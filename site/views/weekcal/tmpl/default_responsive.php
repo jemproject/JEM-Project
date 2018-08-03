@@ -8,19 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-$document = JFactory::getDocument();
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
-
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">

@@ -1246,6 +1246,27 @@ class JemHelper
 
 		return $css;
 	}
+  
+  static public function loadIconFont() {
+    $jemsettings	= JemHelper::config();
+    if ($jemsettings->layoutstyle == 1) {
+      $document = JFactory::getDocument();
+      $faFound = false;
+      /*if($detectAlreadyIncluded) {
+      $styleSheets = $document->_styleSheets;
+        foreach ($styleSheets as $key => $value) {
+          var_dump($key);
+          if (strpos($key,'font-awesome.min.css') !== false) {
+            $faFound = true;
+            break;
+          }
+        }
+      }*/
+      if (!$faFound) {
+        $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
+      }
+    }
+  }
 
 	static public function defineCenterMap($data = false)
 	{

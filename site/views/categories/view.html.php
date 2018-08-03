@@ -35,6 +35,7 @@ class JemViewCategories extends JemView
 
 		// Load css
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 

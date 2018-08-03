@@ -47,8 +47,9 @@ if (empty($list) && !$params->get('show_no_events')) {
 $document = JFactory::getDocument();
 $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/'.$color.'.css');
 
-$jemsettings = JemHelper::config();
+JemHelper::loadIconFont();
 
+$jemsettings = JemHelper::config();
 if ($jemsettings->layoutstyle == 1) {
   $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser_responsive.css');
   require(JModuleHelper::getLayoutPath('mod_jem_teaser', 'default_responsive'));

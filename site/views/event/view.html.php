@@ -376,6 +376,7 @@ class JemViewEvent extends JemView
 
 		// add css file
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 

@@ -52,6 +52,7 @@ class JemViewAttendees extends JViewLegacy {
 
 		// Load css
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 		JemHelper::loadCustomTag();
 
 		//get vars
@@ -155,6 +156,7 @@ class JemViewAttendees extends JViewLegacy {
 		JemHelper::loadCss('backend');
 		JemHelper::loadCss('jem');
 		JemHelper::loadCss('print');
+    JemHelper::loadIconFont();
 		JemHelper::loadCustomTag();
 
 		$document->setMetaData('robots', 'noindex, nofollow');
@@ -201,6 +203,7 @@ class JemViewAttendees extends JViewLegacy {
 
 		// Load css
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_USERS_AND_STATUS'));
 

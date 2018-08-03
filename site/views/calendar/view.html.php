@@ -41,6 +41,7 @@ class JemViewCalendar extends JViewLegacy
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCss('calendar');
+    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 

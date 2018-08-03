@@ -9,19 +9,6 @@
 defined('_JEXEC') or die;
 
 $function = JFactory::getApplication()->input->getCmd('function', 'jSelectVenue');
-
-$document = JFactory::getDocument();
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
 ?>
 
 <script type="text/javascript">

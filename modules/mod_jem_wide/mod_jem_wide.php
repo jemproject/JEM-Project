@@ -31,8 +31,9 @@ if (empty($list) && !$params->get('show_no_events')) {
 
 $document = JFactory::getDocument();
 
-$jemsettings = JemHelper::config();
+JemHelper::loadIconFont();
 
+$jemsettings = JemHelper::config();
 if ($jemsettings->layoutstyle == 1) {
   require(JModuleHelper::getLayoutPath('mod_jem_wide', 'default_responsive'));
   $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide_responsive.css');

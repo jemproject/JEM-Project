@@ -11,18 +11,6 @@
 defined('_JEXEC') or die;
 
 $document = JFactory::getDocument();
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
-
 $module_name = 'mod_jem';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {

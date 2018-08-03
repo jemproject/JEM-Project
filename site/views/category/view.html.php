@@ -59,6 +59,7 @@ class JemViewCategory extends JemView
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCss('calendar');
+      JemHelper::loadIconFont();
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
 
@@ -167,6 +168,7 @@ class JemViewCategory extends JemView
 
 			// Load css
 			JemHelper::loadCss('jem');
+      JemHelper::loadIconFont();
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
 

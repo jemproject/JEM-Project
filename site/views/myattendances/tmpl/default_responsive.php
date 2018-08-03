@@ -8,19 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-$document = JFactory::getDocument();
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
-
 function jem_myattendances_string_contains($masterstring, $string) {
   if (strpos($masterstring, $string) !== false) {
     return true;

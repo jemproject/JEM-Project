@@ -22,17 +22,6 @@ if (JRequest::getVar('jem-rss','0') == 1) {
   jexit(); 
 }
 */
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
 
 $module_name = 'mod_jem_teaser';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;

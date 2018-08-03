@@ -176,6 +176,7 @@ class JemViewEditevent extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 
 		// Load scripts
@@ -295,6 +296,7 @@ class JemViewEditevent extends JViewLegacy
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_VENUE'));
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
@@ -335,6 +337,7 @@ class JemViewEditevent extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_CONTACT'));
 
@@ -393,6 +396,7 @@ class JemViewEditevent extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+    JemHelper::loadIconFont();
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_USERS_TO_INVITE'));
 

@@ -26,8 +26,9 @@ if (empty($list) && !$params->get('show_no_events')) {
 	return;
 }
 
-$jemsettings = JemHelper::config();
+JemHelper::loadIconFont();
 
+$jemsettings = JemHelper::config();
 if ($jemsettings->layoutstyle == 1) {
   require(JModuleHelper::getLayoutPath('mod_jem', 'default_responsive'));
 } else {

@@ -48,8 +48,9 @@ if (empty($list) && !$params->get('show_no_events')) {
 $document = JFactory::getDocument();
 $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_banner/tmpl/'.$color.'.css');
 
-$jemsettings = JemHelper::config();
+JemHelper::loadIconFont();
 
+$jemsettings = JemHelper::config();
 if ($jemsettings->layoutstyle == 1) {
   require(JModuleHelper::getLayoutPath('mod_jem_banner', 'default_responsive'));
   $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner_responsive.css');
