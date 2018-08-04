@@ -302,7 +302,7 @@ defined('_JEXEC') or die;
 								echo $count;
 							}
 						} else {
-							echo JHtml::_('image', 'com_jem/publish_r.png',NULL,NULL,true);
+              echo JemOutput::addremovebutton(NULL,NULL);
 						}
 						?>
 					</div>

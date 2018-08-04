@@ -94,43 +94,85 @@ abstract class JHtmlJemHtml
 	static public function toggleAttendanceStatus($value = 0, $i, $canChange = true, $print = false)
 	{
 		// Array of image, task, alt-text, tooltip
-		$states = array(
-				-99 => array( // fallback on wrong status value
-						'disabled.png',
-						'',
-						'COM_JEM_STATUS_UNKNOWN',
-						'COM_JEM_STATUS_UNKNOWN',
-						'COM_JEM_ATTENDEES_STATUS_UNKNOWN'
-				),
-				-1 => array( // not attending, no toggle
-						'publish_r.png',
-						'',
-						'COM_JEM_NOT_ATTENDING',
-						'COM_JEM_NOT_ATTENDING',
-						'COM_JEM_ATTENDEES_NOT_ATTENDING'
-				),
-				0 => array( // invited, no toggle
-						'invited.png',
-						'',
-						'COM_JEM_INVITED',
-						'COM_JEM_INVITED',
-						'COM_JEM_ATTENDEES_INVITED'
-				),
-				1 => array( // attending, toggle: waiting list
-						'tick.png',
-						'attendees.OnWaitinglist',
-						'COM_JEM_ATTENDING',
-						'COM_JEM_ATTENDING_MOVE_TO_WAITINGLIST',
-						'COM_JEM_ATTENDEES_ATTENDING'
-				),
-				2 => array( // on waiting list, toggle: list of attendees
-						'publish_y.png',
-						'attendees.OffWaitinglist',
-						'COM_JEM_ON_WAITINGLIST',
-						'COM_JEM_ON_WAITINGLIST_MOVE_TO_ATTENDING',
-						'COM_JEM_ATTENDEES_ON_WAITINGLIST'
-				)
-		);
+		$jemsettings = JemHelper::config();
+    
+    if($jemsettings->useiconfont == 1) {
+            $states = array(
+          -99 => array( // fallback on wrong status value
+              'fa-circle-o',
+              '',
+              'COM_JEM_STATUS_UNKNOWN',
+              'COM_JEM_STATUS_UNKNOWN',
+              'COM_JEM_ATTENDEES_STATUS_UNKNOWN'
+          ),
+          -1 => array( // not attending, no toggle
+              'fa-times-circle',
+              '',
+              'COM_JEM_NOT_ATTENDING',
+              'COM_JEM_NOT_ATTENDING',
+              'COM_JEM_ATTENDEES_NOT_ATTENDING'
+          ),
+          0 => array( // invited, no toggle
+              'fa-question-circle',
+              '',
+              'COM_JEM_INVITED',
+              'COM_JEM_INVITED',
+              'COM_JEM_ATTENDEES_INVITED'
+          ),
+          1 => array( // attending, toggle: waiting list
+              'fa-check-circle',
+              'attendees.OnWaitinglist',
+              'COM_JEM_ATTENDING',
+              'COM_JEM_ATTENDING_MOVE_TO_WAITINGLIST',
+              'COM_JEM_ATTENDEES_ATTENDING'
+          ),
+          2 => array( // on waiting list, toggle: list of attendees
+              'fa-list-ol',
+              'attendees.OffWaitinglist',
+              'COM_JEM_ON_WAITINGLIST',
+              'COM_JEM_ON_WAITINGLIST_MOVE_TO_ATTENDING',
+              'COM_JEM_ATTENDEES_ON_WAITINGLIST'
+          )
+      );
+    } else {
+      $states = array(
+          -99 => array( // fallback on wrong status value
+              'disabled.png',
+              '',
+              'COM_JEM_STATUS_UNKNOWN',
+              'COM_JEM_STATUS_UNKNOWN',
+              'COM_JEM_ATTENDEES_STATUS_UNKNOWN'
+          ),
+          -1 => array( // not attending, no toggle
+              'publish_r.png',
+              '',
+              'COM_JEM_NOT_ATTENDING',
+              'COM_JEM_NOT_ATTENDING',
+              'COM_JEM_ATTENDEES_NOT_ATTENDING'
+          ),
+          0 => array( // invited, no toggle
+              'invited.png',
+              '',
+              'COM_JEM_INVITED',
+              'COM_JEM_INVITED',
+              'COM_JEM_ATTENDEES_INVITED'
+          ),
+          1 => array( // attending, toggle: waiting list
+              'tick.png',
+              'attendees.OnWaitinglist',
+              'COM_JEM_ATTENDING',
+              'COM_JEM_ATTENDING_MOVE_TO_WAITINGLIST',
+              'COM_JEM_ATTENDEES_ATTENDING'
+          ),
+          2 => array( // on waiting list, toggle: list of attendees
+              'publish_y.png',
+              'attendees.OffWaitinglist',
+              'COM_JEM_ON_WAITINGLIST',
+              'COM_JEM_ON_WAITINGLIST_MOVE_TO_ATTENDING',
+              'COM_JEM_ATTENDEES_ON_WAITINGLIST'
+          )
+      );
+    }
 
 		$backend = (bool)JFactory::getApplication()->isAdmin();
 		$state   = JArrayHelper::getValue($states, (int) $value, $states[-99]);
@@ -145,11 +187,21 @@ abstract class JHtmlJemHtml
 			$attr = 'class="hasTooltip" title="'.JHtml::tooltipText(JText::_('COM_JEM_STATUS'), JText::_($state[$canChange ? 3 : 2]), 0).'"';
 		}
 
+    
+    
 		if ($print) {
-			$html  = JHtml::_('image', 'com_jem/' . $state[0], '', 'class="icon-inline-left"', true);
+			if ($jemsettings->useiconfont == 1) {
+        $html = '<i class="fa fa-fw fa-lg '.$state[0].' jem-attendance-status-'.$state[0].'"></i>';
+      } else {
+        $html  = JHtml::_('image', 'com_jem/' . $state[0], '', 'class="icon-inline-left"', true);
+      }
 			$html .= JText::_($state[4]);
 		} elseif ($canChange && !empty($state[1])) {
-			$html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), NULL, true);
+      if ($jemsettings->useiconfont == 1) {
+        $html = '<i class="fa fa-fw fa-lg '.$state[0].' jem-attendance-status-'.$state[0].'"></i>';
+      } else {
+        $html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), NULL, true);
+      }
 			if ($backend) {
 				$attr .= ' onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[1] . '\')"';
 				$url = '#';
@@ -158,7 +210,11 @@ abstract class JHtmlJemHtml
 			}
 			$html = JHtml::_('link', $url, $html, $attr);
 		} else {
-			$html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), $attr, true);
+      if ($jemsettings->useiconfont == 1) {
+        $html = '<i class="fa fa-fw fa-lg '.$state[0].' jem-attendance-status-'.$state[0].'"></i>';
+      } else {
+        $html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), $attr, true);
+      }
 		}
 
 		return $html;

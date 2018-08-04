@@ -1246,10 +1246,10 @@ class JemHelper
 
 		return $css;
 	}
-  
+
   static public function loadIconFont() {
     $jemsettings	= JemHelper::config();
-    if ($jemsettings->layoutstyle == 1) {
+    if ($jemsettings->useiconfont == 1) {
       $document = JFactory::getDocument();
       $faFound = false;
       /*if($detectAlreadyIncluded) {
@@ -1263,7 +1263,8 @@ class JemHelper
         }
       }*/
       if (!$faFound) {
-        $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
+        $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');  
+        $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/jem-icon-font.css');        
       }
     }
   }

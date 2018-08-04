@@ -19,18 +19,6 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 
 $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 
-$document = JFactory::getDocument();
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
 ?>
 <script type="text/javascript">
 	function tableOrdering(order, dir, view)
@@ -168,7 +156,7 @@ if (!$faFound) {
           
 					<div class="jem-event-info-small jem-attendee-remove">
             <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
-              <?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip'), true); ?>
+              <?php echo JemOutput::addremovebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip')); ?>
             </a>
 					</div>
 				</li>

@@ -1,0 +1,70 @@
+/* List of all buttons:
+jem-submitbutton
+jem-addvenuebutton
+jem-addusersbutton
+jem-removebutton
+jem-archivebutton
+jem-archivebutton-return
+jem-editbutton
+jem-copybutton
+jem-printbutton
+jem-mailbutton
+jem-icalbutton
+jem-publishbutton
+jem-trashbutton
+jem-unpublishbutton
+jem-exportbutton
+jem-backbutton
+jem-recurrenceicon
+jem-publishstateicon-trashed
+jem-publishstateicon-unpublished
+jem-publishstateicon-published
+jem-publishstateicon-archived
+jem-attendance-status-fa-circle-o
+jem-attendance-status-fa-times-circle
+jem-attendance-status-fa-question-circle
+jem-attendance-status-fa-check-circle
+jem-attendance-status-fa-list-ol
+*/
+
+#jem .jem-submitbutton, 
+#jem .jem-addvenuebutton, 
+#jem .jem-addusersbutton, 
+#jem .jem-archivebutton, 
+#jem .jem-archivebutton-return, 
+#jem .jem-editbutton, 
+#jem .jem-copybutton, 
+#jem .jem-printbutton, 
+#jem .jem-mailbutton, 
+#jem .jem-icalbutton,
+#jem .jem-exportbutton, 
+#jem .jem-recurrenceicon {
+  color: initial;
+}
+
+#jem .jem-publishbutton,
+#jem .jem-publishstateicon-published,
+#jem .jem-attendance-status-fa-check-circle {
+  color: #03b903;
+}
+
+#jem .jem-unpublishbutton,
+#jem .jem-publishstateicon-unpublished,
+#jem .jem-attendance-status-fa-times-circle,
+#jem .jem-removebutton {
+  color: #f30000;
+}
+
+#jem .jem-trashbutton,
+#jem .jem-publishstateicon-trashed {
+  color: #6f6f6f;
+}
+
+#jem .jem-publishstateicon-archived,
+#jem .jem-attendance-status-fa-list-ol {
+  color: #da8812;
+}
+
+#jem .jem-backbutton {
+  color: #03b903;
+}

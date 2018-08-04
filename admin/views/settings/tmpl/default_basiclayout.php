@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 		<legend><?php echo JText::_( 'COM_JEM_LAYOUT_STYLE_SETTINGS' ); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('layoutstyle'); ?> <?php echo $this->form->getInput('layoutstyle'); ?></li>
+			<li><?php echo $this->form->getLabel('useiconfont'); ?> <?php echo $this->form->getInput('useiconfont'); ?></li>
 		</ul>
 	</fieldset>
 </div>
