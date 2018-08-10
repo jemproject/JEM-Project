@@ -185,7 +185,7 @@ if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-horizontal"
           <?php endif; ?>
           
           <?php /*venue*/ ?>
-          <?php if ($params->get('showvenue', 1) == 1) :?>
+          <?php if ($item->venue && $params->get('showvenue', 1) == 1) :?>
             <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
               <i class="fa fa-map-marker" aria-hidden="true"></i>
               <?php if ($item->venuelink) : ?>
