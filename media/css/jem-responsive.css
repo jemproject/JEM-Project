@@ -1,17 +1,21 @@
-/*[src~=print]
-.buttons a::after {
-  font-family: FontAwesome;
-  content: "\f08e";
+/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+body.com_jem #sbox-overlay {
+  width: 100% !important;
 }
+body.com_jem #sbox-window {
+  height: auto !important;
+}
+body.com_jem #sbox-content {
+  height: auto !important;
+  width: auto !important;
+  max-height: 100%;
+  max-width: 100%;
+}
+body.com_jem.body-overlayed {
+  overflow: auto;
+}
+/* ----- */
 
-img[src*="print"] {
-  display: none;
-}
-
-a < img[src*="print"] {
-  display: none;
-}
-*/
 #jem .buttons {
   float: right;
 }
