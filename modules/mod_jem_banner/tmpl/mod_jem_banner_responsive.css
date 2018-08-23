@@ -1,4 +1,4 @@
-/**
+/*
  * @version 2.2.2
  * @package JEM
  * @subpackage JEM Banner Module
@@ -6,6 +6,24 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+
+/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+#sbox-overlay {
+  width: 100% !important;
+}
+#sbox-window {
+  height: auto !important;
+}
+#sbox-content {
+  height: auto !important;
+  width: auto !important;
+  max-height: 100%;
+  max-width: 100%;
+}
+body.body-overlayed {
+  overflow: auto;
+}
+/* ----- */
 
 .jem-row-banner {
   display: flex;
