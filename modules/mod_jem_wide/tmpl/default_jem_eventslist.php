@@ -56,14 +56,16 @@ $jemsettings = JemHelper::config();
     height: <?php echo $imageheight; ?>;
   }
   
-  @media only all and (max-width: 47.938rem) {  
-    #jemmodulewide .jem-event-details {
-      width: 100%;
-    }
-    
-    #jemmodulewide .jem-list-img img {
-      width: <?php echo $imagewidth; ?>;
-      height: <?php echo $imageheight; ?>;
+  @media not print {
+    @media only all and (max-width: 47.938rem) {  
+      #jemmodulewide .jem-event-details {
+        width: 100%;
+      }
+      
+      #jemmodulewide .jem-list-img img {
+        width: <?php echo $imagewidth; ?>;
+        height: <?php echo $imageheight; ?>;
+      }
     }
   }
 </style>

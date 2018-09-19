@@ -88,14 +88,16 @@ if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-horizontal"
     height: <?php echo $imageheight; ?>;
   }
   
-  @media only all and (max-width: 47.938rem) {  
-    #jemmodulebanner .jem-eventimg-banner {
+  @media not print {
+    @media only all and (max-width: 47.938rem) {  
+      #jemmodulebanner .jem-eventimg-banner {
+        
+      }
       
-    }
-    
-    #jemmodulebanner .jem-eventimg-banner img {
-      width: <?php echo $imagewidth; ?>;
-      height: <?php echo $imageheight; ?>;
+      #jemmodulebanner .jem-eventimg-banner img {
+        width: <?php echo $imagewidth; ?>;
+        height: <?php echo $imageheight; ?>;
+      }
     }
   }
 </style>

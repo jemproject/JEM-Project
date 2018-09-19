@@ -450,57 +450,57 @@ body.com_jem.body-overlayed {
     flex-basis: 45% !important;
   }*/
 }
-
-@media only all and (max-width: 47.938rem) {
-  #jem .jem-dl dt, #jem .jem-dl-long dt {
-    float: none;
-    width: auto;
-    clear: none;
-    text-align: left;
-    margin-top: 5px;
-    padding-top: 0px;
-    padding-bottom: 0px;    
-  }
-  
-  #jem .jem-dl dt:first-child, #jem .jem-dl-long dt:first-child {
-    margin-top: 0;
-  }
-  
-  #jem .jem-dl dd, #jem .jem-dl-long dd {
-	  margin-left: 0;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 5px;
-  }
-  
-  #jem .jem_limit {
-    flex-wrap: wrap;
-  }
-  
-  #jem .jem-event-details {
-    order: -1;
-    flex-basis: 100%
-  }
-  
-  #jem .jem-list-img {
-    margin-right: 0;
-    margin-top: 10px;
-  }
-  
-  #jem .jem-catimg {
-    float: none;
-    clear: both;
-  }
-  
-  #jem .jem-sort-small .jem-small-list div{
-    flex-basis: 30%;
-  }
-  
-  #jem .jem-event-info-small {
-    flex-basis: 100% !important;
+@media not print {
+  @media only all and (max-width: 47.938rem) {
+    #jem .jem-dl dt, #jem .jem-dl-long dt {
+      float: none;
+      width: auto;
+      clear: none;
+      text-align: left;
+      margin-top: 5px;
+      padding-top: 0px;
+      padding-bottom: 0px;    
+    }
+    
+    #jem .jem-dl dt:first-child, #jem .jem-dl-long dt:first-child {
+      margin-top: 0;
+    }
+    
+    #jem .jem-dl dd, #jem .jem-dl-long dd {
+      margin-left: 0;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      padding-left: 5px;
+    }
+    
+    #jem .jem_limit {
+      flex-wrap: wrap;
+    }
+    
+    #jem .jem-event-details {
+      order: -1;
+      flex-basis: 100%
+    }
+    
+    #jem .jem-list-img {
+      margin-right: 0;
+      margin-top: 10px;
+    }
+    
+    #jem .jem-catimg {
+      float: none;
+      clear: both;
+    }
+    
+    #jem .jem-sort-small .jem-small-list div{
+      flex-basis: 30%;
+    }
+    
+    #jem .jem-event-info-small {
+      flex-basis: 100% !important;
+    }
   }
 }
-
 @media only all and (max-width: 30rem) {
   
 }

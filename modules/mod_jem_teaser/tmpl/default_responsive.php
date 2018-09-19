@@ -83,14 +83,16 @@ function jem_teaser_string_contains($masterstring, $string) {
     height: <?php echo $imageheight; ?>;
   }
   
-  @media only all and (max-width: 47.938rem) {  
-    #jemmoduleteaser .jem-eventimg-teaser {
+  @media not print {
+    @media only all and (max-width: 47.938rem) {  
+      #jemmoduleteaser .jem-eventimg-teaser {
+        
+      }
       
-    }
-    
-    #jemmoduleteaser .jem-eventimg-teaser img {
-      width: <?php echo $imagewidth; ?>;
-      height: <?php echo $imageheight; ?>;
+      #jemmoduleteaser .jem-eventimg-teaser img {
+        width: <?php echo $imagewidth; ?>;
+        height: <?php echo $imageheight; ?>;
+      }
     }
   }
 </style>

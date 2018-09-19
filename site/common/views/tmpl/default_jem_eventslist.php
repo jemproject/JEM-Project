@@ -63,15 +63,16 @@ defined('_JEXEC') or die;
     width: <?php echo $imagewidth; ?>;
     height: <?php echo $imageheight; ?>;
   }
-  
-  @media only all and (max-width: 47.938rem) {  
-    #jem .jem-list-img {
-      width: 100%;
-    }
-    
-    #jem .jem-list-img img {
-      width: <?php echo $imagewidth; ?>;
-      height: <?php echo $imageheight; ?>;
+  @media not print {
+    @media only all and (max-width: 47.938rem) {  
+      #jem .jem-list-img {
+        width: 100%;
+      }
+      
+      #jem .jem-list-img img {
+        width: <?php echo $imagewidth; ?>;
+        height: <?php echo $imageheight; ?>;
+      }
     }
   }
 </style>
