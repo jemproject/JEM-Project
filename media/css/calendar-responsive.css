@@ -377,14 +377,6 @@ div#jem .monthname { /*delete complete construct -------------------------------
    .newMonthRow, .weeknum {
      display: none;
    }
-
-   /* The "responsive calendar" runs only if you change something in the calendar.class.php
-    * Change line 667 from:
-    * $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
-    * to:
-    * $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\"  eemonthname=\"".$this->getMonthName()."\" eedayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
-    * NOW TAKE A LOOK AT THE COMMENT BELOW!
-    * After that you will see the days like "Mo, 2. August" instead of only the daynumber */
     
    td.monthday div.daynum::after {
      content: ". " attr(jem-monthname);
