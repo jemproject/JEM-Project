@@ -387,7 +387,11 @@ div#jem .monthname { /*delete complete construct -------------------------------
     * After that you will see the days like "Mo, 2. August" instead of only the daynumber */
     
    td.monthday div.daynum::after {
-     content: ". " attr(eemonthname);
+     content: ". " attr(jem-monthname);
+   }
+   
+   .today .daynum a {
+     color: #000000
    }
    
    td.today div.daynum::after {
@@ -397,12 +401,8 @@ div#jem .monthname { /*delete complete construct -------------------------------
    
    td.monthday div.daynum::before {
      margin-left: 5px;
-     content: attr(eedayname) ", ";
-   }
-   
-   /* If you changed the calendar.class.php, uncomment or remove this. */
-   td.monthday div.daynum::before {
-      content: "";
+     content: attr(jem-dayname) ", ";
+     background-color: transparent;
    }
 }
 
