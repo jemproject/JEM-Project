@@ -24,7 +24,7 @@
 }*/
 
 #jemmodulebasic {
-  padding: 10px;
+  padding: 10px 5px;
 }
 
 #jemmodulebasic ul {
@@ -44,4 +44,10 @@
   left: -1.5em;
   font-family: FontAwesome;
   content: "\f073";
+}
+
+#jemmodulebasic .event-title {
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }

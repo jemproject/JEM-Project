@@ -25,37 +25,44 @@ body.body-overlayed {
 }
 /* ----- */
 
-.jem-row-banner {
+#jemmodulebanner .jem-row-banner {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
 
-.jem-horizontal-banner {
+#jemmodulebanner .jem-horizontal-banner {
   flex-direction: row;
 }
 
-.jem-vertical-banner {
+#jemmodulebanner .jem-vertical-banner {
   flex-direction: column;
 }
 
-.jem-event-details-banner {
+#jemmodulebanner .jem-event-details-banner {
   flex: 1;
 }
 
-.jem-banner-datecat {
+#jemmodulebanner .event-title, 
+#jemmodulebanner .jem-banner-datecat {
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+#jemmodulebanner .jem-banner-datecat {
   margin-bottom: 8px;
 }
 
-.jem-banner-datecat > div {
+#jemmodulebanner .jem-banner-datecat > div {
   margin-right: 10px;
 }
 
-.jem-banner-datecat > div:last-child {
+#jemmodulebanner .jem-banner-datecat > div:last-child {
   margin-right: 0;
 }
 
-.jem-eventimg-banner {
+#jemmodulebanner .jem-eventimg-banner {
   margin-bottom: 10px;
 }
 

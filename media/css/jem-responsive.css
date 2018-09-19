@@ -179,6 +179,9 @@ body.com_jem.body-overlayed {
 #jem .jem-sort {
   flex: 1;
   align-items: baseline;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 #jem .jem-sort-small {
@@ -294,6 +297,9 @@ body.com_jem.body-overlayed {
   margin: 0;
   padding: 0;
   list-style-type: none;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 #jem .eventlist li {

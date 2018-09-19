@@ -25,35 +25,41 @@ body.body-overlayed {
 }
 /* ----- */
 
-.jem-row-teaser {
+#jemmoduleteaser .jem-row-teaser {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
 
-.jem-event-details-teaser {
+#jemmoduleteaser .jem-event-details-teaser {
   flex: 1;
 }
 
-.jem-event-details-teaser .jem-row-teaser {
+#jemmoduleteaser .jem-event-details-teaser .jem-row-teaser {
   margin-bottom: 10px;
 }
 
-.jem-event-details-teaser .jem-row-teaser > div {
+#jemmoduleteaser .jem-event-details-teaser .jem-row-teaser > div {
   margin-right: 10px;
 }
 
-.jem-event-details-teaser .jem-row-teaser > div:last-child {
+#jemmoduleteaser .jem-event-details-teaser .jem-row-teaser > div:last-child {
   margin-right: 0;
 }
 
-.jem-eventimg-teaser {
+#jemmoduleteaser .jem-eventimg-teaser {
   float: right;
   margin-left: 5px;
   margin-bottom: 5px;
 }
 
+#jemmoduleteaser .event-title, 
+#jemmoduleteaser .jem-teaser-datecat {
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
  
 #jemmoduleteaser [class|="calendar"] {
 	background-repeat: no-repeat;

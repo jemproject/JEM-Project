@@ -27,19 +27,21 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
   <ul>
     <?php foreach ($list as $item) : ?>
       <li>
-        <?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
-          <a href="<?php echo $item->venueurl; ?>">
-            <?php echo $item->text; ?>
-          </a>
-        <?php elseif ($params->get('showtitloc') == 1 && $params->get('linkdet') == 2) : ?>
-          <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->text); ?>">
-            <?php echo $item->text; ?>
-          </a>
-        <?php
-          else :
-            echo $item->text;
-          endif;
-        ?>    
+        <span class="event-title">
+          <?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
+            <a href="<?php echo $item->venueurl; ?>">
+              <?php echo $item->text; ?>
+            </a>
+          <?php elseif ($params->get('showtitloc') == 1 && $params->get('linkdet') == 2) : ?>
+            <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->text); ?>">
+              <?php echo $item->text; ?>
+            </a>
+          <?php
+            else :
+              echo $item->text;
+            endif;
+          ?>    
+        </span>
         <br />
         <?php if ($params->get('linkdet') == 1) : ?>
         <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>">
