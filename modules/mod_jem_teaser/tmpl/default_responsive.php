@@ -149,24 +149,28 @@ function jem_teaser_string_contains($masterstring, $string) {
               </div>
             <?php */endif; ?>
             <?php if (!empty($item->venue)) : ?>
-              <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-              <i class="fa fa-map-marker" aria-hidden="true"></i>
-              <?php if ($item->venuelink) : ?>
-                <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
-              <?php else : ?>
-                <?php echo $item->venue; ?>
+              <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+                <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <?php if ($item->venuelink) : ?>
+                  <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
+                <?php else : ?>
+                  <?php echo $item->venue; ?>
+                <?php endif; ?>
+                </div>
               <?php endif; ?>
+            <?php endif; ?>
+            <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+              <div class="category" title="<?php echo JText::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
+                <i class="fa fa-tag" aria-hidden="true"></i>
+                <?php echo $item->catname; ?>
               </div>
             <?php endif; ?>
-            <div class="category" title="<?php echo JText::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-              <i class="fa fa-tag" aria-hidden="true"></i>
-              <?php echo $item->catname; ?>
-            </div>
           </div>
           <div class="jem-description-teaser">
             <?php //uncomment this construct to disable the eventimage ?>
             <?php if(strpos($item->eventimage,'/media/system/images/blank.png') === false) : ?>
-              <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-noimage')) : ?>
+              <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                 <?php if(!empty($item->eventimage)) : ?>
                   <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
                     <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
