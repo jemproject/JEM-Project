@@ -101,15 +101,23 @@ function jem_teaser_string_contains($masterstring, $string) {
 <?php ?>
 	<div class="eventset">
 	<?php if (count($list)) : ?>
+    <?php
+      $titletag = '<h2 class="event-title">';
+      $titleendtag = '</h2>';
+      if ($module->showtitle) {
+        $titletag = '<h3 class="event-title">';
+        $titleendtag = '</h3>';
+      } 
+    ?>
     <?php foreach ($list as $item) : ?>
-
-      <h2 class="event-title">
+      
+      <?php echo $titletag; ?>
         <?php if ($item->eventlink) : ?>
           <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
         <?php else : ?>
           <?php echo $item->title; ?>
         <?php endif; ?>
-      </h2>
+      <?php echo $titleendtag; ?>
       
       <div class="jem-row-teaser jem-teaser-event">
         <div class="calendar<?php echo '-'.$item->colorclass; ?> jem-teaser-calendar"
