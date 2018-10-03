@@ -29,7 +29,6 @@ body.com_jem.body-overlayed {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
 }
 
 #jem .jem-wrap-reverse {
@@ -238,6 +237,7 @@ body.com_jem.body-overlayed {
   border-bottom: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+  align-items: center;
 } 
 
 #jem .jem-event:first-child {
