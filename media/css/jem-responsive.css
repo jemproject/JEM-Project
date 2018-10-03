@@ -29,6 +29,7 @@ body.com_jem.body-overlayed {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
 }
 
 #jem .jem-wrap-reverse {
@@ -257,12 +258,13 @@ body.com_jem.body-overlayed {
   flex: 1;
 }
 
-#jem .jem-event-details h3 {
-  margin: 0;
+#jem .jem-event-details h4 {
+  margin-top: 0px;
   margin-bottom: 10px;
+  line-height: 110%;
 }
 
-#jem .jem-event-details h3 a {
+#jem .jem-event-details h4 a {
   font-weight: bold;
 }
 
