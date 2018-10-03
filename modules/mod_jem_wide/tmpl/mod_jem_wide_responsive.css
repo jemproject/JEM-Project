@@ -118,6 +118,7 @@ body.body-overlayed {
   border-bottom: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+  align-items: center;
 } 
 
 #jemmodulewide .jem-event:first-child {
@@ -133,9 +134,14 @@ body.body-overlayed {
   flex: 1;
 }
 
-#jemmodulewide .jem-event-details h3 {
-  margin: 0;
+#jemmodulewide .jem-event-details h4 {
+  margin-top: 0px;
   margin-bottom: 10px;
+  line-height: 110%;
+}
+
+#jemmodulewide .jem-event-details h4 a {
+  font-weight: bold;
 }
 
 #jemmodulewide .jem-list-row {
