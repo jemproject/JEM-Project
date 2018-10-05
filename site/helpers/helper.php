@@ -1312,6 +1312,7 @@ class JemHelper
 	 */
 	static public function loadCustomCss()
 	{
+    $jemsettings  = JemHelper::config();
 		$settings = self::retrieveCss();
 
 		$style = "";
@@ -1338,25 +1339,47 @@ class JemHelper
 			$style .= "div#jem {background-color:".$bg_jem.";}";
 		}
 
-		if ($bg_table_th) {
-			$style .= "div#jem table.eventtable th {background-color:" . $bg_table_th . ";}";
-		}
+    if ($jemsettings->layoutstyle == 1) {
+      if ($bg_table_th) {
+        $style .= "div#jem .jem-misc, div#jem .jem-sort-small {background-color:" . $bg_table_th . ";}";
+      }
 
-		if ($bg_table_td) {
-			$style .= "div#jem table.eventtable td {background-color:" . $bg_table_td . ";}";
-		}
+      if ($bg_table_td) { //Caused by the row-layout of JEM-Responsive, there exist no cells, we use that for row-color
+        $style .= "div#jem .eventlist li:nth-child(odd) {background-color:" . $bg_table_td . ";}";
+      }
 
-		if ($bg_table_tr_entry2) {
-			$style .= "div#jem table.eventtable tr.sectiontableentry2 td {background-color:" . $bg_table_tr_entry2 . ";}";
-		}
+      if ($bg_table_tr_entry2) {
+        $style .= "div#jem .eventlist li:nth-child(even) {background-color:" . $bg_table_tr_entry2 . ";}";
+      }
 
-		if ($bg_table_tr_hover) {
-			$style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
-		}
+      if ($bg_table_tr_hover) {
+        $style .= "div#jem .eventlist li:hover {background-color:" . $bg_table_tr_hover . ";}";
+      }
 
-		if ($bg_table_tr_featured) {
-			$style .= "div#jem table.eventtable tr.featured td {background-color:" . $bg_table_tr_featured . ";}";
-		}
+      if ($bg_table_tr_featured) {
+        $style .= "div#jem .eventlist .jem-featured {background-color:" . $bg_table_tr_featured . ";}";
+      }
+    } else {
+      if ($bg_table_th) {
+        $style .= "div#jem table.eventtable th {background-color:" . $bg_table_th . ";}";
+      }
+
+      if ($bg_table_td) {
+        $style .= "div#jem table.eventtable td {background-color:" . $bg_table_td . ";}";
+      }
+
+      if ($bg_table_tr_entry2) {
+        $style .= "div#jem table.eventtable tr.sectiontableentry2 td {background-color:" . $bg_table_tr_entry2 . ";}";
+      }
+
+      if ($bg_table_tr_hover) {
+        $style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
+      }
+
+      if ($bg_table_tr_featured) {
+        $style .= "div#jem table.eventtable tr.featured td {background-color:" . $bg_table_tr_featured . ";}";
+      }
+    }
 
 		# border-colors
 		$border_filter   = $settings->get('css_color_border_filter');
@@ -1364,20 +1387,30 @@ class JemHelper
 		$border_table_th = $settings->get('css_color_border_table_th');
 		$border_table_td = $settings->get('css_color_border_table_td');
 
-		if ($border_filter) {
-			$style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
-		}
+    if ($border_filter) {
+      $style .= "div#jem #jem_filter {border: 1px solid " . $border_filter . ";}";
+    }
 
-		if ($border_h2) {
-			$style .= "div#jem h2 {border-color:".$border_h2.";}";
-		}
-
-		if ($border_table_th) {
-			$style .= "div#jem table.eventtable th {border-color:" . $border_table_th . ";}";
-		}
-		if ($border_table_td) {
-			$style .= "div#jem table.eventtable td {border-color:" . $border_table_td . ";}";
-		}
+    if ($border_h2) {
+      $style .= "div#jem h2 {border: 1px solid " . $border_h2 . ";}";
+    }
+    
+    if ($jemsettings->layoutstyle == 1) {
+      if ($border_table_th) {
+        $style .= "div#jem .jem-misc, div#jem .jem-sort-small {border: 1px solid " . $border_table_th . ";}";
+      }
+      if ($border_table_td) {
+        $style .= "div#jem .jem-event {border-color: " . $border_table_td . ";}";
+        $style .= "div#jem .jem-event:first-child {border-color: " . $border_table_td . ";}";
+      }
+    } else {
+      if ($border_table_th) {
+        $style .= "div#jem table.eventtable th {border-color:" . $border_table_th . ";}";
+      }
+      if ($border_table_td) {
+        $style .= "div#jem table.eventtable td {border-color:" . $border_table_td . ";}";
+      }
+    }
 
 		# font-color
 		$font_table_h2   = $settings->get('css_color_font_h2');
@@ -1388,13 +1421,23 @@ class JemHelper
 			$style .= "div#jem h2 {color:" . $font_table_h2 . ";}";
 		}
 
-		if ($font_table_td) {
-			$style .= "div#jem table.eventtable td {color:" . $font_table_td . ";}";
-		}
+    if ($jemsettings->layoutstyle == 1) {
+      if ($font_table_td) {
+        $style .= "div#jem .jem-event {color:" . $font_table_td . ";}";
+      }
 
-		if ($font_table_td_a) {
-			$style .= "div#jem table.eventtable td a {color:" . $font_table_td_a . ";}";
-		}
+      if ($font_table_td_a) {
+        $style .= "div#jem .jem-event a {color:" . $font_table_td_a . ";}";
+      }
+    } else {
+      if ($font_table_td) {
+        $style .= "div#jem table.eventtable td {color:" . $font_table_td . ";}";
+      }
+
+      if ($font_table_td_a) {
+        $style .= "div#jem table.eventtable td a {color:" . $font_table_td_a . ";}";
+      }
+    }
 
 		$document = JFactory::getDocument();
 		$document->addStyleDeclaration($style);
