@@ -88,9 +88,9 @@ $jemsettings = JemHelper::config();
           <div class="jem-event-details">
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
-              <a href="<?php echo $item->eventlink; ?>" >
-                <?php echo $item->title; ?>
-              </a>
+              <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
+              <?php echo JemOutput::recurrenceicon($row); ?>
+              <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($item->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>

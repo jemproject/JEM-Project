@@ -230,9 +230,9 @@ defined('_JEXEC') or die;
           <div class="jem-event-details">
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" >
-                <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
-              </a><?php echo JemOutput::publishstateicon($row); ?>
+              <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" ><?php echo $this->escape($row->title); ?></a>
+              <?php echo JemOutput::recurrenceicon($row); ?>
+              <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
@@ -255,7 +255,9 @@ defined('_JEXEC') or die;
                 echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes);
               ?>
-              </a><?php echo JemOutput::publishstateicon($row); ?>
+              </a>
+              <?php echo JemOutput::recurrenceicon($row); ?>
+              <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
@@ -269,6 +271,8 @@ defined('_JEXEC') or die;
                 echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes);
               ?>
+              <?php echo JemOutput::recurrenceicon($row); ?>
+              <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>

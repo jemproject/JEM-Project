@@ -37,8 +37,7 @@ jem-attendance-status-fa-list-ol
 #jem .jem-printbutton, 
 #jem .jem-mailbutton, 
 #jem .jem-icalbutton,
-#jem .jem-exportbutton, 
-#jem .jem-recurrenceicon {
+#jem .jem-exportbutton {
   color: initial;
 }
 

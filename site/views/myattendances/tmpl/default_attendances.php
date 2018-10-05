@@ -100,9 +100,9 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 					<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 					<td headers="jem_title" align="left" valign="top">
-						<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
-							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
-						</a><?php echo JemOutput::publishstateicon($row); ?>
+						<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
+            <?php echo JemOutput::recurrenceicon($row); ?>
+            <?php echo JemOutput::publishstateicon($row); ?>
 					</td>
 					<?php endif; ?>
 

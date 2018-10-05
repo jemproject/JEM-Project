@@ -183,9 +183,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<?php if ($this->jemsettings->showtitle == 1) : ?>
             <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
               <i class="fa fa-comment-o" aria-hidden="true"></i>
-              <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
-                <?php echo $this->escape($row->title); ?>
-              </a><?php echo JemOutput::publishstateicon($row); ?>
+              <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
               <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
