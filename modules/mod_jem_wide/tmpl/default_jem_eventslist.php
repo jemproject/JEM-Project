@@ -59,7 +59,7 @@ $jemsettings = JemHelper::config();
   @media not print {
     @media only all and (max-width: 47.938rem) {  
       #jemmodulewide .jem-event-details {
-        width: 100%;
+        flex-basis: 100%;
       }
       
       #jemmodulewide .jem-list-img img {

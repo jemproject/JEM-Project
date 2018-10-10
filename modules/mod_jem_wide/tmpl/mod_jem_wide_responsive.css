@@ -210,43 +210,14 @@ body.body-overlayed {
 }
 
 @media not print {
-  @media only all and (max-width: 47.938rem) {  
-    #jemmodulewide .jem-dl dt {
-      float: none;
-      width: auto;
-      clear: none;
-      text-align: left;
-      margin-top: 5px;
-      padding-top: 0px;
-      padding-bottom: 0px;    
-    }
-    
-    #jemmodulewide .jem-dl dt:first-child {
-      margin-top: 0;
-    }
-    
-    #jemmodulewide .jem-dl dd {
-      margin-left: 0;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      padding-left: 5px;
-    }
-    
-    #jemmodulewide .jem_limit {
-      flex-wrap: wrap;
-    }
-      
+  @media only all and (max-width: 47.938rem) {    
     #jemmodulewide .jem-list-img {
-      margin-right: 0;
+      margin-right: 10px;
       margin-top: 10px;
+      margin-left: 0;
     }
     
-    #jemmodulewide .jem-catimg {
-      float: none;
-      clear: both;
-    }
-    
-    #jemmodulewide .jem-sort-small .jem-small-list div{
+    #jemmodulewide .jem-sort-small .jem-small-list div {
       flex-basis: 30%;
     }
     
