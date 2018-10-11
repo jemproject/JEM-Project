@@ -153,11 +153,6 @@ function jem_common_show_filter(&$obj) {
         <?php if (!empty($row->featured)) :   ?>
           <li class="jem-event jem-row jem-justify-start jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
 				<?php else : ?>
-          
-          <?php /* if (jem_common_string_contains($this->pageclass_sfx, "jem-onlyfeatured")) { //TODO: Hier weiter machen (Seitenzählung stimmt nicht mehr) --------------------------------------
-            continue;
-          } */?>
-          
           <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
 				<?php endif; ?>
         

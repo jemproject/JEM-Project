@@ -70,6 +70,11 @@ class JemViewEventslist extends JemView
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order']     = $filter_order;
 
+    // TODO: Filter only featured:
+    if ($params->get('onlyfeatured')) {
+      $this->getModel()->setState('filter.featured',1);
+    }
+    
 		// Get data from model
 		$rows = $this->get('Items');
 
