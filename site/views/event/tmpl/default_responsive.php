@@ -35,9 +35,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
 			<?php 
-      echo $this->escape($this->params->get('page_heading'));
-      echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent');
-      echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
+      echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
       ?>
 		</h1>
 	<?php endif; ?>
@@ -242,12 +240,10 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+		<?php $itemid = $this->item ? $this->item->id : 0 ; ?>
 		<h2 class="jem-location">
 			<?php
-			echo JText::_('COM_JEM_VENUE') ;
-			$itemid = $this->item ? $this->item->id : 0 ;
-			echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
-			echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
+			echo JText::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
 			?>
 		</h2>
     
