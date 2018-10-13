@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5" method="upgrade">
 	<name>com_jem</name>
-	<creationDate>February 2018</creationDate>
+	<creationDate>October 2018</creationDate>
 	<author>JEM Community</author>
 	<copyright>Copyright (C) 2013-2018 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
