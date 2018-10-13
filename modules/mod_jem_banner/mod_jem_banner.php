@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0-dev1
  * @package JEM
  * @subpackage JEM Banner Module
- * @copyright (C) 2014-2017 joomlaeventmanager.net
+ * @copyright (C) 2014-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
