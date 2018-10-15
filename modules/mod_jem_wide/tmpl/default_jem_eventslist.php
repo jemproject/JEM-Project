@@ -89,8 +89,8 @@ $jemsettings = JemHelper::config();
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
-              <?php echo JemOutput::recurrenceicon($row); ?>
-              <?php echo JemOutput::publishstateicon($row); ?>
+              <?php echo JemOutput::recurrenceicon($item); ?>
+              <?php echo JemOutput::publishstateicon($item); ?>
               <?php if (!empty($item->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
@@ -98,7 +98,7 @@ $jemsettings = JemHelper::config();
             
             <?php elseif ($params->get('linkevent') == 0) : //Display title as title of jem-event without link ?>
             <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
-              <?php echo $item->title . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+              <?php echo $item->title . JemOutput::recurrenceicon($item) . JemOutput::publishstateicon($item); ?>
               <?php if (!empty($item->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
