@@ -70,7 +70,7 @@ if (empty($this->catrow->events)) { return; }
 </style>
 
 <ul class="eventlist">
-  <?php if ($this->noevents == 1) : ?>
+  <?php if (empty($this->catrow->events)) : ?>
     <li class="jem-event"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></li>
   <?php else : ?>
       <?php
