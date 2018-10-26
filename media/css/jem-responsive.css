@@ -252,6 +252,10 @@ body.com_jem.body-overlayed {
   border-top: 1px solid #ddd;
 }
 
+#jem .jem-event.jem-nopointer {
+  cursor: default;
+}
+
 #jem .jem-list-img {
   flex-shrink: 1;
   margin-right: 15px;
@@ -306,7 +310,7 @@ body.com_jem.body-overlayed {
 #jem .eventlist {
   margin: 0;
   padding: 0;
-  list-style-type: none;
+  list-style: none;
   -ms-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
@@ -314,6 +318,7 @@ body.com_jem.body-overlayed {
 
 #jem .eventlist li {
   padding: 10px;
+  list-style: none;
 }
 
 #jem .eventlist li:nth-child(odd) {
@@ -324,8 +329,18 @@ body.com_jem.body-overlayed {
   margin-bottom: 0;
 }
 
-#jem .eventlist li:hover {
+#jem .eventlist li:not(.jem-nohover):hover {
   background-color: #e0e0e0;
+}
+
+#jem #reg_comment {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  min-width: 200px;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100px;
 }
 
 #jem .jem-register-button {

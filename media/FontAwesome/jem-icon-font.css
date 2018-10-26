@@ -25,6 +25,8 @@ jem-attendance-status-fa-times-circle
 jem-attendance-status-fa-question-circle
 jem-attendance-status-fa-check-circle
 jem-attendance-status-fa-list-ol
+jem-unregisterbutton
+jem-registerbutton
 */
 
 #jem .jem-submitbutton, 
@@ -43,14 +45,16 @@ jem-attendance-status-fa-list-ol
 
 #jem .jem-publishbutton,
 #jem .jem-publishstateicon-published,
-#jem .jem-attendance-status-fa-check-circle {
+#jem .jem-attendance-status-fa-check-circle,
+#jem .jem-registerbutton {
   color: #03b903;
 }
 
 #jem .jem-unpublishbutton,
 #jem .jem-publishstateicon-unpublished,
 #jem .jem-attendance-status-fa-times-circle,
-#jem .jem-removebutton {
+#jem .jem-removebutton,
+#jem .jem-unregisterbutton {
   color: #f30000;
 }
 

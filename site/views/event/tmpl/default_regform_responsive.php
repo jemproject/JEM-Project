@@ -15,9 +15,7 @@ if ($this->showRegForm && empty($this->print)) :
 
 	if (($this->item->maxplaces > 0) && ($this->item->booked >= $this->item->maxplaces) && !$this->item->waitinglist && empty($this->registration->status)) :
 	?>
-	<p class="el-event-full">
 		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
-	</p>
 
 	<?php else : ?>
 
@@ -42,7 +40,7 @@ if ($this->showRegForm && empty($this->print)) :
         <input id="jem_register_event" type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'));"
           <?php if ($this->isregistered >= 1) { echo 'checked="checked"'; } ?>
         />
-        <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i>
+        <i class="fa fa-check-circle-o fa-lg jem-registerbutton" aria-hidden="true"></i>
         <?php if ($this->item->maxplaces && ($this->item->booked >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
           <?php echo ' '.JText::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
         <?php else : ?>
@@ -55,7 +53,7 @@ if ($this->showRegForm && empty($this->print)) :
         <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'));"
           <?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
         />
-        <i class="fa fa-times-circle-o fa-lg" aria-hidden="true"></i>
+        <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
         <?php echo ' '.JText::_('COM_JEM_I_WILL_NOT_GO'); ?>
       <?php else : ?>
         <input type="radio" name="reg_dummy" value="" disabled="disabled" />
@@ -64,13 +62,14 @@ if ($this->showRegForm && empty($this->print)) :
       </li>
       
       <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-        <li><?php echo JText::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></li>
-        
-        <li>
-          <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"
-            ><?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
-            /* looks crazy, but required to prevent unwanted white spaces within textarea content! */
-          ?></textarea>
+        <li class="jem-event jem-nopointer jem-nohover">
+          <p><?php echo JText::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
+          <div class="jem-regcomment">
+            <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"
+              ><?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
+              /* looks crazy, but required to prevent unwanted white spaces within textarea content! */
+            ?></textarea>
+          </div>
         </li>      
       <?php endif; ?>
     </ul>

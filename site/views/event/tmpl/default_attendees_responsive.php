@@ -19,11 +19,11 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 	<?php $maxplaces = (int)$this->item->maxplaces; ?>
 	<?php $booked    = (int)$this->item->booked; ?>
 	<?php if ($maxplaces > 0) : ?>
-		<dt class="register max-places hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_MAX_PLACES'); ?>"><?php echo JText::_('COM_JEM_MAX_PLACES'); ?>:</dt>
+		<dt class="register max-places hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_MAX_PLACES'); ?>"><?php echo JText::_('COM_JEM_MAX_PLACES'); ?>:</dt>
 		<dd class="register max-places"><?php echo $maxplaces; ?></dd>
 	<?php endif; ?>
 	<?php if (($maxplaces > 0) || ($booked > 0)) : ?>
-		<dt class="register booked-places hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_BOOKED_PLACES'); ?>"><?php echo JText::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
+		<dt class="register booked-places hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_BOOKED_PLACES'); ?>"><?php echo JText::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
 		<dd class="register booked-places">
 		<?php if (empty($this->permissions->canEditAttendees)) : ?>
 			<?php echo $booked; ?>
@@ -33,14 +33,14 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		</dd>
 	<?php endif; ?>
 	<?php if ($maxplaces > 0) : ?>
-		<dt class="register available-places hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo JText::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
+		<dt class="register available-places hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo JText::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
 		<dd class="register available-places"><?php echo ($maxplaces - $booked); ?></dd>
 	<?php endif; ?>
 	<?php
 		// only set style info if users already have registered and user is allowed to see it
 		if ($this->registers) :
 	?>
-		<dt class="register registered-users hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
+		<dt class="register registered-users hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
 		<dd class="register registered-users">
 			<ul class="user floattext">
 			<?php
@@ -105,7 +105,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
 	<?php if ($this->print == 0) : ?>
 	<dl class="jem-dl floattext">
-		<dt class="register registration hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_YOUR_REGISTRATION'); ?>"><?php echo JText::_('COM_JEM_YOUR_REGISTRATION'); ?>:</dt>
+		<dt class="register registration hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_YOUR_REGISTRATION'); ?>"><?php echo JText::_('COM_JEM_YOUR_REGISTRATION'); ?>:</dt>
 		<dd class="register registration">
 			<?php
 			if ($this->item->published != 1) {
@@ -125,7 +125,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 3:
 				case 4:
-					echo $this->loadTemplate('regform');
+					echo $this->loadTemplate('regform_responsive');
 					break;
 				}
 			}

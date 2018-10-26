@@ -371,7 +371,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<!-- Registration -->
 	<?php if ($this->showAttendees) : ?>
-		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION'); ?>:</h2>
+		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION'); ?></h2>
 		<?php echo $this->loadTemplate('attendees_responsive'); ?>
 	<?php endif; ?>
 
