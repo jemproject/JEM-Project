@@ -60,22 +60,28 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 			endif;
 
       if(!function_exists("jem_getStatusIcon")) {
-        function jem_getStatusIcon($status) {
-          switch($status) {
-            case 2:  // waiting list
-              return '<i class="fa fa-fw fa-lg fa-list-ol jem-attendance-status-fa-list-ol hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ON_WAITINGLIST').'"></i>';
-              break;
-            case 1:  // attending
-              return '<i class="fa fa-fw fa-lg fa-check-circle jem-attendance-status-fa-check-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ATTENDING').'"></i>';
-              break;
-            case 0:  // invited
-              return '<i class="fa fa-fw fa-lg fa-question-circle jem-attendance-status-fa-question-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_INVITED').'"></i>';
-              break;
-            case -1: // not attending
-              return '<i class="fa fa-fw fa-lg fa-times-circle jem-attendance-status-fa-times-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_NOT_ATTENDING').'"></i>';
-              break;
-            default:
-              return $status;
+        if ($this->settings->get('event_show_more_attendeedetails', '0')) {
+          function jem_getStatusIcon($status) {
+            switch($status) {
+              case 2:  // waiting list
+                return '<i class="fa fa-fw fa-lg fa-list-ol jem-attendance-status-fa-list-ol hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ON_WAITINGLIST').'"></i>';
+                break;
+              case 1:  // attending
+                return '<i class="fa fa-fw fa-lg fa-check-circle jem-attendance-status-fa-check-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ATTENDING').'"></i>';
+                break;
+              case 0:  // invited
+                return '<i class="fa fa-fw fa-lg fa-question-circle jem-attendance-status-fa-question-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_INVITED').'"></i>';
+                break;
+              case -1: // not attending
+                return '<i class="fa fa-fw fa-lg fa-times-circle jem-attendance-status-fa-times-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_NOT_ATTENDING').'"></i>';
+                break;
+              default:
+                return $status;
+            }
+          }
+        } else {
+          function jem_getStatusIcon($status) {
+            return '';
           }
         }
       }
