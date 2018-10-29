@@ -511,14 +511,28 @@ class JemModelEvent extends JModelItem
 		}
 
 		// Get registered users
-		$query = $db->getQuery(true);
-		$query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-		       . $name . ' AS name, r.uid' . $avatar
-		       . ' FROM #__jem_register AS r'
-		       . ' LEFT JOIN #__users AS u ON u.id = r.uid'
-		       . $join
-		       . ' WHERE ' . implode(' AND ', $where);
-		$db->setQuery($query);
+    if ($settings->get('event_show_more_attendeedetails','0')) {
+      //Query containing invited and waiting users orderd in the order: attending (1), waiting list (2), invited (0), not attending (-1)
+      $query = $db->getQuery(true);
+      $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) AS status, '
+          . $name . ' AS name, r.uid' . $avatar
+          . ' FROM #__jem_register AS r'
+          . ' LEFT JOIN #__users AS u ON u.id = r.uid'
+          . $join
+          . ' WHERE event = '. $db->quote($event)
+          . ' ORDER BY ( case status WHEN 1 THEN 1 WHEN 2 THEN 2 WHEN 0 THEN 3 WHEN -1 THEN 4 END) ASC';
+      $db->setQuery($query);
+    } else {
+      //Original Query:
+      $query = $db->getQuery(true);
+      $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
+             . $name . ' AS name, r.uid' . $avatar
+             . ' FROM #__jem_register AS r'
+             . ' LEFT JOIN #__users AS u ON u.id = r.uid'
+             . $join
+             . ' WHERE ' . implode(' AND ', $where);
+      $db->setQuery($query);
+    }
 
 		try {
 			$registered = $db->loadObjectList();

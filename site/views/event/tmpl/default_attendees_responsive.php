@@ -42,7 +42,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 	?>
 		<dt class="register registered-users hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
 		<dd class="register registered-users">
-			<ul class="user floattext">
+			<!--<ul class="user floattext">-->
 			<?php
 			if ($this->settings->get('event_comunsolution', '0') == 1) :
 				if ($this->settings->get('event_comunoption', '0') == 1) :
@@ -59,12 +59,34 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 				endif;
 			endif;
 
+      if(!function_exists("jem_getStatusIcon")) {
+        function jem_getStatusIcon($status) {
+          switch($status) {
+            case 2:  // waiting list
+              return '<i class="fa fa-fw fa-lg fa-list-ol jem-attendance-status-fa-list-ol hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ON_WAITINGLIST').'"></i>';
+              break;
+            case 1:  // attending
+              return '<i class="fa fa-fw fa-lg fa-check-circle jem-attendance-status-fa-check-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ATTENDING').'"></i>';
+              break;
+            case 0:  // invited
+              return '<i class="fa fa-fw fa-lg fa-question-circle jem-attendance-status-fa-question-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_INVITED').'"></i>';
+              break;
+            case -1: // not attending
+              return '<i class="fa fa-fw fa-lg fa-times-circle jem-attendance-status-fa-times-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_NOT_ATTENDING').'"></i>';
+              break;
+            default:
+              return $status;
+          }
+        }
+      }
+      
 			// loop through attendees
 			foreach ($this->registers as $register) :
-				$text = '';
+				echo '<li>';
+        $text = '';
 				// is a plugin catching this ?
 				if ($res = $this->dispatcher->trigger('onAttendeeDisplay', array($register->uid, &$text))) :
-					echo '<li>'.$text.'</li>';
+					echo $text;
 				endif;
 				// if CB
 				if ($this->settings->get('event_comunsolution', '0') == 1) :
@@ -78,27 +100,28 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 							} else {
 								$useravatar = empty($noimg) ? '' : JHtml::image($noimg, $register->name);
 							}
-							echo '<li><a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . '<span class="username">' . $register->name . '</span></a></li>';
+							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . '<span class="username">' . $register->name . ' (' . $register->status . ') </span></a>';
 
 						// User has no avatar
 						else :
 							$nouseravatar = empty($noimg) ? '' : JHtml::image($noimg, $register->name);
-							echo '<li><a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . '<span class="username">' . $register->name . '</span></a></li>';
+							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . '<span class="username">' . $register->name . ' (' . $register->status . ') </span></a>';
 						endif;
 					else :
 						// only show the username with link to profile
-						echo '<li><span class="username"><a href="' . JRoute::_('index.php?option=com_comprofiler&amp;task=userProfile&amp;user=' . $register->uid) . '">' . $register->name . '</a></span></li>';
+						echo '<span class="username"><a href="' . JRoute::_('index.php?option=com_comprofiler&amp;task=userProfile&amp;user=' . $register->uid) . '">' . $register->name . ' (' . $register->status . ') </a></span>';
 					endif;
 				// if CB end - if not CB than only name
 				else :
 					// no communitycomponent is set so only show the username
-					echo '<li><span class="username">' . $register->name . '</span></li>';
+					echo '<span class="username">' . $register->name . jem_getStatusIcon($register->status) . '</span>';
 				endif;
-
+        
+        echo '</li>';
 			// end loop through attendees
 			endforeach;
 			?>
-			</ul>
+			<!--</ul>-->
 		</dd>
 	<?php endif; ?>
 	</dl>

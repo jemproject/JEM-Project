@@ -1132,6 +1132,16 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
+			<field name="event_show_more_attendeedetails" type="radio"
+				label="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS"
+				description="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
+				required="false"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="event_show_attendeenames" type="list"
 				label="COM_JEM_REG_SHOW_ATTENDEENAMES_TO"
 				description="COM_JEM_REG_SHOW_ATTENDEENAMES_TO_DESC"
