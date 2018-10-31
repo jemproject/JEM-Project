@@ -87,8 +87,14 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
       }
       
 			// loop through attendees
-			foreach ($this->registers as $register) :
-				echo '<li>';
+      $registers_array = array();
+      if ($this->settings->get('event_show_more_attendeedetails', '0')) { // Show attendees, on waitinglist, invited and not attending.
+        $registers_array = array_merge($this->regs['attending'], $this->regs['waiting'], $this->regs['invited'], $this->regs['not_attending']);
+      } else {
+        $registers_array = $this->registers;
+      }
+      foreach ($registers_array as $register) :
+        echo '<li>';
         $text = '';
 				// is a plugin catching this ?
 				if ($res = $this->dispatcher->trigger('onAttendeeDisplay', array($register->uid, &$text))) :
