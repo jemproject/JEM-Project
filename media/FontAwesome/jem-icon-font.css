@@ -24,7 +24,7 @@ jem-attendance-status-fa-circle-o
 jem-attendance-status-fa-times-circle
 jem-attendance-status-fa-question-circle
 jem-attendance-status-fa-check-circle
-jem-attendance-status-fa-list-ol
+jem-attendance-status-fa-exclamation-circle
 jem-unregisterbutton
 jem-registerbutton
 */
@@ -64,7 +64,7 @@ jem-registerbutton
 }
 
 #jem .jem-publishstateicon-archived,
-#jem .jem-attendance-status-fa-list-ol {
+#jem .jem-attendance-status-fa-exclamation-circle {
   color: #da8812;
 }
 

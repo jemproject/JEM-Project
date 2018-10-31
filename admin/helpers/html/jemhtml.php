@@ -127,7 +127,7 @@ abstract class JHtmlJemHtml
               'COM_JEM_ATTENDEES_ATTENDING'
           ),
           2 => array( // on waiting list, toggle: list of attendees
-              'fa-list-ol',
+              'fa-exclamation-circle',
               'attendees.OffWaitinglist',
               'COM_JEM_ON_WAITINGLIST',
               'COM_JEM_ON_WAITINGLIST_MOVE_TO_ATTENDING',
