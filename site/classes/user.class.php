@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.3.0-dev1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -226,7 +226,7 @@ abstract class JemUserAbstract extends JUser
 		$db	= JFactory::getDBO();
 
 		if (is_array($asset) && !empty($asset)) {
-			array_walk($asset, create_function('&$v, $k, $db', '$v = $db->quoteName($v);'), $db);
+			array_walk($asset, function(&$v, $k, $db) {  return $v = $db->quoteName($v);  }, $db);
 			$field = ' AND (' . implode(' > 0 OR ', $asset) . ' > 0)';
 		} else {
 			$field = empty($asset) ? '' : ' AND ' . $db->quoteName($asset) . ' > 0';
