@@ -96,7 +96,7 @@ abstract class JHtmlJemHtml
 		// Array of image, task, alt-text, tooltip
 		$jemsettings = JemHelper::config();
     
-    if($jemsettings->useiconfont == 1) {
+    if($jemsettings->useiconfont == 1 && JFactory::getApplication()->isSite()) {
             $states = array(
           -99 => array( // fallback on wrong status value
               'fa-circle-o',
@@ -190,14 +190,14 @@ abstract class JHtmlJemHtml
     
     
 		if ($print) {
-			if ($jemsettings->useiconfont == 1) {
+			if ($jemsettings->useiconfont == 1 && !$backend) {
         $html = '<i class="fa fa-fw fa-lg '.$state[0].' jem-attendance-status-'.$state[0].'"></i>';
       } else {
         $html  = JHtml::_('image', 'com_jem/' . $state[0], '', 'class="icon-inline-left"', true);
       }
 			$html .= JText::_($state[4]);
 		} elseif ($canChange && !empty($state[1])) {
-      if ($jemsettings->useiconfont == 1) {
+      if ($jemsettings->useiconfont == 1 && !$backend) {
         $html = '<i class="fa fa-fw fa-lg '.$state[0].' jem-attendance-status-'.$state[0].'"></i>';
       } else {
         $html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), NULL, true);
@@ -210,7 +210,7 @@ abstract class JHtmlJemHtml
 			}
 			$html = JHtml::_('link', $url, $html, $attr);
 		} else {
-      if ($jemsettings->useiconfont == 1) {
+      if ($jemsettings->useiconfont == 1 && !$backend) {
         $html = '<i class="fa fa-fw fa-lg '.$state[0].' jem-attendance-status-'.$state[0].'"></i>';
       } else {
         $html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), $attr, true);

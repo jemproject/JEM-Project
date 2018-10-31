@@ -161,7 +161,7 @@ class JemOutput
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				if ($settings2->useiconfont == 1) {
+				if ($settings2->useiconfont == 1 && $app->isSite()) {
           $image = '<i class="fa fa-fw fa-lg fa-calendar-plus-o jem-submitbutton"></i>';
         } else {
           $image = JHtml::_('image', 'com_jem/submitevent.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
@@ -203,7 +203,7 @@ class JemOutput
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-        if ($settings3->useiconfont == 1) {
+        if ($settings3->useiconfont == 1 && $app->isSite()) {
           $image = '<i class="fa fa-fw fa-lg fa-plus-square-o jem-addvenuebutton"></i>';
         } else {
           $image = JHtml::_('image', 'com_jem/addvenue.png', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, true);
@@ -246,7 +246,7 @@ class JemOutput
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				if ($settings2->useiconfont == 1) {
+				if ($settings2->useiconfont == 1 && $app->isSite()) {
           $image = '<i class="fa fa-fw fa-lg fa-user-plus jem-addusersbutton"></i>';
         } else {
           $image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, true);
@@ -270,9 +270,10 @@ class JemOutput
 	 */
 	static public function addremovebutton($text, $attributes = array())
 	{
+    $app = JFactory::getApplication();
     $settings = JemHelper::config();
     
-    if ($settings->useiconfont == 1) {
+    if ($settings->useiconfont == 1 && $app->isSite()) {
       $class = '';
       $attributestring = '';
       foreach ($attributes as $key => $value) {
@@ -343,7 +344,7 @@ class JemOutput
 
 			if ($task == 'archive') {
 				if ($settings->get('global_show_icons',1)) {
-          if ($settings2->useiconfont == 1) {
+          if ($settings2->useiconfont == 1 && $app->isSite()) {
             $image = '<i class="fa fa-fw fa-lg fa-calendar jem-archivebutton-return"></i>';
           } else {
             $image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
@@ -363,7 +364,7 @@ class JemOutput
 				}
 			} else {
 				if ($settings->get('global_show_icons',1)) {
-          if ($settings2->useiconfont == 1) {
+          if ($settings2->useiconfont == 1 && $app->isSite()) {
             $image = '<i class="fa fa-fw fa-lg fa-archive jem-archivebutton"></i>';
           } else {
             $image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
@@ -437,7 +438,7 @@ class JemOutput
 					}
 
 					if ($showIcon) {
-            if ($settings2->useiconfont == 1) {
+            if ($settings2->useiconfont == 1 && $app->isSite()) {
               $image = ' <i style="font-size: 70%;" class="fa fa-fw fa-pencil-square-o jem-editbutton"></i>';
             } else {
               $image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
@@ -460,7 +461,7 @@ class JemOutput
 					}
 
 					if ($showIcon) {
-            if ($settings2->useiconfont == 1) {
+            if ($settings2->useiconfont == 1 && $app->isSite()) {
               $image = ' <i style="font-size: 70%;" class="fa fa-fw fa-pencil-square-o jem-editbutton"></i>';
             } else {
               $image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
@@ -483,7 +484,7 @@ class JemOutput
 					}
 
 					if ($showIcon) {
-            if ($settings2->useiconfont == 1) {
+            if ($settings2->useiconfont == 1 && $app->isSite()) {
               $image = ' <i style="font-size: 70%;" class="fa fa-fw fa-pencil-square-o jem-editbutton"></i>';
             } else {
               $image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
@@ -544,7 +545,7 @@ class JemOutput
 			{
 				case 'editevent':
 					if ($showIcon) {
-            if ($settings2->useiconfont == 1) {
+            if ($settings2->useiconfont == 1 && $app->isSite()) {
               $image = '<i style="font-size: 60%;" class="fa fa-fw fa-files-o jem-copybutton"></i>';
             } else {
               $image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_EVENT'), NULL, true);
@@ -560,7 +561,7 @@ class JemOutput
 
 				case 'editvenue':
 					if ($showIcon) {
-            if ($settings2->useiconfont == 1) {
+            if ($settings2->useiconfont == 1 && $app->isSite()) {
               $image = '<i style="font-size: 60%;" class="fa fa-fw fa-files-o jem-copybutton"></i>';
             } else {
               $image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_VENUE'), NULL, true);
@@ -576,7 +577,7 @@ class JemOutput
 
 				case 'venue':
 					if ($showIcon) {
-            if ($settings2->useiconfont == 1) {
+            if ($settings2->useiconfont == 1 && $app->isSite()) {
               $image = '<i style="font-size: 60%;" class="fa fa-fw fa-files-o jem-copybutton"></i>';
             } else {
               $image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_VENUE'), NULL, true);
@@ -619,7 +620,7 @@ class JemOutput
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
 			if ($settings->get('global_show_icons',1)) {
-        if ($settings2->useiconfont == 1) {
+        if ($settings2->useiconfont == 1 && $app->isSite()) {
           $image = '<i class="fa fa-fw fa-lg fa-print jem-printbutton"></i>';
         } else {
           $image = JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
@@ -681,7 +682,7 @@ class JemOutput
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
 			if ($settings->get('global_show_icons')) {
-        if ($settings2->useiconfont == 1) {
+        if ($settings2->useiconfont == 1 && $app->isSite()) {
           $image = '<i class="fa fa-fw fa-lg fa-envelope-o jem-mailbutton"></i>';
         } else {
           $image = JHtml::_('image','system/emailButton.png', JText::_('JGLOBAL_EMAIL'), NULL, true);
@@ -719,7 +720,7 @@ class JemOutput
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons','0')==1) {
-        if ($settings2->useiconfont == 1) {
+        if ($settings2->useiconfont == 1 && $app->isSite()) {
           $image = '<i class="fa fa-fw fa-lg fa-calendar-check-o jem-icalbutton"></i>';
         } else {
           $image = JHtml::_('image', 'com_jem/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'), NULL, true);
@@ -756,7 +757,7 @@ class JemOutput
 			// button in view
 			JHtml::_('behavior.tooltip');
 
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-check-circle jem-publishbutton"></i>';
       } else {
         $image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
@@ -789,7 +790,7 @@ class JemOutput
 			// button in view
 			JHtml::_('behavior.tooltip');
 
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-trash jem-trashbutton"></i>';
       } else {
         $image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
@@ -822,7 +823,7 @@ class JemOutput
 			// button in view
 			JHtml::_('behavior.tooltip');
 
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-times-circle jem-unpublishbutton"></i>';
       } else {
         $image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
@@ -850,7 +851,7 @@ class JemOutput
 
 		JHtml::_('behavior.tooltip');
 
-    if ($settings2->useiconfont == 1) {
+    if ($settings2->useiconfont == 1 && $app->isSite()) {
       $image = '<i class="fa fa-fw fa-lg fa-download jem-exportbutton"></i>';
     } else {
       $image = JHtml::_('image', 'com_jem/export_excel.png', JText::_('COM_JEM_EXPORT'), NULL, true);
@@ -886,7 +887,7 @@ class JemOutput
 
 		JHtml::_('behavior.tooltip');
     
-    if ($settings2->useiconfont == 1) {
+    if ($settings2->useiconfont == 1 && $app->isSite()) {
       $image = '<i class="fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton"></i>';
     } else {
       $image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
@@ -1043,6 +1044,7 @@ class JemOutput
 	 */
 	static public function recurrenceicon($event, $showinline = true, $showtitle = true)
 	{
+		$app = JFactory::getApplication();
 		$settings = JemHelper::globalattribs();
     $settings2 = JemHelper::config();
 		$item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
@@ -1053,7 +1055,7 @@ class JemOutput
 		}
 
 		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
-    if ($settings2->useiconfont == 1) {
+    if ($settings2->useiconfont == 1 && $app->isSite()) {
       $output = ' <i class="fa fa-fw fa-refresh jem-recurrenceicon" title="' . JText::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"></i>';
     } else {
       $image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
@@ -1076,6 +1078,7 @@ class JemOutput
 	static public function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
 	{
 		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
+		$app = JFactory::getApplication();
 
 		// early return
 		if (is_object($item)) {
@@ -1093,7 +1096,7 @@ class JemOutput
 		$published = is_object($item) ? $item->published : $item;
 		switch ($published) {
 		case -2: // trashed
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-trash jem-publishstateicon-trashed"></i>';
       } else {
         $image = 'com_jem/trash.png';
@@ -1101,7 +1104,7 @@ class JemOutput
 			$alt   = JText::_('JTRASHED');
 			break;
 		case  0: // unpublished
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-times-circle jem-publishstateicon-unpublished"></i>';
       } else {
         $image = 'com_jem/publish_x.png';
@@ -1109,7 +1112,7 @@ class JemOutput
 			$alt   = JText::_('JUNPUBLISHED');
 			break;
 		case  1: // published
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-check-circle jem-publishstateicon-published"></i>';
       } else {
         $image = 'com_jem/publish.png';
@@ -1117,7 +1120,7 @@ class JemOutput
 			$alt   = JText::_('JPUBLISHED');
 			break;
 		case  2: // archived
-      if ($settings2->useiconfont == 1) {
+      if ($settings2->useiconfont == 1 && $app->isSite()) {
         $image = '<i class="fa fa-fw fa-lg fa-archive jem-publishstateicon-archived"></i>';
       } else {
         $image = 'com_jem/archive_front.png';
