@@ -513,7 +513,7 @@ class JemModelEvent extends JModelItem
     // Get registered users
     $query = $db->getQuery(true);
     $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-           . $name . ' AS name, r.uid' . $avatar
+           . $name . ' AS name, r.uid' . $avatar . ', r.comment'
            . ' FROM #__jem_register AS r'
            . ' LEFT JOIN #__users AS u ON u.id = r.uid'
            . $join
