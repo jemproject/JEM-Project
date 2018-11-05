@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 ?>
 <?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
-  <hr class="jem-hr" />
+  <hr class="jem-hr" style="display: none;" />
 	<div class="jem-files">
 		<?php if (count($this->attachments) > 1) : ?>
-			<h3 class="jem-files"><?php echo JText::_('COM_JEM_FILES') ; ?></h3>
+			<h2 class="jem-files"><?php echo JText::_('COM_JEM_FILES') ; ?></h2>
 		<?php else : ?>
-			<h3 class="jem-files"><?php echo JText::_('COM_JEM_FILE') ; ?></h3>
+			<h2 class="jem-files"><?php echo JText::_('COM_JEM_FILE') ; ?></h2>
 		<?php endif; ?>
 		<dl class="jem-dl">
 			<?php foreach ($this->attachments as $index=>$file) : ?>

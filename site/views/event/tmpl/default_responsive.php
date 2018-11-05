@@ -249,111 +249,113 @@ JHtml::_('behavior.modal', 'a.flyermodal');
     
     <div class="jem-row jem-wrap-reverse">    
       <?php if ($params->get('event_show_detailsadress', '1')) : ?>
-      <div class="jem-grow-2">
-      <dl class="jem-dl" itemprop="address" itemscope
-          itemtype="https://schema.org/PostalAddress">
-        <dt class="venue hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_LOCATION'); ?>"><?php echo JText::_('COM_JEM_LOCATION'); ?>:</dt>
-        <dd class="venue">
-          <?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
-            <a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a>
-          <?php elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : ?>
-            <a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a>
-          <?php else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
-            echo $this->escape($this->item->venue);
-          endif; ?>
-        </dd>
-        <?php if ($this->item->street) : ?>
-        <dt class="venue_street hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_STREET'); ?>"><?php echo JText::_('COM_JEM_STREET'); ?>:</dt>
-        <dd class="venue_street" itemprop="streetAddress">
-          <?php echo $this->escape($this->item->street); ?>
-        </dd>
-        <?php endif; ?>
-  
-        <?php if ($this->item->postalCode) : ?>
-        <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_ZIP'); ?>"><?php echo JText::_('COM_JEM_ZIP'); ?>:</dt>
-        <dd class="venue_postalCode" itemprop="postalCode">
-          <?php echo $this->escape($this->item->postalCode); ?>
-        </dd>
-        <?php endif; ?>
-  
-        <?php if ($this->item->city) : ?>
-        <dt class="venue_city hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_CITY'); ?>"><?php echo JText::_('COM_JEM_CITY'); ?>:</dt>
-        <dd class="venue_city" itemprop="addressLocality">
-          <?php echo $this->escape($this->item->city); ?>
-        </dd>
-        <?php endif; ?>
-  
-        <?php if ($this->item->state) : ?>
-        <dt class="venue_state hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_STATE'); ?>"><?php echo JText::_('COM_JEM_STATE'); ?>:</dt>
-        <dd class="venue_state" itemprop="addressRegion">
-          <?php echo $this->escape($this->item->state); ?>
-        </dd>
-        <?php endif; ?>
-  
-        <?php if ($this->item->country) : ?>
-        <dt class="venue_country hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_COUNTRY'); ?>"><?php echo JText::_('COM_JEM_COUNTRY'); ?>:</dt>
-        <dd class="venue_country">
-          <?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
-          <meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
-        </dd>
-        <?php endif; ?>
-        
-        <!-- PUBLISHING STATE -->
-        <?php if (!empty($this->showvenuestate) && isset($this->item->locpublished)) : ?>
-        <dt class="venue_published hasTooltip" data-original-title="<?php echo JText::_('JSTATUS'); ?>"><?php echo JText::_('JSTATUS'); ?>:</dt>
-        <dd class="venue_published">
-          <?php switch ($this->item->locpublished) {
-          case  1: echo JText::_('JPUBLISHED');   break;
-          case  0: echo JText::_('JUNPUBLISHED'); break;
-          case  2: echo JText::_('JARCHIVED');    break;
-          case -2: echo JText::_('JTRASHED');     break;
-          } ?>
-        </dd>
-        <?php endif; ?>
-  
-        <?php
-        for ($cr = 1; $cr <= 10; $cr++) {
-          $currentRow = $this->item->{'venue'.$cr};
-          if (preg_match('%^http(s)?://%', $currentRow)) {
-            $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
-          }
-          if ($currentRow) {
-            ?>
-            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
-            <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+        <div class="jem-grow-2">
+          <dl class="jem-dl" itemprop="address" itemscope
+              itemtype="https://schema.org/PostalAddress">
+            <dt class="venue hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_LOCATION'); ?>"><?php echo JText::_('COM_JEM_LOCATION'); ?>:</dt>
+            <dd class="venue">
+              <?php
+              if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
+                echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
+              elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : 
+                echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+              else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+                echo $this->escape($this->item->venue);
+              endif; 
+              ?>
+            </dd>
+            <?php if ($this->item->street) : ?>
+            <dt class="venue_street hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_STREET'); ?>"><?php echo JText::_('COM_JEM_STREET'); ?>:</dt>
+            <dd class="venue_street" itemprop="streetAddress">
+              <?php echo $this->escape($this->item->street); ?>
+            </dd>
+            <?php endif; ?>
+      
+            <?php if ($this->item->postalCode) : ?>
+            <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_ZIP'); ?>"><?php echo JText::_('COM_JEM_ZIP'); ?>:</dt>
+            <dd class="venue_postalCode" itemprop="postalCode">
+              <?php echo $this->escape($this->item->postalCode); ?>
+            </dd>
+            <?php endif; ?>
+      
+            <?php if ($this->item->city) : ?>
+            <dt class="venue_city hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_CITY'); ?>"><?php echo JText::_('COM_JEM_CITY'); ?>:</dt>
+            <dd class="venue_city" itemprop="addressLocality">
+              <?php echo $this->escape($this->item->city); ?>
+            </dd>
+            <?php endif; ?>
+      
+            <?php if ($this->item->state) : ?>
+            <dt class="venue_state hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_STATE'); ?>"><?php echo JText::_('COM_JEM_STATE'); ?>:</dt>
+            <dd class="venue_state" itemprop="addressRegion">
+              <?php echo $this->escape($this->item->state); ?>
+            </dd>
+            <?php endif; ?>
+      
+            <?php if ($this->item->country) : ?>
+            <dt class="venue_country hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_COUNTRY'); ?>"><?php echo JText::_('COM_JEM_COUNTRY'); ?>:</dt>
+            <dd class="venue_country">
+              <?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
+              <meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
+            </dd>
+            <?php endif; ?>
+            
+            <!-- PUBLISHING STATE -->
+            <?php if (!empty($this->showvenuestate) && isset($this->item->locpublished)) : ?>
+            <dt class="venue_published hasTooltip" data-original-title="<?php echo JText::_('JSTATUS'); ?>"><?php echo JText::_('JSTATUS'); ?>:</dt>
+            <dd class="venue_published">
+              <?php switch ($this->item->locpublished) {
+              case  1: echo JText::_('JPUBLISHED');   break;
+              case  0: echo JText::_('JUNPUBLISHED'); break;
+              case  2: echo JText::_('JARCHIVED');    break;
+              case -2: echo JText::_('JTRASHED');     break;
+              } ?>
+            </dd>
+            <?php endif; ?>
+      
             <?php
-          }
-        }
-        ?>
-  
-        <?php if ($params->get('event_show_mapserv') == 1) : ?>
+            for ($cr = 1; $cr <= 10; $cr++) {
+              $currentRow = $this->item->{'venue'.$cr};
+              if (preg_match('%^http(s)?://%', $currentRow)) {
+                $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
+              }
+              if ($currentRow) {
+                ?>
+                <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
+                <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+                <?php
+              }
+            }
+            ?>
+      
+            <?php if ($params->get('event_show_mapserv') == 1) : ?>
+              <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+            <?php endif; ?>
+          </dl>
+        </div>
+      
+        <div class="jem-img">
+          <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+        </div>
+
+        <?php if ($params->get('event_show_mapserv') == 2) : ?>
           <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
         <?php endif; ?>
-      </dl>
-      </div>
-      
-      <div class="jem-img">
-        <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
-      </div>
+
+        <?php if ($params->get('event_show_mapserv') == 3) : ?>
+          <input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
+          <input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
+
+          <input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
+          <input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
+          <input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
+          <input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
+          <input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
+
+          <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+        <?php endif; ?>      
+      <?php endif; /* event_show_detailsadress */ ?>
     </div>
-
-			<?php if ($params->get('event_show_mapserv') == 2) : ?>
-				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-			<?php endif; ?>
-
-			<?php if ($params->get('event_show_mapserv') == 3) : ?>
-				<input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
-				<input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
-
-				<input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
-				<input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
-				<input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
-				<input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
-				<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
-
-				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-			<?php endif; ?>
-		<?php endif; /* event_show_detailsadress */ ?>
 
 		<?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
 		       && $this->item->locdescription != '<br />') : ?>
