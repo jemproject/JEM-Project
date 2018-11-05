@@ -353,7 +353,29 @@ JHtml::_('behavior.modal', 'a.flyermodal');
           <input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
 
           <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-        <?php endif; ?>      
+        <?php endif; ?>
+      <?php else : // $params->get('event_show_detailsadress', '1') == 0 ?>
+        <div class="jem-grow-2">
+          <dl class="jem-dl" itemprop="address" itemscope
+              itemtype="https://schema.org/PostalAddress">
+            <dt class="venue hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_LOCATION'); ?>"><?php echo JText::_('COM_JEM_LOCATION'); ?>:</dt>
+            <dd class="venue">
+              <?php
+              if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
+                echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
+              elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : 
+                echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+              else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+                echo $this->escape($this->item->venue);
+              endif; 
+              ?>
+            </dd>
+          </dl>
+        </div>
+        
+        <div class="jem-img">
+          <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+        </div>        
       <?php endif; /* event_show_detailsadress */ ?>
     </div>
 
