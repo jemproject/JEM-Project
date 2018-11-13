@@ -1539,4 +1539,19 @@ class JemHelper
 			return JApplication::stringURLSafe($string);
 		}
 	}
+  
+  /**
+	 * This method returns true if a string is contend of another string.
+	 *
+	 * @param  string $masterstring
+   * @param  string $string
+	 * @return boolean
+	 */
+  static public function jemStringContains($masterstring, $string) {
+    if (strpos($masterstring, $string) !== false) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

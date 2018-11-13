@@ -7,14 +7,6 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
-function jem_myattendances_string_contains($masterstring, $string) {
-  if (strpos($masterstring, $string) !== false) {
-    return true;
-  } else {
-    return false;
-  }
-}
 ?>
 
 <div id="jem" class="jem_myattendances<?php echo $this->pageclass_sfx;?>">

@@ -30,16 +30,8 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
   $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
 }
 
-function jem_banner_string_contains($masterstring, $string) {
-  if (strpos($masterstring, $string) !== false) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 $banneralignment = "jem-vertical-banner";
-if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-horizontal")){
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizontal")){
   $banneralignment = "jem-horizontal-banner";
 }
 ?>
@@ -48,7 +40,7 @@ if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-horizontal"
  <?php
  $imagewidth = '100%';
  $imagewidthstring = 'jem-imagewidth';
- if (jem_banner_string_contains($params->get('moduleclass_sfx'), $imagewidthstring)) {
+ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
    $pageclass_sfx = $params->get('moduleclass_sfx');
    $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
@@ -61,7 +53,7 @@ if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-horizontal"
  }
  $imageheight = 'auto';
  $imageheigthstring = 'jem-imageheight';
- if (jem_banner_string_contains($params->get('moduleclass_sfx'), $imageheigthstring)) {
+ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
    $pageclass_sfx = $params->get('moduleclass_sfx');
    $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
@@ -77,7 +69,7 @@ if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-horizontal"
   #jemmodulebanner .jem-eventimg-banner {
     width: <?php echo $imagewidth; ?>;
     <?php
-    if (jem_banner_string_contains($params->get('moduleclass_sfx'), "jem-imagetop")) {
+    if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
       echo "order: -1;";
     }
     ?>

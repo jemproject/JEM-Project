@@ -7,15 +7,6 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
-function jem_categories_string_contains($masterstring, $string) {
-  if (strpos($masterstring, $string) !== false) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">

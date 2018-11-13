@@ -29,15 +29,6 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
   unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css']);
   $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
 }
-
-function jem_teaser_string_contains($masterstring, $string) {
-  if (strpos($masterstring, $string) !== false) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 ?>
 
 <style>
@@ -48,7 +39,7 @@ function jem_teaser_string_contains($masterstring, $string) {
   $imagewidth = $imagewidth.'px';
  }
  $imagewidthstring = 'jem-imagewidth';
- if (jem_teaser_string_contains($params->get('moduleclass_sfx'), $imagewidthstring)) {
+ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
    $pageclass_sfx = $params->get('moduleclass_sfx');
    $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
@@ -61,7 +52,7 @@ function jem_teaser_string_contains($masterstring, $string) {
  }
  $imageheight = 'auto';
  $imageheigthstring = 'jem-imageheight';
- if (jem_teaser_string_contains($params->get('moduleclass_sfx'), $imageheigthstring)) {
+ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
    $pageclass_sfx = $params->get('moduleclass_sfx');
    $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
@@ -157,7 +148,7 @@ function jem_teaser_string_contains($masterstring, $string) {
               </div>
             <?php */endif; ?>
             <?php if (!empty($item->venue)) : ?>
-              <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                 <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
                 <i class="fa fa-map-marker" aria-hidden="true"></i>
                 <?php if ($item->venuelink) : ?>
@@ -168,7 +159,7 @@ function jem_teaser_string_contains($masterstring, $string) {
                 </div>
               <?php endif; ?>
             <?php endif; ?>
-            <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+            <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
               <div class="category" title="<?php echo JText::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo $item->catname; ?>
@@ -178,7 +169,7 @@ function jem_teaser_string_contains($masterstring, $string) {
           <div class="jem-description-teaser">
             <?php //uncomment this construct to disable the eventimage ?>
             <?php if(strpos($item->eventimage,'/media/system/images/blank.png') === false) : ?>
-              <?php if (!jem_teaser_string_contains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                 <?php if(!empty($item->eventimage)) : ?>
                   <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
                     <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />

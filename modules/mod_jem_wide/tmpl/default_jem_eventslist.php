@@ -21,7 +21,7 @@ $jemsettings = JemHelper::config();
   $imagewidth = $imagewidth.'px';
  }
  $imagewidthstring = 'jem-imagewidth';
- if (jem_wide_string_contains($params->get('moduleclass_sfx'), $imagewidthstring)) {
+ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
    $pageclass_sfx = $params->get('moduleclass_sfx');
    $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
@@ -34,7 +34,7 @@ $jemsettings = JemHelper::config();
  }
  $imageheight = 'auto';
  $imageheigthstring = 'jem-imageheight';
- if (jem_wide_string_contains($params->get('moduleclass_sfx'), $imageheigthstring)) {
+ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
    $pageclass_sfx = $params->get('moduleclass_sfx');
    $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
@@ -120,7 +120,7 @@ $jemsettings = JemHelper::config();
                 </div>
               <?php endif; ?>
               
-              <?php if (!empty($item->venue) && (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-novenue'))) : ?>
+              <?php if (!empty($item->venue) && (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue'))) : ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if ($params->get('linkvenue') == 1) : ?>
@@ -131,21 +131,21 @@ $jemsettings = JemHelper::config();
                 </div>
               <?php endif; ?>
 
-              <?php if ((!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nocity')) && (!empty($item->city))) : ?>
+              <?php if ((!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) && (!empty($item->city))) : ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
                   <i class="fa fa-building-o" aria-hidden="true"></i>
                   <?php echo $item->city; ?>
                 </div>
               <?php endif; ?>
               
-              <?php if ((!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nostate')) && (!empty($item->state))): ?>
+              <?php if ((!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) && (!empty($item->state))): ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
                   <i class="fa fa-map-o" aria-hidden="true"></i>
                   <?php echo $item->state; ?>
                 </div>
               <?php endif;?> 
               
-              <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
                 <div class="jem-event-info" title="<?php echo strip_tags(JText::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                   <i class="fa fa-tag" aria-hidden="true"></i>
                   <?php echo $item->catname; ?>
@@ -154,7 +154,7 @@ $jemsettings = JemHelper::config();
             </div>         
           </div>   
 
-          <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-noimageevent') && (strpos($item->eventimage, 'blank.png') === false)) : ?>
+          <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent') && (strpos($item->eventimage, 'blank.png') === false)) : ?>
             <div class="jem-list-img" >
               <?php if ($params->get('use_modal')) : ?>
                 <?php if ($item->eventimageorig) {
@@ -171,7 +171,7 @@ $jemsettings = JemHelper::config();
             </div>
           <?php endif; ?>
           
-          <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.png') === false)) : ?>
+          <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.png') === false)) : ?>
             <div class="jem-list-img" >
               <?php if ($params->get('use_modal')) : ?>
                 <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" title="<?php echo $item->venue; ?>">

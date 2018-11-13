@@ -29,7 +29,7 @@ defined('_JEXEC') or die;
   $imagewidth = $imagewidth.'px';
  }
  $imagewidthstring = 'jem-imagewidth';
- if (jem_common_string_contains($this->params->get('pageclass_sfx'), $imagewidthstring)) {
+ if (JemHelper::jemStringContains($this->params->get('pageclass_sfx'), $imagewidthstring)) {
    $pageclass_sfx = $this->params->get('pageclass_sfx');
    $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
@@ -42,7 +42,7 @@ defined('_JEXEC') or die;
  }
  $imageheight = 'auto';
  $imageheigthstring = 'jem-imageheight';
- if (jem_common_string_contains($this->params->get('pageclass_sfx'), $imageheigthstring)) {
+ if (JemHelper::jemStringContains($this->params->get('pageclass_sfx'), $imageheigthstring)) {
    $pageclass_sfx = $this->params->get('pageclass_sfx');
    $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
@@ -78,16 +78,16 @@ defined('_JEXEC') or die;
 </style>
 <?php
 function jem_common_show_filter(&$obj) {
-  if ($obj->settings->get('global_show_filter',1) && !jem_common_string_contains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
+  if ($obj->settings->get('global_show_filter',1) && !JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
     return true;
   }
-  if (jem_common_string_contains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
+  if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
     return true;
   }
   return false;
 }
 ?>
-<?php if (jem_common_show_filter($this) && !jem_common_string_contains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
+<?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
     <div>
       <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>
@@ -313,7 +313,7 @@ function jem_common_show_filter(&$obj) {
 			<?php endforeach; ?>
   <?php endif; ?>
 </ul>
-<?php if (jem_common_show_filter($this) && jem_common_string_contains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
+<?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
     <div>
       <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>

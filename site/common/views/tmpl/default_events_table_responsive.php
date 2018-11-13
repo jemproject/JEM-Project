@@ -10,14 +10,6 @@
 defined('_JEXEC') or die;
 ?>
 <?php 
-function jem_common_string_contains($masterstring, $string) {
-  if (strpos($masterstring, $string) !== false) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 if (empty($this->jemsettings->tablewidth)) :
   echo $this->loadTemplate('jem_eventslist'); // The new layout
 else :

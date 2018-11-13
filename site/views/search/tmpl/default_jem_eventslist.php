@@ -158,7 +158,7 @@ defined('_JEXEC') or die;
   $imagewidth = $imagewidth.'px';
  }
  $imagewidthstring = 'jem-imagewidth';
- if (jem_search_string_contains($this->params->get('pageclass_sfx'), $imagewidthstring)) {
+ if (JemHelper::jemStringContains($this->params->get('pageclass_sfx'), $imagewidthstring)) {
    $pageclass_sfx = $this->params->get('pageclass_sfx');
    $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
@@ -171,7 +171,7 @@ defined('_JEXEC') or die;
  }
  $imageheight = 'auto';
  $imageheigthstring = 'jem-imageheight';
- if (jem_search_string_contains($this->params->get('pageclass_sfx'), $imageheigthstring)) {
+ if (JemHelper::jemStringContains($this->params->get('pageclass_sfx'), $imageheigthstring)) {
    $pageclass_sfx = $this->params->get('pageclass_sfx');
    $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
    $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);

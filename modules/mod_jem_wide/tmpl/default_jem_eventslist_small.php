@@ -13,19 +13,19 @@ defined('_JEXEC') or die;
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem-date" class="sectiontableheader"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_DATE'); ?></div>
-    <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>           
+    <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>           
       <div id="jem-title" class="sectiontableheader"><i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></div>
     <?php endif; ?> 
-    <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+    <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
       <div id="jem-location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></div>
     <?php endif; ?>
-    <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
+    <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
       <div id="jem-city" class="sectiontableheader"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_CITY'); ?></div>
     <?php endif; ?>
-    <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
+    <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
       <div id="jem-state" class="sectiontableheader"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_STATE'); ?></div>
     <?php endif; ?>
-    <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+    <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
       <div id="jem-category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></div>
     <?php endif; ?> 
   </div>
@@ -55,14 +55,14 @@ defined('_JEXEC') or die;
                   echo $item->dateinfo;
                 endif; 
                 ?>
-                 <?php if (jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
+                 <?php if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
                   <?php if (!empty($item->featured)) :?>
                     <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                   <?php endif; ?>
                  <?php endif; ?>
               </div>
               
-              <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
                 <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
                   <i class="fa fa-comment-o" aria-hidden="true"></i>
                   <?php if ($params->get('linkevent') == 1) : ?>
@@ -78,7 +78,7 @@ defined('_JEXEC') or die;
                 </div>
               <?php endif; ?>
               
-              <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                 <?php if (!empty($item->venue)) : ?>
                   <div class="jem-event-info-small jem-event-venue" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
@@ -93,7 +93,7 @@ defined('_JEXEC') or die;
                 <?php endif; ?>                
               <?php endif; ?>
 
-              <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
                 <?php if (!empty($item->city)) : ?>
                   <div class="jem-event-info-small jem-event-city" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
                     <i class="fa fa-building-o" aria-hidden="true"></i>
@@ -104,7 +104,7 @@ defined('_JEXEC') or die;
                 <?php endif; ?>
               <?php endif; ?>
               
-              <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
                 <?php if (!empty($item->state)) : ?>
                   <div class="jem-event-info-small jem-event-state" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
                     <i class="fa fa-map-o" aria-hidden="true"></i>
@@ -115,7 +115,7 @@ defined('_JEXEC') or die;
                 <?php endif; ?>
               <?php endif; ?>
               
-              <?php if (!jem_wide_string_contains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
                 <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(JText::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                   <i class="fa fa-tag" aria-hidden="true"></i>
                   <?php echo $item->catname; ?>

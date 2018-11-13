@@ -25,7 +25,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-nodate')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nodate')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -37,7 +37,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-notitle')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-notitle')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -49,7 +49,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-novenue')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-novenue')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -61,7 +61,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-nocity')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nocity')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -73,7 +73,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-nostate')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nostate')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -85,7 +85,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-nocategory')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nocategory')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -97,7 +97,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (jem_myattendances_string_contains($this->pageclass_sfx, 'jem-noattendees')) : ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-noattendees')) : ?>
       display: none;
     <?php endif; ?>
   }

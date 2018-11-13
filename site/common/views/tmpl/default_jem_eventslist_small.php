@@ -94,16 +94,16 @@ defined('_JEXEC') or die;
 
 <?php
 function jem_common_show_filter(&$obj) {
-  if ($obj->settings->get('global_show_filter',1) && !jem_common_string_contains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
+  if ($obj->settings->get('global_show_filter',1) && !JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
     return true;
   }
-  if (jem_common_string_contains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
+  if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
     return true;
   }
   return false;
 }
 ?>
-<?php if (jem_common_show_filter($this) && !jem_common_string_contains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
+<?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
     <div>
       <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>
@@ -281,7 +281,7 @@ function jem_common_show_filter(&$obj) {
 
 <div class="jem-row valign-baseline">
   <div style="margin:0; padding: 0;">
-    <?php if (jem_common_show_filter($this) && jem_common_string_contains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
+    <?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
       <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div>
           <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>
