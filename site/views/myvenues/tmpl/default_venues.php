@@ -41,6 +41,7 @@ defined('_JEXEC') or die;
 	</div>
 	<?php endif; ?>
 
+	<div class="table-responsive">
 	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 		<colgroup>
 			<?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
@@ -130,6 +131,7 @@ defined('_JEXEC') or die;
 		<?php endif; ?>
 		</tbody>
 	</table>
+	</div>
 
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />

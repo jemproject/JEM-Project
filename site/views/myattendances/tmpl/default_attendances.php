@@ -40,6 +40,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	</div>
 	<?php endif; ?>
 
+	<div class="table-responsive">
 	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
 		<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
@@ -172,6 +173,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 		<?php endif; ?>
 		</tbody>
 	</table>
+	</div>
 
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
