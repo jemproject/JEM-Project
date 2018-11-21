@@ -111,6 +111,10 @@ body.com_jem.body-overlayed {
   max-width: 100%;
 }
 
+#jem .jem-registered-list img {
+  width: 30px;
+}
+
 #jem .jem-catimg {
   float: right;
 }

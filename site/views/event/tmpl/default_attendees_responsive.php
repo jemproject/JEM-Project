@@ -112,12 +112,12 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 							} else {
 								$useravatar = empty($noimg) ? '' : JHtml::image($noimg, $register->name);
 							}
-							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . '<span class="username">' . $register->name . '</span></a>';
+							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>';
 
 						// User has no avatar
 						else :
 							$nouseravatar = empty($noimg) ? '' : JHtml::image($noimg, $register->name);
-							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . '<span class="username">' . $register->name . '</span></a>';
+							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . JText::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>';
 						endif;
 					else :
 						// only show the username with link to profile
