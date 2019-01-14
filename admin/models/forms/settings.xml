@@ -164,6 +164,31 @@
 		</field>
 	</fieldset>
 
+	<fieldset name="displaylayout" label="COM_JEM_LAYOUT_STYLE_SETTINGS">
+		<field name="layoutstyle" type="list"
+			label="COM_JEM_SHOW_LAYOUT_STYLE"
+			description="COM_JEM_SHOW_LAYOUT_STYLE_DESC"
+			class="inputbox"
+			size="1"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_SHOW_LAYOUT_STYLE_LEGACY</option>
+			<option value="1">COM_JEM_SHOW_LAYOUT_STYLE_RESPONSIVE</option>
+			<option value="2">COM_JEM_SHOW_LAYOUT_STYLE_ALTERNATIVE</option>
+		</field>
+		<field name="useiconfont" type="radio"
+			label="COM_JEM_INCLUDE_ICON_FONT"
+			description="COM_JEM_INCLUDE_ICON_FONT_DESC"
+			class="inputbox btn-group btn-group-yesno"
+			default="0"
+			required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+	</fieldset>
+
 	<fieldset name="usercontrol"
 		label="COM_JEM_USER_CONTROL"
 	>

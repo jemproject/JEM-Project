@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -15,6 +15,32 @@ defined('_JEXEC') or die;
  */
 class JemView extends JViewLegacy
 {
+	/**
+	 * Layout style suffix
+	 *
+	 * @var    string
+	 * @since  2.3
+	 */
+	protected $_layoutStyleSuffix = null;
+
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+
+		// additional path for layout style + corresponding override path
+		$suffix = JemHelper::getLayoutStyleSuffix();
+		if (!empty($suffix)) {
+			$this->_layoutStyleSuffix = $suffix;
+			if (is_dir($this->_basePath . '/view')) {
+				$this->addTempltePath($this->_basePath . '/view/' . $this->getName() . '/tmpl/' . $suffix);
+			}
+			else {
+				$this->addTemplatePath($this->_basePath . '/views/' . $this->getName() . '/tmpl/' . $suffix);
+			}
+			$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/' . $this->getName() . '/' . $suffix);
+		}
+	}
+
 	/**
 	 * Adds a row to data indicating even/odd row number
 	 *
@@ -43,6 +69,11 @@ class JemView extends JViewLegacy
 		// additional path for list part + corresponding override path
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 		$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common');
+
+		if (!empty($this->_layoutStyleSuffix)) {
+			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl/'.$this->_layoutStyleSuffix);
+			$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common/'.$this->_layoutStyleSuffix);
+		}
 	}
 
 	/**

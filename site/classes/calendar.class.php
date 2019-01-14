@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -664,7 +664,7 @@ class JemCalendar
 			if (($this->getWeekday($var) == 6) && $this->crSatClass) {
 				$cssClass[] = $this->cssSaturday;
 			}
-			$out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
+			$out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
 		}
 
 		return $out;

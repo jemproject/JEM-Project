@@ -1,14 +1,12 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
-require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * Category-View
@@ -33,18 +31,17 @@ class JemViewCategory extends JemView
 	/**
 	 * Creates the Category View
 	 */
-	public function display($tpl=null)
+	public function display($tpl = null)
 	{
 		if ($this->getLayout() == 'calendar')
 		{
 			### Category Calendar view ###
 
-			$app = JFactory::getApplication();
-
 			// Load tooltips behavior
 			JHtml::_('behavior.tooltip');
 
 			//initialize variables
+			$app         = JFactory::getApplication();
 			$document    = JFactory::getDocument();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
@@ -189,11 +186,7 @@ class JemViewCategory extends JemView
 			}
 
 			// are events available?
-			if (!$items) {
-				$noevents = 1;
-			} else {
-				$noevents = 0;
-			}
+			$noevents = (!$items) ? 1 : 0;
 
 			// Decide which parameters should take priority
 			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -240,6 +233,9 @@ class JemViewCategory extends JemView
 			// search filter
 			$lists['search'] = $search;
 
+			// don't show column "Category" on Category view
+			$lists['hide'] = array('category' => 1);
+
 			// Add feed links
 			$link = '&format=feed&id='.$category->id.'&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
@@ -248,7 +244,7 @@ class JemViewCategory extends JemView
 			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
 			// create the pathway
-			$cats    = new JEMCategories($category->id);
+			$cats    = new JemCategories($category->id);
 			$parents = $cats->getParentlist();
 
 			foreach ($parents as $parent) {

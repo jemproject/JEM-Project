@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -1198,20 +1198,40 @@ class JemHelper
 		return true;
 	}
 
+	static public function getLayoutStyleSuffix()
+	{
+		$jemsettings = self::config();
+		$layoutstyle = isset($jemsettings->layoutstyle) ? (int)$jemsettings->layoutstyle : 0;
+
+		switch ($layoutstyle) {
+		case 1:
+			return 'responsive';
+		case 2:
+			return 'alternative';
+		default:
+			return '';
+		}
+	}
+
 	static public function loadCss($css)
 	{
 		$settings = self::retrieveCss();
+		$suffix   = self::getLayoutStyleSuffix();
 
-		if ($settings->get('css_'.$css.'_usecustom','0')) {
+		if (!empty($suffix)) {
+			$suffix = '-' . $suffix;
+		}
+
+		if ($settings->get('css_' . $css . '_usecustom', '0')) {
 
 			# we want to use custom so now check if we've a file
-			$file = $settings->get('css_'.$css.'_customfile');
+			$file = $settings->get('css_' . $css . '_customfile');
 			$is_file = false;
 
 			# something was filled, now check if we've a valid file
 			if ($file) {
 				$file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
-				$is_file = JFile::exists(JPATH_SITE.'/'.$file);
+				$is_file = JFile::exists(JPATH_SITE . '/' . $file);
 
 				if ($is_file) {
 					# at this point we do have a valid file but let's check the extension too.
@@ -1228,14 +1248,39 @@ class JemHelper
 				$css = JHtml::_('stylesheet', $file, array(), false);
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
-				$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+				$files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+				if (!empty($files)) {
+					# we have to call this stupid function twice; no other way to know if something was loaded
+					$css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+				} else {
+					# no css for layout style configured, so use the default css
+					$css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+				}
 			}
 		} else {
 			# here we want to use the normal css
-			$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+			$files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+			if (!empty($files)) {
+				# we have to call this stupid function twice; no other way to know if something was loaded
+				$css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+			} else {
+				# no css for layout style configured, so use the default css
+				$css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+			}
 		}
 
 		return $css;
+	}
+
+	static public function loadIconFont()
+	{
+		$jemsettings = JemHelper::config();
+		if ($jemsettings->useiconfont == 1) {
+			# This will automaticly search for 'font-awesome.css' if site is in debug mode.
+			# Unfortunately folder structure is not conform to Joomla so we must use absolute pathes and template overrides are not possible.
+			JHtml::_('stylesheet', 'com_jem/FontAwesome/font-awesome.min.css', array(), true);
+			JHtml::_('stylesheet', 'com_jem/FontAwesome/jem-icon-font.css', array(), true);
+		}
 	}
 
 	static public function defineCenterMap($data = false)
@@ -1464,5 +1509,17 @@ class JemHelper
 		} else {
 			return JApplication::stringURLSafe($string);
 		}
+	}
+
+	/**
+	 * This method returns true if a string is within another string.
+	 *
+	 * @param  string $masterstring
+	 * @param  string $string
+	 * @return boolean
+	 */
+	static public function jemStringContains($masterstring, $string)
+	{
+		return (strpos($masterstring, $string) !== false);
 	}
 }

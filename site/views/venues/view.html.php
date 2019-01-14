@@ -1,18 +1,17 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
-
 /**
  * Venues-View
 */
-class JemViewVenues extends JViewLegacy
+class JemViewVenues extends JemView
 {
 	/**
 	 * Creates the Venuesview
@@ -49,7 +48,7 @@ class JemViewVenues extends JViewLegacy
 
 		foreach ($items AS $item) {
 			// Create image information
-			$item->limage = JEMImage::flyercreator($item->locimage, 'venue');
+			$item->limage = JemImage::flyercreator($item->locimage, 'venue');
 
 			// Generate Venuedescription
 			if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
@@ -67,8 +66,8 @@ class JemViewVenues extends JViewLegacy
 			}
 
 			//create target link
-			$item->linkEventsArchived = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
-			$item->linkEventsPublished = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug));
+			$item->linkEventsArchived = JRoute::_(JemHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
+			$item->linkEventsPublished = JRoute::_(JemHelperRoute::getVenueRoute($item->venueslug));
 
 			$item->EventsPublished = $model->AssignedEvents($item->locid,"1");
 			$item->EventsArchived = $model->AssignedEvents($item->locid,"2");
