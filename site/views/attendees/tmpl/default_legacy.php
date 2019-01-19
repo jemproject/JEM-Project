@@ -96,6 +96,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 			</div>
 		</div>
 
+    <div class="table-responsive">
 		<table class="eventtable" style="width:100%" id="articleList">
 			<thead>
 				<tr>
@@ -143,6 +144,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 			<?php endforeach; ?>
 			</tbody>
 		</table>
+    </div>
 
 		<?php echo JHtml::_('form.token'); ?>
 		<input type="hidden" name="option" value="com_jem" />

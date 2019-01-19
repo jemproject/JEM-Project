@@ -44,6 +44,7 @@ defined('_JEXEC') or die;
 	</div>
 <?php endif; ?>
 
+<div class="table-responsive">
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
 		<?php if ($this->jemsettings->showeventimage == 1) : ?>
@@ -186,4 +187,4 @@ defined('_JEXEC') or die;
 			<?php endforeach; ?>
 		<?php endif; ?>
 	</tbody>
-</table>
+</table></div>

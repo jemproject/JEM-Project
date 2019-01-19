@@ -44,6 +44,7 @@ defined('_JEXEC') or die;
 </div>
 <?php endif; ?>
 
+<div class="table-responsive">
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
 		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
@@ -154,4 +155,4 @@ defined('_JEXEC') or die;
 		<?php endforeach; ?>
 	<?php endif; ?>
 	</tbody>
-</table>
+</table></div>

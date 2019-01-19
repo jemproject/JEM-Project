@@ -1174,7 +1174,10 @@ div#jem .inline-button-right {
 	cursor:pointer;
 }
 
-
+/* quick-hack: show horizontal scroll bar on small displays */
+#jem .table-responsive {
+	overflow-x: auto;
+}
 
 @media print {
 

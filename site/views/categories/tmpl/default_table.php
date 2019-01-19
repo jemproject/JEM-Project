@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 if (empty($this->catrow->events)) { return; }
 ?>
 
+<div class="table-responsive">
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
@@ -124,3 +125,4 @@ if (empty($this->catrow->events)) { return; }
 	<?php endif; ?>
 	</tbody>
 </table>
+</div>
