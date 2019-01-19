@@ -338,7 +338,7 @@ div#jem .monthname { /*delete complete construct -------------------------------
 /* *** CALENDAR WEEK ADDITIONS END *** */
 
 
-
+@media not print {
 @media only all and (max-width: 47.938rem) {
    /* Force table to not be like tables anymore */
    table, thead, tbody, th, td,tr {
@@ -397,6 +397,7 @@ div#jem .monthname { /*delete complete construct -------------------------------
      content: attr(jem-dayname) ", ";
      background-color: transparent;
    }
+}
 }
 
 
