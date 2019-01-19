@@ -88,7 +88,10 @@ class JemViewEventslist extends JemView
 
 		// pathway
 		if ($menuitem) {
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		}
 
 		if ($task == 'archive') {

@@ -88,7 +88,10 @@ class JemViewAttendees extends JViewLegacy {
 
 		$pathway = $app->getPathWay();
 		if($menuitem) {
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		}
 		$pathway->addItem('Att:'.$event->title);
 
