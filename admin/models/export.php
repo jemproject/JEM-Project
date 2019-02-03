@@ -119,7 +119,7 @@ class JemModelExport extends JModelList
 
 		$csv = fopen('php://output', 'w');
 		$db  = $this->getDbo();
-
+		$separator=JText::_('COM_JEM_SETTINGS_CSV_SEPARATOR');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 
 		if ($includecategories == 1) {
@@ -128,7 +128,7 @@ class JemModelExport extends JModelList
 			$categories[] = "categories";
 			$header = array_merge($events, $categories);
 
-			fputcsv($csv, $header, ';');
+			fputcsv($csv, $header, $separator);
 
 			$query = $this->getListQuery();
 			$items = $this->_getList($query);
@@ -138,13 +138,13 @@ class JemModelExport extends JModelList
 			}
 		} else {
 			$header = array_keys($db->getTableColumns('#__jem_events'));
-			fputcsv($csv, $header, ';');
+			fputcsv($csv, $header, $separator);
 			$query = $this->getListQuery();
 			$items = $this->_getList($query);
 		}
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, '"');
 		}
 
 		return fclose($csv);
@@ -176,19 +176,19 @@ class JemModelExport extends JModelList
 	public function getCsvcats()
 	{
 		$this->populateState();
-
+		$separator=JText::_('COM_JEM_SETTINGS_CSV_SEPARATOR');
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $separator);
 
 		$db->setQuery($this->getListQuerycats());
 		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, '"');
 		}
 
 		return fclose($csv);
@@ -219,7 +219,7 @@ class JemModelExport extends JModelList
 	public function getCsvvenues()
 	{
 		$this->populateState();
-
+		$separator=JText::_('COM_JEM_SETTINGS_CSV_SEPARATOR');
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		$db = $this->getDbo();
@@ -230,7 +230,7 @@ class JemModelExport extends JModelList
 		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, '"');
 		}
 
 		return fclose($csv);
@@ -261,18 +261,18 @@ class JemModelExport extends JModelList
 	public function getCsvcatsevents()
 	{
 		$this->populateState();
-
+		$separator = $jemconfig->get('csv_separator', ';');
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $separator);
 
 		$db->setQuery($this->getListQuerycatsevents());
 		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, '"');
 		}
 
 		return fclose($csv);
