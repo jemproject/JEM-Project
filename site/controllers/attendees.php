@@ -248,6 +248,8 @@ class JemControllerAttendees extends JControllerLegacy
 		header('Pragma: no-cache');
 
 		$export = fopen('php://output', 'w');
+		//add BOM to fix UTF-8 in Excel
+		fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 
 		$cols = array();
