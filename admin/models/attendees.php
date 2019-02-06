@@ -209,7 +209,8 @@ class JemModelAttendees extends JModelList
 	public function getCsv()
 	{
 		$jemconfig = JemConfig::getInstance()->toRegistry();
-		$sep       = $jemconfig->get('csv_separator', ';');
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
 		$comments  = $jemconfig->get('regallowcomments', 0);
 
 		$event = $this->getEvent();
@@ -258,7 +259,7 @@ class JemModelAttendees extends JModelList
 			}
 			$data[] = $item->uid;
 
-			fputcsv($csv, $data, $sep, '"');
+			fputcsv($csv, $data, $separator, $delimiter);
 		}
 
 		return fclose($csv);

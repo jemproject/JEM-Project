@@ -61,7 +61,9 @@ class JemControllerImport extends JControllerLegacy
 		$replace = JFactory::getApplication()->input->post->getInt('replace_'.$type, 0);
 		$object = JTable::getInstance('jem_'.$dbname, '');
 		$object_fields = get_object_vars($object);
-		$separator=JText::_('COM_JEM_SETTINGS_CSV_SEPARATOR');
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
 
 		if ($type === 'events') {
 			// add additional fields
@@ -97,7 +99,7 @@ class JemControllerImport extends JControllerLegacy
 
 			// get fields, on first row of the file
 			$fields = array();
-			if (($data = fgetcsv($handle, 1000, $separator)) !== false) {
+			if (($data = fgetcsv($handle, 1000, $separator, $delimiter)) !== false) {
 				$numfields = count($data);
 
 				// convert from ansi to utf-8 if required
@@ -130,7 +132,7 @@ class JemControllerImport extends JControllerLegacy
 			$records = array();
 			$row = 1;
 
-			while (($data = fgetcsv($handle, 10000, $separator)) !== FALSE) {
+			while (($data = fgetcsv($handle, 10000, $separator, $delimiter)) !== FALSE) {
 				$num = count($data);
 
 				if ($numfields != $num) {

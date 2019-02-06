@@ -232,7 +232,8 @@ class JemControllerAttendees extends JControllerLegacy
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 
 		$enableemailadress = $params->get('enableemailaddress', 0);
-		$sep               = $jemconfig->get('csv_separator', ';');
+		$separator         = $jemconfig->get('csv_separator', ';');
+		$delimiter         = $jemconfig->get('csv_delimiter', '"');
 		$userfield         = $jemconfig->get('globalattribs.global_regname', 1) ? 'name' : 'username';
 		$comments          = $jemconfig->get('regallowcomments', 0);
 
@@ -247,7 +248,7 @@ class JemControllerAttendees extends JControllerLegacy
 		header('Pragma: no-cache');
 
 		$export = fopen('php://output', 'w');
-		fputcsv($export, array('sep='.$sep), $sep, '"');
+		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 
 		$cols = array();
 		$cols[] = JText::_('COM_JEM_USERNAME');
@@ -260,7 +261,7 @@ class JemControllerAttendees extends JControllerLegacy
 			$cols[] = JText::_('COM_JEM_COMMENT');
 		}
 
-		fputcsv($export, $cols, $sep, '"');
+		fputcsv($export, $cols, $separator, $delimiter);
 
 		foreach ($datas as $data)
 		{
@@ -287,7 +288,7 @@ class JemControllerAttendees extends JControllerLegacy
 				$cols[] = $comment;
 			}
 
-			fputcsv($export, $cols, $sep, '"');
+			fputcsv($export, $cols, $separator, $delimiter);
 		}
 
 		fclose($export);

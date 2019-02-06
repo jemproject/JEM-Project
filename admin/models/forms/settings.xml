@@ -100,6 +100,13 @@
 			<option value=",">COM_JEM_SETTINGS_CSV_SEPARATOR_COMMA</option>
 			<option value=";">COM_JEM_SETTINGS_CSV_SEPARATOR_SEMICOLON</option>
 		</field>
+		<field name="csv_delimiter" type="text"
+			label="COM_JEM_SETTINGS_CSV_DELIMITER"
+			description="COM_JEM_SETTINGS_CSV_DELIMITER_DESC"
+			class="inputbox"
+			default=""
+			required="false"
+		/>
 	</fieldset>
 
 	<fieldset name="display"
