@@ -1,0 +1,1085 @@
+/**
+ * @package JEM
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+/** header icons **/
+.icon-48-archive         { background-image: url(../images/icon-48-archive.png); }
+.icon-48-elcategories    { background-image: url(../images/icon-48-categories.png); }
+.icon-48-categoriesedit  { background-image: url(../images/icon-48-categoriesedit.png); }
+.icon-48-eventedit       { background-image: url(../images/icon-48-eventedit.png); }
+.icon-48-events          { background-image: url(../images/icon-48-events.png); }
+.icon-48-groups          { background-image: url(../images/icon-48-groups.png); }
+.icon-48-groupedit       { background-image: url(../images/icon-48-groupedit.png); }
+.icon-48-help            { background-image: url(../images/icon-48-help.png); }
+.icon-48-home            { background-image: url(../images/icon-48-home.png); }
+.icon-48-settings        { background-image: url(../images/icon-48-settings.png); }
+.icon-48-tableexport     { background-image: url(../images/icon-48-tableexport.png); }
+.icon-48-tableimport     { background-image: url(../images/icon-48-tableimport.png); }
+.icon-48-update          { background-image: url(../images/icon-48-update.png); }
+.icon-48-users           { background-image: url(../images/icon-48-users.png); }
+.icon-48-venues          { background-image: url(../images/icon-48-venues.png); }
+.icon-48-venuesedit      { background-image: url(../images/icon-48-venuesedit.png); }
+.icon-48-housekeeping    { background-image: url(../images/icon-48-housekeeping.png); }
+.icon-48-plugins         { background-image: url(../images/icon-48-plugins.png); }
+
+/*-- needed for Joomla 2.x --*/
+.icon-32-download        { background-image: url(../images/icon-32-tableexport.png); }
+.icon-32-loop            { background-image: url(../images/toolbar/icon-32-move.png); }
+
+/** linkicons **/
+div.linkicon {
+	text-align:center;
+	margin:0px 5px 5px 0px;
+}
+
+
+input.button {
+	/*background-color:#......;*/
+	cursor:pointer;
+	color:black;
+	border:1px solid black;
+}
+
+input.button:focus {
+	/*background-color:#......;*/
+}
+
+
+input#clear {
+	background: url('../images/clear.png') no-repeat scroll left center #CCC;
+	border: 1px solid #808080;
+	cursor: pointer;
+	padding-right:10px;
+}
+
+input#clear:focus {
+	cursor: pointer;
+}
+
+.colorpicker {
+	border:1px solid grey;
+}
+
+
+div.linkicon a {
+	display:block;
+	border:1px solid #F0F0F0;
+	height:97px;
+	width:108px;
+	color:#666666;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+div.linkicon a:hover {
+	border-left:1px solid #EEEEEE;
+	border-top:1px solid #EEEEEE;
+	border-right:1px solid #CCCCCC;
+	border-bottom:1px solid #CCCCCC;
+	background-color:#F9F9F9;
+	color:#0B55C4;
+}
+
+div.linkicon img {
+	padding:10px 0;
+	margin:0 auto;
+}
+
+div.linkicon span {
+	display:block;
+	text-align:center;
+}
+
+/**
+ * imageselect
+ */
+
+div.item {
+	float:left;
+	border:1px solid #CCCCCC;
+	margin:3px;
+	position:relative;
+}
+
+div.imgBorder {
+	height:72px;
+	vertical-align:middle;
+	width:88px;
+	overflow:hidden;
+}
+
+div.imgBorder a {
+	height:72px;
+	width:88px;
+	display:block;
+	cursor:pointer;
+}
+
+div.imgBorder a:hover {
+	height:72px;
+	width:88px;
+	background-color:#F0F0F0;
+	color:#FF6600;
+}
+
+div.controls {
+	text-align:center;
+	height:20px;
+	line-height:20px;
+	background-color:#F9FCF9;
+	border-top:1px solid #DDDDDD;
+}
+
+div.controls img {
+	vertical-align:middle;
+}
+
+div.imageinfo {
+	background:#F9F9F9;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	width:88px;
+	height:15px;
+	vertical-align:middle;
+	text-align:center;
+	overflow:hidden;
+}
+
+div.pnav {
+	padding:5px;
+	text-align:center;
+	background: #F3F3F3;
+	border:1px solid #CCCCCC;
+	overflow:hidden;
+}
+
+div.imghead {
+	padding:3px;
+	border:1px solid #CCCCCC;
+}
+
+/* Form validation */
+.invalid {
+	border-color:#FF0000;
+}
+
+label.invalid {
+	color:#FF0000;
+}
+
+
+div.copyright {
+	font-size:0.85em;
+	text-align:center;
+	margin:1em 0;
+	color:#AAAAAA;
+}
+
+input#jform_title {
+	font-size:0.909em !important;
+}
+
+div.clear {
+	border:0;
+	clear:both;
+	float:none;
+	height:1px;
+	line-height:1px;
+}
+
+.jem_centering {
+	text-align:center;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding:0px;
+}
+
+div#page-parameters fieldset.adminform .el-spacer {
+	background-color:#D3D3D3;
+	padding:5px 0px;
+}
+
+/* align radio buttons horizontally */
+.inputbox {
+	margin:5px;
+	cursor:pointer;
+}
+
+
+/* align radio buttons on import page */
+label#replace_events0-lbl, label#replace_events1-lbl, label#replace_venues0-lbl, label#replace_venues1-lbl, label#replace_categories0-lbl, label#replace_categories1-lbl, label#replace_catevents0-lbl, label#replace_catevents1-lbl {
+	float:none;
+	display:inline-block;
+	min-width: 60px;
+	width: auto;
+	text-align: left;
+}
+
+input#replace_events0.inputbox, input#replace_events1.inputbox, input#replace_venues0.inputbox, input#replace_venues1.inputbox, input#replace_categories0.inputbox, input#replace_categories1.inputbox, input#replace_catevents0.inputbox, input#replace_catevents1.inputbox {
+	float:none;
+	display:inline-block;
+}
+
+table#el-attachments td {
+	padding:4px 5px;
+	vertical-align: top;
+}
+
+table#el-attachments img {
+	cursor:pointer;
+}
+
+table#el-attachments div.title {
+	margin-top: 5px;
+	margin-bottom: 3px;
+}
+
+table#el-attachments input {
+	float: none;
+}
+
+table#el-attachments select.inputbox {
+	width: auto;
+}
+
+table#el-attachments {
+	border-collapse: collapse;
+}
+
+table#el-attachments tr {
+	border-top: 1px solid #D5D5D5;
+}
+
+table#el-attachments tr:first-child {
+	border-top: inherit;
+}
+
+div#jembackend fieldset.adminform label.hasTip
+{
+	min-width:200px;
+}
+
+/* -------------------
+	General Pagination
+--------------------- */
+div.pagination {
+	clear:inherit;
+	text-align:center !important;
+	margin:15px 0 0 0 !important;
+}
+
+/* J! 3.8+ */
+div.pagination nav {
+	display: inline-block;
+}
+
+div.pagination p.counter {
+	font-style:italic;
+}
+
+div.pagination ul {
+	list-style:none;
+	text-align:center !important;
+	padding:0;
+}
+
+div.pagination ul li {
+	list-style:none;
+	display:inline;
+	padding:0 5px 0 5px;
+}
+
+/* -- CONTROL PANEL STYLES ----------------------------- */
+/* ---bluestork template, J2.5-------------------------- */
+.cpanel div.icon, #cpanel div.icon {
+	text-align:center;
+	margin-right:15px;
+	float:left;
+	margin-bottom:15px;
+}
+
+.cpanel div.icon a, #cpanel div.icon a {
+	background-color:#FFFFFF;
+	background-position:-30px;
+	display:block;
+	float:left;
+	height:97px;
+	width:108px;
+	color:#565656;
+	vertical-align:middle;
+	text-decoration:none;
+	border:1px solid #CCCCCC;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	-webkit-transition-property:background-position, -webkit-border-bottom-left-radius, -webkit-box-shadow;
+	-moz-transition-property:background-position, -moz-border-radius-bottomleft, -moz-box-shadow;
+	-webkit-transition-duration:0.8s;
+	-moz-transition-duration:0.8s;
+}
+
+#cpanel div.icon a:hover,
+#cpanel div.icon a:focus,
+#cpanel div.icon a:active,
+.cpanel div.icon a:hover,
+.cpanel div.icon a:focus,
+.cpanel div.icon a:active {
+	background-position:0;
+	-webkit-border-bottom-left-radius:50% 20px;
+	-moz-border-radius-bottomleft:50% 20px;
+	border-bottom-left-radius:50% 20px;
+	-webkit-box-shadow:-5px 10px 15px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow:-5px 10px 15px rgba(0, 0, 0, 0.25);
+	box-shadow:-5px 10px 15px rgba(0, 0, 0, 0.25);
+	position:relative;
+	z-index:10;
+}
+
+#cpanel img,
+.cpanel img {
+	padding:10px 0;
+	margin:0 auto;
+}
+
+#cpanel span,
+.cpanel span {
+	display:block;
+	text-align:center;
+}
+
+div.cpanel-left {
+	width:54%;
+	float:left;
+}
+
+div.cpanel-right {
+	width:45%;
+	float:right;
+}
+
+img#imagelib {
+	max-width:80px;
+	max-height:80px;
+	display:block;
+	clear:left;
+}
+
+/* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
+.table-striped tbody tr:nth-child(odd) td,
+.table-striped tbody tr:nth-child(odd) th {
+	background-color:#F9F9F9;
+}
+
+.table-striped tbody tr.row0:hover td,
+.table-striped tbody tr.row1:hover td	{
+	background-color:#E8F6FE;
+}
+
+/* ---------- TABLE, J3 Isis template -------------------------- */
+table {
+	max-width:100%;
+	background-color:transparent;
+	border-collapse:separate;
+	border-spacing:0;
+}
+
+.table {
+	width:100%;
+	margin-bottom:18px;
+}
+
+.table th,
+.table td {
+	padding:8px;
+	line-height:18px;
+	text-align:left;
+	vertical-align:top;
+	border-top:1px solid #DDDDDD;
+}
+
+.table th {
+	font-weight:bold;
+	background:#E3E0D5;
+}
+
+.table thead th {
+	vertical-align:bottom;
+}
+
+.table caption + thead tr:first-child th,
+.table caption + thead tr:first-child td,
+.table colgroup + thead tr:first-child th,
+.table colgroup + thead tr:first-child td,
+.table thead:first-child tr:first-child th,
+.table thead:first-child tr:first-child td {
+	border-top:1px solid #999999;
+	border-bottom:1px solid #999999;
+}
+
+.table tbody + tbody {
+	border-top:2px solid #DDDDDD;
+}
+
+.table-condensed th,
+.table-condensed td {
+	padding:4px 5px;
+}
+
+.table-bordered {
+	border:1px solid #DDDDDD;
+	border-collapse:separate;
+	*border-collapse:collapse;
+	border-left:0;
+	-webkit-border-radius:4px;
+	-moz-border-radius:4px;
+	border-radius:4px;
+}
+
+.table-bordered th,
+.table-bordered td {
+	border-left:1px solid #DDDDDD;
+}
+
+.table-bordered caption + thead tr:first-child th,
+.table-bordered caption + tbody tr:first-child th,
+.table-bordered caption + tbody tr:first-child td,
+.table-bordered colgroup + thead tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child td,
+.table-bordered thead:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child td {
+	border-top:0;
+}
+
+.table-bordered thead:first-child tr:first-child th:first-child,
+.table-bordered tbody:first-child tr:first-child td:first-child {
+	-webkit-border-top-left-radius:4px;
+	border-top-left-radius:4px;
+	-moz-border-radius-topleft:4px;
+}
+
+.table-bordered thead:first-child tr:first-child th:last-child,
+.table-bordered tbody:first-child tr:first-child td:last-child {
+	-webkit-border-top-right-radius:4px;
+	border-top-right-radius:4px;
+	-moz-border-radius-topright:4px;
+}
+
+.table-bordered thead:last-child tr:last-child th:first-child,
+.table-bordered tbody:last-child tr:last-child td:first-child,
+.table-bordered tfoot:last-child tr:last-child td:first-child {
+	-webkit-border-radius:0 0 0 4px;
+	-moz-border-radius:0 0 0 4px;
+	border-radius:0 0 0 4px;
+	-webkit-border-bottom-left-radius:4px;
+	border-bottom-left-radius:4px;
+	-moz-border-radius-bottomleft:4px;
+}
+
+.table-bordered thead:last-child tr:last-child th:last-child,
+.table-bordered tbody:last-child tr:last-child td:last-child,
+.table-bordered tfoot:last-child tr:last-child td:last-child {
+	-webkit-border-bottom-right-radius:4px;
+	border-bottom-right-radius:4px;
+	-moz-border-radius-bottomright:4px;
+}
+
+.table-bordered caption + thead tr:first-child th:first-child,
+.table-bordered caption + tbody tr:first-child td:first-child,
+.table-bordered colgroup + thead tr:first-child th:first-child,
+.table-bordered colgroup + tbody tr:first-child td:first-child {
+	-webkit-border-top-left-radius:4px;
+	border-top-left-radius:4px;
+	-moz-border-radius-topleft:4px;
+}
+
+.table-bordered caption + thead tr:first-child th:last-child,
+.table-bordered caption + tbody tr:first-child td:last-child,
+.table-bordered colgroup + thead tr:first-child th:last-child,
+.table-bordered colgroup + tbody tr:first-child td:last-child {
+	-webkit-border-top-right-radius:4px;
+	border-top-right-radius:4px;
+	-moz-border-right-topleft:4px;
+}
+
+.table-striped tbody tr:nth-child(odd) td,
+.table-striped tbody tr:nth-child(odd) th {
+	background-color:#F9F9F9;
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+	background-color:#F5F5F5;
+}
+
+table [class*=span],
+.row-fluid table [class*=span] {
+	display:table-cell;
+	float:none;
+	margin-left:0;
+}
+
+table .span1 {
+	float:none;
+	width:44px;
+	margin-left:0;
+}
+
+table .span2 {
+	float:none;
+	width:124px;
+	margin-left:0;
+}
+
+table .span3 {
+	float:none;
+	width:204px;
+	margin-left:0;
+}
+
+table .span4 {
+	float: none;
+	width: 284px;
+	margin-left: 0;
+}
+
+table .span5 {
+	float:none;
+	width:364px;
+	margin-left:0;
+}
+
+table .span6 {
+	float:none;
+	width:444px;
+	margin-left:0;
+}
+
+table .span7 {
+	float:none;
+	width:524px;
+	margin-left:0;
+}
+
+table .span8 {
+	float:none;
+	width:604px;
+	margin-left:0;
+}
+
+table .span9 {
+	float:none;
+	width:684px;
+	margin-left:0;
+}
+
+table .span10 {
+	float:none;
+	width:764px;
+	margin-left:0;
+}
+
+table .span11 {
+	float:none;
+	width:844px;
+	margin-left:0;
+}
+
+table .span12 {
+	float:none;
+	width:924px;
+	margin-left:0;
+}
+
+table .span13 {
+	float:none;
+	width:1004px;
+	margin-left:0;
+}
+
+table .span14 {
+	float:none;
+	width:1084px;
+	margin-left:0;
+}
+
+table .span15 {
+	float:none;
+	width:1164px;
+	margin-left:0;
+}
+
+table .span16 {
+	float:none;
+	width:1244px;
+	margin-left:0;
+}
+
+table .span17 {
+	float:none;
+	width:1324px;
+	margin-left:0;
+}
+
+table .span18 {
+	float:none;
+	width:1404px;
+	margin-left:0;
+}
+
+table .span19 {
+	float:none;
+	width:1484px;
+	margin-left:0;
+}
+
+table .span20 {
+	float:none;
+	width:1564px;
+	margin-left:0;
+}
+
+table .span21 {
+	float:none;
+	width:1644px;
+	margin-left:0;
+}
+
+table .span22 {
+	float:none;
+	width:1724px;
+	margin-left:0;
+}
+
+table .span23 {
+	float:none;
+	width:1804px;
+	margin-left:0;
+}
+
+table .span24 {
+	float:none;
+	width:1884px;
+	margin-left:0;
+}
+
+.table tbody tr.success td {
+	background-color:#DFF0D8;
+}
+
+.table tbody tr.error td {
+	background-color:#F2DEDE;
+}
+
+.table tbody tr.info td {
+	background-color:#D9EDF7;
+}
+
+table.table tfoot tr {
+	text-align:center;
+	color:#333333;
+}
+
+table.table tfoot tr {
+	text-align:center;
+	color:#333333;
+}
+
+table.table tfoot td,table.table tfoot th {
+	background-color:#F7F7F7;
+	border-top:1px solid #999999;
+	text-align:center;
+}
+
+table.table .pagination {
+	display:inline-block;
+	padding:0;
+	margin:0 auto;
+}
+
+.center,
+.table td.center,
+.table th.center {
+	text-align:center;
+}
+
+.table td.order {
+	text-align: center;
+	white-space: nowrap;
+	width: 200px;
+}
+
+.table td.order span {
+	float: left;
+	width: 20px;
+	text-align: center;
+	background-repeat: no-repeat;
+	height: 13px;
+}
+
+
+.highlight {
+	background:none repeat scroll 0 0 #FFFF00;
+}
+
+
+th img
+{
+	margin-left:3px;
+}
+
+img.calendar
+{
+	cursor:pointer;
+}
+
+table.adminlist
+{
+	border:1px solid #999999;
+}
+
+input#csvexport {
+	background:#CCCCCC url('../images/export_excel.png') no-repeat left;
+	padding-left:20px;
+	border:1px solid #808080;
+	height:20px;
+	cursor:pointer;
+}
+
+.select_country
+{
+	max-width:210px;
+}
+
+/* scale icon to fit text height */
+.icon-inline {
+	height: 1.2em;
+	margin-left: 0.3em;
+}
+
+/* prevent problem with Bluestork */
+#recurrence_output select,
+select#jform_recurrence_type {
+	float: none;
+}
+input#jform_recurrence_limit_date {
+	margin-left: 0;
+}
+
+
+/* ------- Things taken from J! 2.5 to be acceptable on J! 3.x -- */
+
+.fltlft {
+	float: left;
+}
+
+.fltrt {
+	float: right;
+	display: inline-block;
+}
+
+.clr {
+	clear: both;
+}
+
+fieldset#filter-bar {
+	height: auto;
+}
+fieldset#filter-bar label {
+	display: inline-block;
+}
+fieldset#filter-bar select {
+	width: auto;
+}
+
+input.text-area-order {
+	width: 50%;
+	margin-right: 5px;
+}
+
+/* Standards for commonly used elements */
+div.width-20   {width: 20%;}
+div.width-30   {width: 30%;}
+div.width-35   {width: 35%;}
+div.width-40   {width: 40%;}
+div.width-45   {width: 45%;}
+div.width-50   {width: 50%;}
+div.width-55   {width: 55%;}
+div.width-60   {width: 60%;}
+div.width-65   {width: 65%;}
+div.width-70   {width: 70%;}
+div.width-80   {width: 80%;}
+div.width-100  {width: 100%;}
+
+/* -- TAB STYLES --------------------- */
+dl.tabs {
+	float: left;
+	margin: 10px 0 -1px 0;
+	z-index: 50;
+}
+
+dl.tabs dt {
+	float: left;
+	padding: 4px 10px;
+	border: 1px solid #ccc;
+	margin-left: 3px;
+	background: #e9e9e9;
+	color: #666;
+}
+
+dl.tabs dt.open {
+	background: #F9F9F9;
+	border-bottom: 1px solid #f9f9f9;
+	z-index: 100;
+	color: #000;
+}
+
+div.current {
+	clear: both;
+	border: 1px solid #ccc;
+	padding: 10px 10px;
+}
+
+div.current dd {
+	padding: 0;
+	margin: 0;
+}
+
+/* Tab changes for accessibility */
+dl.tabs dt h3 {
+	margin: 0;
+	padding: 0;
+	font-size: 1em;
+	font-weight: normal;
+}
+
+dl.tabs dt h3 a:link {
+	color:#333333;
+	outline:medium none;
+	text-decoration:none;
+}
+
+/* Administrator forms, lists */
+
+ul.adminformlist,
+ul.adminformlist li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	clear: left;
+}
+
+/* Administrator forms, lists */
+fieldset.adminform {
+	margin: 0 10px 10px;
+}
+
+/* Field label widths - long label */
+fieldset.adminform.long label,
+fieldset.adminform.long span.faux-label {
+	min-width: 180px;
+}
+
+/* Field label widths - short label */
+fieldset.adminform label,
+fieldset.adminform span.faux-label {
+	min-width: 135px;
+	padding-right: 5px;
+}
+
+div.current label,
+div.current span.faux-label {
+	display: block;
+	width: 150px;
+	float: left;
+	clear: left;
+/*	margin-top: 8px;*/
+/*	-moz-hyphens: auto;*/
+}
+
+div.current fieldset.radio input[type="radio"],
+div.current fieldset.checkbox input[type="checkbox"] {
+	float: left;
+	min-width: 15px;
+/*	margin-top: 8px;*/
+}
+
+fieldset.adminform input#clear {
+	width: auto;
+}
+
+fieldset.adminform fieldset.radio label,
+fieldset.panelform fieldset.radio label {
+	min-width: 85px;
+	width: inherit;
+	padding-left: 0;
+	padding-right: 10px;
+	float: left;
+	clear: none;
+	display:inline;
+}
+
+fieldset.adminform .inputbox {
+	margin-left: inherit;
+}
+
+/* -- Help --------------------------- */
+
+.helpFrame {
+	border-left: 0 solid #222;
+	border-right: none;
+	border-top: none;
+	border-bottom: none;
+	width: 100%;
+	height: 800px;
+	padding: 0 5px 0 10px;
+}
+
+#treecellhelp {
+	display: block;
+	position: relative;
+	float: left;
+	margin: 0;
+	overflow: hidden;
+}
+
+#datacellhelp {
+	display: block;
+	margin: 0;
+	margin-top: 10px;
+	padding: 2px 0 0 0;
+}
+
+
+/* --- LABEL CODE ---- */
+/* Taken from Joomla! template "isis" */
+
+.label {
+	display: inline-block;
+	padding: 2px 4px;
+	font-size: 10.998px;
+	font-weight: bold;
+	line-height: 14px;
+	color: #fff;
+	vertical-align: baseline;
+	white-space: nowrap;
+	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+	background-color: #999;
+}
+
+.label {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.label:empty{
+	display: none;
+}
+
+a.label:hover,
+a.label:focus {
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.label-important       { background-color: #a94442; }
+.label-important[href] { background-color: #843534; }
+.label-warning         { background-color: #f89406; }
+.label-warning[href]   { background-color: #c67605; }
+.label-success         { background-color: #3c763d; }
+.label-success[href]   { background-color: #2b542c; }
+.label-info            { background-color: #31708f; }
+.label-info[href]      { background-color: #245269; }
+.label-inverse         { background-color: #333;    }
+.label-inverse[href]   { background-color: #1a1a1a; }
+
+/* --- ALERT CODE ---- */
+/* Taken from Joomla! template "isis" */
+
+.alert {
+	padding: 8px 35px 8px 14px;
+	margin-bottom: 18px;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+	background-color: #fcf8e3;
+	border: 1px solid #faebcc;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.alert,
+.alert h4 {
+	color: #8a6d3b;
+}
+
+.alert h4 {
+	margin: 0;
+}
+
+.alert .close {
+	position: relative;
+	top: -2px;
+	right: -21px;
+	line-height: 18px;
+}
+
+.alert-success {
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	color: #3c763d;
+}
+
+.alert-success h4 {
+	color: #3c763d;
+}
+
+.alert-danger,
+.alert-error {
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	color: #a94442;
+}
+
+.alert-danger h4,
+.alert-error h4 {
+	color: #a94442;
+}
+
+.alert-info {
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+	color: #31708f;
+}
+
+.alert-info h4 {
+	color: #31708f;
+}
+
+.alert-block {
+	padding-top: 14px;
+	padding-bottom: 14px;
+}
+
+.alert-block > p,
+.alert-block > ul {
+	margin-bottom: 0;
+}
+
+.alert-block p + p {
+	margin-top: 5px;
+}
+
+#jform_unregistra_until_span {
+	display: inline-block;
+}
+
+#jform_unregistra_until_span input {
+	width: 40px;
+	text-align: right;
+}
