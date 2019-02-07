@@ -111,7 +111,7 @@
 			<option value="&apos;">COM_JEM_SETTINGS_CSV_DELIMITER_QUOTE</option>
 			<option value="&quot;">COM_JEM_SETTINGS_CSV_DELIMITER_DQUOTE</option>
 		</field>
-		<field name="csv_bom" type="list"
+		<field name="csv_bom" type="radio"
 			label="COM_JEM_SETTINGS_CSV_BOM"
 			description="COM_JEM_SETTINGS_CSV_BOM_DESC"
 			class="inputbox btn-group btn-group-yesno"
