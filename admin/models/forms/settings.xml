@@ -90,6 +90,9 @@
 			label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
 			description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
 		/>
+		<field name="spacer2" type="spacer"
+				hr="true"
+			/>
 		<field name="csv_separator" type="list"
 			label="COM_JEM_SETTINGS_CSV_SEPARATOR"
 			description="COM_JEM_SETTINGS_CSV_SEPARATOR_DESC"
