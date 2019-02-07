@@ -119,8 +119,8 @@
 			default="1"
 			required="false"
 		>
-			<option value="0">COM_JEM_SETTINGS_CSV_BOM_OFF</option>
-			<option value="1">COM_JEM_SETTINGS_CSV_BOM_ON</option>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 
 	</fieldset>
