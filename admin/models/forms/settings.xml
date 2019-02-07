@@ -114,7 +114,7 @@
 		<field name="csv_bom" type="list"
 			label="COM_JEM_SETTINGS_CSV_BOM"
 			description="COM_JEM_SETTINGS_CSV_BOM_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			size="1"
 			default="1"
 			required="false"
