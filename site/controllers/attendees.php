@@ -234,6 +234,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$enableemailadress = $params->get('enableemailaddress', 0);
 		$separator         = $jemconfig->get('csv_separator', ';');
 		$delimiter         = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom           = $jemconfig->get('csv_bom', '1');
 		$userfield         = $jemconfig->get('globalattribs.global_regname', 1) ? 'name' : 'username';
 		$comments          = $jemconfig->get('regallowcomments', 0);
 
@@ -248,8 +249,10 @@ class JemControllerAttendees extends JControllerLegacy
 		header('Pragma: no-cache');
 
 		$export = fopen('php://output', 'w');
-		//add BOM to fix UTF-8 in Excel
-		fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		if ($csv_bom ==1 ) {
+			//add BOM to fix UTF-8 in Excel
+			fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		}
 		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 
 		$cols = array();

@@ -290,6 +290,8 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('ical_max_items', '100'),
 ('defaultCountry', ''),
 ('csv_separator', ';'),
+('csv_delimiter', '"'),
+('csv_bom', '1'),
 ('globalattribs', ''),
 ('css', ''),
 ('regallowcomments', '0'),
