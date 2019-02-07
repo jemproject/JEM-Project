@@ -251,7 +251,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$export = fopen('php://output', 'w');
 		if ($csv_bom ==1 ) {
 			//add BOM to fix UTF-8 in Excel
-			fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+			fputs($export, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
 		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 

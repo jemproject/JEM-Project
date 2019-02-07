@@ -125,7 +125,7 @@ class JemModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		if ($csv_bom ==1 ) {
 			//add BOM to fix UTF-8 in Excel
-			fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
 
 		if ($includecategories == 1) {
@@ -189,7 +189,7 @@ class JemModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		if ($csv_bom ==1 ) {
 			//add BOM to fix UTF-8 in Excel
-			fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
@@ -237,7 +237,7 @@ class JemModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		if ($csv_bom ==1 ) {
 			//add BOM to fix UTF-8 in Excel
-			fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_venues'));
@@ -285,9 +285,8 @@ class JemModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		if ($csv_bom ==1 ) {
 			//add BOM to fix UTF-8 in Excel
-			fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
 		fputcsv($csv, $header, $separator, $delimiter);
