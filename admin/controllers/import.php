@@ -64,6 +64,7 @@ class JemControllerImport extends JControllerLegacy
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 		$separator = $jemconfig->get('csv_separator', ';');
 		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
 
 		if ($type === 'events') {
 			// add additional fields
@@ -91,8 +92,8 @@ class JemControllerImport extends JControllerLegacy
 			// search for bom - then it is utf-8
 			$bom = pack('CCC', 0xEF, 0xBB, 0xBF);
 			$fc = fread($handle, 3);
-			$convert = strncmp($fc, $bom, 3) !== 0;
-			if ($convert) {
+			$convert = strncmp($fc, $bom, 3) == 0;
+			if ($convert == false) {
 				// no bom - rewind file
 				fseek($handle, 0);
 			}
@@ -103,7 +104,8 @@ class JemControllerImport extends JControllerLegacy
 				$numfields = count($data);
 
 				// convert from ansi to utf-8 if required
-				if ($convert) {
+				if ($convert == true) {
+					$msg .= "<p>BOM not found ... converting to UTF-8</p>\n";
 					array_walk($data, 'jem_convert_ansi2utf8');
 				}
 
@@ -139,7 +141,7 @@ class JemControllerImport extends JControllerLegacy
 					$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
 				} else {
 					// convert from ansi to utf-8 if required
-					if ($convert) {
+					if ($convert == true) {
 						array_walk($data, 'jem_convert_ansi2utf8');
 					}
 
