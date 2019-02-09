@@ -14,6 +14,9 @@ This version includes:
 
 Tips, suggestions are very welcome..
 
+Project Homepage: https://www.joomlaeventmanager.net/
+
+Translation via:  https://www.transifex.com/projects/p/JEM/
 
 
 
