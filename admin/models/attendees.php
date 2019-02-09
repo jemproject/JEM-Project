@@ -211,6 +211,7 @@ class JemModelAttendees extends JModelList
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 		$separator = $jemconfig->get('csv_separator', ';');
 		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
 		$comments  = $jemconfig->get('regallowcomments', 0);
 
 		$event = $this->getEvent();
@@ -219,7 +220,6 @@ class JemModelAttendees extends JModelList
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
 
 		$csv = fopen('php://output', 'w');
-		fputcsv($csv, array('sep='.$sep), $sep, '"');
 
 		$header = array(
 				JText::_('COM_JEM_NAME'),
@@ -233,7 +233,7 @@ class JemModelAttendees extends JModelList
 		}
 		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
 
-		fputcsv($csv, $header, $sep, '"');
+		fputcsv($csv, $header, $separator, $delimiter);
 
 		foreach ($items as $item)
 		{
