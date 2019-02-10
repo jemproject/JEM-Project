@@ -1133,6 +1133,16 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
+			<field name="event_show_more_attendeedetails" type="radio"
+				label="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS"
+				description="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
+				required="false"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="event_show_attendeenames" type="list"
 				label="COM_JEM_REG_SHOW_ATTENDEENAMES_TO"
 				description="COM_JEM_REG_SHOW_ATTENDEENAMES_TO_DESC"
@@ -1305,57 +1315,57 @@
 				type="customcolor"
 				default=""
 				size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER_DESC" />
-        	<field
-        		name="css_color_bg_h2"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2_DESC" />
-        	<field
-        		name="css_color_bg_jem"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM_DESC" />
-        	<field
-        		name="css_color_bg_table_th"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH_DESC" />
-        	<field
-        		name="css_color_bg_table_td"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD_DESC" />
-        	<field
-        		name="css_color_bg_table_tr_entry2"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2_DESC" />
-        	<field
-        		name="css_color_bg_table_tr_hover"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER_DESC" />
-        	<field
-        		name="css_color_bg_table_tr_featured"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED_DESC" />
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER_DESC" />
+			<field
+				name="css_color_bg_h2"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2_DESC" />
+			<field
+				name="css_color_bg_jem"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM_DESC" />
+			<field
+				name="css_color_bg_table_th"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH_DESC" />
+			<field
+				name="css_color_bg_table_td"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD_DESC" />
+			<field
+				name="css_color_bg_table_tr_entry2"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2_DESC" />
+			<field
+				name="css_color_bg_table_tr_hover"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER_DESC" />
+			<field
+				name="css_color_bg_table_tr_featured"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED_DESC" />
 		</fieldset>
 		<fieldset name="css_color_border">
 			<field
@@ -1363,29 +1373,29 @@
 				type="customcolor"
 				default=""
 				size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER_DESC" />
-        	<field
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER_DESC" />
+			<field
 				name="css_color_border_h2"
 				type="customcolor"
 				default=""
 				size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2_DESC" />
-        	<field
-        		name="css_color_border_table_td"
-        		type="customcolor"
-        		default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD_DESC" />
-        	<field
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2_DESC" />
+			<field
 				name="css_color_border_table_th"
 				type="customcolor"
 				default=""
-        		size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH_DESC" />
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH_DESC" />
+			<field
+				name="css_color_border_table_td"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD_DESC" />
 		</fieldset>
 		<fieldset name="css_color_font">
 			<field
@@ -1393,22 +1403,29 @@
 				type="customcolor"
 				default=""
 				size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2_DESC" />
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2_DESC" />
+			<field
+				name="css_color_font_table_th"
+				type="customcolor"
+				default=""
+				size="8"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TH"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TH_DESC" />
 			<field
 				name="css_color_font_table_td"
 				type="customcolor"
 				default=""
 				size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_DESC" />
-        	<field
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_DESC" />
+			<field
 				name="css_color_font_table_td_a"
 				type="customcolor"
 				default=""
 				size="8"
-        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A_DESC" />
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A_DESC" />
 		</fieldset>
 	</fields>
 </form>

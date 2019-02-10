@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5" method="upgrade">
 	<name>com_jem</name>
-	<creationDate>January 2019</creationDate>
+	<creationDate>February 2019</creationDate>
 	<author>JEM Community</author>
 	<copyright>Copyright (C) 2013-2019 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>2.3.0-dev0.2</version>
+	<version>2.3.0-dev0.3</version>
 	<description>COM_JEM_INSTALLATION_DESCRIPTION</description>
 
 	<!-- Runs on install/uninstall/update; New in 1.6 -->
@@ -33,6 +33,7 @@
 		<filename>index.html</filename>
 		<folder>images</folder>
 		<folder>css</folder>
+		<folder>FontAwesome</folder>
 		<folder>js</folder>
 	</media>
 
