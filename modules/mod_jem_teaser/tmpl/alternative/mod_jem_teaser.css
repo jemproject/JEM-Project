@@ -80,20 +80,27 @@ div#jemmoduleteaser .event-title {
 }
 
 div#jemmoduleteaser .time {
+	padding-left: 20px;
+	background: url(../img/time.png) 0 center no-repeat;
 	padding-top: 2px;
 }
 
 div#jemmoduleteaser div.date {
+	padding-left: 0px;
 	padding-top: 2px;
 }
 
 div#jemmoduleteaser .category {
 	position: relative;
+	padding-left: 20px;
+	background: url(../img/category.png) 0 center no-repeat;
 	font-size: smaller;
 }
 
 div#jemmoduleteaser .venue-title {
 	position: relative;
+	padding-left: 20px;
+	background: url(../img/venue.png) 0 center no-repeat;
 	font-size: smaller;
 }
 

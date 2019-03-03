@@ -1213,6 +1213,50 @@ class JemHelper
 		}
 	}
 
+	/**
+	 * Get the path to a layout for a module respecting layout style configured in JEM Settings.
+	 *
+	 * @param   string  $module  The name of the module
+	 * @param   string  $layout  The name of the module layout. If alternative layout, in the form template:filename.
+	 *
+	 * @return  string  The path to the module layout
+	 *
+	 * @since   2.3
+	 */
+	public static function getModuleLayoutPath($module, $layout = 'default')
+	{
+		$template = \JFactory::getApplication()->getTemplate();
+		$defaultLayout = $layout;
+		$suffix = self::getLayoutStyleSuffix();
+
+		if (strpos($layout, ':') !== false)
+		{
+			// Get the template and file name from the string
+			$temp = explode(':', $layout);
+			$template = $temp[0] === '_' ? $template : $temp[0];
+			$layout = $temp[1];
+			$defaultLayout = $temp[1] ?: 'default';
+		}
+
+		// Build the template and base path for the layout
+		$pathes = array();
+		if (!empty($suffix)) {
+			$pathes[] = JPATH_THEMES . '/' . $template . '/html/' . $module . '/' . $suffix . '/' . $layout . '.php';
+			$pathes[] = JPATH_BASE . '/modules/' . $module . '/tmpl/' . $suffix . '/' . $defaultLayout . '.php';
+		}
+		$pathes[] = JPATH_THEMES . '/' . $template . '/html/' . $module . '/' . $layout . '.php';
+		$pathes[] = JPATH_BASE . '/modules/' . $module . '/tmpl/' . $defaultLayout . '.php';
+
+		// Return the first match
+		foreach ($pathes as $path) {
+			if (file_exists($path)) {
+				return $path;
+			}
+		}
+		// last chance
+		return JPATH_BASE . '/modules/' . $module . '/tmpl/default.php';
+	}
+
 	static public function loadCss($css)
 	{
 		$settings = self::retrieveCss();
@@ -1270,6 +1314,59 @@ class JemHelper
 		}
 
 		return $css;
+	}
+
+	/**
+	 * Get the url to a css file for a module respecting layout style configured in JEM Settings.
+	 *
+	 * @param   string  $module  The name of the module
+	 * @param   string  $css     The name of the css file. If null name of module is used.
+	 *
+	 * @since   2.3
+	 */
+	public static function loadModuleStyleSheet($module, $css = null)
+	{
+		if (empty($css)) {
+			$css = $module;
+		}
+
+		$suffix = self::getLayoutStyleSuffix();
+
+		if (!empty($suffix)) {
+			# search for template overrides
+			$path = $module . '/' . $suffix . '/' . $css . '.css';
+			$files = JHtml::_('stylesheet', $path, array(), true, true);
+			if (!empty($files)) {
+				# we have to call this stupid function twice; no other way to know if something was loaded
+				JHtml::_('stylesheet', $path, array(), true);
+				return;
+			} else {
+				# search within module because JEM modules doesn't use media folder
+				$path = 'modules/' . $module . '/tmpl/' . $suffix . '/' . $css . '.css';
+				$files = JHtml::_('stylesheet', $path, array(), false, true);
+				if (!empty($files)) {
+					# we have to call this stupid function twice; no other way to know if something was loaded
+					JHtml::_('stylesheet', $path, array(), false);
+					return;
+				}
+			}
+		}
+
+		$path = $module . '/' . $suffix . '/' . $css . '.css';
+		$files = JHtml::_('stylesheet', $path, array(), true, true);
+		if (!empty($files)) {
+			# we have to call this stupid function twice; no other way to know if something was loaded
+			JHtml::_('stylesheet', $path, array(), true);
+			return;
+		} else {
+			$path = 'modules/' . $module . '/tmpl/' . $css . '.css';
+			$files = JHtml::_('stylesheet', $path, array(), false, true);
+			if (!empty($files)) {
+				# no css for layout style configured, so use the default css
+				JHtml::_('stylesheet', $path, array(), false);
+				return;
+			}
+		}
 	}
 
 	static public function loadIconFont()

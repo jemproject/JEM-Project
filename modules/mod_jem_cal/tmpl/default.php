@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -33,14 +33,6 @@ function mod_jem_cal_click_<?php print $module->id; ?>(url) {
 }
 </script>
 <?php
-}
-
-# Add css
-$document = JFactory::getDocument();
-if ($Default_Stylesheet == 1) {
-	$document->addStyleSheet(JUri::base() . 'modules/mod_jem_cal/mod_jem_cal.css');
-} else {
-	$document->addStyleSheet(JUri::base() . $User_stylesheet);
 }
 
 # Output

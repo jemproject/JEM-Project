@@ -1,0 +1,31 @@
+/**
+ * @version 2.3
+ * @package JEM
+ * @subpackage JEM Banner Module
+ * @copyright (C) 2014-2019 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+div#jemmodulebanner .time:before,
+div#jemmodulebanner div.date:before,
+div#jemmodulebanner .category:before,
+div#jemmodulebanner .venue-title:before {
+	font:normal normal normal 1.4em/1 FontAwesome;
+}
+
+div#jemmodulebanner .time:before {
+	content:"\f017";
+}
+
+div#jemmodulebanner div.date:before {
+	content:"\f133";
+}
+
+div#jemmodulebanner .category:before {
+	content:"\f02b";
+}
+
+div#jemmodulebanner .venue-title:before {
+	content:"\f041";
+}

@@ -1,22 +1,22 @@
 /**
  * @version 2.3
  * @package JEM
- * @subpackage JEM Jubilee Module
+ * @subpackage JEM Banner Module
  * @copyright (C) 2014-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-div#jemmodulejubilee {
+div#jemmodulebanner {
 	width: 100%;
 }
 
-div#jemmodulejubilee .banner-jem {
+div#jemmodulebanner.banner-jem {
 	font-size: smaller;
 }
 
 
-#jemmodulejubilee [class|="calendar"] {
+#jemmodulebanner [class|="calendar"] {
 	background-repeat: no-repeat;
 	width: 84px;
 	height: 82px; /* + padding = 87px */
@@ -28,17 +28,17 @@ div#jemmodulejubilee .banner-jem {
 	line-height: 24px;
 }
 
-#jemmodulejubilee span.share {
+#jemmodulebanner span.share {
 	margin-left:95px;
 }
 
-#jemmodulejubilee [class|="calendar"] .yearjubilee {
+#jemmodulebanner [class|="calendar"] .yearbanner {
 	font-size: 6px;
 	height:5px;
 	color: #e1e1e1;
 }
 
-#jemmodulejubilee [class|="calendar"] .monthjubilee {
+#jemmodulebanner [class|="calendar"] .monthbanner {
 	font-size: 8px;
 	color: white;
 	text-transform:uppercase;
@@ -47,7 +47,7 @@ div#jemmodulejubilee .banner-jem {
 	height:20px;
 }
 
-#jemmodulejubilee [class|="calendar"] .dayjubilee {
+#jemmodulebanner [class|="calendar"] .daybanner {
 	font-weight:bold;
 	font-size: 12px;
 	padding-top:3px;
@@ -55,7 +55,7 @@ div#jemmodulejubilee .banner-jem {
 	color: #333;
 }
 
-#jemmodulejubilee [class|="calendar"] .daynumjubilee {
+#jemmodulebanner [class|="calendar"] .daynumbanner {
 	font-size: 29px;
 	font-weight:bold;
 	color: #FF6400;
@@ -63,33 +63,37 @@ div#jemmodulejubilee .banner-jem {
 }
 
 
-div#jemmodulejubilee .eventset {
+div#jemmodulebanner .eventset {
 	margin-bottom: 10px;
 	padding: 5px;
 	border: 1px dotted silver;
     text-align: left;
 }
 
-div#jemmodulejubilee .event-title {
+div#jemmodulebanner .event-title {
 	padding-left: 0px;
 	font-size: x-large;
 	margin: 0 0 5px;
 }
 
-div#jemmodulejubilee .desc {
+div#jemmodulebanner .desc {
 	padding-left: 0px;
 	padding-top: 2px;
 	font-size: small;
 }
 
-div#jemmodulejubilee .time {
+div#jemmodulebanner .time {
+	padding-left: 20px;
+	background: url(../img/time.png) 0 center no-repeat;
 	padding-top: 2px;
 	font-weight: normal;
 	font-size: smaller;
 	float: left;
 }
 
-div#jemmodulejubilee div.date {
+div#jemmodulebanner div.date {
+	padding-left: 20px;
+	background: url(../img/date.png) 0 center no-repeat;
 	padding-top: 2px;
 	font-weight: normal;
 	font-size: smaller;
@@ -97,26 +101,30 @@ div#jemmodulejubilee div.date {
 	margin-right: 4px;
 }
 
-div#jemmodulejubilee .category {
+div#jemmodulebanner .category {
 	position: relative;
+	padding-left: 20px;
+	background: url(../img/category.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 }
 
-div#jemmodulejubilee .venue-title {
+div#jemmodulebanner .venue-title {
 	position: relative;
+	padding-left: 20px;
+	background: url(../img/venue.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 	margin-right: 8px;
 }
 
-div#jemmodulejubilee .event-image-cell {
+div#jemmodulebanner .event-image-cell {
 }
 
-div#jemmodulejubilee .venue-image-cell {
+div#jemmodulebanner .venue-image-cell {
 }
 
-div#jemmodulejubilee .image-preview {
+div#jemmodulebanner .image-preview {
 	max-width: 110px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
@@ -124,7 +132,7 @@ div#jemmodulejubilee .image-preview {
 	margin: 2px;
 }
 
-div#jemmodulejubilee .image-preview2 {
+div#jemmodulebanner .image-preview2 {
 	max-width: 200px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
@@ -132,11 +140,11 @@ div#jemmodulejubilee .image-preview2 {
 	margin: 2px;
 }
 
-div#jemmodulejubilee .hr {
+div#jemmodulebanner .hr {
 	color: silver;
 	height: 12px;
 }
 
-div#jemmodulejubilee .clr {
+div#jemmodulebanner .clr {
 	clear: both;
 }

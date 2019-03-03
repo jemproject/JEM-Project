@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -44,8 +44,14 @@ if (empty($list) && !$params->get('show_no_events')) {
 	return;
 }
 
-$document = JFactory::getDocument();
-$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css');
-$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/'.$color.'.css');
+$mod_name = 'mod_jem_teaser';
+$jemsettings = JemHelper::config();
+$iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
+JemHelper::loadModuleStyleSheet($mod_name);
+JemHelper::loadModuleStyleSheet($mod_name, $color);
+JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 
-require(JModuleHelper::getLayoutPath('mod_jem_teaser'));
+// load icon font if needed
+JemHelper::loadIconFont();
+
+require(JemHelper::getModuleLayoutPath($mod_name));

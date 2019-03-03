@@ -83,6 +83,8 @@ div#jemmodulejubilee .desc {
 }
 
 div#jemmodulejubilee .time {
+	padding-left: 20px;
+	background: url(../img/time.png) 0 center no-repeat;
 	padding-top: 2px;
 	font-weight: normal;
 	font-size: smaller;
@@ -90,6 +92,8 @@ div#jemmodulejubilee .time {
 }
 
 div#jemmodulejubilee div.date {
+	padding-left: 20px;
+	background: url(../img/date.png) 0 center no-repeat;
 	padding-top: 2px;
 	font-weight: normal;
 	font-size: smaller;
@@ -99,12 +103,16 @@ div#jemmodulejubilee div.date {
 
 div#jemmodulejubilee .category {
 	position: relative;
+	padding-left: 20px;
+	background: url(../img/category.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 }
 
 div#jemmodulejubilee .venue-title {
 	position: relative;
+	padding-left: 20px;
+	background: url(../img/venue.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 	margin-right: 8px;
