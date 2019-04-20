@@ -341,25 +341,25 @@ div#jem .monthname { /*delete complete construct -------------------------------
 @media not print {
 @media only all and (max-width: 47.938rem) {
    /* Force table to not be like tables anymore */
-   table, thead, tbody, th, td,tr {
+   div#jem table, div#jem thead, div#jem tbody, div#jem th, div#jem td, div#jem tr {
       display: inline;
    }
    
    /* Nobody needs the Row with the daynames anymore */
-   tr.daynamesRow {
+   div#jem tr.daynamesRow {
      display:none;
    }
    
    /* Save place for the important information */
-   td.nomonthday {
+   div#jem td.nomonthday {
      display:none;
    }
    
-   .daynum {
+   div#jem .daynum {
      margin-top: 5px;
    }
    
-   .eventcontentinner, .eventandmore {
+   div#jem .eventcontentinner, .eventandmore {
      width: 90%;
      margin-left: auto;
      margin-right: auto;
@@ -370,29 +370,29 @@ div#jem .monthname { /*delete complete construct -------------------------------
       border: none;;
    }
    
-   .daynum a::after {
+   div#jem .daynum a::after {
      padding-left: 0px;
      content: "";
    }
    
-   .newMonthRow, .weeknum {
+   div#jem .newMonthRow, div#jem .weeknum {
      display: none;
    }
     
-   td.monthday div.daynum::after {
+   div#jem td.monthday div.daynum::after {
      content: ". " attr(jem-monthname);
    }
    
-   .today .daynum a {
+   div#jem .today .daynum a {
      color: #000000
    }
    
-   td.today div.daynum::after {
+   div#jem td.today div.daynum::after {
      /*color: #ffffff;*/
      background-color: transparent;
    }
    
-   td.monthday div.daynum::before {
+   div#jem td.monthday div.daynum::before {
      margin-left: 5px;
      content: attr(jem-dayname) ", ";
      background-color: transparent;
