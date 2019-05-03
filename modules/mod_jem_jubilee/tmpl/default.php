@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0-dev3
 * @package JEM
 * @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2017 joomlaeventmanager.net
+* @copyright (C) 2014-2019 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -157,7 +157,7 @@ if ($flyer_link_type == 1) {
 			<div class="clr"></div>
 
 			<?php /*venue*/ ?>
-			<?php if ($params->get('showvenue', 1) == 1) :?>
+			<?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) :?>
 				<div class="venue-title">
 				<?php if ($item->venuelink) : ?>
 					<a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
@@ -168,7 +168,7 @@ if ($flyer_link_type == 1) {
 			<?php endif; ?>
 
 			<?php /*category*/ ?>
-			<?php if ($params->get('showcategory', 1) == 1) :?>
+			<?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
 				<div class="category">
 					<?php echo $item->catname; ?>
 				</div>
