@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0-dev3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -416,11 +416,11 @@ class JemModelEventslist extends JModelList
 			switch ($venueStateMode) {
 			case 0: # complete match: venue's state must be equal (ignoring upper/lower case) one of the strings given by filter
 			default:
-				array_walk($venueState, function(&$v,$k,$db) {  return $v = $db->quote(trim($v));  }, $db);
+				array_walk($venueState, function(&$v,$k,$db) { $v = $db->quote(trim($v)); }, $db);
 				$query->where('l.state IN ('.implode(',', $venueState).')');
 				break;
 			case 1: # contain: venue's state must contain one of the strings given by filter
-				array_walk($venueState, function(&$v,$k,$db) {  return $v = quotemeta($db->escape(trim($v), true));  }, $db);
+				array_walk($venueState, function(&$v,$k,$db) { $v = quotemeta($db->escape(trim($v), true)); }, $db);
 				$query->where('l.state REGEXP '.$db->quote(implode('|', $venueState)));
 				break;
 			}
