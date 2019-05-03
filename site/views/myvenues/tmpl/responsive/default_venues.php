@@ -1,12 +1,14 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0-dev3
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+
+JHtml::_('behavior.tooltip');
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
@@ -57,8 +59,18 @@ defined('_JEXEC') or die;
   }
 </style>
 
-<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
+<script type="text/javascript">
+	function tableOrdering(order, dir, view)
+	{
+		var form = document.getElementById("adminForm");
 
+		form.filter_order.value     = order;
+		form.filter_order_Dir.value = dir;
+		form.submit(view);
+	}
+</script>
+
+<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
   <?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>
       <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
@@ -169,7 +181,7 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 	<input type="hidden" name="option" value="com_jem" />
 	<?php echo JHtml::_('form.token'); ?>
 </form>
@@ -177,7 +189,8 @@ defined('_JEXEC') or die;
 <?php if ($this->settings->get('global_display',1)) : ?>
   <div class="jem-limit-smallist">
     <?php
-      echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>';
+      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
       echo $this->venues_pagination->getLimitBox();
     ?>
   </div>
