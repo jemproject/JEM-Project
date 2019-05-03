@@ -1,8 +1,8 @@
 /**
- * @version 2.2
+ * @version 2.3.0-dev3
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -80,27 +80,20 @@ div#jemmoduleteaser .event-title {
 }
 
 div#jemmoduleteaser .time {
-	padding-left: 20px;
-	background: url(img/time.png) 0 center no-repeat;
 	padding-top: 2px;
 }
 
 div#jemmoduleteaser div.date {
-	padding-left: 0px;
 	padding-top: 2px;
 }
 
 div#jemmoduleteaser .category {
 	position: relative;
-	padding-left: 20px;
-	background: url(img/category.png) 0 center no-repeat;
 	font-size: smaller;
 }
 
 div#jemmoduleteaser .venue-title {
 	position: relative;
-	padding-left: 20px;
-	background: url(img/building.png) 0 center no-repeat;
 	font-size: smaller;
 }
 
