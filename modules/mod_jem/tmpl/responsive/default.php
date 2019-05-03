@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 $document = JFactory::getDocument();
 $module_name = 'mod_jem';
+/*
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
   unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_/tmpl/mod_jem.css']);
@@ -18,7 +19,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
 } else {
   $document->addStyleSheet(JUri::base(true).'/modules/mod_jem/tmpl/mod_jem_responsive.css');
 }
-
+*/
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">

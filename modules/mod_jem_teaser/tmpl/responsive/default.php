@@ -23,12 +23,12 @@ if (JRequest::getVar('jem-rss','0') == 1) {
 }
 */
 
-$module_name = 'mod_jem_teaser';
+/*$module_name = 'mod_jem_teaser';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
   unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css']);
   $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-}
+}*/
 ?>
 
 <style>

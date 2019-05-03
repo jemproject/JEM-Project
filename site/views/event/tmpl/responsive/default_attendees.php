@@ -160,7 +160,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 3:
 				case 4:
-					echo $this->loadTemplate('regform_responsive');
+					echo $this->loadTemplate('regform');
 					break;
 				}
 			}

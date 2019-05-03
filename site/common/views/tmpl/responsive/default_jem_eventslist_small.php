@@ -301,7 +301,7 @@ function jem_common_show_filter(&$obj) {
   <?php if ($this->settings->get('global_display',1)) : ?>
     <div class="jem-limit-smallist">
       <?php
-        echo '<label for="limit" class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>';
+        echo '<label for="limit" class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
         //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
         echo $this->pagination->getLimitBox();
       ?>

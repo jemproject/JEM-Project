@@ -49,7 +49,7 @@ $function = JFactory::getApplication()->input->getCmd('function', 'jSelectContac
       </div>
       <div class="jem-row jem-justify-start jem-nowrap">
         <div>
-          <?php echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>'; ?>
+          <?php echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;'; ?>
         </div>
         <div>&nbsp;</div>
         <div>

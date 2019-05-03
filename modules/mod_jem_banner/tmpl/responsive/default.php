@@ -23,12 +23,12 @@ if ($flyer_link_type == 1) {
 	$modal = '';
 }
 
-$module_name = 'mod_jem_banner';
+/*$module_name = 'mod_jem_banner';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
   unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css']);
   $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-}
+}*/
 
 $banneralignment = "jem-vertical-banner";
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizontal")){

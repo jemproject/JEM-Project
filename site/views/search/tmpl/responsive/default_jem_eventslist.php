@@ -143,7 +143,7 @@ defined('_JEXEC') or die;
   <?php if ($this->settings->get('global_display',1)) : ?>
     <div class="jem_limit jem-row">
       <?php
-        echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>'
+        echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
         echo $this->pagination->getLimitBox();
       ?>
     </div>
