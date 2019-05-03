@@ -1,18 +1,17 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0-dev3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
-
 /**
  * Calendar-View
  */
-class JemViewCalendar extends JViewLegacy
+class JemViewCalendar extends JemView
 {
 	/**
 	 * Calendar-View
@@ -41,7 +40,6 @@ class JemViewCalendar extends JViewLegacy
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCss('calendar');
-    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
