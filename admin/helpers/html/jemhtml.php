@@ -263,7 +263,7 @@ abstract class JHtmlJemHtml
 		} elseif (!empty($attribs)) {
 			$html = '<span '.trim((is_array($attribs) ? JArrayHelper::toString($attribs) : $attribs) . ' /').'><i class="'.$icon.'"></i></span>';
 		} else {
-			$html = '<i class="'.$icon.'"></i>';
+			$html = '<i aria-hidden="true" class="'.$icon.'"></i>';
 		}
 
 		return $html;
