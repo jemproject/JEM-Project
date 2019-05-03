@@ -8,8 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-require JPATH_COMPONENT_SITE.'/classes/view.class.php';
-
 /**
  * Day-View
  */
@@ -56,7 +54,6 @@ class JemViewDay extends JemView
 
 		// Load css
 		JemHelper::loadCss('jem');
-    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
