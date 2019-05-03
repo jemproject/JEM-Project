@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0-dev3
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -45,7 +45,7 @@ $use_ajax            = $params->get('use_ajax', '1');
 $CalTooltipsTitle    = $params->get('cal15q_tooltips_title', JText::_('MOD_JEM_CAL_EVENT'));
 $CalTooltipsTitlePl  = $params->get('cal15q_tooltipspl_title', JText::_('MOD_JEM_CAL_EVENTS'));
 $Default_Stylesheet  = $params->get('Default_Stylesheet', '1');
-$User_stylesheet     = $params->get('User_stylesheet', 'modules/mod_jem_cal/mod_jem_cal.css');
+$User_stylesheet     = $params->get('User_stylesheet', 'modules/mod_jem_cal/tmpl/mod_jem_cal.css');
 $tooltips_max_events = $params->get('tooltips_max_events', 0);
 $Itemid              = $app->input->request->getInt('Itemid', 0);
 
@@ -151,6 +151,19 @@ $props_next_year = '&modjemcal_month='.$req_month.'&modjemcal_year='.$next_year;
 $params->module_id = $module->id; // used for debug log
 $days = ModJemCalHelper::getDays($offset_year, $offset_month, $params);
 
+$mod_name = 'mod_jem_cal';
+
+# Add css
+if ($Default_Stylesheet == 1) {
+	JemHelper::loadModuleStyleSheet($mod_name);
+} else {
+	$document = JFactory::getDocument();
+	$document->addStyleSheet(JUri::base() . $User_stylesheet);
+}
+
+# Load icon font if needed
+JemHelper::loadIconFont();
+
 # Render
-require(JModuleHelper::getLayoutPath('mod_jem_cal'));
+require(JemHelper::getModuleLayoutPath($mod_name));
 ?>

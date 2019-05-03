@@ -1,8 +1,8 @@
 /**
- * @version 2.2
+ * @version 2.3.0-dev3
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2008-2009 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -179,7 +179,7 @@
 	margin-top: -15px;
 	padding-top: 15px;
 	padding-bottom: 5px;
-	background: url(../templates/system/images/selector-arrow.png) no-repeat;
+	background: url(../../templates/system/images/selector-arrow.png) no-repeat;
 	color: #000000;
 }
 
