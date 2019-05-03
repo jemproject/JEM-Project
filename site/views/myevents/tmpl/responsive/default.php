@@ -25,7 +25,7 @@ defined('_JEXEC') or die;
 	<div class="clr"></div>
 
 	<!--table-->
-	<?php echo $this->loadTemplate('events_responsive');?>
+	<?php echo $this->loadTemplate('events');?>
 
 	<!--footer-->
 	<div class="copyright">

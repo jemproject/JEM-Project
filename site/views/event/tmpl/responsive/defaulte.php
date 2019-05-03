@@ -231,7 +231,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php endif ?>
 
 	<?php $this->attachments = $this->item->attachments; ?>
-	<?php echo $this->loadTemplate('attachments_responsive'); ?>
+	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--  	Venue  -->
 	<?php if (($this->item->locid != 0) && !empty($this->item->venue)) : ?>
@@ -388,7 +388,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php endif; ?>
 
 		<?php $this->attachments = $this->item->vattachments; ?>
-		<?php echo $this->loadTemplate('attachments_responsive'); ?>
+		<?php echo $this->loadTemplate('attachments'); ?>
 
 	</div>
 	<?php endif; ?>
@@ -396,7 +396,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<!-- Registration -->
 	<?php if ($this->showAttendees) : ?>
 		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION'); ?></h2>
-		<?php echo $this->loadTemplate('attendees_responsive'); ?>
+		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
 
 	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>

@@ -313,12 +313,12 @@ $location = JemHelper::defineCenterMap($this->form);
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachments'); ?>
-			<?php echo $this->loadTemplate('attachments_responsive'); ?>
+			<?php echo $this->loadTemplate('attachment'); ?>
 			<?php endif; ?>
 
 			<!-- OTHER TAB -->
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-other' ); ?>
-			<?php echo $this->loadTemplate('other_responsive'); ?>
+			<?php echo $this->loadTemplate('other'); ?>
 
 			<?php echo JHtml::_('tabs.end'); ?>
 

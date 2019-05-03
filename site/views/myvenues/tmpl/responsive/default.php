@@ -25,7 +25,7 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<!--table-->
-	<?php echo $this->loadTemplate('venues_responsive');?>
+	<?php echo $this->loadTemplate('venues');?>
 
 	<!--footer-->
 	<div class="copyright">

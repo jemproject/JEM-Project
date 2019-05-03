@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
   <hr class="jem-hr" style="display: none;"/>
 
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
-		<?php echo $this->loadTemplate('events_table_responsive'); ?>
+		<?php echo $this->loadTemplate('events_table'); ?>
 
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />

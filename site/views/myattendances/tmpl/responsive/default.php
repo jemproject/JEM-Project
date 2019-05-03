@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<!--table-->
-	<?php echo $this->loadTemplate('attendances_responsive');?>
+	<?php echo $this->loadTemplate('attendances');?>
 
 	<!--footer-->
 	<div class="copyright">

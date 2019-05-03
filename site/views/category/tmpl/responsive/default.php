@@ -84,7 +84,7 @@ JHtml::_('behavior.modal');
   </h2>
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
 	<!--table-->
-		<?php echo $this->loadTemplate('events_table_responsive'); ?>
+		<?php echo $this->loadTemplate('events_table'); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
