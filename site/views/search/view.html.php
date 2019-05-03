@@ -1,14 +1,12 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0-dev3
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
-require JPATH_COMPONENT_SITE . '/classes/view.class.php';
 
 /**
  * Search-View
@@ -41,7 +39,6 @@ class JemViewSearch extends JemView
 
 		// Load css
 		JemHelper::loadCss('jem');
-    JemHelper::loadIconFont();
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 

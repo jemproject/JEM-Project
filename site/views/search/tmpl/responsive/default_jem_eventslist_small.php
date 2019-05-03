@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0-dev3
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -338,7 +338,8 @@ defined('_JEXEC') or die;
 <?php if ($this->settings->get('global_display',1)) : ?>
   <div class="jem-limit-smallist">
     <?php
-      echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>'
+      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
       echo $this->pagination->getLimitBox();
     ?>
   </div>

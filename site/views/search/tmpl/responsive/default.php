@@ -23,15 +23,18 @@ defined('_JEXEC') or die;
 		<?php echo $this->params->get('introtext'); ?>
 	</div>
 	<?php endif; ?>
-
+  
+  <h2>
+    <?php echo JText::_('COM_JEM_SEARCH_SUBMIT');?>
+  </h2>
 	<!--table-->
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
 		<?php
-		if ($this->params->get('template_suffix')) {
+		/*if ($this->params->get('template_suffix')) {
 			echo $this->loadTemplate('table_'. $this->params->get('template_suffix'));
-		} else {
+		} else {*/
 			echo $this->loadTemplate('table');
-		}
+		//}
 		?>
 
 		<p>
