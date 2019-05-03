@@ -185,14 +185,14 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<?php $this->attachments = $this->venue->attachments; ?>
-	<?php echo $this->loadTemplate('attachments_responsive'); ?>
+	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--table-->
   <h2 class="jem">
 		<?php echo JText::_('COM_JEM_EVENTS'); ?>
 	</h2>
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
-		<?php echo $this->loadTemplate('events_table_responsive'); ?>
+		<?php echo $this->loadTemplate('events_table'); ?>
 
 		<p>
 		<input type="hidden" name="option" value="com_jem" />

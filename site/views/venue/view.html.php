@@ -1,19 +1,17 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0-dev3
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die ();
 
-require JPATH_COMPONENT_SITE.'/classes/view.class.php';
-
 /**
  * Venue-View
  */
-class JemViewVenue extends JEMView
+class JemViewVenue extends JemView
 {
 
 	public function __construct($config = array())
@@ -53,7 +51,6 @@ class JemViewVenue extends JEMView
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCss('calendar');
-      JemHelper::loadIconFont();
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
 
@@ -126,7 +123,7 @@ class JemViewVenue extends JEMView
 			$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
 
 			// init calendar
-			$cal = new JEMCalendar($year, $month, 0);
+			$cal = new JemCalendar($year, $month, 0);
 			$cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 			$cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
@@ -164,9 +161,10 @@ class JemViewVenue extends JEMView
 			$user        = JemFactory::getUser();
 			$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
+			JHtml::_('behavior.tooltip');
+
 			// Load css
 			JemHelper::loadCss('jem');
-      JemHelper::loadIconFont();
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
 
@@ -238,11 +236,11 @@ class JemViewVenue extends JEMView
 			// create the pathway
 			if ($task == 'archive') {
 				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
-				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
+				$print_link = JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			} else {
-				//$pathway->addItem($venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
+				//$pathway->addItem($venue->venue, JRoute::_(JemHelperRoute::getVenueRoute($venue->slug)));
 				$print_link = JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
 			}
 
@@ -324,6 +322,9 @@ class JemViewVenue extends JEMView
 			}
 			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 			$lists['search'] = $search;
+
+			// don't show venue-related columns on Venue view
+			$lists['hide'] = array('venue' => 1);
 
 			// mapping variables
 			$this->lists            = $lists;
