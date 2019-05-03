@@ -179,7 +179,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <?php endif; ?>
           
           <?php /*venue*/ ?>
-          <?php if ($item->venue && $params->get('showvenue', 1) == 1) :?>
+          <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
             <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
               <i class="fa fa-map-marker" aria-hidden="true"></i>
               <?php if ($item->venuelink) : ?>
@@ -191,7 +191,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <?php endif; ?>
 
           <?php /*category*/ ?>
-          <?php if ($params->get('showcategory', 1) == 1) :?>
+          <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
             <div class="category" title="<?php echo JText::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
               <i class="fa fa-tag" aria-hidden="true"></i>
               <?php echo $item->catname; ?>
