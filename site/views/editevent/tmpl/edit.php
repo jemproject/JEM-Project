@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.3.0-dev2
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -207,12 +207,12 @@ function showUnregistraUntil()
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
-			<?php echo $this->loadTemplate('attachments'); ?>
+			<?php echo $this->loadTemplate('attachments_legacy'); ?>
 			<?php endif; ?>
 
 			<!-- OTHER TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
-			<?php echo $this->loadTemplate('other'); ?>
+			<?php echo $this->loadTemplate('other_legacy'); ?>
 
 			<?php echo JHtml::_('tabs.end'); ?>
 

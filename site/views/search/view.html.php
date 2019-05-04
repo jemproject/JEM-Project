@@ -64,7 +64,10 @@ class JemViewSearch extends JemView
 			// Menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_SEARCH'));
 			$pageheading = $params->def('page_heading', $pagetitle);
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		} else {
 			$pagetitle = JText::_('COM_JEM_SEARCH');
 			$pageheading = $pagetitle;

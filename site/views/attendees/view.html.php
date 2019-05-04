@@ -87,7 +87,11 @@ class JemViewAttendees extends JemView
 
 		$pathway = $app->getPathWay();
 		if($menuitem) {
-			$pathway->setItemName(1, $menuitem->title);
+      //https://www.joomlaeventmanager.net/forum/jem-2-2-x-on-joomla-3/10474-category-name-doubled-in-breadcrumb
+      $pathwayKeys = array_keys($pathway->getPathway()); //
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		}
 		$pathway->addItem('Att:'.$event->title);
 

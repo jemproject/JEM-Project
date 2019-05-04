@@ -221,7 +221,10 @@ class JemViewVenue extends JemView
 			if ($useMenuItemParams) {
 				$pagetitle   = $params->get('page_title', $menuitem->title ? $menuitem->title : $venue->venue);
 				$pageheading = $params->get('page_heading', $pagetitle);
-				$pathway->setItemName(1, $menuitem->title);
+        $pathwayKeys = array_keys($pathway->getPathway());
+        $lastPathwayEntryIndex = end($pathwayKeys);
+        $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+        //$pathway->setItemName(1, $menuitem->title);
 			} else {
 				$pagetitle   = $venue->venue;
 				$pageheading = $pagetitle;

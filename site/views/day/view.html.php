@@ -86,7 +86,10 @@ class JemViewDay extends JemView
 		if ($useMenuItemParams) {
 			$pagetitle   = $params->get('page_title', $menuitem->title);
 			$params->def('page_heading', $pagetitle);
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		} else {
 			// TODO: If we can integrate $daydate into page_heading we should set $showdaydate to false.
 			$pagetitle   = JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');

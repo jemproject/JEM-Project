@@ -98,7 +98,10 @@ class JemViewEvent extends JemView
 			// Merge so that the menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem->title ? $menuitem->title : $item->title);
 			$params->def('page_heading', $pagetitle);
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from active query (in case it is an alternative menu item)
 			if (isset($menuitem->query['layout'])) {

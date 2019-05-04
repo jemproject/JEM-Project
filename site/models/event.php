@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0-dev2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -510,15 +510,15 @@ class JemModelEvent extends JModelItem
 			$where[] = 'status = 1';
 		}
 
-		// Get registered users
-		$query = $db->getQuery(true);
-		$query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-		       . $name . ' AS name, r.uid' . $avatar
-		       . ' FROM #__jem_register AS r'
-		       . ' LEFT JOIN #__users AS u ON u.id = r.uid'
-		       . $join
-		       . ' WHERE ' . implode(' AND ', $where);
-		$db->setQuery($query);
+    // Get registered users
+    $query = $db->getQuery(true);
+    $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
+           . $name . ' AS name, r.uid' . $avatar . ', r.comment'
+           . ' FROM #__jem_register AS r'
+           . ' LEFT JOIN #__users AS u ON u.id = r.uid'
+           . $join
+           . ' WHERE ' . implode(' AND ', $where);
+    $db->setQuery($query);
 
 		try {
 			$registered = $db->loadObjectList();

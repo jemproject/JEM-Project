@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.0
+ * @version 2.3.0-dev3
  * @package JEM
  * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -263,7 +263,7 @@ abstract class JHtmlJemHtml
 		} elseif (!empty($attribs)) {
 			$html = '<span '.trim((is_array($attribs) ? JArrayHelper::toString($attribs) : $attribs) . ' /').'><i class="'.$icon.'"></i></span>';
 		} else {
-			$html = '<i class="'.$icon.'"></i>';
+			$html = '<i class="'.$icon.'" aria-hidden="true"></i>';
 		}
 
 		return $html;

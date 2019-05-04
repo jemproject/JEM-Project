@@ -88,7 +88,10 @@ class JemViewEditvenue extends JemView
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
 			$params->def('page_title', $pagetitle);
 			$params->def('page_heading', $pagetitle);
-			$pathway->setItemName(1, $pagetitle);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from menu item if one is set else from venue if there is one set
 			if (isset($menuitem->query['layout'])) {
