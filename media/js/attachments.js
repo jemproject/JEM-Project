@@ -16,19 +16,24 @@ window.addEvent('domready', function() {
 
 	$$('.attach-remove').addEvent('click', function(event){
 		var event = event || window.event;
-
 		$(event.target).style.cursor = 'wait'; /* indicate server request */
+		
+		var clickednode = event.target;    
+		if (!clickednode.hasAttribute('id')) {
+			clickednode = clickednode.getParent();
+		}
 
 		var url = '';
-		var pos = event.target.id.indexOf(':');
+		var pos = clickednode.id.indexOf(':');
 		if (pos >= 0) {
-			var id = event.target.id.substring(13, pos);
-			var token = event.target.id.substr(pos+1);
+			var id = clickednode.id.substring(13, pos);
+			var token = clickednode.id.substr(pos+1);
 			url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id+'&'+token+'=1';
 		} else {
-			var id = event.target.id.substr(13);
+			var id = clickednode.id.substr(13);
 			url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
 		}
+
 		var theAjax = new Request( {
 			url : url,
 			method: 'post',
@@ -38,9 +43,9 @@ window.addEvent('domready', function() {
 		theAjax.addEvent('onSuccess', function(response) {
 			/* server sends 1 on success, 0 on error */
 			if (response.indexOf('1') > -1) {
-				$(event.target).getParent().getParent().dispose();
+				$(clickednode).getParent().getParent().dispose();
 			} else {
-				$(event.target).style.cursor = 'not-allowed'; /* remove failed - how to show? */
+				$(clickednode).style.cursor = 'not-allowed'; /* remove failed - how to show? */
 			}
 		}.bind(this));
 		theAjax.send();
