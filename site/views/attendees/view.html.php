@@ -1,29 +1,32 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
-
 /**
  * Attendees-view
  * @todo fix view
  */
-class JemViewAttendees extends JViewLegacy {
-
+class JemViewAttendees extends JemView
+{
 	public function display($tpl = null)
 	{
 		$app  = JFactory::getApplication();
 		$user = JemFactory::getUser();
+
 		//redirect if not logged in
 		if (!$user->get('id')) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
 		}
+
+		$this->settings    = JemHelper::globalattribs();
+		$this->jemsettings = JemHelper::config();
 
 		if ($this->getLayout() == 'print') {
 			$this->_displayprint($tpl);
@@ -37,9 +40,6 @@ class JemViewAttendees extends JViewLegacy {
 		}
 
 		//initialise variables
-		$this->settings    = JemHelper::globalattribs();
-		$this->jemsettings = JemHelper::config();
-
 		$document	= JFactory::getDocument();
 		$settings	= $this->settings;
 		$params 	= $app->getParams();
@@ -87,7 +87,11 @@ class JemViewAttendees extends JViewLegacy {
 
 		$pathway = $app->getPathWay();
 		if($menuitem) {
-			$pathway->setItemName(1, $menuitem->title);
+      //https://www.joomlaeventmanager.net/forum/jem-2-2-x-on-joomla-3/10474-category-name-doubled-in-breadcrumb
+      $pathwayKeys = array_keys($pathway->getPathway()); //
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		}
 		$pathway->addItem('Att:'.$event->title);
 
@@ -149,7 +153,6 @@ class JemViewAttendees extends JViewLegacy {
 		$document	= JFactory::getDocument();
 		$app		= JFactory::getApplication();
 		$params		= $app->getParams();
-		$settings	= JEMHelper::globalattribs();
 
 		// Load css
 		JemHelper::loadCss('backend');
@@ -169,7 +172,6 @@ class JemViewAttendees extends JViewLegacy {
 		$this->rows 		= $rows;
 		$this->event 		= $event;
 		$this->enableemailaddress = $enableemailaddress;
-		$this->settings		= $settings;
 
 		parent::display($tpl);
 	}
@@ -181,7 +183,6 @@ class JemViewAttendees extends JViewLegacy {
 	{
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$jemsettings = JemHelper::config();
 	//	$db          = JFactory::getDBO();
 		$document    = JFactory::getDocument();
 		$model       = $this->getModel();
@@ -193,7 +194,7 @@ class JemViewAttendees extends JViewLegacy {
 		$filter_type      = '';
 		$search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
 	//	$limitstart       = $jinput->get('limitstart', '0', 'int');
-	//	$limit            = $app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $jemsettings->display_num, 'int');
+	//	$limit            = $app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $this->jemsettings->display_num, 'int');
 	//	$eventId          = !empty($event->id) ? $event->id : 0;
 
 		JHtml::_('behavior.tooltip');

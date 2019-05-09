@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -33,14 +33,16 @@ defined('_JEXEC') or die; ?>
 	</tr>
 </table>
 <br />
+<?php $regname = $this->settings->get('global_regname', '1'); ?>
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th class="title"><?php echo JText::_( 'COM_JEM_USERNAME' ); ?></th>
-			<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
+			<th class="title"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th class="title"><?php echo JText::_( $regname ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME' ); ?></th>
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<?php endif; ?>
+			<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
 			<th class="title"><?php echo JText::_('COM_JEM_STATUS' ); ?></th>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
@@ -50,16 +52,17 @@ defined('_JEXEC') or die; ?>
 
 	<tbody>
 		<?php
-		$regname = $this->settings->get('global_regname', '1');
 		$k = 0;
+		$i = 0;
 		foreach ($this->rows as $row) :
 		?>
 		<tr class="<?php echo "row$k"; ?>">
+			<td><?php echo ++$i; ?></td>
 			<td><?php echo $regname ? $row->name : $row->username; ?></td>
-			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<td><?php echo $row->email; ?></td>
 			<?php endif; ?>
+			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
 			<?php
 			switch ($row->status) :
 			case -1: // explicitely unregistered

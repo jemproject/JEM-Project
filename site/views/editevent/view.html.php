@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -11,7 +11,7 @@ defined('_JEXEC') or die();
 /**
  * Editevent-View
  */
-class JemViewEditevent extends JViewLegacy
+class JemViewEditevent extends JemView
 {
 	protected $form;
 	protected $item;
@@ -102,7 +102,10 @@ class JemViewEditevent extends JViewLegacy
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
 			$params->def('page_title', $pagetitle);
 			$params->def('page_heading', $pagetitle);
-			$pathway->setItemName(1, $pagetitle);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from menu item if one is set else from event if there is one set
 			if (isset($menuitem->query['layout'])) {

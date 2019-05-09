@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -256,7 +256,8 @@ class JemControllerAttendees extends JControllerLegacy
 		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 
 		$cols = array();
-		$cols[] = JText::_('COM_JEM_USERNAME');
+		$cols[] = JText::_('COM_JEM_NUM');
+		$cols[] = JText::_($jemconfig->get('globalattribs.global_regname', 1) ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME');
 		if ($enableemailadress == 1) {
 			$cols[] = JText::_('COM_JEM_EMAIL');
 		}
@@ -268,10 +269,12 @@ class JemControllerAttendees extends JControllerLegacy
 
 		fputcsv($export, $cols, $separator, $delimiter);
 
+		$i = 0;
 		foreach ($datas as $data)
 		{
 			$cols = array();
 
+			$cols[] = ++$i;
 			$cols[] = $data->$userfield;
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
