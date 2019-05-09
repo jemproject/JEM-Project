@@ -28,7 +28,7 @@ defined ('_JEXEC') or die;
 			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" style="width:100px" /></td>
 			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" style="width:100px" /></td>
 			<td><?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox','style'=>'width:100px;','size'=>'3'), 'value', 'text', $file->access); ?></td>
-			<td><?php echo JemOutput::addremovebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></td>
+			<td><?php echo JemOutput::removebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>

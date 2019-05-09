@@ -51,7 +51,7 @@ defined ('_JEXEC') or die;
 					<?php if ($this->jemsettings->attachmentenabled != 0) : ?>
 					<div>
 						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
-						<?php echo JemOutput::addremovebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
+						<?php echo JemOutput::removebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
 					</div>
 					<?php endif; ?>
 				</td>

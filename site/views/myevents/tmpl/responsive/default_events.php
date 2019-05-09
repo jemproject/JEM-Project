@@ -304,7 +304,7 @@ JHtml::_('behavior.tooltip');
 								echo $count;
 							}
 						} else {
-              echo JemOutput::addremovebutton(NULL,NULL);
+              echo JemOutput::removebutton(NULL,NULL);
 						}
 						?>
 					</div>

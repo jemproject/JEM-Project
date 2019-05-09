@@ -207,12 +207,12 @@ function showUnregistraUntil()
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
-			<?php echo $this->loadTemplate('attachments_legacy'); ?>
+			<?php echo $this->loadTemplate('attachments'); ?>
 			<?php endif; ?>
 
 			<!-- OTHER TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
-			<?php echo $this->loadTemplate('other_legacy'); ?>
+			<?php echo $this->loadTemplate('other'); ?>
 
 			<?php echo JHtml::_('tabs.end'); ?>
 
