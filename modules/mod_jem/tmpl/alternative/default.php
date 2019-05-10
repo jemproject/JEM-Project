@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
  * @subpackage JEM Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
