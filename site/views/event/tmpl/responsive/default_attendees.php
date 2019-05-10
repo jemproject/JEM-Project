@@ -81,7 +81,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
           }
         } else {
           function jem_getStatusIcon($status) {
-            return '';
+            return ' <i class="fa fa-li fa-check-circle jem-attendance-status-fa-check-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ATTENDING').'"></i>';
           }
         }
       }
