@@ -131,9 +131,6 @@ defined('_JEXEC') or die;
           ?>
         </dl>
         <?php
-        if ($this->settings->get('global_show_mapserv') == 2) {
-          echo JemOutput::mapicon($this->venue, null, $this->settings);
-        }
       ?>
     </div>
     
@@ -162,18 +159,27 @@ defined('_JEXEC') or die;
 		</dl>
 	<?php endif; ?>
 
-	<?php if ($this->settings->get('global_show_mapserv') == 3) : ?>
-		<input type="hidden" id="latitude" value="<?php echo $this->venue->latitude; ?>">
-		<input type="hidden" id="longitude" value="<?php echo $this->venue->longitude; ?>">
+	<?php
+	$global_show_mapserv = $this->settings->get('global_show_mapserv');
+	if ($global_show_mapserv == 2 || $global_show_mapserv == 3) : ?>
+		<div class="jem-map">
+			<?php if ($global_show_mapserv == 2) : ?>
+				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
+			<?php endif; ?>
 
-		<input type="hidden" id="venue" value="<?php echo $this->venue->venue; ?>">
-		<input type="hidden" id="street" value="<?php echo $this->venue->street; ?>">
-		<input type="hidden" id="city" value="<?php echo $this->venue->city; ?>">
-		<input type="hidden" id="state" value="<?php echo $this->venue->state; ?>">
-		<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode; ?>">
-		<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
+			<?php if ($global_show_mapserv == 3) : ?>
+				<input type="hidden" id="latitude" value="<?php echo $this->venue->latitude; ?>">
+				<input type="hidden" id="longitude" value="<?php echo $this->venue->longitude; ?>">
+
+				<input type="hidden" id="venue" value="<?php echo $this->venue->venue; ?>">
+				<input type="hidden" id="street" value="<?php echo $this->venue->street; ?>">
+				<input type="hidden" id="city" value="<?php echo $this->venue->city; ?>">
+				<input type="hidden" id="state" value="<?php echo $this->venue->state; ?>">
+				<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode; ?>">
+				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
+			<?php endif; ?>
+		</div>
 	<?php endif; ?>
-
 
 	<?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
 	          $this->venuedescription != '<br />') : ?>

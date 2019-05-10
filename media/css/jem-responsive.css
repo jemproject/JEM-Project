@@ -387,6 +387,16 @@ body.com_jem.body-overlayed {
   flex: 1 4%;
 }
 
+#jem div.jem-map {
+	padding-top: 15px;
+	padding-bottom: 5px;
+}
+
+#jem div.jem-map iframe {
+	width: 100%;
+	height: 300px;
+}
+
 #jem.jem_myevents .jem-event, #jem.jem_myvenues .jem-event, #jem.jem_myattendances .jem-event {
   cursor: auto;
 }
