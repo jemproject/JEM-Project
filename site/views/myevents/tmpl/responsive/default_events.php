@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.0-dev3
+ * @version 2.3.0
  * @package JEM
  * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -304,7 +304,7 @@ JHtml::_('behavior.tooltip');
 								echo $count;
 							}
 						} else {
-              echo JemOutput::addremovebutton(NULL,NULL);
+              echo JemOutput::removebutton(NULL,NULL);
 						}
 						?>
 					</div>

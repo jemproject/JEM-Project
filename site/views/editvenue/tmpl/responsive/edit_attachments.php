@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -33,7 +33,7 @@ defined ('_JEXEC') or die;
             <?php if ($this->jemsettings->attachmentenabled != 0) : ?>  
               <?php //This button just deletes the dl because two times more getParent() in attachment.js is required?>
               <dt><?php echo JText::_('COM_JEM_ATTACHMENT_REMOVE'); ?></dt>
-              <dd><?php echo JemOutput::addremovebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></dd>
+              <dd><?php echo JemOutput::removebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></dd>
             <?php endif; ?>
           <dl>
 				</td>

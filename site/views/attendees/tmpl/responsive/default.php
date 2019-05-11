@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.0-dev3
+ * @version 2.3.0
  * @package JEM
  * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -162,7 +162,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             
             <div class="jem-event-info-small jem-attendee-remove">
               <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
-                <?php echo JemOutput::addremovebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip')); ?>
+                <?php echo JemOutput::removebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip')); ?>
               </a>
             </div>
           </li>

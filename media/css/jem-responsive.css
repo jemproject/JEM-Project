@@ -111,6 +111,10 @@ body.com_jem.body-overlayed {
   max-width: 100%;
 }
 
+#jem .jem-registered-list {
+	margin-left: calc(2.14285714em / 1.5);
+}
+
 #jem .jem-registered-list img {
   width: 30px;
 }
@@ -381,6 +385,16 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-remove {
   flex: 1 4%;
+}
+
+#jem div.jem-map {
+	padding-top: 15px;
+	padding-bottom: 5px;
+}
+
+#jem div.jem-map iframe {
+	width: 100%;
+	height: 300px;
 }
 
 #jem.jem_myevents .jem-event, #jem.jem_myvenues .jem-event, #jem.jem_myattendances .jem-event {

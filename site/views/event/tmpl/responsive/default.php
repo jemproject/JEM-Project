@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0-dev2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -337,23 +337,6 @@ JHtml::_('behavior.modal', 'a.flyermodal');
         <div class="jem-img">
           <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
         </div>
-
-        <?php if ($params->get('event_show_mapserv') == 2) : ?>
-          <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-        <?php endif; ?>
-
-        <?php if ($params->get('event_show_mapserv') == 3) : ?>
-          <input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
-          <input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
-
-          <input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
-          <input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
-          <input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
-          <input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
-          <input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
-
-          <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-        <?php endif; ?>
       <?php else : // $params->get('event_show_detailsadress', '1') == 0 ?>
         <div class="jem-grow-2">
           <dl class="jem-dl" itemprop="address" itemscope
@@ -378,6 +361,29 @@ JHtml::_('behavior.modal', 'a.flyermodal');
         </div>        
       <?php endif; /* event_show_detailsadress */ ?>
     </div>
+		
+		<?php
+		$event_show_mapserv = $params->get('event_show_mapserv');
+		if ($event_show_mapserv == 2 || $event_show_mapserv == 3) : ?>
+			<div class="jem-map">
+				<?php if ($event_show_mapserv == 2) : ?>
+					<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+				<?php endif; ?>
+
+				<?php if ($event_show_mapserv == 3) : ?>
+					<input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
+					<input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
+
+					<input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
+					<input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
+					<input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
+					<input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
+					<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
+
+					<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+				<?php endif; ?>
+			</div>
+		<?php endif; ?>
 
 		<?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
 		       && $this->item->locdescription != '<br />') : ?>
@@ -395,6 +401,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<!-- Registration -->
 	<?php if ($this->showAttendees) : ?>
+		<hr class="jem-hr">
 		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION'); ?></h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
