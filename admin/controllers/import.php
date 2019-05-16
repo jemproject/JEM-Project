@@ -104,7 +104,7 @@ class JemControllerImport extends JControllerLegacy
 
 				// convert from ansi to utf-8 if required
 				if ($convert) {
-					$msg .= "<p>BOM not found ... converting to UTF-8</p>\n";
+					$msg .= "<p>".JText::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
 					array_walk($data, 'jem_convert_ansi2utf8');
 				}
 
