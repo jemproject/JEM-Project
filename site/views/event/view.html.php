@@ -164,6 +164,13 @@ class JemViewEvent extends JemView
 		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
 
+		$tempVenue = new stdClass();
+		$tempVenue->text = $item->locdescription;
+		$tempVenue->title = $item->venue;
+		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
+		$item->locdescription = $tempVenue->text;
+		$item->venue = $tempVenue->title;
+		
 		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
 			$model->hit();
