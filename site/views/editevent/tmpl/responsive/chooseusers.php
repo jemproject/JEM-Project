@@ -45,52 +45,63 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<h1 class='componentheading'>
 		<?php echo JText::_('COM_JEM_SELECT_USERS_TO_INVITE'); ?>
 	</h1>
-
-	<div class="jem_fright">
-		<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo JText::_('COM_JEM_SAVE'); ?></button>
-	</div>
-
+	
 	<div class="clr"></div>
 
 	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=editevent&layout=chooseusers&tmpl=component&function='.$this->escape($function).'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
 		<?php if(0) : ?>
-		<div id="jem_filter" class="floattext">
-			<div class="jem_fleft">
-				<?php
-				echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-				echo $this->searchfilter.'&nbsp;';
-				?>
-				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
-				<button type="submit" class="pointer"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button type="button" class="pointer" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-				<?php /*<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '0');"><?php echo JText::_('COM_JEM_NOUSERS')?></button>*/ ?>
-			</div>
-			<div class="jem_fright">
-				<?php
-				echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-				echo $this->pagination->getLimitBox();
-				?>
-			</div>
-		</div>
-		<?php endif; ?>
+		<div class="jem-row valign-baseline">
+			<div id="jem_filter" class="jem-form jem-row jem-justify-start">
+				<div>
+					<?php
+					echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+					?>
+				</div>
+				<div class="jem-row jem-justify-start jem-nowrap">
+          <?php echo $this->searchfilter.'&nbsp;'; ?>
+          <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
+        </div>
+				<div class="jem-row jem-justify-start jem-nowrap">
+          <button type="submit" class="pointer btn"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+					<button type="button" class="pointer btn" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+					<?php /*<button type="button" class="pointer btn" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '0');"><?php echo JText::_('COM_JEM_NOUSERS')?></button>*/ ?>
+        </div>
+      </div>
+			<div class="jem-row jem-justify-start jem-nowrap">
+        <div>
+          <?php echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;'; ?>
+        </div>
+        <div>&nbsp;</div>
+        <div>
+          <?php echo $this->pagination->getLimitBox(); ?>
+        </div>
+      </div>
+    </div>
+		<?php endif;?>
+		
+		<hr class="jem-hr"/>
+    
+    <div class="jem-sort jem-sort-small">
+      <div class="jem-list-row jem-small-list">
+        <div class="sectiontableheader jem-users-number"><?php echo JText::_('COM_JEM_NUM'); ?></div>
+        <div class="sectiontableheader jem-users-checkall"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></div>
+        <div class="sectiontableheader jem-users-name"><?php echo JText::_('COM_JEM_NAME'); ?></div>
+        <div class="sectiontableheader jem-users-state"><?php echo JText::_('COM_JEM_STATUS'); ?></div>
+      </div>
+    </div>
 
-		<table class="eventtable" style="width:100%" summary="jem">
-			<thead>
-				<tr>
-					<th width="1%" class="sectiontableheader"><?php echo JText::_('COM_JEM_NUM'); ?></th>
-					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-					<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_NAME'); ?></th>
-					<th width="10%" class="center"><?php echo JText::_('COM_JEM_STATUS'); ?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php if (empty($this->rows)) : ?>
-					<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NOUSERS'); ?></td></tr>
-				<?php else :?>
-					<?php foreach ($this->rows as $i => $row) : ?>
-					<tr class="row<?php echo $i % 2; ?>">
-						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-						<td class="center"><?php
+		<ul class="eventlist eventtable">
+      <?php if (empty($this->rows)) : ?>
+        <li class="jem-event jem-list-row jem-small-list"><?php echo JText::_('COM_JEM_NOUSERS'); ?></li>
+      <?php else :?>
+        <?php foreach ($this->rows as $i => $row) : ?>
+          <li class="jem-event jem-list-row jem-small-list row<?php echo $i % 2; ?>">
+            <div class="jem-event-info-small jem-users-number">
+              <?php echo $this->pagination->getRowOffset( $i ); ?>
+            </div>
+            
+            <div class="jem-event-info-small jem-users-checkall">
+              <?php
 							//echo JHtml::_('grid.id', $i, $row->id);
 							$cb = JHtml::_('grid.id', $i, $row->id);
 							if ($row->status == 0) {
@@ -100,14 +111,20 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 							//	JemHelper::addLogEntry('after:  '.$cb, __METHOD__);
 							}
 							echo $cb;
-						?></td>
-						<td align="left"><?php echo $this->escape($row->name); ?></td>
-						<td class="center"><?php echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->status, 0, false); ?></td>
-					</tr>
-					<?php endforeach; ?>
-				<?php endif; ?>
-			</tbody>
-		</table>
+							?>
+            </div>
+            
+            <div class="jem-event-info-small jem-users-name">
+              <?php echo $this->escape($row->name); ?>
+            </div>
+            
+            <div class="jem-event-info-small jem-users-state">
+              <?php echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->status, 0, false); ?>
+            </div>
+          </li>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </ul>
 
 		<input type="hidden" name="task" value="selectusers" />
 		<input type="hidden" name="option" value="com_jem" />
@@ -121,4 +138,10 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
+	
+	<hr class="jem-hr"/>
+	
+	<div class="jem-row jem-justify-end">
+    <button type="button" class="pointer btn" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo JText::_('COM_JEM_SAVE'); ?></button>
+  </div>
 </div>
