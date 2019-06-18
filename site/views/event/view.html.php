@@ -76,7 +76,7 @@ class JemViewEvent extends JemView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			JError::raiseWarning(500, implode("\n", $errors));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
 			return false;
 		}
 
@@ -136,7 +136,7 @@ class JemViewEvent extends JemView
 
 		// Check the view access to the event (the model has already computed the values).
 		if (!$item->params->get('access-view')) { // && !$item->params->get('show_noauth') &&  $user->get('guest')) { - not supported yet
-			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			return;
 		}
 
@@ -282,11 +282,11 @@ class JemViewEvent extends JemView
 			$description = explode("[", $this->item->meta_description);
 			$description_content = "";
 			foreach ($description as $desc) {
-				$endpos = JString::strpos($desc, "]", 0);
+				$endpos = \Joomla\String\StringHelper::strpos($desc, "]", 0);
 				if ($endpos > 0) {
-					$keyword = JString::substr($desc, 0, $endpos);
+					$keyword = \Joomla\String\StringHelper::substr($desc, 0, $endpos);
 					$description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-					$description_content .= JString::substr($desc, $endpos + 1);
+					$description_content .= \Joomla\String\StringHelper::substr($desc, $endpos + 1);
 				} else {
 					$description_content .= $desc;
 				}

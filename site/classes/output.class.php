@@ -875,7 +875,7 @@ class JemOutput
 		$output = null;
 		$attributes = null;
 
-		$data->country = JString::strtoupper($data->country);
+		$data->country = \Joomla\String\StringHelper::strtoupper($data->country);
 
 		if ($data->latitude == 0.000000) {
 			$data->latitude = null;

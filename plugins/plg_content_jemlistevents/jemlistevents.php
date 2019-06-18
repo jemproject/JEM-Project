@@ -15,7 +15,7 @@ defined('_JEXEC') or die();
 // No, it's part of JEM package yet.
 //// Check if JEM is installed.
 //if (!JComponentHelper::isEnabled('com_jem', true)) {
-//	return JError::raiseError(JText::_('ERROR'), JText::_('Listevents for JEM works only if JoomlaEventManager (JEM) is installed: <a href=\'https://www.joomlaeventmanager.net\' target=\'_blank\'>www.joomlaeventmanager.net</a>'));
+//	throw new Exception(JText::_('Listevents for JEM works only if JoomlaEventManager (JEM) is installed: <a href=\'https://www.joomlaeventmanager.net\' target=\'_blank\'>www.joomlaeventmanager.net</a>'), 500);
 //	die();
 //}
 
@@ -123,7 +123,7 @@ class PlgContentJemlistevents extends JPlugin
 		}
 
 		// simple performance check to determine whether the bot should process further
-		if (!isset($row->text) || JString::strpos($row->text, 'jemlistevents') === false) {
+		if (!isset($row->text) || \Joomla\String\StringHelper::strpos($row->text, 'jemlistevents') === false) {
 			return true;
 		}
 

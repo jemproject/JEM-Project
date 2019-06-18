@@ -47,7 +47,7 @@ class JFormFieldVenueoptions extends JFormFieldList
 		}
 		elseif (is_array($published))
 		{
-			JArrayHelper::toInteger($published);
+			\Joomla\Utilities\ArrayHelper::toInteger($published);
 			$query->where('l.published IN (' . implode(',', $published) . ')');
 		}
 
@@ -63,7 +63,7 @@ class JFormFieldVenueoptions extends JFormFieldList
 		}
 		catch (RuntimeException $e)
 		{
-			JError::raiseWarning(500, $e->getMessage);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage, 'warning');
 		}
 
 		// Merge any additional options in the XML definition.

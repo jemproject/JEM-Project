@@ -204,7 +204,6 @@ class JemModelVenue extends JemModelEventslist
 		$_venue = $db->loadObject();
 
 		if (empty($_venue)) {
-			//return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
 			return false;
 		}

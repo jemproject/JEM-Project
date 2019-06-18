@@ -39,7 +39,7 @@ class JemViewImagehandler extends JViewLegacy
 		//get vars
 		$task   = $app->input->get('task', '');
 		$search = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
-		$search = trim(JString::strtolower($search));
+		$search = trim(\Joomla\String\StringHelper::strtolower($search));
 
 		//set variables
 		if ($task == 'selecteventimg') {
@@ -82,7 +82,7 @@ class JemViewImagehandler extends JViewLegacy
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
-			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_NO_IMAGES_AVAILABLE'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
 			$this->setLayout('uploadimage');
 			$app->input->set('task', $task);
 			$this->_displayuploadimage($tpl);

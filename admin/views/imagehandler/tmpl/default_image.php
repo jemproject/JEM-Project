@@ -24,6 +24,6 @@ defined('_JEXEC') or die;
 		</a>
 	</div>
 	<div class="imageinfo">
-		<?php echo $this->escape(JString::substr($this->_tmp_img->name, 0, 10) . (JString::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
+		<?php echo $this->escape(\Joomla\String\StringHelper::substr($this->_tmp_img->name, 0, 10) . (\Joomla\String\StringHelper::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
 	</div>
 </div>

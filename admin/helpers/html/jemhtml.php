@@ -39,7 +39,7 @@ abstract class JHtmlJemHtml
 						'COM_JEM_EVENTS_TOGGLE_TO_UNFEATURE'
 				)
 		);
-		$state = JArrayHelper::getValue($states, (int) $value, $states[1]);
+		$state = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[1]);
 		$no_iconfont = (bool)JFactory::getApplication()->isAdmin(); // requires font and css loaded which isn't yet on backend
 		$html = JHtml::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-featured-'.$state[1], $state[3], null, $no_iconfont);
 		if ($canChange) {
@@ -78,7 +78,7 @@ abstract class JHtmlJemHtml
 						'COM_JEM_ON_WAITINGLIST'
 				)
 		);
-		$state = JArrayHelper::getValue($states, (int) $value, $states[1]);
+		$state = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[1]);
 		$no_iconfont = (bool)JFactory::getApplication()->isAdmin(); // requires font and css loaded which isn't yet on backend
 		$html = JHtml::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $no_iconfont);
 		if ($canChange) {
@@ -143,7 +143,7 @@ abstract class JHtmlJemHtml
 				)
 		);
 
-		$state   = JArrayHelper::getValue($states, (int) $value, $states[-99]);
+		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
 
 		if ($print) {
 			$result = JText::_($state[5]);
@@ -210,7 +210,7 @@ abstract class JHtmlJemHtml
 		);
 
 		$backend = (bool)JFactory::getApplication()->isAdmin();
-		$state   = JArrayHelper::getValue($states, (int) $value, $states[-99]);
+		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
 
 		if (version_compare(JVERSION, '3.3', 'lt')) {
 			// on Joomla! 2.5/3.2 we use good old tooltips
@@ -261,7 +261,7 @@ abstract class JHtmlJemHtml
 		if (!$useiconfont) {
 			$html = JHtml::_('image', $image, JText::_($alt), $attribs, $relative);
 		} elseif (!empty($attribs)) {
-			$html = '<span '.trim((is_array($attribs) ? JArrayHelper::toString($attribs) : $attribs) . ' /').'><i class="'.$icon.'"></i></span>';
+			$html = '<span '.trim((is_array($attribs) ? \Joomla\Utilities\ArrayHelper::toString($attribs) : $attribs) . ' /').'><i class="'.$icon.'"></i></span>';
 		} else {
 			$html = '<i class="'.$icon.'" aria-hidden="true"></i>';
 		}

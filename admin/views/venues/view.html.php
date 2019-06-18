@@ -41,7 +41,7 @@ defined('_JEXEC') or die;
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			JError::raiseError(500, implode("\n", $errors));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 

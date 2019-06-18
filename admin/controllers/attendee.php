@@ -125,7 +125,7 @@ class JemControllerAttendee extends JControllerLegacy
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-					JError::raiseNotice(100, JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 				}
 			}
 

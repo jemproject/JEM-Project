@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
 
 					<?php echo JText::_('COM_JEM_FTP_DESC'); ?>
 
-					<?php if(JError::isError($this->ftp)): ?>
+					<?php if($this->ftp INSTANCEOF Exception): ?>
 						<p><?php echo JText::_($this->ftp->message); ?></p>
 					<?php endif; ?>
 

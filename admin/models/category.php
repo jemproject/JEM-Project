@@ -400,7 +400,7 @@ class JemModelCategory extends JModelAdmin
 	{
 		// $value comes as {parent_id}.{extension}
 		$parts = explode('.', $value);
-		$parentId = (int) JArrayHelper::getValue($parts, 0, 1);
+		$parentId = (int) \Joomla\Utilities\ArrayHelper::getValue($parts, 0, 1);
 
 		$table = $this->getTable();
 		$db = $this->getDbo();
@@ -664,7 +664,7 @@ class JemModelCategory extends JModelAdmin
 		if (!empty($children)) {
 			// Remove any duplicates and sanitize ids.
 			$children = array_unique($children);
-			JArrayHelper::toInteger($children);
+			\Joomla\Utilities\ArrayHelper::toInteger($children);
 
 			// Check for a database error.
 			if ($db->getErrorNum()) {
@@ -715,8 +715,8 @@ class JemModelCategory extends JModelAdmin
 		// Alter the title & alias
 		$table = $this->getTable();
 		while ($table->load(array('alias' => $alias, 'parent_id' => $parent_id))) {
-			$title = JString::increment($title);
-			$alias = JString::increment($alias, 'dash');
+			$title = \Joomla\String\StringHelper::increment($title);
+			$alias = \Joomla\String\StringHelper::increment($alias, 'dash');
 		}
 
 		return array($title, $alias);
@@ -752,7 +752,7 @@ class JemModelCategory extends JModelAdmin
 	 */
 	public function delete(&$cids)
 	{
-		JArrayHelper::toInteger($cids);
+		\Joomla\Utilities\ArrayHelper::toInteger($cids);
 
 		// Add all children to the list
 		foreach ($cids as $id) {
@@ -762,7 +762,7 @@ class JemModelCategory extends JModelAdmin
 		$cids = implode(',', $cids);
 
 		if (strlen($cids) == 0) {
-			JError::raiseError(500, $this->_db->stderr());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->stderr(), 'error');
 			return false;
 		}
 
@@ -773,7 +773,7 @@ class JemModelCategory extends JModelAdmin
 		$this->_db->setQuery($query);
 
 		if (!($rows = $this->_db->loadObjectList())) {
-			JError::raiseError(500, $this->_db->stderr());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->stderr(), 'error');
 			return false;
 		}
 

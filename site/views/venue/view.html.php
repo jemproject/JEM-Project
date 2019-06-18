@@ -285,8 +285,8 @@ class JemViewVenue extends JemView
 			}
 
 			// prepare the url for output
-			if (JString::strlen($venue->url) > 35) {
-				$venue->urlclean = $this->escape(JString::substr($venue->url, 0, 35)) . '...';
+			if (\Joomla\String\StringHelper::strlen($venue->url) > 35) {
+				$venue->urlclean = $this->escape(\Joomla\String\StringHelper::substr($venue->url, 0, 35)) . '...';
 			} else {
 				$venue->urlclean = $this->escape($venue->url);
 			}

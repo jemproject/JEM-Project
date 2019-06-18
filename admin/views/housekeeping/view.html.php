@@ -23,7 +23,7 @@ class JemViewHousekeeping extends JemAdminView
 
 		//only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
 		}
 

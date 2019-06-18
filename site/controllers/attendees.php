@@ -50,7 +50,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$comment = '';
 		$fid     = $jinput->getInt('Itemid', 0);
 		$uids    = explode(',', $jinput->getString('uids', ''));
-		JArrayHelper::toInteger($uids);
+		\Joomla\Utilities\ArrayHelper::toInteger($uids);
 		$uids    = array_filter($uids);
 		$uids    = array_unique($uids);
 		$total   = is_array($uids) ? count($uids) : 0;
@@ -141,7 +141,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$total  = is_array($cid) ? count($cid) : 0;
 
 		if ($total < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+			throw new Exception(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
 		}
 
 		$modelAttendeeList = $this->getModel('attendees');

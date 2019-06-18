@@ -263,7 +263,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             <div class="jem-event-info-small jem-myattendances-comments">
               <?php
               $len  = ($this->print) ? 256 : 16;
-              $cmnt = (JString::strlen($row->comment) > $len) ? (JString::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
+              $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > $len) ? (\Joomla\String\StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
               if (!empty($cmnt)) :
                 echo ($this->print) ? $cmnt : JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null);
               endif;

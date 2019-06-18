@@ -83,7 +83,7 @@ class JemModelEditvenue extends JemModelVenue
 		}
 
 		$properties = $table->getProperties(1);
-		$value = JArrayHelper::toObject($properties, 'JObject');
+		$value = \Joomla\Utilities\ArrayHelper::toObject($properties, 'JObject');
 
 		if ($doCopy) {
 			$value->id = 0;

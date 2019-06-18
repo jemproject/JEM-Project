@@ -76,7 +76,7 @@ class JemControllerMyvenues extends JControllerLegacy
 		$cid = $input->get('cid', array(), 'array');
 
 		if (empty($cid)) {
-			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
 			$this->setRedirect(JemHelperRoute::getMyVenuesRoute());
 			return;
 		}

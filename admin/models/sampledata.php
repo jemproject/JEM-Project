@@ -58,7 +58,7 @@ class JemModelSampledata extends JModelLegacy
 	public function loadData()
 	{
 		if ($this->checkForJemData()) {
-			JError::raiseWarning(100, JText::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'), 'warning');
 			return false;
 		}
 
@@ -89,7 +89,7 @@ class JemModelSampledata extends JModelLegacy
 
 		// delete temporary extraction folder
 		if (!$this->deleteTmpFolder()) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
 		}
 
 		return true;
@@ -117,7 +117,7 @@ class JemModelSampledata extends JModelLegacy
 		$result = JArchive::extract($archive, $extractdir);
 
 		if ($result === false) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
 			return false;
 		}
 

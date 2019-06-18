@@ -250,7 +250,7 @@ class JemModelAttendees extends JModelLegacy
 		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
 		$filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
 		$search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-		$search         = $this->_db->escape(trim(JString::strtolower($search)));
+		$search         = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		$where = array();
 		$where[] = 'r.event = '.$this->_db->Quote($this->_id);
@@ -323,13 +323,13 @@ class JemModelAttendees extends JModelLegacy
 	{
 		if (is_array($cid) && count($cid))
 		{
-			JArrayHelper::toInteger($cid);
+			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
 
 			$this->_db->setQuery($query);
 
 			if ($this->_db->execute() === false) {
-				JError::raiseError(1001, $this->_db->getErrorMsg());
+				throw new Exception($this->_db->getErrorMsg(), 1001);
 			}
 
 			// clear attendees cache
@@ -436,7 +436,7 @@ class JemModelAttendees extends JModelLegacy
 		$filter_order_Dir = '';
 		$filter_type      = '1';
 		$search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
-		$search           = $this->_db->escape(trim(JString::strtolower($search)));
+		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
 		$db    = JFactory::getDBO();

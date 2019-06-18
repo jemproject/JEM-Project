@@ -43,7 +43,7 @@ class JemControllerVenue extends JemControllerForm
 		// Initialise variables.
 		$user = JemFactory::getUser();
 		// venues don't have a category yet
-		//$categoryId = JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
+		//$categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 
 		if ($user->can('add', 'venue')) {
 			return true;
@@ -238,7 +238,7 @@ class JemControllerVenue extends JemControllerForm
 
 			// but show warning if mailer is disabled
 			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-				JError::raiseNotice(100, JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 			}
 		}
 	}

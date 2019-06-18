@@ -65,7 +65,7 @@ class JFormFieldModal_Users extends JFormField
 			$count = (int)$db->loadResult();
 
 			if ($error = $db->getErrorMsg()) {
-				JError::raiseWarning(500, $error);
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
 			}
 		} else {
 			$count = 0;

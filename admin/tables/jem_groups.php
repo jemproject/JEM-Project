@@ -43,7 +43,7 @@ class jem_groups extends JTable
 		// Not typed in a category name?
 		if (trim($this->name) == '') {
 			$this->_error = JText::_('COM_JEM_ADD_GROUP_NAME');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -53,7 +53,7 @@ class jem_groups extends JTable
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_GROUP_NAME_ALREADY_EXIST', $this->name));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_GROUP_NAME_ALREADY_EXIST', $this->name), 'warning');
 			return false;
 		}
 

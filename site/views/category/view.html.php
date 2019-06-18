@@ -182,7 +182,7 @@ class JemViewCategory extends JemView
 
 			if ($category == false)
 			{
-				return JError::raiseError(404, JText::_('JGLOBAL_CATEGORY_NOT_FOUND'));
+				throw new Exception(JText::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
 			}
 
 			// are events available?

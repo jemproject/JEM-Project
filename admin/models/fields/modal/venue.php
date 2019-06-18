@@ -56,7 +56,7 @@ class JFormFieldModal_Venue extends JFormField
 		$venue = $db->loadResult();
 
 		if ($error = $db->getErrorMsg()) {
-			JError::raiseWarning(500, $error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
 		}
 
 		if (empty($venue)) {

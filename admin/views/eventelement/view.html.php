@@ -34,7 +34,7 @@ class JemViewEventelement extends JViewLegacy {
 		$filter_type      = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_type',   'filter_type', 0, 'int');
 		$filter_state     = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state',  'filter_state', '', 'string');
 		$filter_search    = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$filter_search    = $db->escape(trim(JString::strtolower($filter_search)));
+		$filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
 
 		//prepare the document
 		$document->setTitle(JText::_('COM_JEM_SELECTEVENT'));

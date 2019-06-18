@@ -214,7 +214,7 @@ $this->lists['sort_by'] = JHtml::_('select.genericlist', $sort_by, 'sort_by', ar
 					</div>
 					<?php if (array_key_exists('comment', $a_span)) : ?>
 					<div class="span<?php echo $a_span['comment']; ?> comment">
-						<?php $cmnt = (JString::strlen($row->comment) > 16) ? (JString::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+						<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 						<?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
 					</div>
 					<?php endif;?>

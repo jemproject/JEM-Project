@@ -72,7 +72,7 @@ class JemModelCategoryelement extends JModelLegacy
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
 		$filter_state     = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
 		$search           = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search           = $db->escape(trim(JString::strtolower($search)));
+		$search           = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
@@ -112,7 +112,7 @@ class JemModelCategoryelement extends JModelLegacy
 
 		// Check for a database error.
 		if ($db->getErrorNum()) {
-			JError::raiseNotice(500, $db->getErrorMsg());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		}
 
 		if (!$mitems) {

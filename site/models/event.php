@@ -182,12 +182,12 @@ class JemModelEvent extends JModelItem
 
 				$this->_item[$pk] = $data;
 			}
-			catch (JException $e)
+			catch (Exception $e)
 			{
 				if ($e->getCode() == 404) {
 					// Need to go thru the error handler to allow Redirect to
 					// work.
-					JError::raiseError(404, $e->getMessage());
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 					return false;
 				}
 				else {
@@ -349,7 +349,7 @@ class JemModelEvent extends JModelItem
 			$query->where('c.id '.$type.(int) $categoryId);
 		}
 		elseif (is_array($categoryId) && count($categoryId)) {
-			JArrayHelper::toInteger($categoryId);
+			\Joomla\Utilities\ArrayHelper::toInteger($categoryId);
 			$categoryId = implode(',', $categoryId);
 			$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
 			$query->where('c.id '.$type.' ('.$categoryId.')');
@@ -653,7 +653,7 @@ class JemModelEvent extends JModelItem
 
 		// Must be logged in
 		if ($uid < 1) {
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return;
 		}
 
@@ -693,7 +693,7 @@ class JemModelEvent extends JModelItem
 
 		// Acting user must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 
@@ -719,7 +719,7 @@ class JemModelEvent extends JModelItem
 
 		// Must be logged in
 		if ($userid < 1) {
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return;
 		}
 
@@ -727,7 +727,7 @@ class JemModelEvent extends JModelItem
 		$this->_db->SetQuery($query);
 
 		if ($this->_db->execute() === false) {
-			JError::raiseError(500, $this->_db->getErrorMsg());
+			throw new Exception($this->_db->getErrorMsg(), 500);
 		}
 
 		return true;

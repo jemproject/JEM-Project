@@ -76,7 +76,7 @@ class jem_categories extends JTableNested
 		// Not typed in a category name?
 		if (trim($this->catname) == '') {
 			$this->_error = JText::_('COM_JEM_ADD_NAME_CATEGORY');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -93,7 +93,7 @@ class jem_categories extends JTableNested
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_CATEGORY_NAME_ALREADY_EXIST', $this->catname));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_CATEGORY_NAME_ALREADY_EXIST', $this->catname), 'warning');
 			return false;
 		}
 		*/

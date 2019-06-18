@@ -58,12 +58,12 @@ class JemAttachment extends JObject
 			// check if the filetype is valid
 			$fileext = strtolower(JFile::getExt($file));
 			if (!in_array($fileext, $allowed)) {
-				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file);
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
 				continue;
 			}
 			// check size
 			if ($rec['size'] > $maxsizeinput) {
-				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $rec['size'], $maxsizeinput));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $rec['size'], $maxsizeinput), 'warning');
 				continue;
 			}
 
@@ -71,7 +71,7 @@ class JemAttachment extends JObject
 				// try to create it
 				$res = JFolder::create($path);
 				if (!$res) {
-					JError::raiseWarning(0, JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path, 'warning');
 					return false;
 				}
 			}
@@ -108,7 +108,7 @@ class JemAttachment extends JObject
 			$table->added_by = $user->get('id');
 
 			if (!($table->check() && $table->store())) {
-				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError());
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError(), 'warning');
 			}
 		} // foreach
 
@@ -130,7 +130,7 @@ class JemAttachment extends JObject
 		$table->bind($attach);
 
 		if (!($table->check() && $table->store())) {
-			JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError(), 'warning');
 			return false;
 		}
 
@@ -210,16 +210,16 @@ class JemAttachment extends JObject
 		$res = $db->loadObject();
 
 		if (!$res) {
-			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
+			throw new Exception(JText::_('COM_JEM_FILE_NOT_FOUND'), 404);
 		}
 
 		if (!in_array($res->access, $levels)) {
-			JError::raiseError(403, JText::_('COM_JEM_NO_ACCESS'));
+			throw new Exception(JText::_('COM_JEM_NO_ACCESS'), 403);
 		}
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
 		if (!file_exists($path)) {
-			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
+			throw new Exception(JText::_('COM_JEM_FILE_NOT_FOUND'), 404);
 		}
 
 		return $path;

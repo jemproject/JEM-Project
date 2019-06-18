@@ -95,7 +95,7 @@ class JemModelExport extends JModelList
 
 		// check if specific category's have been selected
 		if (! empty($cats)) {
-			JArrayHelper::toInteger($cats);
+			\Joomla\Utilities\ArrayHelper::toInteger($cats);
 			$query->where('  c.id IN (' . implode(',', $cats) . ')');
 		}
 
@@ -317,7 +317,7 @@ class JemModelExport extends JModelList
 
 		// Check for a database error.
 		if ($db->getErrorNum()){
-			JError::raiseNotice(500, $db->getErrorMsg());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		}
 
 		if (!$mitems) {

@@ -215,12 +215,12 @@ class com_jemInstallerScript
 	{
 		// Are we installing in J2.5?
 		$jversion = new JVersion();
-		if (version_compare(JVERSION, '4.0', 'ge')                         ||  // J! 4.x NOT supported!
+		if (version_compare(JVERSION, '4.0.1', 'ge')                       ||  // J! 4.x NOT supported, but allow alpha/beta
 			!(($jversion->RELEASE >= '3.4' && $jversion->DEV_LEVEL >= '0') ||
 		      ($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
 		      ($jversion->RELEASE == '3.2' && $jversion->DEV_LEVEL >= '7') ||
 		      ($jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL >= '24'))) {
-			Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
 			return false;
 		}
 
@@ -229,7 +229,7 @@ class com_jemInstallerScript
 
 		// Abort if PHP release is older than required version
 		if(version_compare(PHP_VERSION, $minPhpVersion, '<')) {
-			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'warning');
 			return false;
 		}
 
@@ -237,7 +237,7 @@ class com_jemInstallerScript
 		if (version_compare(phpversion(), '5.4', '<') ) {
 			if (function_exists('get_magic_quotes_gpc')) {
 				if(get_magic_quotes_gpc()) {
-					Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_MAGIC_QUOTES_ENABLED'));
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_PREFLIGHT_MAGIC_QUOTES_ENABLED'), 'warning');
 					return false;
 				}
 			}
@@ -249,7 +249,7 @@ class com_jemInstallerScript
 		// abort if the current Joomla release is older than required version
 		$jversion = new JVersion();
 		if(version_compare($jversion->getShortVersion(), $minJoomlaVersion, '<')) {
-			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion), 'warning');
 			return false;
 		}
 
@@ -262,7 +262,7 @@ class com_jemInstallerScript
 			$this->newRelease = $parent->get('manifest')->version;
 
 			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
-				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'warning');
 				return false;
 			}
 

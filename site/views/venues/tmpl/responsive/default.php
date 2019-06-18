@@ -46,8 +46,8 @@ defined('_JEXEC') or die;
             <dd class="venue_website">
               <a href="<?php echo $this->escape($row->url); ?>" target="_blank">
               <?php 
-                if (JString::strlen($row->url) > 35) {
-                  $urlclean = htmlspecialchars(JString::substr($row->url, 0 , 35)) . '...';
+                if (\Joomla\String\StringHelper::strlen($row->url) > 35) {
+                  $urlclean = htmlspecialchars(\Joomla\String\StringHelper::substr($row->url, 0 , 35)) . '...';
                 } else {
                   $urlclean = htmlspecialchars($row->url);
                 }

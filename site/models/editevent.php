@@ -85,7 +85,7 @@ class JemModelEditevent extends JemModelEvent
 		}
 
 		$properties = $table->getProperties(1);
-		$value = JArrayHelper::toObject($properties, 'JObject');
+		$value = \Joomla\Utilities\ArrayHelper::toObject($properties, 'JObject');
 
 		if ($doCopy) {
 			$value->id = 0;
@@ -239,7 +239,7 @@ class JemModelEditevent extends JemModelEvent
 
 		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-		$search           = $this->_db->escape(trim(JString::strtolower($search)));
+		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
 		$db    = JFactory::getDBO();
@@ -365,7 +365,7 @@ class JemModelEditevent extends JemModelEvent
 
 		$filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-		$search           = $this->_db->escape(trim(JString::strtolower($search)));
+		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
 		$db    = JFactory::getDBO();

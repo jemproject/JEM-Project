@@ -154,7 +154,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             </div>
             
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-              <?php $cmnt = (JString::strlen($row->comment) > 16) ? (JString::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+              <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
               <div class="jem-event-info-small jem-attendee-comment">
                 <?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
               </div>

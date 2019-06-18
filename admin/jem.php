@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 // Access check.
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
 if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+	\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
 }
 
 // Require classes

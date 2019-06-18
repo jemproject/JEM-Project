@@ -244,7 +244,7 @@ class JemTableCategory extends JTableNested
 
 		// If the store failed return false.
 		if (!$stored) {
-			$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $this->_db->getErrorMsg()));
+			$e = JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $this->_db->getErrorMsg());
 			$this->setError($e);
 			return false;
 		}

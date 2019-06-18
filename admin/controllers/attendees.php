@@ -51,7 +51,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$eventid = $jinput->getInt('eventid');
 
 		if (!is_array($cid) || count($cid) < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+			throw new Exception(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
 		}
 
 		$total = count($cid);
@@ -123,9 +123,9 @@ class JemControllerAttendees extends JControllerLegacy
 		$task = $this->getTask();
 
 		if (empty($pks)) {
-			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
 		} else {
-			JArrayHelper::toInteger($pks);
+			\Joomla\Utilities\ArrayHelper::toInteger($pks);
 			$model = $this->getModel('attendee');
 
 			JPluginHelper::importPlugin('jem');
@@ -205,12 +205,12 @@ class JemControllerAttendees extends JControllerLegacy
 		$ids     = $app->input->get('cid', array(), 'array');
 		$values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);
 		$task    = $this->getTask();
-		$value   = JArrayHelper::getValue($values, $task, 0, 'int');
+		$value   = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
 
 		if (empty($ids))
 		{
 			$message = JText::_('JERROR_NO_ITEMS_SELECTED');
-			JError::raiseWarning(500, $message);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($message, 'warning');
 		}
 		else
 		{
@@ -222,7 +222,7 @@ class JemControllerAttendees extends JControllerLegacy
 			{
 				$message = $model->getError();
 				JemHelper::addLogEntry($message, __METHOD__, JLog::ERROR);
-				JError::raiseWarning(500, $message);
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($message, 'warning');
 			}
 			else
 			{

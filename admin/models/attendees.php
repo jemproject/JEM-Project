@@ -184,7 +184,7 @@ class JemModelAttendees extends JModelList
 	{
 		if (is_array($cid) && count($cid))
 		{
-			JArrayHelper::toInteger($cid);
+			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
 			$db = JFactory::getDbo();
 
@@ -196,7 +196,7 @@ class JemModelAttendees extends JModelList
 
 			// TODO: use exception handling
 			if ($db->execute() === false) {
-				JError::raiseError(500, $db->getErrorMsg());
+				throw new Exception($db->getErrorMsg(), 500);
 			}
 		}
 		return true;

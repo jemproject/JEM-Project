@@ -1117,7 +1117,7 @@ class plgJemMailer extends JPlugin
 			$db->setQuery($query);
 
 			if ($db->execute() === false) {
-				JError::raiseError(500, $db->stderr(true));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
 				return;
 			}
 

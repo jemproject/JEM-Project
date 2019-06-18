@@ -551,10 +551,6 @@ class JemModelImport extends JModelLegacy
 
 			$db->setQuery($query);
 
-			// Set legacy to false to be able to catch DB errors.
-			$legacyValue = JError::$legacy;
-			JError::$legacy = false;
-
 			try {
 				$tables[$table] = $db->loadResult();
 				// Don't count the root category
@@ -565,7 +561,6 @@ class JemModelImport extends JModelLegacy
 				$tables[$table] = null;
 			}
 
-			JError::$legacy = $legacyValue;
 		}
 
 		return $tables;
@@ -1143,7 +1138,7 @@ class JemModelImport extends JModelLegacy
 
 		// Check for DB error.
 		if ($error = $db->getErrorMsg()) {
-			JError::raiseWarning(500, $error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
 			return false;
 		}
 		else {

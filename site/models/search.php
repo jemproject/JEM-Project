@@ -246,9 +246,9 @@ class JemModelSearch extends JModelLegacy
 
 		if ($filter) {
 			// clean filter variables
-			$filter      = JString::strtolower($filter);
+			$filter      = \Joomla\String\StringHelper::strtolower($filter);
 			$filter      = $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
-			$filter_type = JString::strtolower($filter_type);
+			$filter_type = \Joomla\String\StringHelper::strtolower($filter_type);
 
 			switch ($filter_type) {
 				case 'title' :
@@ -411,7 +411,7 @@ class JemModelSearch extends JModelLegacy
 		// Check for a database error.
 		if ($db->getErrorNum())
 		{
-			JError::raiseNotice(500, $db->getErrorMsg());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		}
 
 		if (!$mitems) {

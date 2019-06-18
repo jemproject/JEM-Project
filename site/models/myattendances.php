@@ -220,7 +220,7 @@ class JemModelMyattendances extends JModelLegacy
 
 		$filter   = $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
-		$search   = $this->_db->escape(trim(JString::strtolower($search)));
+		$search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		$where = array();
 		// First thing we need to do is to select only needed events

@@ -141,7 +141,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 							?>
 						</td>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-						<?php $cmnt = (JString::strlen($row->comment) > 16) ? (JString::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+						<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 						<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
 						<td class="center"><a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>"><?php echo

@@ -80,13 +80,13 @@ class JemControllerSettings extends JControllerLegacy
 
 		// Access check.
 		if (!$this->allowSave()) {
-			return JError::raiseWarning(403, JText::_('JERROR_SAVE_NOT_PERMITTED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
 		}
 
 		// Validate the posted data.
 		$form = $model->getForm();
 		if (!$form) {
-			JError::raiseError(500, $model->getError());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($model->getError(), 'error');
 			return false;
 		}
 

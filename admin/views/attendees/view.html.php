@@ -30,7 +30,7 @@ class JemViewAttendees extends JemAdminView
 		$filter_status    = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
 		$filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',   'filter_type',    0, 'int');
 		$filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-		$filter_search    = $db->escape(trim(JString::strtolower($filter_search)));
+		$filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -45,7 +45,7 @@ class JemViewAttendees extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			JError::raiseError(500, implode("\n", $errors));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 

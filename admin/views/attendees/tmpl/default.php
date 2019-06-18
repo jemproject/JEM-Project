@@ -114,7 +114,7 @@ JFactory::getDocument()->addScriptDeclaration('
 						?>
 					</td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-					<?php $cmnt = (JString::strlen($row->comment) > 16) ? (rtrim(JString::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
+					<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (rtrim(\Joomla\String\StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif; ?>
 					<td class="center">
