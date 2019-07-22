@@ -102,6 +102,7 @@
 		>
 			<option value=",">COM_JEM_SETTINGS_CSV_SEPARATOR_COMMA</option>
 			<option value=";">COM_JEM_SETTINGS_CSV_SEPARATOR_SEMICOLON</option>
+			<option value="&#9;">COM_JEM_SETTINGS_CSV_SEPARATOR_TAB</option>
 		</field>
 		<field name="csv_delimiter" type="list"
 			label="COM_JEM_SETTINGS_CSV_DELIMITER"
