@@ -593,6 +593,9 @@ class plgJemMailer extends JPlugin
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, ($event->created_by != $userid) ? $event->created_by : 0, $userid);
 
+		if ($event->modified == 0) {  //when state switches modified date is not updated
+			$event->modified = 'now'; //set to now to avoid confusing e-mail message
+		}
 		#####################
 		## SENDMAIL - USER ##
 		#####################
@@ -703,7 +706,9 @@ class plgJemMailer extends JPlugin
 		$text_description = JFilterOutput::cleanText($venue->locdescription);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), 0, ($venue->created_by != $userid) ? $venue->created_by : 0, $userid, $venue_id);
-
+		if ($venue->modified == 0) {  //when state switches modified date is not updated
+			$venue->modified = 'now'; //set to now to avoid confusing e-mail message
+		}
 		#####################
 		## SENDMAIL - USER ##
 		#####################
