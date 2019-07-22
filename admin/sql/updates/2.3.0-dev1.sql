@@ -1,3 +1,3 @@
 -- insert new config values
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`)
-	VALUES ('layoutstyle', '0'), ('useiconfont', '0');
+	VALUES ('layoutstyle', '1'), ('useiconfont', '0');

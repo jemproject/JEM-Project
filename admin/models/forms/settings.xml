@@ -202,7 +202,7 @@
 		>
 			<option value="0">COM_JEM_SHOW_LAYOUT_STYLE_LEGACY</option>
 			<option value="1">COM_JEM_SHOW_LAYOUT_STYLE_RESPONSIVE</option>
-			<option value="2">COM_JEM_SHOW_LAYOUT_STYLE_ALTERNATIVE</option>
+			<option value="2" disabled="disabled">COM_JEM_SHOW_LAYOUT_STYLE_ALTERNATIVE</option>
 		</field>
 		<field name="useiconfont" type="radio"
 			label="COM_JEM_INCLUDE_ICON_FONT"
