@@ -77,7 +77,31 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		</dl>
     
     <?php if (empty($this->rows)) : //ToDo EGNARTS!!! ?> 
-		<div class="eventtable">
+      <dl id="jem_filter" class="jem-dl">
+        <dt>
+          <?php echo '<label for="filter_search">'.JText::_('COM_JEM_SEARCH').'</label>'; ?>
+        </dt>
+        <dd class="jem-form jem-row jem-justify-start">
+          <div class="jem-row jem-justify-start jem-nowrap">
+            <?php echo $this->lists['filter']; ?>
+            <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
+          </div>
+          <div class="jem-row jem-justify-start jem-nowrap">
+            <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+          </div>
+        </dd>
+      </dl>
+      <dl id="jem_filter" class="jem-dl">
+        <dt class="jem-row jem-justify-start jem-nowrap">
+          <?php echo '<label for="filter_status">'.JText::_('COM_JEM_STATUS').'</label>'; ?>
+        </dt>
+        <dd>
+          <?php echo $this->lists['status']; ?>
+        </dd>      
+      </dl>
+    
+      <div class="eventtable">
 			<strong><i><?php echo JText::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
 		</div>
 

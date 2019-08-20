@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @version 2.3.0
  * @package JEM
@@ -19,27 +20,27 @@ $settings	= json_decode($this->item->attribs);
 ?>
 
 <script type="text/javascript">
-window.addEvent('domready', function(){
-	checkmaxplaces();
-});
+	window.addEvent('domready', function() {
+		checkmaxplaces();
+	});
 
-	function checkmaxplaces(){
+	function checkmaxplaces() {
 		var maxplaces = $('jform_maxplaces');
 
-		if (maxplaces != null){
-			$('jform_maxplaces').addEvent('change', function(){
+		if (maxplaces != null) {
+			$('jform_maxplaces').addEvent('change', function() {
 				if ($('event-available')) {
 					var val = parseInt($('jform_maxplaces').value);
 					var booked = parseInt($('event-booked').value);
-					$('event-available').value = (val-booked);
+					$('event-available').value = (val - booked);
 				}
 			});
 
-			$('jform_maxplaces').addEvent('keyup', function(){
+			$('jform_maxplaces').addEvent('keyup', function() {
 				if ($('event-available')) {
 					var val = parseInt($('jform_maxplaces').value);
 					var booked = parseInt($('event-booked').value);
-					$('event-available').value = (val-booked);
+					$('event-available').value = (val - booked);
 				}
 			});
 		}
@@ -51,30 +52,29 @@ window.addEvent('domready', function(){
 			<?php echo $this->form->getField('articletext')->save(); ?>
 			Joomla.submitform(task);
 		} else {
-			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
+			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
 		}
 	}
 </script>
 <script type="text/javascript">
-window.addEvent('domready', function(){
-	$("jform_unregistra").addEvent('change', showUnregistraUntil);
+	window.addEvent('domready', function() {
+		$("jform_unregistra").addEvent('change', showUnregistraUntil);
 
-	showUnregistraUntil();
-});
+		showUnregistraUntil();
+	});
 
-function showUnregistraUntil()
-{
-	var unregistra = $("jform_unregistra");
-	var unregistramode = unregistra.options[unregistra.selectedIndex].value;
+	function showUnregistraUntil() {
+		var unregistra = $("jform_unregistra");
+		var unregistramode = unregistra.options[unregistra.selectedIndex].value;
 
-	if (unregistramode == 2) {
-		document.getElementById('jform_unregistra_until').style.display = '';
-		document.getElementById('jform_unregistra_until2').style.display = '';
-	} else {
-		document.getElementById('jform_unregistra_until').style.display = 'none';
-		document.getElementById('jform_unregistra_until2').style.display = 'none';
+		if (unregistramode == 2) {
+			document.getElementById('jform_unregistra_until').style.display = '';
+			document.getElementById('jform_unregistra_until2').style.display = '';
+		} else {
+			document.getElementById('jform_unregistra_until').style.display = 'none';
+			document.getElementById('jform_unregistra_until2').style.display = 'none';
+		}
 	}
-}
 </script>
 
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">
@@ -85,7 +85,7 @@ function showUnregistraUntil()
 		</h1>
 		<?php endif; ?>
 
-		<form enctype="multipart/form-data" action="<?php echo JRoute::_('index.php?option=com_jem&a_id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+		<form enctype="multipart/form-data" action="<?php echo JRoute::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 			<div class="buttons">
 				<button type="button" class="positive btn btn-success" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
 				<button type="button" class="negative btn" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
@@ -105,7 +105,7 @@ function showUnregistraUntil()
 						} else {
 							echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TEXT'));
 						}
-					?>
+						?>
 				</div>
 			</div>
 			<?php endif; ?>
@@ -119,130 +119,95 @@ function showUnregistraUntil()
 			<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 
 			<!-- DETAILS TAB -->
-			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab' ); ?>
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab'); ?>
 
 			<fieldset class="adminform">
 				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
-          <dl class="jem-dl">
-            <dt><?php echo $this->form->getLabel('title'); ?></dt>
-            <dd><?php echo $this->form->getInput('title'); ?></dd>
-            <?php if (is_null($this->item->id)):?>
-              <dt><?php echo $this->form->getLabel('alias'); ?></dt>
-              <dd><?php echo $this->form->getInput('alias'); ?></dd>
-            <?php endif; ?>
-            <dt><?php echo $this->form->getLabel('dates'); ?></dt>
-            <dd><?php echo $this->form->getInput('dates'); ?></dd>
-            <dt><?php echo $this->form->getLabel('enddates'); ?></dt>
-            <dd><?php echo $this->form->getInput('enddates'); ?></dd>
-            <dt><?php echo $this->form->getLabel('times'); ?></dt>
-            <dd><?php echo $this->form->getInput('times'); ?></dd>
-            <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
-            <dd><?php echo $this->form->getInput('endtimes'); ?></dd>
-            <dt><?php echo $this->form->getLabel('cats'); ?></dt>
-            <dd><?php echo $this->form->getInput('cats'); ?></dd>
-            <dt><?php echo $this->form->getLabel('featured'); ?></dt>
-            <dd><?php echo $this->form->getInput('featured'); ?></dd>
-            <dt><?php echo $this->form->getLabel('published'); ?></dt>
-            <dd><?php echo $this->form->getInput('published'); ?></dd>
-            <dt><?php echo $this->form->getLabel('access'); ?></dt>
-            <dd><?php
-                      echo JHtml::_('select.genericlist', $this->access, 'jform[access]',
-                                    array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
-               ?></dd>
-          </dl>
-        <div style="clear: both;"><br /></div>
-        <div>
-          <?php echo $this->form->getLabel('articletext'); ?>        
-          <?php echo $this->form->getInput('articletext'); ?>
-        </div>
-			</fieldset>
-      <p>&nbsp;</p>
-
-			<fieldset class="adminform">
-        <legend><?php echo JText::_('COM_JEM_EDITVENUE_OTHER_TAB').' '.JText::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
 				<dl class="jem-dl">
-					<dt><?php echo $this->form->getLabel('contactid'); ?></dt><dd><?php echo $this->form->getInput('contactid'); ?></dd>
-					<dt><?php echo $this->form->getLabel('locid'); ?></dt><dd><?php echo $this->form->getInput('locid'); ?></dd>
-				</dl>
-			</fieldset>
-      <p>&nbsp;</p>
-      
-			<!-- START META FIELDSET -->
-			<fieldset class="adminform">
-				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
-					<div class="formelm-area">
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_TIME' );?>" />
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
-						<input class="inputbox btn" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_ENDTIME' );?>" />
-						<br />
-            <br />
-						<?php
-						if (! empty ( $this->item->meta_keywords )) {
-							$meta_keywords = $this->item->meta_keywords;
-						} else {
-							$meta_keywords = $this->jemsettings->meta_keywords;
-						}
-						?>
-            <dl class="jem-dl">
-              <dt>
-                <label for="meta_keywords">
-                  <?php echo JText::_('COM_JEM_META_KEYWORDS').':';?>
-                </label>
-              </dt>
-              <dd><textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea></dd>
-            </dl>
-          </div>
-					<div class="formelm-area">
-						<?php
-						if (! empty ( $this->item->meta_description )) {
-							$meta_description = $this->item->meta_description;
-						} else {
-							$meta_description = $this->jemsettings->meta_description;
-						}
-						?>
-            <dl class="jem-dl">
-              <dt>
-                <label for="meta_description">
-                  <?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
-                </label>
-              </dt>
-              <dd><textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea></dd>
-            </dl>
-          </div>
-					<!-- include the metatags end-->
+					<dt><?php echo $this->form->getLabel('title'); ?></dt>
+					<dd><?php echo $this->form->getInput('title'); ?></dd>
+					<?php if (is_null($this->item->id)) : ?>
+					<dt><?php echo $this->form->getLabel('alias'); ?></dt>
+					<dd><?php echo $this->form->getInput('alias'); ?></dd>
+					<?php endif; ?>
+					<dt><?php echo $this->form->getLabel('dates'); ?></dt>
+					<dd><?php echo $this->form->getInput('dates'); ?></dd>
+					<dt><?php echo $this->form->getLabel('enddates'); ?></dt>
+					<dd><?php echo $this->form->getInput('enddates'); ?></dd>
+					<dt><?php echo $this->form->getLabel('times'); ?></dt>
+					<dd><?php echo $this->form->getInput('times'); ?></dd>
+					<dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
+					<dd><?php echo $this->form->getInput('endtimes'); ?></dd>
+					<dt><?php echo $this->form->getLabel('cats'); ?></dt>
+					<dd><?php echo $this->form->getInput('cats'); ?></dd>
+					<dt><?php echo $this->form->getLabel('locid'); ?></dt>
+					<dd><?php echo $this->form->getInput('locid'); ?></dd>
 
-					<script type="text/javascript">
-					<!--
-						starter("<?php
-						echo JText::_ ( 'COM_JEM_META_ERROR' );
-						?>");	// window.onload is already in use, call the function manualy instead
-					-->
-					</script>
+				</dl>
+				<div style="clear: both;"><br /></div>
+				<div>
+					<?php echo $this->form->getLabel('articletext'); ?>
+					<?php echo $this->form->getInput('articletext'); ?>
+				</div>
+				<p>&nbsp;</p>
+				<!-- IMAGE -->
+				<?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
+				<fieldset class="jem_fldst_image">
+					<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
+					<?php if ($this->jemsettings->imageenabled != 0) : ?>
+					<dl class="adminformlist jem-dl">
+						<dt><?php echo $this->form->getLabel('userfile'); ?></dt>
+						<?php if ($this->item->datimage) : ?>
+						<dd>
+							<?php echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage'); ?>
+							<input type="hidden" name="datimage" id="datimage" value="<?php echo $this->item->datimage; ?>" />
+						</dd>
+						<dt> </dt>
+						<?php endif; ?>
+						<dd><?php echo $this->form->getInput('userfile'); ?></dd>
+						<dt> </dt>
+						<dd><button type="button" class="button3 btn" onclick="document.getElementById('jform_userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
+						<?php if ($this->item->datimage) : ?>
+						<dt><?php echo JText::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
+						<dd><?php
+										echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => JText::_('COM_JEM_REMOVE_IMAGE'), 'class' => 'btn')); ?>
+						</dd>
+						<?php endif; ?>
+						</li>
+					</dl>
+					<input type="hidden" name="removeimage" id="removeimage" value="0" />
+					<?php endif; ?>
+				</fieldset>
+				<?php endif; ?>
 			</fieldset>
-			<!--  END META FIELDSET -->
-      
+
+
+			<!-- EXTENDED TAB -->
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
+			<?php echo $this->loadTemplate('extended'); ?>
+
+			<!-- PUBLISH TAB -->
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
+			<?php echo $this->loadTemplate('publish'); ?>
+
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
-			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments'); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>
 			<?php endif; ?>
 
 			<!-- OTHER TAB -->
-			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other'); ?>
 			<?php echo $this->loadTemplate('other'); ?>
 
 			<?php echo JHtml::_('tabs.end'); ?>
 
 			<input type="hidden" name="task" value="" />
-			<input type="hidden" name="return" value="<?php echo $this->return_page;?>" />
+			<input type="hidden" name="return" value="<?php echo $this->return_page; ?>" />
 			<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
-			<?php if($this->params->get('enable_category', 0) == 1) :?>
-			<input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1);?>"/>
-			<?php endif;?>
+			<?php if ($this->params->get('enable_category', 0) == 1) : ?>
+			<input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1); ?>" />
+			<?php endif; ?>
 			<?php echo JHtml::_('form.token'); ?>
 		</form>
 	</div>

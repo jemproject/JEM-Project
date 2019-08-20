@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="quickicon" method="upgrade">
 	<name>Quick Icon - JEM</name>
-	<creationDate>May 2019</creationDate>
+	<creationDate>August 2019</creationDate>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 	<copyright>copyright (C) 2013-2019 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.3.0-dev4</version>
+	<version>2.3.0-beta2</version>
 	<description>JEM Quick Icon</description>
 
 	<files>
