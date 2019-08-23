@@ -60,7 +60,6 @@ defined('_JEXEC') or die; ?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td><?php echo ++$i; ?></td>
 			<td><?php echo $regname ? $row->name : $row->username; ?></td>
-			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<td><?php echo $row->email; ?></td>
 			<?php endif; ?>
