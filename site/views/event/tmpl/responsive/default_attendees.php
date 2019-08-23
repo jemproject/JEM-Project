@@ -64,7 +64,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
           function jem_getStatusIcon($status) {
             switch($status) {
               case 2:  // waiting list
-                return ' <i class="fa fa-li fa-exclamation-circle jem-attendance-status-fa-exclamation-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ON_WAITINGLIST').'"></i>';
+                return ' <i class="fa fa-li fa-hourglass-half jem-attendance-status-fa-hourglass-half hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ON_WAITINGLIST').'"></i>';
                 break;
               case 1:  // attending
                 return ' <i class="fa fa-li fa-check-circle jem-attendance-status-fa-check-circle hasTooltip" title="'.JText::_('COM_JEM_ATTENDEES_ATTENDING').'"></i>';
