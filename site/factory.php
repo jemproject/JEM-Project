@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
-
+require_once (JPATH_SITE.'/components/com_jem/classes/attachment.class.php');
 
 /**
  * JEM Factory class
