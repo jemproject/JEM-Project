@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -26,6 +26,12 @@ JFactory::getDocument()->addScriptDeclaration('
       		Joomla.submitform(task, document.getElementById("adminForm"));
 		}
 	};
+');
+JFactory::getDocument()->addScriptDeclaration('
+    function submitName(node) {
+      node.parentNode.previousElementSibling.childNodes[0].checked = true;
+      Joomla.submitbutton("attendees.edit");
+    }
 ');
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees&eventid='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
@@ -91,8 +97,8 @@ JFactory::getDocument()->addScriptDeclaration('
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-					<td><a href="<?php echo JRoute::_('index.php?option=com_jem&task=attendees.edit&cid[]='.$row->id); ?>"><?php echo $row->name; ?></a></td>
+					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td> <?php // Die ID kann man doch auch als Parameter für "submitName()" nehmen. Dann muss ich nicht erst den Baum entlang hangeln ?>
+					<td><a href="#" onclick="submitName(this); return false;"><?php echo $row->name; ?></a></td>
 					<td><?php echo $row->username; ?></td>
 					<td class="email"><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 					<td><?php echo $row->uip == 'DISABLED' ? JText::_('COM_JEM_DISABLED') : $row->uip; ?></td>
@@ -108,7 +114,7 @@ JFactory::getDocument()->addScriptDeclaration('
 						?>
 					</td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-					<?php $cmnt = (JString::strlen($row->comment) > 16) ? (rtrim(JString::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
+					<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (rtrim(\Joomla\String\StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif; ?>
 					<td class="center">

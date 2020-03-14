@@ -93,7 +93,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		}
 		elseif (is_array($published) && count($published))
 		{
-			JArrayHelper::toInteger($published);
+			\Joomla\Utilities\ArrayHelper::toInteger($published);
 			$query->where('a.published IN (' . implode(',', $published) . ')');
 		}
 
@@ -113,12 +113,12 @@ class JFormFieldCategoryEdit extends JFormFieldList
 
 			// Check for a database error.
 			if ($db->getErrorNum()) {
-				JError::raiseWarning(500, $db->getErrorMsg());
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
 			}
 		}
 		catch (RuntimeException $e)
 		{
-			JError::raiseWarning(500, $e->getMessage);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getErrorMsg(), 'warning');
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.

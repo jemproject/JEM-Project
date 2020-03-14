@@ -147,8 +147,8 @@ $(document).ready(function() {
 							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 						<?php endif; ?>
 						<br />
-						<?php if (JString::strlen($row->alias) > 25) : ?>
-							<?php echo JString::substr( $this->escape($row->alias), 0 , 25).'...'; ?>
+						<?php if (\Joomla\String\StringHelper::strlen($row->alias) > 25) : ?>
+							<?php echo \Joomla\String\StringHelper::substr( $this->escape($row->alias), 0 , 25).'...'; ?>
 						<?php else : ?>
 							<?php echo $this->escape($row->alias); ?>
 						<?php endif; ?>

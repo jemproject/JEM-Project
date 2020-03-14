@@ -59,12 +59,12 @@ class JemModelDay extends JemModelEventslist
 			} else {
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
-				JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 			}
 		} else {
 			//date isn't valid raise notice and use current date
 			$date = date('Ymd');
-			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 		}
 
 		$this->_date = $date;

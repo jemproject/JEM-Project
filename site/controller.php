@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -45,7 +45,7 @@ class JemController extends JControllerLegacy
 		// Check for edit form.
 		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
-			return JError::raiseError(403, JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
+			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
 		}
 
 		$view = $this->getView($viewName, $viewFormat);
@@ -97,6 +97,8 @@ class JemController extends JControllerLegacy
 
 			// Push document object into the view.
 			$view->document = $document;
+
+			JemHelper::loadIconFont();
 
 			$view->display();
 		}

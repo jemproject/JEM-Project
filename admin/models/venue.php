@@ -258,7 +258,7 @@ class JemModelVenue extends JemModelAdmin
 
 		//uppercase needed by mapservices
 		if ($data['country']) {
-			$data['country'] = JString::strtoupper($data['country']);
+			$data['country'] = \Joomla\String\StringHelper::strtoupper($data['country']);
 		}
 
 		// Save the venue

@@ -1,0 +1,31 @@
+/**
+ * @version 2.3.0
+ * @package JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright (C) 2014-2019 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+div#jemmodulejubilee .time:before,
+div#jemmodulejubilee div.date:before,
+div#jemmodulejubilee .category:before,
+div#jemmodulejubilee .venue-title:before {
+	font:normal normal normal 1.4em/1 FontAwesome;
+}
+
+div#jemmodulejubilee .time:before {
+	content:"\f017";
+}
+
+div#jemmodulejubilee div.date:before {
+	content:"\f133";
+}
+
+div#jemmodulejubilee .category:before {
+	content:"\f02b";
+}
+
+div#jemmodulejubilee .venue-title:before {
+	content:"\f041";
+}

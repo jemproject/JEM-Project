@@ -1,13 +1,14 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
+JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
@@ -164,7 +165,7 @@ defined('_JEXEC') or die;
 
 	<!--table-->
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
-		<?php echo $this->loadTemplate('table'); ?>
+		<?php echo $this->loadTemplate('events_table'); ?>
 
 		<p>
 		<input type="hidden" name="option" value="com_jem" />

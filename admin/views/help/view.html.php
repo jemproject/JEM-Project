@@ -80,7 +80,7 @@ class JemViewHelp extends JemAdminView
 				$title = trim($m[1]);
 				if ($title) {
 					if ($helpsearch) {
-						if (JString::strpos(strip_tags($buffer), $helpsearch) !== false) {
+						if (\Joomla\String\StringHelper::strpos(strip_tags($buffer), $helpsearch) !== false) {
 							$toc[$file] = $title;
 						}
 					} else {

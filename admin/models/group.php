@@ -137,7 +137,7 @@ class JemModelGroup extends JemModelAdmin
 
 		// Store data
 		if (!$table->store(true)) {
-			JError::raiseError(500, $table->getError());
+			throw new Exception($table->getError(), 500);
 		}
 
 		$members = $app->input->get('maintainers', array(), 'array');

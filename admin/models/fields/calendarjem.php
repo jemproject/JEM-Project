@@ -43,7 +43,7 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 			}
 
 			// add hint regarding date/time format accepted in edit field
-			$exampleTimestamp = strtotime("12/31/2017 23:59");
+			$exampleTimestamp = strtotime("NOW");
 			$hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
 
 			$extraData = array(
@@ -77,7 +77,7 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 
 			if (empty($this->hint)) {
 				// add hint regarding date/time format accepted in edit field
-				$exampleTimestamp = strtotime("12/31/2017 23:59");
+				$exampleTimestamp = strtotime("NOW");
 				$this->hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
 			}
 

@@ -1,0 +1,31 @@
+/**
+ * @version 2.3.0
+ * @package JEM
+ * @subpackage JEM Teaser Module
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+div#jemmoduleteaser .time:before,
+div#jemmoduleteaser div.date:before,
+div#jemmoduleteaser .category:before,
+div#jemmoduleteaser .venue-title:before {
+	font:normal normal normal 1.4em/1 FontAwesome;
+}
+
+div#jemmoduleteaser .time:before {
+	content:"\f017";
+}
+
+/*div#jemmoduleteaser div.date:before {
+	content:"\f133";
+}*/
+
+div#jemmoduleteaser .category:before {
+	content:"\f02b";
+}
+
+div#jemmoduleteaser .venue-title:before {
+	content:"\f041";
+}

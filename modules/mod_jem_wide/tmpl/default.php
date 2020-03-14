@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
  * @subpackage JEM Wide Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -48,11 +48,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			</td>
 
 			<td>
+			<?php if (!empty($item->catname)) : ?>
 				<span class="category"><?php echo $item->catname; ?></span>
+			<?php endif; ?>
 			</td>
 
 			<td>
-			<?php if ($item->venue) : ?>
+			<?php if (!empty($item->venue)) : ?>
 				<?php if ($item->venuelink) : ?>
 				<span class="venue-title"><a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a></span>
 				<?php else : ?>

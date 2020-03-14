@@ -1,0 +1,158 @@
+/*
+ * @version 2.3.0
+ * @package JEM
+ * @subpackage JEM Banner Module
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+#sbox-overlay {
+  width: 100% !important;
+}
+#sbox-window {
+  height: auto !important;
+}
+#sbox-content {
+  height: auto !important;
+  width: auto !important;
+  max-height: 100%;
+  max-width: 100%;
+}
+body.body-overlayed {
+  overflow: auto;
+}
+/* ----- */
+
+#jemmodulebanner .jem-row-banner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+#jemmodulebanner .jem-horizontal-banner {
+  flex-direction: row;
+}
+
+#jemmodulebanner .jem-vertical-banner {
+  flex-direction: column;
+}
+
+#jemmodulebanner .jem-event-details-banner {
+  flex: 1;
+}
+
+#jemmodulebanner .event-title, 
+#jemmodulebanner .jem-banner-datecat {
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+#jemmodulebanner .jem-banner-datecat {
+  margin-bottom: 8px;
+}
+
+#jemmodulebanner .jem-banner-datecat > div {
+  margin-right: 10px;
+}
+
+#jemmodulebanner .jem-banner-datecat > div:last-child {
+  margin-right: 0;
+}
+
+#jemmodulebanner .jem-eventimg-banner {
+  margin-bottom: 10px;
+}
+
+#jemmodulebanner .time, #jemmodulebanner .date {
+  font-weight: bold;
+}
+ 
+#jemmodulebanner [class|="calendar"] {
+	background-repeat: no-repeat;
+	width: 82px;
+	height: 82px;
+	text-align: center;
+	padding: 5px 1px 0 0;
+	margin-right:10px;
+  margin-bottom: 10px;
+	line-height: 24px;
+}
+
+#jemmodulebanner [class|="calendar"] .yearbanner {
+	font-size: 80%;
+	height:5px;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner {
+	font-size: 85%;
+	font-weight:bold;
+	height:20px;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+#jemmodulebanner [class|="calendar"] .daybanner {
+  font-size: 90%;
+	font-weight:bold;
+	padding-top:3px;
+}
+
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+	font-size: 150%;
+	font-weight:bold;
+}
+ 
+ 
+@media only all and (max-width: 47.938rem) {
+  
+}
+
+@media print {
+  #main a:link, #main a:visited {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  div#jem {
+    border: 0px;
+  }
+
+  div#jem h2 {
+    border: none;
+  }
+
+  div#jem .flyerimage {
+      border: none !important;
+  }
+
+  a[href]:after {
+    content: none !important;
+  }
+
+  div#jem .buttons {
+    display: none;
+  }
+
+  abbr[title]:after {
+    content: none;
+  }
+
+  .ir a:after,
+  a[href^="javascript:"]:after,
+  a[href^="#"]:after {
+    content: none;
+  }
+
+  a:link:after, a:visited:after {
+    content: none;
+  }
+
+
+  div#jem .flyerimage {
+      border: none;
+  }
+}
+

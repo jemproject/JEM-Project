@@ -1,0 +1,119 @@
+/**
+ * @version 2.3.0
+ * @package JEM
+ * @subpackage JEM Teaser Module
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+div#jemmoduleteaser {
+	width: 100%;
+}
+
+div#jemmoduleteaser .teaser-jem a,
+div#jemmoduleteaser .venue-title a {
+	background-color: transparent;
+	/*color:#095197;*/
+}
+
+#jemmoduleteaser td.event-calendar {
+	width: 1%; /* keep it as small as possible */
+}
+
+#jemmoduleteaser [class|="calendar"] {
+	background-repeat: no-repeat;
+	width: 82px;
+	height: 82px; /* + padding = 87px */
+	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
+	text-align: center;
+	padding: 5px 1px 0 0;
+	float:left;
+	margin-right:10px;
+	line-height: 24px;
+}
+
+#jemmoduleteaser span.share {
+	margin-left:95px;
+}
+
+#jemmoduleteaser [class|="calendar"] .yearteaser {
+	font-size: 6px;
+	height:5px;
+	color: #e1e1e1;
+}
+
+#jemmoduleteaser [class|="calendar"] .monthteaser {
+	font-size: 8px;
+	color: white;
+	text-transform:uppercase;
+	font-weight:bold;
+	text-shadow: #666 1px 1px 1px;
+	height:20px;
+}
+
+#jemmoduleteaser [class|="calendar"] .dayteaser {
+	font-weight:bold;
+	font-size: 12px;
+	padding-top:3px;
+	color: #333;
+}
+
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
+	font-size: 29px;
+	font-weight:bold;
+	color: #FF6400;
+	text-shadow: #000 1px 1px 1px;
+}
+
+div#jemmoduleteaser .eventset {
+	width: 100%;
+	margin-bottom: 10px;
+	padding: 5px;
+	border-bottom: 1px dotted silver;
+	text-align: left;
+}
+
+div#jemmoduleteaser .event-title {
+	padding-left: 8px;
+	font-size: medium;
+}
+
+div#jemmoduleteaser .time {
+	padding-left: 20px;
+	background: url(../img/time.png) 0 center no-repeat;
+	padding-top: 2px;
+}
+
+div#jemmoduleteaser div.date {
+	padding-left: 0px;
+	padding-top: 2px;
+}
+
+div#jemmoduleteaser .category {
+	position: relative;
+	padding-left: 20px;
+	background: url(../img/category.png) 0 center no-repeat;
+	font-size: smaller;
+}
+
+div#jemmoduleteaser .venue-title {
+	position: relative;
+	padding-left: 20px;
+	background: url(../img/venue.png) 0 center no-repeat;
+	font-size: smaller;
+}
+
+div#jemmoduleteaser .event-image-cell {
+}
+
+div#jemmoduleteaser .venue-image-cell {
+}
+
+div#jemmoduleteaser .image-preview {
+	height: 35px;
+	border: 1px solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 3px;
+}

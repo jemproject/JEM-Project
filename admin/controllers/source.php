@@ -91,12 +91,12 @@ class JemControllerSource extends JControllerLegacy
 		$context  = 'com_jem.edit.source';
 
 		if (preg_match('#\.\.#', base64_decode($recordId))) {
-			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'), 'warning');
 		}
 
 		// Access check.
 		if (!$this->allowEdit()) {
-			return JError::raiseWarning(403, JText::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'warning');
 		}
 
 		// Check-out succeeded, push the new record id into the session.
@@ -152,19 +152,19 @@ class JemControllerSource extends JControllerLegacy
 
 		// Access check.
 		if (!$this->allowSave()) {
-			return JError::raiseWarning(403, JText::_('JERROR_SAVE_NOT_PERMITTED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
 		}
 
 		// Match the stored id's with the submitted.
 		if (empty($data['filename']) || ($data['filename'] != $file)) {
-			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_ID_FILENAME_MISMATCH'));
+			throw new Exception(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_ID_FILENAME_MISMATCH'), 500);
 		}
 
 		// Validate the posted data.
 		$form = $model->getForm();
 		if (!$form)
 		{
-			JError::raiseError(500, $model->getError());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($model->getError(), 'error');
 			return false;
 		}
 

@@ -1,14 +1,12 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
-require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * Event-View
@@ -78,7 +76,7 @@ class JemViewEvent extends JemView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			JError::raiseWarning(500, implode("\n", $errors));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
 			return false;
 		}
 
@@ -100,7 +98,10 @@ class JemViewEvent extends JemView
 			// Merge so that the menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem->title ? $menuitem->title : $item->title);
 			$params->def('page_heading', $pagetitle);
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from active query (in case it is an alternative menu item)
 			if (isset($menuitem->query['layout'])) {
@@ -135,7 +136,7 @@ class JemViewEvent extends JemView
 
 		// Check the view access to the event (the model has already computed the values).
 		if (!$item->params->get('access-view')) { // && !$item->params->get('show_noauth') &&  $user->get('guest')) { - not supported yet
-			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			return;
 		}
 
@@ -162,7 +163,15 @@ class JemViewEvent extends JemView
 
 		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
-
+		
+		//use temporary class var to trigger content prepare plugin for venue description
+		$tempVenue = new stdClass();
+		$tempVenue->text = $item->locdescription;
+		$tempVenue->title = $item->venue;
+		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
+		$item->locdescription = $tempVenue->text;
+		$item->venue = $tempVenue->title;
+		
 		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
 			$model->hit();
@@ -192,7 +201,9 @@ class JemViewEvent extends JemView
 
 		// Check if user can edit attendees
 		$isAuthor = $userId && ($userId == $item->created_by);
-		$permissions->canEditAttendees = $isAuthor;
+		//$permissions->canEditAttendees = $isAuthor;
+		//new logic: user can edit events, suggested by jojo12
+		$permissions->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
 		$this->permissions = $permissions;
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
@@ -273,11 +284,11 @@ class JemViewEvent extends JemView
 			$description = explode("[", $this->item->meta_description);
 			$description_content = "";
 			foreach ($description as $desc) {
-				$endpos = JString::strpos($desc, "]", 0);
+				$endpos = \Joomla\String\StringHelper::strpos($desc, "]", 0);
 				if ($endpos > 0) {
-					$keyword = JString::substr($desc, 0, $endpos);
+					$keyword = \Joomla\String\StringHelper::substr($desc, 0, $endpos);
 					$description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-					$description_content .= JString::substr($desc, $endpos + 1);
+					$description_content .= \Joomla\String\StringHelper::substr($desc, $endpos + 1);
 				} else {
 					$description_content .= $desc;
 				}

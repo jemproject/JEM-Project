@@ -95,7 +95,7 @@ class JemControllerCategories extends JControllerAdmin
 
  		if (!is_array($cid) || count($cid) < 1)
  		{
- 			JError::raiseWarning(500, JText::_($this->text_prefix . '_NO_ITEM_SELECTED'));
+			 \Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'warning');
  		}
  		else
  		{
@@ -104,7 +104,7 @@ class JemControllerCategories extends JControllerAdmin
 
  			// Make sure the item ids are integers
  			jimport('joomla.utilities.arrayhelper');
- 			JArrayHelper::toInteger($cid);
+ 			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 
  			// Remove the items.
  			if ($model->delete($cid))
@@ -135,7 +135,7 @@ class JemControllerCategories extends JControllerAdmin
  		$cid= JFactory::getApplication()->input->post->get('cid', array(), 'array');
 
  		if (!is_array($cid) || count($cid) < 1) {
- 			JError::raiseWarning(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+			 \Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');
  		}
 
  		$model = $this->getModel('category');

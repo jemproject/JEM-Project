@@ -30,7 +30,7 @@ class JemViewCategoryelement extends JViewLegacy {
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word');
 		$filter_state 		= $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
 		$search 			= $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
+		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		//prepare document
 		$document->setTitle(JText::_('COM_JEM_SELECT_CATEGORY'));

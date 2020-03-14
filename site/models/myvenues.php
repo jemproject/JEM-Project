@@ -157,7 +157,7 @@ class JemModelMyvenues extends JModelLegacy
 		}
 		// simple checks, good enough here
 		if (is_array($cid) && count($cid) && ($publish >= -2) && ($publish <= 2)) {
-			JArrayHelper::toInteger($cid);
+			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_venues'
@@ -242,7 +242,7 @@ class JemModelMyvenues extends JModelLegacy
 
 		$filter   = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
-		$search   = $this->_db->escape(trim(JString::strtolower($search)));
+		$search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		$where = array();
 

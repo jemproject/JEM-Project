@@ -1,14 +1,12 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
-require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * Categories-View
@@ -55,7 +53,10 @@ class JemViewCategories extends JemView
 		// pathway
 		$pathway = $app->getPathWay();
 		if ($menuitem) {
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		}
 
 		if ($task == 'archive') {

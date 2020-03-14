@@ -1,8 +1,8 @@
 /**
- * @version 2.2
+ * @version 2.3.0
  * @package JEM
  * @subpackage JEM Jubilee Module
- * @copyright (C) 2014-2017 joomlaeventmanager.net
+ * @copyright (C) 2014-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -83,8 +83,6 @@ div#jemmodulejubilee .desc {
 }
 
 div#jemmodulejubilee .time {
-	padding-left: 20px;
-	background: url(img/time.png) 0 center no-repeat;
 	padding-top: 2px;
 	font-weight: normal;
 	font-size: smaller;
@@ -92,8 +90,6 @@ div#jemmodulejubilee .time {
 }
 
 div#jemmodulejubilee div.date {
-	padding-left: 20px;
-	background: url(img/date.png) 0 center no-repeat;
 	padding-top: 2px;
 	font-weight: normal;
 	font-size: smaller;
@@ -103,16 +99,12 @@ div#jemmodulejubilee div.date {
 
 div#jemmodulejubilee .category {
 	position: relative;
-	padding-left: 20px;
-	background: url(img/category.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 }
 
 div#jemmodulejubilee .venue-title {
 	position: relative;
-	padding-left: 20px;
-	background: url(img/building.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 	margin-right: 8px;

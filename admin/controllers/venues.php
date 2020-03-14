@@ -47,12 +47,12 @@ class JemControllerVenues extends JControllerAdmin
 		$cid = $jinput->get('cid',array(),'array');
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_AN_ITEM_TO_DELETE' ) );
+			throw new Exception(JText::_('COM_JEM_SELECT_AN_ITEM_TO_DELETE'), 500);
 		} else {
 			$model = $this->getModel('venue');
 
 			jimport('joomla.utilities.arrayhelper');
-			JArrayHelper::toInteger($cid);
+			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 
 			// trigger delete function in the model
 			$result = $model->delete($cid);

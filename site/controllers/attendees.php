@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -50,7 +50,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$comment = '';
 		$fid     = $jinput->getInt('Itemid', 0);
 		$uids    = explode(',', $jinput->getString('uids', ''));
-		JArrayHelper::toInteger($uids);
+		\Joomla\Utilities\ArrayHelper::toInteger($uids);
 		$uids    = array_filter($uids);
 		$uids    = array_unique($uids);
 		$total   = is_array($uids) ? count($uids) : 0;
@@ -141,7 +141,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$total  = is_array($cid) ? count($cid) : 0;
 
 		if ($total < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+			throw new Exception(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
 		}
 
 		$modelAttendeeList = $this->getModel('attendees');
@@ -232,7 +232,9 @@ class JemControllerAttendees extends JControllerLegacy
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 
 		$enableemailadress = $params->get('enableemailaddress', 0);
-		$sep               = $jemconfig->get('csv_separator', ';');
+		$separator         = $jemconfig->get('csv_separator', ';');
+		$delimiter         = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom           = $jemconfig->get('csv_bom', '1');
 		$userfield         = $jemconfig->get('globalattribs.global_regname', 1) ? 'name' : 'username';
 		$comments          = $jemconfig->get('regallowcomments', 0);
 
@@ -247,10 +249,15 @@ class JemControllerAttendees extends JControllerLegacy
 		header('Pragma: no-cache');
 
 		$export = fopen('php://output', 'w');
-		fputcsv($export, array('sep='.$sep), $sep, '"');
+		if ($csv_bom ==1 ) {
+			//add BOM to fix UTF-8 in Excel
+			fputs($export, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		}
+		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 
 		$cols = array();
-		$cols[] = JText::_('COM_JEM_USERNAME');
+		$cols[] = JText::_('COM_JEM_NUM');
+		$cols[] = JText::_($jemconfig->get('globalattribs.global_regname', 1) ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME');
 		if ($enableemailadress == 1) {
 			$cols[] = JText::_('COM_JEM_EMAIL');
 		}
@@ -260,12 +267,14 @@ class JemControllerAttendees extends JControllerLegacy
 			$cols[] = JText::_('COM_JEM_COMMENT');
 		}
 
-		fputcsv($export, $cols, $sep, '"');
+		fputcsv($export, $cols, $separator, $delimiter);
 
+		$i = 0;
 		foreach ($datas as $data)
 		{
 			$cols = array();
 
+			$cols[] = ++$i;
 			$cols[] = $data->$userfield;
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
@@ -287,7 +296,7 @@ class JemControllerAttendees extends JControllerLegacy
 				$cols[] = $comment;
 			}
 
-			fputcsv($export, $cols, $sep, '"');
+			fputcsv($export, $cols, $separator, $delimiter);
 		}
 
 		fclose($export);

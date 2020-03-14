@@ -1,13 +1,14 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
+JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -45,8 +46,8 @@ defined('_JEXEC') or die;
 				<dd class="venue_website">
 					<a href="<?php echo $this->escape($row->url); ?>" target="_blank">
 					<?php
-						if (JString::strlen($row->url) > 35) {
-							$urlclean = htmlspecialchars(JString::substr($row->url, 0 , 35)) . '...';
+						if (\Joomla\String\StringHelper::strlen($row->url) > 35) {
+							$urlclean = htmlspecialchars(\Joomla\String\StringHelper::substr($row->url, 0 , 35)) . '...';
 						} else {
 							$urlclean = htmlspecialchars($row->url);
 						}

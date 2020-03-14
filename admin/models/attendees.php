@@ -184,7 +184,7 @@ class JemModelAttendees extends JModelList
 	{
 		if (is_array($cid) && count($cid))
 		{
-			JArrayHelper::toInteger($cid);
+			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
 			$db = JFactory::getDbo();
 
@@ -196,7 +196,7 @@ class JemModelAttendees extends JModelList
 
 			// TODO: use exception handling
 			if ($db->execute() === false) {
-				JError::raiseError(500, $db->getErrorMsg());
+				throw new Exception($db->getErrorMsg(), 500);
 			}
 		}
 		return true;
@@ -209,7 +209,9 @@ class JemModelAttendees extends JModelList
 	public function getCsv()
 	{
 		$jemconfig = JemConfig::getInstance()->toRegistry();
-		$sep       = $jemconfig->get('csv_separator', ';');
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
 		$comments  = $jemconfig->get('regallowcomments', 0);
 
 		$event = $this->getEvent();
@@ -218,7 +220,6 @@ class JemModelAttendees extends JModelList
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
 
 		$csv = fopen('php://output', 'w');
-		fputcsv($csv, array('sep='.$sep), $sep, '"');
 
 		$header = array(
 				JText::_('COM_JEM_NAME'),
@@ -232,7 +233,7 @@ class JemModelAttendees extends JModelList
 		}
 		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
 
-		fputcsv($csv, $header, $sep, '"');
+		fputcsv($csv, $header, $separator, $delimiter);
 
 		foreach ($items as $item)
 		{
@@ -258,7 +259,7 @@ class JemModelAttendees extends JModelList
 			}
 			$data[] = $item->uid;
 
-			fputcsv($csv, $data, $sep, '"');
+			fputcsv($csv, $data, $separator, $delimiter);
 		}
 
 		return fclose($csv);

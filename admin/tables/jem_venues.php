@@ -88,7 +88,7 @@ class jem_venues extends JTable
 		// not typed in a venue name
 		if (!trim($this->venue)) {
 			$this->_error = JText::_('COM_JEM_ADD_VENUE');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -102,7 +102,7 @@ class jem_venues extends JTable
 			if (!trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode)) {
 				if ((!trim($this->latitude) && !trim($this->longitude))) {
 					$this->_error = JText::_('COM_JEM_ERROR_ADDRESS');
-					JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 					return false;
 				}
 			}
@@ -110,7 +110,7 @@ class jem_venues extends JTable
 
 		if (JFilterInput::checkAttribute(array ('href', $this->url))) {
 			$this->_error = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -119,49 +119,49 @@ class jem_venues extends JTable
 
 			if (strlen($this->url) > 199) {
 				$this->_error = JText::_('COM_JEM_ERROR_URL_LONG');
-				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
 			.'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
 				$this->_error = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
-				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 		}
 
 		$this->street = strip_tags($this->street);
-		if (JString::strlen($this->street) > 50) {
+		if (\Joomla\String\StringHelper::strlen($this->street) > 50) {
 			$this->_error = JText::_('COM_JEM_ERROR_STREET_LONG');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->postalCode = strip_tags($this->postalCode);
-		if (JString::strlen($this->postalCode) > 10) {
+		if (\Joomla\String\StringHelper::strlen($this->postalCode) > 10) {
 			$this->_error = JText::_('COM_JEM_ERROR_ZIP_LONG');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->city = strip_tags($this->city);
-		if (JString::strlen($this->city) > 50) {
+		if (\Joomla\String\StringHelper::strlen($this->city) > 50) {
 			$this->_error = JText::_('COM_JEM_ERROR_CITY_LONG');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->state = strip_tags($this->state);
-		if (JString::strlen($this->state) > 50) {
+		if (\Joomla\String\StringHelper::strlen($this->state) > 50) {
 			$this->_error = JText::_('COM_JEM_ERROR_STATE_LONG');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->country = strip_tags($this->country);
-		if (JString::strlen($this->country) > 2) {
+		if (\Joomla\String\StringHelper::strlen($this->country) > 2) {
 			$this->_error = JText::_('COM_JEM_ERROR_COUNTRY_LONG');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -172,7 +172,7 @@ class jem_venues extends JTable
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_VENUE_NAME_ALREADY_EXIST', $this->venue));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_VENUE_NAME_ALREADY_EXIST', $this->venue), 'warning');
 			return false;
 		}
 		*/

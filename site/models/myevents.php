@@ -143,7 +143,7 @@ class JemModelMyevents extends JModelLegacy
 		$userid = (int) $user->get('id');
 
 		if (is_array($cid) && count($cid)) {
-			JArrayHelper::toInteger($cid);
+			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'
@@ -284,7 +284,7 @@ class JemModelMyevents extends JModelLegacy
 
 		$filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
-		$search   = $this->_db->escape(trim(JString::strtolower($search)));
+		$search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		$where = array();
 		// First thing we need to do is to select only needed events
@@ -305,7 +305,7 @@ class JemModelMyevents extends JModelLegacy
 
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
-			JArrayHelper::toInteger($cats_excluded);
+			\Joomla\Utilities\ArrayHelper::toInteger($cats_excluded);
 			$where[] = '  c.id NOT IN (' . implode(',', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //

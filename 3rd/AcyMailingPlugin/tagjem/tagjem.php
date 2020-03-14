@@ -60,7 +60,7 @@ class plgAcymailingTagjem extends JPlugin
 		$pageInfo->filter->order->dir   = $app->getUserStateFromRequest($paramBase.".filter_order_Dir", 'filter_order_Dir', 'desc', 'word');
 		if(strtolower($pageInfo->filter->order->dir) !== 'desc') $pageInfo->filter->order->dir = 'asc';
 		$pageInfo->search = $app->getUserStateFromRequest($paramBase.".search", 'search', '', 'string');
-		$pageInfo->search = JString::strtolower($pageInfo->search);
+		$pageInfo->search = \Joomla\String\StringHelper::strtolower($pageInfo->search);
 		$pageInfo->filter_cat = $app->getUserStateFromRequest($paramBase.".filter_cat", 'filter_cat', '', 'int');
 		$pageInfo->featured = $app->getUserStateFromRequest($paramBase.".featured", 'featured', $this->params->get('show_featured', 0), 'int');
 		$pageInfo->opendates = '0';

@@ -57,7 +57,7 @@ class JFormFieldCategories extends JFormFieldList
 		$category = $db->loadResult();
 
 		if ($error = $db->getErrorMsg()) {
-			JError::raiseWarning(500, $error);
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
 		}
 
 		if (empty($category)) {

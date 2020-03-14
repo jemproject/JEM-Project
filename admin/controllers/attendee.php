@@ -50,11 +50,7 @@ class JemControllerAttendee extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$attendee = JTable::getInstance('jem_register', '');
-		if (version_compare(JVERSION, '3.2', 'lt')) {
-			$attendee->bind(JRequest::get('post')); // before Joomla! 3.2.0 there is no good way to get them all from JInput :(
-		} else {
-			$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
-		}
+		$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
 		$attendee->checkin();
 
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
@@ -78,11 +74,7 @@ class JemControllerAttendee extends JControllerLegacy
 		$task = $jinput->getCmd('task');
 
 		// Retrieving $post
-		if (version_compare(JVERSION, '3.2', 'lt')) {
-			$post = JRequest::get('post'); // before Joomla! 3.2.0 we must and can use JRequest
-		} else {
-			$post = $jinput->post->getArray(/*get them all*/);
-		}
+		$post = $jinput->post->getArray(/*get them all*/);
 
 		// Retrieving email-setting
 		$sendemail = $jinput->getInt('sendemail','0');
@@ -125,7 +117,7 @@ class JemControllerAttendee extends JControllerLegacy
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-					JError::raiseNotice(100, JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 				}
 			}
 

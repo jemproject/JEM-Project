@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.2.3
+ * @version 2.3.0
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -88,16 +88,20 @@ if ($params->get('use_modal', 0)) {
 						<?php endif; ?>
 					</td>
 					<td class="event-vencat">
-						<div class="venue-title">
-						<?php if ($item->venuelink) : ?>
-							<a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
-						<?php else : ?>
-							<?php echo $item->venue; ?>
+						<?php if (!empty($item->venue)) : ?>
+							<div class="venue-title">
+							<?php if ($item->venuelink) : ?>
+								<a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
+							<?php else : ?>
+								<?php echo $item->venue; ?>
+							<?php endif; ?>
+							</div>
 						<?php endif; ?>
-						</div>
-						<div class="category">
-							<?php echo $item->catname; ?>
-						</div>
+						<?php if (!empty($item->catname)) : ?>
+							<div class="category">
+								<?php echo $item->catname; ?>
+							</div>
+						<?php endif; ?>
 					</td>
 				</tr>
 			</table>

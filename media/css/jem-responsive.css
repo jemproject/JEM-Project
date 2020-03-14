@@ -1,0 +1,573 @@
+/**
+ * @version 2.3.0-dev2
+ * @package JEM
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+
+/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+
+body.com_jem #sbox-overlay {
+    width: 100% !important;
+}
+
+body.com_jem #sbox-window {
+    height: auto !important;
+}
+
+body.com_jem #sbox-content {
+    height: auto !important;
+    width: auto !important;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+body.com_jem.body-overlayed {
+    overflow: auto;
+}
+
+
+/* ----- */
+
+#jem .buttons {
+    float: right;
+}
+
+#jem .buttons::after {
+    clear: both;
+}
+
+#jem .jem-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#jem .jem-wrap-reverse {
+    flex-wrap: wrap-reverse;
+}
+
+#jem .jem-nowrap {
+    flex-wrap: nowrap;
+}
+
+#jem .jem-justify-start {
+    justify-content: flex-start;
+}
+
+#jem .jem-justify-end {
+    justify-content: flex-end;
+}
+
+#jem .valign-baseline {
+    align-items: baseline;
+}
+
+#jem .jem-dl:after {
+    clear: both;
+}
+
+#jem .jem-dl,
+#jem .jem-dl-long {
+    margin: 0;
+}
+
+#jem .jem-dl dt,
+#jem .jem-dl-long dt {
+    float: left;
+    width: 160px;
+    overflow: hidden;
+    clear: left;
+    text-align: left;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#jem .jem-dl-long dt {
+    width: 200px;
+}
+
+#jem .jem-dl dt label,
+#jem .jem-dl-long dt label {
+    font-weight: bold;
+}
+
+
+/*Special for the description lable in editevent and editvenue*/
+
+#jem #jform_articletext-lbl,
+#jem #jform_locdescription-lbl {
+    font-weight: bold;
+}
+
+#jem .jem-dl dd,
+#jem .jem-dl-long dd {
+    margin-left: 170px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#jem .jem-dl-long dd {
+    margin-left: 210px;
+}
+
+#jem .jem-img {
+    text-align: center;
+}
+
+#jem .jem-img img {
+    max-width: 100%;
+}
+
+#jem .jem-registered-list {
+    margin-left: calc(2.14285714em / 1.5);
+}
+
+#jem .jem-registered-list img {
+    width: 30px;
+}
+
+#jem .jem-catimg {
+    float: right;
+}
+
+#jem .jem-clear {
+    clear: both;
+}
+
+#jem .jem-readmore {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#jem .copyright {
+    text-align: right;
+}
+
+#jem .jem-hr {
+    clear: both;
+}
+
+#jem .jem-date .input-append {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+#jem .jem-limit-smallist {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+#jem #limit {
+    padding: 0;
+    margin: 0;
+}
+
+#jem .jem_limit {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    align-items: baseline;
+}
+
+#jem .input-mini {
+    width: 60px;
+}
+
+#jem .pagination {
+    text-align: center;
+    float: none !important;
+}
+
+#jem_filter {
+    padding: 10px 0 5px 0;
+    align-items: baseline;
+}
+
+#jem_filter div {
+    margin-bottom: 5px;
+}
+
+#jem_filter label,
+#jem_filter select,
+#jem_filter input,
+#jem_filter button,
+#status-lbl {
+    margin-right: 5px;
+}
+
+#jem .jem-misc {
+    padding: 10px 0;
+}
+
+#jem .jem-sort {
+    flex: 1;
+    align-items: baseline;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+#jem .jem-sort-small {
+    font-weight: bold;
+    border-left: 1px solid transparent;
+}
+
+#jem .jem-sort-icon {
+    margin-right: 5px;
+}
+
+#jem .icon-arrow-up-3,
+#jem .icon-arrow-down-3 {
+    width: auto;
+}
+
+#jem .icon-arrow-up-3::before {
+    font-family: FontAwesome !important;
+    content: "\00a0\f0de" !important;
+}
+
+#jem .icon-arrow-down-3::before {
+    font-family: FontAwesome !important;
+    content: "\00a0\f0dd" !important;
+}
+
+#jem img.icon-inline {
+    display: none;
+}
+
+#jem select,
+#jem input,
+.buttonfilter {
+    margin-top: 0 !important;
+    /* margin-bottom: 0 !important; */
+    margin-left: 0 !important;
+}
+
+#jem select,
+#jem input {
+    width: auto;
+}
+
+#jem .jem-sort-parts div::after {
+    content: "";
+    border-right: 1px solid #333;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#jem .jem-sort-parts div:last-child::after {
+    border: none;
+}
+
+#jem .jem-event {
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    align-items: center;
+}
+
+#jem .jem-event:first-child {
+    border-top: 1px solid #ddd;
+}
+
+#jem .jem-event.jem-nopointer {
+    cursor: default;
+}
+
+#jem .jem-list-img {
+    flex-shrink: 1;
+    margin-right: 15px;
+    display: flex;
+}
+
+#jem .jem-list-img .flyerimage {
+    align-self: center;
+}
+
+#jem .jem-event-details {
+    flex: 1;
+}
+
+#jem .jem-event-details h4 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+    line-height: 110%;
+}
+
+#jem .jem-event-details h4 a {
+    font-weight: bold;
+}
+
+#jem .jem-list-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+#jem .jem-small-list {
+    padding: 10px;
+}
+
+#jem .jem-event-info {
+    margin-right: 15px;
+}
+
+#jem .jem-event-info:last-child {
+    margin-right: 0;
+}
+
+#jem .jem-event-info-small {
+    word-break: keep-all;
+}
+
+#jem .jem-event-info-small:last-child {
+    margin-right: 0;
+}
+
+#jem .eventlist {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+#jem .eventlist li {
+    padding: 10px;
+    list-style: none;
+}
+
+#jem .eventlist li:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+#jem .eventlist li:last-child {
+    margin-bottom: 0;
+}
+
+#jem .eventlist li:not(.jem-nohover):hover {
+    background-color: #e0e0e0;
+}
+
+#jem #reg_comment {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    min-width: 200px;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100px;
+}
+
+#jem .jem-register-button {
+    margin-top: 10px !important;
+}
+
+#jem.jem_attendees .jem-event {
+    cursor: auto;
+}
+
+#jem.jem_attendees .jem-attendee-number {
+    flex: 1 2%;
+}
+
+#jem.jem_attendees .jem-attendee-name {
+    flex: 1 24%;
+}
+
+#jem.jem_attendees .jem-attendee-email {
+    flex: 1 22%;
+}
+
+#jem.jem_attendees .jem-attendee-regdate {
+    flex: 1 22%;
+}
+
+#jem.jem_attendees .jem-attendee-status {
+    flex: 1 4%;
+}
+
+#jem.jem_attendees .jem-attendee-comment {
+    flex: 1 22%;
+}
+
+#jem.jem_attendees .jem-attendee-remove {
+    flex: 1 4%;
+}
+
+#jem div.jem-map {
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
+
+#jem div.jem-map iframe {
+    width: 100%;
+    height: 300px;
+}
+
+#jem.jem_myevents .jem-event,
+#jem.jem_myvenues .jem-event,
+#jem.jem_myattendances .jem-event {
+    cursor: auto;
+}
+
+#jem dl.tabs dt.tabs {
+    float: left;
+    margin-left: 0;
+    margin-right: 3px;
+    padding: 4px 10px;
+    background-color: #eeeeee;
+    border-top: 1px solid #CCC;
+    border-left: 1px solid #CCC;
+    border-right: 1px solid #CCC;
+}
+
+#jem dl.tabs dt.open {
+    background-color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+#jem div.current dd.tabs {
+    clear: both;
+    margin: 0;
+    padding: 10px;
+    border: 1px solid #CCC;
+    background-color: #ffffff;
+}
+
+#jem .warningrecurrence {
+    padding: 10px;
+    border: 1px solid #fbeed5;
+    background-color: #fcf8e3;
+}
+
+#jem.jem_select_contact .jem-event,
+#jem.jem_select_venue .jem-event {
+    cursor: auto;
+}
+
+#jem.jem_select_contact .selectcontact,
+#jem.jem_select_venue .selectvenue {
+    cursor: pointer;
+}
+
+#jem.jem_select_contact .jem-contact-number {
+    flex: 1 6%;
+}
+
+#jem.jem_select_contact .jem-contact-name {
+    flex: 1 50%;
+}
+
+#jem.jem_select_contact .jem-contact-city,
+#jem.jem_select_contact .jem-contact-state {
+    flex: 1 20%;
+}
+
+#jem.jem_select_venue .jem-venue-number {
+    flex: 1 6%;
+}
+
+#jem.jem_select_venue .jem-venue-name {
+    flex: 1 44%;
+}
+
+#jem.jem_select_venue .jem-venue-city {
+    flex: 1 20%;
+}
+
+#jem.jem_select_venue .jem-venue-state {
+    flex: 1 14%;
+}
+
+#jem.jem_select_venue .jem-venue-country {
+    flex: 1 10%;
+}
+
+#jem.jem_select_users .jem-users-number {
+    flex: 1 6%;
+}
+
+#jem.jem_select_users .jem-users-checkall {
+    flex: 1 4%;
+}
+
+#jem.jem_select_users .jem-users-name {
+    flex: 1 70%;
+}
+
+#jem.jem_select_users .jem-users-state {
+    flex: 1 14%;
+}
+
+@media only all and (max-width: 59.938rem) and (min-width: 48rem) {
+    /*#jem .jem-event-info-small {
+    flex-basis: 45% !important;
+  }*/
+}
+
+@media not print {
+    @media only all and (max-width: 47.938rem) {
+        #jem .jem-dl dt, #jem .jem-dl-long dt {
+            float: none;
+            width: auto;
+            clear: none;
+            text-align: left;
+            margin-top: 5px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+        #jem .jem-dl dt:first-child,
+        #jem .jem-dl-long dt:first-child {
+            margin-top: 0;
+        }
+        #jem .jem-dl dd,
+        #jem .jem-dl-long dd {
+            margin-left: 0;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 5px;
+        }
+        #jem .jem_limit {
+            flex-wrap: wrap;
+        }
+        #jem .jem-event-details {
+            order: -1;
+            flex-basis: 100%
+        }
+        #jem .jem-list-img {
+            margin-right: 0;
+            margin-top: 10px;
+        }
+        #jem .jem-catimg {
+            float: none;
+            clear: both;
+        }
+        #jem .jem-sort-small .jem-small-list div {
+            flex-basis: 30%;
+        }
+        #jem .jem-event-info-small {
+            flex-basis: 100% !important;
+        }
+    }
+}
+
+@media only all and (max-width: 30rem) {}
+
+@media only all and (max-width: 74.938rem) and (min-width: 60rem) {}
+
+@media only all and (min-width: 75rem) {}

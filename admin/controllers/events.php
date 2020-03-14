@@ -50,7 +50,7 @@ class JemControllerEvents extends JControllerAdmin
 		$ids    = JFactory::getApplication()->input->get('cid', array(), 'array');
 		$values = array('featured' => 1, 'unfeatured' => 0);
 		$task   = $this->getTask();
-		$value  = JArrayHelper::getValue($values, $task, 0, 'int');
+		$value  = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
 
 		$glob_auth = $user->can('publish', 'event'); // general permission for all events
 
@@ -60,12 +60,12 @@ class JemControllerEvents extends JControllerAdmin
 			if (!$glob_auth && !$user->can('publish', 'event', (int)$id)) {
 				// Prune items that you can't change.
 				unset($ids[$i]);
-				JError::raiseNotice(403, JText::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'notice');
 			}
 		}
 
 		if (empty($ids)) {
-			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
 		}
 		else {
 			// Get the model.
@@ -73,7 +73,7 @@ class JemControllerEvents extends JControllerAdmin
 
 			// Publish the items.
 			if (!$model->featured($ids, $value)) {
-				JError::raiseWarning(500, $model->getError());
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($model->getError(), 'warning');
 			}
 		}
 

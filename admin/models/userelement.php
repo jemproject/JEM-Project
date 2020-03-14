@@ -87,7 +87,7 @@ class JemModelUserelement extends JModelLegacy
 		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		$search           = $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string' );
-		$search           = $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		$search           = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );
 
 		// start query
 		$db = JFactory::getDBO();

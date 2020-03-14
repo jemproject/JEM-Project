@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -291,7 +291,7 @@ class JemModelEventslist extends JModelList
 			$query->where('a.id '.$type.(int) $eventId);
 		}
 		elseif (is_array($eventId) && !empty($eventId)) {
-			JArrayHelper::toInteger($eventId);
+			\Joomla\Utilities\ArrayHelper::toInteger($eventId);
 			$eventId = implode(',', $eventId);
 			$type = $this->getState('filter.event_id.include', true) ? 'IN' : 'NOT IN';
 			$query->where('a.id '.$type.' ('.$eventId.')');
@@ -328,7 +328,7 @@ class JemModelEventslist extends JModelList
 			$query->where('a.featured = ' . (int) $featured);
 		}
 		elseif (is_array($featured) && !empty($featured)) {
-			JArrayHelper::toInteger($featured);
+			\Joomla\Utilities\ArrayHelper::toInteger($featured);
 			$featured = implode(',', $featured);
 			$query->where('a.featured IN ('.$featured.')');
 		}
@@ -397,7 +397,7 @@ class JemModelEventslist extends JModelList
 			$query->where('l.id '.$type.(int) $venueId);
 		}
 		elseif (is_array($venueId) && !empty($venueId)) {
-			JArrayHelper::toInteger($venueId);
+			\Joomla\Utilities\ArrayHelper::toInteger($venueId);
 			$venueId = implode(',', $venueId);
 			$type = $this->getState('filter.venue_id.include', true) ? 'IN' : 'NOT IN';
 			$query->where('l.id '.$type.' ('.$venueId.')');
@@ -416,11 +416,11 @@ class JemModelEventslist extends JModelList
 			switch ($venueStateMode) {
 			case 0: # complete match: venue's state must be equal (ignoring upper/lower case) one of the strings given by filter
 			default:
-				array_walk($venueState, create_function('&$v,$k,$db','$v = $db->quote(trim($v));'), $db);
+				array_walk($venueState, function(&$v,$k,$db) { $v = $db->quote(trim($v)); }, $db);
 				$query->where('l.state IN ('.implode(',', $venueState).')');
 				break;
 			case 1: # contain: venue's state must contain one of the strings given by filter
-				array_walk($venueState, create_function('&$v,$k,$db','$v = quotemeta($db->escape(trim($v), true));'), $db);
+				array_walk($venueState, function(&$v,$k,$db) { $v = quotemeta($db->escape(trim($v), true)); }, $db);
 				$query->where('l.state REGEXP '.$db->quote(implode('|', $venueState)));
 				break;
 			}
@@ -617,7 +617,7 @@ class JemModelEventslist extends JModelList
 			$query->where('c.id '.$type.(int) $categoryId);
 		}
 		elseif (is_array($categoryId) && !empty($categoryId)) {
-			JArrayHelper::toInteger($categoryId);
+			\Joomla\Utilities\ArrayHelper::toInteger($categoryId);
 			$categoryId = implode(',', $categoryId);
 			$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
 			$query->where('c.id '.$type.' ('.$categoryId.')');
@@ -805,7 +805,7 @@ class JemModelEventslist extends JModelList
 			$where_pub[] = '(' . $tbl . 'published = ' . (int)$published . ')';
 		}
 		elseif (is_array($published) && !empty($published)) {
-			JArrayHelper::toInteger($published);
+			\Joomla\Utilities\ArrayHelper::toInteger($published);
 			$published = implode(',', $published);
 			$where_pub[] = '(' . $tbl . 'published IN (' . $published . '))';
 		}

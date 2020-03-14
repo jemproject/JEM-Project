@@ -43,7 +43,7 @@ class JemViewSettings extends JemAdminView
 
 		// Check for model errors.
 		if ($errors = $this->get('Errors')) {
-			JError::raiseError(500, implode('<br />', $errors));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode('<br />', $errors), 'error');
 			return false;
 		}
 
@@ -55,7 +55,7 @@ class JemViewSettings extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			JError::raiseError(500, implode("\n", $errors));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
@@ -69,7 +69,7 @@ class JemViewSettings extends JemAdminView
 
 		// only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::_('JERROR_ALERTNOAUTHOR'));
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
 		}
 

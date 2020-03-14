@@ -18,7 +18,6 @@
 	<div class="clear"></div>
 </div>
 
-
 <h3>Navigation</h3>
 
 <p>To access this screen use:
@@ -60,7 +59,6 @@
 <p><strong>Help:</strong>
 	Opens this help screen.</p>
 
-
 <h2><strong>Settings:</strong></h2>
 
 <ul>
@@ -71,7 +69,6 @@
 	<li><a href="#access">User Control</a></li>
 	<li><a href="#configinfo">Configinfo</a></li>
 </ul>
-
 
 <h2>Basic Settings:<a name="basicsettings" id="basicsettings"></a></h2>
 
@@ -108,10 +105,8 @@
 	the following code '%H' shows '16'. More Information <a href=
 	"http://www.php.net/strftime" target="_blank">php strftime manual</a>.</p>
 
-
 <p><strong>Store IP:</strong><br />
 	In some countries it isn't permitted to store the IP address of your visitors. You can disable it here.</p>
-
 
 <h3>Event Handling</h3>
 
@@ -125,7 +120,6 @@
 
 <p><strong>Number of Days:</strong><br />
 	Just to specify when an event is "old".</p>
-
 
 <h3>Image Handling:</h3>
 
@@ -152,12 +146,10 @@
 <p><strong>Lightbox Effect:</strong><br />
 	Enable a nice lightbox effect to enlarge images from thumbnail to maximum size.</p>
 
-
 <div class="box">
 	<p class="attentionheader">Attention</p>
 	<p class="attention">If you define an image width of more than the width of 20% of the content area, you have to modify the jem.css accordingly.</p>
 </div>
-
 
 <h3>Meta Options</h3>
 
@@ -173,7 +165,6 @@
 	<p class="attentionheader">Attention</p>
 	<p class="attention">Don't use inverted commas or quotation marks in the description, because this will cause HTML errors</p>
 </div>
-
 
 <h2>Event Page:<a name="detailspage" id="detailspage"></a></h2>
 
@@ -217,7 +208,6 @@
 <p><strong>Show Introtext:</strong><br />
 	If set to Show, the event Introtext will be shown.
 	If set to Hide, only the part of the event description after the "Read More" break will show.</p>
-
 
 <h3>Venues</h3>
 
@@ -280,7 +270,6 @@
 	If "Show time in date column" is set to No/Hide the only difference is the second, empty line on Two lines layout.
 	So you should show time values for best results.</p>
 
-
 <h3>Columns</h3>
 
 <p><strong>City Column:</strong><br />
@@ -320,7 +309,6 @@
 	If yes, type in the	width of the column. The column title will be displayed
 	at the head of the column.</p>
 
-
 <h3>Custom Stylesheets</h3>
 
 <p>Choose if you want to use custom stylesheets for various parts of JEM. You can set if you are using a custom stylesheet for:</p>
@@ -349,7 +337,6 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 <h3>Font Color</h3>
 
 <p>	Choose a custom Font Color for various parts of JEM.</p>
-
 
 <h2>Global Parameters:<a name="params" id="params"></a></h2>
 
@@ -383,7 +370,6 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 <p><strong>Show Time:</strong><br />
 	Choose if you want to show time with events.</p>
 
-
 <p><strong>Display User Name:</strong><br />
 	Choose if the name or the username should be displayed for the event creator and the attendees.</p>
 
@@ -410,7 +396,6 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	should be removed from database if you uninstall JEM.
 	Be warned: If set to Yes and you uninstall JEM all data like events, venues, or atteendances get lost!</p>
 
-
 <h3>Editevent:</h3>
 
 <p><strong>Owned Venues:</strong><br />
@@ -419,7 +404,6 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 <p><strong>Max. # Custom Fields:</strong><br />
 	Choose the maximum number of Custom Fields that are allowed when entering / editing an Event.
 	Please note this only takes effect in the Frontend.</p>
-
 
 <h3>Advanced Parameters:</h3>
 
@@ -468,7 +452,13 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	When entering a new venue the country is then set to the default chosen here, to save handling.</p>
 
 <p><strong>CSV Separator:</strong><br />
-	Choose if comma or semicolon should be used as separator on CSV Exports (e.g. attendee lists).</p>
+	Choose if comma or semicolon should be used as separator between fields on CSV Imports/Exports (e.g. attendee lists).</p>
+
+<p><strong>CSV Delimiter:</strong><br />
+	Choose if quote or double-quote should be used to embrace fields on CSV Imports/Exports (e.g. attendee lists).</p>
+
+<p><strong>Insert BOM for UTF-8 handling:</strong><br />
+	Adds a 4-bytes string to the beginning of the export File to help Spreadsheet Software (i.e. Excel) to properly import data as UTF-8 encoded</p>
 
 <h3>Venues:</h3>
 
@@ -477,7 +467,6 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	<p class="attention">The Venues settings in this area affect the Venue detail view.
 	Other Venues settings under "Event Page" tab affect the Event detail view.</p>
 </div>
-
 
 <p><strong>Display Venue Description:</strong><br />
 	Choose if you want to display the description of the venue.</p>
@@ -509,8 +498,6 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	Choose the maximum number of Custom Fields that are allowed when entering / editing a Venue.
 	Please note this only takes effect in the Frontend.</p>
 
-
-
 <h2>User Control:<a name="access" id="access"></a></h2>
 
 <h3>User Control</h3>
@@ -520,13 +507,11 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	of the description is too long, the description will be stripped
 	and the note [stripped] will be added.</p>
 
-
 <p><strong>Image Uploads:</strong><br />
 Select if Image uploads for frontend submissions are optional, required or forbidden.</p>
 
 <p><strong>Attachement Uploads:</strong><br />
 Select if Attachment uploads for frontend submissions are enabled or forbidden.</p>
-
 
 <h3>AC - Events</h3>
 
@@ -545,7 +530,6 @@ Select if Attachment uploads for frontend submissions are enabled or forbidden.<
 	Allow user to edit his submitted events even if he hasn't
 	the required access level for editing events.</p>
 
-
 <h3>Registration</h3>
 
 <p><strong>Allow Event Registration:</strong><br />
@@ -558,7 +542,6 @@ Select if Attachment uploads for frontend submissions are enabled or forbidden.<
 
 <p><strong>Allow Comments:</strong><br />
 	Select if Frontend users are allowed to write an additional comment when they register for an event.</p>
-
 
 <h3>AC - Venues</h3>
 
@@ -584,7 +567,6 @@ Select if Attachment uploads for frontend submissions are enabled or forbidden.<
 <h3>Configinfo</h3>
 
 <p>The Configinfo schreen displays a summary of all JEM and JEM-related configuration and version information.</p>
-
 
 <div class="close">
 	<a href="#" onclick="javascript:window.close();">Close window</a>

@@ -149,7 +149,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// bind it to the table
 		if (!$row->bind($data)) {
-			JError::raiseError(500, $this->_db->getErrorMsg() );
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
 			return false;
 		}
 
@@ -176,7 +176,7 @@ class JemModelAttendee extends JModelLegacy
 				if ($details->booked >= $details->maxplaces)
 				{
 					if (!$details->waitinglist) {
-						JError::raiseWarning(0, JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
+						\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
 						return false;
 					}
 					$row->waiting = 1;
@@ -192,7 +192,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// Store it in the db
 		if (!$row->store()) {
-			JError::raiseError(500, $this->_db->getErrorMsg() );
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
 			return false;
 		}
 

@@ -117,8 +117,8 @@ $(document).ready(function() {
 							<?php endif; ?>
 						</td>
 						<td>
-							<?php if (JString::strlen($row->alias) > 25) : ?>
-								<?php echo $this->escape(JString::substr($row->alias, 0 , 25)).'...'; ?>
+							<?php if (\Joomla\String\StringHelper::strlen($row->alias) > 25) : ?>
+								<?php echo $this->escape(\Joomla\String\StringHelper::substr($row->alias, 0 , 25)).'...'; ?>
 							<?php else : ?>
 								<?php echo $this->escape($row->alias); ?>
 							<?php endif; ?>
@@ -126,8 +126,8 @@ $(document).ready(function() {
 						<td align="left">
 							<?php if ($row->url) : ?>
 								<a href="<?php echo $this->escape($row->url); ?>" target="_blank">
-									<?php if (JString::strlen($row->url) > 25) : ?>
-										<?php echo $this->escape(JString::substr($row->url, 0 , 25)).'...'; ?>
+									<?php if (\Joomla\String\StringHelper::strlen($row->url) > 25) : ?>
+										<?php echo $this->escape(\Joomla\String\StringHelper::substr($row->url, 0 , 25)).'...'; ?>
 									<?php else : ?>
 										<?php echo $this->escape($row->url); ?>
 									<?php endif; ?>

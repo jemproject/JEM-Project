@@ -83,10 +83,10 @@ class JemControllerImagehandler extends JControllerLegacy
 
 		//upload the image
 		if (!JFile::upload($file['tmp_name'], $filepath)) {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); </script>\n";
 			$app->close();
 		} else {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.history.go(-1); window.parent.SelectImage('$filename', '$filename'); </script>\n";
+			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.parent.SelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
 	}
@@ -115,7 +115,7 @@ class JemControllerImagehandler extends JControllerLegacy
 		if (count($images)) {
 			foreach ($images as $image) {
 				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
-					JError::raiseWarning(100, JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 					continue;
 				}
 

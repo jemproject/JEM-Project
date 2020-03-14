@@ -79,32 +79,32 @@ class JemTableVenue extends JTable
 		}
 
 		$this->street = strip_tags($this->street);
-		$streetlength = JString::strlen($this->street);
+		$streetlength = \Joomla\String\StringHelper::strlen($this->street);
 		if ($streetlength > 50) {
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_STREET'));
 			return false;
 		}
 
 		$this->postalCode = strip_tags($this->postalCode);
-		if (JString::strlen($this->postalCode) > 10) {
+		if (\Joomla\String\StringHelper::strlen($this->postalCode) > 10) {
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_POSTALCODE'));
 			return false;
 		}
 
 		$this->city = strip_tags($this->city);
-		if (JString::strlen($this->city) > 50) {
+		if (\Joomla\String\StringHelper::strlen($this->city) > 50) {
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_CITY'));
 			return false;
 		}
 
 		$this->state = strip_tags($this->state);
-		if (JString::strlen($this->state) > 50) {
+		if (\Joomla\String\StringHelper::strlen($this->state) > 50) {
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_STATE'));
 			return false;
 		}
 
 		$this->country = strip_tags($this->country);
-		if (JString::strlen($this->country) > 2) {
+		if (\Joomla\String\StringHelper::strlen($this->country) > 2) {
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_COUNTRY'));
 			return false;
 		}
@@ -292,7 +292,7 @@ class JemTableVenue extends JTable
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		JArrayHelper::toInteger($pks);
+		\Joomla\Utilities\ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
 		$state = (int) $state;
 

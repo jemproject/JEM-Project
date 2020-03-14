@@ -1,0 +1,115 @@
+/* List of all buttons:
+jem-submitbutton
+jem-addvenuebutton
+jem-addusersbutton
+jem-removebutton
+jem-archivebutton
+jem-archivebutton-return
+jem-editbutton
+jem-copybutton
+jem-printbutton
+jem-mailbutton
+jem-icalbutton
+jem-publishbutton
+jem-trashbutton
+jem-unpublishbutton
+jem-exportbutton
+jem-backbutton
+jem-recurrenceicon
+jem-publishstateicon-trashed
+jem-publishstateicon-unpublished
+jem-publishstateicon-published
+jem-publishstateicon-archived
+jem-attendance-status-fa-circle-o
+jem-attendance-status-fa-times-circle
+jem-attendance-status-fa-question-circle
+jem-attendance-status-fa-check-circle
+//jem-attendance-status-fa-exclamation-circle
+jem-attendance-status-fa-hourglass-half
+jem-unregisterbutton
+jem-registerbutton
+jem-featured-fa-star-o
+jem-featured-fa-star
+jem-mapicon
+
+jem-dateicon
+jem-clockicon
+jem-venueicon
+jem-categoryicon
+jem-sorticon
+jem-titleicon
+jem-cityicon
+jem-stateicon
+jem-attendeesicon
+jem-featuredicon
+*/
+
+#jem .jem-submitbutton,
+#jem .jem-addvenuebutton,
+#jem .jem-addusersbutton,
+#jem .jem-archivebutton,
+#jem .jem-archivebutton-return,
+#jem .jem-editbutton,
+#jem .jem-copybutton,
+#jem .jem-printbutton,
+#jem .jem-mailbutton,
+#jem .jem-icalbutton,
+#jem .jem-exportbutton {
+  color: initial;
+}
+
+#jem .jem-publishbutton,
+#jem .jem-publishstateicon-published,
+#jem .jem-attendance-status-fa-check-circle,
+#jem .jem-registerbutton {
+  color: #03b903;
+}
+
+#jem .jem-unpublishbutton,
+#jem .jem-publishstateicon-unpublished,
+#jem .jem-attendance-status-fa-times-circle,
+#jem .jem-removebutton,
+#jem .jem-unregisterbutton {
+  color: #f30000;
+}
+
+#jem .jem-trashbutton,
+#jem .jem-publishstateicon-trashed,
+#jem .jem-attendance-status-fa-circle-o {
+  color: #6f6f6f;
+}
+
+#jem .jem-attendance-status-fa-question-circle {
+  color: #0377cc;
+}
+
+#jem .jem-publishstateicon-archived,
+#jem .jem-featured-fa-star-o, /*not featured*/
+#jem .jem-featured-fa-star, /*featured*/
+#jem .jem-attendance-status-fa-exclamation-circle,
+#jem .jem-attendance-status-fa-hourglass-half {
+  color: #da8812;
+}
+
+#jem .jem-backbutton {
+  color: #03b903;
+}
+
+#jem .jem-recurrenceicon {
+	color: #da8812;
+}
+#jem .jem-recurrencefirsticon {
+	color: #f30000;
+}
+/*
+#jem .jem-recurrencefirsticon {
+	margin-left: 0.4em;
+}
+#jem .jem-recurrencefirsticon:after {
+	content:"\f12a";
+	color: #f30000;
+	margin-left: -0.6em;
+	vertical-align: 0.2em;
+	margin-right: 0.6em;
+}
+*/

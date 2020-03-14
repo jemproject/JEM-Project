@@ -48,7 +48,7 @@ class JemModelImagehandler extends JModelLegacy
 		$limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$search     = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
-		$search     = trim(JString::strtolower($search));
+		$search     = trim(\Joomla\String\StringHelper::strtolower($search));
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);

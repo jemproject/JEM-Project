@@ -201,6 +201,12 @@ div#jem .pointer {
 	cursor:pointer;
 }
 
+/* used for map without api-key */
+div#jem .venue_map {
+	border: 1px solid #000;
+	width:500px;
+}
+
 /**
  * @section headers
  */
@@ -1175,6 +1181,10 @@ div#jem .inline-button-right {
 }
 
 
+/* quick-hack: show horizontal scroll bar on small displays */
+#jem .table-responsive {
+	overflow-x: auto;
+}
 
 @media print {
 

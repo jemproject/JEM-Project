@@ -31,7 +31,7 @@ class JEMViewUserElement extends JViewLegacy {
 		$filter_order		= $app->getUserStateFromRequest('com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
 		$search 			= $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
+		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// prepare the document
 		$document->setTitle(JText::_('COM_JEM_SELECTATTENDEE'));

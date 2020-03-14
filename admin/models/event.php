@@ -572,7 +572,7 @@ class JemModelEvent extends JemModelAdmin
 	{
 		// Sanitize the ids.
 		$pks = (array)$pks;
-		JArrayHelper::toInteger($pks);
+		\Joomla\Utilities\ArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {
 			$this->setError(JText::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));

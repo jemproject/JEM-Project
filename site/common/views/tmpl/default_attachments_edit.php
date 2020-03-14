@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -28,7 +28,7 @@ defined ('_JEXEC') or die;
 			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" style="width:100px" /></td>
 			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" style="width:100px" /></td>
 			<td><?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox','style'=>'width:100px;','size'=>'3'), 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT')),true); ?></td>
+			<td><?php echo JemOutput::removebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>

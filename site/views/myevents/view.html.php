@@ -1,18 +1,17 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2019 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
-
 /**
  * Myevents-View
  */
-class JemViewMyevents extends JViewLegacy
+class JemViewMyevents extends JemView
 {
 	/**
 	 * Creates the Myevents View
@@ -96,7 +95,10 @@ class JemViewMyevents extends JViewLegacy
 
 		// pathway
 		if ($menuitem) {
-			$pathway->setItemName(1, $menuitem->title);
+      $pathwayKeys = array_keys($pathway->getPathway());
+      $lastPathwayEntryIndex = end($pathwayKeys);
+      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+      //$pathway->setItemName(1, $menuitem->title);
 		}
 
 		// Set Page title

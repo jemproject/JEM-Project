@@ -95,7 +95,7 @@ class JemModelExport extends JModelList
 
 		// check if specific category's have been selected
 		if (! empty($cats)) {
-			JArrayHelper::toInteger($cats);
+			\Joomla\Utilities\ArrayHelper::toInteger($cats);
 			$query->where('  c.id IN (' . implode(',', $cats) . ')');
 		}
 
@@ -117,10 +117,16 @@ class JemModelExport extends JModelList
 		$jinput = JFactory::getApplication()->input;
 		$includecategories = $jinput->get('categorycolumn', 0, 'int');
 
-		$csv = fopen('php://output', 'w');
 		$db  = $this->getDbo();
-
-		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
+		$csv = fopen('php://output', 'w');
+		if ($csv_bom ==1 ) {
+			//add BOM to fix UTF-8 in Excel
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		}
 
 		if ($includecategories == 1) {
 			$events = array_keys($db->getTableColumns('#__jem_events'));
@@ -128,7 +134,7 @@ class JemModelExport extends JModelList
 			$categories[] = "categories";
 			$header = array_merge($events, $categories);
 
-			fputcsv($csv, $header, ';');
+			fputcsv($csv, $header, $separator, $delimiter);
 
 			$query = $this->getListQuery();
 			$items = $this->_getList($query);
@@ -138,13 +144,13 @@ class JemModelExport extends JModelList
 			}
 		} else {
 			$header = array_keys($db->getTableColumns('#__jem_events'));
-			fputcsv($csv, $header, ';');
+			fputcsv($csv, $header, $separator, $delimiter);
 			$query = $this->getListQuery();
 			$items = $this->_getList($query);
 		}
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, $delimiter);
 		}
 
 		return fclose($csv);
@@ -176,19 +182,24 @@ class JemModelExport extends JModelList
 	public function getCsvcats()
 	{
 		$this->populateState();
-
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
 		$csv = fopen('php://output', 'w');
-		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-
+		if ($csv_bom ==1 ) {
+			//add BOM to fix UTF-8 in Excel
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		}
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $separator, $delimiter);
 
 		$db->setQuery($this->getListQuerycats());
 		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, $delimiter);
 		}
 
 		return fclose($csv);
@@ -219,18 +230,24 @@ class JemModelExport extends JModelList
 	public function getCsvvenues()
 	{
 		$this->populateState();
-
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
 		$csv = fopen('php://output', 'w');
-		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		if ($csv_bom ==1 ) {
+			//add BOM to fix UTF-8 in Excel
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		}
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_venues'));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $separator, $delimiter);
 
 		$db->setQuery($this->getListQueryvenues());
 		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, $delimiter);
 		}
 
 		return fclose($csv);
@@ -261,18 +278,24 @@ class JemModelExport extends JModelList
 	public function getCsvcatsevents()
 	{
 		$this->populateState();
-
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$separator = $jemconfig->get('csv_separator', ';');
+		$delimiter = $jemconfig->get('csv_delimiter', '"');
+		$csv_bom   = $jemconfig->get('csv_bom', '1');
 		$csv = fopen('php://output', 'w');
-		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		if ($csv_bom ==1 ) {
+			//add BOM to fix UTF-8 in Excel
+			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		}
 		$db = $this->getDbo();
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $separator, $delimiter);
 
 		$db->setQuery($this->getListQuerycatsevents());
 		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
-			fputcsv($csv, (array) $lines, ';', '"');
+			fputcsv($csv, (array) $lines, $separator, $delimiter);
 		}
 
 		return fclose($csv);
@@ -294,7 +317,7 @@ class JemModelExport extends JModelList
 
 		// Check for a database error.
 		if ($db->getErrorNum()){
-			JError::raiseNotice(500, $db->getErrorMsg());
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		}
 
 		if (!$mitems) {
