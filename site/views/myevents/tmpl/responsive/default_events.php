@@ -38,7 +38,7 @@ JHtml::_('behavior.tooltip');
   .jem-sort #jem_date,
   #jem .jem-event .jem-event-date {
     <?php if (!empty($this->jemsettings->datewidth)) : ?>
-      flex: 1 <?php echo ($this->jemsettings->datewidth); ?>;
+      flex: 1 <?php echo intval(($this->jemsettings->datewidth))-4 . '%'; /*take a little off to fit status*/?>;
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
@@ -50,7 +50,7 @@ JHtml::_('behavior.tooltip');
   .jem-sort #jem_title,
   #jem .jem-event .jem-event-title {
     <?php if (($this->jemsettings->showtitle == 1) && (!empty($this->jemsettings->titlewidth))) : ?>
-      flex: 1 <?php echo ($this->jemsettings->titlewidth); ?>;
+      flex: 1 <?php echo (intval($this->jemsettings->titlewidth))-4 . '%'; /*take a little off to fit status*/?>;
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
@@ -119,11 +119,11 @@ JHtml::_('behavior.tooltip');
     <?php endif; ?>
   }
   
-  #jem.jem_myevents .jem-myevents-check {
+  #jem .jem-event .jem-myevents-check {
     flex: 0 1%;
   }
 
-  #jem.jem_myevents .jem-myevents-status {
+  #jem .jem-event .jem-myevents-status {
     flex: 0 1%;
   }
 </style>
@@ -171,7 +171,7 @@ JHtml::_('behavior.tooltip');
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?> 
-      <?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
+      <?php if ($this->jemsettings->showatte == 1) : ?>
 				<div id="jem_atte" class="sectiontableheader">&nbsp;<?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
       <div class="jem-myevents-status" ><?php echo JText::_('JSTATUS'); ?></div>
@@ -273,7 +273,7 @@ JHtml::_('behavior.tooltip');
               </div>
             <?php endif; ?>
 
-					<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
+					<?php if ($this->jemsettings->showatte == 1) : ?>
 					<div class="jem-event-info-small jem-event-attendees" title="<?php echo JText::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
             <i class="fa fa-user" aria-hidden="true"></i>
 						<?php

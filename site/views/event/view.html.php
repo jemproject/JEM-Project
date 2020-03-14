@@ -201,7 +201,9 @@ class JemViewEvent extends JemView
 
 		// Check if user can edit attendees
 		$isAuthor = $userId && ($userId == $item->created_by);
-		$permissions->canEditAttendees = $isAuthor;
+		//$permissions->canEditAttendees = $isAuthor;
+		//new logic: user can edit events, suggested by jojo12
+		$permissions->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
 		$this->permissions = $permissions;
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;

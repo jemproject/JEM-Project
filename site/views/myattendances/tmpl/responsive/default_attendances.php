@@ -23,7 +23,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
   .jem-sort #jem_date,
   #jem .jem-event .jem-event-date {
     <?php if (!empty($this->jemsettings->datewidth)) : ?>
-      flex: 1 <?php echo ($this->jemsettings->datewidth); ?>;
+      flex: 1 <?php echo intval(($this->jemsettings->datewidth))-5 . '%'; /*take a little off to fit comment*/?>;
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
@@ -35,7 +35,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
   .jem-sort #jem_title,
   #jem .jem-event .jem-event-title {
     <?php if (($this->jemsettings->showtitle == 1) && (!empty($this->jemsettings->titlewidth))) : ?>
-      flex: 1 <?php echo ($this->jemsettings->titlewidth); ?>;
+      flex: 1 <?php echo intval(($this->jemsettings->titlewidth))-5 . '%'; /*take a little off to fit comment*/?>;
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
@@ -47,7 +47,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
   .jem-sort #jem_location,
   #jem .jem-event .jem-event-venue {
     <?php if (($this->jemsettings->showlocate == 1) && (!empty($this->jemsettings->locationwidth))) : ?>
-      flex: 1 <?php echo ($this->jemsettings->locationwidth); ?>;
+      flex: 1 <?php echo intval(($this->jemsettings->locationwidth))-3 . '%'; /*take a little off to fit comment*/?>;
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
@@ -105,8 +105,12 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
   }
 
   .jem-sort #jem_status,
-  #jem.jem_myattendances .jem-myattendances-status {
-    flex: 0 2%;
+  #jem .jem-event .jem-myattendances-status {
+    flex: 0 1%;
+  }
+    .jem-sort #jem_comment,
+  #jem .jem-event .jem-myattendances-comments {
+    flex: 0 5%;
   }
 </style>
 
