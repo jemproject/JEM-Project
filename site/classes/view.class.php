@@ -2,7 +2,7 @@
 /**
  * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2019 joomlaeventmanager.net
+ * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
