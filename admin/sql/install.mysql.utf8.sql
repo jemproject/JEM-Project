@@ -234,7 +234,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('showtitle', '1'),
 ('showlocate', '1'),
 ('showcity', '1'),
-('tablewidth', '100%'),
+('tablewidth', ''),
 ('datewidth', '20%'),
 ('datemode', '1'),
 ('titlewidth', '20%'),
