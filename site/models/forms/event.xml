@@ -26,6 +26,7 @@
 			size="40"
 			label="COM_JEM_EDITEVENT_FIELD_ALIAS"
 			description="COM_JEM_EDITEVENT_FIELD_ALIAS"
+		        hint="JFIELD_ALIAS_PLACEHOLDER"
 			required="false"
 		/>
 		<field name="dates" type="calendarjem"
