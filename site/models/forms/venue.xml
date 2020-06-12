@@ -19,6 +19,7 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_EDITVENUE_FIELD_ALIAS"
+		        hint="JFIELD_ALIAS_PLACEHOLDER"
 			description="COM_JEM_EDITVENUE_FIELD_ALIAS_DESC"
 		/>
 		<field name="url" type="text"
