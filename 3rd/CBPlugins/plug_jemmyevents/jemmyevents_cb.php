@@ -142,7 +142,7 @@ class jemmyeventsTab extends cbTabHandler {
 	 *
 	 * since CB 2.0, on CB 1.9 it's simply not called
 	 */
-	public function getTabTitle($tab, $user, $ui, $postdata)
+	public function getTabTitle($tab, $user, $ui, $postdata, $reason=NULL)
 	{
 		/* loading global variables */
 		global $_CB_database;
@@ -154,10 +154,10 @@ class jemmyeventsTab extends cbTabHandler {
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
 			$total = !empty($result) ? count($result) : 0;
-			return parent::getTabTitle($tab, $user, $ui, $postdata) . ' <span class="badge badge-default">' . (int)$total . '</span>';
+			return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL) . ' <span class="badge badge-default">' . (int)$total . '</span>';
 		}
 
-		return parent::getTabTitle($tab, $user, $ui, $postdata);
+		return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL);
 	}
 
 	/**
