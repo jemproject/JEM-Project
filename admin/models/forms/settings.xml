@@ -379,6 +379,7 @@
 		>
 			<option value="0">COM_JEM_DO_NOTHING</option>
 			<option value="2">COM_JEM_ARCHIVE_OLD_EVENTS</option>
+			<option value="4">COM_JEM_UNPUBLISH_OLD_EVENTS</option>
 			<option value="3">COM_JEM_TRASH_OLD_EVENTS</option>
 			<option value="1">COM_JEM_DELETE_OLD_EVENTS</option>
 		</field>
