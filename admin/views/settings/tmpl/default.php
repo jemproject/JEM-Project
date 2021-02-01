@@ -106,7 +106,7 @@ window.addEvent('domready', function(){
 	var evhandler = $("jform_oldevent");
 	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
 
-	if (nrevhandler == 1 || nrevhandler == 2 || nrevhandler == 3 || nrevhandler == 4) {
+	if (nrevhandler > 0) {
 		evhandleron();
 	} else {
 		evhandleroff();
@@ -201,7 +201,7 @@ function testevhandler()
 	var evhandler = $("jform_oldevent");
 	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
 
-	if (nrevhandler == 1 || nrevhandler == 2 || nrevhandler == 3 || nrevhandler == 4) {
+	if (nrevhandler > 0) {
 		evhandleron();
 	} else {
 		evhandleroff();
