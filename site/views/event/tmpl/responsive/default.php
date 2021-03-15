@@ -11,10 +11,19 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
-$params  = $this->item->params;
-$images  = json_decode($this->item->datimage);
-$attribs = json_decode($this->item->attribs);
-$user    = JemFactory::getUser();
+$params      = $this->item->params;
+$images      = json_decode($this->item->datimage);
+$attribs     = json_decode($this->item->attribs);
+$user        = JemFactory::getUser();
+$jemsettings = JemHelper::config();
+$document    = JFactory::getDocument();
+
+// Add expiration date, if old events will be archived or removed
+if ($jemsettings->oldevent > 0) {
+  $enddate = strtotime($this->item->enddates?:$this->item->dates);
+  $expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
+  $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
+}
 
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>

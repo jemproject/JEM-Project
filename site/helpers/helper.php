@@ -265,6 +265,15 @@ class JemHelper
 					$db->execute();
 				}
 
+				//Set state unpublished of outdated events
+				if ($jemsettings->oldevent == 4) {
+					$query = 'UPDATE #__jem_events SET published = 0 WHERE dates > 0 AND '
+					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+					       .' AND published = 1';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
 				// Cleanup registrations
 				$query = 'DELETE FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events)';
 				$db->SetQuery($query);
