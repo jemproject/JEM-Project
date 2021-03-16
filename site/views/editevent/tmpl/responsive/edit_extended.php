@@ -152,18 +152,18 @@ defined('_JEXEC') or die;
 	<?php
 		}
 	} ?>
-
+</fieldset>
 	<!-- CONTACT -->
-
+<fieldset class="panelform">
 	<legend><?php echo JText::_('COM_JEM_EDITEVENT_FIELD_CONTACT'); ?></legend>
 	<dl class="jem-dl">
 		<dt><?php echo $this->form->getLabel('contactid'); ?></dt>
 		<dd><?php echo $this->form->getInput('contactid'); ?></dd>
 	</dl>
 	<p>&nbsp;</p>
-
+</fieldset>
 	<!-- REGISTRATION -->
-
+<fieldset class="panelform">
 	<legend><?php echo JText::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
 	<dl class="adminformlist jem-dl">
 		<?php if ($this->jemsettings->showfroregistra == 0) : ?>
