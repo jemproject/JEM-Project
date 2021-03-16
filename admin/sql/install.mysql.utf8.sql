@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `id` int(11) unsigned NOT NULL auto_increment,
-  `venue` varchar(50) NOT NULL default '',
+  `venue` varchar(100) NOT NULL default '',
   `alias` varchar(100) NOT NULL default '',
   `url` varchar(200)  NOT NULL default '',
   `street` varchar(50) default NULL,
