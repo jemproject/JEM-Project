@@ -29,9 +29,9 @@ defined('_JEXEC') or die;
 		</dd>
 
 		<p>&nbsp;</p>
-
+</fieldset>
 		<!-- START META FIELDSET -->
-
+<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_METADATA'); ?></legend>
 		<div class="formelm-area">
 			<input class="inputbox btn" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_('COM_JEM_TITLE');	?>" />
