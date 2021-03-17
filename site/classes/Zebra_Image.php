@@ -1,5 +1,4 @@
 <?php
-defined('_JEXEC') or die;
 
 /**
  *  Methods used with the {@link resize()} method.
@@ -21,18 +20,17 @@ ini_set('gd.jpeg_ignore_warning', true);
 
 /**
  *  A compact (one-file only) and lightweight PHP library for image manipulation providing methods for performing several
- *  types of image manipulation operations and applying filters to images.
+ *  types of image manipulation operations and applying filters to images. Supports WEBP format.
  *
  *  Read more {@link https://github.com/stefangabos/Zebra_Image/ here}
  *
  *  @author     Stefan Gabos <contact@stefangabos.ro>
- *  @version    2.2.6 (last revision: May 22, 2017)
- *  @copyright  (c) 2006 - 2016 Stefan Gabos
+ *  @version    2.6.0 (last revision: May 29, 2020)
+ *  @copyright  (c) 2006 - 2020 Stefan Gabos
  *  @license    http://www.gnu.org/licenses/lgpl-3.0.txt GNU LESSER GENERAL PUBLIC LICENSE
  *  @package    Zebra_Image
  */
-class Zebra_Image
-{
+class Zebra_Image {
 
     /**
      *  Indicates the file system permissions to be set for newly created images.
@@ -91,7 +89,7 @@ class Zebra_Image
     public $error;
 
     /**
-     *  If set to TRUE, images will be auto-rotated according to the {@link http://keyj.emphy.de/exif-orientation-rant/ Exif Orientation Tag}
+     *  If set to TRUE, JPEG images will be auto-rotated according to the {@link http://keyj.emphy.de/exif-orientation-rant/ Exif Orientation Tag}
      *  so that they are always shown correctly.
      *
      *  <samp>If you set this to TRUE you must also enable exif-support with --enable-exif. Windows users must enable both
@@ -105,6 +103,19 @@ class Zebra_Image
      *  @var boolean
      */
     public $auto_handle_exif_orientation;
+
+    /**
+     *  Indicates whether the created image should be saved as a progressive JPEG.
+     *
+     *  Used only if the file at {@link target_path} is a JPG/JPEG image.
+     *
+     *  Default is FALSE
+     *
+     *  @since 2.5.0
+     *
+     *  @var boolean
+     */
+    public $jpeg_interlace;
 
     /**
      *  Indicates the quality of the output image (better quality means bigger file size).
@@ -176,7 +187,11 @@ class Zebra_Image
     /**
      *  Path to an image file to apply the transformations to.
      *
-     *  Supported file types are <b>GIF</b>, <b>PNG</b> and <b>JPEG</b>.
+     *  Supported file types are <b>GIF</b>, <b>PNG</b>, <b>JPEG</b> and <b>WEBP</b>.
+     *
+     *  <samp>WEBP support is available only for PHP version 7.0.0+. Note that even though WEBP support was added to PHP
+     *  in version 5.5.0, it only started working since version 5.5.1, while support for transparency was added with PHP
+     *  version 7.0.0. As a result, I decided to make it available only if PHP version is at least 7.0.0.</samp>
      *
      *  @var    string
      */
@@ -186,11 +201,31 @@ class Zebra_Image
      *  Path (including file name) to where to save the transformed image.
      *
      *  <i>Can be a different than {@link source_path} - the type of the transformed image will be as indicated by the
-     *  file's extension (supported file types are GIF, PNG and JPEG)</i>.
+     *  file's extension (supported file types are GIF, PNG, JPEG and WEBP)</i>.
+     *
+     *  <samp>WEBP support is available only for PHP version 7.0.0+. Note that even though WEBP support was added to PHP
+     *  in version 5.5.0, it only started working since version 5.5.1, while support for transparency was added with PHP
+     *  version 7.0.0. As a result, I decided to make it available only if PHP version is at least 7.0.0.</samp>
      *
      *  @var    string
      */
     public $target_path;
+
+    /**
+     *  Indicates the quality level of the output image.
+     *
+     *  Available only if PHP version is 7.0.0+ and only if the file at {@link target_path} is a WEBP image. It will be
+     *  ignored otherwise.
+     *
+     *  Range is 0 - 100
+     *
+     *  Default is 80
+     *
+     *  @since 2.6.0
+     *
+     *  @var integer
+     */
+    public $webp_quality;
 
     /**
      *  Constructor of the class.
@@ -199,17 +234,18 @@ class Zebra_Image
      *
      *  @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
 
         // set default values for properties
         $this->chmod_value = 0755;
 
-        $this->error = 0;
+        $this->error = $this->jpeg_interlace = 0;
 
         $this->jpeg_quality = 85;
 
         $this->png_compression = 9;
+
+        $this->webp_quality = 80;
 
         $this->preserve_aspect_ratio = $this->preserve_time = $this->enlarge_smaller_images = true;
 
@@ -281,7 +317,7 @@ class Zebra_Image
      *                              -   <b>contrast</b>         -   changes the contrast of the image; use <b>arg1</b>
      *                                                              to set the level of contrast; the range of contrast
      *                                                              is -100 to 100;
-     *                              -   <b>gausian_blur</b>     -   blurs the image using the Gaussian method;
+     *                              -   <b>gaussian_blur</b>    -   blurs the image using the Gaussian method;
      *                              -   <b>grayscale</b>        -   converts the image into grayscale;
      *                              -   <b>edgedetect</b>       -   uses edge detection to highlight the edges in the image;
      *                              -   <b>emboss</b>           -   embosses the image;
@@ -332,11 +368,10 @@ class Zebra_Image
      *                              {@link http://php.net/manual/en/function.imagefilter.php imagefilter} exists and that
      *                              the requested filter is valid, check the {@link error} property to see the error code.
      */
-    public function apply_filter($filter, $arg1 = '', $arg2 = '', $arg3 = '', $arg4 = '')
-    {
+    public function apply_filter($filter, $arg1 = '', $arg2 = '', $arg3 = '', $arg4 = '') {
 
         // if "imagefilter" function exists and the requested filter exists
-        if (function_exists('imagefilter')) {
+        if (function_exists('imagefilter'))
 
             // if image resource was successfully created
             if ($this->_create_from_source()) {
@@ -364,23 +399,19 @@ class Zebra_Image
                 if (is_array($filter)) {
 
                     // iterate through the filters
-                    foreach ($filter as $arguments) {
+                    foreach ($filter as $arguments)
 
                         // if filter exists
                         if (defined('IMG_FILTER_' . strtoupper($arguments[0]))) {
 
                             // try to apply the filter...
-                            if (!@call_user_func_array('imagefilter', array_merge(array($target_identifier, constant('IMG_FILTER_' . strtoupper($arguments[0]))), array_slice($arguments, 1)))) {
+                            if (!@call_user_func_array('imagefilter', array_merge(array($target_identifier, constant('IMG_FILTER_' . strtoupper($arguments[0]))), array_slice($arguments, 1))))
 
                                 // ...and trigger an error if the filter could not be applied
                                 trigger_error('Invalid arguments used for "' . strtoupper($arguments[0]) . '" filter', E_USER_WARNING);
 
-                            }
-
                         // if filter doesn't exists, trigger an error
-                        } else { trigger_error('Filter "' . strtoupper($arguments[0]) . '" is not available', E_USER_WARNING); }
-
-                    }
+                        } else trigger_error('Filter "' . strtoupper($arguments[0]) . '" is not available', E_USER_WARNING);
 
                 // if a single filter is to be applied and it is available
                 } elseif (defined('IMG_FILTER_' . strtoupper($filter))) {
@@ -389,22 +420,18 @@ class Zebra_Image
                     $arguments = func_get_args();
 
                     // try to apply the filter...
-                    if (!@call_user_func_array('imagefilter', array_merge(array($target_identifier, constant('IMG_FILTER_' . strtoupper($filter))), array_slice($arguments, 1)))) {
+                    if (!@call_user_func_array('imagefilter', array_merge(array($target_identifier, constant('IMG_FILTER_' . strtoupper($filter))), array_slice($arguments, 1))))
 
                         // ...and trigger an error if the filter could not be applied
                         trigger_error('Invalid arguments used for "' . strtoupper($arguments[0]) . '" filter', E_USER_WARNING);
 
-                    }
-
                 // if filter doesn't exists, trigger an error
-                } else { trigger_error('Filter "' . strtoupper($arguments[0]) . '" is not available', E_USER_WARNING); }
+                } else trigger_error('Filter "' . strtoupper($filter) . '" is not available', E_USER_WARNING);
 
                 // write image
                 return $this->_write_image($target_identifier);
 
             }
-
-        }
 
         // if script gets this far, return false
         // note that we do not set the error level as it has been already set
@@ -435,13 +462,23 @@ class Zebra_Image
      *  $img->crop(0, 0, 100, 100);
      *  </code>
      *
-     *  @param  integer     $start_x    x coordinate to start cropping from
+     *  @param  integer     $start_x            x coordinate to start cropping from
      *
-     *  @param  integer     $start_y    y coordinate to start cropping from
+     *  @param  integer     $start_y            y coordinate to start cropping from
      *
-     *  @param  integer     $end_x      x coordinate where to end the cropping
+     *  @param  integer     $end_x              x coordinate where to end the cropping
      *
-     *  @param  integer     $end_y      y coordinate where to end the cropping
+     *  @param  integer     $end_y              y coordinate where to end the cropping
+     *
+     *  @param  hexadecimal $background_color   (Optional) A hexadecimal color value (like "#FFFFFF" or "#FFF") used when
+     *                                          the cropping coordinates are off-scale (negative values and/or values
+     *                                          greater than the image's size) to fill the remaining space.
+     *
+     *                                          When set to -1 the script will preserve transparency for transparent GIF
+     *                                          and PNG images. For non-transparent images the background will be black
+     *                                          (#000000) in this case.
+     *
+     *                                          Default is -1
      *
      *  @since  1.0.4
      *
@@ -449,45 +486,79 @@ class Zebra_Image
      *
      *                      If FALSE is returned, check the {@link error} property to see the error code.
      */
-    public function crop($start_x, $start_y, $end_x, $end_y)
-    {
+    public function crop($start_x, $start_y, $end_x, $end_y, $background_color = -1) {
 
         // this method might be also called internally
-        // in this case, there's a fifth argument that points to an already existing image identifier
+        // in this case, there's a sixth argument that points to an already existing image identifier
         $args = func_get_args();
 
-        // if fifth argument exists
-        if (isset($args[4]) && is_resource($args[4])) {
+        // if a sixth argument exists
+        if (isset($args[5]) && is_resource($args[5])) {
 
             // that it is the image identifier that we'll be using further on
-            $this->source_identifier = $args[4];
+            $this->source_identifier = $args[5];
 
             // set this to true so that the script will continue to execute at the next IF
             $result = true;
 
         // if method is called as usually
         // try to create an image resource from source path
-        } else { $result = $this->_create_from_source(); }
+        } else $result = $this->_create_from_source();
 
         // if image resource was successfully created
         if ($result !== false) {
 
+            // compute width and height
+            $width = $end_x - $start_x;
+            $height = $end_y - $start_y;
+
             // prepare the target image
-            $target_identifier = $this->_prepare_image($end_x - $start_x, $end_y - $start_y, -1);
+            $target_identifier = $this->_prepare_image($width, $height, $background_color);
+
+            $dest_x = 0;
+            $dest_y = 0;
+
+            // if starting x is negative
+            if ($start_x < 0) {
+
+                // we are adjusting the position where we place the cropped image on the target image
+                $dest_x = abs($start_x);
+
+                // and crop starting from 0
+                $start_x = 0;
+
+            }
+
+            // if ending x is larger than the image's width, adjust the width we're showing
+            if ($end_x > ($image_width = imagesx($this->source_identifier))) $width = $image_width - $start_x;
+
+            // if starting y is negative
+            if ($start_y < 0) {
+
+                // we are adjusting the position where we place the cropped image on the target image
+                $dest_y = abs($start_y);
+
+                // and crop starting from 0
+                $start_y = 0;
+
+            }
+
+            // if ending y is larger than the image's height, adjust the height we're showing
+            if ($end_y > ($image_height = imagesy($this->source_identifier))) $height = $image_height - $start_y;
 
             // crop the image
             imagecopyresampled(
 
                 $target_identifier,
                 $this->source_identifier,
-                0,
-                0,
+                $dest_x,
+                $dest_y,
                 $start_x,
                 $start_y,
-                $end_x - $start_x,
-                $end_y - $start_y,
-                $end_x - $start_x,
-                $end_y - $start_y
+                $width,
+                $height,
+                $width,
+                $height
 
             );
 
@@ -532,8 +603,7 @@ class Zebra_Image
      *
      *                      If FALSE is returned, check the {@link error} property to see the error code.
      */
-    public function flip_both()
-    {
+    public function flip_both() {
 
         return $this->_flip('both');
 
@@ -565,8 +635,7 @@ class Zebra_Image
      *
      *                      If FALSE is returned, check the {@link error} property to see the error code.
      */
-    public function flip_horizontal()
-    {
+    public function flip_horizontal() {
 
         return $this->_flip('horizontal');
 
@@ -598,8 +667,7 @@ class Zebra_Image
      *
      *                      If FALSE is returned, check the {@link error} property to see the error code.
      */
-    public function flip_vertical()
-    {
+    public function flip_vertical() {
 
         return $this->_flip('vertical');
 
@@ -626,7 +694,8 @@ class Zebra_Image
      *  // apply a "sharpen" filter to the resulting images
      *  $img->sharpen_images = true;
      *
-     *  // resize the image to exactly 150x150 pixels, without altering aspect ratio, by using the CROP_CENTER method
+     *  // resize the image to exactly 150x150 pixels, without altering
+     *  // aspect ratio, by using the CROP_CENTER method
      *  $img->resize(150, 150, ZEBRA_IMAGE_CROP_CENTER);
      *  </code>
      *
@@ -682,7 +751,7 @@ class Zebra_Image
      *                                          If the {@link preserve_aspect_ratio} property is set to TRUE and both the
      *                                          <b>width</b> and <b>height</b> arguments are values greater than <b>0</b>,
      *                                          the image will be resized to the exact given width and height and the
-     *                                          aspect ratio will be preserved by using one of the following methods:
+     *                                          aspect ratio will be preserved by using on of the following methods:
      *
      *                                          -   <b>ZEBRA_IMAGE_BOXED</b> - the image will be scaled so that it will
      *                                              fit in a box with the given width and height (both width/height will
@@ -691,7 +760,7 @@ class Zebra_Image
      *                                              filled with the color specified by the <b>bgcolor</b> argument. (the
      *                                              blank area will be filled only if the image is not transparent!)
      *
-     *                                          -   <b>ZEBRA_IMAGE_NOT_BOXED</b> - the image will be scalled so that it
+     *                                          -   <b>ZEBRA_IMAGE_NOT_BOXED</b> - the image will be scaled so that it
      *                                              <i>could</i> fit in a box with the given width and height but will
      *                                              not be enclosed in a box with given width and height. The new width/
      *                                              height will be both smaller or equal to the required width/height
@@ -718,17 +787,16 @@ class Zebra_Image
      *
      *                                          When set to -1 the script will preserve transparency for transparent GIF
      *                                          and PNG images. For non-transparent images the background will be white
-     *                                          in this case.
+     *                                          (#FFFFFF) in this case.
      *
-     *                                          Default is #FFFFFF.
+     *                                          Default is -1
      *
      *  @return boolean                         Returns TRUE on success or FALSE on error.
      *
      *                                          If FALSE is returned, check the {@link error} property to see what went
      *                                          wrong
      */
-    public function resize($width = 0, $height = 0, $method = ZEBRA_IMAGE_CROP_CENTER, $background_color = '#FFFFFF')
-    {
+    public function resize($width = 0, $height = 0, $method = ZEBRA_IMAGE_CROP_CENTER, $background_color = -1) {
 
         // if image resource was successfully created
         if ($this->_create_from_source()) {
@@ -736,7 +804,7 @@ class Zebra_Image
             // if either width or height is to be adjusted automatically
             // set a flag telling the script that, even if $preserve_aspect_ratio is set to false
             // treat everything as if it was set to true
-            if ($width == 0 || $height == 0) { $auto_preserve_aspect_ratio = true; }
+            if ($width == 0 || $height == 0) $auto_preserve_aspect_ratio = true;
 
             // if aspect ratio needs to be preserved
             if ($this->preserve_aspect_ratio || isset($auto_preserve_aspect_ratio)) {
@@ -896,6 +964,7 @@ class Zebra_Image
                                 0,
                                 $width,
                                 $height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
                             );
 
@@ -910,6 +979,7 @@ class Zebra_Image
                                 0,
                                 floor(($target_width - $width) / 2) + $width,
                                 $height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
                             );
 
@@ -924,6 +994,7 @@ class Zebra_Image
                                 0,
                                 $target_width,
                                 $height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
                             );
 
@@ -939,6 +1010,7 @@ class Zebra_Image
                                 floor(($target_height - $height) / 2),
                                 $width,
                                 floor(($target_height - $height) / 2) + $height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
 
                             );
@@ -955,6 +1027,7 @@ class Zebra_Image
                                 floor(($target_height - $height) / 2),
                                 floor(($target_width - $width) / 2) + $width,
                                 floor(($target_height - $height) / 2) + $height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
 
                             );
@@ -971,6 +1044,7 @@ class Zebra_Image
                                 floor(($target_height - $height) / 2),
                                 $target_width,
                                 floor(($target_height - $height) / 2) + $height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
 
                             );
@@ -987,6 +1061,7 @@ class Zebra_Image
                                 $target_height - $height,
                                 $width,
                                 $target_height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
 
                             );
@@ -1003,6 +1078,7 @@ class Zebra_Image
                                 $target_height - $height,
                                 floor(($target_width - $width) / 2) + $width,
                                 $target_height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
 
                             );
@@ -1019,6 +1095,7 @@ class Zebra_Image
                                 $target_height - $height,
                                 $target_width,
                                 $target_height,
+                                $background_color,
                                 $target_identifier // crop this resource instead
 
                             );
@@ -1033,8 +1110,8 @@ class Zebra_Image
 
                     // prepare the target image
                     $target_identifier = $this->_prepare_image(
-                        ($width > 0 && $height > 0 && $method != ZEBRA_IMAGE_NOT_BOXED ? $width : $target_width),
-                        ($width > 0 && $height > 0 && $method != ZEBRA_IMAGE_NOT_BOXED ? $height : $target_height),
+                        ($width > 0 && $height > 0 && $method !== ZEBRA_IMAGE_NOT_BOXED ? $width : $target_width),
+                        ($width > 0 && $height > 0 && $method !== ZEBRA_IMAGE_NOT_BOXED ? $height : $target_height),
                         $background_color
                     );
 
@@ -1042,8 +1119,8 @@ class Zebra_Image
 
                         $target_identifier,
                         $this->source_identifier,
-                        ($width > 0 && $height > 0 && $method != ZEBRA_IMAGE_NOT_BOXED ? ($width - $target_width) / 2 : 0),
-                        ($width > 0 && $height > 0 && $method != ZEBRA_IMAGE_NOT_BOXED ? ($height - $target_height) / 2 : 0),
+                        ($width > 0 && $height > 0 && $method !== ZEBRA_IMAGE_NOT_BOXED ? ($width - $target_width) / 2 : 0),
+                        ($width > 0 && $height > 0 && $method !== ZEBRA_IMAGE_NOT_BOXED ? ($height - $target_height) / 2 : 0),
                         0,
                         0,
                         $target_width,
@@ -1061,7 +1138,33 @@ class Zebra_Image
             // if we get here it means that
             // smaller images than the given width/height are to be left untouched
             // therefore, we save the image as it is
-            } else { return $this->_write_image($this->source_identifier); }
+            } else {
+
+                // prepare the target image
+                $target_identifier = $this->_prepare_image($this->source_width, $this->source_height, $background_color);
+
+                imagecopyresampled(
+
+                    $target_identifier,
+                    $this->source_identifier,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $this->source_width,
+                    $this->source_height,
+                    $this->source_width,
+                    $this->source_height
+
+                );
+
+                // previously to 2.2.7 I was simply calling the _write_images() method without the code from above this
+                // comment and therefore, when resizing transparent images to a format which doesn't support transparency
+                // and the "enlarge_smaller_images" property being set to FALSE, the "background_color" argument was not
+                // applied and lead to unexpected background colors for the resulting images
+                return $this->_write_image($target_identifier);
+
+            }
 
         }
 
@@ -1103,7 +1206,7 @@ class Zebra_Image
      *
      *                                          When set to -1 the script will preserve transparency for transparent GIF
      *                                          and PNG images. For non-transparent images the background will be white
-     *                                          in this case.
+     *                                          (#FFFFFF) in this case.
      *
      *                                          Default is -1.
      *
@@ -1112,8 +1215,10 @@ class Zebra_Image
      *                                          If FALSE is returned, check the {@link error} property to see the error
      *                                          code.
      */
-    public function rotate($angle, $background_color = -1)
-    {
+    public function rotate($angle, $background_color = -1) {
+
+        // don't do anything if no angle is given
+        if ($angle == 0 || $angle == 360) return true;
 
         // get function arguments
         $arguments = func_get_args();
@@ -1124,57 +1229,56 @@ class Zebra_Image
         // if we came here just to fix orientation or if image resource was successfully created
         if ($use_existing_source || $this->_create_from_source()) {
 
+            // there is a bug in GD when angle is 90, 180, 270
+            // transparency is not preserved
+            if ($angle % 90 === 0) $angle += 0.001;
+
             // angles are given clockwise but imagerotate works counterclockwise so we need to negate our value
             $angle = -$angle;
 
-            // if source image is PNG
-            if ($this->source_type == IMAGETYPE_PNG && $background_color == -1) {
+            // if the uncovered zone after the rotation is to be transparent
+            if ($background_color == -1) {
 
-                // rotate the image
-                // but if using -1 as background color didn't work (as is the case for PNG8)
-                if (!($target_identifier = imagerotate($this->source_identifier, $angle, -1))) {
+                // if target image is a PNG or an WEBP
+                if ($this->target_type === 'png' || $this->target_type === 'webp') {
 
-                    // we will be using #FFF as the color to fill the uncovered zone after the rotation
+                    // allocate a transparent color
+                    $background_color = imagecolorallocatealpha($this->source_identifier, 0, 0, 0, 127);
+
+                // if target image is a GIF
+                } elseif ($this->target_type === 'gif') {
+
+                    // if source image was a GIF and a transparent color existed
+                    if ($this->source_type == IMAGETYPE_GIF && $this->source_transparent_color_index >= 0) {
+
+                        // use that color
+                        $background_color = imagecolorallocate(
+                            $this->source_identifier,
+                            $this->source_transparent_color['red'],
+                            $this->source_transparent_color['green'],
+                            $this->source_transparent_color['blue']
+                        );
+
+                    // if image had no transparent color
+                    } else {
+
+                        // allocate a transparent color
+                        $background_color = imagecolorallocate($this->source_identifier, 255, 255, 255);
+
+                        // make color transparent
+                        imagecolortransparent($this->source_identifier, $background_color);
+
+                    }
+
+                // for other image types
+                } else {
+
+                    // use white as the color of uncovered zone after the rotation
                     $background_color = imagecolorallocate($this->source_identifier, 255, 255, 255);
-
-                    // rotate the image
-                    $target_identifier = imagerotate($this->source_identifier, $angle, $background_color);
 
                 }
 
-            // if source image is a transparent GIF
-            } elseif ($this->source_type == IMAGETYPE_GIF && $this->source_transparent_color_index >= 0) {
-
-                // convert the background color to RGB values
-                $background_color = $this->_hex2rgb($background_color);
-
-                // allocate the color to the image identifier
-                $background_color = imagecolorallocate(
-
-                    $this->source_identifier,
-                    $background_color['r'],
-                    $background_color['g'],
-                    $background_color['b']
-
-                );
-
-                // rotate the image
-                $this->source_identifier = imagerotate($this->source_identifier, $angle, $background_color);
-
-                // get the width of rotated image
-                $width = imagesx($this->source_identifier);
-
-                // get the height of rotated image
-                $height = imagesy($this->source_identifier);
-
-                // create a blank image with the new width and height
-                // (this intermediary step is for preserving transparency)
-                $target_identifier = $this->_prepare_image($width, $height, -1);
-
-                // copy the rotated image on to the new one
-                imagecopyresampled($target_identifier, $this->source_identifier, 0, 0, 0, 0, $width, $height, $width, $height);
-
-            // for the other cases
+            // if a background color is given
             } else {
 
                 // convert the color to RGB values
@@ -1190,10 +1294,10 @@ class Zebra_Image
 
                 );
 
-                // rotate the image
-                $target_identifier = imagerotate($this->source_identifier, $angle, $background_color);
-
             }
+
+            // rotate the image
+            $target_identifier = imagerotate($this->source_identifier, $angle, $background_color);
 
             // if we called this method from the _create_from_source() method
             // because we are fixing orientation
@@ -1210,7 +1314,7 @@ class Zebra_Image
                 return true;
 
             // write image otherwise
-            } else { return $this->_write_image($target_identifier); }
+            } else return $this->_write_image($target_identifier);
 
         }
 
@@ -1227,8 +1331,7 @@ class Zebra_Image
      *
      *  @access private
      */
-    private function _create_from_source()
-    {
+    private function _create_from_source() {
 
         // perform some error checking first
         // if the GD library is not installed
@@ -1265,7 +1368,12 @@ class Zebra_Image
 
         // try to get source file width, height and type
         // and if it founds an unsupported file type
-        } elseif (!list($this->source_width, $this->source_height, $this->source_type) = @getimagesize($this->source_path)) {
+        } elseif (
+
+            // getimagesize() doesn't support WEBP until 7.1.0 so we will handle that differently
+            !(version_compare(PHP_VERSION, '7.0.0') >= 0 && version_compare(PHP_VERSION, '7.1.0') < 0 && ($this->source_type = strtolower(substr($this->source_path, strrpos($this->source_path, '.') + 1))) === 'webp') &&
+            !list($this->source_width, $this->source_height, $this->source_type) = @getimagesize($this->source_path)
+        ) {
 
             // save the error level and stop the execution of the script
             $this->error = 4;
@@ -1278,6 +1386,22 @@ class Zebra_Image
             // get target file's type based on the file extension
             $this->target_type = strtolower(substr($this->target_path, strrpos($this->target_path, '.') + 1));
 
+            // if we are working with WEBP images but PHP version is less than 7.1.0
+            if ($this->source_type === 'webp') {
+
+                // define this constant which is not available until PHP 7.1.0
+                if (!defined('IMAGETYPE_WEBP')) define('IMAGETYPE_WEBP', 18);
+
+                // set value to newly created constant
+                $this->source_type = IMAGETYPE_WEBP;
+
+                // because we didn't get to run getimagesize()
+                // we need to unset these manually
+                unset($this->source_width);
+                unset($this->source_height);
+
+            }
+
             // create an image from file using extension dependant function
             // checks for file extension
             switch ($this->source_type) {
@@ -1289,15 +1413,13 @@ class Zebra_Image
                     $identifier = imagecreatefromgif($this->source_path);
 
                     // get the index of the transparent color (if any)
-                    if (($this->source_transparent_color_index = imagecolortransparent($identifier)) >= 0) {
+                    if (($this->source_transparent_color_index = imagecolortransparent($identifier)) >= 0)
 
                         // get the transparent color's RGB values
                         // we have to mute errors because there are GIF images which *are* transparent and everything
                         // works as expected, but imagecolortransparent() returns a color that is outside the range of
                         // colors in the image's pallette...
                         $this->source_transparent_color = @imagecolorsforindex($identifier, $this->source_transparent_color_index);
-
-                    }
 
                     break;
 
@@ -1318,12 +1440,39 @@ class Zebra_Image
                     // disable blending
                     imagealphablending($identifier, false);
 
+                    // save full alpha channel information
+                    imagesavealpha($identifier, true);
+
+                    break;
+
+                // if WEBP
+                case IMAGETYPE_WEBP:
+
+                    // create an image from file
+                    $identifier = imagecreatefromwebp($this->source_path);
+
+                    // if we are working with WEBP images but PHP version is less than 7.1.0
+                    if (!isset($this->source_width)) {
+
+                        // use these to get image's width and height as support for WEBP in getimagesize() was added only
+                        // beginning with PHP 7.1.0
+                        $this->source_width = imagesx($identifier);
+                        $this->source_height = imagesy($identifier);
+
+                    }
+
+                    // disable blending
+                    imagealphablending($identifier, false);
+
+                    // save full alpha channel information
+                    imagesavealpha($identifier, true);
+
                     break;
 
                 default:
 
                     // if unsupported file type
-                    // note that we call this if the file is not GIF, JPG or PNG even though the getimagesize function
+                    // note that we call this if the file is not GIF, JPG, PNG or WEBP even though the getimagesize function
                     // handles more image types
                     $this->error = 4;
 
@@ -1335,14 +1484,13 @@ class Zebra_Image
 
         // if target file has to have the same timestamp as the source image
         // save it as a global property of the class
-        if ($this->preserve_time) { $this->source_image_time = filemtime($this->source_path); }
+        if ($this->preserve_time) $this->source_image_time = filemtime($this->source_path);
 
         // make available the source image's identifier
         $this->source_identifier = $identifier;
 
-        // if we need to handle exif orientation automatically
-        // Hoffi: exif_read_data() supports JPEG and TIFF only, prevent PHP Warning
-        if ($this->auto_handle_exif_orientation && ($this->source_type === IMAGETYPE_JPEG)) {
+        // for JPEG files, if we need to handle exif orientation automatically
+        if ($this->auto_handle_exif_orientation && $this->source_type === IMAGETYPE_JPEG)
 
             // if "exif_read_data" function is not available, return false
             if (!function_exists('exif_read_data')) {
@@ -1380,8 +1528,6 @@ class Zebra_Image
 
             }
 
-        }
-
         return true;
 
     }
@@ -1397,8 +1543,7 @@ class Zebra_Image
      *
      *                      If FALSE is returned, check the {@link error} property to see the error code.
      */
-    private function _flip($orientation)
-    {
+    private function _flip($orientation) {
 
         // if image resource was successfully created
         if ($this->_create_from_source()) {
@@ -1487,19 +1632,20 @@ class Zebra_Image
      *
      *  @param  string  $color              Hexadecimal representation of a color (i.e. #123456 or #AAA).
      *
-     *  @param  string  $default_on_error   Hexadecimal representation of a color to be used in case $color is not
-     *                                      recognized as a hexadecimal color.
+     *  @param  string  $default_on_error   (Optional) Hexadecimal representation of a color to be used in case $color
+     *                                      is not recognized as a hexadecimal color.
+     *
+     *                                      Default is #FFFFFF
      *
      *  @return array                       Returns an associative array with the values of (R)ed, (G)reen and (B)lue
      *
      *  @access private
      */
-    private function _hex2rgb($color, $default_on_error = '#FFFFFF')
-    {
+    private function _hex2rgb($color, $default_on_error = '#FFFFFF') {
 
         // if color is not formatted correctly
         // use the default color
-        if (preg_match('/^#?([a-f]|[0-9]){3}(([a-f]|[0-9]){3})?$/i', $color) == 0) { $color = $default_on_error; }
+        if (preg_match('/^#?([a-f]|[0-9]){3}(([a-f]|[0-9]){3})?$/i', $color) == 0) $color = $default_on_error;
 
         // trim off the "#" prefix from $background_color
         $color = ltrim($color, '#');
@@ -1511,7 +1657,7 @@ class Zebra_Image
 
             // take each value
             // and duplicate it
-            for ($i = 0; $i < 3; $i++) { $tmp .= str_repeat($color[$i], 2); }
+            for ($i = 0; $i < 3; $i++) $tmp .= str_repeat($color[$i], 2);
 
             // the color in it's full, 6 characters length notation
             $color = $tmp;
@@ -1544,55 +1690,34 @@ class Zebra_Image
      *                                          Can also be -1 case in which the script will try to create a transparent
      *                                          image, if possible.
      *
-     *                                          Default is "#FFFFFF".
+     *                                          Default is #FFFFFF.
      *
      *  @return                                 Returns the identifier of the newly created image.
      *
      *  @access private
      */
-    private function _prepare_image($width, $height, $background_color = '#FFFFFF')
-    {
+    private function _prepare_image($width, $height, $background_color = '#FFFFFF') {
 
         // create a blank image
         $identifier = imagecreatetruecolor((int)$width <= 0 ? 1 : (int)$width, (int)$height <= 0 ? 1 : (int)$height);
 
-        // if we are creating a PNG image
-        if ($this->target_type == 'png' && $background_color == -1) {
+        // if we are creating a transparent image, and image type supports transparency
+        if ($background_color === -1 && $this->target_type !== 'jpg') {
 
             // disable blending
             imagealphablending($identifier, false);
 
             // allocate a transparent color
-            $transparent_color = imagecolorallocatealpha($identifier, 0, 0, 0, 127);
+            $background_color = imagecolorallocatealpha($identifier, 0, 0, 0, 127);
 
-            // fill the image with the transparent color
-			imagefill($identifier, 0, 0, $transparent_color);
+            // we also need to set this for saving gifs
+            imagecolortransparent($identifier, $background_color);
 
-            //save full alpha channel information
+            // save full alpha channel information
 			imagesavealpha($identifier, true);
 
-        // if source image is a transparent GIF
-        } elseif ($this->target_type == 'gif' && $background_color == -1 && $this->source_transparent_color_index >= 0) {
-
-            // allocate the source image's transparent color also to the new image resource
-            $transparent_color = imagecolorallocate(
-                $identifier,
-                $this->source_transparent_color['red'],
-                $this->source_transparent_color['green'],
-                $this->source_transparent_color['blue']
-            );
-
-            // fill the background of the new image with transparent color
-            imagefill($identifier, 0, 0, $transparent_color);
-
-            // from now on, every pixel having the same RGB as the transparent color will be transparent
-            imagecolortransparent($identifier, $transparent_color);
-
-        // for other image types
+        // if we are not creating a transparent image
         } else {
-
-            // if transparent background color specified, revert to white
-            if ($background_color == -1) { $background_color = '#FFFFFF'; }
 
             // convert hex color to rgb
             $background_color = $this->_hex2rgb($background_color);
@@ -1600,10 +1725,10 @@ class Zebra_Image
             // prepare the background color
             $background_color = imagecolorallocate($identifier, $background_color['r'], $background_color['g'], $background_color['b']);
 
-            // fill the image with the background color
-            imagefill($identifier, 0, 0, $background_color);
-
         }
+
+        // fill the image with the background color
+        imagefill($identifier, 0, 0, $background_color);
 
         // return the image's identifier
         return $identifier;
@@ -1622,8 +1747,7 @@ class Zebra_Image
      *
      *  @access private
      */
-    private function _sharpen_image($image)
-    {
+    private function _sharpen_image($image) {
 
         // if the "sharpen_images" is set to true and we're running an appropriate version of PHP
         // (the "imageconvolution" is available only for PHP 5.1.0+)
@@ -1663,11 +1787,13 @@ class Zebra_Image
      *
      *  @access private
      */
-    private function _write_image($identifier)
-    {
+    private function _write_image($identifier) {
 
         // sharpen image if it's required
         $this->_sharpen_image($identifier);
+
+        // save interlaced JPEG images if required
+        if (in_array($this->target_type, array('jpg', 'jpeg')) && $this->jpeg_interlace) imageinterlace($identifier, 1);
 
         // image saving process goes according to required extension
         switch ($this->target_type) {
@@ -1724,9 +1850,6 @@ class Zebra_Image
             // if PNG
             case 'png':
 
-                // save full alpha channel information
-                imagesavealpha($identifier, true);
-
                 // if GD support for this file type is not available
                 if (!function_exists('imagepng')) {
 
@@ -1737,6 +1860,29 @@ class Zebra_Image
 
                 // if, for some reason, file could not be created
                 } elseif (@!imagepng($identifier, $this->target_path, $this->png_compression)) {
+
+                    // save the error level and stop the execution of the script
+                    $this->error = 3;
+
+                    return false;
+
+                }
+
+                break;
+
+            // if WEBP
+            case 'webp':
+
+                // if GD support for this file type is not available
+                if (!function_exists('imagewebp')) {
+
+                    // save the error level and stop the execution of the script
+                    $this->error = 6;
+
+                    return false;
+
+                // if, for some reason, file could not be created
+                } elseif (@!imagewebp($identifier, $this->target_path, $this->webp_quality)) {
 
                     // save the error level and stop the execution of the script
                     $this->error = 3;
@@ -1761,13 +1907,13 @@ class Zebra_Image
         $disabled_functions = @ini_get('disable_functions');
 
         // if the 'chmod' function is not disabled via configuration
-        if ($disabled_functions == '' || strpos('chmod', $disabled_functions) === false) {
+        if ($disabled_functions === '' || strpos('chmod', $disabled_functions) === false) {
 
             // chmod the file
             chmod($this->target_path, intval($this->chmod_value, 8));
 
         // save the error level
-        } else { $this->error = 8; }
+        } else $this->error = 8;
 
         // if target file has to have the same timestamp as the source image
         if ($this->preserve_time && isset($this->source_image_time)) {
@@ -1776,6 +1922,10 @@ class Zebra_Image
             @touch($this->target_path, $this->source_image_time);
 
         }
+
+        // free memory
+        imagedestroy($this->source_identifier);
+        imagedestroy($identifier);
 
         // return true
         return true;
