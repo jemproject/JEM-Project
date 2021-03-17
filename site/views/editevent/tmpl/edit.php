@@ -87,8 +87,8 @@ function showUnregistraUntil()
 
 		<form enctype="multipart/form-data" action="<?php echo JRoute::_('index.php?option=com_jem&a_id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 			<div class="buttons">
-				<button type="button" class="positive" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
-				<button type="button" class="negative" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
+				<button type="submit" class="positive" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
+				<button type="cancel" class="negative" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
 			</div>
 
 			<?php if ($this->item->recurrence_type > 0) : ?>
@@ -134,75 +134,59 @@ function showUnregistraUntil()
 					<li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
 					<li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
 					<li><?php echo $this->form->getLabel('cats'); ?><?php echo $this->form->getInput('cats'); ?></li>
-					<li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
-					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
-					<li><?php echo $this->form->getLabel('access'); ?><?php
-					          echo JHtml::_('select.genericlist', $this->access, 'jform[access]',
-					                        array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
-						 ?>
-					</li>
+					<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
+
 				</ul>
+			</fieldset>
+			<fieldset>
+				<legend><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>
+			
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('articletext'); ?>
 				<div class="clr"><br></div>
 				<?php echo $this->form->getInput('articletext'); ?>
 			</fieldset>
+	<!-- IMAGE -->
+	<?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
+	<fieldset class="jem_fldst_image">
+		<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
+		<?php
+		if ($this->item->datimage) :
+			echo JemOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
+			?><input type="hidden" name="datimage" id="datimage" value="<?php echo $this->item->datimage; ?>" /><?php
+		endif;
+		?>
+		<?php if ($this->jemsettings->imageenabled != 0) : ?>
+		<ul class="adminformlist">
+			<li>
+				<?php /* We get field with id 'jform_userfile' and name 'jform[userfile]' */ ?>
+				<?php echo $this->form->getLabel('userfile'); ?> <?php echo $this->form->getInput('userfile'); ?>
+			</li>
+			<li>							   
+				<button type="button" class="button3" onclick="document.getElementById('jform_userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
+</li>	
+	<?php
+				if ($this->item->datimage) :
+					echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => JText::_('COM_JEM_REMOVE_IMAGE')));
 
-			<fieldset class="adminform">
-				<ul class="adminformlist">
-					<li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
-					<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
-				</ul>
-			</fieldset>
+				endif;
+				?>
+		<input type="hidden" name="removeimage" id="removeimage" value="0" />
+				
+			</li>
+		</ul>
+		<?php endif; ?>
+	</fieldset>
+	<?php endif; ?>
 
-			<!-- START META FIELDSET -->
-			<fieldset class="">
-				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
-					<div class="formelm-area">
-						<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_TIME' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_ENDTIME' );?>" />
-						<br />
-						<label for="meta_keywords">
-							<?php echo JText::_('COM_JEM_META_KEYWORDS').':';?>
-						</label>
-						<?php
-						if (! empty ( $this->item->meta_keywords )) {
-							$meta_keywords = $this->item->meta_keywords;
-						} else {
-							$meta_keywords = $this->jemsettings->meta_keywords;
-						}
-						?>
-						<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
-					</div>
-					<div class="formelm-area">
-						<label for="meta_description">
-							<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
-						</label>
-						<?php
-						if (! empty ( $this->item->meta_description )) {
-							$meta_description = $this->item->meta_description;
-						} else {
-							$meta_description = $this->jemsettings->meta_description;
-						}
-						?>
-						<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
-					</div>
-					<!-- include the metatags end-->
+			<!-- EXTENDED TAB -->
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
+			<?php echo $this->loadTemplate('extended'); ?>
 
-					<script type="text/javascript">
-					<!--
-						starter("<?php
-						echo JText::_ ( 'COM_JEM_META_ERROR' );
-						?>");	// window.onload is already in use, call the function manualy instead
-					-->
-					</script>
-			</fieldset>
-			<!--  END META FIELDSET -->
+			<!-- PUBLISH TAB -->
+			
+			<?php  echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
+			<?php echo $this->loadTemplate('publish'); ?>
 
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
