@@ -242,16 +242,11 @@ $location = JemHelper::defineCenterMap($this->form);
 					<li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
 				</ul>
-
-				<div class="clr"></div>
-				<?php echo $this->form->getLabel('locdescription'); ?>
-
-				<div class="clr"><br /></div>
-				<?php echo $this->form->getInput('locdescription'); ?>
 			</fieldset>
 
 			<!-- VENUE-GEODATA-->
 			<fieldset class="adminform" id="geodata">
+				<legend><?php echo JText::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
 				<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('map'); ?><?php echo $this->form->getInput('map'); ?></li>
 				</ul>
@@ -300,19 +295,25 @@ $location = JemHelper::defineCenterMap($this->form);
 					<input id="cp-latlong" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
 				</div>
 			</fieldset>
-
-			<!-- META -->
-			<fieldset class="">
-				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
-				<input type="button" class="button" value="<?php echo JText::_('COM_JEM_ADD_VENUE_CITY'); ?>" onclick="meta()" />
-				<?php foreach ($this->form->getFieldset('meta') as $field) : ?>
-					<div class="control-group">
-						<div class="control-label"><?php echo $field->label; ?></div>
-						<div class="controls"><?php echo $field->input; ?></div>
-					</div>
-				<?php endforeach; ?>
+			<fieldset>
+				<legend><?php echo JText::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>
+				<div class="clr"></div>
+				<?php echo $this->form->getLabel('locdescription'); ?>
+				<div>
+				<div class="clr"><br /></div>
+				<?php echo $this->form->getInput('locdescription'); ?>
+				</div>
 			</fieldset>
+			<p>&nbsp;</p>
 
+			<!-- EXTENDED TAB -->
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_EXTENDED_TAB'), 'editvenue-extendedtab'); ?>
+			<?php echo $this->loadTemplate('extended'); ?>
+
+
+			<!-- PUBLISHING TAB -->
+			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_PUBLISH_TAB'), 'venue-publishtab'); ?>
+			<?php echo $this->loadTemplate('publish'); ?>
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachments'); ?>
