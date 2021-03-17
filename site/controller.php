@@ -68,6 +68,7 @@ class JemController extends JControllerLegacy
 				case 'search':
 				case 'venue':
 				case 'venues':
+				case 'venueslist':	
 				case 'weekcal':
 					$model = $this->getModel($viewName);
 					break;

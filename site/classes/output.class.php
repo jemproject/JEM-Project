@@ -84,7 +84,7 @@ class JemOutput
 			if (in_array('addEvent', $btns_show) || (!in_array('addEvent', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
 				$buttons[$idx][] = JemOutput::submitbutton(!empty($canAddEvent), null);
 			}
-			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
+			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues', 'venueslist')))) {
 				$buttons[$idx][] = JemOutput::addvenuebutton(!empty($canAddVenue), null, null);
 			}
 			if (in_array('addUsers', $btns_show) || (!in_array('addUsers', $btns_hide) && in_array($view, array('attendees')))) {
@@ -99,10 +99,10 @@ class JemOutput
 		if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
 			$buttons[$idx][] = JemOutput::archivebutton(null, $task, $id); // task: archive, id: for '&id='
 		}
-		if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue')))) {
+		if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
 			$buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
 		}
-		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'weekcal')))) {
+		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
 			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
 		}
 		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event')))) {
@@ -1100,6 +1100,65 @@ class JemOutput
 	}
 
 	/**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	 * Formats date
 	 *
 	 * @param string $date

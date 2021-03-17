@@ -122,7 +122,13 @@ function jemParseRoute($segments)
 				$vars['view'] = 'venues';
 			}
 			break;
-
+			
+		case 'venueslist':
+			{
+				$vars['view'] = 'venueslist';
+			}
+			break;
+			
 		case 'day':
 			{
 				$vars['view'] = 'day';
