@@ -234,7 +234,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('showtitle', '1'),
 ('showlocate', '1'),
 ('showcity', '1'),
-('tablewidth', '100%'),
+('tablewidth', ''),
 ('datewidth', '20%'),
 ('datemode', '1'),
 ('titlewidth', '20%'),
@@ -297,7 +297,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('regallowcomments', '0'),
 ('regallowinvitation', '0'),
 ('layoutstyle', '1'),
-('useiconfont', '0');
+('useiconfont', '1');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan, Islamic Republic of'),
