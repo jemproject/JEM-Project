@@ -118,13 +118,13 @@ class jemmyeventsTab extends cbTabHandler {
 		if (!$fast) {
 			$query .= '  AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
 			        . ' CONCAT(a.introtext,a.fulltext) AS text, a.published, a.registra, a.maxplaces, a.waitinglist,'
-		//	        . ' l.venue, l.city, l.state, l.url,'
+					. ' l.venue, l.city, l.state, l.url,'
 			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
-		//	        . ',CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			        . ',CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			        ;
 		}
 		$query     .= ' FROM `#__jem_events` AS a '
-		//	        . ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
+			        . ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
 			        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 			        . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
 		            . ' WHERE ' . $where_pub . ' AND a.created_by = ' . $userid . '  AND a.access IN (' . implode(',', $levels) . ')'
@@ -154,10 +154,10 @@ class jemmyeventsTab extends cbTabHandler {
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
 			$total = !empty($result) ? count($result) : 0;
-			return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL) . ' <span class="badge badge-default">' . (int)$total . '</span>';
+			return parent::getTabTitle($tab, $user, $ui, $postdata) . ' <span class="badge badge-default">' . (int)$total . '</span>';
 		}
 
-		return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL);
+		return parent::getTabTitle($tab, $user, $ui, $postdata);
 	}
 
 	/**
@@ -195,6 +195,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$end_date = $params->get('end_date');
 		$start_date = $params->get('start_date');
 		$date_combi = $params->get('date_combi');
+		$event_place = $params->get('event_place');
 		$event_categories = $params->get('event_categories');
 		// Show attendee "statistic" to event owner only.
 		$event_attending = $myprofile && $params->get('event_attending');
@@ -242,7 +243,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 		/* Start of Table */
 		$return .= "\n\t<table  class='jemmyeventsCBTabTable'>";
-
+		$return .= "\n\t<table  class='table table-hover mb-0'>";
 		/* start of headerline */
 		$return .= "\n\t\t<tr class='jemmyeventstableheader'>";
 		$span = 0;
@@ -250,21 +251,21 @@ class jemmyeventsTab extends cbTabHandler {
 		/* start of imagefield */
 		if ($event_image) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableTitle'>";
-			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_IMAGE;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_IMAGE', 'Image' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		}
 
 		/* Title header */
 		$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t" . _JEMMYEVENTS_TITLE;
+		$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_TITLE', 'Title' );
 		$return .= "\n\t\t\t</th>";
 		++$span;
 
 		/* Category header */
 		if ($event_categories) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableCat'>";
-			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_CATEGORY;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_CATEGORY', 'Category' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		}
@@ -272,7 +273,7 @@ class jemmyeventsTab extends cbTabHandler {
 		/* Startdate and Enddate combined column header */
 		if ($date_combi) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableStartEnd'>";
-			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_START_END;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_DATE', 'StartEnd' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		}
@@ -280,7 +281,7 @@ class jemmyeventsTab extends cbTabHandler {
 			/* Startdate header */
 			if ($start_date) {
 				$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableStart'>";
-				$return .= "\n\t\t\t\t" . _JEMMYEVENTS_START;
+				$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_START', 'Startdate' );
 				$return .= "\n\t\t\t</th>";
 				++$span;
 			}
@@ -288,16 +289,22 @@ class jemmyeventsTab extends cbTabHandler {
 			/* Enddate header */
 			if ($end_date) {
 				$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableExp'>";
-				$return .= "\n\t\t\t\t" . _JEMMYEVENTS_EXPIRE;
+				$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_END', 'Enddate' );
 				$return .= "\n\t\t\t</th>";
 				++$span;
 			}
 		}
-
+		/* City header */
+		if ($event_place) {
+			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableVenue'>";
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_VENUE', 'Venue' );
+			$return .= "\n\t\t\t</th>";
+			++$span;
+		}
 		/* Attendees */
 		if ($event_attending) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableReg'>";
-			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_REGISTER;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_ATTENDING', 'Attending' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		}
@@ -384,7 +391,21 @@ class jemmyeventsTab extends cbTabHandler {
 						$return .= "\n\t\t\t</td>";
 					}
 				}
-
+				/* Venue field
+				 *
+				 * a link to the venueevent is specified so people can visit the venue page
+				 */
+				if ($event_place) {
+					$location = empty($result->venueslug) ? '' : "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
+					$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableVenue'>";
+					$return .= "\n\t\t\t\t$location";
+					if (!empty($result->city)) {
+						$return .= "<small style='font-style:italic;'> - {$result->city}</small>";
+					}
+																
+												  
+					$return .= "\n\t\t\t</td>";
+				}				
 				/* Attendees field */
 				if ($event_attending) {
 					$regs = '-';
@@ -404,14 +425,14 @@ class jemmyeventsTab extends cbTabHandler {
 								$regs .= ' / '.(int)$result->maxplaces;
 								$waits = (int)$objList[0]->waiting;
 								if ($result->waitinglist && $waits) {
-									$regs .= ' + '.$waits;
+									$regs .= ', + '.$waits;
 								}
 							}
 							if (!empty($objList[0]->unregistered)) {
-								$regs .= ' - '.(int)$objList[0]->unregistered;
+								$regs .= ', - '.(int)$objList[0]->unregistered;
 							}
 							if (!empty($objList[0]->invited)) {
-								$regs .= ', '.(int)$objList[0]->invited .' ?';
+								$regs .= ', ? '.(int)$objList[0]->invited .' ';
 							}
 						}
 						unset($objList);
@@ -429,7 +450,7 @@ class jemmyeventsTab extends cbTabHandler {
 			// When no data has been found the user will see a message
 
 			/* display no listings */
-			$return .= '<tr><td class="jemmyeventsCBTabTableTitle" colspan="'.$span.'">'._JEMMYEVENTS_NO_LISTING.'</td></tr>';
+			$return .= '<tr><td class="jemmyeventsCBTabTableTitle" colspan="'.$span.'">'.CBTxt::T( 'JEMMYEVENTS_NOENTRY', 'No entries' ).'</td></tr>';
 		}
 
 		/* closing tag of the table */

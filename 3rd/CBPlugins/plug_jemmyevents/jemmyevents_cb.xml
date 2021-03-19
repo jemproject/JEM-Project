@@ -24,30 +24,30 @@
 	<tabs>
 		<tab name="My Events" description="Created Events" class="jemmyeventsTab" fields="0" position="cb_tabmain" displaytype="tab">
 		<params>
-			<param name="start_date" type="radio" default="0" label="Start Date" description="Show/Hide the start date/time">
-				<option value="0">Hide</option>
-				<option value="1">Show</option>
-			</param>
-			<param name="end_date" type="radio" default="0" label="End Date" description="Show/Hide the end date/time">
-				<option value="0">Hide</option>
-				<option value="1">Show</option>
-			</param>
-			<param name="date_combi" type="radio" default="0" label="Date Columns" description="Use two columns or combine start and end date/time in a single column">
-				<option value="0">Separate Columns</option>
-				<option value="1">Combined Column</option>
-			</param>
-			<param name="event_image" type="radio" default="0" label="Event image" description="Show/Hide the image">
-				<option value="0">Hide</option>
-				<option value="1">Show</option>
-			</param>
-			<param name="event_categories" type="radio" default="0" label="Event categories" description="Show/Hide the category">
-				<option value="0">Hide</option>
-				<option value="1">Show</option>
-			</param>
-			<param name="event_attending" type="radio" default="0" label="Registrations" description="Show/Hide number of attendees">
-				<option value="0">Hide</option>
-				<option value="1">Show</option>
-			</param>
+			<param name="start_date" type="yesno" default="1" label="Startdate" description="Show/Hide the start date/time" yes="Enable" no="Disable"/>
+								   
+								   
+		   
+			<param name="end_date" type="yesno" default="0" label="Enddate" description="Show/Hide the end date/time" yes="Enable" no="Disable"/>
+								   
+								   
+		   
+			<param name="date_combi" type="yesno" default="0" label="Combine Date Columns" description="Use two columns or combine start and end date/time in a single column" yes="Enable" no="Disable"/>
+											   
+											  
+		   
+			<param name="event_image" type="yesno" default="0" label="Image" description="Show/Hide the image" yes="Enable" no="Disable"/>
+								   
+								   
+		   
+			<param name="event_categories" type="yesno" default="0" label="Category" description="Show/Hide the category" yes="Enable" no="Disable"/>
+
+			<param name="event_place" type="yesno" default="0" label="Venue" description="Show/Hide venue" yes="Enable" no="Disable"/>
+		   
+			<param name="event_attending" type="yesno" default="0" label="Attending" description="Show/Hide number of attendees" yes="Enable" no="Disable"/>
+								   
+								   
+		   
 		</params>
 			<fields>
 			</fields>
