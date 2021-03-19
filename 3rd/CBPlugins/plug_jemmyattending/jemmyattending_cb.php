@@ -154,10 +154,10 @@ class jemmyattendingTab extends cbTabHandler {
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
 			$total = !empty($result) ? count($result) : 0;
-			return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL) . ' <span class="badge badge-default">' . (int)$total . '</span>';
+			return parent::getTabTitle($tab, $user, $ui, $postdata) . ' <span class="badge badge-default">' . (int)$total . '</span>';
 		}
 
-		return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL);
+		return parent::getTabTitle($tab, $user, $ui, $postdata);
 	}
 
 	/**
@@ -247,28 +247,20 @@ class jemmyattendingTab extends cbTabHandler {
 
 		/* Start of Table */
 		$return .= "\n\t<table class='jemmyattendingCBTabTable'>";
-
+		$return .= "\n\t<table class='table table-hover mb-0'>";
 		/* start of headerline */
 		$return .= "\n\t\t<tr class='jemmyattendingtableheader'>";
 
 		/* Title header */
 		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_TITLE;
+		$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_TITLE', 'Title' );
 		$return .= "\n\t\t\t</th>";
 		$span = 1;
 
 		/* Description header */
 		if ($event_description) {
 			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableDesc'>";
-			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_DESC;
-			$return .= "\n\t\t\t</th>";
-			++$span;
-		}
-
-		/* City header */
-		if ($event_venue) {
-			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableVenue'>";
-			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_CITY;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_DESC', 'Description' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		}
@@ -276,14 +268,14 @@ class jemmyattendingTab extends cbTabHandler {
 		/* Startdate and enddate in a single column */
 		if ($event_datecombi) {
 			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStartEnd'>";
-			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START_END;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_STARTEND', 'StartEnddate' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		} else {
 			/* Startdate header */
 			if ($event_startdate) {
 				$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStart'>";
-				$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START;
+				$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_START', 'Startdate' );
 				$return .= "\n\t\t\t</th>";
 				++$span;
 			}
@@ -291,22 +283,29 @@ class jemmyattendingTab extends cbTabHandler {
 			/* Enddate header */
 			if ($event_enddate) {
 				$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableExp'>";
-				$return .= "\n\t\t\t\t" . _JEMMYATTENDING_EXPIRE;
+				$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_END', 'Enddate' );
 				$return .= "\n\t\t\t</th>";
 				++$span;
 			}
 		}
+		/* City header */
+		if ($event_venue) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableVenue'>";
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_VENUE', 'Venue' );
+			$return .= "\n\t\t\t</th>";
+			++$span;
+		}
 
 		/* Status header */
 		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStatus'>";
-		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_STATUS;
+		$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_SSTATUS', 'StatusAttending' );
 		$return .= "\n\t\t\t</th>";
 		++$span;
 
 		/* Comment header */
 		if ($reg_comment) {
 			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableComment'>";
-			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_COMMENT;
+			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_COMMENT', 'Comment' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
 		}
@@ -354,19 +353,6 @@ class jemmyattendingTab extends cbTabHandler {
 					$return .= "\n\t\t\t</td>";
 				}
 
-				/* Venue field
-				 *
-				 * a link to the venueevent is specified so people can visit the venue page
-				 */
-				if ($event_venue) {
-					$location = empty($result->venueslug) ? '' : "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
-					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
-					$return .= "\n\t\t\t\t$location";
-					if (!empty($result->city)) {
-						$return .= "<small style='font-style:italic;'> - {$result->city}</small>";
-					}
-					$return .= "\n\t\t\t</td>";
-				}
 
 				if ($event_datecombi) {
 					/*
@@ -399,6 +385,20 @@ class jemmyattendingTab extends cbTabHandler {
 						$return .= "\n\t\t\t</td>";
 					}
 				}
+				/* Venue field
+				 *
+				 * a link to the venueevent is specified so people can visit the venue page
+				 */
+				if ($event_venue) {
+					$location = empty($result->venueslug) ? '' : "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
+					$return .= "\n\t\t\t\t$location";
+					if (!empty($result->city)) {
+						$return .= "<small style='font-style:italic;'> - {$result->city}</small>";
+					}
+					$return .= "\n\t\t\t</td>";
+				}
+
 
 				/*
 				 * Status
@@ -407,19 +407,19 @@ class jemmyattendingTab extends cbTabHandler {
 				switch ($result->reg_state) {
 				case -1: // explicitely unregistered
 					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.png');
-					$tip = _JEMMYATTENDING_STATUS_UNREGISTERED;
+					$tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNREGISTERED', 'Not attending' );
 					break;
 				case  0: // invited, not answered yet
 					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.png');
-					$tip = _JEMMYATTENDING_STATUS_INVITED;
+					$tip = CBTxt::T( 'JEMMYATTENDING_STATUS_INVITED', 'Invited' );
 					break;
 				case  1: // registered
 					$img = JRoute::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
-					$tip = $result->waiting ? _JEMMYATTENDING_STATUS_WAITINGLIST : _JEMMYATTENDING_STATUS_REGISTERED;
+					$tip = $result->waiting ? CBTxt::T( 'JEMMYATTENDING_STATUS_WAITINGLIST', 'On Waitinglist' ) : CBTxt::T( 'JEMMYATTENDING_STATUS_REGISTERED', 'Attending' );
 					break;
 				default: // ? - shouldn't happen...
 					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.png');
-					$tip = _JEMMYATTENDING_STATUS_UNKNOWN;
+					$tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNKNOWN', 'Status unknown' );
 					break;
 				}
 				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
@@ -444,7 +444,7 @@ class jemmyattendingTab extends cbTabHandler {
 			// When no data has been found the user will see a message
 
 			/* display no listings */
-			$return .= '<tr><td class="jemmyattendingCBTabTableTitle" colspan="'.$span.'">'._JEMMYATTENDING_NO_LISTING.'</td></tr>';
+			$return .= '<tr><td class="jemmyattendingCBTabTableTitle" colspan="'.$span.'">'.CBTxt::T( 'JEMMYATTENDING_NOENTRY', 'No entries ' ).'</td></tr>';
 		}
 
 		/* closing tag of the table */
