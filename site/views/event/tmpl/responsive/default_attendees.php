@@ -37,7 +37,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<dd class="register available-places"><?php echo ($maxplaces - $booked); ?></dd>
 	<?php endif; ?>
 	<?php
-		// only set style info if users already have registered and user is allowed to see it
+		// only set style info if users already have registered for event and user is allowed to see it
 		if ($this->registers) :
 	?>
 		<dt class="register registered-users hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
