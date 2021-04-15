@@ -204,6 +204,8 @@ class JemViewEvent extends JemView
 		//$permissions->canEditAttendees = $isAuthor;
 		//new logic: user can edit events, suggested by jojo12
 		$permissions->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
+		//suggestion by M59S to allow groupmembers too see line 230/231 too 
+		$edit_att->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
 		$this->permissions = $permissions;
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
@@ -221,7 +223,8 @@ class JemViewEvent extends JemView
 		$e_times = $item->times;
 		$e_hours = (int)$item->unregistra_until;
 
-		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
+		//$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
+		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
 		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
 
 		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_dates.' '.$e_times.' -'.$e_hours.' hour') > strtotime('now'))));
