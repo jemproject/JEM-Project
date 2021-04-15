@@ -272,7 +272,8 @@ class JemModelAttendees extends JModelLegacy
 		$where[] = ' c.access  IN (' . implode(',', $levels) . ')';
 
 		// then if the user is the owner of the event
-		$where[] = ' a.created_by = '.$this->_db->Quote($user->id);
+		//commented out to let groupmember and admins too add attending users in frontend
+		//$where[] = ' a.created_by = '.$this->_db->Quote($user->id);
 
 		/*
 		* Search name or username (depends on global setting "reguser"
