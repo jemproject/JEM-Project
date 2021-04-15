@@ -40,8 +40,8 @@ class JemModelAttendee extends JModelLegacy
 
 		$jinput = JFactory::getApplication()->input;
 		$array = $jinput->get('cid',  0, 'array');
+		if(is_array($this) && $this->setId((int)$array[0]));
 
-		$this->setId((int)$array[0]);
 	}
 
 	/**
