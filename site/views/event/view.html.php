@@ -43,7 +43,7 @@ class JemViewEvent extends JemView
 		$menu              = $app->getMenu();
 		$menuitem          = $menu->getActive();
 		$pathway           = $app->getPathway();
-
+		$edit_att 	   = new \stdClass();
 		$this->params      = $app->getParams('com_jem');
 		$this->item        = $this->get('Item');
 		$this->print       = $app->input->getBool('print', false);
