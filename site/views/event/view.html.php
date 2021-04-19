@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.0
+ * @version 2.3.1
  * @package JEM
  * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,7 +10,7 @@ defined('_JEXEC') or die;
 
 /**
  * Event-View
- */
+ *1
 class JemViewEvent extends JemView
 {
 	protected $item;
