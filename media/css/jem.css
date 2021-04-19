@@ -5,7 +5,26 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
+#jem ul.jem-registered-list img {
+    width: 30px;
+}
 
+#jem .jem-event-info {
+    margin-right: 15px;
+	float: left;
+}
+
+#jem .jem-event-info:last-child {
+    margin-right: 0;
+}
+
+#jem .jem-event-info-small {
+    word-break: keep-all;
+}
+
+#jem .jem-event-info-small:last-child {
+    margin-right: 0;
+}								 
 div#jem a {
 }
 
