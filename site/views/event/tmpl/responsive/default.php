@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -11,10 +11,10 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
-$params      = $this->item->params;
-$images      = json_decode($this->item->datimage);
-$attribs     = json_decode($this->item->attribs);
-$user        = JemFactory::getUser();
+$params  = $this->item->params;
+$images  = json_decode($this->item->datimage);
+$attribs = json_decode($this->item->attribs);
+$user    = JemFactory::getUser();
 $jemsettings = JemHelper::config();
 $document    = JFactory::getDocument();
 
@@ -24,7 +24,6 @@ if ($jemsettings->oldevent > 0) {
   $expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
   $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
-
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
@@ -45,7 +44,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<h1 class="componentheading">
 			<?php echo $this->escape($this->params->get('page_heading')); ?>
 			<?php echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
-
+      
 		</h1>
 	<?php endif; ?>
 
@@ -164,7 +163,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
         flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
       }
     </style>
-    <div class="jem-img">
+    <div class="jem-img" >
       <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
     </div>
   </div>
@@ -365,7 +364,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
           </dl>
         </div>
         
-        <div class="jem-img">
+        <div class="jem-img" itemprop="photo">
           <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
         </div>        
       <?php endif; /* event_show_detailsadress */ ?>
