@@ -43,9 +43,9 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-			<?php 
-      echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
-      ?>
+			<?php echo $this->escape($this->params->get('page_heading')); ?>
+			<?php echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
+
 		</h1>
 	<?php endif; ?>
 
