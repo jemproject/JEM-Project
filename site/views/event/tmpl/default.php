@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -11,10 +11,10 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
-$params      = $this->item->params;
-$images      = json_decode($this->item->datimage);
-$attribs     = json_decode($this->item->attribs);
-$user        = JemFactory::getUser();
+$params  = $this->item->params;
+$images  = json_decode($this->item->datimage);
+$attribs = json_decode($this->item->attribs);
+$user    = JemFactory::getUser();
 $jemsettings = JemHelper::config();
 $document    = JFactory::getDocument();
 
