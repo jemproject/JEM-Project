@@ -10,7 +10,7 @@ defined('_JEXEC') or die;
 
 /**
  * Event-View
- *1
+ */
 class JemViewEvent extends JemView
 {
 	protected $item;
