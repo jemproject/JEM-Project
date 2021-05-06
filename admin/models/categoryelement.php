@@ -39,6 +39,7 @@ class JemModelCategoryelement extends JModelLegacy
 		$array = $jinput->get('cid', 0, 'array');
 
 		$this->setId((int) $array[0]);
+		if(is_array($this) && $this->setId((int)$array[0]));
 	}
 
 	/**
