@@ -86,10 +86,10 @@ function showUnregistraUntil()
 		<?php endif; ?>
 
 		<form enctype="multipart/form-data" action="<?php echo JRoute::_('index.php?option=com_jem&a_id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
-			<div class="buttons">
-				<button type="submit" class="positive" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
-				<button type="cancel" class="negative" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
-			</div>
+
+				<button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
+				<button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
+
 
 			<?php if ($this->item->recurrence_type > 0) : ?>
 			<div class="description">
@@ -115,7 +115,6 @@ function showUnregistraUntil()
 				<?php echo $this->params->get('introtext'); ?>
 			</div>
 			<?php endif; ?>
-			<p>&nbsp;</p>
 
 			<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 
