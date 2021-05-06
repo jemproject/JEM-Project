@@ -128,8 +128,7 @@ function jemParseRoute($segments)
 				$vars['view'] = 'venueslist';
 			}
 			break;
-			
-		case 'day':
+					case 'day':
 			{
 				$vars['view'] = 'day';
 				if ($count == 2) {

@@ -35,7 +35,8 @@ defined('_JEXEC') or die;
 					<?php //This button just deletes the dl because two times more getParent() in attachment.js is required
 							?>
 					<?php echo JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT') . ' ' . $file->name; ?>
-					<?php echo JemOutput::removebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove' . $file->id . ':' . JSession::getFormToken(), 'class' => 'attach-remove btn', 'title' => JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
+					<?php echo JemOutput::removebutton(JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove' . $file->id . ':' . JSession::getFormToken(), 'class' => 'attach-remove', 'title' => JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
+
 					<?php endif; ?>
 				</td>
 				<td>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.0
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,8 +31,8 @@ defined('_JEXEC') or die;
 				<td>
 					<?php echo $this->lists['filter_types']; ?>
 					<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-					<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-					<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+					<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+					<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				</td>
 			</tr>
 			<tr>
@@ -82,16 +82,17 @@ defined('_JEXEC') or die;
 			<?php endif; ?>
 			<tr>
 				<td colspan="2">
-					<input class="buttonfilter" type="submit" value="<?php echo JText::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
+					<input class="btn btn-primary" type="submit" value="<?php echo JText::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
 				</td>
 			</tr>
 		</table>
-	</div>
-
-	<div class="jem_fright">
+			<div class="jem_fright">
 		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 	</div>
+	</div>
+
+
 </div>
 
 <div class="table-responsive">

@@ -30,8 +30,8 @@ JHtml::_('behavior.tooltip');
 		<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
 		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-		<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+		<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
 
@@ -72,6 +72,7 @@ JHtml::_('behavior.tooltip');
 		</colgroup>
 
 		<thead>
+		<th>
 			<tr>
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
 				<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
@@ -179,9 +180,15 @@ JHtml::_('behavior.tooltip');
 
 						<?php if ($this->jemsettings->showatte == 1) : ?>
 						<td headers="jem_attendees" align="left" valign="top">
-							<?php echo !empty($row->regCount) ? $this->escape($row->regCount) : '-'; ?>
-						</td>
-						<?php endif; ?>
+							<?php
+							if (!empty($row->regCount)) : 
+								echo $this->escape($row->regCount), " / ", $this->escape($row->maxplaces);
+							else : 
+								echo "- / ", $this->escape ($row->maxplaces);
+							endif;
+								?>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																										   
+							</td>	
+							<?php endif; ?>	
 					</tr>
 				<?php endforeach; ?>
 			<?php endif; ?>

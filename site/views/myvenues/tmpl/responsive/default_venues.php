@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0
+ * @version 2.3.1
  * @package JEM
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -82,10 +82,19 @@ JHtml::_('behavior.tooltip');
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-          <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+          <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+          <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
         </div>
-			</div>   
+		<?php if ($this->settings->get('global_display',1)) : ?>
+		<div class="jem-limit-smallist">
+		<?php
+		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>';
+		//echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+		echo $this->venues_pagination->getLimitBox();
+		?>
+		</div>
+		<?php endif; ?>		
+		</div>   
 		<?php endif; ?>
   <?php endif; ?>
 
@@ -186,15 +195,7 @@ JHtml::_('behavior.tooltip');
 	<?php echo JHtml::_('form.token'); ?>
 </form>
 
-<?php if ($this->settings->get('global_display',1)) : ?>
-  <div class="jem-limit-smallist">
-    <?php
-      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>';
-      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-      echo $this->venues_pagination->getLimitBox();
-    ?>
-  </div>
-<?php endif; ?>
+
 
 <div class="pagination">
 	<?php echo $this->venues_pagination->getPagesLinks(); ?>

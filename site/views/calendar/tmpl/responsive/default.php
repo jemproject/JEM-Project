@@ -294,10 +294,10 @@ td.today div.daynum::after {
 
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
-				<button id="buttonshowall" class="calendarButton btn">
+				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
 				</button>
-				<button id="buttonhideall" class="calendarButton btn">
+				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
 				</button>
 		</div>
@@ -325,7 +325,7 @@ td.today div.daynum::after {
 							# build legend
 							if (array_key_exists($cat->id, $countcatevents)) {
 							?>
-								<button class="eventCat btn" id="cat<?php echo $cat->id; ?>">
+								<button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
 									<?php
 									if (isset($cat->color) && $cat->color) {
 										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
@@ -355,10 +355,10 @@ td.today div.daynum::after {
 
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
-				<button id="buttonshowall" class="calendarButton btn">
+				<button id="buttonshowall" class="btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
 				</button>
-				<button id="buttonhideall" class="calendarButton btn">
+				<button id="buttonhideall" class="btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
 				</button>
 		</div>
@@ -386,7 +386,7 @@ td.today div.daynum::after {
 							# build legend
 							if (array_key_exists($cat->id, $countcatevents)) {
 							?>
-								<button class="eventCat btn" id="cat<?php echo $cat->id; ?>">
+								<button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
 									<?php
 									if (isset($cat->color) && $cat->color) {
 										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';

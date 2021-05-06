@@ -97,9 +97,17 @@ function jem_common_show_filter(&$obj) {
       <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
+	  	<?php if ($this->settings->get('global_display',1)) : ?>
+	<div class="jem_fright">
+		   
+		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+		<?php echo $this->pagination->getLimitBox(); ?>
+		
+	</div>
+	<?php endif; ?>															
   </div>
 <?php endif; ?>
 
@@ -126,15 +134,7 @@ function jem_common_show_filter(&$obj) {
       <?php endif; ?>
     </div>    
   </div>
-  <?php if ($this->settings->get('global_display',1)) : ?>
-    <div class="jem_limit jem-row">
-      <?php
-        echo '<label for="limit" class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-        //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-        echo $this->pagination->getLimitBox();
-      ?>
-    </div>
-  <?php endif; ?>
+
 </div>
 
 <ul class="eventlist">
@@ -274,12 +274,20 @@ function jem_common_show_filter(&$obj) {
                 </div>
               <?php endif; ?>
               
-              <?php if (($this->jemsettings->showatte == 1) && (!empty($row->regCount))) : ?>
+              
+              <?php if ($this->jemsettings->showatte == 1) : ?>
+			  <?php if (!empty($row->regCount)) : ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
                   <i class="fa fa-user" aria-hidden="true"></i>
-                  <?php echo $this->escape($row->regCount); ?>
-                </div>
-              <?php endif; ?>
+                  <?php echo $this->escape($row->regCount), " / ", $this->escape($row->maxplaces); ?>
+                  </div>
+                <?php else : ?>
+                  <div class="jem-event-info-small jem-event-attendees">
+				  <i class="fa fa-user" aria-hidden="true"></i>
+				  <?php echo " - / ", $this->escape ($row->maxplaces); ?>
+				  </div>
+                <?php endif; ?>
+              <?php endif; ?> 						
             </div>            
           </div>
        
@@ -324,8 +332,8 @@ function jem_common_show_filter(&$obj) {
       <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
   </div>
 <?php endif; ?>

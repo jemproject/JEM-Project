@@ -9,7 +9,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<div id="jem" class="jem_venueslist form-inline<?php echo $this->pageclass_sfx;?>">
+<div id="jem" class="jem_venueslist<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
 		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0
+ * @version 2.3.1
  * @package JEM
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,8 +35,8 @@ JHtml::_('behavior.tooltip');
 			<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>
 

@@ -113,9 +113,18 @@ function jem_common_show_filter(&$obj) {
       <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
+  <?php if ($this->settings->get('global_display',1)) : ?>
+    <div class="jem-limit-smallist">
+      <?php
+        echo '<label for="limit" class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+        //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+        echo $this->pagination->getLimitBox();
+      ?>
+    </div>
+  <?php endif; ?>	
   </div>
 <?php endif; ?>
 
@@ -180,13 +189,16 @@ function jem_common_show_filter(&$obj) {
               </div>
               
               <?php if ($this->jemsettings->showtitle == 1) : ?>
-                <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-                  <i class="fa fa-comment-o" aria-hidden="true"></i>
+                <div class="jem-event-info-small jem-event-title"> 
+				<h4	title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+
+
                   <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
                   <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                   <?php if (!empty($row->featured)) :?>
                     <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                   <?php endif; ?>
+				  </h4>
                 </div>
               <?php else : ?>
               <?php endif; ?>
@@ -241,10 +253,13 @@ function jem_common_show_filter(&$obj) {
                 <?php if (!empty($row->regCount)) : ?>
                   <div class="jem-event-info-small jem-event-attendees" title="<?php echo JText::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
                     <i class="fa fa-user" aria-hidden="true"></i>
-                    <?php echo $this->escape($row->regCount); ?>
+                    <?php echo $this->escape($row->regCount), " / ", $this->escape($row->maxplaces); ?>
                   </div>
                 <?php else : ?>
-                  <div class="jem-event-info-small jem-event-attendees"><i class="fa fa-user" aria-hidden="true"></i> -</div>
+                  <div class="jem-event-info-small jem-event-attendees">
+				  <i class="fa fa-user" aria-hidden="true"></i>
+				  <?php echo " - / ", $this->escape ($row->maxplaces); ?>
+				  </div>
                 <?php endif; ?>
               <?php endif; ?> 
 
@@ -298,13 +313,5 @@ function jem_common_show_filter(&$obj) {
     <?php endif; ?>
   </div>
 
-  <?php if ($this->settings->get('global_display',1)) : ?>
-    <div class="jem-limit-smallist">
-      <?php
-        echo '<label for="limit" class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-        //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-        echo $this->pagination->getLimitBox();
-      ?>
-    </div>
-  <?php endif; ?>
+
 </div>
