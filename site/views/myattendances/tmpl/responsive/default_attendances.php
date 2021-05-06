@@ -139,9 +139,18 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-          <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+          <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+          <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
         </div>
+		<?php if ($this->settings->get('global_display',1)) : ?>
+  <div class="jem-limit-smallist">
+    <?php
+      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+      echo $this->attending_pagination->getLimitBox();
+    ?>
+  </div>
+<?php endif; ?>
 			</div>   
 		<?php endif; ?>
   <?php endif; ?>
@@ -286,15 +295,6 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<input type="hidden" name="option" value="com_jem" />
 </form>
 
-<?php if ($this->settings->get('global_display',1)) : ?>
-  <div class="jem-limit-smallist">
-    <?php
-      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-      echo $this->attending_pagination->getLimitBox();
-    ?>
-  </div>
-<?php endif; ?>
 
 <div class="pagination">
 	<?php echo $this->attending_pagination->getPagesLinks(); ?>
