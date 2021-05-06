@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.0
+ * @version 2.3.1
  * @package JEM
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -132,7 +132,7 @@ JHtml::_('behavior.tooltip');
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
   <?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>
-      <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
+		<div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div>
           <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>
         </div>
@@ -141,9 +141,18 @@ JHtml::_('behavior.tooltip');
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-          <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+          <button class="buttonfilter btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+          <button class="buttonfilter btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
         </div>
+		<?php if ($this->settings->get('global_display',1)) : ?>
+		<div class="jem-limit-smallist">
+		<?php
+		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+			//echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+		echo $this->events_pagination->getLimitBox();
+		?>
+		</div>
+		<?php endif; ?>
 			</div>   
 		<?php endif; ?>
   <?php endif; ?>
@@ -282,7 +291,7 @@ JHtml::_('behavior.tooltip');
 							$count = $row->regCount;
 							if ($row->maxplaces)
 							{
-								$count .= '/'.$row->maxplaces;
+								$count .= ' / '.$row->maxplaces;
 								if ($row->waitinglist && $row->waiting) {
 									$count .= ' + '.$row->waiting;
 								}
@@ -291,7 +300,7 @@ JHtml::_('behavior.tooltip');
 								$count .= ' - '.(int)$row->unregCount;
 							}
 							if (!empty($row->invited)) {
-								$count .= ', '.(int)$row->invited .' ?';
+								$count .= ', ? '.(int)$row->invited .' ';
 							}
 
 							if (!empty($row->regTotal) || empty($row->finished)) {
@@ -332,15 +341,7 @@ JHtml::_('behavior.tooltip');
 	<?php echo JHtml::_('form.token'); ?>
 </form>
 
-<?php if ($this->settings->get('global_display',1)) : ?>
-  <div class="jem-limit-smallist">
-    <?php
-      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-			//echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-      echo $this->events_pagination->getLimitBox();
-    ?>
-  </div>
-<?php endif; ?>
+
 
 <div class="pagination">
 	<?php echo $this->events_pagination->getPagesLinks(); ?>
