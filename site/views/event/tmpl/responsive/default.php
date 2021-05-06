@@ -11,10 +11,10 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
-$params  = $this->item->params;
-$images  = json_decode($this->item->datimage);
-$attribs = json_decode($this->item->attribs);
-$user    = JemFactory::getUser();
+$params      = $this->item->params;
+$images      = json_decode($this->item->datimage);
+$attribs     = json_decode($this->item->attribs);
+$user        = JemFactory::getUser();
 $jemsettings = JemHelper::config();
 $document    = JFactory::getDocument();
 
@@ -42,9 +42,9 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_heading')); ?>
-			<?php echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
-      
+			<?php 
+      echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
+      ?>
 		</h1>
 	<?php endif; ?>
 
@@ -163,7 +163,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
         flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
       }
     </style>
-    <div class="jem-img" >
+    <div class="jem-img">
       <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
     </div>
   </div>
@@ -364,7 +364,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
           </dl>
         </div>
         
-        <div class="jem-img" itemprop="photo">
+        <div class="jem-img">
           <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
         </div>        
       <?php endif; /* event_show_detailsadress */ ?>

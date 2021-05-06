@@ -73,7 +73,7 @@ if ($this->showRegForm && empty($this->print)) :
         </li>      
       <?php endif; ?>
     </ul>
-    <input class="jem-register-button btn" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" /> 
+    <input class="jem-register-button btn btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" /> 
 
       <?php /* the following line together with BreezingForms leads to a form with the ID xxx - here 6089 - and uses event title, date and email contact  ?>
 	<input class="btn btn-default btn-secondary btn-sm" type="button" value="   <?php echo JText::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>   " onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
