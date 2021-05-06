@@ -11,10 +11,10 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
-$params  = $this->item->params;
-$images  = json_decode($this->item->datimage);
-$attribs = json_decode($this->item->attribs);
-$user    = JemFactory::getUser();
+$params      = $this->item->params;
+$images      = json_decode($this->item->datimage);
+$attribs     = json_decode($this->item->attribs);
+$user        = JemFactory::getUser();
 $jemsettings = JemHelper::config();
 $document    = JFactory::getDocument();
 
@@ -39,10 +39,10 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<div class="clr"> </div>
 
-	<?php if ($this->params->get('show_page_heading', 1)) : ?>
+	<?php if (!$this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
 			<?php echo $this->escape($this->params->get('page_heading')); ?>
-		</h1>
+      <?php echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
 	<?php endif; ?>
 
 	<div class="clr"> </div>
