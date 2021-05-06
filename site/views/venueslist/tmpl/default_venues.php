@@ -44,8 +44,8 @@ function jem_common_show_filter(&$obj) {
       <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <button class="buttonfilter btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="buttonfilter btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
 	  	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
@@ -85,19 +85,20 @@ function jem_common_show_filter(&$obj) {
 	<?php if ($this->params->get('showstate')) : ?>			
 			<col width="20%" class="jem_col_state" />
 	<?php endif; ?>	
+			<?php if ($this->jemsettings->showlocate == 1) : ?>													  
 			<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
-
+			<?php endif; ?>
 		</colgroup>
 		<thead>
 			<tr>
-				<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_city" class="sectiontableheader" align="left"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 	<?php if ($this->params->get('showstate')) : ?>
-				<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_state" class="sectiontableheader" align="left"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 	<?php endif; ?>	
 			
 			
 
-				<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_location" class="sectiontableheader" align="left"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 
 
 
