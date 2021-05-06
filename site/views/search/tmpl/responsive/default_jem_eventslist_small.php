@@ -182,11 +182,19 @@ defined('_JEXEC') or die;
   <?php endif; ?>
   <dt></dt>
   <dd>
-    <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-    <button class="buttonfilter btn" type="button" onclick="clearForm();this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>    
+    <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+    <button class="btn btn-secondary" type="button" onclick="clearForm();this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>    
   </dd>
 </dl>
-
+<?php if ($this->settings->get('global_display',1)) : ?>
+  <div class="jem-limit-smallist">
+    <?php
+      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+      echo $this->pagination->getLimitBox();
+    ?>
+  </div>
+<?php endif; ?>
 
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
@@ -335,12 +343,4 @@ defined('_JEXEC') or die;
   <?php endif; ?>
 </ul>
 
-<?php if ($this->settings->get('global_display',1)) : ?>
-  <div class="jem-limit-smallist">
-    <?php
-      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-      //echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-      echo $this->pagination->getLimitBox();
-    ?>
-  </div>
-<?php endif; ?>
+
