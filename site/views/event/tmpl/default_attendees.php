@@ -158,19 +158,12 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					echo JText::_('COM_JEM_TOO_LATE_REGISTER');
 					break;
 				case 2:
-
-					// insert Breezing Form hack here
-
 					//echo JText::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
-
-					<input class="btn btn-warning btn-sm" type="button" value="<?php echo JText::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>" onClick="window.location='/index.php?option=com_comprofiler&view=login&Itemid=4812';"/>
-
-					
-   
-
-					<br /><br />
-
-					<input class="btn btn-secondary btn-sm" type="button" value="<?php echo JText::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=3475&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
+					<input class="btn btn-warning" type="button" value="<?php echo JText::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>"onClick="window.location='/index.php?option=com_comprofiler&view=login&Itemid=4812';"/>
+			
+					<?php //insert Breezing Form hack here
+					/*<input class="btn btn-secondary" type="button" value="<?php echo JText::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
+					*/?>
 					<?php
 					break;
 				case 3:
