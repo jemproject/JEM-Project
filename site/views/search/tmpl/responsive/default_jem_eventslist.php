@@ -65,7 +65,7 @@ defined('_JEXEC') or die;
     return;
   }
 </script>
-
+<div id="jem_filter" class="floattext">			
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
@@ -123,7 +123,7 @@ defined('_JEXEC') or die;
       ?>
     </div>
   <?php endif; ?>
-
+</div>
 <div class="jem-misc jem-row">
   <div class="jem-sort jem-row jem-justify-start jem-nowrap">
     <i class="fa fa-sort fa-lg jem-sort-icon" aria-hidden="true"></i>
