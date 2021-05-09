@@ -136,7 +136,7 @@ defined('_JEXEC') or die;
     <?php endif; ?>
   }
 </style>
-
+<div id="jem_filter" class="floattext">		
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
@@ -195,7 +195,7 @@ defined('_JEXEC') or die;
     ?>
   </div>
 <?php endif; ?>
-
+  </div>
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem_date" class="sectiontableheader"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
