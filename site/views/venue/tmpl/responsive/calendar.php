@@ -287,10 +287,10 @@ defined('_JEXEC') or die;
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
 
-				<button id="buttonshowall" class="calendarButton btn btn-secondary">
+				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
 				</button>
-				<button id="buttonhideall" class="calendarButton btn btn-secondary">
+				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
 				</button>
 
@@ -320,7 +320,7 @@ defined('_JEXEC') or die;
 							# build legend
 							if (array_key_exists($cat->id, $countcatevents)) {
 							?>
-								<button class="eventCat btn btn-outline-secondary" id="cat<?php echo $cat->id; ?>">
+								<button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
 									<?php
 									if (isset($cat->color) && $cat->color) {
 										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
@@ -351,10 +351,10 @@ defined('_JEXEC') or die;
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
 			<div class="calendarButtonsToggle">
-				<button id="buttonshowall" class="calendarButton btn btn-dark">
+				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
 				</button>
-				<button id="buttonhideall" class="calendarButton btn btn-dark">
+				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
 					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
 				</button>
 			</div>
