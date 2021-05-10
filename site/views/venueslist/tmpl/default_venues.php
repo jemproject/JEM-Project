@@ -78,7 +78,7 @@ function jem_common_show_filter(&$obj) {
 
 
 
-	<div class="table-responsive">
+	<div class="table table-responsive table-striped table-hover">
 	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 		<colgroup>
 			<col width="20%" class="jem_col_city" />
