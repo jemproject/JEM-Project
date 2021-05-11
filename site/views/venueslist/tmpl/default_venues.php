@@ -59,25 +59,6 @@ function jem_common_show_filter(&$obj) {
 
 <?php endif; ?>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	<div class="table table-responsive table-striped table-hover">
 	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 		<colgroup>
@@ -128,11 +109,6 @@ function jem_common_show_filter(&$obj) {
 						endif;
 						?>
 					</td>
-
-
-
-
-
 				</tr>
 
 				<?php// $i = 1 - $i; ?>
