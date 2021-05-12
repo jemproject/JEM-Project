@@ -261,6 +261,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('gddisabled', '1'),
 ('imageenabled', '1'),
 ('attachmentenabled', '0'),
+('frontendpublish','0'),
 ('catlinklist', '1'),
 ('showfroregistra', '2'),
 ('showfrounregistra', '2'),
