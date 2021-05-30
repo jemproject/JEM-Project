@@ -39,7 +39,7 @@ function initialize() {
 		      map: map,
 		      title: title,
 		      visible: true,
-		      icon: "https://chart.apis.google.com/chart?chst=d_map_pin_letter_withshadow&chld=•|3491FF|000000"
+		      icon: "https://chart.apis.google.com/chart?chst=d_map_pin_letter_withshadow&chld=•|FF0000|000000"
 		  });
 
 		var boxText = document.createElement("div");
@@ -90,7 +90,7 @@ function initialize() {
 				        var marker = new google.maps.Marker({
 				            map: map,
 				            position: results[0].geometry.location,
-				            icon: "https://chart.apis.google.com/chart?chst=d_map_pin_letter_withshadow&chld=•|3491FF|000000"
+				            icon: "https://chart.apis.google.com/chart?chst=d_map_pin_letter_withshadow&chld=•|FF0000|000000"
 				        });
 
 				        var boxText = document.createElement("div");
