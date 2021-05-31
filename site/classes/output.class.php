@@ -12,7 +12,6 @@ defined('_JEXEC') or die;
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
-
 /**
  * Holds the logic for all output related things
  */
@@ -873,13 +872,13 @@ class JemOutput
 		$hl = $params->get($lg,mb_strtolower($lang->getTag()));
 
 		//Link to map
-		$mapimage = JHtml::_('jemhtml.icon', 'com_jem/map_icon.png', 'fa fa-map', JText::_('COM_JEM_MAP'), 'class="jem-mapicon"');
+		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
 
 		//set var
 		$output = null;
 		$attributes = null;
 
-		$data->country = \Joomla\String\StringHelper::strtoupper($data->country);
+		$data->country = JString::strtoupper($data->country);
 
 		if ($data->latitude == 0.000000) {
 			$data->latitude = null;
@@ -954,9 +953,7 @@ class JemOutput
 	 */
 	static public function recurrenceicon($event, $showinline = true, $showtitle = true)
 	{
-		$app = JFactory::getApplication();
 		$settings = JemHelper::globalattribs();
-		$settings2 = JemHelper::config();
 		$item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
 		//stop if disabled
@@ -966,9 +963,6 @@ class JemOutput
 
 		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
-		/* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
-		$icon  = $first ? 'fa fa-fw fa-refresh jem-recurrencefirsticon' : 'fa fa-fw fa-refresh jem-recurrenceicon';
-		$showinline &= !($settings2->useiconfont == 1 && $app->isSite());
 		$attr_class = $showinline ? ('class="icon-inline" ') : '';
 		$attr_title = $showtitle  ? ('title="' . JText::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
 		$output = JHtml::_('jemhtml.icon', $image, $icon, JText::_('COM_JEM_RECURRING_EVENT'), $attr_class . $attr_title, !$app->isSite());
@@ -987,7 +981,6 @@ class JemOutput
 	static public function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
 	{
 		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
-		$app = JFactory::getApplication();
 
 		// early return
 		if (is_object($item)) {
@@ -1004,22 +997,18 @@ class JemOutput
 		switch ($published) {
 		case -2: // trashed
 			$image = 'com_jem/trash.png';
-			$icon = 'fa fa-fw fa-lg fa-trash jem-publishstateicon-trashed';
 			$alt   = JText::_('JTRASHED');
 			break;
-		case  0: // unpublished F10C: fa-circle-o F070: fa-eye-slash, F192: fa-dot-circle-o
+		case  0: // unpublished
 			$image = 'com_jem/publish_x.png';
-			$icon = 'fa fa-fw fa-lg fa-eye-slash jem-publishstateicon-unpublished';
 			$alt   = JText::_('JUNPUBLISHED');
 			break;
-		case  1: // published F06E: fa-eye
+		case  1: // published
 			$image = 'com_jem/publish.png';
-			$icon = 'fa fa-fw fa-lg fa-check-circle jem-publishstateicon-published';
 			$alt   = JText::_('JPUBLISHED');
 			break;
 		case  2: // archived
 			$image = 'com_jem/archive_front.png';
-			$icon = 'fa fa-fw fa-lg fa-archive jem-publishstateicon-archived';
 			$alt   = JText::_('JARCHIVED');
 			break;
 		default: // unknown state - abort!
@@ -1035,7 +1024,7 @@ class JemOutput
 			$attributes['title'] = $alt;
 		}
 
-		$output = JHtml::_('jemhtml.icon', $image, $icon, $alt, $attributes, !$app->isSite());
+		$output = JHtml::_('image', $image, $alt, $attributes, true);
 
 		return $output;
 	}
@@ -1104,7 +1093,7 @@ class JemOutput
 		return $output;
 	}
 
-	/**
+	/**		
 	 * Formats date
 	 *
 	 * @param string $date
