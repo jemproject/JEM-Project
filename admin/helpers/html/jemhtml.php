@@ -20,7 +20,7 @@ abstract class JHtmlJemHtml
 	 * @param int $value state value
 	 * @param int $i
 	 */
-	static public function featured($value = 0, $i, $canChange = true)
+	static public function featured($i, $value = 0, $canChange = true)
 	{
 		// Array of image, iconfont, task, title, action
 		$states = array(
@@ -55,7 +55,7 @@ abstract class JHtmlJemHtml
 	 * @param int $i
 	 * @deprecated since version 2.1.7
 	 */
-	static public function toggleStatus($value = 0, $i, $canChange = true)
+	static public function toggleStatus($i, $value = 0, $canChange = true)
 	{
 		if (class_exists('JemHelper')) {
 			JemHelper::addLogEntry('Use of this function is deprecated. Use JemHekper::toggleAttendanceStatus() instead.', __METHOD__, JLog::WARNING);
@@ -97,7 +97,7 @@ abstract class JHtmlJemHtml
 	 * @param bool $print if true show icon AND text for printing
 	 * @return string The html snippet.
 	 */
-	static public function getAttendanceStatusText($value = 0, $i, $canChange = true, $print = false)
+	static public function getAttendanceStatusText($i, $value = 0, $canChange = true, $print = false)
 	{
 		// Array of image, iconfont, task, alt-text, alt-text edit, tooltip
 		$states = array(
@@ -163,7 +163,7 @@ abstract class JHtmlJemHtml
 	 * @param bool $print if true show icon AND text for printing
 	 * @return string The html snippet.
 	 */
-	static public function toggleAttendanceStatus($value = 0, $i, $canChange = true, $print = false)
+	static public function toggleAttendanceStatus($i, $value = 0, $canChange = true, $print = false)
 	{
 		// Array of image, iconfont, task, alt-text, alt-text edit, tooltip
 		$states = array(
