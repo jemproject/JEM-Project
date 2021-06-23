@@ -75,7 +75,7 @@ class JemModelSampledata extends JModelLegacy
 		// Process queries
 		foreach ($queries as $query) {
 			$query = trim($query);
-			if ($query != '' && $query{0} != '#') {
+			if ($query != '' && $query[0] != '#') {
 				$this->_db->setQuery($query);
 				$this->_db->execute();
 			}
