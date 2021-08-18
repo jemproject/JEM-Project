@@ -216,7 +216,8 @@ class com_jemInstallerScript
 		// Are we installing in J2.5?
 		$jversion = new JVersion();
 		if (version_compare(JVERSION, '4.0.1', 'ge')                       ||  // J! 4.x NOT supported, but allow alpha/beta
-			!(($jversion->RELEASE >= '3.4' && $jversion->DEV_LEVEL >= '0') ||
+		    !(($jversion->RELEASE >= '3.10' && $jversion->DEV_LEVEL >= '0') ||			
+		      ($jversion->RELEASE >= '3.4' && $jversion->DEV_LEVEL >= '0') ||
 		      ($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
 		      ($jversion->RELEASE == '3.2' && $jversion->DEV_LEVEL >= '7') ||
 		      ($jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL >= '24'))) {
