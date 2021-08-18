@@ -33,6 +33,7 @@ class Pkg_JemInstallerScript
 			),
 		'Joomla!' => array (
 			'4.0' => '', // Not supported
+			'3.10' => '3.10.0',
 			'3.3' => '3.3.3',
 			'3.2' => '3.2.7',
 			'3.0' => '', // Not supported
