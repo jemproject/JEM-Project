@@ -144,16 +144,20 @@ $settings	= json_decode($this->item->attribs);
 					<dd><?php echo $this->form->getInput('locid'); ?></dd>
 
 				</dl>
-				<div style="clear: both;"><br /></div>
+			</fieldset>
+			<!-- EVENTDESCRIPTION -->
+			<fieldset class="adminform">
+				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DESCRIPTION_LEGEND'); ?></legend>				
 				<div>
 					<?php echo $this->form->getLabel('articletext'); ?>
 					<?php echo $this->form->getInput('articletext'); ?>
 				</div>
-				<p>&nbsp;</p>
-				<!-- IMAGE -->
+			</fieldset>
+
+			<!-- IMAGE -->
 				<?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
-				<fieldset class="jem_fldst_image">
-					<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
+			<fieldset class="jem_fldst_image">
+				<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 					<?php if ($this->jemsettings->imageenabled != 0) : ?>
 					<dl class="adminformlist jem-dl">
 						<dt><?php echo $this->form->getLabel('userfile'); ?></dt>
@@ -177,9 +181,9 @@ $settings	= json_decode($this->item->attribs);
 					</dl>
 					<input type="hidden" name="removeimage" id="removeimage" value="0" />
 					<?php endif; ?>
-				</fieldset>
-				<?php endif; ?>
 			</fieldset>
+				<?php endif; ?>
+			
 
 
 			<!-- EXTENDED TAB -->
