@@ -211,7 +211,7 @@ $location = JemHelper::defineCenterMap($this->form);
 				<button type="submit" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo JText::_('JSAVE') ?></button>
 				<button type="cancel" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo JText::_('JCANCEL') ?></button>	
 
-
+		<br>
 			<?php if ($this->params->get('showintrotext')) : ?>
 			<div class="description no_space floattext">
 				<?php echo $this->params->get('introtext'); ?>
