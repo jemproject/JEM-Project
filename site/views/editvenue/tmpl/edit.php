@@ -208,8 +208,8 @@ $location = JemHelper::defineCenterMap($this->form);
 
 		<form action="<?php echo JRoute::_('index.php?option=com_jem&a_id=' . (int)$this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
 
-				<button type="button" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo JText::_('JSAVE') ?></button>
-				<button type="button" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo JText::_('JCANCEL') ?></button>
+				<button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo JText::_('JSAVE') ?></button>
+				<button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo JText::_('JCANCEL') ?></button>
 
 
 			<?php if ($this->params->get('showintrotext')) : ?>
