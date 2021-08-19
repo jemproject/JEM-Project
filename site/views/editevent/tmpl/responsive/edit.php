@@ -90,7 +90,7 @@ $settings	= json_decode($this->item->attribs);
 				<button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
 				<button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>	
 
-
+		<br>
 			<?php if ($this->item->recurrence_type > 0) : ?>
 			<div class="description warningrecurrence" style="clear: both;">
 				<div style="float:left;">
