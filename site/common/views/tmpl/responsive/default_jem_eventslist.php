@@ -171,14 +171,15 @@ function jem_common_show_filter(&$obj) {
           
           <div class="jem-event-details">
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
-            <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+            <h3	title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+		    
               <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" ><?php echo $this->escape($row->title); ?></a>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
-            </h4>
+            </h3>
             
             <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
             <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
@@ -281,10 +282,16 @@ function jem_common_show_filter(&$obj) {
                   <i class="fa fa-user" aria-hidden="true"></i>
                   <?php echo $this->escape($row->regCount), " / ", $this->escape($row->maxplaces); ?>
                   </div>
+                <?php elseif ($this->escape($row->maxplaces) == 0) : ?>
+				<div>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				 <?php echo " > 0 "; ?>
+				</div>	    
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-attendees">
 				  <i class="fa fa-user" aria-hidden="true"></i>
-				  <?php echo " - / ", $this->escape ($row->maxplaces); ?>
+			  	  <?php echo " < ", $this->escape ($row->maxplaces); ?>
+
 				  </div>
                 <?php endif; ?>
               <?php endif; ?> 						
