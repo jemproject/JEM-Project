@@ -159,7 +159,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 2:
 					//echo JText::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
-					<input class="btn btn-warning" type="button" value="<?php echo JText::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>"onClick="window.location='/index.php?option=com_comprofiler&view=login&Itemid=4812';"/>
+					<input class="btn btn-warning" type="button" value="<?php echo JText::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>"/>
 			
 					<?php //insert Breezing Form hack here
 					/*<input class="btn btn-secondary" type="button" value="<?php echo JText::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
