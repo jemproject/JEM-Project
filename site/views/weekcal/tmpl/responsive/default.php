@@ -289,10 +289,12 @@ defined('_JEXEC') or die;
 
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
-				<button id="buttonshowall" class="calendarButton btn">
+				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
+	
 					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
 				</button>
-				<button id="buttonhideall" class="calendarButton btn">
+				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
+	
 					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
 				</button>
 		</div>
