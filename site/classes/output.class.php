@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+
 /**
  * Holds the logic for all output related things
  */
@@ -199,7 +200,7 @@ class JemOutput
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/addvenue.png', 'fa fa-fw fa-lg fa-plus-square-o jem-addvenuebutton', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isSite());
+				$image = JHtml::_('jemhtml.icon', 'com_jem/addvenue.png', 'fa fa-fw fa-lg fa-plus-square jem-addvenuebutton', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isSite());
 			} else {
 				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
 			}
@@ -844,7 +845,7 @@ class JemOutput
 	 *
 	 * @param obj $data
 	 */
-	static public function mapicon($data, $params, $view = false)
+	static public function mapicon($data, $view = false, $params)
 	{
 		$settings = JemHelper::globalattribs();
 
@@ -867,18 +868,14 @@ class JemOutput
 			$mapserv = $params->get('global_show_mapserv');
 		}
 
-		//Language of map
-		$lang = JFactory::getLanguage();
-		$hl = $params->get($lg,mb_strtolower($lang->getTag()));
-
 		//Link to map
-		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
+		$mapimage = JHtml::_('jemhtml.icon', 'com_jem/map_icon.png', 'fa fa-map', JText::_('COM_JEM_MAP'), 'class="jem-mapicon"');
 
 		//set var
 		$output = null;
 		$attributes = null;
 
-		$data->country = JString::strtoupper($data->country);
+		$data->country = \Joomla\String\StringHelper::strtoupper($data->country);
 
 		if ($data->latitude == 0.000000) {
 			$data->latitude = null;
@@ -887,7 +884,7 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$hl.'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		// google map link or include
 		switch ($mapserv)
@@ -895,7 +892,7 @@ class JemOutput
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$hl.'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$message = JText::_('COM_JEM_MAP').':';
@@ -906,7 +903,7 @@ class JemOutput
 			case 2:
 				// include iframe
 				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.com/maps?hl='.$hl.'&amp;q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 
 				$output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
@@ -915,7 +912,6 @@ class JemOutput
 			case 3:
 				// include - Google API3
 				# https://developers.google.com/maps/documentation/javascript/tutorial
-				# https://developers.google.com/maps/documentation/javascript/localization?hl=en
 				$api		= trim($params->get('global_googleapi'));
 				$clientid	= trim($params->get('global_googleclientid'));
 
@@ -923,13 +919,13 @@ class JemOutput
 
 				# do we have a client-ID?
 				if ($clientid) {
-					$document->addScript('https://maps.googleapis.com/maps/api/js?client='.$clientid.'&language='.$hl.'&sensor=false&v=3.15');
+					$document->addScript('https://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
 				} else {
 					# do we have an api-key?
 					if ($api) {
-						$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&language='.$hl.'&sensor=false');
+						$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
 					} else {
-						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false'.'&language='.$hl);
+						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false');
 					}
 				}
 
@@ -953,7 +949,9 @@ class JemOutput
 	 */
 	static public function recurrenceicon($event, $showinline = true, $showtitle = true)
 	{
+		$app = JFactory::getApplication();
 		$settings = JemHelper::globalattribs();
+		$settings2 = JemHelper::config();
 		$item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
 		//stop if disabled
@@ -963,6 +961,9 @@ class JemOutput
 
 		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
+		/* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
+		$icon  = $first ? 'fa fa-fw fa-refresh jem-recurrencefirsticon' : 'fa fa-fw fa-refresh jem-recurrenceicon';
+		$showinline &= !($settings2->useiconfont == 1 && $app->isSite());
 		$attr_class = $showinline ? ('class="icon-inline" ') : '';
 		$attr_title = $showtitle  ? ('title="' . JText::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
 		$output = JHtml::_('jemhtml.icon', $image, $icon, JText::_('COM_JEM_RECURRING_EVENT'), $attr_class . $attr_title, !$app->isSite());
@@ -981,6 +982,7 @@ class JemOutput
 	static public function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
 	{
 		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
+		$app = JFactory::getApplication();
 
 		// early return
 		if (is_object($item)) {
@@ -997,18 +999,22 @@ class JemOutput
 		switch ($published) {
 		case -2: // trashed
 			$image = 'com_jem/trash.png';
+			$icon = 'fa fa-fw fa-lg fa-trash jem-publishstateicon-trashed';
 			$alt   = JText::_('JTRASHED');
 			break;
-		case  0: // unpublished
+		case  0: // unpublished F10C: fa-circle-o F070: fa-eye-slash, F192: fa-dot-circle-o
 			$image = 'com_jem/publish_x.png';
+			$icon = 'fa fa-fw fa-lg fa-eye-slash jem-publishstateicon-unpublished';
 			$alt   = JText::_('JUNPUBLISHED');
 			break;
-		case  1: // published
+		case  1: // published F06E: fa-eye
 			$image = 'com_jem/publish.png';
+			$icon = 'fa fa-fw fa-lg fa-check-circle jem-publishstateicon-published';
 			$alt   = JText::_('JPUBLISHED');
 			break;
 		case  2: // archived
 			$image = 'com_jem/archive_front.png';
+			$icon = 'fa fa-fw fa-lg fa-archive jem-publishstateicon-archived';
 			$alt   = JText::_('JARCHIVED');
 			break;
 		default: // unknown state - abort!
@@ -1024,7 +1030,7 @@ class JemOutput
 			$attributes['title'] = $alt;
 		}
 
-		$output = JHtml::_('image', $image, $alt, $attributes, true);
+		$output = JHtml::_('jemhtml.icon', $image, $icon, $alt, $attributes, !$app->isSite());
 
 		return $output;
 	}
@@ -1093,6 +1099,65 @@ class JemOutput
 		return $output;
 	}
 
+	/**
+	/**
+	 * Creates the flyer2
+	 *
+	 * @param obj $data
+	 * @param array $image
+	 * @param string $type
+	 */
+
+	static public function flyer2($data, $image, $type, $id = null)
+	{
+		$id_attr = $id ? 'id="'.$id.'"' : '';
+		$settings = JemHelper::config();
+		switch($type) {
+			case 'event':
+				$folder = 'events';
+				$imagefile = $data->datimage;
+				$info = $data->title;
+				break;
+			case 'category':
+				$folder = 'categories';
+				$imagefile = $data->image;
+				$info = $data->catname;
+				break;
+			case 'venue':
+				$folder = 'venues';
+				$imagefile = $data->locimage;
+				$info = $data->venue;
+				break;
+		}
+
+		// Do we have an image?
+		if (empty($imagefile) || empty($image)) {
+			return;
+		}
+		jimport('joomla.filesystem.file');
+				
+		// Does a thumbnail exist?
+/*		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+			if ($settings->lightbox == 0) {
+				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+
+				$icon = '<img '.$attributes.' src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage">'.$icon.'</div>';
+			} else {
+				JHtml::_('behavior.modal', 'a.flyermodal');
+				$url = JUri::base().$image['original'];
+				$attributes = $id_attr.' class="flyermodal flyerimage2" title="'.$info.'"';
+
+				$icon = '<img src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
+			}
+		// Otherwise take the values for the original image specified in the settings
+		} else {*/
+		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.JURI::base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+//		}
+		return $output;
+	}
 	/**		
 	 * Formats date
 	 *
