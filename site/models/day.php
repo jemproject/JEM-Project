@@ -127,6 +127,31 @@ class JemModelDay extends JemModelEventslist
 			$this->setState('filter.category_id', $cats);
 			$this->setState('filter.category_id.include', true);
 		}
+################################
+		## EXCLUDE/INCLUDE CATEGORIES ##
+		################################
+		
+		$catswitch = $params->get('categoryswitch', '');
+		
+		# set included categories
+		if ($catswitch) {
+			$included_cats = trim($params->get('categoryswitchcats', ''));
+			if ($included_cats) {
+				$included_cats = explode(",", $included_cats);
+				$this->setState('filter.category_id', $included_cats);
+				$this->setState('filter.category_id.include', true);
+			}
+		}
+		
+		# set excluded categories
+		if (!$catswitch) {
+			$excluded_cats = trim($params->get('categoryswitchcats', ''));
+			if ($excluded_cats) {
+				$excluded_cats = explode(",", $excluded_cats);
+				$this->setState('filter.category_id', $excluded_cats);
+				$this->setState('filter.category_id.include', false);
+			}
+		}
 
 		// maybe top category is given by calendar view
 		$top_category = $app->input->getInt('topcat', 0);
