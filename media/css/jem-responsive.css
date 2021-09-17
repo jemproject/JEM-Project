@@ -192,6 +192,7 @@ body.com_jem.body-overlayed {
 #jem_filter {
     padding: 10px 0 5px 0;
     align-items: baseline;
+	background-color: #ffa500;
 }
 
 #jem_filter div {
