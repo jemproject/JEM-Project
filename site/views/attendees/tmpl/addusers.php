@@ -54,11 +54,7 @@ if (empty($form)) {
 		<?php echo JText::_('COM_JEM_SELECT_USERS_AND_STATUS'); ?>
 	</h1>
 
-	<div class="jem_fright">
-		<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
-			<?php echo JText::_('COM_JEM_SAVE'); ?>
-		</button>
-	</div>
+
 
 	<div class="clr"></div>
 
@@ -75,8 +71,8 @@ if (empty($form)) {
 				echo $this->searchfilter.'&nbsp;';
 				?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
-				<button type="submit" class="pointer"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button type="button" class="pointer" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button type="submit" class="pointer btn btn-primary"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button type="button" class="pointer btn btn-secondary" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</div>
 			<div class="jem_fright">
 				<?php
@@ -120,7 +116,11 @@ if (empty($form)) {
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		<input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
 	</form>
-
+	<div class="jem_fright">
+		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
+			<?php echo JText::_('COM_JEM_SAVE'); ?>
+		</button>
+	</div>
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
