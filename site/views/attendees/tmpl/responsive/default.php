@@ -87,12 +87,11 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
           </div>
           <div class="jem-row jem-justify-start jem-nowrap">
-            <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
           </div>
         </dd>
-      </dl>
-      <dl id="jem_filter" class="jem-dl">
+
         <dt class="jem-row jem-justify-start jem-nowrap">
           <?php echo '<label for="filter_status">'.JText::_('COM_JEM_STATUS').'</label>'; ?>
         </dt>
@@ -116,19 +115,23 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
           </div>
           <div class="jem-row jem-justify-start jem-nowrap">
-            <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
           </div>
         </dd>
-      </dl>
-      
-      <dl id="jem_filter" class="jem-dl">
+
         <dt class="jem-row jem-justify-start jem-nowrap">
           <?php echo '<label for="filter_status">'.JText::_('COM_JEM_STATUS').'</label>'; ?>
         </dt>
         <dd>
           <?php echo $this->lists['status']; ?>
-        </dd>      
+        </dd>
+  <div class="jem-limit-smallist">
+    <?php
+      echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+      echo $this->pagination->getLimitBox();
+    ?>
+  </div>		
       </dl>
 
       <div class="jem-sort jem-sort-small" id="articleList">
@@ -206,13 +209,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
 	</form>
-
-  <div class="jem-limit-smallist">
-    <?php
-      echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-      echo $this->pagination->getLimitBox();
-    ?>
-  </div>
   
 	<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>

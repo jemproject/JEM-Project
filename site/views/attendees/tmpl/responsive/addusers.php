@@ -79,10 +79,9 @@ if (empty($form)) {
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-          <button type="submit" class="pointer btn"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button type="button" class="pointer btn" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+          <button type="submit" class="pointer btn btn-primary"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+          <button type="button" class="pointer btn btn-secondary" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
-      </div>
       <div class="jem-row jem-justify-start jem-nowrap">
         <div>
           <?php echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;'; ?>
@@ -91,7 +90,9 @@ if (empty($form)) {
         <div>
           <?php echo $this->pagination->getLimitBox(); ?>
         </div>
-      </div>
+      </div> 
+ </div>
+
     </div>
 		<?php endif; ?>
 
@@ -148,7 +149,7 @@ if (empty($form)) {
   <hr class="jem-hr"/>
   
   <div class="jem-row jem-justify-end">
-    <button type="button" class="pointer btn" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
+    <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
       <?php echo JText::_('COM_JEM_SAVE'); ?>
     </button>
   </div>
