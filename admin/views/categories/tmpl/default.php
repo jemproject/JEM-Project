@@ -30,8 +30,8 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 		<fieldset id="filter-bar">
 			<div class="filter-search fltlft">
 				<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" />
-				<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</div>
 
 			<div class="filter-select fltrt">
@@ -187,8 +187,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-		<input type="hidden" name="original_order_values" value="<?php echo implode($originalOrders, ','); ?>" />
-		
+		<input type="hidden" name="original_order_values" value="<?php echo implode(",", $originalOrders); ?>" />
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>
