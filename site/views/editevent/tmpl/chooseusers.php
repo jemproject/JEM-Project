@@ -47,7 +47,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	</h1>
 
 	<div class="jem_fright">
-		<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo JText::_('COM_JEM_SAVE'); ?></button>
+		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo JText::_('COM_JEM_SAVE'); ?></button>
 	</div>
 
 	<div class="clr"></div>
@@ -61,9 +61,9 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 				echo $this->searchfilter.'&nbsp;';
 				?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
-				<button type="submit" class="pointer"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button type="button" class="pointer" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-				<?php /*<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '0');"><?php echo JText::_('COM_JEM_NOUSERS')?></button>*/ ?>
+				<button type="submit" class="pointer btn btn-primary"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button type="button" class="pointer btn btn-secondary" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<?php /*<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '0');"><?php echo JText::_('COM_JEM_NOUSERS')?></button>*/ ?>
 			</div>
 			<div class="jem_fright">
 				<?php
