@@ -37,9 +37,9 @@ $function = JFactory::getApplication()->input->getCmd('function', 'jSelectContac
 				echo $this->searchfilter.'&nbsp;';
 				?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
-				<button type="submit" class="pointer"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button type="button" class="pointer" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-				<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_CONTACT') ?>');"><?php echo JText::_('COM_JEM_NOCONTACT')?></button>
+				<button type="submit" class="pointer btn btn-primary"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button type="button" class="pointer btn btn-secondary" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_CONTACT') ?>');"><?php echo JText::_('COM_JEM_NOCONTACT')?></button>
 			</div>
 			<div class="jem_fright">
 				<?php
