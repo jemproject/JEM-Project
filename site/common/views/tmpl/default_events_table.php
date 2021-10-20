@@ -72,7 +72,6 @@ JHtml::_('behavior.tooltip');
 		</colgroup>
 
 		<thead>		
-		<th>
 			<tr>
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
 				<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
