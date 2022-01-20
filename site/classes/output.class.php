@@ -845,7 +845,7 @@ class JemOutput
 	 *
 	 * @param obj $data
 	 */
-	static public function mapicon($data, $view = false, $params)
+	static public function mapicon($data, $view, $params)
 	{
 		$settings = JemHelper::globalattribs();
 
