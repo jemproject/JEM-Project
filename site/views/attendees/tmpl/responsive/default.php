@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -68,15 +68,15 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<dl class="jem-dl">
 					<dt class="jem-title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
 					<dd class="jem-title"><a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a></dd>
-					
+
 					<dt class="jem-date"><?php echo JText::_('COM_JEM_DATE').':'; ?></dt>
           <dd class="jem-date">
-            <?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?> 
+            <?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
           </dd>
 				</td>
 		</dl>
-    
-    <?php if (empty($this->rows)) : //ToDo EGNARTS!!! ?> 
+
+    <?php if (empty($this->rows)) : //ToDo EGNARTS!!! ?>
       <dl id="jem_filter" class="jem-dl">
         <dt>
           <?php echo '<label for="filter_search">'.JText::_('COM_JEM_SEARCH').'</label>'; ?>
@@ -97,9 +97,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         </dt>
         <dd>
           <?php echo $this->lists['status']; ?>
-        </dd>      
+        </dd>
       </dl>
-    
+
       <div class="eventtable">
 			<strong><i><?php echo JText::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
 		</div>
@@ -131,12 +131,12 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
       echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
       echo $this->pagination->getLimitBox();
     ?>
-  </div>		
+  </div>
       </dl>
 
       <div class="jem-sort jem-sort-small" id="articleList">
         <div class="jem-list-row jem-small-list">
-          <div class="sectiontableheader jem-attendee-number"><?php echo JText::_('COM_JEM_NUM'); ?></div>           
+          <div class="sectiontableheader jem-attendee-number"><?php echo JText::_('COM_JEM_NUM'); ?></div>
           <div class="sectiontableheader jem-attendee-name"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if ($this->enableemailaddress == 1) :?>
             <div class="sectiontableheader jem-attendee-email"><?php echo JText::_('COM_JEM_EMAIL'); ?></div>
@@ -145,11 +145,11 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           <div class="sectiontableheader jem-attendee-status"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
             <div class="sectiontableheader jem-attendee-comment"><?php echo JText::_('COM_JEM_COMMENT'); ?></div>
-          <?php endif; ?> 
+          <?php endif; ?>
           <div class="sectiontableheader jem-attendee-remove"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></div>
-        </div>    
+        </div>
       </div>
-      
+
       <ul class="eventlist eventtable">
         <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.JSession::getFormToken().'=1'; ?>
         <?php foreach ($this->rows as $i => $row) : ?>
@@ -157,21 +157,21 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <div class="jem-event-info-small jem-attendee-number">
               <?php echo $this->pagination->getRowOffset($i); ?>
             </div>
-            
+
             <div class="jem-event-info-small jem-attendee-name">
               <?php echo $row->$namefield; ?>
             </div>
-            
+
             <?php if ($this->enableemailaddress == 1) :?>
               <div class="jem-event-info-small jem-attendee-email">
                 <a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a>
               </div>
             <?php endif; ?>
-            
+
             <div class="jem-event-info-small jem-attendee-regdate">
               <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?>
             </div>
-            
+
             <div class="jem-event-info-small jem-attendee-status">
               <?php
               $status = (int)$row->status;
@@ -179,14 +179,14 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
               echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, true);
               ?>
             </div>
-            
+
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
               <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
               <div class="jem-event-info-small jem-attendee-comment">
                 <?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
               </div>
             <?php endif;?>
-            
+
             <div class="jem-event-info-small jem-attendee-remove">
               <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
                 <?php echo JemOutput::removebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip')); ?>
@@ -195,7 +195,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           </li>
         <?php endforeach; ?>
       </ul>
-    
+
     <?php endif; /* empty($this->rows) */ ?>
 
 		<?php echo JHtml::_('form.token'); ?>
@@ -209,7 +209,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
 	</form>
-  
+
 	<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>

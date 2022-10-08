@@ -2,7 +2,7 @@
 /**
  * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -20,7 +20,7 @@ abstract class JHtmlJemHtml
 	 * @param int $i
 	 * @param int $value state value
 	 */
-	static public function featured($i, $value = 0, $canChange = true)		
+	static public function featured($i, $value = 0, $canChange = true)
 	{
 		// Array of image, iconfont, task, title, action
 		$states = array(
@@ -56,7 +56,7 @@ abstract class JHtmlJemHtml
 	 * @deprecated since version 2.1.7
 	 */
 	static public function toggleStatus($i, $value = 0, $canChange = true)
-		
+
 	{
 		if (class_exists('JemHelper')) {
 			JemHelper::addLogEntry('Use of this function is deprecated. Use JemHekper::toggleAttendanceStatus() instead.', __METHOD__, JLog::WARNING);
@@ -99,7 +99,7 @@ abstract class JHtmlJemHtml
 	 * @return string The html snippet.
 	 */
 	static public function getAttendanceStatusText($i, $value = 0, $canChange = true, $print = false)
-		
+
 	{
 		// Array of image, iconfont, task, alt-text, alt-text edit, tooltip
 		$states = array(
@@ -166,7 +166,7 @@ abstract class JHtmlJemHtml
 	 * @return string The html snippet.
 	 */
 	static public function toggleAttendanceStatus($i, $value = 0, $canChange = true, $print = false)
-		
+
 	{
 		// Array of image, iconfont, task, alt-text, alt-text edit, tooltip
 		$states = array(

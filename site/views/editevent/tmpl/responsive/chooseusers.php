@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -45,7 +45,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<h1 class='componentheading'>
 		<?php echo JText::_('COM_JEM_SELECT_USERS_TO_INVITE'); ?>
 	</h1>
-	
+
 	<div class="clr"></div>
 
 	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=editevent&layout=chooseusers&tmpl=component&function='.$this->escape($function).'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
@@ -78,9 +78,9 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
       </div>
     </div>
 		<?php endif;?>
-		
+
 		<hr class="jem-hr"/>
-    
+
     <div class="jem-sort jem-sort-small">
       <div class="jem-list-row jem-small-list">
         <div class="sectiontableheader jem-users-number"><?php echo JText::_('COM_JEM_NUM'); ?></div>
@@ -99,7 +99,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             <div class="jem-event-info-small jem-users-number">
               <?php echo $this->pagination->getRowOffset( $i ); ?>
             </div>
-            
+
             <div class="jem-event-info-small jem-users-checkall">
               <?php
 							//echo JHtml::_('grid.id', $i, $row->id);
@@ -113,11 +113,11 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 							echo $cb;
 							?>
             </div>
-            
+
             <div class="jem-event-info-small jem-users-name">
               <?php echo $this->escape($row->name); ?>
             </div>
-            
+
             <div class="jem-event-info-small jem-users-state">
               <?php echo JHtml::_('jemhtml.toggleAttendanceStatus', 0, $row->status, false); ?>
             </div>
@@ -138,9 +138,9 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
-	
+
 	<hr class="jem-hr"/>
-	
+
 	<div class="jem-row jem-justify-end">
     <button type="button" class="pointer btn" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo JText::_('COM_JEM_SAVE'); ?></button>
   </div>
