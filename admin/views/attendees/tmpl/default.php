@@ -110,7 +110,7 @@ JFactory::getDocument()->addScriptDeclaration('
 						<?php
 						$status = (int)$row->status;
 						if ($status === 1 && $row->waiting == 1) { $status = 2; }
-						echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $i, $canChange);
+						echo JHtml::_('jemhtml.toggleAttendanceStatus', $i, $status, $canChange);
 						?>
 					</td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>

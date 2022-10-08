@@ -119,7 +119,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             </div>
             
             <div class="jem-event-info-small jem-users-state">
-              <?php echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->status, 0, false); ?>
+              <?php echo JHtml::_('jemhtml.toggleAttendanceStatus', 0, $row->status, false); ?>
             </div>
           </li>
         <?php endforeach; ?>

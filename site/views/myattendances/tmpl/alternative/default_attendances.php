@@ -246,9 +246,9 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 						<?php
 						$status = (int)$row->status;
 						if ($status === 1 && $row->waiting == 1) { $status = 2; }
-						echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $row->id, false, $this->print);
+						echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, false, $this->print);
 						?><span class="info-text"><?php
-							echo JHtml::_('jemhtml.getAttendanceStatusText', $status, $row->id, false, true);
+							echo JHtml::_('jemhtml.getAttendanceStatusText', $row->id, $status, false, true);
 						?></span>
 					</div>
 					<?php endif; ?>

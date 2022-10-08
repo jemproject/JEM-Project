@@ -138,7 +138,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 							<?php
 							$status = (int)$row->status;
 							if ($status === 1 && $row->waiting == 1) { $status = 2; }
-							echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $row->id, true);
+							echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, true);
 							?>
 						</td>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>

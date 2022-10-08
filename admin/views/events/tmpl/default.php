@@ -175,7 +175,7 @@ $(document).ready(function() {
 					</td>
 					<td class="center"><?php echo $published; ?></td>
 					<td class="center">
-						<?php echo JHtml::_('jemhtml.featured', $row->featured, $i, $canChange); ?>
+						<?php echo JHtml::_('jemhtml.featured', $i, $row->featured, $canChange); ?>
 					</td>
 					<td>
 						<?php echo JText::_('COM_JEM_AUTHOR').': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
