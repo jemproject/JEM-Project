@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -140,7 +140,7 @@ function showUnregistraUntil()
 			</fieldset>
 			<fieldset>
 				<legend><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>
-			
+
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('articletext'); ?>
 				<div class="clr"><br></div>
@@ -162,9 +162,9 @@ function showUnregistraUntil()
 				<?php /* We get field with id 'jform_userfile' and name 'jform[userfile]' */ ?>
 				<?php echo $this->form->getLabel('userfile'); ?> <?php echo $this->form->getInput('userfile'); ?>
 			</li>
-			<li>							   
+			<li>
 				<button type="button" class="button3" onclick="document.getElementById('jform_userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
-</li>	
+</li>
 	<?php
 				if ($this->item->datimage) :
 					echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => JText::_('COM_JEM_REMOVE_IMAGE')));
@@ -172,7 +172,7 @@ function showUnregistraUntil()
 				endif;
 				?>
 		<input type="hidden" name="removeimage" id="removeimage" value="0" />
-				
+
 			</li>
 		</ul>
 		<?php endif; ?>
@@ -184,7 +184,7 @@ function showUnregistraUntil()
 			<?php echo $this->loadTemplate('extended'); ?>
 
 			<!-- PUBLISH TAB -->
-			
+
 			<?php  echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
 			<?php echo $this->loadTemplate('publish'); ?>
 
