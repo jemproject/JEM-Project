@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -111,7 +111,6 @@ function jem_common_show_filter(&$obj) {
 					</td>
 				</tr>
 
-				<?php// $i = 1 - $i; ?>
 			<?php endforeach; ?>
 		<?php endif; ?>
 		</tbody>
