@@ -321,10 +321,10 @@ $location = JemHelper::defineCenterMap($this->form);
 
 
 			<!-- PUBLISHING TAB -->
-			<?php if ($this->jemsettings->frontendpublish != 0) : ?>			
+			
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_PUBLISH_TAB'), 'venue-publishtab'); ?>
 			<?php echo $this->loadTemplate('publish'); ?>
-			<?php endif; ?>
+
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachmentstab'); ?>

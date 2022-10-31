@@ -184,10 +184,10 @@ function showUnregistraUntil()
 			<?php echo $this->loadTemplate('extended'); ?>
 
 			<!-- PUBLISH TAB -->
-			<?php if ($this->jemsettings->frontendpublish != 0) : ?>			
+			
 			<?php  echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
 			<?php echo $this->loadTemplate('publish'); ?>
-			<?php endif; ?>
+
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
