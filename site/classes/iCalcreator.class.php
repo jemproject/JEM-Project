@@ -1665,7 +1665,7 @@ class vcalendar {
       $proprows  = array();
       for( $i = 0; $i < count( $this->unparsed ); $i++ ) { // concatenate lines
         $line = rtrim( $this->unparsed[$i], $nl );
-        while( isset( $this->unparsed[$i+1] ) && !empty( $this->unparsed[$i+1] ) && ( ' ' == $this->unparsed[$i+1]{0} ))
+        while( isset( $this->unparsed[$i+1] ) && !empty( $this->unparsed[$i+1] ) && ( ' ' == $this->unparsed[$i+1][0] ))
 		
           $line .= rtrim( substr( $this->unparsed[++$i], 1 ), $nl );
         $proprows[] = $line;
@@ -3064,8 +3064,8 @@ class calendarComponent {
           }
         }
         elseif(( 3 <= strlen( trim( $fbMember ))) &&    // string format duration
-               ( in_array( $fbMember{0}, array( 'P', '+', '-' )))) {
-          if( 'P' != $fbMember{0} )
+               ( in_array( $fbMember[0], array( 'P', '+', '-' )))) {
+          if( 'P' != $fbMember[0] )
 	   
             $fbmember = substr( $fbMember, 1 );
           $freebusyPairMember = iCalUtilityFunctions::_durationStr2arr( $fbMember );
@@ -3992,7 +3992,7 @@ class calendarComponent {
     }
     elseif(is_string( $year ) && ( is_array( $month ) || empty( $month ))) {  // duration or date in a string
       $params = iCalUtilityFunctions::_setParams( $month );
-      if( in_array( $year{0}, array( 'P', '+', '-' ))) { // duration
+      if( in_array( $year[0], array( 'P', '+', '-' ))) { // duration
 	      
         $relatedStart = ( isset( $params['RELATED'] ) && ( 'END' == strtoupper( $params['RELATED'] ))) ? FALSE : TRUE;
         $before       = ( '-'  == $year[0] ) ? TRUE : FALSE;
@@ -4255,7 +4255,7 @@ class calendarComponent {
     $length = 6;
     $str    = null;
     for( $p = 0; $p < $length; $p++ )
-      $unique .= $base{mt_rand( $start, $end )};
+      $unique .= $base[mt_rand( $start, $end )];
 	  
     $this->uid = array( 'params' => null );
     $this->uid['value']  = $date.'-'.$unique.'@'.$this->getConfig( 'unique_id' );
@@ -5731,7 +5731,7 @@ class calendarComponent {
     $proprows  = array();
     for( $i = 0; $i < count( $this->unparsed ); $i++ ) { // concatenate lines
       $line = rtrim( $this->unparsed[$i], $nl );
-      while( isset( $this->unparsed[$i+1] ) && !empty( $this->unparsed[$i+1] ) && ( ' ' == $this->unparsed[$i+1]{0} ))
+      while( isset( $this->unparsed[$i+1] ) && !empty( $this->unparsed[$i+1] ) && ( ' ' == $this->unparsed[$i+1][0] ))
 	      
         $line .= rtrim( substr( $this->unparsed[++$i], 1 ), $nl );
       $proprows[] = $line;
@@ -6963,7 +6963,7 @@ class iCalUtilityFunctions {
         if( isset( $theDate['timestamp'] ))
           $tzid = ( isset( $theDate['tz'] )) ? $theDate['tz'] : null;
         else
-          $tzid = ( isset( $theDate['tz'] )) ? $theDate['tz'] : ( 7 == count( $theDate )) ? end( $theDate ) : null;
+          $tzid = ( isset( $theDate['tz'] )) ? $theDate['tz'] : (( 7 == count( $theDate )) ? end( $theDate ) : null);
         if( !empty( $tzid )) {
 	      
           $parno = 7;
@@ -7063,7 +7063,7 @@ class iCalUtilityFunctions {
       $base   = 'aAbB!cCdD"eEfF#gGhHiIjJ%kKlL&mMnN/oOpP(rRsS)tTuU=vVxX?uUvV*wWzZ-1234_5678|90';
       $len    = strlen( $base ) - 1;
       for( $p = 0; $p < 6; $p++ )
-	        iCalUtilityFunctions::$baseDelim .= $base{mt_rand( 0, $len )};
+	        iCalUtilityFunctions::$baseDelim .= $base[mt_rand( 0, $len )];
 	    
     }
             /* fix eol chars */

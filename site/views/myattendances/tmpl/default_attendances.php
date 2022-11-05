@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -169,7 +169,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 							<?php
 							$status = (int)$row->status;
 							if ($status === 1 && $row->waiting == 1) { $status = 2; }
-							echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $row->id, false, $this->print);
+							echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, false, $this->print);
 							?>
 						</td>
 

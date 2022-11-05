@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -88,7 +88,7 @@ $settings	= json_decode($this->item->attribs);
 		<form enctype="multipart/form-data" action="<?php echo JRoute::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
 				<button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
-				<button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>	
+				<button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
 
 		<br>
 			<?php if ($this->item->recurrence_type > 0) : ?>
@@ -147,7 +147,7 @@ $settings	= json_decode($this->item->attribs);
 			</fieldset>
 			<!-- EVENTDESCRIPTION -->
 			<fieldset class="adminform">
-				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DESCRIPTION_LEGEND'); ?></legend>				
+				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DESCRIPTION_LEGEND'); ?></legend>
 				<div>
 					<?php echo $this->form->getLabel('articletext'); ?>
 					<?php echo $this->form->getInput('articletext'); ?>
@@ -183,7 +183,7 @@ $settings	= json_decode($this->item->attribs);
 					<?php endif; ?>
 			</fieldset>
 				<?php endif; ?>
-			
+
 
 
 			<!-- EXTENDED TAB -->
@@ -191,10 +191,9 @@ $settings	= json_decode($this->item->attribs);
 			<?php echo $this->loadTemplate('extended'); ?>
 
 			<!-- PUBLISH TAB -->
-			<?php if ($this->jemsettings->frontendpublish != 0) : ?>															  
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
 			<?php echo $this->loadTemplate('publish'); ?>
-			<?php endif; ?>
+
 			<!-- ATTACHMENTS TAB -->
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments'); ?>

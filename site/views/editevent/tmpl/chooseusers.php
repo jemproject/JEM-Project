@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.4
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -102,7 +102,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 							echo $cb;
 						?></td>
 						<td align="left"><?php echo $this->escape($row->name); ?></td>
-						<td class="center"><?php echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->status, 0, false); ?></td>
+						<td class="center"><?php echo JHtml::_('jemhtml.toggleAttendanceStatus', 0, $row->status, false); ?></td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>

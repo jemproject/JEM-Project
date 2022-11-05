@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.0
+ * @version 2.3.4
  * @package JEM
  * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -140,7 +140,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+          <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
 		<?php if ($this->settings->get('global_display',1)) : ?>
   <div class="jem-limit-smallist">
@@ -151,16 +151,16 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     ?>
   </div>
 <?php endif; ?>
-			</div>   
+			</div>
 		<?php endif; ?>
   <?php endif; ?>
 
 	<div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
       <div id="jem_date" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php if ($this->jemsettings->showtitle == 1) : ?>              
+      <?php if ($this->jemsettings->showtitle == 1) : ?>
         <div id="jem_title" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php endif; ?> 
+      <?php endif; ?>
       <?php if ($this->jemsettings->showlocate == 1) : ?>
         <div id="jem_location" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
@@ -174,12 +174,12 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php /*if ($this->event->waitinglist):*/ ?>
-        <div id="jem_status" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>	
+        <div id="jem_status" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php /*endif;*/?>
       <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
         <div id="jem_comment" class="sectiontableheader"><?php echo JText::_('COM_JEM_COMMENT'); ?></div>
       <?php endif; ?>
-    </div>    
+    </div>
   </div>
 
 	<ul class="eventlist">
@@ -191,8 +191,8 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
           <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event">
 				<?php else : ?>
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event">
-				<?php endif; ?>  
-        
+				<?php endif; ?>
+
 					<div class="jem-event-info-small jem-event-date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
             <i class="fa fa-clock-o" aria-hidden="true"></i>
             <?php
@@ -226,13 +226,13 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
                   <?php echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
                 <?php else : ?>
                   <?php echo $this->escape($row->venue); ?>
-                <?php endif; ?>                  
+                <?php endif; ?>
               </div>
             <?php else : ?>
               <div class="jem-event-info-small jem-event-venue">
                 <i class="fa fa-map-marker" aria-hidden="true"></i> -
               </div>
-            <?php endif; ?>                
+            <?php endif; ?>
           <?php endif; ?>
 
 					<?php if ($this->jemsettings->showcity == 1) : ?>
@@ -263,12 +263,12 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
               <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
             </div>
           <?php endif; ?>
-          
+
 					<div class="jem-event-info-small jem-myattendances-status">
 						<?php
 						$status = (int)$row->status;
 						if ($status === 1 && $row->waiting == 1) { $status = 2; }
-						echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $row->id, false, $this->print);
+						echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, false, $this->print);
 						?>
 					</div>
 

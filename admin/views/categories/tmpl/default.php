@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.3.1
+ * @version     2.3.4
  * @package     JEM
- * @copyright   Copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -187,8 +187,8 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-		<input type="hidden" name="original_order_values" value="<?php echo implode($originalOrders, ','); ?>" />
-		
+		<input type="hidden" name="original_order_values" value="<?php echo implode(',', $originalOrders); ?>" />
+
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>

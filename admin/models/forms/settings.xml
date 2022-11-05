@@ -246,16 +246,6 @@
 		>
 			<option value="0">COM_JEM_DISABLED</option>
 			<option value="1">COM_JEM_ENABLED</option>
-		</field>
-		<field name="frontendpublish" type="list"
-			label="COM_JEM_FRONTEND_PUBLISH_OPTIONS"
-			description="COM_JEM_FRONTEND_PUBLISH_OPTIONS_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">COM_JEM_DISABLED</option>
-			<option value="1">COM_JEM_ENABLED</option>
 		</field>		
 	</fieldset>
 
