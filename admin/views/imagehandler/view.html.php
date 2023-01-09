@@ -9,8 +9,11 @@
 
 defined('_JEXEC') or die;
 
-
-
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 /**
  * View class for the JEM imageselect screen
  * Based on the Joomla! media component
@@ -26,10 +29,10 @@ class JemViewImagehandler extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$option = $app->input->getString('option', 'com_jem');
 
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		if ($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
@@ -66,8 +69,10 @@ class JemViewImagehandler extends JViewLegacy
 		}
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		//get images
 		$images = $this->get('images');
 		$pagination = $this->get('Pagination');
@@ -82,7 +87,7 @@ class JemViewImagehandler extends JViewLegacy
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
+			Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
 			$this->setLayout('uploadimage');
 			$app->input->set('task', $task);
 			$this->_displayuploadimage($tpl);
@@ -108,14 +113,18 @@ class JemViewImagehandler extends JViewLegacy
 	protected function _displayuploadimage($tpl = null)
 	{
 		//initialise variables
-		$uri         = JFactory::getURI()->toString();
+		$uri         =Uri::getInstance();
+		$uri         = $uri->toString();
 		$jemsettings = JemAdmin::config();
 
 		//get vars
-		$task = JFactory::getApplication()->input->get('task', '');
+		$task = Factory::getApplication()->input->get('task', '');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		jimport('joomla.client.helper');
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');

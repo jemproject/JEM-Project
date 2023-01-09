@@ -7,7 +7,11 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Search-View
  */
@@ -19,15 +23,16 @@ class JemViewSearch extends JemView
 	public function display($tpl = null)
 	{
 		// initialize variables
-		$app          = JFactory::getApplication();
-		$document     = JFactory::getDocument();
+		$app          = Factory::getApplication();
+		$document     = Factory::getDocument();
 		$jemsettings  = JemHelper::config();
 		$settings     = JemHelper::globalattribs();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$params       = $app->getParams();
-		$uri          = JFactory::getURI();
+		$uri          = Uri::getInstance();
 		$pathway      = $app->getPathWay();
+		$url 			= Uri::root();
 	//	$user         = JemFactory::getUser();
 
 		// Decide which parameters should take priority
@@ -35,7 +40,7 @@ class JemViewSearch extends JemView
 		                                && $menuitem->query['view'] == 'search');
 
 		// add javascript
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -43,7 +48,8 @@ class JemViewSearch extends JemView
 		JemHelper::loadCustomTag();
 
 		// Load Script
-		JHtml::_('script', 'com_jem/search.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/search.js', false, true);
+		$document->addScript($url.'media/com_jem/js/search.js');
 
 		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
@@ -62,14 +68,14 @@ class JemViewSearch extends JemView
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
 			// Menu item params take priority
-			$pagetitle = $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_SEARCH'));
+			$pagetitle = $params->def('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_SEARCH'));
 			$pageheading = $params->def('page_heading', $pagetitle);
       $pathwayKeys = array_keys($pathway->getPathway());
       $lastPathwayEntryIndex = end($pathwayKeys);
       $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
       //$pathway->setItemName(1, $menuitem->title);
 		} else {
-			$pagetitle = JText::_('COM_JEM_SEARCH');
+			$pagetitle = Text::_('COM_JEM_SEARCH');
 			$pageheading = $pagetitle;
 			$params->set('introtext', ''); // there is no introtext in that case
 			$params->set('showintrotext', 0);
@@ -78,9 +84,9 @@ class JemViewSearch extends JemView
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=search&task=archive'));
-			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
-			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=search&task=archive'));
+			$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 		}
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
@@ -88,10 +94,10 @@ class JemViewSearch extends JemView
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 		}
 		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		// Set Page title
@@ -117,46 +123,46 @@ class JemViewSearch extends JemView
 		// Cause of group limits we can't use class here to build the categories tree
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
-		$catoptions[] = JHtml::_('select.option', '1', JText::_('COM_JEM_SELECT_CATEGORY'));
+		$catoptions[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_SELECT_CATEGORY'));
 		$catoptions   = array_merge($catoptions, JemCategories::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
 
 		// build selectlists
-		$lists['categories'] = JHtml::_('select.genericlist', $catoptions, 'filter_category', array('size'=>'1', 'class'=>'inputbox'), 'value', 'text', $selectedcats);
+		$lists['categories'] = HTMLHelper::_('select.genericlist', $catoptions, 'filter_category', array('size'=>'1', 'class'=>'inputbox'), 'value', 'text', $selectedcats);
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
 		// date filter
-		$lists['date_from'] = JHtml::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
-		$lists['date_to']   = JHtml::_('calendar', $filter_date_to, 'filter_date_to', 'filter_date_to', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
+		$lists['date_from'] = HTMLHelper::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
+		$lists['date_to']   = HTMLHelper::_('calendar', $filter_date_to, 'filter_date_to', 'filter_date_to', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
 
 		// country filter
 		$continents = array();
-		$continents[] = JHtml::_('select.option', '',   JText::_('COM_JEM_SELECT_CONTINENT'));
-		$continents[] = JHtml::_('select.option', 'AF', JText::_('COM_JEM_AFRICA'));
-		$continents[] = JHtml::_('select.option', 'AS', JText::_('COM_JEM_ASIA'));
-		$continents[] = JHtml::_('select.option', 'EU', JText::_('COM_JEM_EUROPE'));
-		$continents[] = JHtml::_('select.option', 'NA', JText::_('COM_JEM_NORTH_AMERICA'));
-		$continents[] = JHtml::_('select.option', 'SA', JText::_('COM_JEM_SOUTH_AMERICA'));
-		$continents[] = JHtml::_('select.option', 'OC', JText::_('COM_JEM_OCEANIA'));
-		$continents[] = JHtml::_('select.option', 'AN', JText::_('COM_JEM_ANTARCTICA'));
-		$lists['continents'] = JHtml::_('select.genericlist', $continents, 'filter_continent', array('class'=>'inputbox'), 'value', 'text', $filter_continent);
+		$continents[] = HTMLHelper::_('select.option', '',   Text::_('COM_JEM_SELECT_CONTINENT'));
+		$continents[] = HTMLHelper::_('select.option', 'AF', Text::_('COM_JEM_AFRICA'));
+		$continents[] = HTMLHelper::_('select.option', 'AS', Text::_('COM_JEM_ASIA'));
+		$continents[] = HTMLHelper::_('select.option', 'EU', Text::_('COM_JEM_EUROPE'));
+		$continents[] = HTMLHelper::_('select.option', 'NA', Text::_('COM_JEM_NORTH_AMERICA'));
+		$continents[] = HTMLHelper::_('select.option', 'SA', Text::_('COM_JEM_SOUTH_AMERICA'));
+		$continents[] = HTMLHelper::_('select.option', 'OC', Text::_('COM_JEM_OCEANIA'));
+		$continents[] = HTMLHelper::_('select.option', 'AN', Text::_('COM_JEM_ANTARCTICA'));
+		$lists['continents'] = HTMLHelper::_('select.genericlist', $continents, 'filter_continent', array('class'=>'inputbox'), 'value', 'text', $filter_continent);
 		unset($continents);
 
 		// country filter
 		$countries = array();
-		$countries[] = JHtml::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
+		$countries[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_COUNTRY'));
 		$countries = array_merge($countries, $this->get('CountryOptions'));
-		$lists['countries'] = JHtml::_('select.genericlist', $countries, 'filter_country', array('class'=>'inputbox'), 'value', 'text', $filter_country);
+		$lists['countries'] = HTMLHelper::_('select.genericlist', $countries, 'filter_country', array('class'=>'inputbox'), 'value', 'text', $filter_country);
 		unset($countries);
 
 		// city filter
 		if ($filter_country) {
 			$cities = array();
-			$cities[] = JHtml::_('select.option', '', JText::_('COM_JEM_SELECT_CITY'));
+			$cities[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_CITY'));
 			$cities = array_merge($cities, $this->get('CityOptions'));
-			$lists['cities'] = JHtml::_('select.genericlist', $cities, 'filter_city', array('class'=>'inputbox'), 'value', 'text', $filter_city);
+			$lists['cities'] = HTMLHelper::_('select.genericlist', $cities, 'filter_city', array('class'=>'inputbox'), 'value', 'text', $filter_city);
 			unset($cities);
 		}
 
@@ -188,7 +194,7 @@ class JemViewSearch extends JemView
 	 */
 	protected function _buildSortLists()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$task = $app->input->get('task', '');
 
 		$filter_order = $app->input->getCmd('filter_order', 'a.dates');
@@ -202,9 +208,9 @@ class JemViewSearch extends JemView
 		$filter_type      = $app->input->getString('filter_type', '');
 
 		$sortselects = array();
-		$sortselects[] = JHtml::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		$sortselects[] = JHtml::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		$sortselect    = JHtml::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$sortselects[] = HTMLHelper::_('select.option', 'title', Text::_('COM_JEM_TABLE_TITLE'));
+		$sortselects[] = HTMLHelper::_('select.option', 'venue', Text::_('COM_JEM_TABLE_LOCATION'));
+		$sortselect    = HTMLHelper::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		$lists['order_Dir']    = $filter_order_Dir;
 		$lists['order']        = $filter_order;

@@ -257,7 +257,7 @@ class JemControllerEvent extends JemControllerForm
 			// trigger all jem plugins
 			JPluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
-			$dispatcher->trigger('onEventEdited', array($this->_id, $isNew));
+			$dispatcher->triggerEvent('onEventEdited', array($this->_id, $isNew));
 
 			// but show warning if mailer is disabled
 			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
@@ -276,6 +276,7 @@ class JemControllerEvent extends JemControllerForm
 	 */
 	public function save($key = null, $urlVar = 'a_id')
 	{
+	// echo "<pre/>";print_R($_POST);die;
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
@@ -326,7 +327,7 @@ class JemControllerEvent extends JemControllerForm
 
 		JPluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
-		$dispatcher->trigger('onEventUserRegistered', array($register_id));
+		$dispatcher->triggerEvent('onEventUserRegistered', array($register_id));
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
@@ -356,7 +357,7 @@ class JemControllerEvent extends JemControllerForm
 
 		JPluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
-		$dispatcher->trigger('onEventUserUnregistered', array($id));
+		$dispatcher->triggerEvent('onEventUserUnregistered', array($id));
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();

@@ -10,7 +10,7 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal', 'a.flyermodal');
+// JHtml::_('behavior.modal', 'a.flyermodal');
 
 /*$module_name = 'mod_jem_wide';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
@@ -29,7 +29,7 @@ if (count($list)) {
     include("default_jem_eventslist.php"); // The new layout
   }
 } else {
-	echo JText::_('MOD_JEM_WIDE_NO_EVENTS');
+	echo Text::_('MOD_JEM_WIDE_NO_EVENTS');
 }
 echo '</div>';
 

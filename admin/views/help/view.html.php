@@ -9,6 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
 
 /**
  * View class for the JEM Help screen
@@ -25,14 +31,17 @@ class JemViewHelp extends JemAdminView
 		jimport('joomla.filesystem.folder');
 
 		//initialise variables
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
+		$this->document = Factory::getDocument();
 
 		//get vars
-		$helpsearch = JFactory::getApplication()->input->getString('filter_search', '');
+		$helpsearch = Factory::getApplication()->input->getString('filter_search', '');
 
-		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// // Load css
+		// JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
@@ -62,7 +71,7 @@ class JemViewHelp extends JemAdminView
 	 */
 	public function getHelpTOC($helpsearch)
 	{
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		jimport('joomla.filesystem.folder');
 
 		// Check for files in the actual language
@@ -99,7 +108,7 @@ class JemViewHelp extends JemAdminView
 	protected function addToolbar()
 	{
 		//create the toolbar
-		JToolBarHelper::title(JText::_('COM_JEM_HELP'), 'help');
+		ToolbarHelper::title(Text::_('COM_JEM_HELP'), 'help');
 	}
 }
 ?>

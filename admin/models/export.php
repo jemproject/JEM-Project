@@ -311,13 +311,20 @@ class JemModelExport extends JModelList
 		$db    = JFactory::getDBO();
 		$where = ' WHERE c.published = 1';
 		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
-		$db->setQuery($query);
-
-		$mitems = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum()){
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// if ($db->getErrorNum()){
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
+		try
+		{
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {

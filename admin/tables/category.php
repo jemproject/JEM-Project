@@ -54,18 +54,18 @@ class JemTableCategory extends JTableNested
 		$query = $db->getQuery(true);
 
 		// Insert columns.
-		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access', 'published');
+		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access','title','published');
 
 		// Insert values.
-		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'), 1, 1);
+		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'),1, $db->quote('root'),1);
 
 		// Prepare the insert query.
 		$query
 		->insert($db->quoteName('#__jem_categories'))
 		->columns($db->quoteName($columns))
 		->values(implode(',', $values));
-
 		$db->setQuery($query);
+		
 		$db->execute();
 
 		return $db->insertid();
@@ -84,7 +84,7 @@ class JemTableCategory extends JTableNested
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
 		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+			$this->setError(get_class($this).'::store failed - '.$this->_db->getError());
 			return false;
 		}
 		return true;
@@ -196,7 +196,6 @@ class JemTableCategory extends JTableNested
 	{
 		$date = JFactory::getDate();
 		$user = JemFactory::getUser();
-
 		if ($this->id) {
 			// Existing category
 			$this->modified_time = $date->toSql();
@@ -208,13 +207,14 @@ class JemTableCategory extends JTableNested
 		}
 		// Verify that the alias is unique
 		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => $this->getDbo()));
+		
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		    && ($table->id != $this->id || $this->id == 0)) {
-
+			
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
 		}
-
+	
 		return parent::store($updateNulls);
 	}
 
@@ -244,7 +244,7 @@ class JemTableCategory extends JTableNested
 
 		// If the store failed return false.
 		if (!$stored) {
-			$e = JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $this->_db->getErrorMsg());
+			$e = JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $stored->getError());
 			$this->setError($e);
 			return false;
 		}

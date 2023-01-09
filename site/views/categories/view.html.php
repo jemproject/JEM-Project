@@ -7,7 +7,11 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Categories-View
  */
@@ -18,9 +22,9 @@ class JemViewCategories extends JemView
 	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
-		$document    = JFactory::getDocument();
+		$document    = Factory::getDocument();
 		$jemsettings = JemHelper::config();
 		$user        = JemFactory::getUser();
 		$print       = $app->input->getBool('print', false);
@@ -60,21 +64,21 @@ class JemViewCategories extends JemView
 		}
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive'));
-			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
-			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
-			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive'));
+			$print_link = Route::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
+			$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
+			$print_link = Route::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
 		}
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 		}
 		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		// Set Page title

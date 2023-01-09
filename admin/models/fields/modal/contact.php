@@ -27,14 +27,15 @@ class JFormFieldModal_Contact extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectContact_'.$this->id.'(id, name, object) {';
-		$script[] = '        document.id("'.$this->id.'_id").value = id;';
-		$script[] = '        document.id("'.$this->id.'_name").value = name;';
-		$script[] = '        SqueezeBox.close();';
+		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '        document.getElementById("'.$this->id.'_name").value = name;';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#contact-modal").modal("hide");';
 		$script[] = '    }';
 
 		// Add to document head
@@ -49,12 +50,20 @@ class JFormFieldModal_Contact extends JFormField
 		$query->select('name');
 		$query->from('#__contact_details');
 		$query->where(array('id='.(int)$this->value));
-		$db->setQuery($query);
+		
+
+		// if ($error = $db->getErrorMsg()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
+		try
+		{
+			$db->setQuery($query);
 
 		$contact = $db->loadResult();
-
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (empty($contact)) {
@@ -70,8 +79,21 @@ class JFormFieldModal_Contact extends JFormField
 		// The contact select button
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			JText::_('COM_JEM_SELECT').'</a>';
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'contact-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => JText::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.JText::_('COM_JEM_SELECT').'
+		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

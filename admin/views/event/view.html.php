@@ -8,7 +8,10 @@
  */
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 /**
  * Event View
  */
@@ -31,17 +34,19 @@ class JemViewEvent extends JemAdminView
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
-		JHtml::_('behavior.framework');
-		JHtml::_('behavior.modal', 'a.modal');
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.framework');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.formvalidation');
+		
+			
 
 		//initialise variables
 		$jemsettings 	= JemHelper::config();
-		$document		= JFactory::getDocument();
+		$this->document	= Factory::getDocument();
 		$user 			= JemFactory::getUser();
 		$this->settings	= JemAdmin::config();
-		$task			= JFactory::getApplication()->input->get('task', '');
+		$task			= Factory::getApplication()->input->get('task', '');
 		$this->task 	= $task;
 		$url 			= JUri::root();
 
@@ -52,20 +57,30 @@ class JemViewEvent extends JemAdminView
 		$Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		if (version_compare(JVERSION, '3.0', 'lt')) {
 			$style = 'select.required {'
 					. 'background-color: #D5EEFF;'
 					. '}';
-			$document->addStyleDeclaration($style);
+			$this->document->addStyleDeclaration($style);
 		}
 
+		
+
 		// Load scripts
-		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		JHtml::_('script', 'com_jem/recurrence.js', false, true);
-		JHtml::_('script', 'com_jem/unlimited.js', false, true);
-		JHtml::_('script', 'com_jem/seo.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/recurrence.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/unlimited.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/seo.js', false, true);
+		$this->document->addScript($url.'media/com_jem/js/attachments.js');
+		$this->document->addScript($url.'media/com_jem/js/recurrence.js');
+		$this->document->addScript($url.'media/com_jem/js/unlimited.js');
+		$this->document->addScript($url.'media/com_jem/js/seo.js');
 
 		// JQuery noConflict
 		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
@@ -87,36 +102,36 @@ class JemViewEvent extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		$user		= JemFactory::getUser();
 		$isNew		= ($this->item->id == 0);
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo		= JemHelperBackend::getActions();
 
-		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_EVENT') : JText::_('COM_JEM_EDIT_EVENT'), 'eventedit');
+		ToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_EVENT') : JText::_('COM_JEM_EDIT_EVENT'), 'eventedit');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
-			JToolBarHelper::apply('event.apply');
-			JToolBarHelper::save('event.save');
+			ToolBarHelper::apply('event.apply');
+			ToolBarHelper::save('event.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-			JToolBarHelper::save2new('event.save2new');
+			ToolBarHelper::save2new('event.save2new');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::save2copy('event.save2copy');
+			ToolBarHelper::save2copy('event.save2copy');
 		}
 
 		if (empty($this->item->id))  {
-			JToolBarHelper::cancel('event.cancel');
+			ToolBarHelper::cancel('event.cancel');
 		} else {
-			JToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editevents', true);
+		ToolBarHelper::divider();
+		ToolBarHelper::help('editevents', true);
 	}
 }
 ?>

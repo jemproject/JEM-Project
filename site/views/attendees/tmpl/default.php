@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+// JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
@@ -91,7 +91,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 				<?php echo $this->lists['filter'].'&nbsp;'; ?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
 				<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				&nbsp;
 			</div>
 			<br><br><br>
@@ -107,7 +107,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.JSession::getFormToken().'=1'; ?>
 
 		<div class="table-responsive">
-			<table class="eventtable" style="width:100%" id="articleList">
+			<table class="eventtable table table-striped" style="width:100%" id="articleList">
 				<thead>
 					<tr>
 						<th width="1%" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>

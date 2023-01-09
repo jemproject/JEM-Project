@@ -11,76 +11,89 @@
 
 defined('_JEXEC') or die;
 
+
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 // Load tooltips behavior
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.switcher');
-JHtml::_('behavior.tooltip');
+// HTMLHelper::_('behavior.formvalidation');
+// HTMLHelper::_('behavior.switcher');
+// HTMLHelper::_('behavior.tooltip');
+
+
+$wa = $this->document->getWebAssetManager();
+		$wa
+			->useScript('keepalive')
+			->useStyle('jem.colorpicker')
+			->useScript('form.validate');
 
 
 ?>
 
 <script>
-window.addEvent('domready', function(){
+// window.bind('domready', function(){
+jQuery(document).ready(function($){
+	$('#jform_showcity0').bind('click', cityon);
+	$('jform_showcity1').bind('click', cityoff);
 
-	$('jform_showcity0').addEvent('click', cityon);
-	$('jform_showcity1').addEvent('click', cityoff);
-
-	if($('jform_showcity0').checked) {
+	if($('#jform_showcity0').checked) {
 		cityon();
 	}
 
-	$('jform_showatte0').addEvent('click', atteon);
-	$('jform_showatte1').addEvent('click', atteoff);
+	$('#jform_showatte0').bind('click', atteon);
+	$('#jform_showatte1').bind('click', atteoff);
 
-	if($('jform_showatte0').checked) {
+	if($('#jform_showatte0').checked) {
 		atteon();
 	}
 
-	$('jform_showtitle0').addEvent('click', titleon);
-	$('jform_showtitle1').addEvent('click', titleoff);
+	$('#jform_showtitle0').bind('click', titleon);
+	$('#jform_showtitle1').bind('click', titleoff);
 
-	if($('jform_showtitle0').checked) {
+	if($('#jform_showtitle0').checked) {
 		titleon();
 	}
 
-	$('jform_showlocate0').addEvent('click', locon);
-	$('jform_showlocate1').addEvent('click', locoff);
+	$('#jform_showlocate0').bind('click', locon);
+	$('#jform_showlocate1').bind('click', locoff);
 
-	if($('jform_showlocate0').checked) {
+	if($('#jform_showlocate0').checked) {
 		locon();
 	}
 
-	$('jform_showstate0').addEvent('click', stateon);
-	$('jform_showstate1').addEvent('click', stateoff);
+	$('#jform_showstate0').bind('click', stateon);
+	$('#jform_showstate1').bind('click', stateoff);
 
 	if($('jform_showstate0').checked) {
 		stateon();
 	}
 
-	$('jform_showcat0').addEvent('click', caton);
-	$('jform_showcat1').addEvent('click', catoff);
+	$('#jform_showcat0').bind('click', caton);
+	$('#jform_showcat1').bind('click', catoff);
 
-	if($('jform_showcat0').checked) {
+	if($('#jform_showcat0').checked) {
 		caton();
 	}
 
-	$('jform_showeventimage0').addEvent('click', evimageon);
-	$('jform_showeventimage1').addEvent('click', evimageoff);
+	$('#jform_showeventimage0').bind('click', evimageon);
+	$('#jform_showeventimage1').bind('click', evimageoff);
 
 	if($('jform_showeventimage0').checked) {
 		evimageon();
 	}
 
-	$('jform_gddisabled0').addEvent('click', lbon);
-	$('jform_gddisabled1').addEvent('click', lboff);
+	$('#jform_gddisabled0').bind('click', lbon);
+	$('#jform_gddisabled1').bind('click', lboff);
 
 	if($('jform_gddisabled0').checked) {
 		lbon();
 	}
 
-	$("jform_globalattribs_event_show_mapserv").addEvent('change', testmap);
+	$("#jform_globalattribs_event_show_mapserv").bind('change', testmap);
 
-	var mapserv = $("jform_globalattribs_event_show_mapserv");
+	var mapserv = $("#jform_globalattribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -90,7 +103,7 @@ window.addEvent('domready', function(){
 	}
 
 
-	$("jform_globalattribs_global_show_mapserv").addEvent('change', testmap);
+	$("#jform_globalattribs_global_show_mapserv").bind('change', testmap);
 
 	var mapserv = $("jform_globalattribs_global_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
@@ -101,7 +114,7 @@ window.addEvent('domready', function(){
 		globalmapoff();
 	}
 
-	$("jform_oldevent").addEvent('change', testevhandler);
+	$("#jform_oldevent").bind('change', testevhandler);
 
 	var evhandler = $("jform_oldevent");
 	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
@@ -112,7 +125,7 @@ window.addEvent('domready', function(){
 		evhandleroff();
 	}
 
-	$('jform_globalattribs_event_comunsolution').addEvent('change', testcomm);
+	$('#jform_globalattribs_event_comunsolution').bind('change', testcomm);
 
 	var commhandler = $("jform_globalattribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
@@ -135,7 +148,7 @@ window.addEvent('domready', function(){
 		}
 	}
 
-	$("jform_showfroregistra").addEvent('change', testregistra);
+	$("#jform_showfroregistra").bind('change', testregistra);
 
 	var registra = $("jform_showfroregistra");
 	var nrregistra = registra.options[registra.selectedIndex].value;
@@ -165,7 +178,7 @@ function testcolor(color) {
 
 function testcomm()
 {
-	var commhandler = $("jform_globalattribs_event_comunsolution");
+	var commhandler = $("#jform_globalattribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -177,7 +190,7 @@ function testcomm()
 
 function testmap()
 {
-	var mapserv = $("jform_globalattribs_event_show_mapserv");
+	var mapserv = $("#jform_globalattribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -186,7 +199,7 @@ function testmap()
 		eventmapoff();
 	}
 
-	var mapserv2 = $("jform_globalattribs_global_show_mapserv");
+	var mapserv2 = $("#jform_globalattribs_global_show_mapserv");
 	var nrmapserv2 = mapserv2.options[mapserv2.selectedIndex].value;
 
 	if (nrmapserv2 == 1 || nrmapserv2 == 2) {
@@ -198,7 +211,7 @@ function testmap()
 
 function testevhandler()
 {
-	var evhandler = $("jform_oldevent");
+	var evhandler = $("#jform_oldevent");
 	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
 
 	if (nrevhandler > 0) {
@@ -210,7 +223,7 @@ function testevhandler()
 
 function testregistra()
 {
-	var registra = $("jform_showfroregistra");
+	var registra = $("#jform_showfroregistra");
 	var nrregistra = registra.options[registra.selectedIndex].value;
 
 	if (nrregistra >= 1) {
@@ -374,7 +387,7 @@ function registraon()
 }
 
 function registraoff()
-{
+{Route
 	document.getElementById('froreg1').style.display = 'none';
 	document.getElementById('froreg2').style.display = 'none';
 }
@@ -383,66 +396,96 @@ function registraoff()
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
-		if (task == 'settings.cancel' || document.formvalidator.isValid(document.id('settings-form'))) {
+		if (task == 'settings.cancel' || document.formvalidator.isValid(document.getElementById('settings-form'))) {
 			Joomla.submitform(task, document.getElementById('settings-form'));
 		}
 	}
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_jem&view=settings'); ?>" method="post" id="settings-form" name="adminForm" class="form-validate">
-	<?php if (isset($this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
+
+
+<form action="<?php echo Route::_('index.php?option=com_jem&view=settings'); ?>" method="post" id="settings-form" name="adminForm" class="form-validate">
+
+	<div id="j-main-container" class="j-main-container">
+
+			<div class="row">
+				<div class="col-md-12">
+				    <?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'settings-basic', 'recall' => true, 'breakpoint' => 768]); ?>
+					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'settings-basic', Text::_('COM_JEM_BASIC_SETTINGS')); ?>
+					    <fieldset class="adminform">
+						      
+								<div class="w-50 fltlft">
+									<?php echo $this->loadTemplate('basicdisplay'); ?>
+									<?php echo $this->loadTemplate('basiclayout'); ?>
+									<?php echo $this->loadTemplate('basiceventhandling'); ?>
+								</div>
+								<div class="w-50 fltrt">
+									<?php echo $this->loadTemplate('basicimagehandling'); ?>
+									<?php echo $this->loadTemplate('basicmetahandling'); ?>
+								</div>
+						</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
+
+
+					
+					<?php echo HTMLHelper::_('uitab.addTab','settings-pane', 'settings-pane-2', Text::_('COM_JEM_EVENT_PAGE')); ?>
+					    <fieldset class="adminform">
+							<div class="width-50 fltlft">
+								<?php echo $this->loadTemplate('evevents'); ?>
+							</div>
+							<div class="width-50 fltrt">
+								<?php echo $this->loadTemplate('evvenues'); ?>
+								<?php echo $this->loadTemplate('evregistration'); ?>
+							</div>
+						</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
+
+
+				
+					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_LAYOUT')); ?>
+					    <fieldset class="adminform">
+						   <?php echo $this->loadTemplate('layout'); ?>
+						</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
+
+					
+					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'parameters', Text::_('COM_JEM_GLOBAL_PARAMETERS')); ?>
+					    <fieldset class="adminform">
+						    <?php echo $this->loadTemplate('parameters'); ?>
+						</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
+
+
+				
+					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
+					    <fieldset class="adminform">
+						   <?php echo $this->loadTemplate('usercontrol'); ?>
+						</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
+
+
+					
+					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'configinfo', Text::_('COM_JEM_SETTINGS_TAB_CONFIGINFO')); ?>
+					    <fieldset class="adminform">
+						   <?php echo $this->loadTemplate('configinfo'); ?>
+						</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
+					
+				</div>
+			</div>
+  
 	</div>
-	<div id="j-main-container" class="span10">
-	<?php endif; ?>
-		<?php echo JHtml::_('tabs.start', 'settings-pane', array('useCookie'=>1)); ?>
-		<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_BASIC_SETTINGS' ), 'settings-basic'); ?>
-
-		<div class="width-50 fltlft">
-			<?php echo $this->loadTemplate('basicdisplay'); ?>
-			<?php echo $this->loadTemplate('basiclayout'); ?>
-			<?php echo $this->loadTemplate('basiceventhandling'); ?>
-		</div>
-		<div class="width-50 fltrt">
-			<?php echo $this->loadTemplate('basicimagehandling'); ?>
-			<?php echo $this->loadTemplate('basicmetahandling'); ?>
-		</div>
-		<div class="clr"></div>
-
-		<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_EVENT_PAGE' ), 'layout2'); ?>
-
-		<div class="width-50 fltlft">
-			<?php echo $this->loadTemplate('evevents'); ?>
-		</div>
-		<div class="width-50 fltrt">
-			<?php echo $this->loadTemplate('evvenues'); ?>
-			<?php echo $this->loadTemplate('evregistration'); ?>
-		</div>
-		<div class="clr"></div>
-
-		<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_LAYOUT' ), 'layout'); ?>
-		<?php echo $this->loadTemplate('layout'); ?>
-
-		<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_GLOBAL_PARAMETERS' ), 'parameters'); ?>
-		<?php echo $this->loadTemplate('parameters'); ?>
-
-		<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_USER_CONTROL' ), 'usercontrol'); ?>
-		<?php echo $this->loadTemplate('usercontrol'); ?>
-		<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_SETTINGS_TAB_CONFIGINFO' ), 'configinfo'); ?>
-		<?php echo $this->loadTemplate('configinfo'); ?>
-
-		<?php echo JHtml::_('tabs.end'); ?>
-
-		<div class="clr"></div>
-	<?php if (isset($this->sidebar)) : ?>
-	</div>
-	<?php endif; ?>
 
 	<input type="hidden" name="task" value="">
 	<input type="hidden" name="id" value="1">
 	<input type="hidden" name="lastupdate" value="<?php $this->jemsettings->lastupdate; ?>">
 	<input type="hidden" name="option" value="com_jem">
 	<input type="hidden" name="controller" value="settings">
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

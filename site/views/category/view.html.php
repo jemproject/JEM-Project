@@ -7,7 +7,11 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Category-View
  */
@@ -38,21 +42,22 @@ class JemViewCategory extends JemView
 			### Category Calendar view ###
 
 			// Load tooltips behavior
-			JHtml::_('behavior.tooltip');
+			// HTMLHelper::_('behavior.tooltip');
 
 			//initialize variables
-			$app         = JFactory::getApplication();
-			$document    = JFactory::getDocument();
+			$app         = Factory::getApplication();
+			$document    = Factory::getDocument();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$user        = JemFactory::getUser();
 			$menu        = $app->getMenu();
 			$menuitem    = $menu->getActive();
 			$params      = $app->getParams();
-			$uri         = JFactory::getURI();
+			// $uri         = Factory::getURI();
+			$uri         = Uri::getInstance();
 			$pathway     = $app->getPathWay();
 			$print       = $app->input->getBool('print', false);
-
+			$url 		 = Uri::root();
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCss('calendar');
@@ -77,7 +82,8 @@ class JemViewCategory extends JemView
 			$document->addStyleDeclaration($style);
 
 			// add javascript (using full path - see issue #590)
-			JHtml::_('script', 'media/com_jem/js/calendar.js');
+			// HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
+			$document->addScript($url.'media/com_jem/js/calendar.js');
 
 			// Retrieve date variables
 			$year  = (int)$app->input->getInt('yearID', strftime("%Y"));
@@ -102,10 +108,10 @@ class JemViewCategory extends JemView
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+				$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 			}
 			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+				$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 			}
 
 			$document->setTitle($pagetitle);
@@ -122,7 +128,7 @@ class JemViewCategory extends JemView
 			$url_base = 'index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid;
 			$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
 
-			$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
+			$print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
 
 			// init calendar
 			$cal = new JemCalendar($year, $month, 0);
@@ -147,17 +153,18 @@ class JemViewCategory extends JemView
 			### Category List view ###
 
 			//initialize variables
-			$app         = JFactory::getApplication();
-			$document    = JFactory::getDocument();
+			$app         = Factory::getApplication();
+			$document    = Factory::getDocument();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$user        = JemFactory::getUser();
 			$print       = $app->input->getBool('print', false);
 
-			JHtml::_('behavior.tooltip');
+			// HTMLHelper::_('behavior.tooltip');
 
 			// get menu information
-			$uri      = JFactory::getURI();
+			// $uri      = Factory::getURI();
+			$uri      = Uri::getInstance();
 			$pathway  = $app->getPathWay();
 			$menu     = $app->getMenu();
 			$menuitem = $menu->getActive();
@@ -182,7 +189,7 @@ class JemViewCategory extends JemView
 
 			if ($category == false)
 			{
-				throw new Exception(JText::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
+				throw new Exception(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
 			}
 
 			// are events available?
@@ -214,21 +221,21 @@ class JemViewCategory extends JemView
 			$filters = array();
 
 			if ($jemsettings->showtitle == 1) {
-				$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
+				$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_TITLE'));
 			}
 			if ($jemsettings->showlocate == 1) {
-				$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+				$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
 			}
 			if ($jemsettings->showcity == 1) {
-				$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
+				$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
 			}
 			if ($jemsettings->showcat == 1) {
-				$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+				$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
 			}
 			if ($jemsettings->showstate == 1) {
-				$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
+				$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+			$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 			// search filter
 			$lists['search'] = $search;
@@ -239,16 +246,16 @@ class JemViewCategory extends JemView
 			// Add feed links
 			$link = '&format=feed&id='.$category->id.'&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-			$this->document->addHeadLink(JRoute::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
+			$this->document->addHeadLink(Route::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
+			$this->document->addHeadLink(Route::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
 			// create the pathway
 			$cats    = new JemCategories($category->id);
 			$parents = $cats->getParentlist();
 
 			foreach ($parents as $parent) {
-				$pathway->addItem($this->escape($parent->catname), JRoute::_(JemHelperRoute::getCategoryRoute($parent->slug)) );
+				$pathway->addItem($this->escape($parent->catname), Route::_(JemHelperRoute::getCategoryRoute($parent->slug)) );
 			}
 
 			// Show page heading specified on menu item or category title as heading - idea taken from com_content.
@@ -266,27 +273,27 @@ class JemViewCategory extends JemView
 				$pagetitle   = $category->catname;
 				$pageheading = $pagetitle;
 				$params->set('show_page_heading', 1); // ensure page heading is shown
-				$pathway->addItem($category->catname, JRoute::_(JemHelperRoute::getCategoryRoute($category->slug)) );
+				$pathway->addItem($category->catname, Route::_(JemHelperRoute::getCategoryRoute($category->slug)) );
 			}
 			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			if ($task == 'archive') {
-				$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
-				$print_link = JRoute::_(JemHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
-				$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
-				$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+				$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
+				$print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
+				$pagetitle   .= ' - '.Text::_('COM_JEM_ARCHIVE');
+				$pageheading .= ' - '.Text::_('COM_JEM_ARCHIVE');
 			} else {
-				$print_link = JRoute::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
+				$print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
 
 			$params->set('page_heading', $pageheading);
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+				$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 			}
 			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+				$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 			}
 
 			// Set Page title & Meta data
@@ -305,7 +312,7 @@ class JemViewCategory extends JemView
 
 			// Generate Categorydescription
 			if (empty ($category->description)) {
-				$description = JText::_('COM_JEM_NO_DESCRIPTION');
+				$description = Text::_('COM_JEM_NO_DESCRIPTION');
 			} else {
 				// execute plugins
 				$category->text  = $category->description;

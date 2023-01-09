@@ -109,11 +109,11 @@ class JemControllerAttendee extends JControllerLegacy
 				$dispatcher = JemFactory::getDispatcher();
 				// there was a user and it's overwritten by a new user -> send unregister mails
 				if ($old_uid && ($old_uid != $uid)) {
-					$dispatcher->trigger('onEventUserUnregistered', array($old_data->event, $old_data));
+					$dispatcher->triggerEvent('onEventUserUnregistered', array($old_data->event, $old_data));
 				}
 				// there is a new user which wasn't before -> send register mails
 				if ($uid && (($old_uid != $uid) || ($row->status != $old_status))) {
-					$dispatcher->trigger('onEventUserRegistered', array($row->id));
+					$dispatcher->triggerEvent('onEventUserRegistered', array($row->id));
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {

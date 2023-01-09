@@ -16,6 +16,11 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
+
 require_once(dirname(__FILE__).'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -25,13 +30,13 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 JemHelper::addFileLogger();
 
 # Include mootools or bootstrap tooltip
-JHtml::_('behavior.tooltip');
-if (version_compare(JVERSION, '3.3', 'ge')) {
-	JHtml::_('bootstrap.tooltip');
-}
+// JHtml::_('behavior.tooltip');
+// if (version_compare(JVERSION, '3.3', 'ge')) {
+// 	JHtml::_('bootstrap.tooltip');
+// }
 
 # Parameters
-$app                 = JFactory::getApplication();
+$app                 = Factory::getApplication();
 $day_name_length     = $params->get('day_name_length', '2');
 $first_day           = $params->get('first_day', '1');
 $Year_length         = $params->get('Year_length', '1');
@@ -42,8 +47,8 @@ $Show_Tooltips       = $params->get('Show_Tooltips', '1');
 $Show_Tooltips_Title = $params->get('Show_Tooltips_Title', '1');
 $Remember            = $params->get('Remember', '1');
 $use_ajax            = $params->get('use_ajax', '1');
-$CalTooltipsTitle    = $params->get('cal15q_tooltips_title', JText::_('MOD_JEM_CAL_EVENT'));
-$CalTooltipsTitlePl  = $params->get('cal15q_tooltipspl_title', JText::_('MOD_JEM_CAL_EVENTS'));
+$CalTooltipsTitle    = $params->get('cal15q_tooltips_title', Text::_('MOD_JEM_CAL_EVENT'));
+$CalTooltipsTitlePl  = $params->get('cal15q_tooltipspl_title', Text::_('MOD_JEM_CAL_EVENTS'));
 $Default_Stylesheet  = $params->get('Default_Stylesheet', '1');
 $User_stylesheet     = $params->get('User_stylesheet', 'modules/mod_jem_cal/tmpl/mod_jem_cal.css');
 $tooltips_max_events = $params->get('tooltips_max_events', 0);
@@ -78,7 +83,7 @@ if ($Remember == 1) {
 }
 
 # Set today
-$config      = JFactory::getConfig();
+$config      = Factory::getConfig();
 $tzoffset    = $config->get('config.offset');
 $time        = time() + (($tzoffset + $Time_offset) * 60 * 60);
 $today_month = date('m', $time);
@@ -121,7 +126,7 @@ $prev_year = $req_year - 1;
 $next_year = $req_year + 1;
 
 # Requested URL
-$uri   = JUri::getInstance();
+$uri   = Uri::getInstance();
 $myurl = $uri->toString(array('query'));
 
 //08/09/09 - Added Fix for sh404sef
@@ -133,12 +138,12 @@ if (empty($myurl)) {
 	$request_link = preg_replace('/&modjemcal_(month|year|id)=\d+/i', '', $request_link);
 }
 
-$ajax_link = JUri::base().'?option=com_ajax&module=jem_cal&format=raw'.'&Itemid='.$Itemid;
+$ajax_link = Uri::base().'?option=com_ajax&module=jem_cal&format=raw'.'&Itemid='.$Itemid;
 
 # By default use links working on browsers with JavaScript disabled.
 # Then let a JavaScript change this to ajax links.
-$url_base_nojs = JRoute::_($request_link, false) . '&modjemcal_id='.$module->id;
-$url_base_ajax = JRoute::_($ajax_link, false) . '&modjemcal_id='.$module->id;
+$url_base_nojs = Route::_($request_link, false) . '&modjemcal_id='.$module->id;
+$url_base_ajax = Route::_($ajax_link, false) . '&modjemcal_id='.$module->id;
 
 # Create link params - template must concatenate one of the url_bases above and one of the props below.
 $props_prev = '&modjemcal_month='.$prev_month.'&modjemcal_year='.$prev_month_year;
@@ -157,8 +162,8 @@ $mod_name = 'mod_jem_cal';
 if ($Default_Stylesheet == 1) {
 	JemHelper::loadModuleStyleSheet($mod_name);
 } else {
-	$document = JFactory::getDocument();
-	$document->addStyleSheet(JUri::base() . $User_stylesheet);
+	$document = Factory::getDocument();
+	$document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
 
 # Load icon font if needed

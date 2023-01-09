@@ -15,6 +15,10 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
+
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 abstract class ModJemCalHelper extends JModuleHelper
@@ -64,7 +68,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 	 */
 	public static function getAjax()
 	{
-		$app     = JFactory::getApplication();
+		$app     = Factory::getApplication();
 		$modid   = $app->input->getInt('modjemcal_id');
 		# JModuleHelper doesn't provide module by id - but we
 		$module = self::getModuleById($modid);
@@ -83,7 +87,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 		# Set params for the model
 		$model->setState('params', $params);
 
-		$db       = JFactory::getDbo();
+		$db       = Factory::getDbo();
 		$user     = JemFactory::getUser();
 		$levels   = $user->getAuthorisedViewLevels();
 		$settings = JemHelper::globalattribs();
@@ -241,11 +245,11 @@ abstract class ModJemCalHelper extends JModuleHelper
 					}
 					if (($StraightToDetails == 1) and ($stod == 1)) {
 						if ($FixItemID == 0) {
-							$link = JRoute::_(JemHelperRoute::getEventRoute($event->slug));
+							$link = Route::_(JemHelperRoute::getEventRoute($event->slug));
 						} else {
-							# Create the link - copied from Jroute
+							# Create the link - copied from Route
 							$evlink = JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
-							$link = JRoute::_($evlink);
+							$link = Route::_($evlink);
 						}
 					} else {
 						/// @todo fix the getroute link
@@ -256,12 +260,12 @@ abstract class ModJemCalHelper extends JModuleHelper
 							} else {
 								$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams;
 							}
-							$link = JRoute::_($evlink);
+							$link = Route::_($evlink);
 							//$link = JemHelperRoute::getRoute($tdate, 'day');
 						} else {
-							# Create the link - copied from Jroute
+							# Create the link - copied from Route
 							$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams . '&Itemid=' . $FixItemID;
-							$link = JRoute::_($evlink);
+							$link = Route::_($evlink);
 						}
 					}
 					$days[$count] = array($link,$title);

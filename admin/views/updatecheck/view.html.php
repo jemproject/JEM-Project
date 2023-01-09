@@ -9,6 +9,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 
 /**
  * View class for the JEM Updatecheck screen
@@ -25,10 +29,12 @@ class JemViewUpdatecheck extends JemAdminView
 		$updatedata      	= $this->get('Updatedata');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Load script
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		//assign data to template
 		$this->updatedata	= $updatedata;
@@ -45,10 +51,10 @@ class JemViewUpdatecheck extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
+		ToolbarHelper::title(Text::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
 
-		JToolBarHelper::back();
-		JToolBarHelper::divider();
-		JToolBarHelper::help('update', true);
+		ToolbarHelper::back();
+		ToolbarHelper::divider();
+		ToolbarHelper::help('update', true);
 	}
 }

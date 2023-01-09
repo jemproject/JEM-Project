@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+// JHtml::_('behavior.tooltip');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=userelement&tmpl=component" method="post" id="adminForm" name="adminForm">
@@ -18,7 +18,7 @@ JHtml::_('behavior.tooltip');
 			<td width="100%">
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 				<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</td>
 		</tr>
 	</table>

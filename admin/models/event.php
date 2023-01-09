@@ -244,18 +244,21 @@ class JemModelEvent extends JemModelAdmin
 		$table       = $this->getTable();
 
 		// Check if we're in the front or back
-		$backend = (bool)$app->isAdmin();
+		$backend = (bool)$app->isClient('administrator');
 		$new     = (bool)empty($data['id']);
 
 		// Variables
 		$cats             = $data['cats'];
-		$invitedusers     = $data['invited'];
+		$invitedusers     = isset($data['invited']) ? $data['invited'] : '';
 		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
 		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords     = $jinput->get('meta_keywords', '', '');
 		$metadescription  = $jinput->get('meta_description', '', '');
 		$task             = $jinput->get('task', '', 'cmd');
-
+		$data['metadata']  = isset($data['metadata']) ? $data['metadata'] : '';
+		$data['attribs']  = isset($data['attribs']) ? $data['attribs'] : '';
+		$data['ordering']  = isset($data['ordering']) ? $data['ordering'] : '';
+	
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
 			$this->cleanCache();
@@ -279,19 +282,19 @@ class JemModelEvent extends JemModelAdmin
 
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
-			$data['recurrence_number']     = '';
-			$data['recurrence_byday']      = '';
-			$data['recurrence_counter']    = '';
-			$data['recurrence_type']       = '';
-			$data['recurrence_limit']      = '';
-			$data['recurrence_limit_date'] = '';
-			$data['recurrence_first_id']   = '';
+			$data['recurrence_number']     = '0';
+			$data['recurrence_byday']      = '0';
+			$data['recurrence_counter']    = '0';
+			$data['recurrence_type']       = '0';
+			$data['recurrence_limit']      = '0';
+			$data['recurrence_limit_date'] = '0000-00-00';
+			$data['recurrence_first_id']   = '0';
 		} else {
 			if (!$new) {
 				// edited event maybe part of a recurrence set
 				// -> drop event from set
-				$data['recurrence_first_id'] = '';
-				$data['recurrence_counter']  = '';
+				$data['recurrence_first_id'] = '0';
+				$data['recurrence_counter']  = '0';
 			}
 
 			$data['recurrence_number'] = $recurrencenumber;
@@ -459,9 +462,9 @@ class JemModelEvent extends JemModelAdmin
 		if (!empty($add_cats)) {
 			$query = $db->getQuery(true);
 			$query->insert($db->quoteName('#__jem_cats_event_relations'))
-			      ->columns($db->quoteName(array('catid', 'itemid')));
+			      ->columns($db->quoteName(array('catid', 'itemid','ordering')));
 			foreach ($add_cats as $catid) {
-				$query->values((int)$catid . ',' . $eventId);
+				$query->values((int)$catid . ',' . $eventId.','.'0');
 			}
 			$db->setQuery($query);
 			$ret &= ($db->execute() !== false);
@@ -528,7 +531,7 @@ class JemModelEvent extends JemModelAdmin
 
 				if ($ret !== false) {
 					$id = $db->insertid();
-					$dispatcher->trigger('onEventUserRegistered', array($id));
+					$dispatcher->triggerEvent('onEventUserRegistered', array($id));
 				}
 			}
 		}
@@ -549,7 +552,7 @@ class JemModelEvent extends JemModelAdmin
 				}
 
 				if ($ret !== false) {
-					$dispatcher->trigger('onEventUserUnregistered', array($eventId, $reg));
+					$dispatcher->triggerEvent('onEventUserUnregistered', array($eventId, $reg));
 				}
 			}
 		}
@@ -587,9 +590,7 @@ class JemModelEvent extends JemModelAdmin
 					' SET featured = '.(int) $value.
 					' WHERE id IN ('.implode(',', $pks).')'
 			);
-			if ($db->execute() === false) {
-				throw new Exception($db->getErrorMsg());
-			}
+			$db->execute() ;
 
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());

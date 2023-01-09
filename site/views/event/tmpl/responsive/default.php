@@ -24,7 +24,7 @@ if ($jemsettings->oldevent > 0) {
   $expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
   $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
-JHtml::_('behavior.modal', 'a.flyermodal');
+// JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"

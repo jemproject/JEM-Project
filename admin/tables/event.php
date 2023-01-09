@@ -161,6 +161,7 @@ class JemTableEvent extends JTable
 	 */
 	public function store($updateNulls = true)
 	{
+		
 		$date        = JFactory::getDate();
 		$user        = JemFactory::getUser();
 		$userid      = $user->get('id');
@@ -169,17 +170,22 @@ class JemTableEvent extends JTable
 		$jemsettings = JemHelper::config();
 
 		// Check if we're in the front or back
-		if ($app->isAdmin()) {
+		if ($app->isClient('administrator')) {
 			$backend = true;
 		} else {
 			$backend = false;
 		}
-
 		if ($this->id) {
 			// Existing event
 			$this->modified = $date->toSql();
 			$this->modified_by = $userid;
 		} else {
+			$this->modified ='0000-00-00 00:00:00';
+			if(empty($this->created_by_alias))
+				$this->created_by_alias='';
+			if(empty($this->language))
+				$this->language='';
+
 			// New event
 			if (!intval($this->created)) {
 				$this->created = $date->toSql();
@@ -213,6 +219,7 @@ class JemTableEvent extends JTable
 
 				if (!empty($file['name'])) {
 					// only on first event, skip on recurrence events
+					
 					if (empty($this->recurrence_first_id)) {
 						//check the image
 						$check = JemImage::check($file, $jemsettings);
@@ -256,7 +263,7 @@ class JemTableEvent extends JTable
 				$this->published = 0;
 			}
 		}
-
+		
 		// item must be stored BEFORE image deletion
 		$ret = parent::store($updateNulls);
 		if ($ret && $image_to_delete) {
@@ -277,9 +284,10 @@ class JemTableEvent extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;
@@ -370,14 +378,22 @@ class JemTableEvent extends JTable
 		$query->update($this->_db->quoteName($this->_tbl));
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
-		$this->_db->setQuery($query . $checkin);
-		$this->_db->execute();
+		
 
 		// Check for a database error.
 		// TODO: use exception handling
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+		try
+		{
+			$this->_db->setQuery($query . $checkin);
+			$this->_db->execute();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.

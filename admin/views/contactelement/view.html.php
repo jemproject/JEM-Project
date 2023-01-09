@@ -9,7 +9,9 @@
 
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 /**
  * View class for the JEM Contactelement screen
  *
@@ -20,14 +22,14 @@ class JEMViewContactelement extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		//initialise variables
-		$db			= JFactory::getDBO();
-		$document	= JFactory::getDocument();
+		$db			= Factory::getDBO();
+		$document	= Factory::getDocument();
 
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal');
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
@@ -37,10 +39,13 @@ class JEMViewContactelement extends JViewLegacy {
 		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		//prepare document
-		$document->setTitle(JText::_('COM_JEM_SELECTVENUE'));
+		$document->setTitle(Text::_('COM_JEM_SELECTVENUE'));
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Get data from the model
 		$rows 		= $this->get('Data');
@@ -52,11 +57,11 @@ class JEMViewContactelement extends JViewLegacy {
 
 		//Build search filter
 		$filters = array();
-		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
-		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
+		$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS'));
+		$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
+		$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;

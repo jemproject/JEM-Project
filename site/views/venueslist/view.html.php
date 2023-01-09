@@ -8,7 +8,11 @@
  */
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * View: Venueslist
  */
@@ -26,14 +30,14 @@ class JemViewVenueslist extends JViewLegacy
 		$pagination = $this->get('Pagination');
 		
 		// initialize variables
-		$app          = JFactory::getApplication();
-		$document     = JFactory::getDocument();
+		$app          = Factory::getApplication();
+		$document     = Factory::getDocument();
 		$jemsettings  = JemHelper::config();
 		$settings     = JemHelper::globalattribs();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$params       = $app->getParams();
-		$uri          = JFactory::getURI();
+		$uri          = Uri::getInstance();
 		$user         = JemFactory::getUser();
 		$userId       = $user->get('id');
 		$pathway      = $app->getPathWay();
@@ -43,7 +47,7 @@ class JemViewVenueslist extends JViewLegacy
 
 		// redirect if not logged in
 		//if (!$userId) {
-			//$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+			//$app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			// return false;
 		//}
 
@@ -80,21 +84,21 @@ class JemViewVenueslist extends JViewLegacy
 		// Workaround issue #557: Show venue name always.
 		$jemsettings->showlocate = 1;
 
-		//$filters[] = JHtml::_('select.option', '0', JText::_('COM_JEM_CHOOSE'));
+		//$filters[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_CHOOSE'));
 		
 		if ($jemsettings->showlocate == 1) {
 
 
 
-			$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
+			$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
 		}
 
 
-			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));			
+			$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));			
 
 
-			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'input-medium'), 'value', 'text', $filter);
+			$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'input-medium'), 'value', 'text', $filter);
 
 		// search filter
 		$lists['search'] = $search;
@@ -109,7 +113,7 @@ class JemViewVenueslist extends JViewLegacy
 		}
 
 		// Set Page title
-		$pagetitle = JText::_('COM_JEM_VENUESLIST_PAGETITLE');
+		$pagetitle = Text::_('COM_JEM_VENUESLIST_PAGETITLE');
 		$pageheading = $pagetitle;
 		$pageclass_sfx = '';
 
@@ -117,20 +121,20 @@ class JemViewVenueslist extends JViewLegacy
 		if ($useMenuItemParams) {
 			// Menu item params take priority
 			$params->def('page_title', $menuitem->title);
-			$pagetitle = $params->get('page_title', JText::_('COM_JEM_VENUESLIST_PAGETITLE'));
+			$pagetitle = $params->get('page_title', Text::_('COM_JEM_VENUESLIST_PAGETITLE'));
 			$pageheading = $params->get('page_heading', $pagetitle);
 			$pageclass_sfx = $params->get('pageclass_sfx');
-			$print_link = JRoute::_('index.php?option=com_jem&view=venueslist&print=1&tmpl=component');
+			$print_link = Route::_('index.php?option=com_jem&view=venueslist&print=1&tmpl=component');
 		}
 
 		$params->set('page_heading', $pageheading);
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 		}
 		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		$document->setTitle($pagetitle);

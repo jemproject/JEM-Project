@@ -80,7 +80,7 @@ if (empty($form)) {
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button type="submit" class="pointer btn btn-primary"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button type="button" class="pointer btn btn-secondary" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+          <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
       <div class="jem-row jem-justify-start jem-nowrap">
         <div>

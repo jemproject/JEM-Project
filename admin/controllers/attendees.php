@@ -68,7 +68,7 @@ class JemControllerAttendees extends JControllerLegacy
 			$modelAttendeeItem->setId($reg_id);
 			$entry = $modelAttendeeItem->getData();
 			if ($modelAttendeeList->remove(array($reg_id))) {
-				$dispatcher->trigger('onEventUserUnregistered', array($entry->event, $entry));
+				$dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
 			} else {
 				$error = true;
 			}
@@ -137,7 +137,7 @@ class JemControllerAttendees extends JControllerLegacy
 				$res = $model->toggle();
 
 				if ($res) {
-					$dispatcher->trigger('onUserOnOffWaitinglist', array($pk));
+					$dispatcher->triggerEvent('onUserOnOffWaitinglist', array($pk));
 
 					if ($attendee->waiting) {
 						$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
@@ -234,28 +234,28 @@ class JemControllerAttendees extends JControllerLegacy
 					$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_NOTATTENDING', count($ids));
 					foreach ($ids AS $pk) {
 						// onEventUserUnregistered($eventid, $record, $recordid)
-						$dispatcher->trigger('onEventUserUnregistered', array($eventid, false, $pk));
+						$dispatcher->triggerEvent('onEventUserUnregistered', array($eventid, false, $pk));
 					}
 					break;
 				case 0:
 					$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_INVITED', count($ids));
 					foreach ($ids AS $pk) {
 						// onEventUserRegistered($recordid)
-						$dispatcher->trigger('onEventUserRegistered', array($pk));
+						$dispatcher->triggerEvent('onEventUserRegistered', array($pk));
 					}
 					break;
 				case 1:
 					$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_ATTENDING', count($ids));
 					foreach ($ids AS $pk) {
 						// onEventUserRegistered($recordid)
-						$dispatcher->trigger('onEventUserRegistered', array($pk));
+						$dispatcher->triggerEvent('onEventUserRegistered', array($pk));
 					}
 					break;
 				case 2:
 					$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($ids));
 					foreach ($ids AS $pk) {
 						// onUserOnOffWaitinglist($recordid)
-						$dispatcher->trigger('onUserOnOffWaitinglist', array($pk));
+						$dispatcher->triggerEvent('onUserOnOffWaitinglist', array($pk));
 					}
 					break;
 				}

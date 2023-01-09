@@ -29,13 +29,13 @@ class JFormFieldModal_Users extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectUsers_'.$this->id.'(ids, count, object) {';
-		$script[] = '        document.id("'.$this->id.'_ids").value = ids;';
-		$script[] = '        document.id("'.$this->id.'_count").value = count;';
+		$script[] = '        document.getElementById("'.$this->id.'_ids").value = ids;';
+		$script[] = '        document.getElementById("'.$this->id.'_count").value = count;';
 		$script[] = '        SqueezeBox.close();';
 		$script[] = '    }';
 
@@ -62,10 +62,18 @@ class JFormFieldModal_Users extends JFormField
 			$query->where('id IN ('.$idlist.')');
 			$db->setQuery($query);
 
-			$count = (int)$db->loadResult();
+			
 
-			if ($error = $db->getErrorMsg()) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+			// if ($error = $db->getErrorMsg()) {
+			// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+			// }
+			try
+			{
+				$count = (int)$db->loadResult();
+			}
+			catch (RuntimeException $e)
+			{			
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 			}
 		} else {
 			$count = 0;

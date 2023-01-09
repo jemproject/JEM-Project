@@ -152,7 +152,7 @@ if (empty($this->catrow->events)) { return; }
             <div class="jem-list-row">  
               <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" >
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>
+                  <i class="far fa-clock" aria-hidden="true"></i>
                   <?php
                     echo JemOutput::formatShortDateTime($row->dates, $row->times,
                       $row->enddates, $row->endtimes, $this->jemsettings->showtime);
@@ -164,7 +164,7 @@ if (empty($this->catrow->events)) { return; }
               
               <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-                  <i class="fa fa-comment-o" aria-hidden="true"></i>
+                  <i class="fa fa-comment" aria-hidden="true"></i>
                   <?php echo $this->escape($row->title); ?>
                 </div>
               <?php endif; ?>
@@ -182,14 +182,14 @@ if (empty($this->catrow->events)) { return; }
 
               <?php if (($this->jemsettings->showcity == 1) && (!empty($row->city))) : ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                  <i class="fa fa-building-o" aria-hidden="true"></i>
+                  <i class="fa fa-building" aria-hidden="true"></i>
                   <?php echo $this->escape($row->city); ?>
                 </div>
               <?php endif; ?>
               
               <?php if (($this->jemsettings->showstate == 1) && (!empty($row->state))): ?>
                 <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                  <i class="fa fa-map-o" aria-hidden="true"></i>
+                  <i class="fa fa-map" aria-hidden="true"></i>
                   <?php echo $this->escape($row->state); ?>
                 </div>
               <?php endif; ?>

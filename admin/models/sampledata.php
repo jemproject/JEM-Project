@@ -8,7 +8,7 @@
  *
  */
 defined('_JEXEC') or die();
-
+use Joomla\Archive\Archive;
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
@@ -63,7 +63,6 @@ class JemModelSampledata extends JModelLegacy
 		}
 
 		$scriptfile = $this->sampleDataDir . 'sampledata.sql';
-
 		// load sql file
 		if (!($buffer = file_get_contents($scriptfile))) {
 			return false;
@@ -76,7 +75,6 @@ class JemModelSampledata extends JModelLegacy
 		foreach ($queries as $query) {
 			$query = trim($query);
 			if ($query != '' && $query[0] != '#') {
-				
 				$this->_db->setQuery($query);
 				$this->_db->execute();
 			}
@@ -115,7 +113,15 @@ class JemModelSampledata extends JModelLegacy
 		$archive = JPath::clean($archive);
 
 		// extract archive
-		$result = JArchive::extract($archive, $extractdir);
+	
+		try {
+			$archiveObj = new Archive(array('tmp_path' => JFactory::getApplication()->get('tmp_path')));
+			$result = $archiveObj->extract($archive, $extractdir);
+        } catch (\Exception $e) {
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
+
+            return false;
+        }
 
 		if ($result === false) {
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
@@ -136,7 +142,7 @@ class JemModelSampledata extends JModelLegacy
 		}
 		$filelist['files'] = $files;
 		$filelist['folder'] = $extractdir;
-
+		
 		return $filelist;
 	}
 

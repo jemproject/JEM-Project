@@ -9,8 +9,10 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 if ($params->get('use_modal', 0)) {
-	JHtml::_('behavior.modal', 'a.flyermodal');
+	// JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
 } else {
 	$modal = 'notmodal';
@@ -107,7 +109,7 @@ if ($params->get('use_modal', 0)) {
 			</table>
 		<?php endforeach; ?>
 	<?php else : ?>
-		<?php echo JText::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
+		<?php echo Text::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
 	<?php endif; ?>
 	</div>
 </div>

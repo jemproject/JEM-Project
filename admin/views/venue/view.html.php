@@ -9,7 +9,10 @@
 
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 /**
  * View class: Venue
  */
@@ -25,47 +28,58 @@ class JemViewVenue extends JemAdminView
 		$this->form	 = $this->get('Form');
 		$this->item	 = $this->get('Item');
 		$this->state = $this->get('State');
-
+		
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
-		JHtml::_('behavior.framework');
-		JHtml::_('behavior.modal', 'a.modal');
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.framework');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.formvalidation');
 
 		//initialise variables
-		$document       = JFactory::getDocument();
+		$this->document = Factory::getDocument();
 		$this->settings = JemAdmin::config();
 		$globalregistry = JemHelper::globalattribs();
-		$task           = JFactory::getApplication()->input->get('task', '');
+		$task           = Factory::getApplication()->input->get('task', '');
 		$this->task     = $task;
-
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/geostyle.css', array(), true);
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+		$wa->registerStyle('jem.geostyle', 'com_jem/geostyle.css')->useStyle('jem.geostyle');
 
 		// Load Scripts
-		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		//$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
+		
+		
 
-		$language = JFactory::getLanguage();
+		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+		
+		
+		//$this->document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		
+		
+		$language = Factory::getLanguage();
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
 
 		$key = trim($globalregistry->get('global_googleapi', ''));
-		$document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
+		$this->document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
-		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
+		$this->document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
 		// JQuery scripts
-		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
+		$this->document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		// HTMLHelper::_('script', 'com_jem/jquery.geocomplete.js', false, true);
+		$wa->registerScript('jem.geocomplete', 'com_jem/jquery.geocomplete.js')->useScript('jem.geocomplete');
 
 		$access2 = JemHelper::getAccesslevelOptions();
 		$this->access = $access2;
@@ -80,35 +94,35 @@ class JemViewVenue extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		$user       = JemFactory::getUser();
 		$isNew      = ($this->item->id == 0);
 		$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo      = JemHelperBackend::getActions();
 
-		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_VENUE') : JText::_('COM_JEM_EDIT_VENUE'), 'venuesedit');
+		ToolbarHelper::title($isNew ? Text::_('COM_JEM_ADD_VENUE') : Text::_('COM_JEM_EDIT_VENUE'), 'venuesedit');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
-			JToolBarHelper::apply('venue.apply');
-			JToolBarHelper::save('venue.save');
+			ToolbarHelper::apply('venue.apply');
+			ToolbarHelper::save('venue.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-			JToolBarHelper::save2new('venue.save2new');
+			ToolbarHelper::save2new('venue.save2new');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::save2copy('venue.save2copy');
+			ToolbarHelper::save2copy('venue.save2copy');
 		}
 
 		if (empty($this->item->id))  {
-			JToolBarHelper::cancel('venue.cancel');
+			ToolbarHelper::cancel('venue.cancel');
 		} else {
-			JToolBarHelper::cancel('venue.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('venue.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editvenues', true);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('editvenues', true);
 	}
 }

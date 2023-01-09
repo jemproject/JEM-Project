@@ -39,7 +39,6 @@ abstract class JEMHelperRoute
 	 */
 	public static function getRoute($id, $view = 'event', $category = null)
 	{
-		
 		// Deprecation warning.
 		JLog::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', JLog::WARNING, 'deprecated');
 
@@ -130,7 +129,6 @@ abstract class JEMHelperRoute
 			$link .= '&Itemid='.$item;
 		}
 		elseif ($item = self::_findItem()) {
-			// $link .= '&Itemid='.$item;
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
@@ -314,4 +312,3 @@ abstract class JEMHelperRoute
 	}
 }
 ?>
-

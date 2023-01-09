@@ -35,7 +35,7 @@ class JFormFieldImageselect extends JFormFieldList
 	public function getInput()
 	{
 		// Load the modal behavior script.
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// ImageType
 		$imagetype = $this->element['imagetype'];
@@ -46,7 +46,8 @@ class JFormFieldImageselect extends JFormFieldList
 		$script[] = '		document.getElementById(\'a_image\').value = image';
 		$script[] = '		document.getElementById(\'a_imagename\').value = imagename';
 		$script[] = '		document.getElementById(\'imagelib\').src = \'../images/jem/'.$imagetype.'/\' + image';
-		$script[] = '		window.parent.SqueezeBox.close()';
+		// $script[] = '		window.parent.SqueezeBox.close()';
+		$script[] = '        $(".btn-close").trigger("click");';
 		$script[] = '	}';
 		
 		switch ($imagetype)
@@ -75,11 +76,43 @@ class JFormFieldImageselect extends JFormFieldList
 
 		//
 		$html[] = "<div class=\"fltlft\">";
-		$html[] = "<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/system/images/blank.png'}\"; />";
+		$html[] = "<input class=\"form-control\" style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/system/images/blank.png'}\"; />";
 		$html[] = "</div>";
 
-		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
-		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
+		// $html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
+		$html[] = "<div class=\"button2-left\"><div class=\"blank\">";
+			$html[] = JHtml::_(
+				'bootstrap.renderModal',
+				'imageupload-modal',
+				array(		
+					'url'    => $link,
+					'title'  => JText::_('COM_JEM_UPLOAD'),
+					'width'  => '650px',
+					'height' => '375px',
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				)
+			);
+			$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#imageupload-modal">'.JText::_('COM_JEM_UPLOAD').'
+			</button>';
+
+		$html[] ='</div></div>';
+		// $html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
+		$html[] = "<div class=\"button2-left\"><div class=\"blank\">";
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'imageselect-modal',
+			array(		
+				'url'    => $link2,
+				'title'  => JText::_('COM_JEM_SELECTIMAGE'),
+				'width'  => '650px',
+				'height' => '375px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#imageselect-modal">'.JText::_('COM_JEM_SELECTIMAGE').'
+		</button>';
+		$html[] ='</div></div>';
+
 		$html[] = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"SelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."');\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 
 		$html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";

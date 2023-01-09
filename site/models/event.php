@@ -141,16 +141,24 @@ class JemModelEvent extends JModelItem
 
 				# Get the item
 				//$query->group('a.id');
-				$db->setQuery($query);
-				$data = $db->loadObject();
+				
+				// if ($error = $db->getErrorMsg()) {
+				// 	throw new Exception($error);
+				// }
+				try
+				{
+					$db->setQuery($query);
+					$data = $db->loadObject();
 
-				if ($error = $db->getErrorMsg()) {
-					throw new Exception($error);
+				}
+				catch (RuntimeException $e)
+				{			
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 				}
 
-				if (empty($data)) {
-					throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
-				}
+				// if (empty($data)) {
+				// 	throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+				// }
 
 				# Convert parameter fields to objects.
 				$registry = new JRegistry;

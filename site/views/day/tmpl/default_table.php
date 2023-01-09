@@ -29,7 +29,7 @@ defined('_JEXEC') or die;
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
 		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
 		<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
 
@@ -43,7 +43,7 @@ defined('_JEXEC') or die;
 <?php endif; ?>
 
 <div class="table-responsive">
-	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 		<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 			<?php if ($this->jemsettings->showtitle == 1) : ?>

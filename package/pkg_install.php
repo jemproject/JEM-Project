@@ -11,7 +11,7 @@
  * @link http://www.kunena.org
  **/
 defined ( '_JEXEC' ) or die ();
-
+use Joomla\CMS\Version;
 /**
  * JEM package installer script.
  */
@@ -32,7 +32,8 @@ class Pkg_JemInstallerScript
 			'0' => '5.5' // Preferred version
 			),
 		'Joomla!' => array (
-			'4.0' => '', // Not supported
+			'4.2' => '4.2', 
+			'4.0' => '4.0', 
 			'3.10' => '3.10.0',
 			'3.3' => '3.3.3',
 			'3.2' => '3.2.7',
@@ -68,10 +69,11 @@ class Pkg_JemInstallerScript
 
 	public function preflight($type, $parent) {
 		/** @var JInstallerComponent $parent */
-		$manifest = $parent->getParent()->getManifest();
-
+		// $manifest = $parent->getParent()->getManifest();
+		$jversion = new Version();
+		$current_version = Version::MAJOR_VERSION;
 		// Prevent installation if requirements are not met.
-		if (!$this->checkRequirements($manifest->version)) return false;
+		if (!$this->checkRequirements($current_version)) return false;
 
 		return true;
 	}

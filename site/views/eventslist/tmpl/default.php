@@ -7,7 +7,6 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
 ?>
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">

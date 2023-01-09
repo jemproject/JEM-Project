@@ -13,10 +13,10 @@ var $select_element;
 
 function start_recurrencescript(el) {
 //window.addEvent('domready', function() {
-	$content = $("recurrence_output"); // get the object (position) of the output
+	$content = $("#recurrence_output"); // get the object (position) of the output
 	$select_element = $(el);
 	output_recurrencescript(); // start the output
-	$select_element.addEvent('change', output_recurrencescript); // additional event handler
+	$select_element.on('change', output_recurrencescript); // additional event handler
 }
 
 /**
@@ -152,7 +152,7 @@ function generate_selectlist_weekday() {
 		}
 		$selectlist.appendChild($option);	// include the option - element into the select - element
 	}
-	$($selectlist).addEvent('change', function() {
+	$($selectlist).on('change', function() {
 		var result = '';
 		var isempty = true;
 		for (i=0;i<this.length;i++) {

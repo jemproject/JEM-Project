@@ -9,8 +9,9 @@
 /**
  * this file manages the js script for adding/removing attachements in event
  */
- window.addEvent('domready', function() {
- 	$$('#userfile-remove').addEvent('click', function(event){
+//  window.addEvent('domready', function() {
+jQuery(document).ready(function($){
+ 	$('#userfile-remove').on('click', function(event){
 		var di = document.getElementById('datimage');
 		if (di) { di.style.display = 'none'; }
 		var li = document.getElementById('locimage');
@@ -20,4 +21,6 @@
 		var ri = document.getElementById('removeimage');
 		if (ri) { ri.value = '1'; }
 	});
+
  }); 
+

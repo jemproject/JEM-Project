@@ -39,12 +39,12 @@
   margin-bottom: 10px;
 }
 
-#jemmodulebasic ul li:before {
+/* #jemmodulebasic ul li:before {
   position: absolute;
   left: -1.5em;
   font-family: FontAwesome;
   content: "\f073";
-}
+} */
 
 #jemmodulebasic .event-title {
   -ms-hyphens: auto;

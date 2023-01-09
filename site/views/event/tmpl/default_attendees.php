@@ -99,7 +99,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
         echo '<li class="jem-registered-user">' . jem_getStatusIcon($register->status);
         $text = '';
 				// is a plugin catching this ?
-				if ($res = $this->dispatcher->trigger('onAttendeeDisplay', array($register->uid, &$text))) :
+				if ($res = $this->dispatcher->triggerEvent('onAttendeeDisplay', array($register->uid, &$text))) :
 					echo $text;
 				endif;
 				// if CB

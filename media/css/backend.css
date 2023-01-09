@@ -306,8 +306,10 @@ div.pagination ul li {
 	background-position:-30px;
 	display:block;
 	float:left;
-	height:97px;
-	width:108px;
+	/* height:97px;
+	width:108px; */
+	height:115px;
+	width:137px;
 	color:#565656;
 	vertical-align:middle;
 	text-decoration:none;
@@ -715,10 +717,10 @@ table.table .pagination {
 
 .table td.order span {
 	float: left;
-	width: 20px;
+	width: 26px;
 	text-align: center;
 	background-repeat: no-repeat;
-	height: 13px;
+	height: 26px;
 }
 
 

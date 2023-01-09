@@ -33,14 +33,15 @@ class JFormFieldEvent extends JFormFieldList
 	protected function getInput()
 	{
 		// Load the modal behavior script.
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// Build the script.
 		$script = array();
 		$script[] = '	function elSelectEvent(id, title, object) {';
 		$script[] = '		document.getElementById("'.$this->id.'_id").value = id;';
 		$script[] = '		document.getElementById("'.$this->id.'_name").value = title;';
-		$script[] = '		SqueezeBox.close();';
+		// $script[] = '		SqueezeBox.close();';
+		$script[] = '        $("#event-modal").modal("hide");';
 		$script[] = '	}';
 
 		// Add the script to the document head.
@@ -55,11 +56,15 @@ class JFormFieldEvent extends JFormFieldList
 			'SELECT title' .
 			' FROM #__jem_events' .
 			' WHERE id = '.(int) $this->value
-		);
-		$title = $db->loadResult();
+		);		
 
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		try
+		{
+			$title = $db->loadResult();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($title)) {
@@ -75,7 +80,20 @@ class JFormFieldEvent extends JFormFieldList
 		// The user select button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_EVENT').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_EVENT').'</a>';
+		// $html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_EVENT').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_EVENT').'</a>';
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'event-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => JText::_('COM_JEM_SELECT_EVENT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#event-modal">'.JText::_('COM_JEM_SELECT_EVENT').'
+</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

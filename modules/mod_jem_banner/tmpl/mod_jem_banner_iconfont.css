@@ -14,9 +14,9 @@ div#jemmodulebanner .venue-title:before {
 	font:normal normal normal 1.4em/1 FontAwesome;
 }
 
-div#jemmodulebanner .time:before {
+/* div#jemmodulebanner .time:before {
 	content:"\f017";
-}
+} */
 
 div#jemmodulebanner div.date:before {
 	content:"\f133";

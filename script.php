@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
+use Joomla\CMS\Version;
 $db = JFactory::getDBO();
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
@@ -201,7 +201,8 @@ class com_jemInstallerScript
 	{
 		$this->getHeader(); ?>
 		<h2><?php echo JText::_('COM_JEM_UPDATE_STATUS'); ?>:</h2>
-		<p><?php echo JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version); ?></p>;
+		<!-- <p><?php //echo JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version); ?></p>; -->
+		<p><?php echo JText::sprintf('COM_JEM_UPDATE_TEXT', $this->newRelease); ?></p>;
 		<?php
 	}
 
@@ -214,13 +215,20 @@ class com_jemInstallerScript
 	function preflight($type, $parent)
 	{
 		// Are we installing in J2.5?
-		$jversion = new JVersion();
-		if (version_compare(JVERSION, '4.0.1', 'ge')                       ||  // J! 4.x NOT supported, but allow alpha/beta
-		    !(($jversion->RELEASE >= '3.10' && $jversion->DEV_LEVEL >= '0') ||			
-		      ($jversion->RELEASE >= '3.4' && $jversion->DEV_LEVEL >= '0') ||
-		      ($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
-		      ($jversion->RELEASE == '3.2' && $jversion->DEV_LEVEL >= '7') ||
-		      ($jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL >= '24'))) {
+		$jversion = new Version();
+		$current_version = Version::MAJOR_VERSION;
+		$this->newRelease= Version::MAJOR_VERSION;
+		// $MINOR_VERSION = Version::MINOR_VERSION;
+		$devLevel = Version::PATCH_VERSION;
+      
+		
+		if (version_compare(JVERSION, '4.3.1', 'ge')                       ||  // J! 4.x NOT supported, but allow alpha/beta
+		    !(($current_version >= '4.3' && $devLevel >= '0') ||
+				($current_version >= '3.10' && $devLevel >= '0') ||			
+		      ($current_version >= '3.4' && $devLevel >= '0') ||
+		      ($current_version == '3.3' && $devLevel >= '3') ||
+		      ($current_version == '3.2' && $devLevel >= '7') ||
+		      ($current_version == '2.5' && $devLevel >= '24'))) {
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
 			return false;
 		}
@@ -245,24 +253,23 @@ class com_jemInstallerScript
 		}
 
 		// Minimum Joomla version as per Manifest file
-		$minJoomlaVersion = $parent->get('manifest')->attributes()->version;
-
-		// abort if the current Joomla release is older than required version
-		$jversion = new JVersion();
-		if(version_compare($jversion->getShortVersion(), $minJoomlaVersion, '<')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion), 'warning');
-			return false;
-		}
+		// $minJoomlaVersion = $parent->get('manifest')->attributes()->version;
+		// $MINOR_VERSION = Version::MINOR_VERSION;
+		// // abort if the current Joomla release is older than required version
+		// $jversion = new JVersion();
+		// if(version_compare($jversion->getShortVersion(), $minJoomlaVersion, '<')) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion), 'warning');
+		// 	return false;
+		// }
 
 		// abort if the release being installed is not newer than the currently installed version
 		if (strtolower($type) == 'update') {
 			// Installed component version
 			$this->oldRelease = $this->getParam('version');
-
+			// echo "<pre/>";print_R($this->oldRelease);die;
 			// Installing component version as per Manifest file
-			$this->newRelease = $parent->get('manifest')->version;
-
-			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
+			// $this->newRelease = $parent->get('manifest')->version; 
+			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) { 
 				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'warning');
 				return false;
 			}

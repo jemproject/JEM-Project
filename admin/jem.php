@@ -27,6 +27,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.view.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
+require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html/jemhtml.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT.'/tables');
@@ -36,6 +37,8 @@ JemHelper::addFileLogger();
 
 // import joomla controller library
 jimport('joomla.application.component.controller');
+
+
 
 // Require the frontend base controller
 require_once (JPATH_COMPONENT.'/controller.php');

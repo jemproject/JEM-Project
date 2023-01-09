@@ -7,7 +7,9 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-JHtml::_('behavior.tooltip');							 
+use Joomla\CMS\Language\Text;
+
+// JHtml::_('behavior.tooltip');							 
 ?>
 	<?php /*?>	
 <style>
@@ -37,20 +39,20 @@ function jem_common_show_filter(&$obj) {
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
     <div>
-      <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>
+      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <?php echo $this->lists['filter']; ?>
       <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
 	  	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
 		   
-		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 		
 	</div>
@@ -60,7 +62,7 @@ function jem_common_show_filter(&$obj) {
 <?php endif; ?>
 
 	<div class="table table-responsive table-striped table-hover table-sm">
-	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
+	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 		<colgroup>
 			<col width="20%" class="jem_col_city" />
 	<?php if ($this->params->get('showstate')) : ?>			
@@ -72,9 +74,9 @@ function jem_common_show_filter(&$obj) {
 		</colgroup>
 		<thead>
 			<tr>
-				<th id="jem_city" class="sectiontableheader" align="left"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_city" class="sectiontableheader" align="left"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 	<?php if ($this->params->get('showstate')) : ?>
-				<th id="jem_state" class="sectiontableheader" align="left"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_state" class="sectiontableheader" align="left"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 	<?php endif; ?>	
 			
 			
@@ -88,7 +90,7 @@ function jem_common_show_filter(&$obj) {
 
 		<tbody>
 			<?php if (empty($this->rows)) : ?>
-				<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_VENUES'); ?></td></tr>
+				<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></td></tr>
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->rows as $row) : ?>

@@ -9,12 +9,13 @@
 /**
  * this file manages the js script for adding/removing attachements in event
  */
-window.addEvent('domready', function() {
+// window.addEvent('domready', function() {
+	jQuery(document).ready(function($){
 
-	$$('.attach-field').addEvent('change', addattach);
-	$$('.clear-attach-field').addEvent('click', clearattach);
+	$('.attach-field').on('change', addattach);
+	$('.clear-attach-field').on('click', clearattach);
 
-	$$('.attach-remove').addEvent('click', function(event){
+	$('.attach-remove').on('click', function(event){
 		var event = event || window.event;
 		$(event.target).style.cursor = 'wait'; /* indicate server request */
 		
@@ -40,7 +41,7 @@ window.addEvent('domready', function() {
 			postBody : ''
 			});
 
-		theAjax.addEvent('onSuccess', function(response) {
+		theAjax.addEventListener('onSuccess', function(response) {
 			/* server sends 1 on success, 0 on error */
 			if (response.indexOf('1') > -1) {
 				$(clickednode).getParent().getParent().dispose();
@@ -70,8 +71,8 @@ function addattach()
 	/* if not create one */
 	if (emptyRows.length < 1) {
 		var row = rows[rows.length-1].clone();
-		row.getElement('.attach-field').addEvent('change', addattach).value = '';
-		row.getElement('.clear-attach-field').addEvent('click', clearattach).value = '';
+		row.getElement('.attach-field').on('change', addattach).value = '';
+		row.getElement('.clear-attach-field').on('click', clearattach).value = '';
 		row.inject(tbody);
 	}
 }

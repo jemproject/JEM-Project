@@ -238,7 +238,7 @@ class JemModelVenue extends JemModelAdmin
 		$task        = $jinput->get('task', '', 'cmd');
 
 		// Check if we're in the front or back
-		$backend = (bool)$app->isAdmin();
+		$backend = (bool)$app->isClient('administrator');
 		$new     = (bool)empty($data['id']);
 
 		// Store IP of author only.
@@ -246,7 +246,16 @@ class JemModelVenue extends JemModelAdmin
 			$author_ip = $jinput->get('author_ip', '', 'string');
 			$data['author_ip'] = $author_ip;
 		}
-
+	
+		$data['modified'] = (isset($data['modified']) && !empty($data['modified'])) ? $data['modified'] : '0000-00-00 00:00:00';
+		$data['publish_up'] = (isset($data['publish_up']) && !empty($data['publish_up'])) ? $data['publish_up'] : '0000-00-00 00:00:00';
+		$data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : '0000-00-00 00:00:00';
+		$data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : '0000-00-00 00:00:00';
+		$data['attribs'] = (isset($data['attribs'])) ? $data['attribs'] : '';
+		$data['language'] = (isset($data['language'])) ? $data['language'] : '';
+		$data['latitude'] = (isset($data['latitude']) && !empty($data['latitude'])) ? $data['latitude'] : 0;
+		$data['longitude'] = (isset($data['longitude']) && !empty($data['longitude'])) ? $data['longitude'] : 0;
+	
 		// Store as copy - reset creation date, modification fields, hit counter, version
 		if ($task == 'save2copy') {
 			unset($data['created']);

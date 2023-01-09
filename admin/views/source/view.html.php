@@ -9,6 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+
 /**
  * Source view
  *
@@ -50,21 +56,21 @@ class JemViewSource extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		$user  = JemFactory::getUser();
 		$canDo = JemHelperBackend::getActions(0);
 
-		JToolBarHelper::title(JText::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
+		ToolbarHelper::title(Text::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
 
 		// Can save the item.
 		if ($canDo->get('core.edit')) {
-			JToolBarHelper::apply('source.apply');
-			JToolBarHelper::save('source.save');
+			ToolbarHelper::apply('source.apply');
+			ToolbarHelper::save('source.save');
 		}
 
-		JToolBarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editcss', true);
+		ToolbarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
+		ToolbarHelper::divider();
+		ToolbarHelper::help('editcss', true);
 	}
 }

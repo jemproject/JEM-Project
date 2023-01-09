@@ -186,7 +186,9 @@ if (MooTools.version == '1.11') {
 		}
 	});
 } else {
-	window.addEvent('domready', function() {
+	// window.addEvent('domready', function() {
+	jQuery(document).ready(function($){
+
 		toggler = $('submenu');
 		element = $('elconfig-document');
 		if(element) {

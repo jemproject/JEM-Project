@@ -83,7 +83,7 @@ class JemControllerAttendees extends JControllerLegacy
 						JemHelper::addLogEntry("Change user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
 						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg, $reg->id);
 						if ($reg_id) {
-							$res = $dispatcher->trigger('onEventUserRegistered', array($reg_id));
+							$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 							++$changed;
 						} else {
 							JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user ${uid}", $errMsg)), __METHOD__, JLog::DEBUG);
@@ -99,7 +99,7 @@ class JemControllerAttendees extends JControllerLegacy
 				} else {
 					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
 					if ($reg_id) {
-						$res = $dispatcher->trigger('onEventUserRegistered', array($reg_id));
+						$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 					} else {
 						JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user ${uid}", $errMsg)), __METHOD__, JLog::DEBUG);
 						if (!empty($errMsg)) {
@@ -157,7 +157,7 @@ class JemControllerAttendees extends JControllerLegacy
 			$modelAttendeeItem->setId($reg_id);
 			$entry = $modelAttendeeItem->getData();
 			if($modelAttendeeList->remove(array($reg_id))) {
-				$res = $dispatcher->trigger('onEventUserUnregistered', array($entry->event, $entry));
+				$res = $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
 			} else {
 				$error = true;
 			}
@@ -200,7 +200,7 @@ class JemControllerAttendees extends JControllerLegacy
 		{
 			JPluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
-			$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
+			$res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($id));
 
 			if ($attendee->waiting) {
 				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');

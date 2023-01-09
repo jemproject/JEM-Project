@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="2.5" method="upgrade">
+<extension type="component" method="upgrade">
 	<name>com_jem</name>
 	<creationDate>November 2022</creationDate>
 	<author>JEM Community</author>
@@ -7,7 +7,7 @@
 	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>2.3.5</version>
+	<version>4.0.0</version>
 	<description>COM_JEM_INSTALLATION_DESCRIPTION</description>
 
 	<!-- Runs on install/uninstall/update; New in 1.6 -->
@@ -20,6 +20,7 @@
 		<filename>router.php</filename>
 		<filename>index.html</filename>
 
+		<folder>services</folder>
 		<folder>classes</folder>
 		<folder>common</folder>
 		<folder>controllers</folder>

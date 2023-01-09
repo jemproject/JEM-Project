@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+// JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 ?>
@@ -140,7 +140,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+          <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
 		<?php if ($this->settings->get('global_display',1)) : ?>
   <div class="jem-limit-smallist">
@@ -194,7 +194,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 				<?php endif; ?>
 
 					<div class="jem-event-info-small jem-event-date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
-            <i class="fa fa-clock-o" aria-hidden="true"></i>
+            <i class="far fa-clock" aria-hidden="true"></i>
             <?php
               echo JemOutput::formatShortDateTime($row->dates, $row->times,
                 $row->enddates, $row->endtimes, $this->jemsettings->showtime);
@@ -208,7 +208,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 					<?php if ($this->jemsettings->showtitle == 1) : ?>
             <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <i class="fa fa-comment-o" aria-hidden="true"></i>
+              <i class="fa fa-comment" aria-hidden="true"></i>
               <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
               <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
@@ -238,22 +238,22 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<?php if ($this->jemsettings->showcity == 1) : ?>
             <?php if (!empty($row->city)) : ?>
               <div class="jem-event-info-small jem-event-city" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                <i class="fa fa-building-o" aria-hidden="true"></i>
+                <i class="fa fa-building" aria-hidden="true"></i>
                 <?php echo $this->escape($row->city); ?>
               </div>
             <?php else : ?>
-              <div class="jem-event-info-small jem-event-city"><i class="fa fa-building-o" aria-hidden="true"></i> -</div>
+              <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
             <?php endif; ?>
           <?php endif; ?>
 
 					<?php if ($this->jemsettings->showstate == 1) : ?>
             <?php if (!empty($row->state)) : ?>
               <div class="jem-event-info-small jem-event-state" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                <i class="fa fa-map-o" aria-hidden="true"></i>
+                <i class="fa fa-map" aria-hidden="true"></i>
                 <?php echo $this->escape($row->state); ?>
               </div>
             <?php else : ?>
-              <div class="jem-event-info-small jem-event-state"><i class="fa fa-map-o" aria-hidden="true"></i> -</div>
+              <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
             <?php endif; ?>
           <?php endif; ?>
 

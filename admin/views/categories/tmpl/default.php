@@ -7,11 +7,16 @@
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 // Include the component HTML helpers.
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.multiselect');
+HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+// HTMLHelper::_('behavior.tooltip');
+// HTMLHelper::_('behavior.multiselect');
+$wa = $this->document->getWebAssetManager();
+$wa->useScript('multiselect');
 
 $user		= JemFactory::getUser();
 $userId		= $user->get('id');
@@ -20,36 +25,51 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 $ordering 	= ($listOrder == 'a.lft');
 $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_jem&view=categories');?>" method="post" name="adminForm" id="adminForm">
-	<?php if (isset($this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-	<?php endif; ?>
+<form action="<?php echo Route::_('index.php?option=com_jem&view=categories');?>" method="post" name="adminForm" id="adminForm">
+	<?php //if (isset($this->sidebar)) : ?>
+	<!-- <div id="j-sidebar-container" class="span2">
+		<?php //echo $this->sidebar; ?>
+	</div> -->
+	<!-- <div id="j-main-container" class="span10"> -->
+	<?php //endif; ?>
+	<div id="j-main-container" class="j-main-container">
 		<fieldset id="filter-bar">
-			<div class="filter-search fltlft">
-				<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" />
-				<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<div class="row mb-3">
+				<div class="col-md-4">
+					<div class="input-group">  
+						<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >											
+						
+						<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
+							<span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<select name="filter_level" class="inputbox form-select m-0" onchange="this.form.submit()">
+						<option value=""><?php echo Text::_('JOPTION_SELECT_MAX_LEVELS');?></option>
+						<?php echo HTMLHelper::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level'));?>
+					</select>
+				</div>
+				<div class="col-md-2">
+					<select name="filter_published" class="inputbox form-select m-0" onchange="this.form.submit()">
+						<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
+						<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true);?>
+					</select>
+				</div>
+				<div class="col-md-3">
+					<select name="filter_access" class="inputbox form-select m-0" onchange="this.form.submit()">
+						<option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
+						<?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
+					</select>
+				</div>
 			</div>
+			<!-- <div class="filter-search fltlft">
+				<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" />
+				<button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			</div> -->
 
-			<div class="filter-select fltrt">
-				<select name="filter_level" class="inputbox" onchange="this.form.submit()">
-					<option value=""><?php echo JText::_('JOPTION_SELECT_MAX_LEVELS');?></option>
-					<?php echo JHtml::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level'));?>
-				</select>
-
-				<select name="filter_published" class="inputbox" onchange="this.form.submit()">
-					<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-					<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true);?>
-				</select>
-
-				<select name="filter_access" class="inputbox" onchange="this.form.submit()">
-					<option value=""><?php echo JText::_('JOPTION_SELECT_ACCESS');?></option>
-					<?php echo JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
-				</select>
-			</div>
 		</fieldset>
 		<div class="clr"> </div>
 
@@ -57,30 +77,30 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 			<thead>
 				<tr>
 					<th width="1%">
-						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+						<input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 					</th>
 					<th>
-						<?php echo JHtml::_('grid.sort', 'JGLOBAL_TITLE', 'a.catname', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.catname', $listDirn, $listOrder); ?>
 					</th>
 					<th width="5%" nowrap="nowrap">
-						<?php echo JText::_( 'COM_JEM_COLOR' ); ?>
+						<?php echo Text::_( 'COM_JEM_COLOR' ); ?>
 					</th>
-					<th width="15%"><?php echo JHtml::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $listDirn, $listOrder ); ?></th>
-					<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
+					<th width="15%"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $listDirn, $listOrder ); ?></th>
+					<th width="1%" class="center" nowrap="nowrap"><?php echo Text::_( 'COM_JEM_EVENTS' ); ?></th>
 					<th width="5%">
-						<?php echo JHtml::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
 					</th>
 					<th width="10%">
-						<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.lft', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.lft', $listDirn, $listOrder); ?>
 						<?php if ($saveOrder) :?>
-							<?php echo JHtml::_('grid.order',  $this->items, 'filesave.png', 'categories.saveorder'); ?>
+							<?php echo HTMLHelper::_('grid.order',  $this->items, 'filesave.png', 'categories.saveorder'); ?>
 						<?php endif; ?>
 					</th>
 					<th class="center" width="10%">
-						<?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 					</th>
 					<th width="1%" class="nowrap">
-						<?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+						<?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
 					</th>
 				</tr>
 			</thead>
@@ -110,12 +130,12 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 				?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center">
-							<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+							<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
 						</td>
 						<td>
 							<?php echo str_repeat('<span class="gi">|&mdash;</span>', $repeat) ?>
 							<?php if ($item->checked_out) : ?>
-								<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'categories.', $canCheckin); ?>
+								<?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'categories.', $canCheckin); ?>
 							<?php endif; ?>
 							<?php if ($canEdit || $canEditOwn) : ?>
 								<a href="<?php echo JRoute::_('index.php?option=com_jem&task=category.edit&id='.$item->id);?>">
@@ -126,9 +146,9 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 							<p class="smallsub" title="<?php echo $this->escape($item->path);?>">
 								<?php echo str_repeat('<span class="gtr">|&mdash;</span>', $repeat) ?>
 								<?php if (empty($item->note)) : ?>
-									<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias));?>
+									<?php echo Text::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias));?>
 								<?php else : ?>
-									<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS_NOTE', $this->escape($item->alias), $this->escape($item->note));?>
+									<?php echo Text::sprintf('JGLOBAL_LIST_ALIAS_NOTE', $this->escape($item->alias), $this->escape($item->note));?>
 								<?php endif; ?></p>
 						</td>
 						<td class="center">
@@ -138,12 +158,12 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 						</td>
 						<td class="center">
 							<?php if ($item->catgroup) : ?>
-								<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_GROUP_EDIT'), $item->catgroup, 'editlinktip'); ?>>
+								<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_GROUP_EDIT'), $item->catgroup, 'editlinktip'); ?>>
 								<a href="<?php echo $grouplink; ?>">
 									<?php echo $this->escape($item->catgroup); ?>
 								</a></span>
 							<?php elseif ($item->groupid) : ?>
-								<?php echo JText::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $item->groupid); ?>
+								<?php echo Text::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $item->groupid); ?>
 							<?php else : ?>
 								<?php echo '-'; ?>
 							<?php endif; ?>
@@ -152,7 +172,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 							<?php echo $item->assignedevents; ?>
 						</td>
 						<td class="center">
-							<?php echo JHtml::_('jgrid.published', $item->published, $i, 'categories.', $canChange);?>
+							<?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'categories.', $canChange);?>
 						</td>
 						<td class="order">
 							<?php if ($canChange) : ?>
@@ -178,9 +198,9 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 				<?php endforeach; ?>
 			</tbody>
 		</table>
-	<?php if (isset($this->sidebar)) : ?>
 	</div>
-	<?php endif; ?>
+	<?php //if (isset($this->sidebar)) : ?>
+	<?php //endif; ?>
 
 	<div>
 		<input type="hidden" name="task" value="" />
@@ -189,6 +209,6 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 		<input type="hidden" name="original_order_values" value="<?php echo implode(',', $originalOrders); ?>" />
 
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 	</div>
 </form>

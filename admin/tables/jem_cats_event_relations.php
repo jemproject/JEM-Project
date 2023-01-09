@@ -63,9 +63,10 @@ class jem_cats_event_relations extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;

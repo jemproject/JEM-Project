@@ -9,6 +9,11 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
 
 /**
  * View class for the JEM Settings screen
@@ -23,17 +28,22 @@ class JemViewSettings extends JemAdminView
 
 	public function display($tpl = null)
 	{
-		$app         = JFactory::getApplication();
-		$document    = JFactory::getDocument();
+		$app         = Factory::getApplication();
+		$document    = Factory::getDocument();
 		$form        = $this->get('Form');
 		$data        = $this->get('Data');
 		$state       = $this->get('State');
 		$config      = $this->get('ConfigInfo');
 		$jemsettings = $this->get('Data');
+		$this->document = Factory::getDocument();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css');
 
 		$style = '
 		    div.current fieldset.radio input {
@@ -60,16 +70,16 @@ class JemViewSettings extends JemAdminView
 		}
 
 		// Load Script
-		$document->addScript(JUri::root().'media/com_jem/js/colorpicker.js');
+		$document->addScript(Uri::root().'media/com_jem/js/colorpicker.js');
 
-		JHtml::_('behavior.modal', 'a.modal');
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.formvalidation');
-		JHtml::_('behavior.framework');
-
+		// HTMLHelper::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.framework');
+		HTMLHelper::_('jquery.framework');
 		// only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
 		}
 
@@ -93,18 +103,18 @@ class JemViewSettings extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_SETTINGS_TITLE'), 'settings');
-		JToolBarHelper::apply('settings.apply');
-		JToolBarHelper::save('settings.save');
-		JToolBarHelper::cancel('settings.cancel');
+		ToolbarHelper::title(Text::_('COM_JEM_SETTINGS_TITLE'), 'settings');
+		ToolbarHelper::apply('settings.apply');
+		ToolbarHelper::save('settings.save');
+		ToolbarHelper::cancel('settings.cancel');
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('settings', true);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('settings', true);
 	}
 
 	protected function WarningIcon()
 	{
-		$url = JUri::root();
+		$url = Uri::root();
 		$tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
 
 		return $tip;

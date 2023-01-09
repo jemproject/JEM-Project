@@ -155,7 +155,7 @@ class JemHelper
 				// trigger an event to let plugins handle whatever cleanup they want to do.
 				if (JPluginHelper::importPlugin('jem')) {
 					$dispatcher = JemFactory::getDispatcher();
-					$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
+					$dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
 				$db = JFactory::getDbo();
@@ -835,7 +835,7 @@ class JemHelper
 				{
 					JPluginHelper::importPlugin('jem');
 					$dispatcher = JemFactory::getDispatcher();
-					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($register_id));
+					$res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($register_id));
 				}
 			}
 		}
@@ -1163,9 +1163,9 @@ class JemHelper
 
 		if ($href) {
 			$href = JRoute::_ ($href);
-			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
+			$tip = '<span class="'.$class.'" data-bs-toggle="tooltip" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
 		} else {
-			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
+			$tip = '<span class="'.$class.'" data-bs-toggle="tooltip" title="'.$title.$tooltip.'">'.$text.'</span>';
 		}
 
 		return $tip;
@@ -1270,7 +1270,8 @@ class JemHelper
 	{
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
-
+		$document = JFactory::getDocument();
+		$url      = JUri::root();
 		if (!empty($suffix)) {
 			$suffix = '-' . $suffix;
 		}
@@ -1295,30 +1296,42 @@ class JemHelper
 					}
 				}
 			}
-
+			
 			if ($is_file) {
 				# we do have a valid file so we will use it.
-				$css = JHtml::_('stylesheet', $file, array(), false);
+				// $css = JHtml::_('stylesheet', $file, array(), false);
+				$css = $document->addStyleSheet($file);
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
-				$files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+				// $files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+				$files = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
-					$css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+					// $css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+					$css = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+
 				} else {
 					# no css for layout style configured, so use the default css
-					$css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+					// $css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+					$css = $document->addStyleSheet($url.'media/com_jem/css/'. $css. '.css');
+
 				}
 			}
 		} else {
 			# here we want to use the normal css
-			$files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+			// $files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+			$files = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+
 			if (!empty($files)) {
 				# we have to call this stupid function twice; no other way to know if something was loaded
-				$css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+				// $css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+				$css = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+
 			} else {
 				# no css for layout style configured, so use the default css
-				$css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+				// $css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+				$css = $document->addStyleSheet($url.'media/com_jem/css/'. $css. '.css');
+
 			}
 		}
 

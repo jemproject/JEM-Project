@@ -9,6 +9,10 @@
 defined('_JEXEC') or die;
 
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 /**
  * Housekeeping-View
  */
@@ -17,21 +21,23 @@ class JemViewHousekeeping extends JemAdminView
 
 	public function display($tpl = null) {
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$this->totalcats = $this->get('Countcats');
 
 		//only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
 		}
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Load Script
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		// add toolbar
 		$this->addToolbar();
@@ -45,11 +51,11 @@ class JemViewHousekeeping extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
+		ToolbarHelper::title(Text::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
 
-		JToolBarHelper::back();
-		JToolBarHelper::divider();
-		JToolBarHelper::help('housekeeping', true);
+		ToolbarHelper::back();
+		ToolbarHelper::divider();
+		ToolbarHelper::help('housekeeping', true);
 	}
 }
 ?>

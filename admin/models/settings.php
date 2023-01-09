@@ -111,7 +111,7 @@ class JemModelSettings extends JModelForm
 			if (!empty($fields)) {
 				// Bind the form fields to the table
 				if (!$settings->bind($data,'')) {
-					$this->setError($this->_db->getErrorMsg());
+					$this->setError($settings->getError());
 					return false;
 				}
 
@@ -134,7 +134,7 @@ class JemModelSettings extends JModelForm
 				$settings->id = 1;
 
 				if (!$settings->store()) {
-					$this->setError($this->_db->getErrorMsg());
+					$this->setError($settings->getError());
 					return false;
 				}
 			}

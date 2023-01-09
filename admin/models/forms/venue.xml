@@ -93,7 +93,7 @@
 		<field name="published" type="list"
 			label="JSTATUS"
 			description="JFIELD_PUBLISHED_DESC"
-			class="inputbox"
+			class="inputbox m-0"
 			filter="intval"
 			size="1"
 			default="1"
@@ -104,7 +104,7 @@
 		<field name="country" type="countryoptions"
 			label="COM_JEM_GLOBAL_FIELD_COUNTRY"
 			description="COM_JEM_GLOBAL_FIELD_COUNTRY_DESC"
-			class="select_country"
+			class="select_country m-0"
 		/>
 	</fieldset>
 

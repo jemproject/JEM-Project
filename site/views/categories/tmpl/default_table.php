@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 ?>
 
 <div class="table-responsive">
-	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 		<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 			<?php if ($this->jemsettings->showtitle == 1) : ?>

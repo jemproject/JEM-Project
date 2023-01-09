@@ -238,12 +238,18 @@ class JemModelCategory extends JModelAdmin
 		if ($table->parent_id != $data['parent_id'] || $data['id'] == 0) {
 			$table->setLocation($data['parent_id'], 'last-child');
 		}
-
+		$data['title'] = isset($data['title']) ? $data['title']  : '';
+		$data['note'] = isset($data['note']) ? $data['note']  : '';
+		$data['language'] = isset($data['language']) ? $data['language']  : '';
+		$data['path'] = isset($data['path']) ? $data['path']  : '';
+		$data['metadata'] = isset($data['metadata']) ? $data['metadata']  : '';
+		
 		// Alter the title for save as copy
 		if ($jinput->get('task', '') == 'save2copy') {
 			list ($title, $alias) = $this->generateNewTitle($data['parent_id'], $data['alias'], $data['title']);
 			$data['title'] = $title;
 			$data['alias'] = $alias;
+			
 			// also reset creation date, modification fields, hit counter, version
 			unset($data['created_time']);
 			unset($data['modified_time']);
@@ -259,7 +265,7 @@ class JemModelCategory extends JModelAdmin
 			$color = '';
 		}
 		$table->color = $color;
-
+		
 		// Bind the data.
 		if (!$table->bind($data)) {
 			$this->setError($table->getError());
@@ -279,7 +285,9 @@ class JemModelCategory extends JModelAdmin
 		}
 
 		// Trigger the onContentBeforeSave event.
-		$result = $dispatcher->trigger($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew));
+		// $result = $dispatcher->triggerEvent($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew));
+		$result = $dispatcher->triggerEvent($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew,''));
+		
 		if (in_array(false, $result, true)) {
 			$this->setError($table->getError());
 			return false;
@@ -287,12 +295,13 @@ class JemModelCategory extends JModelAdmin
 
 		// Store the data.
 		if (!$table->store()) {
+			
 			$this->setError($table->getError());
 			return false;
 		}
-
+		
 		// Trigger the onContentAfterSave event.
-		$dispatcher->trigger($this->event_after_save, array($this->option . '.' . $this->name, &$table, $isNew));
+		$dispatcher->triggerEvent($this->event_after_save, array($this->option . '.' . $this->name, &$table, $isNew));
 
 		// Rebuild the path for the category:
 		if (!$table->rebuildPath($table->id)) {
@@ -334,7 +343,7 @@ class JemModelCategory extends JModelAdmin
 			JPluginHelper::importPlugin('content');
 
 			// Trigger the onCategoryChangeState event.
-			$dispatcher->trigger('onCategoryChangeState', array($extension, $pks, $value));
+			$dispatcher->triggerEvent('onCategoryChangeState', array($extension, $pks, $value));
 
 			return true;
 		}
@@ -434,7 +443,7 @@ class JemModelCategory extends JModelAdmin
 		// If the parent is 0, set it to the ID of the root item in the tree
 		if (empty($parentId)) {
 			if (!$parentId = $table->getRootId()) {
-				$this->setError($db->getErrorMsg());
+				$this->setError($parentId->getError());
 				return false;
 			}
 			// Make sure we can create in root
@@ -455,7 +464,7 @@ class JemModelCategory extends JModelAdmin
 		$db->setQuery($query);
 		$count = $db->loadResult();
 
-		if ($error = $db->getErrorMsg()) {
+		if ($error = $count->getError()) {
 			$this->setError($error);
 			return false;
 		}
@@ -667,10 +676,10 @@ class JemModelCategory extends JModelAdmin
 			\Joomla\Utilities\ArrayHelper::toInteger($children);
 
 			// Check for a database error.
-			if ($db->getErrorNum()) {
-				$this->setError($db->getErrorMsg());
-				return false;
-			}
+			// if ($db->getErrorNum()) {
+			// 	$this->setError($db->getErrorMsg());
+			// 	return false;
+			// }
 		}
 
 		return true;
@@ -800,7 +809,7 @@ class JemModelCategory extends JModelAdmin
 
 			// TODO: use exception handling
 			if ($this->_db->execute() === false) {
-				$this->setError($this->_db->getErrorMsg());
+				$this->setError($this->_db->getError());
 				return false;
 			}
 		}
@@ -843,11 +852,20 @@ class JemModelCategory extends JModelAdmin
 		       . ' FROM #__jem_categories'
 		       . ' WHERE ' . $source . ' = ' . (int)$id;
 		$this->_db->setQuery( $query );
-		$rows = $this->_db->loadObjectList();
+		
 
 		// Make sure there aren't any errors
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+		try 
+		{
+			$rows = $this->_db->loadObjectList();
+		} 
+		catch (\InvalidArgumentException $e)
+		{
+			$this->setError($e->getMessage());			
 			return false;
 		}
 

@@ -7,7 +7,12 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Calendar-View
  */
@@ -18,14 +23,14 @@ class JemViewCalendar extends JemView
 	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Load tooltips behavior
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.framework');
+		// JHtml::_('behavior.tooltip');
+		// JHtml::_('behavior.framework');
 
 		// initialize variables
-		$document     = JFactory::getDocument();
+		$document     = Factory::getDocument();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$jemsettings  = JemHelper::config();
@@ -36,6 +41,7 @@ class JemViewCalendar extends JemView
 		$jinput       = $app->input;
 		$print        = $jinput->getBool('print', false);
 		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
+		$url 			= Uri::root();
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -72,7 +78,8 @@ class JemViewCalendar extends JemView
 		$document->addStyleDeclaration($style);
 
 		// add javascript (using full path - see issue #590)
-		JHtml::_('script', 'media/com_jem/js/calendar.js');
+		// JHtml::_('script', 'media/com_jem/js/calendar.js');
+		$document->addScript($url.'media/com_jem/js/calendar.js');
 
 		$year  = (int)$jinput->getInt('yearID', strftime("%Y"));
 		$month = (int)$jinput->getInt('monthID', strftime("%m"));
@@ -90,10 +97,10 @@ class JemViewCalendar extends JemView
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 		}
 		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		$document->setTitle($pagetitle);
@@ -111,7 +118,7 @@ class JemViewCalendar extends JemView
 		$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
 		$url_base = 'index.php?option=com_jem&view=calendar' . $partItemid;
 
-		$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
+		$print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
 
 		// init calendar
 		$cal = new JemCalendar($year, $month, 0);

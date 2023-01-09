@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\Factory;
 /**
  * Script file of JEM component
 */
@@ -68,7 +68,7 @@ class mod_jem_teaserInstallerScript
 	 */
 	private function getParam($name)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
 		$db->setQuery($query);
@@ -85,7 +85,7 @@ class mod_jem_teaserInstallerScript
 	private function updateParams216()
 	{
 		// get all "mod_jem..." entries
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('id, params');
 		$query->from('#__modules');

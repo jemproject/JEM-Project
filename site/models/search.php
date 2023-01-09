@@ -405,14 +405,23 @@ class JemModelSearch extends JModelLegacy
 		       . $where
 		       . ' ORDER BY c.lft'
 		       ;
-		$db->setQuery($query);
-		$mitems = $db->loadObjectList();
+		
+
+		try
+		{
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+		}
 
 		// Check for a database error.
-		if ($db->getErrorNum())
-		{
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
-		}
+		// if ($db->getErrorNum())
+		// {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
 
 		if (!$mitems) {
 			$mitems = array();

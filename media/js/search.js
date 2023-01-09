@@ -7,7 +7,9 @@
  * @author Sascha Karnatz
  */
 
-window.addEvent('domready', function(){
+// window.addEvent('domready', function(){
+	jQuery(document).ready(function($){
+
 	/*
 	$('filter_date').addEvent('change', function() {
 		this.form.submit();
@@ -15,7 +17,7 @@ window.addEvent('domready', function(){
 	*/
 
 	if ($('filter_continent')) {
-		$('filter_continent').addEvent('change', function() {
+		$('filter_continent').on('change', function() {
 			if (country = $('filter_country')) {
 				country.selectedIndex = 0;
 			}
@@ -27,7 +29,7 @@ window.addEvent('domready', function(){
 	}
 
 	if (country = $('filter_country')) {
-		country.addEvent('change', function() {
+		country.on('change', function() {
 			if (city = $('filter_city')) {
 				city.selectedIndex = 0;
 			}
@@ -36,13 +38,13 @@ window.addEvent('domready', function(){
 	}
 
 	if (city = $('filter_city')) {
-		city.addEvent('change', function() {
+		city.on('change', function() {
 			this.form.submit();
 		});
 	}
 
 	if ($('filter_category')) {
-		$('filter_category').addEvent('change', function() {
+		$('filter_category').on('change', function() {
 			this.form.submit();
 		});
 	}

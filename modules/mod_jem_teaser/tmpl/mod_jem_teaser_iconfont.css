@@ -14,18 +14,18 @@ div#jemmoduleteaser .venue-title:before {
 	font:normal normal normal 1.4em/1 FontAwesome;
 }
 
-div#jemmoduleteaser .time:before {
+/* div#jemmoduleteaser .time:before {
 	content:"\f017";
-}
+} */
 
 /*div#jemmoduleteaser div.date:before {
 	content:"\f133";
 }*/
 
-div#jemmoduleteaser .category:before {
+/* div#jemmoduleteaser .category:before {
 	content:"\f02b";
-}
+} */
 
-div#jemmoduleteaser .venue-title:before {
+/* div#jemmoduleteaser .venue-title:before {
 	content:"\f041";
-}
+} */

@@ -85,11 +85,19 @@ class JFormFieldCategoryParent extends JFormFieldList
 		// Get the options.
 		$db->setQuery($query);
 
-		$options = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+		// if ($db->getErrorNum()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+		// }
+		try 
+		{
+			$options = $db->loadObjectList();
+		} 
+		catch (\InvalidArgumentException $e)
+		{
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.

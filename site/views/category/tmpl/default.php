@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal');
+// JHtml::_('behavior.modal');
 ?>
 <div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">

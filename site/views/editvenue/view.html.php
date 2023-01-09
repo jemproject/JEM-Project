@@ -7,7 +7,11 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Editvenue-View
  */
@@ -26,16 +30,16 @@ class JemViewEditvenue extends JemView
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$user        = JemFactory::getUser();
-		$document    = JFactory::getDocument();
+		$document    = Factory::getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
 		$pathway     = $app->getPathway();
-		$url         = JUri::root();
+		$url         = Uri::root();
 
-		$language    = JFactory::getLanguage();
+		$language    = Factory::getLanguage();
 		$language    = $language->getTag();
 		$language    = substr($language, 0,2);
 
@@ -53,13 +57,13 @@ class JemViewEditvenue extends JemView
 
 		// check for data error
 		if (empty($item)) {
-			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 			return false;
 		}
 
 		// check for guest
 		if (!$user || $user->id == 0) {
-			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 
@@ -72,7 +76,7 @@ class JemViewEditvenue extends JemView
 		}
 
 		if ($authorised !== true) {
-			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 
@@ -81,8 +85,8 @@ class JemViewEditvenue extends JemView
 		                                && $menuitem->query['view']   == 'editvenue'
 		                                && 0 == $item->id); // menu item is always for new venues
 
-		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITVENUE_VENUE_ADD')
-		                          : JText::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
+		$title = ($item->id == 0) ? Text::_('COM_JEM_EDITVENUE_VENUE_ADD')
+		                          : Text::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
 
 		if ($useMenuItemParams) {
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
@@ -140,9 +144,9 @@ class JemViewEditvenue extends JemView
 			return false;
 		}
 
-		JHtml::_('behavior.framework');
-		JHtml::_('behavior.formvalidation');
-		JHtml::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.framework');
+		// HTMLHelper::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.tooltip');
 
 		$access2      = JemHelper::getAccesslevelOptions(true);
 		$this->access = $access2;
@@ -154,8 +158,11 @@ class JemViewEditvenue extends JemView
 		JemHelper::loadCustomTag();
 
 		// Load script
-		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		JHtml::_('script', 'com_jem/other.js', false, true);
+		
+		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/other.js', false, true);
+		$document->addScript($url.'media/com_jem/js/attachments.js');
+		$document->addScript($url.'media/com_jem/js/other.js');
 		$key = trim($settings->get('global_googleapi', ''));
 		$document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
@@ -164,8 +171,9 @@ class JemViewEditvenue extends JemView
 
 		// JQuery scripts
 		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
+		// HTMLHelper::_('script', 'com_jem/jquery.geocomplete.js', false, true);
+		$document->addScript($url.'media/com_jem/js/jquery.geocomplete.js');
 		// No permissions required/useful on this view
 		$permissions = new stdClass();
 
@@ -174,7 +182,7 @@ class JemViewEditvenue extends JemView
 		$this->settings      = $settings;
 		$this->permissions   = $permissions;
 		$this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
-		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
+		$this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
 		$this->user          = $user;
 
 		if (!$publisher) {
@@ -183,9 +191,9 @@ class JemViewEditvenue extends JemView
 		}
 
 		// configure image field: show max. file size, and possibly mark field as required
-		$tip = JText::_('COM_JEM_UPLOAD_IMAGE');
+		$tip = Text::_('COM_JEM_UPLOAD_IMAGE');
 		if ((int)$jemsettings->sizelimit > 0) {
-			$tip .= ' <br/>' . JText::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+			$tip .= ' <br/>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
 		}
 		$this->form->setFieldAttribute('userfile', 'description', $tip);
 		if ($jemsettings->imageenabled == 2) {
@@ -202,14 +210,14 @@ class JemViewEditvenue extends JemView
 	 */
 	protected function _prepareDocument()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$title = $this->params->get('page_title');
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+			$title = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
 		}
 		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = Text::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		$this->document->setTitle($title);
 

@@ -8,7 +8,10 @@
  */
 
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class Export
@@ -24,11 +27,13 @@ class JemViewExport extends JemAdminView
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document	= JFactory::getDocument();
+		$document	= Factory::getDocument();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories = $this->get('Categories');
 
@@ -49,11 +54,11 @@ class JemViewExport extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
+		ToolbarHelper::title(Text::_('COM_JEM_EXPORT'), 'tableexport');
 
-		JToolBarHelper::back();
-		JToolBarHelper::divider();
-		JToolBarHelper::help('export', true);
+		ToolbarHelper::back();
+		ToolbarHelper::divider();
+		ToolbarHelper::help('export', true);
 	}
 }
 ?>

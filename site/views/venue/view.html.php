@@ -7,7 +7,11 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die ();
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Venue-View
  */
@@ -32,22 +36,23 @@ class JemViewVenue extends JemView
 			### Venue Calendar view ###
 
 			// Load tooltips behavior
-			JHtml::_('behavior.tooltip');
+			// HTMLHelper::_('behavior.tooltip');
 
 			// initialize variables
-			$app         = JFactory::getApplication();
-			$document    = JFactory::getDocument();
+			$app         = Factory::getApplication();
+			$document    = Factory::getDocument();
 			$menu        = $app->getMenu();
 			$menuitem    = $menu->getActive();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$params      = $app->getParams();
-			$uri         = JFactory::getURI();
+			// $uri         = Factory::getURI();
+			$uri          = Uri::getInstance();
 			$pathway     = $app->getPathWay();
 			$jinput      = $app->input;
 			$print       = $jinput->getBool('print', false);
 			$user        = JemFactory::getUser();
-
+			$url 			= Uri::root();
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCss('calendar');
@@ -62,7 +67,7 @@ class JemViewVenue extends JemView
 			$venue = $this->get('Venue');
 			// check for data error
 			if (empty($venue)) {
-				$app->enqueueMessage(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+				$app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
 				return false;
 			}
 
@@ -79,8 +84,8 @@ class JemViewVenue extends JemView
 			$document->addStyleDeclaration ($style);
 
 			// add javascript (using full path - see issue #590)
-			JHtml::_('script', 'media/com_jem/js/calendar.js');
-
+			// HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
+			$document->addScript($url.'media/com_jem/js/calendar.js');
 			// Retrieve year/month variables
 			$year = $jinput->get('yearID', strftime("%Y"),'int');
 			$month = $jinput->get('monthID', strftime("%m"),'int');
@@ -97,10 +102,10 @@ class JemViewVenue extends JemView
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+				$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 			}
 			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+				$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 			}
 
 			$document->setTitle($pagetitle);
@@ -120,7 +125,7 @@ class JemViewVenue extends JemView
 			$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
 			$url_base = 'index.php?option=com_jem&view=venue&layout=calendar' . $partVenid . $partItemid;
 
-			$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
+			$print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
 
 			// init calendar
 			$cal = new JemCalendar($year, $month, 0);
@@ -146,22 +151,23 @@ class JemViewVenue extends JemView
 			### Venue List view ###
 
 			// initialize variables
-			$app         = JFactory::getApplication();
-			$document    = JFactory::getDocument();
+			$app         = Factory::getApplication();
+			$document    = Factory::getDocument();
 			$menu        = $app->getMenu();
 			$menuitem    = $menu->getActive();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$params      = $app->getParams('com_jem');
 			$pathway     = $app->getPathWay ();
-			$uri         = JFactory::getURI();
+			// $uri         = Factory::getURI();
+			$uri          = Uri::getInstance();
 			$jinput      = $app->input;
 			$task        = $jinput->getCmd('task', '');
 			$print       = $jinput->getBool('print', false);
 			$user        = JemFactory::getUser();
 			$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-			JHtml::_('behavior.tooltip');
+			// HTMLHelper::_('behavior.tooltip');
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -179,7 +185,7 @@ class JemViewVenue extends JemView
 
 			// check for data error
 			if (empty($venue)) {
-				$app->enqueueMessage(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+				$app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
 				return false;
 			}
 
@@ -213,9 +219,9 @@ class JemViewVenue extends JemView
 			// Add feed links
 			$link = '&format=feed&id='.$venue->id.'&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-			$this->document->addHeadLink(JRoute::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
+			$this->document->addHeadLink(Route::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
+			$this->document->addHeadLink(Route::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
 			// pathway, page title, page heading
 			if ($useMenuItemParams) {
@@ -229,29 +235,29 @@ class JemViewVenue extends JemView
 				$pagetitle   = $venue->venue;
 				$pageheading = $pagetitle;
 				$params->set('show_page_heading', 1); // ensure page heading is shown
-				$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getVenueRoute($venue->slug)));
+				$pathway->addItem($pagetitle, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
 			}
 			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// create the pathway
 			if ($task == 'archive') {
-				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
-				$print_link = JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
-				$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
-				$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+				$pathway->addItem (Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
+				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
+				$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			} else {
-				//$pathway->addItem($venue->venue, JRoute::_(JemHelperRoute::getVenueRoute($venue->slug)));
-				$print_link = JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+				//$pathway->addItem($venue->venue, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
+				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
 			}
 
 			$params->set('page_heading', $pageheading);
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+				$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
 			}
 			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+				$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 			}
 
 			// set Page title & Meta data
@@ -306,21 +312,21 @@ class JemViewVenue extends JemView
 			$jemsettings->showlocate = 0;
 
 			if ($jemsettings->showtitle == 1) {
-				$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
+				$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_TITLE'));
 			}
 			if ($jemsettings->showlocate == 1) {
-				$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+				$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
 			}
 			if ($jemsettings->showcity == 1) {
-				$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
+				$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
 			}
 			if ($jemsettings->showcat == 1) {
-				$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+				$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
 			}
 			if ($jemsettings->showstate == 1) {
-				$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
+				$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+			$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 			$lists['search'] = $search;
 
 			// don't show venue-related columns on Venue view

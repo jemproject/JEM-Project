@@ -26,7 +26,7 @@ class JFormFieldHits extends JFormField
 	 */
 	protected function getInput()
 	{
-		$onclick	= ' onclick="document.id(\''.$this->id.'\').value=\'0\';"';
+		$onclick	= ' onclick="document.getElementById(\''.$this->id.'\').value=\'0\';"';
 
 		return '<input style="border:0;" type="text" name="'.$this->name.'" id="'.$this->id.'" value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'" readonly="readonly" /><input type="button"'.$onclick.' value="'.JText::_('COM_JEM_RESET_HITS').'" class="button"/>';
 	}

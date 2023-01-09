@@ -8,6 +8,10 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
 $options = array(
     'onActive' => 'function(title, description){
         description.setStyle("display", "block");
@@ -23,74 +27,93 @@ $options = array(
 );
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=help'); ?>" method="post" name="adminForm" id="adminForm">
-	<?php if (isset($this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-	<?php endif; ?>
-		<table border="1" class="adminform">
-			<tr>
-				<td colspan="2">
-					<table style="width:100%">
-						<tr>
-							<td>
-								<strong><?php echo JText::_('COM_JEM_SEARCH'); ?></strong>
-								<input class="text_area" type="hidden" name="option" value="com_jem" />
-								<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->helpsearch;?>" class="inputbox" />
-								<input type="submit" value="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>" class="button" />
-								<input type="button" value="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>" class="button" onclick="f=document.adminForm;f.filter_search.value='';f.submit()" />
-							</td>
-							<td style="text-align:right">
-								<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_HOME'); ?></a>
-								|
-								<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_GET_HELP'); ?></a>
-								|
-								<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/givehelp.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_GIVE_HELP'); ?></a>
-								|
-								<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_CREDITS'); ?></a>
-								|
-								<?php echo JHtml::_('link', 'https://www.gnu.org/licenses/gpl-2.0.html', JText::_('COM_JEM_LICENSE'), array('target' => 'helpFrame')) ?>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
+
+	<div id="j-main-container" class="j-main-container">
+	    <div class="row mb-3">
+		   <div class="col-md-12">
+				<fieldset id="filter-bar" class=" mb-3">
+					<div class="row mb-3">
+						<div class="col-md-4">
+							<div class="input-group">  
+								<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->helpsearch;?>"  inputmode="search" onChange="document.adminForm.submit();" >											
+								
+								<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
+									<span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+							</div>
+						</div>
+						<div class="col-md-8">
+							<div class="filter-select fltrt">
+									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_HOME'); ?></a>
+									|
+									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_GET_HELP'); ?></a>
+									|
+									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/givehelp.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_GIVE_HELP'); ?></a>
+									|
+									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_CREDITS'); ?></a>
+									|
+									<?php echo HTMLHelper::_('link', 'https://www.gnu.org/licenses/gpl-2.0.html', Text::_('COM_JEM_LICENSE'), array('target' => 'helpFrame')) ?>
+								
+							</div>
+						</div>
+					</div>
+				</fieldset>
+		   </div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div id="treecellhelp" class="w-100">
+					<div class="accordion" id="accordionHelpForm">
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="det-pane-header">
+							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#det-pane-details" aria-expanded="true" aria-controls="det-pane-details">
+								<?php echo Text::_('COM_JEM_SCREEN_HELP'); ?>
+							</button>
+							</h2>
+							<div id="det-pane-details" class="accordion-collapse collapse show" aria-labelledby="det-pane-header" data-bs-parent="#accordionHelpForm">
+								<div class="accordion-body">
+									<fieldset class="panelform">
+									<table class="adminlist">
+										<?php
+										foreach ($this->toc as $k=>$v) {
+											echo '<tr>';
+											echo '<td>';
+											echo HTMLHelper::Link('components/com_jem/help/'.$this->langTag.'/'.$k, $v, array('target' => 'helpFrame'));
+											echo '</td>';
+											echo '</tr>';
+										}
+										?>
+									</table>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div id="datacellhelp" class="w-100">
+					<fieldset title="<?php echo Text::_('COM_JEM_HELP_VIEW'); ?>">
+						<legend>
+							<?php echo Text::_('COM_JEM_HELP_VIEW'); ?>
+						</legend>
+							<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame w-100" height="600px"></iframe>
+					</fieldset>
+				</div>
+			</div>
+		</div>
 		<div class="clr"> </div>
-		<div id="treecellhelp" class="width-20 fltleft">
-			<?php echo JHtml::_('sliders.start', 'det-pane', $options); ?>
-			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_SCREEN_HELP'), 'help'); ?>
-				<table class="adminlist">
-					<?php
-					foreach ($this->toc as $k=>$v) {
-						echo '<tr>';
-						echo '<td>';
-						echo JHtml::Link('components/com_jem/help/'.$this->langTag.'/'.$k, $v, array('target' => 'helpFrame'));
-						echo '</td>';
-						echo '</tr>';
-					}
-					?>
-				</table>
-			<?php echo JHtml::_('sliders.end');?>
-		</div>
-		<div id="datacellhelp" class="width-80 fltrt">
-			<fieldset title="<?php echo JText::_('COM_JEM_HELP_VIEW'); ?>">
-				<legend>
-					<?php echo JText::_('COM_JEM_HELP_VIEW'); ?>
-				</legend>
-					<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame"></iframe>
-			</fieldset>
-		</div>
-	<?php if (isset($this->sidebar)) : ?>
 	</div>
-	<?php endif; ?>
+
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="help" />
 	<input type="hidden" name="task" value="" />
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
-<?php
-//keep session alive
-JHtml::_('behavior.keepalive');
+<?php 
+$wa = $this->document->getWebAssetManager();
+$wa->useScript('keepalive');
+
 ?>

@@ -20,9 +20,9 @@ div#jemmodulewide span.event-title:before {
 	content:"\f024";
 }
 
-div#jemmodulewide .time:before {
+/* div#jemmodulewide .time:before {
 	content:"\f017";
-}
+} */
 
 div#jemmodulewide div.date:before {
 	content:"\f133";

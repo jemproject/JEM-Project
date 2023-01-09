@@ -184,7 +184,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// bind it to the table
 		if (!$row->bind($data)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($row->getError(), 'error');
 			return false;
 		}
 
@@ -271,7 +271,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// Store it in the db
 		if (!$row->store()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($row->getError(), 'error');
 			return false;
 		}
 

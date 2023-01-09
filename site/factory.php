@@ -73,6 +73,9 @@ abstract class JemFactory extends JFactory
 	 */
 	public static function getDispatcher()
 	{
+		if (version_compare(JVERSION, '4.0', 'ge')) {
+			return JFactory::getApplication();
+		} else
 		if (version_compare(JVERSION, '3.0', 'ge')) {
 			return JEventDispatcher::getInstance();
 		} else {

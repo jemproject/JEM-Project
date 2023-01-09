@@ -9,6 +9,8 @@
 */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 /**
@@ -32,7 +34,7 @@ abstract class ModJemJubileeHelper
 		static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l', 'md' => 'md');
 		static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '', 'md' => '');
 
-		$db     = JFactory::getDBO();
+		$db     = Factory::getDBO();
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -173,9 +175,9 @@ abstract class ModJemJubileeHelper
 			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
 		}
 
-		if ($params->get('flyer_link_type', 0) == 1) {
-			JHtml::_('behavior.modal', 'a.flyermodal');
-		}
+		// if ($params->get('flyer_link_type', 0) == 1) {
+		// 	JHtml::_('behavior.modal', 'a.flyermodal');
+		// }
 
 		####
 		# Retrieve the available Events
@@ -358,8 +360,8 @@ abstract class ModJemJubileeHelper
 	 */
 	protected static function _get_local_now($cleartime = true)
 	{
-		$app    = JFactory::getApplication();
-		$user   = JFactory::getUser();
+		$app    = Factory::getApplication();
+		$user   = Factory::getUser();
 		$offset = $app->get('offset');
 		$userTz = $user->getParam('timezone', $offset);
 

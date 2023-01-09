@@ -167,7 +167,7 @@ class JemModelSource extends JModelForm
 		$ftp = JClientHelper::getCredentials('ftp');
 
 		// Trigger the onExtensionBeforeSave event.
-		$result = $dispatcher->trigger('onExtensionBeforeSave', array('com_jem.source', $data, false));
+		$result = $dispatcher->triggerEvent('onExtensionBeforeSave', array('com_jem.source', $data, false));
 		if (in_array(false, $result, true)) {
 			$this->setError(JText::sprintf('COM_JEM_CSSMANAGER_ERROR_FAILED_TO_SAVE_FILENAME', $file));
 			return false;
@@ -193,7 +193,7 @@ class JemModelSource extends JModelForm
 		}
 
 		// Trigger the onExtensionAfterSave event.
-		$dispatcher->trigger('onExtensionAfterSave', array('com_jem.source', $data, false));
+		$dispatcher->triggerEvent('onExtensionAfterSave', array('com_jem.source', $data, false));
 
 		return true;
 	}

@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+// JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
@@ -127,7 +127,7 @@ $this->lists['sort_by'] = JHtml::_('select.genericlist', $sort_by, 'sort_by', ar
 				<?php echo $this->lists['filter'].'&nbsp;'; ?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
 				<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				&nbsp;
 			</div>
 			<div class="jem_fleft" style="white-space:nowrap;">

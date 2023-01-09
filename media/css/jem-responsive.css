@@ -172,6 +172,7 @@ body.com_jem.body-overlayed {
 #jem #limit {
     padding: 0;
     margin: 0;
+    width: 80px;
 }
 
 #jem .jem_limit {
@@ -234,13 +235,15 @@ body.com_jem.body-overlayed {
 }
 
 #jem .icon-arrow-up-3::before {
-    font-family: FontAwesome !important;
-    content: "\00a0\f0de" !important;
+    /* font-family: FontAwesome !important; */
+    /* content: "\00a0\f0de" !important; */
+    content: "\f0de" !important;
 }
 
 #jem .icon-arrow-down-3::before {
-    font-family: FontAwesome !important;
-    content: "\00a0\f0dd" !important;
+    /* font-family: FontAwesome !important; */
+    /* content: "\00a0\f0dd" !important; */
+    content: "\f0dd" !important;
 }
 
 #jem img.icon-inline {

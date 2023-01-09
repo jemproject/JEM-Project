@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal', 'a.flyermodal');
+// JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">

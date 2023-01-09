@@ -107,12 +107,20 @@ class JemModelCategoryelement extends JModelLegacy
 				// . ' ORDER BY c.parent_id, c.ordering';
 				. $orderby;
 
-		$db->setQuery($query);
-		$mitems = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// if ($db->getErrorNum()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
+		try
+		{
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {

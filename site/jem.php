@@ -27,7 +27,8 @@ require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-
+$wa = JFactory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('jquery');
 // create JEM's file logger
 JemHelper::addFileLogger();
 

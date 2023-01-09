@@ -29,13 +29,13 @@ class JFormFieldModal_Venue extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';
-		$script[] = '        document.id("'.$this->id.'_id").value = id;';
-		$script[] = '        document.id("'.$this->id.'_name").value = venue;';
+		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '        document.getElementById("'.$this->id.'_name").value = venue;';
 		$script[] = '        SqueezeBox.close();';
 		$script[] = '    }';
 
@@ -53,10 +53,18 @@ class JFormFieldModal_Venue extends JFormField
 		$query->where(array('id='.(int)$this->value));
 		$db->setQuery($query);
 
-		$venue = $db->loadResult();
+		
 
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// if ($error = $db->getErrorMsg()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
+		try
+		{
+			$venue = $db->loadResult();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($venue)) {

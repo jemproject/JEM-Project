@@ -9,7 +9,10 @@
 
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 /**
  * View class: Attendee
  */
@@ -18,19 +21,22 @@ class JemViewAttendee extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$document = JFactory::getDocument();
-		$jinput   = JFactory::getApplication()->input;
+		$document = Factory::getDocument();
+		$jinput   = Factory::getApplication()->input;
 
 		$this->jemsettings = JemHelper::config();
 
 		// Load the form validation behavior
-		JHtml::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.formvalidation');
 
 		//get vars
 		$event_id = $jinput->getInt('event', 0);
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		//Get data from the model
 		$row = $this->get('Data');
@@ -40,7 +46,7 @@ class JemViewAttendee extends JViewLegacy {
 		// TODO: On J! 2.5 we need last param 0 because it defaults to 1 activating a useless feature.
 		//       On J! 3.x this param and the useless feature has been removed so we should remove last param.
 		//       Such changes are of sort "grrr".
-		$lists['users'] = JHtml::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
+		$lists['users'] = HTMLHelper::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
 
 		//assign data to template
 		$this->lists 	= $lists;
@@ -59,42 +65,42 @@ class JemViewAttendee extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		//get vars
-		$cid        = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$cid        = Factory::getApplication()->input->get('cid', array(), 'array');
 		$user       = JemFactory::getUser();
 		$checkedOut = false; // don't know, table hasn't such a field
 		$canDo      = JemHelperBackend::getActions();
 
 		if (empty($cid[0])) {
-			JToolBarHelper::title(JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
+			ToolbarHelper::title(Text::_('COM_JEM_ADD_ATTENDEE'), 'users');
 		} else {
-			JToolBarHelper::title(JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
+			ToolbarHelper::title(Text::_('COM_JEM_EDIT_ATTENDEE'), 'users');
 		}
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
-			JToolBarHelper::apply('attendee.apply');
-			JToolBarHelper::save('attendee.save');
+			ToolbarHelper::apply('attendee.apply');
+			ToolbarHelper::save('attendee.save');
 		}
 
 		if (!$checkedOut && $canDo->get('core.create')) {
-			JToolBarHelper::save2new('attendee.save2new');
+			ToolbarHelper::save2new('attendee.save2new');
 		}
 
 		// If an existing item, can save to a copy.
 		if (!empty($cid[0]) && $canDo->get('core.create')) {
-			JToolBarHelper::save2copy('attendee.save2copy');
+			ToolbarHelper::save2copy('attendee.save2copy');
 		}
 
 		if (empty($cid[0])) {
-			JToolBarHelper::cancel('attendee.cancel');
+			ToolbarHelper::cancel('attendee.cancel');
 		} else {
-			JToolBarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editattendee', true);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('editattendee', true);
 	}
 }

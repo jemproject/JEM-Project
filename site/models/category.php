@@ -105,7 +105,9 @@ class JemModelCategory extends JemModelEventslist
 		$menuParams = new JRegistry;
 
 		if ($menu = $app->getMenu()->getActive()) {
-			$menuParams->loadString($menu->params);
+			// $menu_params = $menu->getParams();
+			// $menuParams->loadString($menu->params);
+			$menuParams->loadString($menu->getParams());
 		}
 
 		$mergedParams = clone $menuParams;

@@ -161,7 +161,7 @@ class JemModelGroups extends JModelList
 			$this->_db->setQuery($query);
 
 			if ($this->_db->execute() === false) {
-				$this->setError($this->_db->getErrorMsg());
+				$this->setError($this->_db->getError());
 				return false;
 			}
 
@@ -172,7 +172,7 @@ class JemModelGroups extends JModelList
 			$this->_db->setQuery($query);
 
 			if ($this->_db->execute() === false) {
-				$this->setError($this->_db->getErrorMsg());
+				$this->setError($this->_db->getError());
 				return false;
 			}
 		}

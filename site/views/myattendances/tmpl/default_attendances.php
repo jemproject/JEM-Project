@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+// JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 ?>
@@ -37,7 +37,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
 			<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>
 
@@ -51,7 +51,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<?php endif; ?>
 
 	<div class="table-responsive">
-		<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
+		<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
 			<colgroup>
 				<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 				<?php if ($this->jemsettings->showtitle == 1) : ?>

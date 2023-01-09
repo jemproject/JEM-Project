@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die; ?>
 
-<table style="width: 100%">
+<table class="table" style="width: 100%">
 	<tr>
 		<td class="sectionname" width="100%"><span
 			style="color: #C24733; font-size: 18px; font-weight: bold;"><?php echo JText::_( 'COM_JEM_REGISTERED_USER' ); ?>

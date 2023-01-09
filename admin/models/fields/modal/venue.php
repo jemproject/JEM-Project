@@ -29,14 +29,15 @@ class JFormFieldModal_Venue extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';
-		$script[] = '        document.id("'.$this->id.'_id").value = id;';
-		$script[] = '        document.id("'.$this->id.'_name").value = venue;';
-		$script[] = '        SqueezeBox.close();';
+		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '        document.getElementById("'.$this->id.'_name").value = venue;';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#venue-modal-1").modal("hide");';
 		$script[] = '    }';
 
 		// Add to document head
@@ -51,12 +52,19 @@ class JFormFieldModal_Venue extends JFormField
 		$query->select('venue');
 		$query->from('#__jem_venues');
 		$query->where(array('id='.(int)$this->value));
-		$db->setQuery($query);
+		
 
-		$venue = $db->loadResult();
-
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// if ($error = $db->getErrorMsg()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
+		try
+		{
+			$db->setQuery($query);
+			$venue = $db->loadResult();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (empty($venue)) {
@@ -72,10 +80,28 @@ class JFormFieldModal_Venue extends JFormField
 		// The venue select button
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			JText::_('COM_JEM_SELECT').'</a>';
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'venue-modal-1',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => JText::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.JText::_('COM_JEM_SELECT').'
+		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
+
+		
+
+
+
 
 		// The active venue id field
 		if (0 == (int)$this->value) {

@@ -29,13 +29,13 @@ class JFormFieldModal_Contact extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectContact_'.$this->id.'(id, name, object) {';
-		$script[] = '        document.id("'.$this->id.'_id").value = id;';
-		$script[] = '        document.id("'.$this->id.'_name").value = name;';
+		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '        document.getElementById("'.$this->id.'_name").value = name;';
 		$script[] = '        SqueezeBox.close();';
 		$script[] = '    }';
 
@@ -53,10 +53,19 @@ class JFormFieldModal_Contact extends JFormField
 		$query->where(array('id='.(int)$this->value));
 		$db->setQuery($query);
 
-		$contact = $db->loadResult();
+		// $contact = $db->loadResult();
 
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// if ($error = $db->getErrorMsg()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
+
+		try
+		{
+			$contact = $db->loadResult();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($contact)) {

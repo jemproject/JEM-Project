@@ -9,13 +9,15 @@
 */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 
 if ($flyer_link_type == 1) {
-	JHtml::_('behavior.modal', 'a.flyermodal');
+	// JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
 } elseif ($flyer_link_type == 0) {
 	$modal = 'notmodal';
@@ -71,7 +73,7 @@ if ($flyer_link_type == 1) {
 						<div>
 							<?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
 							<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="<?php echo $modal;?>"
-							   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : JText::_('MOD_JEM_BANNER_CLICK_TO_ENLARGE'); ?> ">
+							   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('MOD_JEM_BANNER_CLICK_TO_ENLARGE'); ?> ">
 								<img class="float_right <?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
 							</a>
 						</div>
@@ -167,7 +169,7 @@ if ($flyer_link_type == 1) {
 			<?php endif; ?>
 		<?php endforeach; ?>
 	<?php else : ?>
-		<?php echo JText::_('MOD_JEM_BANNER_NO_EVENTS'); ?>
+		<?php echo Text::_('MOD_JEM_BANNER_NO_EVENTS'); ?>
 	<?php endif; ?>
 	</div>
 </div>

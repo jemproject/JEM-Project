@@ -108,14 +108,22 @@ class JemTableGroup extends JTable
 		$query->update($this->_db->quoteName($this->_tbl));
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
-		$this->_db->setQuery($query . $checkin);
-		$this->_db->execute();
+	
 
 		// Check for a database error.
 		// TODO: use exception handling
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+		try
+		{
+			$this->_db->setQuery($query . $checkin);
+			$this->_db->execute();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.

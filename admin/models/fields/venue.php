@@ -33,14 +33,15 @@ class JFormFieldVenue extends JFormFieldList
 	protected function getInput()
 	{
 		// Load the modal behavior script.
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// Build the script.
 		$script = array();
 		$script[] = '	function elSelectVenue(id, venue, object) {';
 		$script[] = '		document.getElementById("'.$this->id.'_id").value = id;';
 		$script[] = '		document.getElementById("'.$this->id.'_name").value = venue;';
-		$script[] = '		SqueezeBox.close();';
+		// $script[] = '		SqueezeBox.close();';
+		$script[] = '        $("#venue-modal").modal("hide");';
 		$script[] = '	}';
 
 		// Add the script to the document head.
@@ -56,10 +57,15 @@ class JFormFieldVenue extends JFormFieldList
 			' FROM #__jem_venues' .
 			' WHERE id = '.(int) $this->value
 		);
-		$title = $db->loadResult();
+		
 
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		try
+		{
+			$title = $db->loadResult();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($title)) {
@@ -75,7 +81,21 @@ class JFormFieldVenue extends JFormFieldList
 		//
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_VENUE').'</a>';
+		// $html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_VENUE').'</a>';
+
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'venue-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => JText::_('COM_JEM_SELECT_VENUE'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#venue-modal">'.JText::_('COM_JEM_SELECT_VENUE').'
+		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

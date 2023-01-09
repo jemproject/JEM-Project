@@ -114,7 +114,7 @@ function jem_common_show_filter(&$obj) {
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
   <?php if ($this->settings->get('global_display',1)) : ?>
     <div class="jem-limit-smallist">
@@ -130,18 +130,18 @@ function jem_common_show_filter(&$obj) {
 
   <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
-      <div id="jem_date" class="sectiontableheader"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php if ($this->jemsettings->showtitle == 1) : ?>              
-        <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?> 
       <?php if ($this->jemsettings->showlocate == 1) : ?>
         <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcity == 1) : ?>
-        <div id="jem_city" class="sectiontableheader"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
-        <div id="jem_state" class="sectiontableheader"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
@@ -172,7 +172,7 @@ function jem_common_show_filter(&$obj) {
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
 				<?php endif; ?>              
               <div class="jem-event-info-small jem-event-date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                <i class="far fa-clock" aria-hidden="true"></i>
                 <?php
                   echo JemOutput::formatShortDateTime($row->dates, $row->times,
                     $row->enddates, $row->endtimes, $this->jemsettings->showtime);
@@ -223,22 +223,22 @@ function jem_common_show_filter(&$obj) {
               <?php if ($this->jemsettings->showcity == 1) : ?>
                 <?php if (!empty($row->city)) : ?>
                   <div class="jem-event-info-small jem-event-city" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                    <i class="fa fa-building" aria-hidden="true"></i>
                     <?php echo $this->escape($row->city); ?>
                   </div>
                 <?php else : ?>
-                  <div class="jem-event-info-small jem-event-city"><i class="fa fa-building-o" aria-hidden="true"></i> -</div>
+                  <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
                 <?php endif; ?>
               <?php endif; ?>
               
               <?php if ($this->jemsettings->showstate == 1) : ?>
                 <?php if (!empty($row->state)) : ?>
                   <div class="jem-event-info-small jem-event-state" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                    <i class="fa fa-map-o" aria-hidden="true"></i>
+                    <i class="fa fa-map" aria-hidden="true"></i>
                     <?php echo $this->escape($row->state); ?>
                   </div>
                 <?php else : ?>
-                  <div class="jem-event-info-small jem-event-state"><i class="fa fa-map-o" aria-hidden="true"></i> -</div>
+                  <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
                 <?php endif; ?>
               <?php endif; ?>
               
@@ -307,7 +307,7 @@ function jem_common_show_filter(&$obj) {
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button class="buttonfilter btn" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="buttonfilter btn" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+          <button class="buttonfilter btn" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
         </div>
       </div>
     <?php endif; ?>

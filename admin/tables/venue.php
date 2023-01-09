@@ -125,7 +125,7 @@ class JemTableVenue extends JTable
 		$jemsettings = JemHelper::config();
 
 		// Check if we're in the front or back
-		if ($app->isAdmin()) {
+		if ($app->isClient('administrator')) {
 			$backend = true;
 		} else {
 			$backend = false;
@@ -229,9 +229,11 @@ class JemTableVenue extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;
@@ -322,14 +324,23 @@ class JemTableVenue extends JTable
 		$query->update($this->_db->quoteName($this->_tbl));
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
-		$this->_db->setQuery($query . $checkin);
-		$this->_db->execute();
+		
 
 		// Check for a database error.
 		// TODO: use exception handling
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+
+		try
+		{
+			$this->_db->setQuery($query . $checkin);
+			$this->_db->execute();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.

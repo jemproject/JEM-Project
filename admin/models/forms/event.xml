@@ -164,12 +164,14 @@
 			   description="COM_JEM_VENUE"
 			   size="40"
 			   required="false"
+			   default="0"
 		/>
 		<field name="contactid" type="modal_contact"
 			   label="COM_JEM_CONTACT"
 			   description="COM_JEM_CONTACT"
 			   size="40"
 			   required="false"
+			    default="0"
 		/>
 	</fieldset>
 

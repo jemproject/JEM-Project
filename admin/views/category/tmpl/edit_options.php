@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die; ?>
 
-<?php echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
+<?php //echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 
 	<fieldset class="panelform">
 		<ul class="adminformlist">

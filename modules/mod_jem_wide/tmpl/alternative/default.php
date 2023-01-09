@@ -10,7 +10,8 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal', 'a.flyermodal');
+use Joomla\CMS\Language\Text;
+// JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 
 <div class="jemmodulewide<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulewide">
@@ -91,6 +92,6 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php endforeach; ?>
 	</table>
 <?php else : ?>
-	<?php echo JText::_('MOD_JEM_WIDE_NO_EVENTS'); ?>
+	<?php echo Text::_('MOD_JEM_WIDE_NO_EVENTS'); ?>
 <?php endif; ?>
 </div>

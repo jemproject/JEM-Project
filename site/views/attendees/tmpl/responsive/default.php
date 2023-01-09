@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+// JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
@@ -88,7 +88,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           </div>
           <div class="jem-row jem-justify-start jem-nowrap">
             <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
           </div>
         </dd>
 
@@ -116,7 +116,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           </div>
           <div class="jem-row jem-justify-start jem-nowrap">
             <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
           </div>
         </dd>
 

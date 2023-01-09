@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
 			<?php echo JText::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</td>
 		<td nowrap="nowrap">
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">

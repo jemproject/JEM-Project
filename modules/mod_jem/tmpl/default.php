@@ -9,6 +9,7 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
@@ -43,6 +44,6 @@ defined('_JEXEC') or die;
 		<?php endforeach; ?>
 	</ul>
 <?php else : ?>
-	<?php echo JText::_('MOD_JEM_NO_EVENTS'); ?>
+	<?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
 <?php endif; ?>
 </div>

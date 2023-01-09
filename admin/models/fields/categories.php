@@ -30,14 +30,16 @@ class JFormFieldCategories extends JFormFieldList
 	protected function getInput()
 	{
 		// Load the modal behavior script.
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// Build the script.
 		$script = array();
 		$script[] = '    function jSelectCategory_'.$this->id.'(id, category, object) {';
-		$script[] = '		document.id("'.$this->id.'_id").value = id;';
-		$script[] = '		document.id("'.$this->id.'_name").value = category;';
-		$script[] = '		SqueezeBox.close();';
+		$script[] = '		document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '		document.getElementById("'.$this->id.'_name").value = category;';
+		// $script[] = '		SqueezeBox.close();';
+		$script[] = '        $("#categories-modal").modal("hide");';
+		
 		$script[] = '	};';
 
 		// Add the script to the document head.
@@ -52,13 +54,20 @@ class JFormFieldCategories extends JFormFieldList
 		$query->select('catname');
 		$query->from('#__jem_categories');
 		$query->where('id='.(int)$this->value);
-		$db->setQuery($query);
+		
 
-		$category = $db->loadResult();
-
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		try
+		{
+			$db->setQuery($query);
+			$category = $db->loadResult();
 		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+		}
+		// if ($error = $db->getErrorMsg()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
 
 		if (empty($category)) {
 			$category = JText::_('COM_JEM_SELECT_CATEGORY');
@@ -73,8 +82,21 @@ class JFormFieldCategories extends JFormFieldList
 		// The user select button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_CATEGORY').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.
-						JText::_('COM_JEM_SELECT_CATEGORY').'</a>';
+		// $html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_CATEGORY').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.
+		// 				JText::_('COM_JEM_SELECT_CATEGORY').'</a>';
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'categories-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => JText::_('COM_JEM_SELECT_CATEGORY'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#categories-modal">'.JText::_('COM_JEM_SELECT_CATEGORY').'
+</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

@@ -9,7 +9,10 @@
 
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 /**
  * View class for the JEM import screen
  *
@@ -24,10 +27,12 @@ class JemViewImport extends JemAdminView
 		jimport('joomla.html.pane');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Load script
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		// Get data from the model
 		$eventfields = $this->get('EventFields');
@@ -46,7 +51,7 @@ class JemViewImport extends JemAdminView
 		$this->jemTables 		= $this->get('JemTablesCount');
 		$this->existingJemData 	= $this->get('ExistingJemData');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jinput = $app->input;
 		$progress = new stdClass();
 		$progress->step 	= $jinput->get('step', 0, 'INT');
@@ -78,11 +83,11 @@ class JemViewImport extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
+		ToolbarHelper::title(Text::_('COM_JEM_IMPORT'), 'tableimport');
 
-		JToolBarHelper::back();
-		JToolBarHelper::divider();
-		JToolBarHelper::help('import', true);
+		ToolbarHelper::back();
+		ToolbarHelper::divider();
+		ToolbarHelper::help('import', true);
 	}
 }
 ?>

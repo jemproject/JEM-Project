@@ -9,6 +9,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 $document = JFactory::getDocument();
 $module_name = 'mod_jem';
 /*
@@ -27,6 +29,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
   <ul>
     <?php foreach ($list as $item) : ?>
       <li>
+        <i class="far fa-calendar-alt"></i>
         <span class="event-title">
           <?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
             <a href="<?php echo $item->venueurl; ?>">
@@ -55,6 +58,6 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
     <?php endforeach; ?>
   </ul>
 <?php else : ?>
-  <?php echo JText::_('COM_JEM_NO_EVENTS'); ?>
+  <?php echo Text::_('COM_JEM_NO_EVENTS'); ?>
 <?php endif; ?>
 </div>

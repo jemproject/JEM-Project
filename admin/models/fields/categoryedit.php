@@ -112,9 +112,9 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			$options = $db->loadObjectList();
 
 			// Check for a database error.
-			if ($db->getErrorNum()) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
-			}
+			// if ($db->getErrorNum()) {
+			// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+			// }
 		}
 		catch (RuntimeException $e)
 		{
