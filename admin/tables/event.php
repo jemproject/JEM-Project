@@ -24,11 +24,13 @@ class JemTableEvent extends JTable
 	public function bind($array, $ignore = '')
 	{
 		// in here we are checking for the empty value of the checkbox
-
+		
 		if (!isset($array['registra'])) {
 			$array['registra'] = 0 ;
 		}
-
+		if(isset($array['contactid'])){
+			$array['contactid'] = (int) $array['contactid'];
+		}
 		if (!isset($array['unregistra'])) {
 			$array['unregistra'] = 0 ;
 		}

@@ -175,7 +175,8 @@ class JemModelAttendee extends JModelLegacy
 			}
 		}
 
-		$row = $this->getTable('jem_register', '');
+		// $row = $this->getTable('jem_register', '');
+		$row = JTable::getInstance('jem_register', '');
 
 		if ($id > 0) {
 			$row->load($id);

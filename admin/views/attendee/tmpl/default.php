@@ -22,15 +22,28 @@ $wa = $document->getWebAssetManager();
 			->useScript('form.validate');
 
 $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
+echo JHtml::_(
+	'bootstrap.renderModal',
+	'user-modal',
+	array(		
+		'url'    => $selectuser_link.'&amp;'.JSession::getFormToken().'=1',
+		'title'  => JText::_('COM_JEM_SELECT'),
+		'width'  => '800px',
+		'height' => '450px',
+		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+	)
+);
 ?>
 
 <script type="text/javascript">
 
 	function modalSelectUser(id, username)
 	{
-		$('uid').value = id;
-		$('username').value = username;
-		window.parent.SqueezeBox.close();
+		console.log(id,username);
+		$('#uid').val(id)  ;
+		$('#username').val(username);
+		// window.parent.SqueezeBox.close();
+		$("#user-modal").modal("hide");
 	}
 
 	Joomla.submitbutton = function(task)
@@ -79,7 +92,10 @@ $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&t
 				<td>
 					<input type="text" name="username" id="username" readonly="readonly" value="<?php echo $this->row->username; ?>" />
 					<input type="hidden" name="uid" id="uid" value="<?php echo $this->row->uid; ?>" />
-					<a class="usermodal" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+					<!-- <a class="usermodal" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+						<span><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
+					</a> -->
+					<a class="usermodal" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#user-modal">
 						<span><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
 					</a>
 				</td>

@@ -32,7 +32,8 @@ class JemHtml
 		$states = array(
 				0 => array(
 						'disabled.png',
-						'fa-star-o', //'fa-circle-o',
+						// 'fa-star-o', //'fa-circle-o',
+						'fas fa-star', //'fa-circle-o',
 						'events.featured',
 						'COM_JEM_EVENTS_UNFEATURED',
 						'COM_JEM_EVENTS_TOGGLE_TO_FEATURE'
@@ -178,7 +179,7 @@ class JemHtml
 		$states = array(
 				-99 => array( // fallback on wrong status value
 						'disabled.png',
-						'fa-circle-o',
+						'fa-circle',
 						'',
 						'COM_JEM_STATUS_UNKNOWN',
 						'COM_JEM_STATUS_UNKNOWN',
@@ -220,22 +221,22 @@ class JemHtml
 
 		$backend = (bool)Factory::getApplication()->isClient('administrator');
 		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
-
+		HTMLHelper::_('bootstrap.tooltip');
 		if (version_compare(JVERSION, '3.3', 'lt')) {
 			// on Joomla! 2.5/3.2 we use good old tooltips
-			// HTMLHelper::_('behavior.tooltip');
-			$attr = 'class="hasTip" title="'.Text::_('COM_JEM_STATUS').'::'.Text::_($state[$canChange ? 4 : 3]).'"';
+			// HTMLHelper::_('behavior.tooltip');		
+
+			$attr = 'class="hasTip" data-bs-toggle="tooltip" title="'.Text::_('COM_JEM_STATUS').'::'.Text::_($state[$canChange ? 4 : 3]).'"';
 		} else {
 			// on Joomla! 3.3+ we must use the new tooltips
-			HTMLHelper::_('bootstrap.tooltip');
-			$attr = 'class="hasTooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), Text::_($state[$canChange ? 4 : 3]), 0).'"';
+			$attr = 'class="hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), Text::_($state[$canChange ? 4 : 3]), 0).'"';
 		}
 
 		if ($print) {
-			$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], 'class="icon-inline-left"', $backend);
+			$html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], 'class="icon-inline-left"', $backend);
 			$html .= Text::_($state[5]);
 		} elseif ($canChange && !empty($state[2])) {
-			$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $backend);
+			$html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $backend);
 			if ($backend) {
 				$attr .= ' onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')"';
 				$url = '#';
@@ -244,9 +245,18 @@ class JemHtml
 			}
 			$html = HTMLHelper::_('link', $url, $html, $attr);
 		} else {
-			$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], $attr, $backend);
+			$html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], $attr, $backend);
 		}
-
+		//-------------start added for tooltips initialize-----------
+		$html .= '<script>
+			jQuery(document).ready(function(){
+				var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'))
+				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+				return new bootstrap.Tooltip(tooltipTriggerEl,{html:true})
+				})
+			});
+		</script>';
+		//-------------end added for tooltips initialize-----------
 		return $html;
 	}
 

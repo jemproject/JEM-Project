@@ -123,7 +123,7 @@ class JemModelEvent extends JemModelAdmin
 			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
 
-			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
+			$item->articletext = ($item->fulltext && trim($item->fulltext) != '') ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
 
 			$db = JFactory::getDbo();
 

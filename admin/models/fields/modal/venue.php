@@ -8,6 +8,9 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 jimport('joomla.form.formfield');
 
@@ -29,7 +32,7 @@ class JFormFieldModal_Venue extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		// JHtml::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
 
 		// Build the script
 		$script = array();
@@ -41,13 +44,13 @@ class JFormFieldModal_Venue extends JFormField
 		$script[] = '    }';
 
 		// Add to document head
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('venue');
 		$query->from('#__jem_venues');
@@ -68,7 +71,7 @@ class JFormFieldModal_Venue extends JFormField
 		}
 
 		if (empty($venue)) {
-			$venue = JText::_('COM_JEM_SELECTVENUE');
+			$venue = Text::_('COM_JEM_SELECTVENUE');
 		}
 		$venue = htmlspecialchars($venue, ENT_QUOTES, 'UTF-8');
 
@@ -80,20 +83,20 @@ class JFormFieldModal_Venue extends JFormField
 		// The venue select button
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		// $html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-		// 			JText::_('COM_JEM_SELECT').'</a>';
-		$html[] = JHtml::_(
+		// $html[] = '    <a class="modal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
+		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'venue-modal-1',
 			array(		
 				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
-				'title'  => JText::_('COM_JEM_SELECT'),
+				'title'  => Text::_('COM_JEM_SELECT'),
 				'width'  => '800px',
 				'height' => '450px',
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.JText::_('COM_JEM_SELECT').'
+		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.Text::_('COM_JEM_SELECT').'
 		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';

@@ -72,7 +72,8 @@ defined('_JEXEC') or die;
 					if (!$row->times) {
 						$displaytime = '-';
 					} else {
-						$time = strftime( $this->jemsettings->formattime, strtotime( $row->times ));
+						// $time = strftime( $this->jemsettings->formattime, strtotime( $row->times ));
+						$time = date( $this->jemsettings->formattime, strtotime( $row->times ));
 						$displaytime = $time.' '.$this->jemsettings->timename;
 					}
 					echo $displaytime;

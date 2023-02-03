@@ -187,7 +187,8 @@ class JemControllerImport extends JControllerLegacy
 			case 'endtimes':
 				if ($value !== '' && strtoupper($value) !== 'NULL') {
 					$time = strtotime($value);
-					$field = strftime('%H:%M', $time);
+					// $field = strftime('%H:%M', $time);
+					$field = date('Y-m-d h:m:s',$time);
 				} else {
 					$field = null;
 				}
@@ -197,7 +198,8 @@ class JemControllerImport extends JControllerLegacy
 			case 'recurrence_limit_date':
 				if ($value !== '' && strtoupper($value) !== 'NULL') {
 					$date = strtotime($value);
-					$field = strftime('%Y-%m-%d', $date);
+					// $field = strftime('%Y-%m-%d', $date);
+					$field = date('Y-m-d', $date);
 				} else {
 					$field = null;
 				}

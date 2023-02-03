@@ -204,7 +204,7 @@ class JemModelImport extends JModelLegacy
 				// collect categories for each event; we get array( itemid => array( catid => ordering ) )
 				$events[$row[$itemidx]][$row[$catidx]] = ($orderidx !== false) ? $row[$orderidx] : 0;
 			}
-			echo "<pre/>";print_R($events);die;
+		
 			// store data
 			return $this->storeCatsEventRelations($events, $replace);
 		}

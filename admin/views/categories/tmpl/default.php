@@ -16,7 +16,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 // HTMLHelper::_('behavior.tooltip');
 // HTMLHelper::_('behavior.multiselect');
 $wa = $this->document->getWebAssetManager();
-$wa->useScript('multiselect');
+$wa->useScript('multiselect')->useScript('table.columns');
 
 $user		= JemFactory::getUser();
 $userId		= $user->get('id');

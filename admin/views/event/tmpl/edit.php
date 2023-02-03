@@ -170,7 +170,6 @@ Joomla.submitbutton = function(task)
 
 
 </script>
-<?php //echo "<pre/>"; print_R($this->item);die; ?>
 <form
 	action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
 	class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">

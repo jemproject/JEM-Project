@@ -25,12 +25,11 @@ class JemViewEvents extends JemAdminView
 
 	public function display($tpl = null)
 	{
-		$user 		= JemFactory::getUser();
-		$document	= Factory::getDocument();
-		$settings 	= JemHelper::globalattribs();
-
-		$jemsettings = JemAdmin::config();
-		$url 		= JUri::root();
+		$user 			= JemFactory::getUser();
+		$this->document	= Factory::getDocument();
+		$settings 		= JemHelper::globalattribs();
+		$jemsettings 	= JemAdmin::config();
+		$url 			= JUri::root();
 
 		// Initialise variables.
 		$this->items		= $this->get('Items');
@@ -57,15 +56,15 @@ class JemViewEvents extends JemAdminView
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Load Scripts
-		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$this->document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 
 		if ($highlighter) {
-			$document->addScript($url.'media/com_jem/js/highlighter.js');
+			$this->document->addScript($url.'media/com_jem/js/highlighter.js');
 			$style = '
 			    .red, .red a {
 			    color:red;}
 			    ';
-			$document->addStyleDeclaration($style);
+			$this->document->addStyleDeclaration($style);
 		}
 
 		//add style to description of the tooltip (hastip)

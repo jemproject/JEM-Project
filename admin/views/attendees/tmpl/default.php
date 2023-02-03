@@ -18,7 +18,8 @@ $user		= JemFactory::getUser();
 $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
-
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+// $wa->useScript('table.columns');
 Factory::getDocument()->addScriptDeclaration('
 	Joomla.submitbutton = function(task)
 	{
@@ -40,10 +41,10 @@ Factory::getDocument()->addScriptDeclaration('
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&eventid='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
 	<?php if (isset($this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
+	<!-- <div id="j-sidebar-container" class="span2">
+		<?php //echo $this->sidebar; ?>
+	</div> -->
+	<div id="j-main-container" class="span10 j-main-container">
 	<?php endif; ?>
 		<table class="adminlist" style="width:100%;">
 			<tr>
@@ -114,7 +115,7 @@ Factory::getDocument()->addScriptDeclaration('
 						<?php
 						$status = (int)$row->status;
 						if ($status === 1 && $row->waiting == 1) { $status = 2; }
-						echo HTMLHelper::_('jemhtml.toggleAttendanceStatus', $i, $status, $canChange);
+						echo jemhtml::toggleAttendanceStatus( $i, $status, $canChange);
 						?>
 					</td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
@@ -122,7 +123,7 @@ Factory::getDocument()->addScriptDeclaration('
 					<td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif; ?>
 					<td class="center">
-						<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')">
+						<a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">
 							<?php echo HTMLHelper::_('image','com_jem/publish_r.png',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
 						</a>
 					</td>

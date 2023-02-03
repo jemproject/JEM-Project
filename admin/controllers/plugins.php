@@ -17,6 +17,9 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
 */
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 class JemControllerPlugins extends JControllerLegacy
 {
 	/**
@@ -35,7 +38,7 @@ class JemControllerPlugins extends JControllerLegacy
 	 */
 	public function plugins()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = $db->getQuery(true);
 		$query->select(array('count(*)'));
@@ -48,11 +51,12 @@ class JemControllerPlugins extends JControllerLegacy
 
 		//any plugins installed? if not redirect to installation screen
 		if ($total > 0){
-			$link = 'index.php?option=com_plugins&filter_search=jem';
+			// $link = 'index.php?option=com_plugins&filter_search=jem';
+			$link = 'index.php?option=com_plugins&filter[search]=jem';
 			$msg = "";
 		} else {
 			$link = 'index.php?option=com_installer';
-			$msg = JText::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
+			$msg = Text::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
 		}
 		$this->setRedirect($link, $msg);
 	}

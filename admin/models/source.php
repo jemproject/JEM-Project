@@ -37,7 +37,7 @@ class JemModelSource extends JModelForm
 		$id = $app->getUserState('com_jem.edit.source.id');
 
 		// Parse the template id out of the compound reference.
-		$temp = (base64_decode($id));
+		$temp = $id ? (base64_decode($id)) : $id;
 		$fileName = $temp;
 
 		$this->setState('filename', $fileName);
@@ -118,9 +118,9 @@ class JemModelSource extends JModelForm
 			$file = $fileName;
 			$filePath = JPath::clean(JPATH_ROOT . '/media/com_jem/css/' . $file);
 		}
-
+		
 		$item = new stdClass;
-		if (file_exists($filePath)) {
+		if ($file && file_exists($filePath)) {
 			$item->custom   = $custom !== false;
 			$item->filename = $file;
 			$item->source   = file_get_contents($filePath);

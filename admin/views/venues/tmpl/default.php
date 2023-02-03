@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-
+use Joomla\CMS\Factory;
 
 $user		= JemFactory::getUser();
 $userId		= $user->get('id');
@@ -19,6 +19,8 @@ $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder	= $listOrder=='a.ordering';
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('table.columns');
 
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 $settings	= $this->settings;
