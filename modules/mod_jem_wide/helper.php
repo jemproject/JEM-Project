@@ -199,11 +199,13 @@ abstract class ModJemWideHelper
 		} else {
 			//Get needed timestamps and format
 			$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
-			$yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
+			// $yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
+			$yesterday       = date("Y-m-d", $yesterday_stamp);
 			$today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 			$today           = date('Y-m-d');
 			$tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
-			$tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
+			// $tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
+			$tomorrow        = date("Y-m-d", $tomorrow_stamp);
 
 			$dates_stamp     = $row->dates ? strtotime($row->dates) : null;
 			$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;

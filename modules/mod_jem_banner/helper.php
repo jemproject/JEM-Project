@@ -375,12 +375,14 @@ abstract class ModJemBannerHelper
 		//Get needed timestamps and format
 		//setlocale (LC_TIME, 'de_DE.UTF8');
 		$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
-		$yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
+		// $yesterday       = strftime("%Y-%m-%d", $yesterday_stamp); 
+		$yesterday       = date("Y-m-d", $yesterday_stamp); 
 		$today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 		$today           = date('Y-m-d');
 		$tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
-		$tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
-
+		// $tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
+		$tomorrow        = date("Y-m-d", $tomorrow_stamp);
+		
 		$dates_stamp     = strtotime($row->dates);
 		$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 
@@ -395,19 +397,22 @@ abstract class ModJemBannerHelper
 			//if daymethod show day
 			if ($params->get('daymethod', 1) == 1) {
 				//single day event
-				$date = strftime('%A', strtotime($row->dates));
+				// $date = strftime('%A', strtotime($row->dates));
+				$date = date('l', strtotime($row->dates));
 				$result = Text::sprintf('MOD_JEM_BANNER_ON_DATE', $date);
 
 				//Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
 				if (($dates_stamp > $tomorrow_stamp) && $enddates_stamp) {
-					$startdate = strftime('%A', strtotime($row->dates));
+					// $startdate = strftime('%A', strtotime($row->dates));
+					$startdate = date('l', strtotime($row->dates));
 					$result = Text::sprintf('MOD_JEM_BANNER_FROM', $startdate);
 				}
 
 				//current multidayevent (Until 18.08.2008)
 				if ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp <= $today_stamp)) {
 					//format date
-					$enddate = strftime('%A', strtotime($row->enddates));
+					// $enddate = strftime('%A', strtotime($row->enddates));
+					$enddate = date('l', strtotime($row->enddates));
 					$result = Text::sprintf('MOD_JEM_BANNER_UNTIL', $enddate);
 				}
 			} else { // show day difference
@@ -461,11 +466,13 @@ abstract class ModJemBannerHelper
 		} else {
 			# Get needed timestamps and format
 			$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
-			$yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
+			// $yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
+			$yesterday       = date("Y-m-d", $yesterday_stamp);
 			$today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 			$today           = date('Y-m-d');
 			$tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
-			$tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
+			// $tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
+			$tomorrow        = date("Y-m-d", $tomorrow_stamp);
 
 			$dates_stamp     = $row->dates ? strtotime($row->dates) : null;
 			$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;

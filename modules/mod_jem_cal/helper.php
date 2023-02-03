@@ -105,8 +105,10 @@ abstract class ModJemCalHelper extends JModuleHelper
 		# Only select events within specified date range. (choosen month)
 		$monthstart = mktime(0, 0,  1, $greq_month,     1, $greq_year);
 		$monthend   = mktime(0, 0, -1, $greq_month + 1, 1, $greq_year);
-		$filter_date_from = $db->Quote(strftime('%Y-%m-%d', $monthstart));
-		$filter_date_to   = $db->Quote(strftime('%Y-%m-%d', $monthend));
+		// $filter_date_from = $db->Quote(strftime('%Y-%m-%d', $monthstart));
+		// $filter_date_to   = $db->Quote(strftime('%Y-%m-%d', $monthend));
+		$filter_date_from = $db->Quote(date('Y-m-d', $monthstart));
+		$filter_date_to   = $db->Quote(date('Y-m-d', $monthend));
 		$where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $filter_date_from . ') >= 0';
 		$model->setState('filter.calendar_from', $where_from);
 		$where_to = ' DATEDIFF(a.dates, ' . $filter_date_to . ') <= 0';
@@ -215,7 +217,8 @@ abstract class ModJemCalHelper extends JModuleHelper
 				for ($count = $event->created_day; $count <= $eday; $count++) {
 
 					$uxdate = mktime(0, 0, 0, $greq_month, $count, $greq_year);
-					$tdate = strftime('%Y%m%d',$uxdate);// Toni change Joomla 1.5
+					// $tdate = strftime('%Y%m%d',$uxdate);// Toni change Joomla 1.5
+					$tdate = date('Ymd',$uxdate);// Toni change Joomla 1.5
 
 					if (empty($days[$count][1])) {
 						$cut = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);

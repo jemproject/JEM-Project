@@ -317,7 +317,7 @@ body.com_jem.body-overlayed {
 #jem .jem-list-row {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     justify-content: flex-start;
 }
 
@@ -575,3 +575,7 @@ body.com_jem.body-overlayed {
 @media only all and (max-width: 74.938rem) and (min-width: 60rem) {}
 
 @media only all and (min-width: 75rem) {}
+
+#jem .form-check-input{
+width:1em !important;
+}

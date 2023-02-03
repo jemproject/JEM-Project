@@ -266,7 +266,6 @@ class com_jemInstallerScript
 		if (strtolower($type) == 'update') {
 			// Installed component version
 			$this->oldRelease = $this->getParam('version');
-			// echo "<pre/>";print_R($this->oldRelease);die;
 			// Installing component version as per Manifest file
 			// $this->newRelease = $parent->get('manifest')->version; 
 			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) { 

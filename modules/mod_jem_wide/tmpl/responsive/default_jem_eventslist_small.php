@@ -66,7 +66,7 @@ use Joomla\CMS\Language\Text;
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
                 <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
-                  <i class="fa fa-comment-o" aria-hidden="true"></i>
+                  <i class="fa fa-comment" aria-hidden="true"></i>
                   <?php if ($params->get('linkevent') == 1) : ?>
                   <a href="<?php echo $item->eventlink; ?>">
                     <?php echo $item->title; ?>
@@ -98,7 +98,7 @@ use Joomla\CMS\Language\Text;
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
                 <?php if (!empty($item->city)) : ?>
                   <div class="jem-event-info-small jem-event-city" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
-                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                    <i class="fa fa-building" aria-hidden="true"></i>
                     <?php echo $item->city; ?>
                   </div>
                 <?php else : ?>
@@ -109,7 +109,7 @@ use Joomla\CMS\Language\Text;
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
                 <?php if (!empty($item->state)) : ?>
                   <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
-                    <i class="fa fa-map-o" aria-hidden="true"></i>
+                    <i class="fa fa-map" aria-hidden="true"></i>
                     <?php echo $item->state; ?>
                   </div>
                 <?php else : ?>

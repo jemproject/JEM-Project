@@ -32,12 +32,12 @@ function switchstart() {	// Diese Funktion uebergibt alle relevanten Feldern ein
 	try {
 		if ($keyword.length > 0) {
 			for (var i=0; i < $keyword.length; i++) {
-				$($keyword[i]).onchange = seo_switch;
+				document.getElementById($keyword[i]).onchange = seo_switch;
 			}
 		}
 		if ($description_vars.length > 0) {
 			for (var i=0; i < $description_vars.length; i++) {
-				$($description_vars[i]).onchange = seo_switch;
+				document.getElementById($description_vars[i]).onchange = seo_switch;
 			}
 		}
 	} catch(e) {
@@ -51,7 +51,7 @@ function seo_switch() {	// Bei jeder Veraenderung werden beide Funktionen aufger
 }
 
 function get_keywords() {
-	$keywords = $("meta_keywords").value;	// Keywords auslesenen
+	$keywords = $("#meta_keywords").val();	// Keywords auslesenen
 	var $Nullvalue = "[NULL]";
 	$manual_keywords = "";					// die Anzeige der nicht zuordbaren Variable wird geleert
 	$keyword = $keywords.split(",");			// in eine Array aufspalten
@@ -60,7 +60,7 @@ function get_keywords() {
 			$keyword[i] = $keyword[i].replace(/ /g,"");
 			$keyword[i] = $keyword[i].replace(/\[/g,"");
 			$keyword[i] = $keyword[i].replace(/\]/g,"");
-			$($keyword[i]).value;				// ein Fehler wird provoziert, falls dieses Element nicht vorhanden ist
+			document.getElementById($keyword[i]).value;				// ein Fehler wird provoziert, falls dieses Element nicht vorhanden ist
 		} catch (e) {
 			if ($manual_keywords != "") {	// das nicht verwendete Keyword wird neu abgespeichert
 				$manual_keywords += ", ";
@@ -89,7 +89,7 @@ function get_keywords() {
 }
 
 function get_description() {
-	$description = $("meta_description").value;	// uebergebene Bechreibung wird aufgerufen und eingefuegt
+	$description = $("#meta_description").val();	// uebergebene Bechreibung wird aufgerufen und eingefuegt
 	if ($description != "") {
 		var Ergebnis = $description.split("[");		// alle relevanten Teile werden getrennt
 		if (Ergebnis.length > 1) {
@@ -98,7 +98,7 @@ function get_description() {
 				var inputarray = Ergebnis[i].substring(0,(Ergebnis[i].indexOf("]")));	// die einzelnen Variablen werden aus dem Satz ausgelesen
 				try { 									// Die Abfrage wird Fehlersicher gemacht
 					$description_vars[i-1] = inputarray;
-					$($description_vars[i-1]).value;
+					document.getElementById($description_vars[i-1]).value;
 				} catch (e) {
 					$description_vars.pop();
 					continue;
@@ -118,14 +118,14 @@ function include_keyword() {
 		if ($keywords != "") {
 					$keywords += ", ";
 				}
-		if($($keyword[i]).tagName == "SELECT") {	// es wird unterschieden zwischen normalen Inputfeld und Selectfeld
-			if ($($keyword[i]).value != 0) {		// um auch korrekt abspeichern zu koennen wird das Komma richtig gesetzt
+		if(document.getElementById($keyword[i]).tagName == "SELECT") {	// es wird unterschieden zwischen normalen Inputfeld und Selectfeld
+			if (document.getElementById($keyword[i]).value != 0) {		// um auch korrekt abspeichern zu koennen wird das Komma richtig gesetzt
 				$keywords += get_selected_option($keyword[i]); // Auslesen des Wertes aus dem Selectfeld
 			} else {
 				$keywords += "["+$keyword[i]+"]";
 			}
-		} else if ($($keyword[i]).value != "") {
-			$keywords += $($keyword[i]).value;	//Auslesen des Wertes aus dem Inputfeld
+		} else if (document.getElementById($keyword[i]).value != "") {
+			$keywords += document.getElementById($keyword[i]).value;	//Auslesen des Wertes aus dem Inputfeld
 		} else {
 			$keywords += "["+$keyword[i]+"]";
 		}
@@ -136,7 +136,7 @@ function include_keyword() {
 		}
 		$keywords = $keywords + $manual_keywords;
 	}
-	$("meta_keywords").value = $keywords;
+	document.getElementById("meta_keywords").value = $keywords;
 }
 
 function include_description() {
@@ -144,13 +144,13 @@ function include_description() {
 	var desc_output = $description;	// Es wird die urspruengliche Ausgabe abgespeichert, da diese im spaeteren Verlauf geaendert wird
 	for (var i = 0; i < $description_vars.length; i++) {
 		desc_value = "["+$description_vars[i]+"]";	// Der Wert wird auf Default gesetzt, damit er ausgegeben werden kann, falls ein deafulteinstellung gewaehlt wird
-		if ($($description_vars[i]).tagName == "SELECT") {	// es wird wieder unterschieden zwischen Select und Inputfeld
-			if ($($description_vars[i]).value != 0) {
+		if (document.getElementById($description_vars[i]).tagName == "SELECT") {	// es wird wieder unterschieden zwischen Select und Inputfeld
+			if (document.getElementById($description_vars[i]).value != 0) {
 				desc_value = get_selected_option($description_vars[i]);
 			}
 		} else {
-			if ($($description_vars[i]).value != "") {
-				desc_value = $($description_vars[i]).value;
+			if (document.getElementById($description_vars[i]).value != "") {
+				desc_value = document.getElementById($description_vars[i]).value;
 			}
 		}
 		desc_split = desc_output.split("["+$description_vars[i]+"]");	// Der Satz wird in zwei Teile geteilt
@@ -163,19 +163,21 @@ function include_description() {
 			}
 		}
 	}
-	$("meta_description").value = desc_output;
+	document.getElementById("meta_description").value = desc_output;
 }
 
 function insert_keyword($keyword) {
 	try {
-		var $input = $($inputbox).value;
+		
+		var $input = document.getElementById($inputbox).value;
 		if ($inputbox == "meta_keywords") {
 			if ($input != "") {
 				$input += ",";
 			}
 		}
+		
 		$input += " "+$keyword;
-		$($inputbox).value = $input;
+		document.getElementById($inputbox).value = $input;
 		change_metatags();
 	} catch(e) {
 		alert($meta_error);
@@ -184,10 +186,10 @@ function insert_keyword($keyword) {
 
 function change_metatags() {
 	if ($inputbox == "meta_keywords") {
-		$keywords = $($inputbox).value;
+		$keywords = document.getElementById($inputbox).value;
 		get_keywords();
 	} else {
-		$description = $($inputbox).value;
+		$description = document.getElementById($inputbox).value;
 		get_description();
 	}
 	switchstart();
@@ -195,18 +197,18 @@ function change_metatags() {
 
 function get_inputbox($input) {
 	if ($input == "meta_keywords") {
-		$($input).value = $keywords;
+		document.getElementById($input).value = $keywords;
 	} else {
-		$($input).value = $description;
+		document.getElementById($input).value = $description;
 	}
 	$inputbox = $input;
 }
 
 function get_selected_option($selectfield) {
 	var $buffer;
-	for(i= 0; i < $($selectfield).length; i++) {
-		if($($selectfield).options[i].value == $($selectfield).value) {
-			$buffer = $($selectfield).options[i].text;
+	for(i= 0; i < document.getElementById($selectfield).length; i++) {
+		if(document.getElementById($selectfield).options[i].value == document.getElementById($selectfield).value) {
+			$buffer = document.getElementById($selectfield).options[i].text;
 			break;
 		}
 	}

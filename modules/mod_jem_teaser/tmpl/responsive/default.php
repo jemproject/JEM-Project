@@ -133,13 +133,13 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
           <div class="jem-row-teaser jem-teaser-datecat">
             <?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
               <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock" aria-hidden="true"></i>
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php //endif; ?>
             <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
               <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock" aria-hidden="true"></i>
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->dateinfo; ?>
               </div>
             <?php //endif; ?>
@@ -152,7 +152,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
             <?php if (!empty($item->venue)) : ?>
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                 <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
                 <?php if ($item->venuelink) : ?>
                   <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
                 <?php else : ?>
@@ -163,7 +163,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
             <?php endif; ?>
             <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
               <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-                <i class="fa fa-tag" aria-hidden="true"></i>
+                <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
                 <?php echo $item->catname; ?>
               </div>
             <?php endif; ?>

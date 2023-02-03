@@ -21,6 +21,7 @@ jQuery(document).ready(function($){
 		var ri = document.getElementById('removeimage');
 		if (ri) { ri.value = '1'; }
 	});
+	
 
  }); 
 

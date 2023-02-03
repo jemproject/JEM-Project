@@ -223,14 +223,15 @@ div#jem .eventtitle {
 
 #jlcalendarlegend .eventCat {
 	float: left;
-	padding: 1px 5px;
+	
 	cursor: pointer;
 	box-shadow: 2px 2px 2px #888888;
+	/* padding: 1px 5px;
 	border: 1px solid black;
 	margin-left:4px;
 	margin-right:4px;
 	margin-bottom:6px;
-	line-height:20px;
+	line-height:20px; */
 }
 
 #jlcalendarlegend .legendb {
@@ -248,10 +249,6 @@ div#jem .eventtitle {
 div#buttonshowall,
 div#buttonhideall {
 	float: left;
-	padding-top:3px;
-	padding-left:4px;
-	padding-right:4px;
-	margin-right: 6px;
 	cursor: pointer;
 	border:1px solid black;
 	width: auto;
@@ -355,7 +352,7 @@ div#jem td {
 
 
 .calendarButton {
-	background-image: -webkit-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+/* 	background-image: -webkit-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
 	background-image:    -moz-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
 	background-image:     -ms-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
 	background-image:      -o-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
@@ -370,7 +367,7 @@ div#jem td {
 	width: 48px;
 	height: 20px;
 	margin: 1px;
-	padding: 1px;
+	padding: 1px; */
 	display: inline-block;
 	text-align: center;
 	color: rgba(0,0,0,1);

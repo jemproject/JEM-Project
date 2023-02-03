@@ -12,11 +12,15 @@ var $select_value;
 var $select_element;
 
 function start_recurrencescript(el) {
+	
 //window.addEvent('domready', function() {
-	$content = $("#recurrence_output"); // get the object (position) of the output
-	$select_element = $(el);
+	// $content = $("#recurrence_output"); // get the object (position) of the output
+	$content =  document.getElementById('recurrence_output');  // get the object (position) of the output
+	// $select_element = $("#"+el);
+	$select_element = document.getElementById(el);
+	
 	output_recurrencescript(); // start the output
-	$select_element.on('change', output_recurrencescript); // additional event handler
+	$("#"+el).on('change', output_recurrencescript); // additional event handler
 }
 
 /**
@@ -26,7 +30,9 @@ function start_recurrencescript(el) {
  * @access public
 **/
 function output_recurrencescript() {
+
 	var $select_value = $select_element.value;	// the value of the select list
+	
 	if ($select_value != 0) {	// want the user a recurrence
 								// create an element by the generate_output function
 								// ** $select_output is an array of all sentences of each type **
@@ -34,16 +40,16 @@ function output_recurrencescript() {
 		$content.replaceChild($element, $content.firstChild);	// include the element
 		set_parameter();	// set the new parameter
 		if (navigator.appName == "Microsoft Internet Explorer") {	// the IE don't know some CSS - classes
-			$("counter_row").style.display = "inline"; // show the counter for the IE
+			document.getElementById("counter_row").style.display = "inline"; // show the counter for the IE
 		} else {
-			$("counter_row").style.display = "table-row"; // show the counter for the normal browsers
+			document.getElementById("counter_row").style.display = "table-row"; // show the counter for the normal browsers
 		}
 	} else {
-		$("recurrence_number").value = 0;	// set the parameter
+		document.getElementById("recurrence_number").value = 0;	// set the parameter
 		$nothing = document.createElement("span");	// create a new "empty" element
 		$nothing.appendChild(document.createTextNode(""));
 		$content.replaceChild($nothing, $content.firstChild);	// replace the old element by the new one
-		$("counter_row").style.display = "none"; // hide the counter
+		document.getElementById("counter_row").style.display = "none"; // hide the counter
 	}
 }
 
@@ -56,6 +62,7 @@ function output_recurrencescript() {
  * @access public
 **/
 function generate_output($select_output, $select_value) {
+	
 	var $output_array = $select_output.split("[placeholder]");	// split the output into two parts
 	var $span = document.createElement("span");					// create a new element
 	for ($i = 0; $i < $output_array.length; $i++) {
@@ -106,7 +113,7 @@ function generate_selectlist($select_value) {
 	}
 	for ($j = 0; $j < $limit; $j++) {
 		var $option = document.createElement("option");	// create option element
-		if ($j == (parseInt($("recurrence_number").value) - 1)) {	// the selected - attribute
+		if ($j == (parseInt(document.getElementById("recurrence_number").value) - 1)) {	// the selected - attribute
 			$option.selected = true;
 		}
 		if (($j >= 4) && ($select_value == 4)) {	// get the word for "last" and "before last" in the weekday section
@@ -142,12 +149,14 @@ function generate_selectlist_weekday() {
 	$selectlist.id = "recurrence_selectlist_weekday";
 	$selectlist.multiple = true;
 	$selectlist.size = 7;
-	var selected = $("recurrence_byday").value.split(','); // array of selected values
+
+	var selected =document.getElementById("recurrence_byday").value.split(','); // array of selected values
+
 	for ($j = 0; $j < 7; $j++) {						// the 7 days
 		var $option = document.createElement("option");	// create the option - elements
 		$option.value = $weekday[$j][0];	// add the value
 		$option.appendChild(document.createTextNode($weekday[$j][1])); // + 1 day because their is no recuring each "0" day
-		if (selected.contains($option.value)) {	// the selected - attribute
+		if (selected.includes($option.value)) {	// the selected - attribute
 			$option.selected = true;
 		}
 		$selectlist.appendChild($option);	// include the option - element into the select - element
@@ -165,7 +174,7 @@ function generate_selectlist_weekday() {
 				result += this.options[i].value
 			}
 		}
-		$('recurrence_byday').value = result;
+		document.getElementById('recurrence_byday').value = result;
 	});
 	return $selectlist;
 }
@@ -177,5 +186,5 @@ function generate_selectlist_weekday() {
 **/
 function set_parameter() {
 	// include the value into the recurrence_number input tag
-	$("recurrence_number").value = $("recurrence_selectlist").value;
+	document.getElementById("recurrence_number").value = document.getElementById("recurrence_selectlist").value;
 }

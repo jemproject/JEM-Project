@@ -559,14 +559,16 @@ div#jem .jem_fright {
 --------------------- */
 
 /* J!3 */
-#jem .edit .current dd.tabs fieldset legend {
+#jem .edit fieldset legend {
 	width: auto;
+float: unset;
 }
 
+/* 
 #jem .edit .current dd.tabs {
 	border: none;
 }
-
+*/
 div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
@@ -1227,3 +1229,17 @@ div#jem .buttons {
 }
 
 } /* END media print */
+
+#jem.jem_editevent .edit form ul.adminformlist li{
+display:flex;
+flex-wrap: wrap;
+}
+#jem.jem_editevent .edit form select[id^="filter_"], #jem.jem_editevent .edit form select, #jem.jem_editevent .edit form input[id^="filter_"]{
+min-width:15%;
+}
+#jem.jem_editevent .edit form input:not([type="checkbox"]):not([type="file"]){
+width:auto;
+}
+#jem.jem_editevent .edit form .form-check .form-check-input{
+margin-left : 0px;
+}

@@ -12,17 +12,20 @@ div#jemmodulewide .time:before,
 div#jemmodulewide div.date:before,
 div#jemmodulewide .category:before,
 div#jemmodulewide .venue-title:before {
-	font:normal normal normal 1.2em/1 FontAwesome;
+	/* font:normal normal normal 1.2em/1 FontAwesome;	 */
+	font-family:"Font Awesome 5 Free";
 	padding-right: 4px;
+	font-weight: 600;
 }
+
 
 div#jemmodulewide span.event-title:before {
 	content:"\f024";
 }
 
-/* div#jemmodulewide .time:before {
+div#jemmodulewide .time:before {
 	content:"\f017";
-} */
+}
 
 div#jemmodulewide div.date:before {
 	content:"\f133";

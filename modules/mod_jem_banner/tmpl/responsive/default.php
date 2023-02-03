@@ -143,19 +143,19 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <?php if ($showcalendar == 0) : ?>
             <?php if ($item->date && $datemethod == 2) :?>
               <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php endif; ?>
 
             <?php if ($item->date && $datemethod == 1) :?>
               <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php if ($item->time && $datemethod == 1) :?>
               <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock" aria-hidden="true"></i>
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->time; ?>
               </div>
             <?php endif; ?>
@@ -165,7 +165,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
             <?php /* wenn Zeitdifferenz angezeigt werden soll */ ?>
             <?php if ($item->date && $datemethod == 2) : ?>
               <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php endif; ?>
@@ -174,7 +174,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
             <?php if ($item->time && $datemethod == 1) :?>
             <?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
               <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock" aria-hidden="true"></i>
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->time; ?>
               </div>
             <?php endif; ?>
@@ -183,7 +183,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <?php /*venue*/ ?>
           <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
             <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-              <i class="fa fa-map-marker" aria-hidden="true"></i>
+              <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
               <?php if ($item->venuelink) : ?>
                 <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
               <?php else : ?>
@@ -195,7 +195,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <?php /*category*/ ?>
           <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
             <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-              <i class="fa fa-tag" aria-hidden="true"></i>
+              <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
               <?php echo $item->catname; ?>
             </div>
           <?php endif; ?>
