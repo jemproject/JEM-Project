@@ -147,7 +147,8 @@ class JemModelWeekcal extends JemModelEventslist
 
 						# generate days of current multi-day selection
 						$multi[$counter] = clone $item;
-						$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
+						// $multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
+						$multi[$counter]->dates = date('Y-m-d', $nextday);
 
 						if ($multi[$counter]->dates < $item->enddates) {
 							$multi[$counter]->multi = 'middle';

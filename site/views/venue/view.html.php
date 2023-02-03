@@ -87,8 +87,10 @@ class JemViewVenue extends JemView
 			// HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
 			$document->addScript($url.'media/com_jem/js/calendar.js');
 			// Retrieve year/month variables
-			$year = $jinput->get('yearID', strftime("%Y"),'int');
-			$month = $jinput->get('monthID', strftime("%m"),'int');
+			// $year = $jinput->get('yearID', strftime("%Y"),'int');
+			// $month = $jinput->get('monthID', strftime("%m"),'int');
+			$year = $jinput->get('yearID', date("Y"),'int');
+			$month = $jinput->get('monthID', date("m"),'int');
 
 			// get data from model and set the month
 			$model = $this->getModel('VenueCal');
@@ -141,7 +143,7 @@ class JemViewVenue extends JemView
 			$this->settings      = $settings;
 			$this->permissions   = $permissions;
 			$this->cal           = $cal;
-			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+			$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 			$this->print_link    = $print_link;
 			$this->print         = $print;
 
@@ -351,7 +353,7 @@ class JemViewVenue extends JemView
 			$this->item             = $menuitem;
 			$this->pagetitle        = $pagetitle;
 			$this->task             = $task;
-			$this->pageclass_sfx    = htmlspecialchars($pageclass_sfx);
+			$this->pageclass_sfx    = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		}
 
 		parent::display($tpl);

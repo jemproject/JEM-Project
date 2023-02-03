@@ -7,6 +7,8 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 ?>
 
@@ -37,7 +39,8 @@ defined('_JEXEC') or die;
 	$limit = $this->params->get('daylimit', 10);
 	$evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
 	$currentWeek = $this->currentweek;
-	$firstDate = strftime("%Y-%m-%d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
+	// $firstDate = strftime("%Y-%m-%d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
+	$firstDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
 	$showtime = $this->settings->get('global_show_timedetails', 1);
 
 	foreach ($this->rows as $row) :
@@ -46,14 +49,17 @@ defined('_JEXEC') or die;
 		}
 
 		//get event date
-		$year = strftime('%Y', strtotime($row->dates));
-		$month = strftime('%m', strtotime($row->dates));
-		$day = strftime('%d', strtotime($row->dates));
+		// $year = strftime('%Y', strtotime($row->dates));
+		// $month = strftime('%m', strtotime($row->dates));
+		// $day = strftime('%d', strtotime($row->dates));
+		$year = date('Y', strtotime($row->dates));
+		$month = date('m', strtotime($row->dates));
+		$day = date('d', strtotime($row->dates));
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
-			$var1a = JRoute::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
-			$var1b = JText::_('COM_JEM_AND_MORE');
+			$var1a = Route::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
+			$var1b = Text::_('COM_JEM_AND_MORE');
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
 			$id = 'eventandmore';
 
@@ -71,7 +77,7 @@ defined('_JEXEC') or die;
 			$end = JemOutput::formattime($row->endtimes);
 
 			if ($start != '') {
-				$timehtml = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_TIME_SHORT').': </span>';
+				$timehtml = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_TIME_SHORT').': </span>';
 				$timehtml .= $start;
 				if ($end != '') {
 					$timehtml .= ' - '.$end;
@@ -80,8 +86,8 @@ defined('_JEXEC') or die;
 			}
 		}
 
-		$eventname  = '<div class="eventName">'.JText::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
-		$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+		$eventname  = '<div class="eventName">'.Text::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
+		$detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
 		//initialize variables
 		$multicatname = '';
@@ -95,7 +101,7 @@ defined('_JEXEC') or die;
 		//walk through categories assigned to an event
 		foreach((array)$row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
-			$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+			$detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
 			$content    .= '<div id="catz" class="cat'.$category->id.'">';
@@ -197,7 +203,7 @@ defined('_JEXEC') or die;
 
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
-			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
+			$venue  = '<div class="location"><span class="text-label">'.Text::_('COM_JEM_VENUE_SHORT').': </span>';
       $venue .=   !empty($row->venue) ? $this->escape($row->venue) : '-';
 			$venue .= '</div>';
 		} else {
@@ -208,12 +214,12 @@ defined('_JEXEC') or die;
 		$statusicon = '';
 		if (isset($row->published) && ($row->published != 1)) {
 			$statusicon  = JemOutput::publishstateicon($row);
-			$eventstate  = '<div class="eventstate"><span class="text-label">'.JText::_('JSTATUS').': </span>';
+			$eventstate  = '<div class="eventstate"><span class="text-label">'.Text::_('JSTATUS').': </span>';
 			switch ($row->published) {
-			case  1: $eventstate .= JText::_('JPUBLISHED');   break;
-			case  0: $eventstate .= JText::_('JUNPUBLISHED'); break;
-			case  2: $eventstate .= JText::_('JARCHIVED');    break;
-			case -2: $eventstate .= JText::_('JTRASHED');     break;
+			case  1: $eventstate .= Text::_('JPUBLISHED');   break;
+			case  0: $eventstate .= Text::_('JUNPUBLISHED'); break;
+			case  2: $eventstate .= Text::_('JARCHIVED');    break;
+			case -2: $eventstate .= Text::_('JTRASHED');     break;
 			}
 			$eventstate .= '</div>';
 		} else {
@@ -221,7 +227,7 @@ defined('_JEXEC') or die;
 		}
 
 		//date in tooltip
-		$multidaydate = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_DATE').': </span>';
+		$multidaydate = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_DATE').': </span>';
 		switch ($multi_mode) {
 		case 1:  // first day
 			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
@@ -291,11 +297,11 @@ defined('_JEXEC') or die;
 		<div class="calendarButtons jem-row jem-justify-start">
 				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
 	
-					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+					<?php echo Text::_('COM_JEM_SHOWALL'); ?>
 				</button>
 				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
 	
-					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+					<?php echo Text::_('COM_JEM_HIDEALL'); ?>
 				</button>
 		</div>
 
@@ -354,10 +360,10 @@ defined('_JEXEC') or die;
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
 				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
-					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+					<?php echo Text::_('COM_JEM_SHOWALL'); ?>
 				</button>
 				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
-					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+					<?php echo Text::_('COM_JEM_HIDEALL'); ?>
 				</button>
 		</div>
     

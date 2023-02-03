@@ -151,7 +151,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
       </div>
 
       <ul class="eventlist eventtable">
-        <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.JSession::getFormToken().'=1'; ?>
+        <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.JSession::getFormToken().'=1'; 
+        ?>
         <?php foreach ($this->rows as $i => $row) : ?>
           <li class="jem-event jem-list-row jem-small-list row<?php echo $i % 2; ?>">
             <div class="jem-event-info-small jem-attendee-number">
@@ -176,7 +177,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
               <?php
               $status = (int)$row->status;
               if ($status === 1 && $row->waiting == 1) { $status = 2; }
-              echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, true);
+              echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
               ?>
             </div>
 

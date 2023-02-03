@@ -8,6 +8,10 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
 
@@ -158,7 +162,7 @@ class JemHelper
 					$dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$query = $db->getQuery(true);
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
@@ -184,7 +188,7 @@ class JemHelper
 					$ref_event = JTable::getInstance('Event', 'JemTable');
 					$ref_event->load($recurrence_row['id']);
 
-					$db = JFactory::getDbo();
+					$db = Factory::getDbo();
 					$query = $db->getQuery(true);
 					$query->select('*');
 					$query->from($db->quoteName('#__jem_events').' AS a');
@@ -230,7 +234,7 @@ class JemHelper
 								// run query always but don't show error message to "normal" users
 								$user = JemFactory::getUser();
 								if($user->authorise('core.manage')) {
-									echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+									echo Text::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
 								}
 							}
 						}
@@ -334,7 +338,7 @@ class JemHelper
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
 					$current_weekday = (int) $date_array["weekday"];
 					$selected = array($current_weekday);
 				}
@@ -392,7 +396,7 @@ class JemHelper
 		}
 
 		if ($start_day < $date_array["unixtime"]) {
-			throw new Exception(JText::_('COM_JEM_RECURRENCE_DATE_GENERATION_ERROR'), 500);
+			throw new Exception(Text::_('COM_JEM_RECURRENCE_DATE_GENERATION_ERROR'), 500);
 		}
 
 		return $recurrence_row;
@@ -415,7 +419,7 @@ class JemHelper
 		}
 
 		try {
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$nulldate = explode(' ', $db->getNullDate());
 			$db->setQuery('UPDATE #__jem_events'
 			            . ' SET recurrence_first_id = 0, recurrence_type = 0'
@@ -470,7 +474,7 @@ class JemHelper
 		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
 		if (is_file($fullPath)) {
 			// Count usage and don't delete if used elsewhere.
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$db->setQuery($countquery_tmpl . $db->quote($filename));
 			if (null === ($usage = $db->loadObjectList())) {
 				return false;
@@ -486,7 +490,7 @@ class JemHelper
 		}
 		elseif (empty($filename) && is_dir($fullPath)) {
 			// get image files used
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$db->setQuery($imagequery);
 			if (null === ($used = $db->loadAssocList('image', 'count'))) {
 				return false;
@@ -524,7 +528,7 @@ class JemHelper
 	{
 		$jemsettings = JemHelper::config();
 		$basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
-		$db          = JFactory::getDBO();
+		$db          = Factory::getDBO();
 		$res         = true;
 
 		// Get list of all folders matching type (format is "$type$id")
@@ -626,7 +630,7 @@ class JemHelper
 					$result[] = (7 - $firstday) % 7;
 					break;
 				default:
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
+					\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
 			}
 		}
 
@@ -639,11 +643,11 @@ class JemHelper
 	 */
 	static public function getAccesslevelOptions($ownonly = false, $disabledLevels = false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$where = '';
 		$selDisabled = '';
 		if ($ownonly) {
-			$levels = JFactory::getUser()->getAuthorisedViewLevels();
+			$levels = Factory::getUser()->getAuthorisedViewLevels();
 			$allLevels = $levels;
 			if (!empty($disabledLevels)) {
 				if (!is_array($disabledLevels)) {
@@ -678,7 +682,7 @@ class JemHelper
 	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
 		$timelist = array();
-		$timelist[0] = JHtml::_('select.option', '', '');
+		$timelist[0] = HTMLHelper::_('select.option', '', '');
 
 		if ($max == 23) {
 			// does user prefer 12 or 24 hours format?
@@ -693,10 +697,11 @@ class JemHelper
 				$value = '0'.$value;
 			}
 
-			$timelist[] = JHtml::_('select.option', $value, ($format ? strftime($format, strtotime("$value:00:00")) : $value));
+			// $timelist[] = HTMLHelper::_('select.option', $value, ($format ? strftime($format, strtotime("$value:00:00")) : $value));
+			$timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
 		}
 
-		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+		return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 
 	/**
@@ -795,7 +800,7 @@ class JemHelper
 	 */
 	static public function updateWaitingList($event)
 	{
-		$db = Jfactory::getDBO();
+		$db = Factory::getDBO();
 
 		// get event details for registration
 		$query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
@@ -829,7 +834,7 @@ class JemHelper
 			$query = ' UPDATE #__jem_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
 			$db->setQuery($query);
 			if ($db->execute() === false) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg(), 'warning');
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg(), 'warning');
 			} else {
 				foreach ($bumping AS $register_id)
 				{
@@ -863,7 +868,7 @@ class JemHelper
 		}
 		$ids = implode(",", $ids);
 
-		$db = Jfactory::getDBO();
+		$db = Factory::getDBO();
 
 		// status 1: user registered (attendee or waiting list), status -1: user exlicitely unregistered, status 0: user is invited but hadn't answered yet
 		$query = ' SELECT COUNT(id) as total,'
@@ -906,7 +911,7 @@ class JemHelper
 	{
 		$user     = JemFactory::getUser();
 		$userTz   = $user->getParam('timezone');
-		$timeZone = JFactory::getConfig()->get('offset');
+		$timeZone = Factory::getConfig()->get('offset');
 
 		/* disabled for now
 		if($userTz) {
@@ -945,7 +950,7 @@ class JemHelper
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$jemsettings   = JemHelper::config();
 		$timezone_name = JemHelper::getTimeZoneName();
-		$config        = JFactory::getConfig();
+		$config        = Factory::getConfig();
 		$sitename      = $config->get('sitename');
 
 		// get categories names
@@ -968,7 +973,7 @@ class JemHelper
 
 		// start
 		if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->dates, $start_date)) {
-			throw new Exception(JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'), 0);
+			throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'), 0);
 		}
 
 		$date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
@@ -979,10 +984,11 @@ class JemHelper
 			$dateparam = array('VALUE' => 'DATE');
 
 			// for ical all day events, dtend must be send to the next day
-			$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
+			// $event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
+			$event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
 
 			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
-				throw new Exception(JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
+				throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
 			}
 
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
@@ -991,7 +997,7 @@ class JemHelper
 		else // not all day events, there is a start time
 		{
 			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/', $event->times, $start_time)) {
-				throw new Exception(JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
+				throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
 			}
 
 			$date['hour'] = $start_time[1];
@@ -1010,17 +1016,18 @@ class JemHelper
 			if ($event->enddates == $event->dates &&
 			    strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
 			{
-				$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
+				// $event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
+				$event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
 			}
 
 			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
-				throw new Exception(JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
+				throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
 			}
 
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
 
 			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/', $event->endtimes, $end_time)) {
-				throw new Exception(JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
+				throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
 			}
 
 			$date_end['hour'] = $end_time[1];
@@ -1034,11 +1041,11 @@ class JemHelper
 
 		// item description text
 		$description = $event->title.'\\n';
-		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
+		$description .= Text::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
 		$link = JUri::root().JemHelperRoute::getEventRoute($event->slug);
 		$link = JRoute::_($link);
-		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
+		$description .= Text::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
 		// location
 		$location = array($event->venue);
@@ -1151,12 +1158,12 @@ class JemHelper
 			}
 		} else {
 			// on Joomla! 3.3+ we must use the new tooltips
-			JHtml::_('bootstrap.tooltip');
+			HTMLHelper::_('bootstrap.tooltip');
 			if (0) { /* old style using 'hasTip' */
-				$title = JHtml::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
+				$title = HTMLHelper::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
 			} else { /* new style using 'has Tooltip' */
 				$class = str_replace('hasTip', '', $class) . ' hasTooltip';
-				$title = JHtml::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
+				$title = HTMLHelper::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
 			}
 			$tooltip = '';
 		}
@@ -1234,7 +1241,7 @@ class JemHelper
 	 */
 	public static function getModuleLayoutPath($module, $layout = 'default')
 	{
-		$template = \JFactory::getApplication()->getTemplate();
+		$template = Factory::getApplication()->getTemplate();
 		$defaultLayout = $layout;
 		$suffix = self::getLayoutStyleSuffix();
 
@@ -1270,7 +1277,7 @@ class JemHelper
 	{
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
-		$document = JFactory::getDocument();
+		$document = Factory::getDocument();
 		$url      = JUri::root();
 		if (!empty($suffix)) {
 			$suffix = '-' . $suffix;
@@ -1299,37 +1306,37 @@ class JemHelper
 			
 			if ($is_file) {
 				# we do have a valid file so we will use it.
-				// $css = JHtml::_('stylesheet', $file, array(), false);
+				// $css = HTMLHelper::_('stylesheet', $file, array(), false);
 				$css = $document->addStyleSheet($file);
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
-				// $files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+				// $files = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
 				$files = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
-					// $css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+					// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
 					$css = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
 
 				} else {
 					# no css for layout style configured, so use the default css
-					// $css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+					// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
 					$css = $document->addStyleSheet($url.'media/com_jem/css/'. $css. '.css');
 
 				}
 			}
 		} else {
 			# here we want to use the normal css
-			// $files = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
+			// $files = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
 			$files = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
 
 			if (!empty($files)) {
 				# we have to call this stupid function twice; no other way to know if something was loaded
-				// $css = JHtml::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
+				// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
 				$css = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
 
 			} else {
 				# no css for layout style configured, so use the default css
-				// $css = JHtml::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
+				// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
 				$css = $document->addStyleSheet($url.'media/com_jem/css/'. $css. '.css');
 
 			}
@@ -1357,35 +1364,35 @@ class JemHelper
 		if (!empty($suffix)) {
 			# search for template overrides
 			$path = $module . '/' . $suffix . '/' . $css . '.css';
-			$files = JHtml::_('stylesheet', $path, array(), true, true);
+			$files = HTMLHelper::_('stylesheet', $path, array(), true, true);
 			if (!empty($files)) {
 				# we have to call this stupid function twice; no other way to know if something was loaded
-				JHtml::_('stylesheet', $path, array(), true);
+				HTMLHelper::_('stylesheet', $path, array(), true);
 				return;
 			} else {
 				# search within module because JEM modules doesn't use media folder
 				$path = 'modules/' . $module . '/tmpl/' . $suffix . '/' . $css . '.css';
-				$files = JHtml::_('stylesheet', $path, array(), false, true);
+				$files = HTMLHelper::_('stylesheet', $path, array(), false, true);
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
-					JHtml::_('stylesheet', $path, array(), false);
+					HTMLHelper::_('stylesheet', $path, array(), false);
 					return;
 				}
 			}
 		}
 
 		$path = $module . '/' . $suffix . '/' . $css . '.css';
-		$files = JHtml::_('stylesheet', $path, array(), true, true);
+		$files = HTMLHelper::_('stylesheet', $path, array(), true, true);
 		if (!empty($files)) {
 			# we have to call this stupid function twice; no other way to know if something was loaded
-			JHtml::_('stylesheet', $path, array(), true);
+			HTMLHelper::_('stylesheet', $path, array(), true);
 			return;
 		} else {
 			$path = 'modules/' . $module . '/tmpl/' . $css . '.css';
-			$files = JHtml::_('stylesheet', $path, array(), false, true);
+			$files = HTMLHelper::_('stylesheet', $path, array(), false, true);
 			if (!empty($files)) {
 				# no css for layout style configured, so use the default css
-				JHtml::_('stylesheet', $path, array(), false);
+				HTMLHelper::_('stylesheet', $path, array(), false);
 				return;
 			}
 		}
@@ -1397,8 +1404,8 @@ class JemHelper
 		if ($jemsettings->useiconfont == 1) {
 			# This will automaticly search for 'font-awesome.css' if site is in debug mode.
 			# Note: css files must be stored on /media/com_jem/FontAwesome/css/ to be conform to Joomla and also allow template overrides.
-			JHtml::_('stylesheet', 'com_jem/FontAwesome/font-awesome.min.css', array(), true);
-			JHtml::_('stylesheet', 'com_jem/FontAwesome/jem-icon-font.css', array(), true);
+			HTMLHelper::_('stylesheet', 'com_jem/FontAwesome/font-awesome.min.css', array(), true);
+			HTMLHelper::_('stylesheet', 'com_jem/FontAwesome/jem-icon-font.css', array(), true);
 		}
 	}
 
@@ -1626,7 +1633,7 @@ class JemHelper
 			break;
 		} // switch
 
-		$document = JFactory::getDocument();
+		$document = Factory::getDocument();
 		$document->addStyleDeclaration($style);
 
 		return true;
@@ -1639,7 +1646,7 @@ class JemHelper
 	 */
 	static public function loadCustomTag()
 	{
-		$document = JFactory::getDocument();
+		$document = Factory::getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
 
@@ -1679,7 +1686,7 @@ class JemHelper
 				break;
 		}
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select(array($column));
 		$query->from('#__extensions');
@@ -1701,7 +1708,7 @@ class JemHelper
 		$options = array();
 		$options = array_merge(JemHelperCountries::getCountryOptions(),$options);
 
-		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
+		array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('COM_JEM_SELECT_COUNTRY')));
 
 		return $options;
 	}

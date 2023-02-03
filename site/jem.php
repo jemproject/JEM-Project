@@ -8,10 +8,12 @@
  */
 
 defined('_JEXEC') or die;
-
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 // include files
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
+require_once (JPATH_COMPONENT_SITE.'/helpers/mailtohelper.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/route.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/countries.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/config.class.php');
@@ -27,7 +29,7 @@ require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-$wa = JFactory::getApplication()->getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('jquery');
 // create JEM's file logger
 JemHelper::addFileLogger();
@@ -42,8 +44,22 @@ jimport('joomla.application.component.controller');
 $controller = JControllerLegacy::getInstance('Jem');
 
 // Perform the Request task
-$input = JFactory::getApplication()->input;
+$input = Factory::getApplication()->input;
 $controller->execute($input->getCmd('task'));
 
 // Redirect if set by the controller
 $controller->redirect();
+HTMLHelper::_('bootstrap.framework');
+$document = Factory::getDocument();
+$document->addScriptDeclaration('
+    jQuery(document).ready(function(){
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl,{
+                html:true
+            })
+        });
+    
+    });
+');
+

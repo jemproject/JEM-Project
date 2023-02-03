@@ -8,6 +8,9 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 jimport('joomla.form.formfield');
 
@@ -29,24 +32,25 @@ class JFormFieldModal_Venue extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		// JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';
 		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
 		$script[] = '        document.getElementById("'.$this->id.'_name").value = venue;';
-		$script[] = '        SqueezeBox.close();';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#venue-modal").modal("hide");';
 		$script[] = '    }';
 
 		// Add to document head
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('venue');
 		$query->from('#__jem_venues');
@@ -68,7 +72,7 @@ class JFormFieldModal_Venue extends JFormField
 		}
 
 		if (empty($venue)) {
-			$venue = JText::_('COM_JEM_SELECT_VENUE');
+			$venue = Text::_('COM_JEM_SELECT_VENUE');
 		}
 		$venue = htmlspecialchars($venue, ENT_QUOTES, 'UTF-8');
 
@@ -76,8 +80,22 @@ class JFormFieldModal_Venue extends JFormField
 		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
 
 		// The venue select button
-		$html[] = '    <a class="flyermodal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
+
+		$html[] = HTMLHelper::_(
+			'bootstrap.renderModal',
+			'venue-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => Text::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT').'
+		</button>';
 
 		// The active venue id field
 		if (0 == (int)$this->value) {

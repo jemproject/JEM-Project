@@ -402,8 +402,8 @@ class JemCalendar
 	var $monthNames=false;
 	var $dayNames=false;
 	var $calEventContent=false;
-	var $calEventContentUrl=false;
-	var $calEventContentId=false;
+	var $calEventContentUrl=[];
+	var $calEventContentId=[];
 	var $calInit=0;
 	var $weekNum=false;
 	var $WeekUrl=false;
@@ -896,7 +896,7 @@ class JemCalendar
 	 * @return array
 	 */
 	function hasEventContent($var) {
-		$hasContent = false;
+		$hasContent = [];
 		if ($this->calEventContent) {
 			$checkTime = $this->mkActiveTime(0, 0, 1, $this->actmonth, $var, $this->actyear);
 			$n = is_array($this->calEventContent) ? count($this->calEventContent) : 0;

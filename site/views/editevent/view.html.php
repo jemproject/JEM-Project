@@ -78,7 +78,7 @@ class JemViewEditevent extends JemView
 			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-
+		
 		if (empty($item->id)) {
 			$authorised = (bool)$user->can('add', 'event');
 		} else {
@@ -92,11 +92,11 @@ class JemViewEditevent extends JemView
 			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-
+	
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
 		                                && ($menuitem->query['view']   == 'editevent')
-		                                && (0 == $item->id)); // menu item is always for new event
+		                                && (0 == $item->id) && (!isset($_GET['from_id']))); // menu item is always for new event
 
 		$title = ($item->id == 0) ? Text::_('COM_JEM_EDITEVENT_ADD_EVENT')
 		                          : Text::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
@@ -105,9 +105,9 @@ class JemViewEditevent extends JemView
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
 			$params->def('page_title', $pagetitle);
 			$params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
       //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from menu item if one is set else from event if there is one set
@@ -116,10 +116,11 @@ class JemViewEditevent extends JemView
 			} elseif ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-
+			
 			$item->params->merge($params);
 		} else {
 			$pagetitle = $title;
+			
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
@@ -191,12 +192,15 @@ class JemViewEditevent extends JemView
 		// HTMLHelper::_('script', 'com_jem/seo.js', false, true);
 		// HTMLHelper::_('script', 'com_jem/unlimited.js', false, true);
 		// HTMLHelper::_('script', 'com_jem/other.js', false, true);
-		$document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js');
-		$document->addScript($url.'media/com_jem/js/attachments.js');
-		$document->addScript($url.'media/com_jem/js/recurrence.js');
-		$document->addScript($url.'media/com_jem/js/seo.js');
-		$document->addScript($url.'media/com_jem/js/unlimited.js');
-		$document->addScript($url.'media/com_jem/js/other.js');
+		// $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js');
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		// $wa->useScript('jquery');
+		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+		$wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
+		$wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
+		$wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
+		$wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
+
 
 		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));

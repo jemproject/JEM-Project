@@ -207,7 +207,7 @@ $this->lists['sort_by'] = JHtml::_('select.genericlist', $sort_by, 'sort_by', ar
 						<?php
 						$status = (int)$row->status;
 						if ($status === 1 && $row->waiting == 1) { $status = 2; }
-						echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, true);
+						echo jemhtml::toggleAttendanceStatus( $row->id, $status, true);
 						?><span class="info-text"><?php
 							echo JHtml::_('jemhtml.getAttendanceStatusText', $row->id, $status, false, true);
 						?></span>

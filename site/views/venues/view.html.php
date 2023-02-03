@@ -131,7 +131,7 @@ class JemViewVenues extends JemView
 		$this->show_status   = $permissions->canEditPublishVenue;
 		$this->task          = $task;
 		$this->pagetitle     = $pagetitle;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		parent::display($tpl);
 	}

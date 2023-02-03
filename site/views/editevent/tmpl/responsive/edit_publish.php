@@ -34,13 +34,13 @@ defined('_JEXEC') or die;
 <fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_METADATA'); ?></legend>
 		<div class="formelm-area">
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_('COM_JEM_TITLE');	?>" />
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[a_name]')" value="<?php echo JText::_('COM_JEM_VENUE'); ?>" />
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[categories]')" value="<?php echo JText::_('COM_JEM_CATEGORIES'); ?>" />
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_('COM_JEM_DATE'); ?>" />
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_('COM_JEM_TIME'); ?>" />
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_('COM_JEM_ENDDATE'); ?>" />
-			<input class="inputbox btn" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_('COM_JEM_ENDTIME'); ?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_('COM_JEM_TITLE');	?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[a_name]')" value="<?php echo JText::_('COM_JEM_VENUE'); ?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[categories]')" value="<?php echo JText::_('COM_JEM_CATEGORIES'); ?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_('COM_JEM_DATE'); ?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_('COM_JEM_TIME'); ?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_('COM_JEM_ENDDATE'); ?>" />
+			<input class="inputbox btn btn-secondary" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_('COM_JEM_ENDTIME'); ?>" />
 			<br />
 			<br />
 			<?php

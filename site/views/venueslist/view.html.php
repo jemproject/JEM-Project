@@ -168,7 +168,7 @@ class JemViewVenueslist extends JViewLegacy
 
 		$this->permissions		= $permissions;
 		$this->show_status		= $permissions->canEditPublishVenue;	$this->print_link		= $print_link;
-		$this->pageclass_sfx      = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx      = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		parent::display($tpl);
 	}

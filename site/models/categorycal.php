@@ -91,11 +91,17 @@ class JemModelCategoryCal extends JemModelEventslist
 		###########
 
 		#only select events within specified dates. (chosen month)
-		$monthstart = mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
-		$monthend   = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
+		// $monthstart = mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
+		// $monthend   = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
-		$filter_date_from = strftime('%Y-%m-%d', $monthstart);
-		$filter_date_to   = strftime('%Y-%m-%d', $monthend);
+		// $filter_date_from = strftime('%Y-%m-%d', $monthstart);
+		// $filter_date_to   = strftime('%Y-%m-%d', $monthend);
+
+		$monthstart = mktime(0, 0,  1, date('m', $this->_date),   1, date('Y', $this->_date));
+		$monthend   = mktime(0, 0, -1, date('m', $this->_date)+1, 1, date('Y', $this->_date));
+
+		$filter_date_from = date('Y-m-d', $monthstart);
+		$filter_date_to   = date('Y-m-d', $monthend);
 
 		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $this->_db->Quote($filter_date_from) .') >= 0';
 		$this->setState('filter.calendar_from', $where);

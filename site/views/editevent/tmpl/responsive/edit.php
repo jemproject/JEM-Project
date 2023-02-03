@@ -28,7 +28,7 @@ $wa = $document->getWebAssetManager();
 
 // Create shortcut to parameters.
 $params		= $this->params;
-$settings	= json_decode($this->item->attribs);
+// $settings	= json_decode($this->item->attribs);
 ?>
 
 <script type="text/javascript">
@@ -76,10 +76,11 @@ jQuery(document).ready(function($){
 	// window.addEvent('domready', function() {
 	jQuery(document).ready(function($){	
 
-		function showUnregistraUntil() {
-			var unregistra = $("jform_unregistra");
-			var unregistramode = unregistra.options[unregistra.selectedIndex].value;
-
+		var showUnregistraUntil =function() {
+			var unregistra = $("#jform_unregistra");
+			
+			var unregistramode = unregistra.val();
+			
 			if (unregistramode == 2) {
 				document.getElementById('jform_unregistra_until').style.display = '';
 				document.getElementById('jform_unregistra_until2').style.display = '';
@@ -88,7 +89,7 @@ jQuery(document).ready(function($){
 				document.getElementById('jform_unregistra_until2').style.display = 'none';
 			}
 		}
-		$("jform_unregistra").on('change', showUnregistraUntil);
+		$("#jform_unregistra").on('change', showUnregistraUntil);
 
 		showUnregistraUntil();
 	});
@@ -191,7 +192,7 @@ jQuery(document).ready(function($){
 						<?php endif; ?>
 						<dd><?php echo $this->form->getInput('userfile'); ?></dd>
 						<dt> </dt>
-						<dd><button type="button" class="button3 btn" onclick="document.getElementById('jform_userfile').value = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
+						<dd><button type="button" class="button3 btn btn-secondary" onclick="document.getElementById('jform_userfile').value = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
 						<?php if ($this->item->datimage) : ?>
 						<dt><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
 						<dd><?php

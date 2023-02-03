@@ -126,7 +126,7 @@ if (empty($form)) {
             </div>
 
             <div class="jem-event-info-small jem-users-state">
-              <?php echo JHtml::_('jemhtml.toggleAttendanceStatus', 0, $row->status, false); ?>
+              <?php echo jemhtml::toggleAttendanceStatus( 0, $row->status, false); ?>
             </div>
           </li>
         <?php endforeach; ?>

@@ -39,6 +39,7 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday; ?>" />
 
 	<script type="text/javascript">
+	
 		<!--
 		var $select_output = new Array();
 		$select_output[1] = "<?php

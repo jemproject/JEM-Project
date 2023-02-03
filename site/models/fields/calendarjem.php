@@ -8,6 +8,7 @@
  */
 
 defined('JPATH_PLATFORM') or die;
+use Joomla\CMS\Language\Text;
 
 JFormHelper::loadFieldClass('calendar');
 
@@ -44,7 +45,8 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 
 			// add hint regarding date/time format accepted in edit field
 			$exampleTimestamp = strtotime("12/31/2017 23:59");
-			$hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
+			// $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
+			$hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($this->format, $exampleTimestamp));
 
 			$extraData = array(
 				'hint' => $hint,
@@ -78,7 +80,8 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 			if (empty($this->hint)) {
 				// add hint regarding date/time format accepted in edit field
 				$exampleTimestamp = strtotime("12/31/2017 23:59");
-				$this->hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
+				// $this->hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
+				$this->hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($this->format, $exampleTimestamp));
 			}
 
 			return parent::getInput();

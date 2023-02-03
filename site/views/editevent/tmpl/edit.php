@@ -24,7 +24,8 @@ $wa = $document->getWebAssetManager();
 
 // Create shortcut to parameters.
 $params		= $this->params;
-$settings	= json_decode($this->item->attribs);
+// $settings	= json_decode($this->item->attribs);
+
 ?>
 
 <script type="text/javascript">
@@ -62,7 +63,7 @@ $settings	= json_decode($this->item->attribs);
 <script type="text/javascript">
 	Joomla.submitbutton = function(task) {
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
-			<?php echo $this->form->getField('articletext')->save(); ?>
+			<?php //echo $this->form->getField('articletext')->save(); ?>
 			Joomla.submitform(task);
 		} else {
 			alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
@@ -73,6 +74,20 @@ $settings	= json_decode($this->item->attribs);
 // window.addEvent('domready', function(){
 // window.onload = (event) => {
 	jQuery(document).ready(function($){
+		var showUnregistraUntil = function(){
+			var unregistra = $("#jform_unregistra");
+			// var unregistramode = unregistra.options[unregistra.selectedIndex].val();
+			var unregistramode = unregistra.val();
+
+			if (unregistramode == 2) {
+				document.getElementById('jform_unregistra_until').style.display = '';
+				document.getElementById('jform_unregistra_until2').style.display = '';
+			} else {
+				document.getElementById('jform_unregistra_until').style.display = 'none';
+				document.getElementById('jform_unregistra_until2').style.display = 'none';
+			}
+		}
+
 		$("#jform_unregistra").on('change', showUnregistraUntil);
 		showUnregistraUntil();
 	})
@@ -80,19 +95,7 @@ $settings	= json_decode($this->item->attribs);
 	
 // }
 
-function showUnregistraUntil()
-{
-	var unregistra = $("#jform_unregistra");
-	var unregistramode = unregistra.options[unregistra.selectedIndex].val();
 
-	if (unregistramode == 2) {
-		document.getElementById('jform_unregistra_until').style.display = '';
-		document.getElementById('jform_unregistra_until2').style.display = '';
-	} else {
-		document.getElementById('jform_unregistra_until').style.display = 'none';
-		document.getElementById('jform_unregistra_until2').style.display = 'none';
-	}
-}
 </script>
 
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">

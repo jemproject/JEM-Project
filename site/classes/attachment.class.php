@@ -43,7 +43,7 @@ class JemAttachment extends JObject
 
 		$allowed = explode(",", $jemsettings->attachments_types);
 		foreach ($allowed as $k => $v) {
-			$allowed[$k] = trim($v);
+			$allowed[$k] = ($v ?  trim($v) : $v);
 		}
 
 		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
@@ -104,7 +104,8 @@ class JemAttachment extends JObject
 			if (isset($rec['access'])) {
 				$table->access = intval($rec['access']);
 			}
-			$table->added = strftime('%F %T');
+			// $table->added = strftime('%F %T');
+			$table->added = date('Y-m-d h:m:s');
 			$table->added_by = $user->get('id');
 
 			if (!($table->check() && $table->store())) {

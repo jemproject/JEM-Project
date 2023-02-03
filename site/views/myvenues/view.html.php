@@ -166,7 +166,7 @@ class JemViewMyvenues extends JemView
 		$this->lists              = $lists;
 		$this->novenues           = $novenues;
 		$this->print_link         = $print_link;
-		$this->pageclass_sfx      = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx      = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		parent::display($tpl);
 	}

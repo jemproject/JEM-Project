@@ -268,22 +268,26 @@ class JemModelSearch extends JModelLegacy
 		{
 			if ($filter_date_from && strtotime($filter_date_from))
 			{
-				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
+				// $filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
+				$filter_date_from = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_from)));
 				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
 			}
 			if ($filter_date_to && strtotime($filter_date_to))
 			{
-				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
+				// $filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
+				$filter_date_to = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_to)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 			}
 		} else {
 			// match only on start date
 			if ($filter_date_from && strtotime($filter_date_from)) {
-				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
+				// $filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
+				$filter_date_from = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_from)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_from .') >= 0';
 			}
 			if ($filter_date_to && strtotime($filter_date_to)) {
-				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
+				// $filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
+				$filter_date_to = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_to)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 			}
 		}

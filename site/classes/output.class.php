@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-
+use Joomla\CMS\Session\Session;
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
@@ -171,7 +171,7 @@ class JemOutput
 			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				$image = jemhtml::icon( 'com_jem/submitevent.png', 'fa fa-fw fa-lg fa-calendar-plus-o jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
+				$image = jemhtml::icon( 'com_jem/submitevent.png', 'fa fa-fw fa-lg fa-calendar-plus jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
 			} else {
 				$image = Text::_('COM_JEM_DELIVER_NEW_EVENT');
 			}
@@ -253,7 +253,7 @@ class JemOutput
 				$image = Text::_('COM_JEM_ADD_USER_REGISTRATIONS');
 			}
 
-			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.JSession::getFormToken().'=1';
+			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.Session::getFormToken().'=1';
 			$overlib = Text::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
 			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
 
@@ -420,7 +420,7 @@ class JemOutput
 					}
 
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pencil-square-o jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
 					} else {
 						$image = Text::_('COM_JEM_EDIT_EVENT');
 					}
@@ -439,7 +439,7 @@ class JemOutput
 					}
 
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pencil-square-o jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
+						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
 					} else {
 						$image = Text::_('COM_JEM_EDIT_VENUE');
 					}
@@ -458,7 +458,7 @@ class JemOutput
 					}
 
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pencil-square-o jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
+						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
 					} else {
 						$image = Text::_('COM_JEM_EDIT_VENUE');
 					}
@@ -515,7 +515,7 @@ class JemOutput
 			{
 				case 'editevent':
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fa fa-fw fa-files-o jem-copybutton', Text::_('COM_JEM_COPY_EVENT'), NULL, !$app->isClient('site'));
+						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_EVENT'), NULL, !$app->isClient('site'));
 					} else {
 						$image = Text::_('COM_JEM_COPY_EVENT');
 					}
@@ -527,7 +527,7 @@ class JemOutput
 
 				case 'editvenue':
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fa fa-fw fa-files-o jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
+						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
 					} else {
 						$image = Text::_('COM_JEM_COPY_VENUE');
 					}
@@ -539,7 +539,7 @@ class JemOutput
 
 				case 'venue':
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fa fa-fw fa-files-o jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
+						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
 					} else {
 						$image = Text::_('COM_JEM_COPY_VENUE');
 					}
@@ -631,21 +631,39 @@ class JemOutput
 			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
 			// $url = 'index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($link);
-			$url = 'index.php?option=com_mailto&tmpl=component&template='.$template;
+			$url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
+			
+			// $url = 'index.php?option=com_mailto&tmpl=component&template='.$template;
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
 			if ($settings->get('global_show_icons')) {
-				$image = jemhtml::icon( 'com_jem/emailButton.png', 'fa fa-fw fa-lg fa-envelope-o jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
+				$image = jemhtml::icon( 'com_jem/emailButton.png', 'fa fa-fw fa-lg fa-envelope jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
 			} else {
 				$image = Text::_('COM_JEM_EMAIL');
 			}
 
 			$overlib = Text::_('COM_JEM_EMAIL_DESC');
 			$text = Text::_('COM_JEM_EMAIL');
-			$output = '<a href="' . Route::_($url) . '" ' . self::tooltip($text, $overlib, '', 'bottom')
-			        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
+			$new_html = '';
+			// $n_link = 'index.php?option=com_jem&amp;view=mailto&amp;tmpl=component';
 
-			return $output;
+			$new_html.= HTMLHelper::_(
+				'bootstrap.renderModal',
+				'mailto-modal',
+				array(		
+					'url'    => $url.'&amp;'.Session::getFormToken().'=1',
+					'title'  => Text::_('COM_JEM_SELECT'),
+					'width'  => '800px',
+					'height' => '450px',
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				)
+			);
+			$new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';
+			// $output = '<a href="' . Route::_($url) . '" ' . self::tooltip($text, $overlib, '', 'bottom')
+			//         . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
+
+			// return $output;
+			return $new_html;
 		}
 	}
 
@@ -668,7 +686,7 @@ class JemOutput
 			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons','0')==1) {
-				$image = jemhtml::icon( 'com_jem/iCal2.0.png', 'fa fa-fw fa-lg fa-calendar-check-o jem-icalbutton', Text::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isClient('site'));
+				$image = jemhtml::icon( 'com_jem/iCal2.0.png', 'fa fa-fw fa-lg fa-calendar-check jem-icalbutton', Text::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isClient('site'));
 			} else {
 				$image = Text::_('COM_JEM_EXPORT_ICS');
 			}
@@ -842,15 +860,17 @@ class JemOutput
 		if (version_compare(JVERSION, '3.3', 'lt')) {
 			// on Joomla! 2.5/3.2 we use good old tooltips
 			//HTMLHelper::_('behavior.tooltip');
-			$result = 'class="'.$classes.' hasTip" title="'.$title.'::'.$text.'"';
+			$result = 'class="'.$classes.' hasTip" data-bs-toggle="tooltip" title="'.$title.'::'.$text.'"';
 		} else {
 			// on Joomla! 3.3+ we must use the new tooltips
-			HTMLHelper::_('bootstrap.tooltip');
-			$result = 'class="'.$classes.' hasTooltip" title="'.HTMLHelper::tooltipText($title, $text, 0).'"';
+			// HTMLHelper::_('bootstrap.tooltip');
+			$result = 'class="'.$classes.' hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText($title, $text, 0).'"';
 			if (!empty($position) && (array_search($position, array('top', 'bottom', 'left', 'right')) !== false)) {
 				$result .= ' data-placement="'.$position.'"';
 			}
 		}
+		
+		
 		return $result;
 	}
 
@@ -1220,7 +1240,8 @@ class JemOutput
 			$format = $settings->formattime;
 		}
 
-		$formattedTime = strftime($format, strtotime($time));
+		// $formattedTime = strftime($format, strtotime($time));
+		$formattedTime = date($format, strtotime($time));
 
 		if ($addSuffix && !empty($settings->timename)) {
 			$formattedTime .= ' '.$settings->timename;
@@ -1491,7 +1512,8 @@ class JemOutput
 		}
 
 		//Format date
-		$parsed = strftime('%Y-%m-%d %H:%M:%S', $sec);
+		// $parsed = strftime('%Y-%m-%d %H:%M:%S', $sec);
+		$parsed = date('Y-m-d H:M:S', $sec);
 
 		$date = array('year'  => (int) substr($parsed, 0, 4),
 		              'month' => (int) substr($parsed, 5, 2),

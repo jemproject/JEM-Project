@@ -714,7 +714,7 @@ class vcalendar {
         }
         break;
       case 'FILENAME':
-        $value   = trim( $value );
+        $value   = $value ?  trim( $value ) : $value;
         $dirfile = $this->directory.$this->delimiter.$value;
         if( file_exists( $dirfile )) {
             /* local file exists */
@@ -736,7 +736,7 @@ class vcalendar {
           return FALSE;
         break;
       case 'FORMAT':
-        $value   = trim( strtolower( $value ));
+        $value   =$value ? trim( strtolower( $value )) : $value;
         if( 'xcal' == $value ) {
           $this->format             = 'xcal';
           $this->attributeDelimiter = $this->nl;
@@ -751,7 +751,7 @@ class vcalendar {
         $res = TRUE;
         break;
       case 'LANGUAGE': // set language for calendar component as defined in [RFC 1766]
-        $value   = trim( $value );
+        $value   =$value ? trim( $value ) : $value;
         $this->language = $value;
         $this->_makeProdid();
         $subcfg  = array( 'LANGUAGE' => $value );
@@ -777,7 +777,7 @@ class vcalendar {
         $res = TRUE;
         break;
       case 'UNIQUE_ID':
-        $value   = trim( $value );
+        $value   =$value ? trim( $value ) : $value;
         $this->unique_id = $value;
         $this->_makeProdid();
         $subcfg  = array( 'UNIQUE_ID' => $value );
@@ -4874,7 +4874,7 @@ class calendarComponent {
         break;
       case 'LANGUAGE':
          // set language for calendar component as defined in [RFC 1766]
-        $value  = trim( $value );
+        $value  =$value ? trim( $value ) : $value;
         if( empty( $this->language ) || !$softUpdate )
           $this->language = $value;
         $subcfg = array( 'LANGUAGE' => $value );
@@ -4893,7 +4893,7 @@ class calendarComponent {
         $res    = TRUE;
         break;
       case 'UNIQUE_ID':
-        $value  = trim( $value );
+        $value  =$value ? trim( $value ) : $value;
         $this->unique_id = $value;
         $subcfg = array( 'UNIQUE_ID' => $value );
         $res    = TRUE;
@@ -5487,7 +5487,7 @@ class calendarComponent {
           if( FALSE !== strpos( $part, ',' )) {
             $part = explode( ',', $part );
             foreach( $part as $thePart ) {
-              $thePart = trim( $thePart );
+              $thePart =  $thePart ? trim( $thePart ) : $thePart;
               if( !empty( $thePart )) {
                 if( !isset( $output[$thePart] ))
                   $output[$thePart] = 1;
@@ -5497,7 +5497,7 @@ class calendarComponent {
             }
           }
           else {
-            $part = trim( $part );
+            $part =  $part ? trim( $part ) :  $part;
             if( !isset( $output[$part] ))
               $output[$part] = 1;
             else
@@ -5508,7 +5508,7 @@ class calendarComponent {
       elseif( FALSE !== strpos( $content, ',' )) {
         $content = explode( ',', $content );
         foreach( $content as $thePart ) {
-          $thePart = trim( $thePart );
+          $thePart =$thePart  ? trim( $thePart ) : $thePart ;
           if( !empty( $thePart )) {
             if( !isset( $output[$thePart] ))
               $output[$thePart] = 1;
@@ -5518,7 +5518,7 @@ class calendarComponent {
         }
       } // end elseif( FALSE !== strpos( $content, ',' ))
       else {
-        $content = trim( $content );
+        $content = $content ? trim( $content ) : $content;
         if( !empty( $content )) {
           if( !isset( $output[$content] ))
             $output[$content] = 1;

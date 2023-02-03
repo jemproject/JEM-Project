@@ -116,7 +116,7 @@ class JemViewWeekcal extends JemView
 		$this->permissions   = $permissions;
 		$this->currentweek   = $currentweek;
 		$this->cal           = $cal;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->print_link    = $print_link;
 		$this->print         = $print;
 

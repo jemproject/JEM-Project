@@ -180,7 +180,7 @@ class JemViewSearch extends JemView
 		$this->filter_continent = $filter_continent;
 		$this->filter_country   = $filter_country;
 		$this->document         = $document;
-		$this->pageclass_sfx    = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx    =$pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		parent::display($tpl);
 	}

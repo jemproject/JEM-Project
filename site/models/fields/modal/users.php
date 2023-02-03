@@ -9,6 +9,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 jimport('joomla.form.formfield');
 
 /**
@@ -29,18 +33,19 @@ class JFormFieldModal_Users extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		// JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectUsers_'.$this->id.'(ids, count, object) {';
 		$script[] = '        document.getElementById("'.$this->id.'_ids").value = ids;';
 		$script[] = '        document.getElementById("'.$this->id.'_count").value = count;';
-		$script[] = '        SqueezeBox.close();';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#user-modal").modal("hide");';
 		$script[] = '    }';
 
 		// Add to document head
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
@@ -55,7 +60,7 @@ class JFormFieldModal_Users extends JFormField
 		$idlist = implode(',', $ids);
 
 		if (!empty($idlist)) {
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select('COUNT(id)');
 			$query->from('#__users');
@@ -80,7 +85,7 @@ class JFormFieldModal_Users extends JFormField
 		}
 
 	//	if (empty($count)) {
-	//		$count = JText::_('COM_JEM_SELECT_USERS');
+	//		$count = Text::_('COM_JEM_SELECT_USERS');
 	//	}
 	//	$count = htmlspecialchars($count, ENT_QUOTES, 'UTF-8');
 
@@ -88,8 +93,21 @@ class JFormFieldModal_Users extends JFormField
 		$html[] = '  <input type="text" id="'.$this->id.'_count" value="'.$count.'" disabled="disabled" size="4" />';
 
 		// The contact select button
-		$html[] = '    <a class="flyermodal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
+		$html[] = HTMLHelper::_(
+			'bootstrap.renderModal',
+			'user-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => Text::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#user-modal">'.Text::_('COM_JEM_SELECT').'
+		</button>';
 
 		// class='required' for client side validation
 		$class = '';
