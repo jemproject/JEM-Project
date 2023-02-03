@@ -25,4 +25,4 @@ Translation via:  https://www.transifex.com/projects/p/JEM/
 Download the installation package pkg_jem_v2.3.7.zip
 You have to remove the previous test version and make a clean install.
 
-Please report all error back here via PM to hekla on the https://www.joomlaeventmanager.net/forum
+Please report all error back here or via PM to hekla on the https://www.joomlaeventmanager.net/forum
