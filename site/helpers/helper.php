@@ -1743,6 +1743,6 @@ class JemHelper
 	 */
 	static public function jemStringContains($masterstring, $string)
 	{
-		return (strpos($masterstring, $string) !== false);
+		return ($masterstring && $string && strpos($masterstring, $string) !== false);
 	}
 }

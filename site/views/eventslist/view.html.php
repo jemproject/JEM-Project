@@ -170,7 +170,7 @@ class JemViewEventslist extends JemView
 		$this->settings      = $settings;
 		$this->permissions   = $permissions;
 		$this->pagetitle     = $pagetitle;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = ($pageclass_sfx ? htmlspecialchars($pageclass_sfx): $pageclass_sfx);
 
 		$this->_prepareDocument();
 		parent::display($tpl);
