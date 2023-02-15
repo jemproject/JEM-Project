@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.4
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -73,11 +73,11 @@ $(document).ready(function() {
 				<div class="col-md-4">				
 					<div class="row">	
 						<div class="col-md-12">
-							<label class="filter-hide-lbl" for="filter_begin"><?php echo JText::_('COM_JEM_EVENTS_FILTER_STARTDATE'); ?></label>
+							<label class="filter-hide-lbl" for="filter_begin"><?php echo Text::_('COM_JEM_EVENTS_FILTER_STARTDATE'); ?></label>
 							<?php echo HTMLHelper::_('calendar', $this->state->get('filter_begin'), 'filter_begin', 'filter_begin', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_STARTDATE')));?>
 						</div>
 						<div class="col-md-12">
-							<label class="filter-hide-lbl" for="filter_end"><?php echo JText::_('COM_JEM_EVENTS_FILTER_ENDDATE'); ?></label>
+							<label class="filter-hide-lbl" for="filter_end"><?php echo Text::_('COM_JEM_EVENTS_FILTER_ENDDATE'); ?></label>
 							<?php echo HTMLHelper::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_ENDDATE') ));?>
 						</div>
 						<div class="col-md-6">
@@ -123,7 +123,27 @@ $(document).ready(function() {
 				<tfoot>
 					<tr>
 						<td colspan="20">
-							<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter()); ?>
+							<div class="row align-items-center">
+								<div class="col-md-4">
+									<div class="limit float-end">
+										<?php 
+											echo $this->pagination->getLimitBox();	
+										?>
+									</div>
+								</div>
+								<div class="col-md-8">
+									<?php
+										echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); 
+									?>
+								</div>
+							</div>
+							
+							<?php 
+							// echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter());
+
+							
+							 ?>
+							 
 						</td>
 					</tr>
 				</tfoot>

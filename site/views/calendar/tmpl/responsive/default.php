@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -153,7 +153,7 @@ td.today div.daynum::after {
 				break;
 			case 'middle': // middle day
 				$multi_mode = 2;
-				$multi_icon = '<i class="fa fa-arrows-h fa-lg" aria-hidden="true"></i>';
+				$multi_icon = '<i class="fas fa-arrows-alt-h"></i>';
 				break;
 			case 'zlast': // last day
 				$multi_mode = 3;

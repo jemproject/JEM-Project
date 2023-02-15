@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.3.8
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -141,10 +141,10 @@ abstract class ModJemWideHelper
 
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
-			$lists[$i]->venue       = htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venue       = $row->venue ? htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8') : $row->venue;
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->state       = $row->state ? htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8') : $row->state;
+			$lists[$i]->city        = $row->city ? htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8') : $row->city;
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
 
@@ -169,8 +169,8 @@ abstract class ModJemWideHelper
 				$lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
 			}
 
-			$lists[$i]->eventdescription   = strip_tags($row->fulltext);
-			$lists[$i]->venuedescription   = strip_tags($row->locdescription);
+			$lists[$i]->eventdescription   = $row->fulltext ? strip_tags($row->fulltext) : $row->fulltext;
+			$lists[$i]->venuedescription   = $row->locdescription ? strip_tags($row->locdescription) : $row->locdescription;
 
 			# provide custom fields
 			for ($n = 1; $n <= 10; ++$n) {

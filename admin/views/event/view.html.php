@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -73,14 +73,12 @@ class JemViewEvent extends JemAdminView
 		
 
 		// Load scripts
-		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/recurrence.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/unlimited.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/seo.js', false, true);
-		$this->document->addScript($url.'media/com_jem/js/attachments.js');
-		$this->document->addScript($url.'media/com_jem/js/recurrence.js');
-		$this->document->addScript($url.'media/com_jem/js/unlimited.js');
-		$this->document->addScript($url.'media/com_jem/js/seo.js');
+		$wa->useScript('jquery');
+		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+		$wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
+		$wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
+		$wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
+		
 
 		// JQuery noConflict
 		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');

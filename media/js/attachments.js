@@ -1,5 +1,5 @@
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -55,7 +55,7 @@
 
 function addattach()
 {
-	var tbody = $('el-attachments').getElement('tbody');
+	var tbody = $('#el-attachments').getElement('tbody');
 	var rows = tbody.getElements('tr');
 	var emptyRows = [];
 

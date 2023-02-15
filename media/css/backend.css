@@ -698,9 +698,9 @@ table.table tfoot td,table.table tfoot th {
 }
 
 table.table .pagination {
-	display:inline-block;
+	/* display:inline-block;
 	padding:0;
-	margin:0 auto;
+	margin:0 auto; */
 }
 
 .center,
@@ -1082,6 +1082,7 @@ a.label:focus {
 }
 
 #jform_unregistra_until_span input {
-	width: 40px;
-	text-align: right;
+width: auto;
+	/* width: 40px;
+	text-align: right; */
 }

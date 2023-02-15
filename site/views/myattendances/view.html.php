@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -157,7 +157,8 @@ class JemViewMyattendances extends JemView
 		$this->print                = $print;
 		$this->lists                = $lists;
 		$this->noattending          = $noattending;
-		$this->pageclass_sfx        = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx 		= $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+
 
 		parent::display($tpl);
 	}

@@ -1,5 +1,5 @@
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,7 +19,7 @@ var $manual_keywords = "";	// String - Speichert alle manuell eingefuegen Keywor
 var $description;		// String - die Beschreibung
 var $description_vars;	// Array - HTML - Tags, die mit einem onchange versehen werden
 var $inputbox = "";		// String - es wird mit Hilfe dieser Variable ermittel, ob der User Beschreibung bzw. Keywords angeklickt hat
-var meta_error;			// String - Fehler, der in der jeweiligen Sprache ausgegeben wird
+var $meta_error;			// String - Fehler, der in der jeweiligen Sprache ausgegeben wird
 
 function starter($msg) {			// Funktion, welche beim Starten der Seite aufgerufen werden
 	get_keywords();					// leider funktionier window.onload nicht, da sonst die Popupfenster Fehler verursachen
@@ -167,6 +167,7 @@ function include_description() {
 }
 
 function insert_keyword($keyword) {
+
 	try {
 		
 		var $input = document.getElementById($inputbox).value;
@@ -196,6 +197,7 @@ function change_metatags() {
 }
 
 function get_inputbox($input) {
+	
 	if ($input == "meta_keywords") {
 		document.getElementById($input).value = $keywords;
 	} else {

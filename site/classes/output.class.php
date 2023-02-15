@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.4
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -255,7 +255,22 @@ class JemOutput
 
 			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.Session::getFormToken().'=1';
 			$overlib = Text::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
-			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+			// $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+
+
+			$output= HTMLHelper::_(
+				'bootstrap.renderModal',
+				'adduser-modal',
+				array(		
+					'url'    => $url,
+					'title'  => Text::_('COM_JEM_SELECT'),
+					'width'  => '800px',
+					'height' => '450px',
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				)
+			);
+			$output.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#adduser-modal" ' .  self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom'). '>' . $image . '</a>';
+
 
 			return $output;
 		}

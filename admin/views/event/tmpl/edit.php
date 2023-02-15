@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,9 +47,9 @@ $params = $params->toArray();
 	window.onload = function() {
 	checkmaxplaces();
 
-	$("jform_attribs_event_show_mapserv").addEvent('change', testmap);
+	$("#jform_attribs_event_show_mapserv").on('change', testmap);
 
-	var mapserv = $("jform_attribs_event_show_mapserv");
+	var mapserv = $("#jform_attribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -58,9 +58,9 @@ $params = $params->toArray();
 		eventmapoff();
 	}
 
-	$('jform_attribs_event_comunsolution').addEvent('change', testcomm);
+	$('#jform_attribs_event_comunsolution').addEvent('change', testcomm);
 
-	var commhandler = $("jform_attribs_event_comunsolution");
+	var commhandler = $("#jform_attribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -72,26 +72,26 @@ $params = $params->toArray();
 
 	function checkmaxplaces()
 	{
-		$('jform_maxplaces').addEvent('change', function(){
-			if ($('event-available')) {
-						var val = parseInt($('jform_maxplaces').value);
-						var booked = parseInt($('event-booked').value);
-						$('event-available').value = (val-booked);
+		$('#jform_maxplaces').on('change', function(){
+			if ($('#event-available')) {
+						var val = parseInt($('#jform_maxplaces').val());
+						var booked = parseInt($('#event-booked').val());
+						$('#event-available').val((val-booked));
 			}
 			});
 
-		$('jform_maxplaces').addEvent('keyup', function(){
-			if ($('event-available')) {
-						var val = parseInt($('jform_maxplaces').value);
-						var booked = parseInt($('event-booked').value);
-						$('event-available').value = (val-booked);
+		$('#jform_maxplaces').on('keyup', function(){
+			if ($('#event-available')) {
+						var val = parseInt($('#jform_maxplaces').val());
+						var booked = parseInt($('#event-booked').val());
+						$('#event-available').val((val-booked));
 			}
 			});
 	}
 
 	function testcomm()
 	{
-		var commhandler = $("jform_attribs_event_comunsolution");
+		var commhandler = $("#jform_attribs_event_comunsolution");
 		var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 		if (nrcommhandler == 1) {
@@ -103,7 +103,7 @@ $params = $params->toArray();
 
 	function testmap()
 	{
-		var mapserv = $("jform_attribs_event_show_mapserv");
+		var mapserv = $("#jform_attribs_event_show_mapserv");
 		var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 		if (nrmapserv == 1 || nrmapserv == 2) {
@@ -143,8 +143,8 @@ Joomla.submitbutton = function(task)
 
 			<?php //echo $this->form->getField('articletext')->save(); ?>
 
-			$("meta_keywords").value = $keywords;
-			$("meta_description").value = $description;
+			document.getElementById("meta_keywords").value = $keywords;
+			document.getElementById("meta_description").value = $description;
 		}
 }
 </script>
@@ -378,7 +378,7 @@ Joomla.submitbutton = function(task)
 						<ul class="adminformlist">
 							<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?>
 							</li>
-							<li id="recurrence_output">
+							<li id="recurrence_output" class="m-3">
 							<label></label>
 							</li>
 							<li id="counter_row" style="display: none;">
@@ -398,26 +398,26 @@ Joomla.submitbutton = function(task)
 
 						<script
 						type="text/javascript">
-						// <!--
-						// 	var $select_output = new Array();
-						// 	$select_output[1] = "<?php echo Text::_ ('COM_JEM_OUTPUT_DAY'); ?>";
-						// 	$select_output[2] = "<?php echo Text::_ ('COM_JEM_OUTPUT_WEEK'); ?>";
-						// 	$select_output[3] = "<?php echo Text::_ ('COM_JEM_OUTPUT_MONTH'); ?>";
-						// 	$select_output[4] = "<?php echo Text::_ ('COM_JEM_OUTPUT_WEEKDAY'); ?>";
+						<!--
+							var $select_output = new Array();
+							$select_output[1] = "<?php echo Text::_ ('COM_JEM_OUTPUT_DAY'); ?>";
+							$select_output[2] = "<?php echo Text::_ ('COM_JEM_OUTPUT_WEEK'); ?>";
+							$select_output[3] = "<?php echo Text::_ ('COM_JEM_OUTPUT_MONTH'); ?>";
+							$select_output[4] = "<?php echo Text::_ ('COM_JEM_OUTPUT_WEEKDAY'); ?>";
 
-						// 	var $weekday = new Array();
-						// 	$weekday[0] = new Array("MO", "<?php echo Text::_ ('COM_JEM_MONDAY'); ?>");
-						// 	$weekday[1] = new Array("TU", "<?php echo Text::_ ('COM_JEM_TUESDAY'); ?>");
-						// 	$weekday[2] = new Array("WE", "<?php echo Text::_ ('COM_JEM_WEDNESDAY'); ?>");
-						// 	$weekday[3] = new Array("TH", "<?php echo Text::_ ('COM_JEM_THURSDAY'); ?>");
-						// 	$weekday[4] = new Array("FR", "<?php echo Text::_ ('COM_JEM_FRIDAY'); ?>");
-						// 	$weekday[5] = new Array("SA", "<?php echo Text::_ ('COM_JEM_SATURDAY'); ?>");
-						// 	$weekday[6] = new Array("SU", "<?php echo Text::_ ('COM_JEM_SUNDAY'); ?>");
+							var $weekday = new Array();
+							$weekday[0] = new Array("MO", "<?php echo Text::_ ('COM_JEM_MONDAY'); ?>");
+							$weekday[1] = new Array("TU", "<?php echo Text::_ ('COM_JEM_TUESDAY'); ?>");
+							$weekday[2] = new Array("WE", "<?php echo Text::_ ('COM_JEM_WEDNESDAY'); ?>");
+							$weekday[3] = new Array("TH", "<?php echo Text::_ ('COM_JEM_THURSDAY'); ?>");
+							$weekday[4] = new Array("FR", "<?php echo Text::_ ('COM_JEM_FRIDAY'); ?>");
+							$weekday[5] = new Array("SA", "<?php echo Text::_ ('COM_JEM_SATURDAY'); ?>");
+							$weekday[6] = new Array("SU", "<?php echo Text::_ ('COM_JEM_SUNDAY'); ?>");
 
-						// 	var $before_last = "<?php echo Text::_ ('COM_JEM_BEFORE_LAST'); ?>";
-						// 	var $last = "<?php echo Text::_ ('COM_JEM_LAST'); ?>";
-						// 	start_recurrencescript("jform_recurrence_type");
-						// -->
+							var $before_last = "<?php echo Text::_ ('COM_JEM_BEFORE_LAST'); ?>";
+							var $last = "<?php echo Text::_ ('COM_JEM_LAST'); ?>";
+							start_recurrencescript("jform_recurrence_type");
+						-->
 						</script>
 						<?php /* show "old" recurrence settings for information */
 							if (!empty($this->item->recurr_bak->recurrence_type)) {
@@ -560,11 +560,11 @@ Joomla.submitbutton = function(task)
 						</fieldset>
 
 						<script type="text/javascript">
-						// <!--
-						// 	starter("<?php
-						// 	echo Text::_ ( 'COM_JEM_META_ERROR' );
-						// 	?>");	// window.onload is already in use, call the function manualy instead
-						// -->
+						<!--
+							starter("<?php
+							echo Text::_ ( 'COM_JEM_META_ERROR' );
+							?>");	// window.onload is already in use, call the function manualy instead
+						-->
 						</script>
 					</div>
 				</div>

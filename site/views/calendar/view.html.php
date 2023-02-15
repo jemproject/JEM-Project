@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -135,7 +135,7 @@ class JemViewCalendar extends JemView
 		$this->settings      = $settings;
 		$this->permissions   = $permissions;
 		$this->cal           = $cal;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->print_link    = $print_link;
 		$this->print         = $print;
 

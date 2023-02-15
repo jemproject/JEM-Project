@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -1135,7 +1135,7 @@ class JemHelper
 	static public function getValidIds($ids_in)
 	{
 		$ids_out = array();
-		$tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
+		$tmp =  is_array($ids_in) ? $ids_in : (!empty($ids_out) ?  explode(',', $ids_in) : array());
 		foreach ($tmp as $id) {
 			if ((int)$id > 0) {
 				$ids_out[] = (int)$id;

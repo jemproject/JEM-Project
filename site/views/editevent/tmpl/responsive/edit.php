@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version 2.3.4
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,10 +39,10 @@ $params		= $this->params;
 // 	}
 jQuery(document).ready(function($){
 	function checkmaxplaces() {
-		var maxplaces = $('jform_maxplaces');
+		var maxplaces = $('#jform_maxplaces');
 
 		if (maxplaces != null) {
-			$('jform_maxplaces').on('change', function() {
+			$('#jform_maxplaces').on('change', function() {
 				if ($('event-available')) {
 					var val = parseInt($('jform_maxplaces').value);
 					var booked = parseInt($('event-booked').value);
@@ -50,7 +50,7 @@ jQuery(document).ready(function($){
 				}
 			});
 
-			$('jform_maxplaces').on('keyup', function() {
+			$('#jform_maxplaces').on('keyup', function() {
 				if ($('event-available')) {
 					var val = parseInt($('jform_maxplaces').value);
 					var booked = parseInt($('event-booked').value);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -105,7 +105,21 @@ $(document).ready(function() {
 			<tfoot>
 				<tr>
 					<td colspan="20">
-						<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter()); ?>
+						<?php //echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter()); ?>
+						<div class="row align-items-center">
+							<div class="col-md-4">
+								<div class="limit float-end">
+									<?php 
+										echo $this->pagination->getLimitBox();	
+									?>
+								</div>
+							</div>
+							<div class="col-md-8">
+								<?php
+									echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); 
+								?>
+							</div>
+						</div>
 					</td>
 				</tr>
 			</tfoot>

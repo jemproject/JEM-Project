@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.8
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -203,7 +203,8 @@ class JemViewEditevent extends JemView
 
 
 		// Escape strings for HTML output
-		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
+		$pageclass_sfx 		 = $item->params->get('pageclass_sfx');
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
 		$this->jemsettings   = $jemsettings;
 		$this->settings      = $settings;

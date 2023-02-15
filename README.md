@@ -1,4 +1,4 @@
-# JEM 4beta (2.3.7a)
+# JEM 4beta (2.3.8)
 
 Forked from jemproject/JEM-Project
 
@@ -22,10 +22,7 @@ Project Homepage: https://www.joomlaeventmanager.net/
 Translation via:  https://www.transifex.com/projects/p/JEM/
 
 ## To install
-Download the installation package pkg_jem_v2.3.7a.zip
+Download the installation package pkg_jem_v2.3.8.zip
 You have to remove the previous test version and make a clean install.
 
 Please report all error back here or via PM to hekla on the https://www.joomlaeventmanager.net/forum
-
-changelog 2.3.7a 
-- time display bug is fixed
