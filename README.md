@@ -22,7 +22,7 @@ Project Homepage: https://www.joomlaeventmanager.net/
 Translation via:  https://www.transifex.com/projects/p/JEM/
 
 ## To install
-Download the installation package pkg_jem_v2.3.8.zip
+Download the installation package [pkg_jem_v2.3.8.zip](https://github.com/Heklaterriol/JEM-Project/blob/JEM-4beta1/pkg_jem_v2.3.8.zip).    
 You have to remove the previous test version and make a clean install.
 
-Please report all error back here or via PM to hekla on the https://www.joomlaeventmanager.net/forum
+Please report all error back here or via PM to hekla on the [www.joomlaeventmanager.net/forum](https://www.joomlaeventmanager.net/forum).
