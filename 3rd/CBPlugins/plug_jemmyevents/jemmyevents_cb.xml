@@ -8,7 +8,7 @@
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 	<version>2.0</version>
-	<release>2.2.0</release>
+	<release>2.3.9</release>
 	<description>This plugin will show events submitted by the user in their profile.</description>
 	<files>
 		<filename plugin="jemmyevents_cb">jemmyevents_cb.php</filename>

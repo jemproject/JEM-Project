@@ -1,6 +1,6 @@
 <?php
 /**
- * Version 2.2.0
+ * Version 2.3.9
  * @copyright	Copyright (C) 2014 Thamesmog.
  * @copyright	Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
