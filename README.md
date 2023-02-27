@@ -1,5 +1,5 @@
 # JEM 4beta (2.3.9)
-released 2023-02 28
+released 2023-02-28
 
 Forked from jemproject/JEM-Project
 
