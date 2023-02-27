@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -184,7 +184,9 @@ class JemViewEvent extends JemView
 		}
 
 		// Escape strings for HTML output
-		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
+		$pageclass_sfx 		 =  $this->item->params->get('pageclass_sfx');
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+		
 
 		$this->print_link = Route::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
@@ -331,11 +333,12 @@ class JemViewEvent extends JemView
 		}
 		$this->registration  = $registration;
 		$this->dispatcher    = $dispatcher;
-		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
+		$pageclass_sfx 		 =  $item->params->get('pageclass_sfx');
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->itemid        = $menuitem ? $menuitem->id : false;
 
 		$this->_prepareDocument();
-
+		
 		parent::display($tpl);
 	}
 

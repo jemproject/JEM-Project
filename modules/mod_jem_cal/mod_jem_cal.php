@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -20,6 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 require_once(dirname(__FILE__).'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
@@ -32,7 +33,7 @@ JemHelper::addFileLogger();
 # Include mootools or bootstrap tooltip
 // JHtml::_('behavior.tooltip');
 // if (version_compare(JVERSION, '3.3', 'ge')) {
-// 	JHtml::_('bootstrap.tooltip');
+	HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 // }
 
 # Parameters
@@ -53,6 +54,11 @@ $Default_Stylesheet  = $params->get('Default_Stylesheet', '1');
 $User_stylesheet     = $params->get('User_stylesheet', 'modules/mod_jem_cal/tmpl/mod_jem_cal.css');
 $tooltips_max_events = $params->get('tooltips_max_events', 0);
 $Itemid              = $app->input->request->getInt('Itemid', 0);
+
+if($Itemid ==0){
+	
+	$Itemid = $app->getMenu()->getActive()->id;
+}
 
 # AJAX requires at least J! 3.2.7 (because we use com_ajax)
 $use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');

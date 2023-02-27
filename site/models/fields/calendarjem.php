@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -46,7 +46,8 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 			// add hint regarding date/time format accepted in edit field
 			$exampleTimestamp = strtotime("12/31/2017 23:59");
 			// $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
-			$hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($this->format, $exampleTimestamp));
+			$date_format = str_replace("%","",$this->format);
+			$hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
 			$extraData = array(
 				'hint' => $hint,

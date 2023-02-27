@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,9 @@ defined('_JEXEC') or die; ?>
 		</td>
 		<td><div class="button2-left">
 				<div class="blank">
-					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
+					<!-- <a href="#" onclick="window.print();return false;"><?php //echo JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
+					</a> -->
+					<a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span>
 					</a>
 				</div>
 			</div>

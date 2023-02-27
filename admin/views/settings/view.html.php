@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -115,7 +115,8 @@ class JemViewSettings extends JemAdminView
 	protected function WarningIcon()
 	{
 		$url = Uri::root();
-		$tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
+		// $tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
+		$tip = '<span class="icon-info-circle" aria-hidden="true"></span>';
 
 		return $tip;
 	}

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -83,28 +83,29 @@ window.onload = (event) => {
 
 	function test() {
 		var form = document.getElementById('venue-form');
-		var map = $('jform_map');
+		var map = $('#jform_map');
 		var streetcheck = $(form.jform_street).hasClass('required');
+		// if (map && map.checked == true) {
+		if (map && map.is(":checked")) {
+			var lat = $('#jform_latitude');
+			var lon = $('#jform_longitude');
 
-		if (map && map.checked == true) {
-			var lat = $('jform_latitude');
-			var lon = $('jform_longitude');
-
-			if (lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
+			if (lat.val() == ('' || 0.000000) || lon.val() == ('' || 0.000000)) {
 				if (!streetcheck) {
 					addrequired();
 				}
 			} else {
-				if (lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000)) {
+				if (lat.val() != ('' || 0.000000) && lon.val() != ('' || 0.000000)) {
 					removerequired();
 				}
 			}
-			$('mapdiv').show();
+			$('#mapdiv').show();
 		}
 
-		if (map && map.checked == false) {
+		// if (map && map.checked == false) {
+		if (map && !map.is(":checked")) {
 			removerequired();
-			$('mapdiv').hide();
+			$('#mapdiv').hide();
 		}
 	}
 
@@ -281,7 +282,7 @@ window.onload = (event) => {
 
 				<div id="mapdiv">
 					<div class="jem-row jem-justify-start">
-						<div><input id="geocomplete" type="text" size="55" placeholder="<?php echo Text::_('COM_JEM_VENUE_ADDRPLACEHOLDER'); ?>" value="" /></div>
+						<div><input id="geocomplete" class="form-control" type="text" size="55" placeholder="<?php echo Text::_('COM_JEM_VENUE_ADDRPLACEHOLDER'); ?>" value="" /></div>
 						<div><input id="find-left" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" /></div>
 					</div>
 

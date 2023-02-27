@@ -579,3 +579,8 @@ body.com_jem.body-overlayed {
 #jem .form-check-input{
 width:1em !important;
 }
+
+.jem-readmore .btn , #find-left.btn{
+background-color:#f0f0f0;
+}
+

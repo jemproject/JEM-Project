@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,6 +47,10 @@ class JemControllerCssmanager extends JControllerAdmin
 		$this->setRedirect('index.php?option=com_jem&view=main');
 	}
 
+	public function back()
+	{
+		$this->setRedirect('index.php?option=com_jem&view=main');
+	}
 	/**
 	 *
 	 */

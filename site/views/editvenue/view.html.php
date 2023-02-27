@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -164,7 +164,7 @@ class JemViewEditvenue extends JemView
 		$document->addScript($url.'media/com_jem/js/attachments.js');
 		$document->addScript($url.'media/com_jem/js/other.js');
 		$key = trim($settings->get('global_googleapi', ''));
-		$document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
+		// $document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language);
 
 		// Noconflict
 		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
@@ -173,7 +173,12 @@ class JemViewEditvenue extends JemView
 		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 
 		// HTMLHelper::_('script', 'com_jem/jquery.geocomplete.js', false, true);
-		$document->addScript($url.'media/com_jem/js/jquery.geocomplete.js');
+		// $document->addScript($url.'media/com_jem/js/jquery.geocomplete.js');
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerScript('jem.jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')->useScript('jem.jquery');
+		$wa->registerScript('jem.jquery_map', 'https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language)->useScript('jem.jquery_map');
+		$wa->registerScript('jem.geocomplete', 'com_jem/jquery.geocomplete.js')->useScript('jem.geocomplete');
 		// No permissions required/useful on this view
 		$permissions = new stdClass();
 

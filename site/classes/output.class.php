@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.9
  * @package JEM
  * @copyright (C) 2013-2022 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -601,17 +601,17 @@ class JemOutput
 				//button in popup
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
 				$text = Text::_('COM_JEM_PRINT');
-				$title = 'title='.Text::_('JGLOBAL_PRINT');
-				$pimage = HTMLHelper::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), $title, true);
-				$output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
+				// $title = 'title='.Text::_('JGLOBAL_PRINT');
+				// $pimage = HTMLHelper::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), $title, true);
+				// $output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
+				$output = '<a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>';
 			} else {
 				//button in view
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
 				$text = Text::_('COM_JEM_PRINT');
-				$output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
+				$output = '<a href="' . Route::_($print_link) . '&tmpl=component" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
 				        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
 			}
-
 			return $output;
 		}
 		return;
