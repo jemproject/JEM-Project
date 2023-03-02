@@ -103,7 +103,7 @@
 					description="MOD_JEM_DATE_FORMAT_DESC"
 				/>
 				<field name="formattime" type="text"
-					default="%H:%M"
+					default="H:i"
 					label="MOD_JEM_TIME_FORMAT"
 					description="MOD_JEM_TIME_FORMAT_DESC"
 				/>
