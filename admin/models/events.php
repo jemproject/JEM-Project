@@ -129,6 +129,10 @@ class JemModelEvents extends JModelList
 		$query->select('vl.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS vl ON vl.id = a.access');
 
+        // Join over the country.
+        $query->select('co.name AS country');
+        $query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
+
 		// Filter by published state
 		$published = $this->getState('filter_state');
 		if (is_numeric($published)) {
@@ -194,14 +198,14 @@ class JemModelEvents extends JModelList
 							break;
 						case 6:
 							/* search country */
-							$query->where('loc.country LIKE '.$search);
+							$query->where('co.name LIKE '.$search);
 							break;
 						case 7:
 							/* search all */
-							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.')');
 							break;
 						default:
-							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.')');
 					}
 				}
 			}
