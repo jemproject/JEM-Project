@@ -109,6 +109,7 @@ $(document).ready(function() {
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
+                        <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'loc.country', $listDirn, $listOrder ); ?></th>
 						<th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
 						<th width="1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 						<th width="1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
@@ -220,6 +221,7 @@ $(document).ready(function() {
 						</td>
 						<td class="city"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 						<td class="state"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
+                        <td class="state"><?php echo $row->state ? $this->escape($row->country) : '-'; ?></td>
 						<td class="category">
 							<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist,true)); ?>
 						</td>
