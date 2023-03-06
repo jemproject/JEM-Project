@@ -138,7 +138,7 @@ div#jem .eventcontenttop {
 
 div#jem .eventtitle
 {
-	text-align:left;
+	text-aling:left;
 }
 
 div#jem .rowcolor {
@@ -180,7 +180,7 @@ div#jem .eventtitle {
 .custom-title {
 	font-weight: bold;
 	font-size: 11px;
-	margin: 10;
+	margin: 10px;
 	color: white;
 	padding: 2px 5px 1px;
 	background: #7598FF;
