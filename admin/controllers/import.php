@@ -195,9 +195,8 @@ class JemControllerImport extends JControllerLegacy
 			case 'dates':
 			case 'enddates':
 			case 'recurrence_limit_date':
-				if ($value !== '' && strtoupper($value) !== 'NULL') {
+				if ($value !== '' && strtoupper($value) !== 'NULL' && $value != '0000-00-00') {
 					$date = strtotime($value);
-					// $field = strftime('%Y-%m-%d', $date);
 					$field = date('Y-m-d', $date);
 				} else {
 					$field = null;
