@@ -473,20 +473,11 @@ Joomla.submitbutton = function(task)
 									?>
 									<hr>
 									<fieldset class="panelform">
-										<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
+										<h3><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></h3>
 										<ul>
-											<li>
-												<label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
-												<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_type; ?>">
-											</li>
-											<li>
-												<div class="clear"></div>
-												<label> </label>
-												<?php echo $recurr_info; ?>
-											</li>
-											<li>
-												<label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
-												<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_limit_date; ?>">
+											<li><strong><?php echo Text::_('COM_JEM_RECURRENCE') ?></strong>: <?php echo $recurr_type; ?></li>
+											<li><?php echo $recurr_info; ?></li>
+											<li><strong><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></strong>: <?php echo $recurr_limit_date; ?>">
 											</li>
 										</ul>
 									</fieldset>
