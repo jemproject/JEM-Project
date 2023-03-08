@@ -1527,8 +1527,7 @@ class JemOutput
 		}
 
 		//Format date
-		// $parsed = strftime('%Y-%m-%d %H:%M:%S', $sec);
-		$parsed = date('Y-m-d H:M:S', $sec);
+		$parsed = date('Y-m-d H:i:s', $sec);
 
 		$date = array('year'  => (int) substr($parsed, 0, 4),
 		              'month' => (int) substr($parsed, 5, 2),
