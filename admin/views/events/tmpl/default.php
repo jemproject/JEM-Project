@@ -238,8 +238,6 @@ $(document).ready(function() {
 							?>
 						</td>
 						<td>
-							<?php echo Text::_('COM_JEM_AUTHOR').': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
-							<?php echo Text::_('COM_JEM_EMAIL').': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
 							<?php
 							$created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC2'));
 							$modified 		= HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC2') );
@@ -254,9 +252,11 @@ $(document).ready(function() {
 								$overlib 	.= Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by.'<br />';
 							}
 							?>
-							<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
-								<?php echo $image; ?>
-							</span>
+							<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib . '<br /><strong>' . Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author . '<br /><br /><strong>' . Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email, 'editlinktip'); ?>>
+							
+							<a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a></span>
+							
+							
 						</td>
 						<td class="center"><?php echo $row->hits; ?></td>
 
