@@ -187,7 +187,7 @@ class JemControllerImport extends JControllerLegacy
 			case 'endtimes':
 				if ($value !== '' && strtoupper($value) !== 'NULL') {
 					$time = strtotime($value);
-					$field = date('Y-m-d H:i:s',$time);
+					$field = date('H:i:s',$time);
 				} else {
 					$field = null;
 				}
