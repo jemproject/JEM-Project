@@ -338,7 +338,7 @@ Joomla.submitbutton = function(task)
 							<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
 							</li>	
 							<li><label><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?></label>
-										<input type="text" value="<?php echo $this->item->booked; ?>" class="form-control readonly valid form-control-success" readonly="">
+										<input type="text" value="<?php echo $this->item->booked; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
 									</li>
 							<?php if ($this->item->maxplaces): ?>
 							<li><label><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
@@ -477,10 +477,10 @@ Joomla.submitbutton = function(task)
 									<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
 									<ul class="adminformlist">
 									<li class="has-success"><label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
-										<input type="text" value="<?php echo $recurr_type; ?>, <?php echo $recurr_info; ?>" class="form-control readonly valid form-control-success" readonly="">
+										<input type="text" value="<?php echo $recurr_type; ?>, <?php echo $recurr_info; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
 									</li>
 									<li><label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
-										<input type="text" value="<?php echo $recurr_limit_date; ?>" class="form-control readonly valid form-control-success" readonly="">
+										<input type="text" value="<?php echo $recurr_limit_date; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
 									</li>
 										</ul>
 									</fieldset>
