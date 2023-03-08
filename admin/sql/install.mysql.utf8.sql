@@ -242,7 +242,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('citywidth', '15%'),
 ('formatdate', 'D, j. F Y'),
 ('formatShortDate', 'd.m.y'),
-('formattime', 'H:M'),
+('formattime', 'H:i'),
 ('formathour', 'H'),
 ('timename', 'h'),
 ('showdetails', '1'),
