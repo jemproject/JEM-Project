@@ -665,8 +665,11 @@ fieldset.adminform.long span.faux-label {min-width: 180px;}
 /* Field label widths - short label */
 fieldset.adminform label,
 fieldset.adminform span.faux-label {
-     min-width: 135px;
-     padding-right: 5px;
+    /* min-width: 135px; */
+    padding-right: 5px;
+}
+fieldset.adminform label.btn {
+    min-width: 135px;
 }
 div.current label,
 div.current span.faux-label {
