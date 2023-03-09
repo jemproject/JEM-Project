@@ -68,7 +68,7 @@ if ($this->showRegForm && empty($this->print)) :
 		</p>
 		<?php endif; ?>
 		<p>
-			<input class="button1 btn btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
+			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
 		</p>
 		<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
 		<input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />
