@@ -44,8 +44,8 @@ if ($jemsettings->oldevent > 0) {
 
 	<?php if (!$this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-        	<?php echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
-        </h1>
+			<?php echo $this->escape($this->params->get('page_heading')); ?>
+      <?php echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
 	<?php endif; ?>
 
 	<div class="clr"> </div>
