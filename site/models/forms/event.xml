@@ -142,6 +142,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
 			size="40"
 			required="false"
+		    default="0"
 		/>
 		<field name="contactid" type="modal_contact"
 			label="COM_JEM_EDITEVENT_FIELD_CONTACT"
