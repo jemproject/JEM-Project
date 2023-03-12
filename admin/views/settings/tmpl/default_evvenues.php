@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 $group = 'globalattribs';
 ?>
 
-<div class="width-100">
-	<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
 		<legend><?php echo JText::_('COM_JEM_VENUES'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('event_show_locdescription',$group); ?> <?php echo $this->form->getInput('event_show_locdescription',$group); ?></li>
