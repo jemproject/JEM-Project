@@ -80,7 +80,7 @@ function jem_common_show_filter(&$obj) {
 
 <?php endif; ?>
 
-
+<?php /* Kopfzeile */ ?>
 
   <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
@@ -114,6 +114,7 @@ function jem_common_show_filter(&$obj) {
 					<li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
 				<?php endif; ?>  
 
+<?php// list city ?>
 
  
 				
@@ -136,7 +137,7 @@ function jem_common_show_filter(&$obj) {
 					<div class="jem-event-info-small jem-event-state">-</div>
 					<?php endif; ?>
                 <?php endif; ?>
-		  
+<?php// list venue ?>			  
                 <?php if (!empty($row->locid)) : ?>
                   <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
