@@ -170,12 +170,14 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
           </div>
           <div class="jem-description-teaser">
             <?php //uncomment this construct to disable the eventimage ?>
-            <?php if(strpos($item->eventimage,'/media/system/images/blank.png') === false) : ?>
-              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
-                <?php if(!empty($item->eventimage)) : ?>
-                  <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
-                    <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
-                  </a>
+            <?php if($item->showimageevent): ?>
+		      <?php if(strpos($item->eventimage,'/media/system/images/blank.png') === false) : ?>
+                <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
+                  <?php if(!empty($item->eventimage)) : ?>
+                    <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                      <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
+                    </a>
+                  <?php endif; ?>
                 <?php endif; ?>
               <?php endif; ?>
             <?php endif; ?>

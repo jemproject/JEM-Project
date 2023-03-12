@@ -201,6 +201,8 @@ abstract class ModJemTeaserHelper
 			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
+			$lists[$i]->showimagevenue   = $params->get('showimagevenue', 1);
 
 			# time/date
 			$lists[$i]->day         = modJEMteaserHelper::_format_day($row, $params);
