@@ -102,13 +102,13 @@ $(document).ready(function() {
 				<thead>
 					<tr>
 						<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-                        <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
+            <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $listDirn, $listOrder ); ?></th>
 						<th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
-                        <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'loc.country', $listDirn, $listOrder ); ?></th>
+            <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'loc.country', $listDirn, $listOrder ); ?></th>
 						<th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
 						<th width="1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 						<th width="1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
@@ -174,6 +174,7 @@ $(document).ready(function() {
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
+						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 						<td>
 							<?php if ($row->checked_out) : ?>
 								<?php echo HTMLHelper::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
