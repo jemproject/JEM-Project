@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.10
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -1102,7 +1102,8 @@ class plgJemMailer extends JPlugin
 	 */
 	private function Adminlist()
 	{
-		$additional_mails	= array_filter(explode(',', ($this->params->get('admin_receivers')  ? trim($this->params->get('admin_receivers')) : $this->params->get('admin_receivers'))));
+		$admin_receiver = $this->params->get('admin_receivers');
+		$additional_mails	=(!empty($admin_receiver) ? (array_filter(explode(',', ($admin_receiver  ? trim($admin_receiver) : $admin_receiver)))) :array()) ;
 		// remove whitespaces around each entry, then check if valid email address
 		foreach ($additional_mails as $k => $v) {
 			$additional_mails[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);

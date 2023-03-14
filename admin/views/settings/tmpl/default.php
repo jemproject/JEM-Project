@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,7 +36,7 @@ $wa = $this->document->getWebAssetManager();
 // window.bind('domready', function(){
 jQuery(document).ready(function($){
 	$('#jform_showcity0').bind('click', cityon);
-	$('jform_showcity1').bind('click', cityoff);
+	$('#jform_showcity1').bind('click', cityoff);
 
 	if($('#jform_showcity0').checked) {
 		cityon();
@@ -52,48 +52,48 @@ jQuery(document).ready(function($){
 	$('#jform_showtitle0').bind('click', titleon);
 	$('#jform_showtitle1').bind('click', titleoff);
 
-	if($('#jform_showtitle0').checked) {
+	if(document.getElementById('jform_showtitle0').checked) {
 		titleon();
 	}
 
 	$('#jform_showlocate0').bind('click', locon);
 	$('#jform_showlocate1').bind('click', locoff);
 
-	if($('#jform_showlocate0').checked) {
+	if(document.getElementById('jform_showlocate0').checked) {
 		locon();
 	}
 
 	$('#jform_showstate0').bind('click', stateon);
 	$('#jform_showstate1').bind('click', stateoff);
 
-	if($('jform_showstate0').checked) {
+	if(document.getElementById('jform_showstate0').checked) {
 		stateon();
 	}
 
 	$('#jform_showcat0').bind('click', caton);
 	$('#jform_showcat1').bind('click', catoff);
 
-	if($('#jform_showcat0').checked) {
+	if(document.getElementById('jform_showcat0').checked) {
 		caton();
 	}
 
 	$('#jform_showeventimage0').bind('click', evimageon);
 	$('#jform_showeventimage1').bind('click', evimageoff);
 
-	if($('jform_showeventimage0').checked) {
+	if(document.getElementById('jform_showeventimage0').checked) {
 		evimageon();
 	}
 
 	$('#jform_gddisabled0').bind('click', lbon);
 	$('#jform_gddisabled1').bind('click', lboff);
 
-	if($('jform_gddisabled0').checked) {
+	if(document.getElementById('jform_gddisabled0').checked) {
 		lbon();
 	}
 
 	$("#jform_globalattribs_event_show_mapserv").bind('change', testmap);
 
-	var mapserv = $("#jform_globalattribs_event_show_mapserv");
+	var mapserv = document.getElementById("jform_globalattribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -105,7 +105,7 @@ jQuery(document).ready(function($){
 
 	$("#jform_globalattribs_global_show_mapserv").bind('change', testmap);
 
-	var mapserv = $("jform_globalattribs_global_show_mapserv");
+	var mapserv = document.getElementById("jform_globalattribs_global_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -116,7 +116,7 @@ jQuery(document).ready(function($){
 
 	$("#jform_oldevent").bind('change', testevhandler);
 
-	var evhandler = $("jform_oldevent");
+	var evhandler = document.getElementById("jform_oldevent");
 	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
 
 	if (nrevhandler > 0) {
@@ -127,7 +127,7 @@ jQuery(document).ready(function($){
 
 	$('#jform_globalattribs_event_comunsolution').bind('change', testcomm);
 
-	var commhandler = $("jform_globalattribs_event_comunsolution");
+	var commhandler = document.getElementById("jform_globalattribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -137,7 +137,7 @@ jQuery(document).ready(function($){
 	}
 
 
-	var ObjArray = $$('input.colorpicker').get('id').sort();
+	var ObjArray = $('input.colorpicker').get('id').sort();
 
 	var arrayLength = ObjArray.length;
 	for (var i = 0; i < arrayLength; i++) {
@@ -150,7 +150,7 @@ jQuery(document).ready(function($){
 
 	$("#jform_showfroregistra").bind('change', testregistra);
 
-	var registra = $("jform_showfroregistra");
+	var registra = document.getElementById("jform_showfroregistra");
 	var nrregistra = registra.options[registra.selectedIndex].value;
 
 	if (nrregistra >= 1) {
@@ -178,7 +178,7 @@ function testcolor(color) {
 
 function testcomm()
 {
-	var commhandler = $("#jform_globalattribs_event_comunsolution");
+	var commhandler = document.getElementById("jform_globalattribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -190,7 +190,7 @@ function testcomm()
 
 function testmap()
 {
-	var mapserv = $("#jform_globalattribs_event_show_mapserv");
+	var mapserv = document.getElementById("jform_globalattribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -199,7 +199,7 @@ function testmap()
 		eventmapoff();
 	}
 
-	var mapserv2 = $("#jform_globalattribs_global_show_mapserv");
+	var mapserv2 = document.getElementById("jform_globalattribs_global_show_mapserv");
 	var nrmapserv2 = mapserv2.options[mapserv2.selectedIndex].value;
 
 	if (nrmapserv2 == 1 || nrmapserv2 == 2) {
@@ -211,7 +211,7 @@ function testmap()
 
 function testevhandler()
 {
-	var evhandler = $("#jform_oldevent");
+	var evhandler = document.getElementById("jform_oldevent");
 	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
 
 	if (nrevhandler > 0) {
@@ -223,7 +223,7 @@ function testevhandler()
 
 function testregistra()
 {
-	var registra = $("#jform_showfroregistra");
+	var registra = document.getElementById("jform_showfroregistra");
 	var nrregistra = registra.options[registra.selectedIndex].value;
 
 	if (nrregistra >= 1) {

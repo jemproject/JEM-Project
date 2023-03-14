@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.10
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net

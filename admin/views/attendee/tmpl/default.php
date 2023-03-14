@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,7 +18,8 @@ use Joomla\CMS\Factory;
 // HTMLHelper::_('behavior.keepalive');
 $document = Factory::getDocument();
 $wa = $document->getWebAssetManager();
-		$wa->useScript('keepalive')
+		$wa->useScript('jquery')
+		->useScript('keepalive')
 			->useScript('form.validate');
 
 $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
@@ -36,17 +37,14 @@ echo JHtml::_(
 ?>
 
 <script type="text/javascript">
-
-	function modalSelectUser(id, username)
-	{
-		console.log(id,username);
-		$('#uid').val(id)  ;
-		$('#username').val(username);
+function modalSelectUser(id, username)
+{
+		jQuery('#uid').val(id)  ;
+		jQuery('#username').val(username);
 		// window.parent.SqueezeBox.close();
-		$("#user-modal").modal("hide");
-	}
-
-	Joomla.submitbutton = function(task)
+		jQuery("#user-modal").modal("hide");
+}	
+Joomla.submitbutton = function(task)
 	{
 		if (task == 'attendee.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
 			if (task == 'attendee.cancel' || document.getElementById('adminForm').uid.value != 0) {
