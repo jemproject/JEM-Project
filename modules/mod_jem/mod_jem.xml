@@ -48,6 +48,16 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
+				<field name="highlight_featured" type="radio"
+					   default="0"
+					   label="MOD_JEM_HIGHLIGHT_FEATURED"
+					   description="MOD_JEM_HIGHLIGHT_FEATURED_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+
 				<field name="offset_hours" type="text"
 					default=""
 					label="MOD_JEM_OFFSET_HOURS"
@@ -62,7 +72,7 @@
 					<option value="1">MOD_JEM_TITLE</option>
 				</field>
 				<field name="cuttitle" type="text"
-					default="18"
+					default="30"
 					label="MOD_JEM_MAX_TITLE_LENGTH"
 					description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
 				/>

@@ -117,6 +117,11 @@ div[id^='scat'] {
 
 }
 
+.borderfeatured {
+	border-width: 3px;
+	border-style: solid;
+}
+
 div#jem .eventcontentinner a {
 	color: #333;
 }
@@ -143,7 +148,7 @@ div#jem .eventtitle
 
 div#jem .rowcolor {
 	height: 10px;
-	text-aling:right;
+	text-align:right;
 }
 
 div#jem .eventtitle {

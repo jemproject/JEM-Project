@@ -9,9 +9,9 @@
 defined('_JEXEC') or die;
 
 ?>
-<div class="width-50 fltlft">
-	<div class="width-100">
-		<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <div class="width-100" style="padding: 10px 1vw;">
+        <fieldset class="options-form">
 			<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CONFIGINFO'); ?></legend>
 			<br>
 			<table class="adminlist table">
@@ -37,6 +37,14 @@ defined('_JEXEC') or die;
 				                         ,'AcyMailing Tag : insert events from JEM 2.1+'
 				                                              => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
 				                         );
+                ?>
+                <tr>
+					<th><u><?php echo JText::_('COM_JEM_NAME'); ?></u></th>
+                    <th><u><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS'); ?></u></th>
+                    <th><u><?php echo JText::_('COM_JEM_DATE'); ?></u></th>
+                    <th><u><?php echo JText::_('COM_JEM_STATE'); ?></u></th>
+                </tr>
+                <?php
 				foreach ($known_extensions as $name => $label) {
 					if (!empty($this->config->$name)) { ?>
 					<tr>
