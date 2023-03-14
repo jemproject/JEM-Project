@@ -49,6 +49,7 @@ class JemViewMailto extends JViewLegacy
 		$layout = $app->input->get('layout', 'edit');
 		
 		$params = $this->params;
+		$this->pageclass_sfx = $params->get('pageclass_sfx');
 		// Get the form to display
 		$this->form = $this->get('Form');
 

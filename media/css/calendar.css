@@ -105,6 +105,11 @@ div[id^='scat'] {
         hyphens: auto;
 }
 
+.borderfeatured {
+	border-width: 3px;
+	border-style: solid;
+}
+
 div#jem .eventcontentinner a {
 	color: #333;
 	/* text-decoration:none; */

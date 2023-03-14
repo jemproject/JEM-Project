@@ -28,7 +28,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<?php if (empty($this->permissions->canEditAttendees)) : ?>
 			<?php echo $booked; ?>
 		<?php else : ?>
-			<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo $this->item->booked; ?> <i class="fa fa-external-link" aria-hidden="true"></i></a>
+			<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo $this->item->booked; ?> <i class="icon-out-2" aria-hidden="true"></i></a>
 		<?php endif; ?>
 		</dd>
 	<?php endif; ?>

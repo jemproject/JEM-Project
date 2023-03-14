@@ -16,6 +16,8 @@ use Joomla\CMS\Factory;
 // HTMLHelper::_('behavior.tooltip');
 // HTMLHelper::_('behavior.formvalidation');
 // HTMLHelper::_('behavior.keepalive');
+HTMLHelper::_('jquery.framework');
+
 $document = Factory::getDocument();
 $wa = $document->getWebAssetManager();
 		$wa->useScript('jquery')

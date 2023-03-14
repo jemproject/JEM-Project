@@ -70,7 +70,24 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
-
+				<field name="showimageevent" type="radio"
+					   default="1"
+					   label="MOD_JEM_TEASER_SHOW_IMAGE_EVENT"
+					   description="MOD_JEM_TEASER_SHOW_IMAGE_EVENT_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field name="showimagevenue" type="radio"
+					   default="1"
+					   label="MOD_JEM_TEASER_SHOW_IMAGE_VENUE"
+					   description="MOD_JEM_TEASER_SHOW_IMAGE_VENUE_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
 				<field name="color" type="list"
 					default="1"
 					label="MOD_JEM_TEASER_COLOR"

@@ -73,7 +73,7 @@ if ($this->showRegForm && empty($this->print)) :
         </li>      
       <?php endif; ?>
     </ul>
-    <input class="jem-register-button btn btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" /> 
+    <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" /> 
 
 	
 		

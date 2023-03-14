@@ -8,8 +8,8 @@
  */
 defined('_JEXEC') or die;
 ?>
-<div class="width-100">
-	<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
 		<legend><?php echo JText::_( 'COM_JEM_EVENT_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('oldevent'); ?> <?php echo $this->form->getInput('oldevent'); ?></li>

@@ -22,8 +22,8 @@ defined('_JEXEC') or die;
 -->
 </script>
 
-<div class="width-100">
-	<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
 		<legend><?php echo JText::_( 'COM_JEM_META_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
 			<li><label id="jform_meta_keywords-lbl" <?php echo JEMOutput::tooltip(JText::_('COM_JEM_META_KEYWORDS'), JText::_('COM_JEM_META_KEYWORDS_DESC')); ?>>

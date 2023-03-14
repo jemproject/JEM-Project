@@ -104,8 +104,8 @@ class JemAttachment extends JObject
 			if (isset($rec['access'])) {
 				$table->access = intval($rec['access']);
 			}
-			// $table->added = strftime('%F %T');
-			$table->added = date('Y-m-d h:m:s');
+
+			$table->added = date('Y-m-d H:i:s');
 			$table->added_by = $user->get('id');
 
 			if (!($table->check() && $table->store())) {

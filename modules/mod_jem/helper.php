@@ -132,7 +132,8 @@ abstract class ModJemHelper
 			$lists[$i]->text     = $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city     = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venueurl = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
-
+			$lists[$i]->featured = $row->featured;
+			
 			# provide custom fields
 			for ($n = 1; $n <= 10; ++$n) {
 				$var = 'custom'.$n;
