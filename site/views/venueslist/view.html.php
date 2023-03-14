@@ -16,10 +16,17 @@ use Joomla\CMS\Router\Route;
 /**
  * View: Venueslist
  */
-class JemViewVenueslist extends JViewLegacy
+
+	
+class JemViewVenueslist extends JemView
 {
-	protected $pagination = null;
-	protected $items = null;
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+
+		// additional path for common templates + corresponding override path
+		$this->addCommonTemplatePath();
+	}	
 	
 	/**
 	 * Creates the Venueslist View
