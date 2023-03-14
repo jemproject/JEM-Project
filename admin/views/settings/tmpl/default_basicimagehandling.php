@@ -22,8 +22,7 @@ $gdv = JEMImage::gdVersion();
 
 			<li><?php echo $this->form->getLabel('imagehight'); ?> <?php echo $this->form->getInput('imagehight'); ?></li>
 
-			<li><?php echo $this->form->getLabel('imagewidth'); ?> <?php echo $this->form->getInput('imagewidth'); ?>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_WARNING'), JText::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
+			<li><?php echo $this->form->getLabel('imagewidth'); ?><span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_WARNING'), JText::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
 					<?php echo $this->WarningIcon(); ?>
 				</span>
 			</li>
