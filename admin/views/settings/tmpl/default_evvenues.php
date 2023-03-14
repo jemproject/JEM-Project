@@ -19,8 +19,8 @@ $group = 'globalattribs';
 			<li><?php echo $this->form->getLabel('event_show_detailsadress',$group); ?> <?php echo $this->form->getInput('event_show_detailsadress',$group); ?></li>
 			<li><?php echo $this->form->getLabel('event_show_detlinkvenue',$group); ?> <?php echo $this->form->getInput('event_show_detlinkvenue',$group); ?></li>
 			<li><?php echo $this->form->getLabel('event_show_mapserv',$group); ?> <?php echo $this->form->getInput('event_show_mapserv',$group); ?></li>
-			<li id="eventmap1" style="display:none"><?php echo $this->form->getLabel('event_tld',$group); ?> <?php echo $this->form->getInput('event_tld',$group); ?></li>
-			<li id="eventmap2" style="display:none"><?php echo $this->form->getLabel('event_lg',$group); ?> <?php echo $this->form->getInput('event_lg',$group); ?></li>
+			<li><?php echo $this->form->getLabel('event_tld',$group); ?> <?php echo $this->form->getInput('event_tld',$group); ?></li>
+			<li><?php echo $this->form->getLabel('event_lg',$group); ?> <?php echo $this->form->getInput('event_lg',$group); ?></li>
 		</ul>
 	</fieldset>
 </div>
