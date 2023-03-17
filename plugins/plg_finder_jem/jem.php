@@ -214,7 +214,7 @@ class plgFinderJEM extends Adapter {
 				$this->checkItemAccess($row);
 			}
 		}
-echo "fdsfsd";die;
+
 		// Check for access levels from the category
 		if ($context == 'com_jem.category')
 		{
@@ -322,8 +322,6 @@ echo "fdsfsd";die;
 		{
 			$item->addTaxonomy('Author', !empty($item->created_by_alias) ? $item->created_by_alias : $item->author);
 		}
-
-		
 
 		// Add the category taxonomy data.
 		$item->addTaxonomy('Category', $item->category, $item->cat_state, $item->cat_access);

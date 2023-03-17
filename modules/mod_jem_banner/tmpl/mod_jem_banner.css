@@ -1,5 +1,5 @@
 /**
- * @version 2.3.10
+ * @version 2.3.11
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2019 joomlaeventmanager.net
@@ -74,6 +74,10 @@ div#jemmodulebanner .event-title {
 	padding-left: 0px;
 	font-size: x-large;
 	margin: 0 0 5px;
+}
+
+.highlight_featured{
+	font-weight: bold;
 }
 
 div#jemmodulebanner .desc {
