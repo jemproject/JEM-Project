@@ -1,9 +1,16 @@
 # JEM 4beta (2.3.10)
-released 2023-03-14
+released 2023-03-15
 
 Forked from jemproject/JEM-Project
 
 Based on Egnarts94/JEM-Project Responsive JEM
+
+
+## version 2.3.10
+is the next release from our developer.
+
+## version 2.3.11
+is the 2.3.11 release **including the fixes from the community**.
 
 ## This version includes:
 - Import/Export view

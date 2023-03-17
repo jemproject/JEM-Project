@@ -174,7 +174,6 @@ $(document).ready(function() {
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
-						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 						<td>
 							<?php if ($row->checked_out) : ?>
 								<?php echo HTMLHelper::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
