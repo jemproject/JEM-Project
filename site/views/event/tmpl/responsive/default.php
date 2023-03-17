@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -45,13 +45,18 @@ if ($jemsettings->oldevent > 0) {
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-			<?php 
-      echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
-      ?>
-		</h1>
+        	<?php echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
 	<?php endif; ?>
 
 	<!-- Event -->
+	<h2 class="jem">
+		<?php		
+		echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
+        echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+        echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
+		?>
+	</h2>
   <div class="jem-row">
   
     <div class="jem-info">

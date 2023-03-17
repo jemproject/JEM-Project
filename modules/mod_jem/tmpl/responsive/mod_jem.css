@@ -1,5 +1,5 @@
 /**
- * @version 2.3.0
+ * @version 2.3.10
  * @package JEM
  * @subpackage JEM Latest Events Basic Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -50,6 +50,10 @@
   -ms-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+}
+
+.highlight_featured{
+  font-weight: bold;
 }
 
 @media print {

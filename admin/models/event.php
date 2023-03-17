@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -287,7 +287,7 @@ class JemModelEvent extends JemModelAdmin
 			$data['recurrence_counter']    = '0';
 			$data['recurrence_type']       = '0';
 			$data['recurrence_limit']      = '0';
-			$data['recurrence_limit_date'] = '0000-00-00';
+			$data['recurrence_limit_date'] = null;
 			$data['recurrence_first_id']   = '0';
 		} else {
 			if (!$new) {

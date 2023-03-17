@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -174,7 +174,7 @@ class JemViewDay extends JemView
 		$this->permissions   = $permissions;
 		$this->daydate       = $daydate;
 		$this->showdaydate   = $showdaydate; // if true daydate will be shown as h2 sub heading
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx =$pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		// Doesn't really help - each view has less or more specific needs.
 		//$this->prepareDocument();

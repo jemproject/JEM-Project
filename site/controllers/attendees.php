@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -243,17 +243,17 @@ class JemControllerAttendees extends JControllerLegacy
 		$event = $model->getEvent();
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
 
-		header('Content-Type: text/x-csv');
+		header('Content-Type: text/csv; charset=utf-8');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Content-Disposition: attachment; filename=attendees.csv');
+		header('Content-Disposition: attachment; filename=attendees_event_' . $event->id . '.csv');
 		header('Pragma: no-cache');
 
 		$export = fopen('php://output', 'w');
+		ob_end_clean();
 		if ($csv_bom ==1 ) {
 			//add BOM to fix UTF-8 in Excel
 			fputs($export, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		fputcsv($export, array('sep='.$separator), $separator, $delimiter);
 
 		$cols = array();
 		$cols[] = JText::_('COM_JEM_NUM');

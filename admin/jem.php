@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2020 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
 
 // Access check.
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
@@ -49,6 +50,7 @@ $controller = JControllerLegacy::getInstance('Jem');
 // Perform the Request task
 $input = JFactory::getApplication()->input;
 $controller->execute($input->getCmd('task'));
+HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 
 // Redirect if set by the controller
 $controller->redirect();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,10 +16,17 @@ use Joomla\CMS\Router\Route;
 /**
  * View: Venueslist
  */
-class JemViewVenueslist extends JViewLegacy
+
+	
+class JemViewVenueslist extends JemView
 {
-	protected $pagination = null;
-	protected $items = null;
+	public function __construct($config = array())
+{
+		parent::__construct($config);
+
+		// additional path for common templates + corresponding override path
+		$this->addCommonTemplatePath();
+	}	
 	
 	/**
 	 * Creates the Venueslist View

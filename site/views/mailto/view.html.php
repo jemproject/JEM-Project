@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -49,6 +49,7 @@ class JemViewMailto extends JViewLegacy
 		$layout = $app->input->get('layout', 'edit');
 		
 		$params = $this->params;
+		$this->pageclass_sfx = $params->get('pageclass_sfx');
 		// Get the form to display
 		$this->form = $this->get('Form');
 

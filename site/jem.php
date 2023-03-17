@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -50,16 +50,17 @@ $controller->execute($input->getCmd('task'));
 // Redirect if set by the controller
 $controller->redirect();
 HTMLHelper::_('bootstrap.framework');
+HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 $document = Factory::getDocument();
-$document->addScriptDeclaration('
-    jQuery(document).ready(function(){
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl,{
-                html:true
-            })
-        });
+// $document->addScriptDeclaration('
+//     jQuery(document).ready(function(){
+//         var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));
+//         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+//             return new bootstrap.Tooltip(tooltipTriggerEl,{
+//                 html:true
+//             })
+//         });
     
-    });
-');
+//     });
+// ');
 

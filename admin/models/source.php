@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -108,8 +108,9 @@ class JemModelSource extends JModelForm
 	public function getSource()
 	{
 		$fileName = $this->getState('filename');
-		$custom   = stripos($fileName, 'custom#:');
-
+		
+		$custom   = $fileName ? stripos($fileName, 'custom#:') : false;
+		
 		# custom file?
 		if ($custom !== false) {
 			$file = str_replace('custom#:', '', $fileName);
@@ -148,7 +149,7 @@ class JemModelSource extends JModelForm
 	{
 		$dispatcher = JemFactory::getDispatcher();
 		$fileName   = $this->getState('filename');
-		$custom     = stripos($fileName, 'custom#:');
+		$custom     = $fileName  ? stripos($fileName, 'custom#:') : false;
 
 		# custom file?
 		if ($custom !== false) {

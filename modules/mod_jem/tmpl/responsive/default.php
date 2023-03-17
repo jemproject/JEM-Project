@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -22,6 +22,11 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
   $document->addStyleSheet(JUri::base(true).'/modules/mod_jem/tmpl/mod_jem_responsive.css');
 }
 */
+
+$highlight_featured = $params->get('highlight_featured');
+$showtitloc = $params->get('showtitloc');
+$linkloc = $params->get('linkloc');
+$linkdet = $params->get('linkdet');
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
@@ -30,12 +35,16 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
     <?php foreach ($list as $item) : ?>
       <li>
         <i class="far fa-calendar-alt"></i>
-        <span class="event-title">
-          <?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
+          <?php if($highlight_featured && $item->featured): ?>
+            <span class="event-title highlight_featured">
+          <?php else : ?>
+            <span class="event-title">
+          <?php endif; ?>
+          <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
             <a href="<?php echo $item->venueurl; ?>">
               <?php echo $item->text; ?>
             </a>
-          <?php elseif ($params->get('showtitloc') == 1 && $params->get('linkdet') == 2) : ?>
+          <?php elseif ($showtitloc == 1 && $linkdet == 2) : ?>
             <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->text); ?>">
               <?php echo $item->text; ?>
             </a>
@@ -46,7 +55,12 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
           ?>    
         </span>
         <br />
-        <?php if ($params->get('linkdet') == 1) : ?>
+        <?php if($highlight_featured && $item->featured): ?>
+            <span class="event-title highlight_featured">
+        <?php else : ?>
+            <span class="event-title">
+        <?php endif; ?>
+        <?php if ($linkdet == 1) : ?>
         <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>">
           <?php echo $item->dateinfo; ?>
         </a>
@@ -54,6 +68,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
           echo $item->dateinfo;
         endif;
         ?>
+        </span>
       </li>
     <?php endforeach; ?>
   </ul>

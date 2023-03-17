@@ -7,7 +7,7 @@
 	<creationDate>March 2020</creationDate>
 	<copyright>copyright (C) 2013-2020 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.3.8</version>
+	<version>2.3.10</version>
 	<description>MOD_JEM_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -48,6 +48,16 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
+				<field name="highlight_featured" type="radio"
+					   default="0"
+					   label="MOD_JEM_HIGHLIGHT_FEATURED"
+					   description="MOD_JEM_HIGHLIGHT_FEATURED_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+
 				<field name="offset_hours" type="text"
 					default=""
 					label="MOD_JEM_OFFSET_HOURS"
@@ -62,7 +72,7 @@
 					<option value="1">MOD_JEM_TITLE</option>
 				</field>
 				<field name="cuttitle" type="text"
-					default="18"
+					default="30"
 					label="MOD_JEM_MAX_TITLE_LENGTH"
 					description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
 				/>
@@ -103,7 +113,7 @@
 					description="MOD_JEM_DATE_FORMAT_DESC"
 				/>
 				<field name="formattime" type="text"
-					default="%H:%M"
+					default="H:i"
 					label="MOD_JEM_TIME_FORMAT"
 					description="MOD_JEM_TIME_FORMAT_DESC"
 				/>

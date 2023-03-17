@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @subpackage JEM Jubilee Module
  * @copyright (C) 2014-2019 joomlaeventmanager.net

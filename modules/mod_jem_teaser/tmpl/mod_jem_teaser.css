@@ -1,5 +1,5 @@
 /**
- * @version 2.3.0
+ * @version 2.3.10
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -75,7 +75,6 @@ div#jemmoduleteaser .eventset {
 }
 
 div#jemmoduleteaser .event-title {
-	padding-left: 8px;
 	font-size: medium;
 }
 
@@ -90,11 +89,13 @@ div#jemmoduleteaser div.date {
 div#jemmoduleteaser .category {
 	position: relative;
 	font-size: smaller;
+	padding-top: 4px;
 }
 
 div#jemmoduleteaser .venue-title {
 	position: relative;
 	font-size: smaller;
+	padding-top: 4px;
 }
 
 div#jemmoduleteaser .event-image-cell {

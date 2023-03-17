@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.8
+ * @version 2.3.10
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -187,8 +187,7 @@ class JemControllerImport extends JControllerLegacy
 			case 'endtimes':
 				if ($value !== '' && strtoupper($value) !== 'NULL') {
 					$time = strtotime($value);
-					// $field = strftime('%H:%M', $time);
-					$field = date('Y-m-d h:m:s',$time);
+					$field = date('H:i:s',$time);
 				} else {
 					$field = null;
 				}
@@ -196,9 +195,8 @@ class JemControllerImport extends JControllerLegacy
 			case 'dates':
 			case 'enddates':
 			case 'recurrence_limit_date':
-				if ($value !== '' && strtoupper($value) !== 'NULL') {
+				if ($value !== '' && strtoupper($value) !== 'NULL' && $value != '0000-00-00') {
 					$date = strtotime($value);
-					// $field = strftime('%Y-%m-%d', $date);
 					$field = date('Y-m-d', $date);
 				} else {
 					$field = null;
