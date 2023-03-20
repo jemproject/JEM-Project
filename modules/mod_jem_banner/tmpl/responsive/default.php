@@ -15,6 +15,7 @@ $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
+$imagewidthmax   = (int)$params->get('imagewidthmax', 0);
 
 if ($flyer_link_type == 1) {
 	// JHtml::_('behavior.modal', 'a.flyermodal');
@@ -78,8 +79,8 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
   }
   
   #jemmodulebanner .jem-eventimg-banner img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
+    <?php echo ($imagewidthmax? 'width:' . $imagewidthmax .'px': 'max-width:'. $imagewidth); ?>;
+    height: <?php echo ($imagewidthmax? 'auto' : $imageheight); ?>;
   }
   
   @media not print {
@@ -139,7 +140,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                  *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
                  */
           ?>
-          <?php /* wenn kein Kalenderblatt angezeigt wird */ ?>
+          <?php /* when no calendar sheet is displayed */ ?>
           <?php if ($showcalendar == 0) : ?>
             <?php if ($item->date && $datemethod == 2) :?>
               <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
@@ -160,9 +161,9 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
               </div>
             <?php endif; ?>
             <?php endif; ?>
-          <?php /* wenn Kalenderblatt angezeigt wird */ ?>
+          <?php /* when calendar sheet is displayed */ ?>
           <?php else : ?>
-            <?php /* wenn Zeitdifferenz angezeigt werden soll */ ?>
+            <?php /* if time difference should be displayed */ ?>
             <?php if ($item->date && $datemethod == 2) : ?>
               <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
                 <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
@@ -170,7 +171,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
               </div>
             <?php endif; ?>
 
-            <?php /* wenn Datum angezeigt werden soll */ ?>
+            <?php /* if date is to be displayed */ ?>
             <?php if ($item->time && $datemethod == 1) :?>
             <?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
               <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">

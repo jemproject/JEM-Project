@@ -121,7 +121,6 @@ div#jemmodulebanner .venue-image-cell {
 }
 
 div#jemmodulebanner .image-preview {
-	max-width: 110px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
@@ -129,7 +128,6 @@ div#jemmodulebanner .image-preview {
 }
 
 div#jemmodulebanner .image-preview2 {
-	max-width: 200px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
