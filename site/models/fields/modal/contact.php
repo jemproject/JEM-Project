@@ -52,7 +52,7 @@ class JFormFieldModal_Contact extends JFormField
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosecontact&amp;tmpl=component&amp;function=jSelectContact_'.$this->id;
 
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('name');
 		$query->from('#__contact_details');

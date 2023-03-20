@@ -189,7 +189,7 @@ class JemViewAttendees extends JemView
 	{
 		$app         = Factory::getApplication();
 		$jinput      = $app->input;
-	//	$db          = Factory::getDBO();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = Factory::getDocument();
 		$model       = $this->getModel();
 		$event       = $this->get('Event');

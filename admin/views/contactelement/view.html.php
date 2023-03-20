@@ -25,7 +25,7 @@ class JEMViewContactelement extends JViewLegacy {
 		$app = Factory::getApplication();
 
 		//initialise variables
-		$db			= Factory::getDBO();
+		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$document	= Factory::getDocument();
 
 		// HTMLHelper::_('behavior.tooltip');

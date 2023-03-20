@@ -28,7 +28,7 @@ class JEMViewUserElement extends JViewLegacy {
 		// initialise variables
 		$document	= Factory::getDocument();
 		$jemsettings = JEMAdmin::config();
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// get var
 		$filter_order		= $app->getUserStateFromRequest('com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd');
