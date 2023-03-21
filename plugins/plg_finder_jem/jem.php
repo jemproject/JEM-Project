@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.10
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2015 joomlaeventmanager.net
