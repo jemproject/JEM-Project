@@ -1,6 +1,7 @@
 /**
+ * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -12,8 +13,8 @@
 }
 
 table.month, table.week {
-	background-color:#FFFFFF;
-	border:2px solid #000000;
+	background-color:#fff;
+	border:2px solid #000;
 	width:100%;
 }
 
@@ -23,7 +24,6 @@ table.month {
 
 .monthname {
 	color:#355881;
-	font-family:Geneva,Verdana,Arial,sans-serif;
 	font-size:18px;
 	font-weight:bold;
 	text-align:center;
@@ -38,15 +38,13 @@ table.month {
 }
 
 .dayname {
-	color:#FFFFFF; /* calendarweek: #667171 */
-	font-family:Geneva,Verdana,Arial,sans-serif;
+	color:#fff; /* calendarweek: #667171 */
 	font-size:10px;
 	font-weight:bold;
 }
 
 .daysRow {
 	color:#433D27;
-	font-family:Arial,Geneva,Verdana,sans-serif;
 	font-size:10px;
 	height:88px;
 	text-align:left;
@@ -56,7 +54,6 @@ table.month {
 .daynum {
 	background-color:#A2A3AE;
 	color:#FBFCEF;
-	font-family:Geneva,Verdana,Arial,sans-serif;
 	font-size:11px;
 	font-weight:bold;
 	margin:0px;
@@ -212,9 +209,8 @@ div#jem .eventtitle {
 
 #jlcalendarlegend .calendarButtons {
 	margin-top:8px;
-	margin-left:2px;
 	margin-bottom:4px;
-	height:30px;
+	height:50px;
 }
 
 #jlcalendarlegend .calendarButtonsToggle{
@@ -228,15 +224,13 @@ div#jem .eventtitle {
 
 #jlcalendarlegend .eventCat {
 	float: left;
-	
 	cursor: pointer;
 	box-shadow: 2px 2px 2px #888888;
-	/* padding: 1px 5px;
+	padding: 2px 10px;
 	border: 1px solid black;
-	margin-left:4px;
-	margin-right:4px;
-	margin-bottom:6px;
-	line-height:20px; */
+	margin-right:5px;
+	margin-bottom:5px;
+	line-height:40px; 
 }
 
 #jlcalendarlegend .legendb {
@@ -266,7 +260,7 @@ div#buttonhideall {
 }
 
 .today .daynum a {
-	color:#FFFFFF;
+	color:#fff;
 	background-color:red;
 	/* calendarweek: vertical-align: top; */
 }
@@ -289,7 +283,7 @@ div#jem td {
 	text-align: center;
 	font-size: 10px;
 	font-weight: bold;
-	color: #ffffff; /* calendarweek: #667171 */
+	color: #fff; /* calendarweek: #667171 */
 	border-style: none;
 	border-width:1px;
 	padding: 2px 3px;
@@ -326,8 +320,8 @@ div#jem td {
 	vertical-align: top;
 	font-size: 11px;
 	font-weight: bold;
-	background-color: #ffffff;
-	color: #000000;
+	background-color: #fff;
+	color: #000;
 	height:90px;
 	width:90px;
 }
@@ -344,14 +338,14 @@ div#jem td {
 .today {
 	border-width: 1px;
 	border-style: solid;
-	background-color: #BBCCFF;
-	color: #000000;
+	background-color: #bcf;
+	color: #000;
 }
 
 .selectedday {
 	border-width: 1px;
 	border-style: outset;
-	background-color: #ffffff;
+	background-color: #fff;
 }
 /* *** CALENDAR WEEK ADDITIONS END *** */
 
@@ -376,6 +370,8 @@ div#jem td {
 	display: inline-block;
 	text-align: center;
 	color: rgba(0,0,0,1);
+	margin-right: 5px;
+	box-shadow: 2px 2px 2px #888;
 }
 
 .calendarButton:hover {
