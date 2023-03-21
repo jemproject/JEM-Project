@@ -304,7 +304,11 @@ class com_jemInstallerScript extends InstallerScript
 
 		if (strtolower($type) == 'update') 
 		{
-		    
+		    // Changes between 2.3.12 -> 2.3.13
+			if (version_compare($this->oldRelease, '2.3.13', 'lt') && version_compare($this->newRelease, '2.3.12', 'gt')) {
+				// change categoriesdetailed view name in menu items
+				$this->updateJemMenuItems2313();
+			}
 		}
 		elseif (strtolower($type) == 'install') {
 			$this->fixJemMenuItems();
@@ -326,6 +330,37 @@ class com_jemInstallerScript extends InstallerScript
 		$db->setQuery($query);
 		$manifest = json_decode($db->loadResult(), true);
 		return $manifest[$name];
+	}
+
+	/**
+	 * Sets parameter values in the component's row of the extension table
+	 *
+	 * @param $param_array  An array holding the params to store
+	 */
+	private function setParams($param_array)
+	{
+		if (is_array($param_array) && (count($param_array) > 0)) {
+			// read the existing component value(s)
+			$db = Factory::getContainer()->get('DatabaseDriver');
+			$query = $db->getQuery(true);
+			$query->select('params')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
+			$db->setQuery($query);
+			$params = json_decode($db->loadResult(), true);
+
+			// add the new variable(s) to the existing one(s)
+			foreach ($param_array as $name => $value) {
+				$params[(string) $name] = (string) $value;
+			}
+
+			// store the combined new and existing values back as a JSON string
+			$paramsString = json_encode($params);
+			$query = $db->getQuery(true);
+			$query->update('#__extensions')
+			      ->set('params = '.$db->quote($paramsString))
+			      ->where(array("type = 'component'", "element = 'com_jem'"));
+			$db->setQuery($query);
+			$db->execute();
+		}
 	}
 
 	/**
@@ -638,4 +673,73 @@ class com_jemInstallerScript extends InstallerScript
 		}
 	}
 
+	private function updateJemMenuItems2313()
+	{
+		// get all "com_jem..." frontend entries
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query->select('id, link, params');
+		$query->from('#__menu');
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=categor%'"));
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
+
+		foreach ($items as $item) {
+			$link = $item->link;
+			// Decode the item params
+			$reg = new JRegistry;
+			$reg->loadString($item->params);
+
+			// get view
+			preg_match('/view=([^&]+)/', $item->link, $matches);
+			$view = $matches[1];
+
+			switch ($view) {
+				case 'venue':
+				/*
+					// add "&id=..." if required
+					if (strpos($link, '&id=') === false) {
+						$link .= '&id=' . (int)$reg->get('id', 0); // 0 is forbidden but we have no default
+
+						// and remove from params
+						$params = array();
+						foreach ($reg->toArray() as $k => $v) {
+							switch ($k) {
+							case 'id':
+								// remove 'id'
+								break;
+							default:
+								$params[$k] = $v;
+								break;
+							}
+						}
+						$reg = new JRegistry;
+						$reg->loadArray($params);
+					}
+				*/
+				break;
+			}
+
+			// write changed entry back into DB
+			/*
+			$query = $db->getQuery(true);
+			$query->update('#__menu');
+			$query->set('link = '.$db->quote((string)$link));
+			$query->set('params = '.$db->quote((string)$reg));
+			$query->where(array('id = '.$db->quote($item->id)));
+			$db->setQuery($query);
+			$db->execute();
+			*/
+		}
+
+			// write changed entry back into DB
+			$query = $db->getQuery(true);
+			$query->update('#__menu');
+			$query->set('link = '.$db->quote((string)$link));
+			$query->set('params = '.$db->quote((string)$reg));
+			$query->where(array('id = '.$db->quote($item->id)));
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
 }
