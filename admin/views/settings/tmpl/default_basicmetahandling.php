@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,17 +13,17 @@ defined('_JEXEC') or die;
 <script type="text/javascript">
 <!--
 	function insert_keyword($keyword) {
-		$("jform_meta_description").value += " " + $keyword;
+		document.getElementById("jform_meta_description").value += " " + $keyword;
 	}
 
 	function include_description() {
-		$("jform_meta_description").value = "<?php echo JText::_( 'COM_JEM_META_DESCRIPTION_STANDARD' ); ?>";
+		document.getElementById("jform_meta_description").value = "<?php echo JText::_( 'COM_JEM_META_DESCRIPTION_STANDARD' ); ?>";
 	}
 -->
 </script>
 
-<div class="width-100">
-	<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
 		<legend><?php echo JText::_( 'COM_JEM_META_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
 			<li><label id="jform_meta_keywords-lbl" <?php echo JEMOutput::tooltip(JText::_('COM_JEM_META_KEYWORDS'), JText::_('COM_JEM_META_KEYWORDS_DESC')); ?>>

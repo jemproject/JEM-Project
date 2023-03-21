@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -56,15 +56,18 @@ if ($params->get('use_modal', 0)) {
 					<td class="event-info">
 						<div class="teaser-jem">
 							<div>
-								<?php if(!empty($item->eventimage)) : ?>
-									<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
-									<img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
-								<?php else : ?>
-								<?php endif; ?>
-								<?php if(!empty($item->venueimage)) : ?>
-									<a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
-									<img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
-								<?php endif; ?>
+                                <?php if($item->showimageevent): ?>
+								    <?php if(!empty($item->eventimage)) : ?>
+									    <a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+									    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
+								    <?php endif; ?>
+                                <?php endif; ?>
+                                <?php if($item->showimagevenue): ?>
+                                    <?php if(!empty($item->venueimage)) : ?>
+                                        <a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                                        <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
+                                    <?php endif; ?>
+                                <?php endif; ?>
 							</div>
 							<div>
 								<?php echo $item->eventdescription; ?>

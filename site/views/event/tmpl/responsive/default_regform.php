@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -73,7 +73,7 @@ if ($this->showRegForm && empty($this->print)) :
         </li>      
       <?php endif; ?>
     </ul>
-    <input class="jem-register-button btn btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" /> 
+    <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" /> 
 
 	
 		

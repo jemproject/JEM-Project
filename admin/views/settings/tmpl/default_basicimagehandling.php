@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,8 +12,8 @@ defined('_JEXEC') or die;
 $gdv = JEMImage::gdVersion();
 ?>
 
-<div class="width-100">
-	<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
 		<legend><?php echo JText::_( 'COM_JEM_IMAGE_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('image_filetypes'); ?> <?php echo $this->form->getInput('image_filetypes'); ?></li>
@@ -22,8 +22,7 @@ $gdv = JEMImage::gdVersion();
 
 			<li><?php echo $this->form->getLabel('imagehight'); ?> <?php echo $this->form->getInput('imagehight'); ?></li>
 
-			<li><?php echo $this->form->getLabel('imagewidth'); ?> <?php echo $this->form->getInput('imagewidth'); ?>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_WARNING'), JText::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
+			<li><?php echo $this->form->getLabel('imagewidth'); ?><span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_WARNING'), JText::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
 					<?php echo $this->WarningIcon(); ?>
 				</span>
 			</li>

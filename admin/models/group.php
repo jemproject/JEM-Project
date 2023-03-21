@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 require_once dirname(__FILE__) . '/admin.php';
 
@@ -126,7 +128,7 @@ class JemModelGroup extends JemModelAdmin
 	 */
 	protected function _prepareTable($table)
 	{
-		$db  = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$app = JFactory::getApplication();
 
 		// Make sure the data is valid

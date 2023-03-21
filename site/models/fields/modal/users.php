@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -60,7 +60,7 @@ class JFormFieldModal_Users extends JFormField
 		$idlist = implode(',', $ids);
 
 		if (!empty($idlist)) {
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('COUNT(id)');
 			$query->from('#__users');

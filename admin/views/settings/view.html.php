@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -43,7 +43,7 @@ class JemViewSettings extends JemAdminView
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css');
+		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
 
 		$style = '
 		    div.current fieldset.radio input {
@@ -70,13 +70,16 @@ class JemViewSettings extends JemAdminView
 		}
 
 		// Load Script
-		$document->addScript(Uri::root().'media/com_jem/js/colorpicker.js');
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		// $document->addScript(Uri::root().'media/com_jem/js/colorpicker.js');
+		$wa->useScript('jquery');
+		$wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
 
 		// HTMLHelper::_('behavior.modal', 'a.modal');
 		// HTMLHelper::_('behavior.tooltip');
 		// HTMLHelper::_('behavior.formvalidation');
 		// HTMLHelper::_('behavior.framework');
-		HTMLHelper::_('jquery.framework');
+		// HTMLHelper::_('jquery.framework');
 		// only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');

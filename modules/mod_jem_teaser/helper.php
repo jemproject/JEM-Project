@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -67,6 +67,7 @@ abstract class ModJemTeaserHelper
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
+        $countryids = JemHelper::getValidIds($params->get('couid'));
 		$stateloc      = $params->get('stateloc');
 		$stateloc_mode = $params->get('stateloc_mode', 0);
 
@@ -140,6 +141,12 @@ abstract class ModJemTeaserHelper
 			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
 		}
 
+        # filter country's
+        if ($countryids) {
+            $model->setState('filter.country_id', $countryids);
+            $model->setState('filter.country_id.include', true);
+        }
+
 		# count
 		$count = $params->get('count', '2');
 		$model->setState('list.limit', $count);
@@ -199,8 +206,11 @@ abstract class ModJemTeaserHelper
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
+            $lists[$i]->country     = htmlspecialchars($row->country, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
+			$lists[$i]->showimagevenue   = $params->get('showimagevenue', 1);
 
 			# time/date
 			$lists[$i]->day         = modJEMteaserHelper::_format_day($row, $params);

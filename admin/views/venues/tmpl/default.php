@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -81,7 +81,6 @@ $(document).ready(function() {
 		<table class="table table-striped" id="articleList">
 			<thead>
 				<tr>
-					<th width="1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder ); ?></th>
 					<th width="20%"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder ); ?></th>
@@ -137,7 +136,6 @@ $(document).ready(function() {
 					$published 	= HTMLHelper::_('jgrid.published', $row->published, $i, 'venues.', $canChange, 'cb', $row->publish_up, $row->publish_down);
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
-						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 						<td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
 						<td align="left" class="venue">
 							<?php if ($row->checked_out) : ?>

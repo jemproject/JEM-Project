@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -197,7 +197,6 @@ class JemControllerImport extends JControllerLegacy
 			case 'recurrence_limit_date':
 				if ($value !== '' && strtoupper($value) !== 'NULL' && $value != '0000-00-00') {
 					$date = strtotime($value);
-					// $field = strftime('%Y-%m-%d', $date);
 					$field = date('Y-m-d', $date);
 				} else {
 					$field = null;

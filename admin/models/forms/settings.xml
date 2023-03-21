@@ -158,15 +158,15 @@
 			required="false"
 		/>
 		<field name="formattime" type="text"
-			label="COM_JEM_TIME_STRFTIME"
-			description="COM_JEM_TIME_STRFTIME_DESC"
+			label="COM_JEM_TIME_FORMAT"
+			description="COM_JEM_TIME_FORMAT_DESC"
 			class="inputbox"
 			size="20"
 			required="false"
 		/>
 		<field name="formathour" type="text"
-			label="COM_JEM_HOUR_STRFTIME"
-			description="COM_JEM_HOUR_STRFTIME_DESC"
+			label="COM_JEM_HOUR_FORMAT"
+			description="COM_JEM_HOUR_FORMAT_DESC"
 			class="inputbox"
 			size="20"
 			required="false"
@@ -202,7 +202,6 @@
 		>
 			<option value="0">COM_JEM_SHOW_LAYOUT_STYLE_LEGACY</option>
 			<option value="1">COM_JEM_SHOW_LAYOUT_STYLE_RESPONSIVE</option>
-			<option value="2" disabled="disabled">COM_JEM_SHOW_LAYOUT_STYLE_ALTERNATIVE</option>
 		</field>
 		<field name="useiconfont" type="radio"
 			label="COM_JEM_INCLUDE_ICON_FONT"

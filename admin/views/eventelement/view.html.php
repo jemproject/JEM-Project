@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -22,7 +22,7 @@ class JemViewEventelement extends JViewLegacy {
 
 		//initialise variables
 		$user        = JemFactory::getUser();
-		$db          = Factory::getDBO();
+		$db          = Factory::getContainer()->get('DatabaseDriver');
 		$jemsettings = JEMAdmin::config();
 		$document    = Factory::getDocument();
 		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);

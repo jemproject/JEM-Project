@@ -1,5 +1,5 @@
 /**
- * @version 2.3.0
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2019 joomlaeventmanager.net
@@ -76,6 +76,10 @@ div#jemmodulebanner .event-title {
 	margin: 0 0 5px;
 }
 
+.highlight_featured{
+	font-weight: bold;
+}
+
 div#jemmodulebanner .desc {
 	padding-left: 0px;
 	padding-top: 2px;
@@ -117,7 +121,6 @@ div#jemmodulebanner .venue-image-cell {
 }
 
 div#jemmodulebanner .image-preview {
-	max-width: 110px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
@@ -125,7 +128,6 @@ div#jemmodulebanner .image-preview {
 }
 
 div#jemmodulebanner .image-preview2 {
-	max-width: 200px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,8 +26,8 @@ endif;
 defined('_JEXEC') or die;
 ?>
 
-<div class="width-100">
-	<fieldset class="adminform">
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
 		<legend><?php echo JText::_('COM_JEM_EVENTS'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('evevents') as $field): ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -287,7 +287,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = Factory::getDBO();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = Factory::getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
@@ -338,7 +338,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = Factory::getDBO();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = Factory::getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
@@ -393,7 +393,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = Factory::getDBO();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = Factory::getDocument();
 		$model       = $this->getModel();
 

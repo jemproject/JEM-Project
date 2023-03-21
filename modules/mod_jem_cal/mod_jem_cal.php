@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -171,10 +171,11 @@ if ($Default_Stylesheet == 1) {
 	$document = Factory::getDocument();
 	$document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
-
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
 # Load icon font if needed
 JemHelper::loadIconFont();
 
 # Render
 require(JemHelper::getModuleLayoutPath($mod_name));
+
 ?>

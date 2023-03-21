@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -209,7 +209,7 @@ class JemModelImport extends JModelLegacy
 			return $this->storeCatsEventRelations($events, $replace);
 		}
 
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// in case imported data has no key field explicitely add it with value 0 and don't try to replace
 		$presetkey = in_array('id', $fieldsname) ? false : 'id';
@@ -392,7 +392,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function storeCatsEventRelations(array $events, $replace = true)
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$columns = array('catid', 'itemid', 'ordering');
 		$result  = array('added' => 0, 'updated' => 0, 'ignored' => 0);
 
@@ -1001,7 +1001,7 @@ class JemModelImport extends JModelLegacy
 	{
 		if (empty(static::$_user_ids))
 		{
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('a.id')
 			      ->from($db->quoteName('#__users') . ' AS a')
@@ -1023,7 +1023,7 @@ class JemModelImport extends JModelLegacy
 	{
 		if (empty(static::$_view_levels))
 		{
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('a.id')
 			      ->from($db->quoteName('#__viewlevels') . ' AS a')
@@ -1043,7 +1043,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	protected function _getCategoryViewLevels()
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('a.id, a.access')
 		      ->from($db->quoteName('#__jem_categories') . ' AS a')
@@ -1067,7 +1067,7 @@ class JemModelImport extends JModelLegacy
 	{
 		$ret = $defaultLevel;
 
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('c.access')
 		      ->from($db->quoteName($this->elprefix.'eventlist_categories') . ' AS c')
@@ -1102,7 +1102,7 @@ class JemModelImport extends JModelLegacy
 		$ok = preg_match('/([^0-9]+)([0-9]+)/', $object, $matches);
 		if ($ok && (count($matches) == 3)) {
 			$id = $matches[2];
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 
 			switch ($matches[1]) {
@@ -1137,7 +1137,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function _rootkey()
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('c.id');
 		$query->from('#__jem_categories AS c');

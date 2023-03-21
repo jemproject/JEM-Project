@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -42,10 +42,10 @@ if ($jemsettings->oldevent > 0) {
 
 	<div class="clr"> </div>
 
-	<?php if (!$this->params->get('show_page_heading', 1)) : ?>
+	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_heading')); ?>
-      <?php echo $this->escape($this->params->get('page_heading')).' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent'); ?>
+	    	<?php echo $this->escape($this->params->get('page_heading')); ?>
+	    </h1>
 	<?php endif; ?>
 
 	<div class="clr"> </div>

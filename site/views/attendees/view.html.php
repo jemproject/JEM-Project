@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -189,7 +189,7 @@ class JemViewAttendees extends JemView
 	{
 		$app         = Factory::getApplication();
 		$jinput      = $app->input;
-	//	$db          = Factory::getDBO();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = Factory::getDocument();
 		$model       = $this->getModel();
 		$event       = $this->get('Event');

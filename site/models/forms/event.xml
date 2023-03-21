@@ -142,6 +142,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
 			size="40"
 			required="false"
+		    default="0"
 		/>
 		<field name="contactid" type="modal_contact"
 			label="COM_JEM_EDITEVENT_FIELD_CONTACT"
@@ -289,11 +290,14 @@
 			min="0"
 			max="999"
 		/>
-		<field name="maxplaces" type="text"
+		<field name="maxplaces" type="number"
 			size="4"
 			class="inputbox"
 			label="COM_JEM_EDITEVENT_FIELD_MAX_PLACES"
 			description="COM_JEM_EDITEVENT_FIELD_MAX_PLACES_DESC"
+			filter="integer"
+			default="0"
+			min="0"
 		/>
 		<field name="invited" type="modal_users"
 			label="COM_JEM_EDITEVENT_FIELD_INVITED_USERS"

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,7 +34,7 @@ class mod_jem_bannerInstallerScript
 			$this->oldRelease = $this->getParam('version');
 
 			// Installing component version as per Manifest file
-			$this->newRelease = (string) $parent->get('manifest')->version;
+			$this->newRelease = (string) $parent->getManifest()->version;
 
 			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
 				return false;
@@ -68,7 +68,7 @@ class mod_jem_bannerInstallerScript
 	 */
 	private function getParam($name)
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
 		$db->setQuery($query);
@@ -85,7 +85,7 @@ class mod_jem_bannerInstallerScript
 	private function updateParams216()
 	{
 		// get all "mod_jem..." entries
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('id, params');
 		$query->from('#__modules');

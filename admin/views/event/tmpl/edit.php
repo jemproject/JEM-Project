@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -336,9 +336,10 @@ Joomla.submitbutton = function(task)
 							<li--><span id="jform_unregistra_until_span"><?php echo $this->form->getInput('unregistra_until'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
 							</li>
 							<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
-							</li>
-							<li><label><?php echo Text::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><input id="event-booked" class="readonly inputbox" type="text" readonly="true" value="<?php echo $this->item->booked; ?>" />
-							</li>
+							</li>	
+							<li><label><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?></label>
+										<input type="text" value="<?php echo $this->item->booked; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
+									</li>
 							<?php if ($this->item->maxplaces): ?>
 							<li><label><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
 							</li>
@@ -473,21 +474,14 @@ Joomla.submitbutton = function(task)
 									?>
 									<hr>
 									<fieldset class="panelform">
-										<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
-										<ul>
-											<li>
-												<label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
-												<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_type; ?>">
-											</li>
-											<li>
-												<div class="clear"></div>
-												<label> </label>
-												<?php echo $recurr_info; ?>
-											</li>
-											<li>
-												<label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
-												<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_limit_date; ?>">
-											</li>
+									<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
+									<ul class="adminformlist">
+									<li class="has-success"><label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
+										<input type="text" value="<?php echo $recurr_type; ?>, <?php echo $recurr_info; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
+									</li>
+									<li><label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
+										<input type="text" value="<?php echo $recurr_limit_date; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
+									</li>
 										</ul>
 									</fieldset>
 									<?php

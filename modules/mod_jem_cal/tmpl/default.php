@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2020 joomlaeventmanager.net
@@ -32,7 +32,7 @@ jQuery(document).ready(function(){
 });
 function mod_jem_cal_click_<?php print $module->id; ?>(url) {
 	jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-		jQuery(".hasTooltip").tooltip();
+		jQuery(".hasTooltip").tooltip({'html':true});		
 	});
 }
 </script>

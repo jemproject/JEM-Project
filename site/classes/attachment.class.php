@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -104,7 +104,7 @@ class JemAttachment extends JObject
 			if (isset($rec['access'])) {
 				$table->access = intval($rec['access']);
 			}
-			// $table->added = strftime('%F %T');
+
 			$table->added = date('Y-m-d H:i:s');
 			$table->added_by = $user->get('id');
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -21,7 +21,12 @@ require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapt
  * @subpackage  Finder.jem
  *
  */
-class plgFinderJEM extends FinderIndexerAdapter {
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Component\Finder\Administrator\Indexer\Adapter;
+use Joomla\Component\Finder\Administrator\Indexer\Helper;
+use Joomla\Component\Finder\Administrator\Indexer\Result;
+use Joomla\Registry\Registry;
+class plgFinderJEM extends Adapter {
 	/**
 	 * The plugin identifier.
 	 *
@@ -259,36 +264,36 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @throws  Exception on database error.
 	 */
-	protected function index(FinderIndexerResult $item, $format = 'html')
+	// protected function index(FinderIndexerResult $item, $format = 'html')
+	protected function index(Result $item)
 	{
 		// Check if the extension is enabled
-		if (JComponentHelper::isEnabled($this->extension) == false)
+		if (ComponentHelper::isEnabled($this->extension) == false)
 		{
 			return;
 		}
 
-		if ($this->jVer == 3) {
-			$item->setLanguage();
-		}
+		$item->setLanguage();
+		
 
 		// Initialize the item parameters.
 		$registry = new JRegistry;
 		$registry->loadString($item->params);
-		$item->params = JComponentHelper::getParams('com_jem', true);
+		$item->params = ComponentHelper::getParams('com_jem', true);
 		$item->params->merge($registry);
 
-		$registry = new JRegistry;
+		$registry = new Registry;
 		$registry->loadString($item->metadata);
 		$item->metadata = $registry;
 
 		// Trigger the onContentPrepare event.
-		$item->summary = FinderIndexerHelper::prepareContent($item->summary, $item->params);
-		$item->body = FinderIndexerHelper::prepareContent($item->fulltext, $item->params);
+		$item->summary = Helper::prepareContent($item->summary, $item->params);
+		$item->body = Helper::prepareContent($item->fulltext, $item->params);
 
 		// Build the necessary route and path information.
 		$item->url = $this->getURL($item->id, $this->extension, $this->layout);
 		$item->route = JEMHelperRoute::getEventRoute($item->slug, $item->catslug);
-		$item->path = FinderIndexerHelper::getContentPath($item->route);
+		// $item->path = Helper::getContentPath($item->route);
 
 		// Get the menu title if it exists.
 		$title = $this->getItemMenuTitle($item->url);
@@ -330,15 +335,11 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		}
 
 		// Get content extras.
-		FinderIndexerHelper::getContentExtras($item);
+		Helper::getContentExtras($item);
 
 		// Index the item.
-		// On J! 3.x we must use indexer member which doesn't exist on J! 2.5
-		if ($this->jVer == 3) {
-			$this->indexer->index($item);
-		} else {
-			FinderIndexer::index($item);
-		}
+		
+		$this->indexer->index($item);
 	}
 
 	/**

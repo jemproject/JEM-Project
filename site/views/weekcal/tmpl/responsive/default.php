@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -265,19 +265,28 @@ use Joomla\CMS\Language\Text;
 			}
 		}
 
-		//generate the output
-		// if we have exact one color from categories we can use this as background color of event
-		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
-			$content .= '<div class="eventcontentinner" style="background-color:'.array_pop($catcolor).'" onclick=location.href="'.$detaillink.'">';
-			$content .= $editicon;
-			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-			$content .= $contentend . '</div>';
-		} else {
-			$content .= '<div class="eventcontentinner" onclick=location.href="'.$detaillink.'">' . $colorpic;
-			$content .= $editicon;
-			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $color);
-			$content .= $contentend . '</div>';
-		}
+        //get border for featured event
+        $usefeaturedborder = $this->params->get('usefeaturedborder', 0);
+        $featuredbordercolor = $this->params->get('featuredbordercolor', 0);
+        $featuredclass = '';
+        $featuredstyle ='';
+        if($usefeaturedborder && $row->featured){
+            $featuredclass="borderfeatured";
+            $featuredstyle="border-color:" . $featuredbordercolor;
+        }
+
+        //generate the output
+        // if we have exact one color from categories we can use this as background color of event
+        $content .= '<div class="eventcontentinner ' . $featuredclass . '" style="' . $featuredstyle;
+        if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
+            $content .= '; background-color:'.array_pop($catcolor);
+            $content .= '" onclick=location.href="'.$detaillink.'">';
+        } else {
+            $content .= '" onclick=location.href="'.$detaillink.'">' . $colorpic;
+        }
+        $content .= $editicon;
+        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+        $content .= $contentend . '</div>';
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;

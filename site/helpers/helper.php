@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -162,7 +162,7 @@ class JemHelper
 					$dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
-				$db = Factory::getDbo();
+                $db = Factory::getCnotainer()->get('DatabaseDriver');
 				$query = $db->getQuery(true);
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
@@ -188,7 +188,7 @@ class JemHelper
 					$ref_event = JTable::getInstance('Event', 'JemTable');
 					$ref_event->load($recurrence_row['id']);
 
-					$db = Factory::getDbo();
+                    $db = Factory::getContainer()->get('DatabaseDriver');
 					$query = $db->getQuery(true);
 					$query->select('*');
 					$query->from($db->quoteName('#__jem_events').' AS a');
@@ -419,7 +419,7 @@ class JemHelper
 		}
 
 		try {
-			$db = Factory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 			$nulldate = explode(' ', $db->getNullDate());
 			$db->setQuery('UPDATE #__jem_events'
 			            . ' SET recurrence_first_id = 0, recurrence_type = 0'
@@ -474,7 +474,7 @@ class JemHelper
 		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
 		if (is_file($fullPath)) {
 			// Count usage and don't delete if used elsewhere.
-			$db = Factory::getDBO();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$db->setQuery($countquery_tmpl . $db->quote($filename));
 			if (null === ($usage = $db->loadObjectList())) {
 				return false;
@@ -490,7 +490,7 @@ class JemHelper
 		}
 		elseif (empty($filename) && is_dir($fullPath)) {
 			// get image files used
-			$db = Factory::getDBO();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$db->setQuery($imagequery);
 			if (null === ($used = $db->loadAssocList('image', 'count'))) {
 				return false;
@@ -528,7 +528,7 @@ class JemHelper
 	{
 		$jemsettings = JemHelper::config();
 		$basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
-		$db          = Factory::getDBO();
+		$db          = Factory::getContainer()->get('DatabaseDriver');
 		$res         = true;
 
 		// Get list of all folders matching type (format is "$type$id")
@@ -643,7 +643,7 @@ class JemHelper
 	 */
 	static public function getAccesslevelOptions($ownonly = false, $disabledLevels = false)
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$where = '';
 		$selDisabled = '';
 		if ($ownonly) {
@@ -800,7 +800,7 @@ class JemHelper
 	 */
 	static public function updateWaitingList($event)
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// get event details for registration
 		$query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
@@ -868,7 +868,7 @@ class JemHelper
 		}
 		$ids = implode(",", $ids);
 
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// status 1: user registered (attendee or waiting list), status -1: user exlicitely unregistered, status 0: user is invited but hadn't answered yet
 		$query = ' SELECT COUNT(id) as total,'
@@ -1135,12 +1135,14 @@ class JemHelper
 	static public function getValidIds($ids_in)
 	{
 		$ids_out = array();
-		$tmp =  is_array($ids_in) ? $ids_in : (!empty($ids_out) ?  explode(',', $ids_in) : array());
-		foreach ($tmp as $id) {
-			if ((int)$id > 0) {
-				$ids_out[] = (int)$id;
-			}
-		}
+        $tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
+        if(!empty($tmp)){
+            foreach ($tmp as $id) {
+                if ((int)$id > 0) {
+                    $ids_out[] = (int)$id;
+                }
+            }
+        }
 
 		return (empty($ids_out) ? false : $ids_out);
 	}
@@ -1686,7 +1688,7 @@ class JemHelper
 				break;
 		}
 
-		$db = Factory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array($column));
 		$query->from('#__extensions');

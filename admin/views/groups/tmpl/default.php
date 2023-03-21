@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.9
+ * @version 2.3.12
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,10 +47,10 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 		<table class="table table-striped" id="articleList">
 			<thead>
 				<tr>
-				<th width="5" class="center"><?php echo Text::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="5" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th width="30%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
 				<th><?php echo Text::_( 'COM_JEM_DESCRIPTION' ); ?></th>
+                <th width="1%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'id', $listDirn, $listOrder ); ?></th>
 				</tr>
 			</thead>
 
@@ -87,7 +87,6 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 					$link 		= 'index.php?option=com_jem&amp;task=group.edit&amp;id='.$row->id;
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
-					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 					<td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
 					<td>
 						<?php if ($row->checked_out) : ?>
@@ -108,6 +107,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 							echo $this->escape($descoutput);
 						?>
 					</td>
+                    <td class="center"><?php echo $row->id; ?></td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
