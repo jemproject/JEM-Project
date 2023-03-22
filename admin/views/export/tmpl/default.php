@@ -45,12 +45,12 @@ use Joomla\CMS\Language\Text;
 		<div id="j-main-container" class="j-main-container">
 			<div class="row">
 				<div class="col-md-6">
-					<fieldset class="adminform">
+                    <fieldset class="options-form">
 						<legend><?php echo Text::_('COM_JEM_EXPORT_EVENTS_LEGEND');?></legend>
-
+                        <div class="width-50 fltlft" style="padding: 0 1vw;">
 						<ul class="adminformlist">
 							<li>
-								<label <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'), Text::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'), 'editlinktip'); ?>>
+                                    <label class="top" <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'), Text::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'), 'editlinktip'); ?>>
 								<?php echo Text::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'); ?></label>
 								<?php
 									$categorycolumn = array();
@@ -67,38 +67,37 @@ use Joomla\CMS\Language\Text;
 								<label for="enddates"><?php echo Text::_('COM_JEM_EXPORT_TO_DATE').':'; ?></label>
 								<?php echo HTMLHelper::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
 							</li>
-							<li>
-								<label for="cid"><?php echo Text::_('COM_JEM_CATEGORY').':'; ?></label>
+                            </ul>
+                        </div>
+                        <div class="width-50 fltrt" style="padding: 0 1vw;">
+                            <div>
+                                <label style="bottom: 100%;left: 0;position: sticky;" for="cid"><?php echo Text::_('COM_JEM_CATEGORY').':'; ?></label>
 								<?php echo $this->categories; ?>
+                                <div style="clear: both"></div>
 								<input class="button" type="button" name="selectall" value="<?php echo Text::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
-								<br />
 								<input class="button" type="button" name="unselectall" value="<?php echo Text::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();">
-							</li>
-							<li>
-								<label></label>
 								<input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;"></input>
-							</li>
-						</ul>
+                            </div>
 					</fieldset>
 
 					<div class="clr"></div>
 				</div>
 
 				<div class="col-md-6">
-					<fieldset class="adminform">
+                    <fieldset class="options-form">
 						<legend><?php echo Text::_('COM_JEM_EXPORT_OTHER_LEGEND');?></legend>
 
 						<ul class="adminformlist">
 							<li>
-								<label><?php echo Text::_('COM_JEM_EXPORT_CATEGORIES'); ?></label>
+                                <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CATEGORIES'); ?></label>
 								<input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;"></input>
 							</li>
 							<li>
-								<label><?php echo Text::_('COM_JEM_EXPORT_VENUES'); ?></label>
+                                <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_VENUES'); ?></label>
 								<input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;"></input>
 							</li>
 							<li>
-								<label><?php echo Text::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></label>
+                                <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></label>
 								<input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;"></input>
 							</li>
 						</ul>
