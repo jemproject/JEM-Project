@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once dirname(__FILE__) . '/admin.php';
 
 /**
@@ -126,7 +128,7 @@ class JemModelGroup extends JemModelAdmin
 	 */
 	protected function _prepareTable($table)
 	{
-		$db  = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$app = JFactory::getApplication();
 
 		// Make sure the data is valid

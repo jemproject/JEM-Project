@@ -126,6 +126,20 @@
 				label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"
 				description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
 			/>
+			<field name="usefeaturedborder" type="radio"
+				   default="0"
+				   label="COM_JEM_CALENDAR_USEFEATUREDBORDER"
+				   description="COM_JEM_CALENDAR_USEFEATUREDBORDER_DESC"
+				   class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+			<field name="featuredbordercolor" type="color"
+				   default="#000080"
+				   label="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR"
+				   description="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR_DESC"
+			/>
 		</fieldset>
 	</fields>
 </metadata>

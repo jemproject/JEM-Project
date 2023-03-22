@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 // get module helper
-require_once(dirname(__FILE__).'/helper.php');
+require_once(__DIR__.'/helper.php');
 
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');

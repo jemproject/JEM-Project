@@ -21,7 +21,7 @@ class JemViewCategoryelement extends JViewLegacy {
 	{
 		//initialise variables
 		$document	= Factory::getDocument();
-		$db			= Factory::getDBO();
+		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$app 		= Factory::getApplication();
 		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 

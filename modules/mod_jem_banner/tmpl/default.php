@@ -15,6 +15,7 @@ $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
+$imagewidthmax   = (int)$params->get('imagewidthmax', 0);
 
 if ($flyer_link_type == 1) {
 	// JHtml::_('behavior.modal', 'a.flyermodal');
@@ -25,6 +26,11 @@ if ($flyer_link_type == 1) {
 	$modal = '';
 }
 ?>
+<style>
+    .banner-jem img {
+   <?php echo ($imagewidthmax? "width:" . $imagewidthmax ."px": "max-width:100%"); ?>;
+    }
+</style>
 
 <div class="jemmodulebanner<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebanner">
 <?php ?>

@@ -22,7 +22,7 @@ class JemViewEventelement extends JViewLegacy {
 
 		//initialise variables
 		$user        = JemFactory::getUser();
-		$db          = Factory::getDBO();
+		$db          = Factory::getContainer()->get('DatabaseDriver');
 		$jemsettings = JEMAdmin::config();
 		$document    = Factory::getDocument();
 		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);

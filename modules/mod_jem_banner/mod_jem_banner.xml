@@ -118,7 +118,13 @@
 					label="MOD_JEM_BANNER_FALLBACK_COLOR"
 					description="MOD_JEM_BANNER_FALLBACK_COLOR_DESC"
 				/>
-
+				<field name="imagewidthmax" type="text"
+					   class="inputbox"
+					   default=""
+					   size="8"
+					   label="MOD_JEM_BANNER_IMAGE_WIDTH_MAX"
+					   description="MOD_JEM_BANNER_IMAGE_WIDTH_MAX_DESC"
+				/>
 				<field name="showflyer" type="radio"
 					default="1"
 					label="MOD_JEM_BANNER_SHOWFLYER"

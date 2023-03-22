@@ -142,7 +142,7 @@ class mod_jem_calInstallerScript
 	private function updateParams223()
 	{
 		// get all "mod_jem..." entries
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('id, module, note, params');
 		$query->from('#__modules');

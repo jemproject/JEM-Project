@@ -60,7 +60,7 @@ class JFormFieldModal_Users extends JFormField
 		$idlist = implode(',', $ids);
 
 		if (!empty($idlist)) {
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('COUNT(id)');
 			$query->from('#__users');

@@ -21,7 +21,7 @@ class JemViewAttendees extends JemAdminView
 	public function display($tpl = null)
 	{
 		$app = Factory::getApplication();
-		$db  = Factory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$this->jemsettings = JemHelper::config();
 

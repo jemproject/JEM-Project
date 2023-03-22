@@ -34,7 +34,7 @@ class JemControllerExport extends JControllerAdmin
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$this->sendHeaders("events.csv", "text/csv");
+		$this->sendHeaders("jem_export-" . date('Ymd-His') . ".csv", "text/csv");
 		$this->getModel()->getCsv();
 		jexit();
 	}

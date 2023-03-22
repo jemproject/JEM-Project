@@ -22,7 +22,7 @@ class JemViewVenueelement extends JViewLegacy {
 		$app = Factory::getApplication();
 
 		//initialise variables
-		$db			= Factory::getDBO();
+		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$document	= Factory::getDocument();
 		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 

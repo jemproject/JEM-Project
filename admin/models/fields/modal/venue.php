@@ -50,7 +50,7 @@ class JFormFieldModal_Venue extends JFormField
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
 
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('venue');
 		$query->from('#__jem_venues');

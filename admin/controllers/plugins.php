@@ -38,7 +38,7 @@ class JemControllerPlugins extends JControllerLegacy
 	 */
 	public function plugins()
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = $db->getQuery(true);
 		$query->select(array('count(*)'));
