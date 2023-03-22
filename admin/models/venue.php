@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/admin.php';
+require_once __DIR__ . '/admin.php';
 
 /**
  * Model: Venue
