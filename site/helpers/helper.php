@@ -162,7 +162,7 @@ class JemHelper
 					$dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
-                $db = Factory::getCnotainer()->get('DatabaseDriver');
+                $db = Factory::getContainer()->get('DatabaseDriver');
 				$query = $db->getQuery(true);
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
