@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
 
@@ -127,7 +129,7 @@ class JemModelEditevent extends JemModelEvent
 		//$asset = 'com_jem.event.' . $value->id;
 		//$asset = 'com_jem';
 
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('count(id)'));
 		$query->from('#__jem_register');
@@ -242,7 +244,7 @@ class JemModelEditevent extends JemModelEvent
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db    = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
 		$query->from('#__jem_venues as l');
@@ -368,7 +370,7 @@ class JemModelEditevent extends JemModelEvent
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db    = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('con.*'));
 		$query->from('#__contact_details As con');
@@ -432,7 +434,7 @@ class JemModelEditevent extends JemModelEvent
 
 		// Add registration status if available
 		$itemId     = (int)$this->getState('event.id');
-		$db         = JFactory::getDBO();
+        $db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$qry->select(array('reg.uid, reg.status, reg.waiting'));
@@ -494,7 +496,7 @@ class JemModelEditevent extends JemModelEvent
 		$search           = '';
 
 		// Query
-		$db    = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('usr.id, usr.name'));
 		$query->from('#__users As usr');
@@ -540,8 +542,8 @@ class JemModelEditevent extends JemModelEvent
 	public function getInvitedUsers()
 	{
 		$itemId = (int)$this->getState('event.id');
-		$db     = JFactory::getDBO();
-		$query  = $db->getQuery(true);
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$query->select(array('reg.uid'));
 		$query->from('#__jem_register As reg');

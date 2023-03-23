@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
@@ -896,6 +897,7 @@ class JemOutput
 	 */
 	static public function mapicon($data, $view, $params)
 	{
+		$app = Factory::getApplication();
 		$settings = JemHelper::globalattribs();
 
 		//stop if disabled
@@ -964,7 +966,7 @@ class JemOutput
 				$api		= trim($params->get('global_googleapi'));
 				$clientid	= trim($params->get('global_googleclientid'));
 
-				$document 	= Factory::getDocument();
+				$document   = $app->getDocument();
 
 				# do we have a client-ID?
 				if ($clientid) {

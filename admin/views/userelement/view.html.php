@@ -26,7 +26,8 @@ class JEMViewUserElement extends JViewLegacy {
 		$app = Factory::getApplication();
 
 		// initialise variables
-		$document	= Factory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$jemsettings = JEMAdmin::config();
 		$db = Factory::getContainer()->get('DatabaseDriver');
 

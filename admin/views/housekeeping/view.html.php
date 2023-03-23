@@ -8,11 +8,11 @@
  */
 defined('_JEXEC') or die;
 
-
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * Housekeeping-View
  */
@@ -22,18 +22,19 @@ class JemViewHousekeeping extends JemAdminView
 	public function display($tpl = null) {
 
 		$app = Factory::getApplication();
+		$user = $app->getIdentity();
 
 		$this->totalcats = $this->get('Countcats');
 
 		//only admins have access to this view
-		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+		if (!$user->authorise('core.manage', 'com_jem')) {
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
 		}
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Load Script

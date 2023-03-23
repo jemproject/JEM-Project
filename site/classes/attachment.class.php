@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
 
@@ -157,7 +159,7 @@ class JemAttachment extends JObject
 		$files = JFolder::files($path, null, false, false);
 
 		// then get info for files from db
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$fnames = array();
 		foreach ($files as $f) {
 			$fnames[] = $db->Quote($f);
@@ -202,7 +204,7 @@ class JemAttachment extends JObject
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = 'SELECT * '
 		       . ' FROM #__jem_attachments '
 		       . ' WHERE id = '. $db->Quote(intval($id));
@@ -243,7 +245,7 @@ class JemAttachment extends JObject
 		$userid = $user->get('id');
 
 		// then get info for files from db
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = 'SELECT file, object, added_by '
 		       . ' FROM #__jem_attachments '

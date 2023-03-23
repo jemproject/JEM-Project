@@ -40,9 +40,9 @@ class JemControllerVenues extends JControllerAdmin
 	{
 		// Check for token
 		JSession::checkToken() or jexit(JText::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
-
-		$user = JFactory::getUser();
+		
 		$app = JFactory::getApplication();
+		$user = Factory::getApplication()->getIdentity();
 		$jinput = $app->input;
 		$cid = $jinput->get('cid',array(),'array');
 

@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 
 // get module helper
-require_once(dirname(__FILE__).'/helper.php');
+require_once(__DIR__).'/helper.php');
 
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -22,7 +22,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-Factory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
 switch($params->get('color')) {
 	case 'red':

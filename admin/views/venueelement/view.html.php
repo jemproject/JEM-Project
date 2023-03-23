@@ -22,8 +22,8 @@ class JemViewVenueelement extends JViewLegacy {
 		$app = Factory::getApplication();
 
 		//initialise variables
+		$document   = $app->getDocument();
 		$db			= Factory::getContainer()->get('DatabaseDriver');
-		$document	= Factory::getDocument();
 		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		// HTMLHelper::_('behavior.tooltip');

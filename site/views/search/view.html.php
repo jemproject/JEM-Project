@@ -24,7 +24,7 @@ class JemViewSearch extends JemView
 	{
 		// initialize variables
 		$app          = Factory::getApplication();
-		$document     = Factory::getDocument();
+		$document     = $app->getDocument();
 		$jemsettings  = JemHelper::config();
 		$settings     = JemHelper::globalattribs();
 		$menu         = $app->getMenu();

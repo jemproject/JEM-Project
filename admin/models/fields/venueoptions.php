@@ -8,6 +8,8 @@
  */
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Factory;
+
 JFormHelper::loadFieldClass('list');
 
 /**
@@ -34,7 +36,7 @@ class JFormFieldVenueoptions extends JFormFieldList
 		$jinput = JFactory::getApplication()->input;
 
 		// Create SQL
-		$db		= JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('l.id AS value, l.venue AS text, l.published');

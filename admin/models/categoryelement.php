@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 /**
  * Categoryelement-Model
@@ -62,7 +64,7 @@ class JemModelCategoryelement extends JModelLegacy
 	public function getData()
 	{
 		$app    = JFactory::getApplication();
-		$db     = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		$limit            = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');

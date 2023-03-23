@@ -21,8 +21,9 @@ class JemViewAttendee extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$document = Factory::getDocument();
-		$jinput   = Factory::getApplication()->input;
+        $app      = Factory::getApplication();
+        $document = $app->getDocument();
+		$jinput   = $app->input;
 
 		$this->jemsettings = JemHelper::config();
 
@@ -34,7 +35,7 @@ class JemViewAttendee extends JViewLegacy {
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 

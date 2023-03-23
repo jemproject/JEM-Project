@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 
 /**
  * JEM Component Controller
@@ -63,7 +64,8 @@ class JemController extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->request->getInt('id', 0);
+		$app = Factory::getApplication();
+		$id = $app->input->request->getInt('id', 0);
 
 		$res = JemAttachment::remove($id);
 		if (!$res) {

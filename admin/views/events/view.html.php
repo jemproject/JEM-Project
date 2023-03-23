@@ -25,8 +25,9 @@ class JemViewEvents extends JemAdminView
 
 	public function display($tpl = null)
 	{
+		$app            = Factory::getApplication();
+		$document       = $app->getDocument();
 		$user 			= JemFactory::getUser();
-		$this->document	= Factory::getDocument();
 		$settings 		= JemHelper::globalattribs();
 		$jemsettings 	= JemAdmin::config();
 		$url 			= JUri::root();

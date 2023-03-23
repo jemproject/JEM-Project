@@ -27,11 +27,12 @@ class JemViewExport extends JemAdminView
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document	= Factory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		//Cause of group limits we can't use class here to build the categories tree

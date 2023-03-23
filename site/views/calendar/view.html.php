@@ -30,7 +30,7 @@ class JemViewCalendar extends JemView
 		// JHtml::_('behavior.framework');
 
 		// initialize variables
-		$document     = Factory::getDocument();
+		$document     = $app->getDocument();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$jemsettings  = JemHelper::config();

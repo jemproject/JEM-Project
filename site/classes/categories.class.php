@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -133,7 +135,7 @@ class JemCategories
 	 */
 	protected function _load($id)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$app = JFactory::getApplication();
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
@@ -358,7 +360,7 @@ class JemCategories
 		$settings  = JemHelper::globalattribs();
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';
@@ -426,7 +428,7 @@ class JemCategories
 
 	public function getPath()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$parentcats = array();
 		$cid = $this->id;
 		$user = JemFactory::getUser();
@@ -476,7 +478,7 @@ class JemCategories
 	 */
 	static protected function buildParentCats($cid)
 	{
-		$db         = JFactory::getDBO();
+		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$parentcats = array();
 		$user       = JemFactory::getUser();
 		$userid     = (int)$user->get('id');
@@ -575,7 +577,7 @@ class JemCategories
 	 */
 	static public function getCategoriesTree($published = false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$state = array(0,1);
@@ -727,7 +729,7 @@ class JemCategories
 	 */
 	static public function getChilds($id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 AND access IN ('.implode(',', $levels).')';

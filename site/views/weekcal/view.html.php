@@ -23,7 +23,7 @@ class JemViewWeekcal extends JemView
 
 		// initialize variables
 		$app          = JFactory::getApplication();
-		$document     = JFactory::getDocument();
+		$document     = $app->getDocument();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$jemsettings  = JemHelper::config();

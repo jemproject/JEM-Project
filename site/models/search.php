@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -389,8 +391,8 @@ class JemModelSearch extends JModelLegacy
 	 */
 	public function getCategoryTree()
 	{
-		$app = JFactory::getApplication();
-		$db = JFactory::getDBO();
+		$app = Factory::getApplication();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams('com_jem');

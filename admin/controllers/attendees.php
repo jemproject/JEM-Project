@@ -199,8 +199,9 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$user    = JFactory::getUser();
-		$app     = JFactory::getApplication();
+		$app = Factory::getApplication();
+        $user = $app->getIdentity()
+
 		$eventid = $app->input->getInt('eventid');
 		$ids     = $app->input->get('cid', array(), 'array');
 		$values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);

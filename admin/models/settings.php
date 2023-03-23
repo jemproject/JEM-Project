@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modelform');
 
 /**
@@ -208,7 +210,7 @@ class JemModelSettings extends JModelForm
 		$config->vs_gd = $gd_version;
 
 		// Get info about all JEM parts
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('name', 'type', 'enabled', 'manifest_cache'));
 		$query->from('#__extensions');

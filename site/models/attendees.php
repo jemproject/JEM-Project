@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -355,7 +357,7 @@ class JemModelAttendees extends JModelLegacy
 
 		// Add registration status if available
 		$eventId    = $this->_id;
-		$db         = JFactory::getDBO();
+		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$qry->select(array('reg.uid, reg.status, reg.waiting'));
@@ -389,7 +391,7 @@ class JemModelAttendees extends JModelLegacy
 			return array();
 		}
 
-		$db  = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
@@ -440,7 +442,7 @@ class JemModelAttendees extends JModelLegacy
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('usr.id, usr.name'));
 		$query->from('#__users As usr');

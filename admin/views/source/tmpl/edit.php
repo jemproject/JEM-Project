@@ -11,9 +11,11 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-$document    = JFactory::getDocument();
+$app = Factory::getApplication();
+$document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate')

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.filesystem.file');
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 
@@ -53,7 +55,7 @@ class JemImage
 		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_NOT_BOXED, -1)) {
 
 			//only admins will see these errors
-			if (JFactory::getUser()->authorise('core.manage')) {
+			if (Factory::getApplication()->getIdentity()->authorise('core.manage')) {
 
 				// if there was an error, let's see what the error is about
 				switch ($image->error) {

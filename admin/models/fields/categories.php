@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.form.formfield');
 JFormHelper::loadFieldClass('list');
 
@@ -49,7 +51,7 @@ class JFormFieldCategories extends JFormFieldList
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component&amp;function=jSelectCategory_'.$this->id;
 
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('catname');
 		$query->from('#__jem_categories');

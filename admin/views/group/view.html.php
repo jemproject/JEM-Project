@@ -31,15 +31,16 @@ class JemViewGroup extends JemAdminView
 	public function display($tpl = null)
 	{
 		// Initialise variables.
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$this->form	 = $this->get('Form');
 		$this->item	 = $this->get('Item');
 		$this->state = $this->get('State');
-		$this->document = Factory::getDocument();
 
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			$app->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
@@ -49,15 +50,14 @@ class JemViewGroup extends JemAdminView
 
 		//initialise variables
 		$jemsettings = JemHelper::config();
-		$document	= Factory::getDocument();
 		$this->settings	= JemAdmin::config();
-		$task		= Factory::getApplication()->input->get('task', '');
+		$task		= $app->input->get('task', '');
 		$this->task = $task;
 		$url 		= Uri::root();
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		$maintainers 		= $this->get('Members');

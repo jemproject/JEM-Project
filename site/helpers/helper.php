@@ -162,7 +162,7 @@ class JemHelper
 					$dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
-                $db = Factory::getCnotainer()->get('DatabaseDriver');
+                $db = Factory::getContainer()->get('DatabaseDriver');
 				$query = $db->getQuery(true);
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
@@ -647,7 +647,7 @@ class JemHelper
 		$where = '';
 		$selDisabled = '';
 		if ($ownonly) {
-			$levels = Factory::getUser()->getAuthorisedViewLevels();
+			$levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
 			$allLevels = $levels;
 			if (!empty($disabledLevels)) {
 				if (!is_array($disabledLevels)) {
@@ -1279,7 +1279,8 @@ class JemHelper
 	{
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
-		$document = Factory::getDocument();
+        $app = Factory::getApplication();
+        $document = $app->getDocument();
 		$url      = JUri::root();
 		if (!empty($suffix)) {
 			$suffix = '-' . $suffix;
@@ -1635,7 +1636,8 @@ class JemHelper
 			break;
 		} // switch
 
-		$document = Factory::getDocument();
+        $app = Factory::getApplication();
+        $document = $app->getDocument();
 		$document->addStyleDeclaration($style);
 
 		return true;
@@ -1648,7 +1650,8 @@ class JemHelper
 	 */
 	static public function loadCustomTag()
 	{
-		$document = Factory::getDocument();
+        $app = Factory::getApplication();
+        $document = $app->getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
 

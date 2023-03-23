@@ -35,12 +35,12 @@ class JemViewCssmanager extends JemAdminView
 		$app = Factory::getApplication();
 
 		// initialise variables
-		$this->document = Factory::getDocument();
+		$this->document = $app->getDocument();
 		$user = JemFactory::getUser();
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 

@@ -9,11 +9,12 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Factory;
+
 //JFormHelper::loadFieldClass('list');
 
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
-
 
 
 /**
@@ -62,7 +63,7 @@ class JFormFieldCatOptions2 extends JFormField
 		$currentid = JFactory::getApplication()->input->getInt('id');
 		$categories = JEMCategories::getCategoriesTree(0);
 
-		$db		= JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 		$query = 'SELECT DISTINCT parent_id FROM #__jem_categories WHERE id = '. $db->quote($currentid);
 

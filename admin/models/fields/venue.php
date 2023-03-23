@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
 jimport('joomla.form.helper');
@@ -51,7 +53,7 @@ class JFormFieldVenue extends JFormFieldList
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;object='.$this->id;
 
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$db->setQuery(
 			'SELECT venue' .
 			' FROM #__jem_venues' .

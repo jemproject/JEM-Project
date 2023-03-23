@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.helper');
 
 // Load the base adapter.
@@ -366,7 +368,7 @@ class plgFinderJEM extends Adapter {
 	 */
 	protected function getListQuery($sql = null)
 	{
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		// Check if we can use the supplied SQL query.
 		$sql = $sql instanceof JDatabaseQuery ? $sql : $db->getQuery(true);
 
@@ -425,7 +427,7 @@ class plgFinderJEM extends Adapter {
 
 	protected function getStateQuery()
 	{
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		// Check if we can use the supplied SQL query.
 		$sql = $db->getQuery(true);
 

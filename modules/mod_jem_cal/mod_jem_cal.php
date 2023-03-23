@@ -22,7 +22,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
-require_once(dirname(__FILE__).'/helper.php');
+require_once(__DIR__.'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -168,7 +168,7 @@ $mod_name = 'mod_jem_cal';
 if ($Default_Stylesheet == 1) {
 	JemHelper::loadModuleStyleSheet($mod_name);
 } else {
-	$document = Factory::getDocument();
+	$document = $app->getDocument();
 	$document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');

@@ -62,8 +62,8 @@ class JemModelMailto extends JModelForm
    
 	protected function loadFormData()
 	{
-		$user = JFactory::getUser();
-		$app  = JFactory::getApplication();
+        $app  = Factory::getApplication();
+		$user = $app->getIdentity();
       
 		$data = $app->getUserState('jem.mailto.form.data', array());
 		

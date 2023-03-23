@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modelitem');
 
 /**
@@ -281,7 +283,7 @@ class JemModelEvent extends JModelItem
 		$settings  = JemHelper::globalattribs();
 
 		// Query
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';

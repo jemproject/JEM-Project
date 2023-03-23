@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controller');
 
 /**
@@ -32,7 +34,8 @@ class JemController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$document   = JFactory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$user       = JemFactory::getUser();
 
 		// Set the default view name and format from the Request.
@@ -120,7 +123,8 @@ class JemController extends JControllerLegacy
 
 		$mime = JemHelper::getMimeType($path);
 
-		$doc = JFactory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$doc->setMimeEncoding($mime);
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');
 		if ($fd = fopen ($path, "r"))

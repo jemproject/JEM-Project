@@ -10,6 +10,8 @@
  */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modellist');
 
 /**
@@ -308,7 +310,7 @@ class JemModelExport extends JModelList
 	{
 		// @todo alter function
 
-		$db    = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$where = ' WHERE c.published = 1';
 		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
 		

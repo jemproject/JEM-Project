@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/eventslist.php';
+require_once __DIR__ . '/eventslist.php';
 
 /**
  * Model-Day

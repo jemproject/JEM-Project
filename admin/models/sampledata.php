@@ -8,6 +8,8 @@
  *
  */
 defined('_JEXEC') or die();
+
+use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
@@ -240,7 +242,7 @@ class JemModelSampledata extends JModelLegacy
 	 */
 	private function checkForJemData()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$query->select("id");
@@ -263,7 +265,7 @@ class JemModelSampledata extends JModelLegacy
 	 */
 	private function assignAdminId()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = $db->getQuery(true);
 		$query->select("id");

@@ -8,7 +8,9 @@
  */
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/admin.php';
+use Joomla\CMS\Factory;
+
+require_once __DIR__ . '/admin.php';
 
 /**
  * Model: Venue
@@ -60,7 +62,7 @@ class JemModelVenue extends JemModelAdmin
 		{
 			$pksTodelete = array();
 			$errorNotice = array();
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 			foreach ($pks as $pk)
 			{
 				$result = array();

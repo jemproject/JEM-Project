@@ -19,7 +19,8 @@ $images      = json_decode($this->item->datimage);
 $attribs     = json_decode($this->item->attribs);
 $user        = JemFactory::getUser();
 $jemsettings = JemHelper::config();
-$document    = Factory::getDocument();
+$app         = Factory::getApplication();
+$document    = $app->getDocument();
 
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {

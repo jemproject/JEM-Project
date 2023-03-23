@@ -10,10 +10,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.plugin.plugin');
 jimport('joomla.html.parameter');
-
-
 
 
 class plgSearchJEM extends JPlugin
@@ -61,7 +61,7 @@ class plgSearchJEM extends JPlugin
 			return array(); // we need jem please
 		}
 
-		$db     = JFactory::getDBO();
+		$db     = Factory::getContainer()->get('DatabaseDriver');
 		$app    = JFactory::getApplication();
 		$user   = JemFactory::getUser();
 		$groups = implode(',', $user->getAuthorisedViewLevels());

@@ -22,11 +22,10 @@ class JEMViewContactelement extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-		$app = Factory::getApplication();
-
 		//initialise variables
+		$app = Factory::getApplication();
 		$db			= Factory::getContainer()->get('DatabaseDriver');
-		$document	= Factory::getDocument();
+		$document   = $app->getDocument();
 
 		// HTMLHelper::_('behavior.tooltip');
 		// HTMLHelper::_('behavior.modal');

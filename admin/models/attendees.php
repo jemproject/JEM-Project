@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modellist');
 
 /**
@@ -163,7 +165,7 @@ class JemModelAttendees extends JModelList
 	 */
 	public function getEvent()
 	{
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('id','title','dates','maxplaces','waitinglist'));
 		$query->from('#__jem_events');
@@ -186,7 +188,7 @@ class JemModelAttendees extends JModelList
 		{
 			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_register'));

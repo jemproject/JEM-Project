@@ -19,8 +19,8 @@ class JemViewEventslist extends JViewLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$app = JFactory::getApplication();
-		$doc = JFactory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model

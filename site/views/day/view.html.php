@@ -7,11 +7,13 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+
 /**
  * Day-View
  */
@@ -36,7 +38,7 @@ class JemViewDay extends JemView
 		$settings    = JemHelper::globalattribs();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$params      = $app->getParams();
 		// $uri         = Factory::getURI();
 		$uri         = Uri::getInstance();

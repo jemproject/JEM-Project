@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-require_once dirname(__FILE__) . '/admin.php';
+require_once __DIR__ . '/admin.php';
 
 /**
  * JEM Component Group Model

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 /**
  * Model-Venueslist
  */
@@ -111,7 +113,7 @@ class JemModelVenueslist extends JModelList
 		$user      = JemFactory::getUser();
 		
 		# Query
-		$db 	= JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		
 		$case_when_l = ' CASE WHEN ';

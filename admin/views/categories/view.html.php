@@ -30,15 +30,16 @@ class JemViewCategories extends JemAdminView
 		$this->state		= $this->get('State');
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
-		$this->document 	= Factory::getDocument();
+		$this->app          = Factory::getApplication();
+        $this->document     = $this->app->getDocument();
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+            $this->app->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $this->app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Load css

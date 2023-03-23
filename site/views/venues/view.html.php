@@ -23,7 +23,7 @@ class JemViewVenues extends JemView
 	public function display($tpl = null)
 	{
 		$app         = Factory::getApplication();
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$user        = JemFactory::getUser();

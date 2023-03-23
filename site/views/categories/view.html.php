@@ -24,7 +24,7 @@ class JemViewCategories extends JemView
 	{
 		$app = Factory::getApplication();
 
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$jemsettings = JemHelper::config();
 		$user        = JemFactory::getUser();
 		$print       = $app->input->getBool('print', false);

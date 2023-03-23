@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 /**
  * JEM Event Table
  */
@@ -110,7 +112,8 @@ class JemTableEvent extends JTable
 
 
 		// Dates
-		$nullDate = JFactory::getDbo()->getNullDate();
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$nullDate = $db->getNullDate();
 
 		if (empty($this->enddates) || ($this->enddates == $nullDate)) {
 			$this->enddates = null;
@@ -433,7 +436,7 @@ class JemTableEvent extends JTable
 		$id = $this->id;
 
 		if (parent::delete($pk)) {
-			$db = JFactory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
 			$query->where('itemid = '.$db->quote($id));

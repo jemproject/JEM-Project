@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 
@@ -90,7 +92,7 @@ class JemModelUserelement extends JModelLegacy
 		$search           = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );
 
 		// start query
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('u.id', 'u.name', 'u.username', 'u.email'));
 		$query->from('#__users as u');
