@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
@@ -43,7 +45,7 @@ class JemControllerEvent extends JemControllerForm
 	{
 		// Initialise variables.
 		$user       = JemFactory::getUser();
-		$categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
+		$categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', Factory::getApplication()->input->getInt('catid', 0), 'int');
 
 		if ($user->can('add', 'event', false, $categoryId ? $categoryId : false)) {
 			return true;
@@ -166,7 +168,7 @@ class JemControllerEvent extends JemControllerForm
 	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
 	{
 		// Need to override the parent method completely.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$tmpl   = $jinput->getCmd('tmpl', '');
 		$layout = $jinput->getCmd('layout', 'edit');
 		$task   = $jinput->getCmd('task', '');
@@ -224,7 +226,7 @@ class JemControllerEvent extends JemControllerForm
 	 */
 	protected function getReturnPage()
 	{
-		$return = JFactory::getApplication()->input->get('return', null, 'base64');
+		$return = Factory::getApplication()->input->get('return', null, 'base64');
 
 		if (empty($return) || !JUri::isInternal(base64_decode($return))) {
 			if (!empty($this->_id)) {
@@ -298,8 +300,8 @@ class JemControllerEvent extends JemControllerForm
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$id  = JFactory::getApplication()->input->getInt('rdid', 0);
-		$rid = JFactory::getApplication()->input->getInt('regid', 0);
+		$id  = Factory::getApplication()->input->getInt('rdid', 0);
+		$rid = Factory::getApplication()->input->getInt('regid', 0);
 
 		// Get the model
 		$model = $this->getModel('Event', 'JemModel');
@@ -345,7 +347,7 @@ class JemControllerEvent extends JemControllerForm
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->getInt('rdid', 0);
+		$id = Factory::getApplication()->input->getInt('rdid', 0);
 
 		// Get/Create the model
 		$model = $this->getModel('Event', 'JemModel');

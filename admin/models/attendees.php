@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modellist');
 
 /**
@@ -33,7 +35,7 @@ class JemModelAttendees extends JModelList
 
 		parent::__construct($config);
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$eventid = $app->input->getInt('eventid', 0);
 		$this->setId($eventid);
 	}
@@ -50,7 +52,7 @@ class JemModelAttendees extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$limit      = $app->getUserStateFromRequest('com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.attendees.limitstart', 'limitstart', 0, 'int');
@@ -163,7 +165,7 @@ class JemModelAttendees extends JModelList
 	 */
 	public function getEvent()
 	{
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('id','title','dates','maxplaces','waitinglist'));
 		$query->from('#__jem_events');
@@ -186,7 +188,7 @@ class JemModelAttendees extends JModelList
 		{
 			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_register'));

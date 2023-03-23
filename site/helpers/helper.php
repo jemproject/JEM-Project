@@ -647,7 +647,7 @@ class JemHelper
 		$where = '';
 		$selDisabled = '';
 		if ($ownonly) {
-			$levels = Factory::getUser()->getAuthorisedViewLevels();
+			$levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
 			$allLevels = $levels;
 			if (!empty($disabledLevels)) {
 				if (!is_array($disabledLevels)) {

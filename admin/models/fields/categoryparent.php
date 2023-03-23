@@ -8,6 +8,8 @@
  */
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Factory;
+
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -38,7 +40,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		$name = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		// For categories the old category is the category id 0 for new category.
 		if ($this->element['parent'])
 		{
@@ -52,7 +54,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 			$oldCat = $this->form->getValue($name);
 		}
 
-		$db		= JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('a.id AS value, a.title AS text, a.level');

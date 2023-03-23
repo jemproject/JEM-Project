@@ -8,6 +8,8 @@
  *
  */
 defined('_JEXEC') or die();
+
+use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
@@ -115,7 +117,7 @@ class JemModelSampledata extends JModelLegacy
 		// extract archive
 	
 		try {
-			$archiveObj = new Archive(array('tmp_path' => JFactory::getApplication()->get('tmp_path')));
+			$archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
 			$result = $archiveObj->extract($archive, $extractdir);
         } catch (\Exception $e) {
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
@@ -240,7 +242,7 @@ class JemModelSampledata extends JModelLegacy
 	 */
 	private function checkForJemData()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$query->select("id");
@@ -263,7 +265,7 @@ class JemModelSampledata extends JModelLegacy
 	 */
 	private function assignAdminId()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = $db->getQuery(true);
 		$query->select("id");

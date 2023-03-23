@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * View class: Venues
  */
@@ -26,7 +27,8 @@ use Joomla\CMS\Factory;
 	public function display($tpl = null)
 	{
 		$user     = JemFactory::getUser();
-		$document = Factory::getDocument();
+        $app      = Factory::getApplication();
+        $document = $app->getDocument();
 		$url      = JUri::root();
 		$settings = JemHelper::globalattribs();
 
@@ -44,13 +46,13 @@ use Joomla\CMS\Factory;
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			$app->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Add Scripts

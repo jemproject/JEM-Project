@@ -32,7 +32,7 @@ class JemViewEditvenue extends JemView
 		$settings    = JemHelper::globalattribs();
 		$app         = Factory::getApplication();
 		$user        = JemFactory::getUser();
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();

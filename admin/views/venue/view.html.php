@@ -42,12 +42,13 @@ class JemViewVenue extends JemAdminView
 		// HTMLHelper::_('behavior.formvalidation');
 
 		//initialise variables
-		$this->document = Factory::getDocument();
+        $app = Factory::getApplication();
+        $this->document = $app->getDocument();
 		$this->settings = JemAdmin::config();
 		$globalregistry = JemHelper::globalattribs();
-		$task           = Factory::getApplication()->input->get('task', '');
+		$task           = $app->input->get('task', '');
 		$this->task     = $task;
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);

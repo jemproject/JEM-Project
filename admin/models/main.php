@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -35,7 +37,7 @@ class JemModelMain extends JModelLegacy
 	 */
 	protected function getStateData($tablename, &$map = null)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		if($map == null) {
 			$map = array('published' => 1, 'unpublished' => 0, 'archived' => 2, 'trashed' => -2);

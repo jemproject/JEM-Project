@@ -28,19 +28,19 @@ class JemViewSettings extends JemAdminView
 
 	public function display($tpl = null)
 	{
-		$app         = Factory::getApplication();
-		$document    = Factory::getDocument();
+        $app         = Factory::getApplication();
+        $document    = $app->getDocument();
 		$form        = $this->get('Form');
 		$data        = $this->get('Data');
 		$state       = $this->get('State');
 		$config      = $this->get('ConfigInfo');
 		$jemsettings = $this->get('Data');
-		$this->document = Factory::getDocument();
+		$this->document = $document;
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $document->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
@@ -53,7 +53,7 @@ class JemViewSettings extends JemAdminView
 
 		// Check for model errors.
 		if ($errors = $this->get('Errors')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode('<br />', $errors), 'error');
+			$app->enqueueMessage(implode('<br />', $errors), 'error');
 			return false;
 		}
 
@@ -65,12 +65,12 @@ class JemViewSettings extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			$app->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
 		// Load Script
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 		// $document->addScript(Uri::root().'media/com_jem/js/colorpicker.js');
 		$wa->useScript('jquery');
 		$wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
@@ -82,7 +82,7 @@ class JemViewSettings extends JemAdminView
 		// HTMLHelper::_('jquery.framework');
 		// only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
 		}
 

@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once __DIR__ . '/admin.php';
 
 /**
@@ -60,7 +62,7 @@ class JemModelVenue extends JemModelAdmin
 		{
 			$pksTodelete = array();
 			$errorNotice = array();
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 			foreach ($pks as $pk)
 			{
 				$result = array();
@@ -201,7 +203,7 @@ class JemModelVenue extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.venue.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.venue.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
@@ -232,7 +234,7 @@ class JemModelVenue extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 		$task        = $jinput->get('task', '', 'cmd');

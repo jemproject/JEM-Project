@@ -8,7 +8,9 @@
  */
 defined('_JEXEC') or die;
 
-$function = JFactory::getApplication()->input->getCmd('function', 'jSelectCategory');
+use Joomla\CMS\Factory;
+
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectCategory');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">

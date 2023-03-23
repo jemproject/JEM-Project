@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 /**
  * Source controller class
  */
@@ -85,7 +87,7 @@ class JemControllerSource extends JControllerLegacy
 	public function edit()
 	{
 		// Initialise variables.
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 		$model    = $this->getModel();
 		$recordId = $app->input->get('id', '');
 		$context  = 'com_jem.edit.source';
@@ -115,7 +117,7 @@ class JemControllerSource extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app     = JFactory::getApplication();
+		$app     = Factory::getApplication();
 		$model   = $this->getModel();
 		$context = 'com_jem.edit.source';
 
@@ -136,7 +138,7 @@ class JemControllerSource extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app     = JFactory::getApplication();
+		$app     = Factory::getApplication();
 		$data    = $app->input->get('jform', array(), 'array');
 		$context = 'com_jem.edit.source';
 		$task    = $this->getTask();

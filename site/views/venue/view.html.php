@@ -40,7 +40,7 @@ class JemViewVenue extends JemView
 
 			// initialize variables
 			$app         = Factory::getApplication();
-			$document    = Factory::getDocument();
+			$document    = $app->getDocument();
 			$menu        = $app->getMenu();
 			$menuitem    = $menu->getActive();
 			$jemsettings = JemHelper::config();
@@ -154,7 +154,7 @@ class JemViewVenue extends JemView
 
 			// initialize variables
 			$app         = Factory::getApplication();
-			$document    = Factory::getDocument();
+			$document    = $app->getDocument();
 			$menu        = $app->getMenu();
 			$menuitem    = $menu->getActive();
 			$jemsettings = JemHelper::config();

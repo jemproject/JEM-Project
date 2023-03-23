@@ -16,7 +16,9 @@ use Joomla\CMS\Factory;
 // HTMLHelper::_('behavior.tooltip');
 // HTMLHelper::_('behavior.calendar');
 // HTMLHelper::_('behavior.formvalidation');
-$document    = Factory::getDocument();
+
+$app = Factory::getApplication();
+$document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 		$wa->useScript('keepalive')
 			->useScript('form.validate');

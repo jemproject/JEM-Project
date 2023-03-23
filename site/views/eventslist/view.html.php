@@ -40,7 +40,7 @@ class JemViewEventslist extends JemView
 		$settings    = JemHelper::globalattribs();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$params      = $app->getParams();
 		$uri         = Uri::getInstance();
 		$jinput      = $app->input;

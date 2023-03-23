@@ -38,15 +38,14 @@ class JemViewEvent extends JemAdminView
 		// HTMLHelper::_('behavior.modal', 'a.modal');
 		// HTMLHelper::_('behavior.tooltip');
 		// HTMLHelper::_('behavior.formvalidation');
-		
-			
 
 		//initialise variables
 		$jemsettings 	= JemHelper::config();
-		$this->document	= Factory::getDocument();
+		$app            = Factory::getApplication();
+		$this->document = $app->getDocument();
 		$user 			= JemFactory::getUser();
 		$this->settings	= JemAdmin::config();
-		$task			= Factory::getApplication()->input->get('task', '');
+		$task			= $app->input->get('task', '');
 		$this->task 	= $task;
 		$url 			= JUri::root();
 
@@ -59,7 +58,7 @@ class JemViewEvent extends JemAdminView
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 

@@ -20,9 +20,9 @@ class JemViewCategoryelement extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$document	= Factory::getDocument();
-		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$app 		= Factory::getApplication();
+		$document   = $app->getDocument();
+		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		// HTMLHelper::_('behavior.tooltip');

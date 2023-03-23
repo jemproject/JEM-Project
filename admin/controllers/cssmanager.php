@@ -9,6 +9,8 @@
  */
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controlleradmin');
 
 /**
@@ -56,7 +58,7 @@ class JemControllerCssmanager extends JControllerAdmin
 	 */
 	public function linenumber()
 	{
-		$task  = JFactory::getApplication()->input->get('task', '');
+		$task  = Factory::getApplication()->input->get('task', '');
 		$model = $this->getModel();
 
 		switch ($task)

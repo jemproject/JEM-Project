@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once __DIR__ . '/admin.php';
 
 /**
@@ -125,7 +127,7 @@ class JemModelEvent extends JemModelAdmin
 
 			$item->articletext = ($item->fulltext && trim($item->fulltext) != '') ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
 
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
 			$query->select(array('count(id)'));
@@ -173,7 +175,7 @@ class JemModelEvent extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.event.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.event.data', array());
 
 		if (empty($data)){
 			$data = $this->getItem();
@@ -189,7 +191,7 @@ class JemModelEvent extends JemModelAdmin
 	 */
 	protected function _prepareTable($table)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
@@ -238,7 +240,7 @@ class JemModelEvent extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 		$table       = $this->getTable();
@@ -270,7 +272,8 @@ class JemModelEvent extends JemModelAdmin
 		}
 
 		// convert international date formats...
-		$nullDate = JFactory::getDbo()->getNullDate();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$nullDate = $db->getNullDate();
 		if (!empty($data['dates']) && ($data['dates'] != $nullDate)) {
 			$d = JFactory::getDate($data['dates'], 'UTC');
 			$data['dates'] = $d->format('Y-m-d', true, false);

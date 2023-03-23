@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modelform');
 jimport('joomla.filesystem.file');
 
@@ -60,10 +62,10 @@ class JemModelSource extends JModelForm
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Codemirror or Editor None should be enabled
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('COUNT(*)');
 		$query->from('#__extensions as a');
@@ -91,7 +93,7 @@ class JemModelSource extends JModelForm
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.source.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.source.data', array());
 
 		if (empty($data)) {
 			$data = $this->getSource();

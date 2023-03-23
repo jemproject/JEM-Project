@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 
@@ -51,7 +53,7 @@ class JemModelContactelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
+		$app =  Factory::getApplication();
 
 		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
@@ -79,7 +81,7 @@ class JemModelContactelement extends JModelLegacy
 	 */
 	protected function buildQuery()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 
 		$filter_order     = $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order','filter_order','con.ordering','cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order_Dir','filter_order_Dir','','word' );
@@ -92,7 +94,7 @@ class JemModelContactelement extends JModelLegacy
 		$search           = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );
 
 		// start query
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('con.*'));
 		$query->from('#__contact_details as con');

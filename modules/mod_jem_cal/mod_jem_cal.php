@@ -168,7 +168,7 @@ $mod_name = 'mod_jem_cal';
 if ($Default_Stylesheet == 1) {
 	JemHelper::loadModuleStyleSheet($mod_name);
 } else {
-	$document = Factory::getDocument();
+	$document = $app->getDocument();
 	$document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');

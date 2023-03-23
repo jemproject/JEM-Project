@@ -7,12 +7,14 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+
 /**
  * Attendees-view
  * @todo fix view
@@ -45,7 +47,7 @@ class JemViewAttendees extends JemView
 		}
 
 		//initialise variables
-		$document	= Factory::getDocument();
+		$document   = $app->getDocument();
 		$settings	= $this->settings;
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
@@ -156,8 +158,8 @@ class JemViewAttendees extends JemView
 	 */
 	protected function _displayprint($tpl = null)
 	{
-		$document	= Factory::getDocument();
-		$app		= Factory::getApplication();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$params		= $app->getParams();
 
 		// Load css
@@ -188,9 +190,9 @@ class JemViewAttendees extends JemView
 	protected function _displayaddusers($tpl)
 	{
 		$app         = Factory::getApplication();
+		$document    = $app->getDocument();
 		$jinput      = $app->input;
 	//	$db          = Factory::getContainer()->get('DatabaseDriver');
-		$document    = Factory::getDocument();
 		$model       = $this->getModel();
 		$event       = $this->get('Event');
 

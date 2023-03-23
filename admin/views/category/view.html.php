@@ -32,8 +32,8 @@ class JemViewCategory extends JemAdminView
 		$this->state	= $this->get('State');
 		$this->canDo	= JemHelperBackend::getActions($this->state->get('category.component'));
 
-
-		$this->document	= Factory::getDocument();
+        $app = Factory::getApplication();
+        $this->document = $app->getDocument();
 
 		// Check for errors.
 		$errors = $this->get('Errors');
@@ -41,7 +41,7 @@ class JemViewCategory extends JemAdminView
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa = $app->getDocument()->getWebAssetManager();
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
@@ -68,7 +68,7 @@ class JemViewCategory extends JemAdminView
 
 		parent::display($tpl);
 
-		Factory::getApplication()->input->set('hidemainmenu', true);
+		$app->input->set('hidemainmenu', true);
 		$this->addToolbar();
 	}
 

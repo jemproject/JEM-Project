@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+
 /**
  * View class for the JEM home screen
  *
@@ -27,7 +28,8 @@ class JemViewMain extends JemAdminView
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document = Factory::getDocument();
+        $app = Factory::getApplication();
+        $document = $app->getDocument();
 		$user     = JemFactory::getUser();
 
 		// Get data from the model

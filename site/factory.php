@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
@@ -74,7 +76,7 @@ abstract class JemFactory extends JFactory
 	public static function getDispatcher()
 	{
 		if (version_compare(JVERSION, '4.0', 'ge')) {
-			return JFactory::getApplication();
+			return Factory::getApplication();
 		} else
 		if (version_compare(JVERSION, '3.0', 'ge')) {
 			return JEventDispatcher::getInstance();

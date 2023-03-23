@@ -8,7 +8,9 @@
  */
 defined('_JEXEC') or die;
 
-$function = JFactory::getApplication()->input->getCmd('function', 'jSelectVenue');
+use Joomla\CMS\Factory;
+
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">

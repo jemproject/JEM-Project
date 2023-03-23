@@ -20,7 +20,7 @@ class JemViewVenue extends JViewLegacy
 	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
-		$doc = JFactory::getDocument();
+		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
@@ -78,7 +78,7 @@ class JemViewVenue extends JViewLegacy
 				$item->category    = $category;
 
 				// loads item info into rss array
-				$doc->addItem($item);
+				$document->addItem($item);
 			}
 		}
 	}

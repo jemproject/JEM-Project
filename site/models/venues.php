@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -56,7 +58,7 @@ class JemModelVenues extends JemModelEventslist
 		$levels = $user->getAuthorisedViewLevels();
 
 		// Query
-		$db     = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$case_when_l  = ' CASE WHEN ';
@@ -137,7 +139,7 @@ class JemModelVenues extends JemModelEventslist
 	{
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$db     = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$query->select(array('a.id'));
@@ -204,7 +206,7 @@ class JemModelVenues extends JemModelEventslist
 		$settings = JemHelper::globalattribs();
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';

@@ -16,7 +16,8 @@ use Joomla\CMS\Language\Text;
 // HTMLHelper::_('behavior.formvalidation');
 // HTMLHelper::_('behavior.keepalive');
 
-$document    = Factory::getDocument();
+$app = Factory::getApplication();
+$document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 		$wa->useScript('keepalive')
 			->useScript('form.validate');

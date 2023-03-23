@@ -47,7 +47,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
@@ -288,7 +288,7 @@ class JemViewEditevent extends JemView
 		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
 	//	$db          = Factory::getContainer()->get('DatabaseDriver');
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
@@ -339,7 +339,7 @@ class JemViewEditevent extends JemView
 		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
 	//	$db          = Factory::getContainer()->get('DatabaseDriver');
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -394,7 +394,7 @@ class JemViewEditevent extends JemView
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 	//	$db          = Factory::getContainer()->get('DatabaseDriver');
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$model       = $this->getModel();
 
 		// no filters, hard-coded

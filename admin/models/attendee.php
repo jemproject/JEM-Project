@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -38,7 +40,7 @@ class JemModelAttendee extends JModelLegacy
 	{
 		parent::__construct();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$array = $jinput->get('cid',  0, 'array');
 		if(is_array($this) && $this->setId((int)$array[0]));
 
@@ -83,7 +85,7 @@ class JemModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
 			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist'));
@@ -119,7 +121,7 @@ class JemModelAttendee extends JModelLegacy
 			$data = JTable::getInstance('jem_register', '');
 			$data->username = null;
 			if (empty($data->eventtitle)) {
-				$jinput = JFactory::getApplication()->input;
+				$jinput = Factory::getApplication()->input;
 				$eventid = $jinput->getInt('event', 0);
 				$table = $this->getTable('Event', 'JemTable');
 				$table->load($eventid);
@@ -191,7 +193,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// sanitise id field
 		$row->id = (int)$row->id;
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
 		// Check if user is already registered to this event
 		$query = $db->getQuery(true);

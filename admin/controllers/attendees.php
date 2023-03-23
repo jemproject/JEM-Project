@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controller');
 
 /**
@@ -46,7 +48,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
 		$eventid = $jinput->getInt('eventid');
 
@@ -118,7 +120,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$pks  = $app->input->get('cid', array(), 'array');
 		$task = $this->getTask();
 
@@ -179,7 +181,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$jinput->set('view', 'attendee');
 		// 'attendee' expects event id as 'event' not 'id'
 		$jinput->set('event', $jinput->getInt('eventid'));
@@ -199,8 +201,9 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$user    = JFactory::getUser();
-		$app     = JFactory::getApplication();
+		$app = Factory::getApplication();
+        $user = $app->getIdentity();
+
 		$eventid = $app->input->getInt('eventid');
 		$ids     = $app->input->get('cid', array(), 'array');
 		$values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);

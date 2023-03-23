@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modelform');
 
 /**
@@ -53,7 +55,7 @@ class JemModelSettings extends JModelForm
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.settings.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.settings.data', array());
 
 		if (empty($data)) {
 			$data = $this->getData();
@@ -73,7 +75,7 @@ class JemModelSettings extends JModelForm
 		}
 
 		// additional data:
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$varmetakey = $jinput->get('meta_keywords','','');
 		$data['meta_keywords'] = implode(', ', array_filter($varmetakey));
 		$data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
@@ -156,7 +158,7 @@ class JemModelSettings extends JModelForm
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -208,7 +210,7 @@ class JemModelSettings extends JModelForm
 		$config->vs_gd = $gd_version;
 
 		// Get info about all JEM parts
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('name', 'type', 'enabled', 'manifest_cache'));
 		$query->from('#__extensions');

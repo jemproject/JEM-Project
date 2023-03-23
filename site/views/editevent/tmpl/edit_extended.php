@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 //$max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
 ?>
 

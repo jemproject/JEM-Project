@@ -566,11 +566,18 @@ img.calendar {cursor:pointer;}
 table.adminlist {border:1px solid #999;}
 input#csvexport {
      background:#ccc url('../images/export_excel.png') no-repeat left;
-     padding-left:20px;
+     background-position-x: 5px;
      border:1px solid #808080;
-     height:20px;
+     height:35px;
      cursor:pointer;
+     padding:0 8px 0px 30px;
 }
+
+.labelexport {
+     min-width: 100px;
+     padding: 10px 0;
+}
+
 .select_country {max-width:210px;}
 /* scale icon to fit text height */
 .icon-inline {
@@ -821,3 +828,4 @@ a.label:focus {
      border: 0;
      border-bottom: 1px solid #ccc;
 }
+

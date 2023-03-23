@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modellist');
 
 /**
@@ -272,7 +274,7 @@ class JemModelEvents extends JModelList
 		$levels = $user->getAuthorisedViewLevels();
 
 		# Query
-		$db     = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';

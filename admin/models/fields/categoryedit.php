@@ -8,6 +8,8 @@
  */
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Factory;
+
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -40,7 +42,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		$name = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		// Load the category options for a given extension.
 
 		// For categories the old category is the category id or 0 for new category.
@@ -58,7 +60,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			//$extension = $this->element['extension'] ? (string) $this->element['extension'] : (string) $jinput->get('option','com_content');
 		}
 
-		$db		= JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('a.id AS value, a.catname AS text, a.level, a.published');

@@ -8,6 +8,7 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 
 /**
  * Day-Feed
@@ -19,8 +20,8 @@ class JemViewDay extends JViewLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$app = JFactory::getApplication();
-		$doc = JFactory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
@@ -71,7 +72,7 @@ class JemViewDay extends JViewLegacy
 				$item->category    = $category;
 
 				// loads item info into rss array
-				$doc->addItem($item);
+				$document->addItem($item);
 			}
 		}
 	}

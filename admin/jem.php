@@ -8,10 +8,14 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 // Access check.
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
+
+
 if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 	\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
 }
@@ -48,7 +52,7 @@ require_once (JPATH_COMPONENT.'/controller.php');
 $controller = JControllerLegacy::getInstance('Jem');
 
 // Perform the Request task
-$input = JFactory::getApplication()->input;
+$input = Factory::getApplication()->input;
 $controller->execute($input->getCmd('task'));
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 

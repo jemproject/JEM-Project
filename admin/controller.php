@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 
 /**
  * JEM Component Controller
@@ -33,7 +34,7 @@ class JemController extends JControllerLegacy
 	{
 		// Load the submenu - but not on edit views.
 		// if no view found then refert to main
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$view = $jinput->getCmd('view', 'main');
 		// add all views you won't see the submenu / sidebar
 		//  - on J! 2.5 param 'hidemainmenu' let's not show the submenu
@@ -63,7 +64,8 @@ class JemController extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->request->getInt('id', 0);
+		$app = Factory::getApplication();
+		$id = $app->input->request->getInt('id', 0);
 
 		$res = JemAttachment::remove($id);
 		if (!$res) {

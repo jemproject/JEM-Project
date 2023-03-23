@@ -11,7 +11,10 @@
  * @link http://www.kunena.org
  **/
 defined ( '_JEXEC' ) or die ();
+
+use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
+
 /**
  * JEM package installer script.
  */
@@ -126,7 +129,7 @@ class Pkg_JemInstallerScript
 	}
 
 	public function checkRequirements($version) {
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$pass  = $this->checkVersion('PHP', phpversion());
 		$pass &= $this->checkVersion('Joomla!', JVERSION);
 		$pass &= $this->checkVersion('MySQL', $db->getVersion ());

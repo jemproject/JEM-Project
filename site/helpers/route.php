@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 // Component Helper
 jimport('joomla.application.component.helper');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -223,7 +225,7 @@ abstract class JEMHelperRoute
 	 */
 	protected static function _findItem($needles = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$menus = $app->getMenu('site');
 
 		// Prepare the reverse lookup array.

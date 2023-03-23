@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -75,7 +77,7 @@ class JemModelAttendees extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 
@@ -211,7 +213,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	protected function _buildContentOrderBy()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.uregdate', 'cmd' );
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',        'word' );
@@ -241,7 +243,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	protected function _buildContentWhere()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
@@ -355,7 +357,7 @@ class JemModelAttendees extends JModelLegacy
 
 		// Add registration status if available
 		$eventId    = $this->_id;
-		$db         = JFactory::getDBO();
+		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$qry->select(array('reg.uid, reg.status, reg.waiting'));
@@ -389,7 +391,7 @@ class JemModelAttendees extends JModelLegacy
 			return array();
 		}
 
-		$db  = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
@@ -409,7 +411,7 @@ class JemModelAttendees extends JModelLegacy
 	public function getUsersPagination()
 	{
 		$jemsettings = JemHelper::config();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.addusers.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart  = $app->input->getInt('limitstart', 0);
 		// correct start value if required
@@ -440,7 +442,7 @@ class JemModelAttendees extends JModelLegacy
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('usr.id, usr.name'));
 		$query->from('#__users As usr');

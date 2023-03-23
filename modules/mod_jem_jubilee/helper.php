@@ -36,7 +36,7 @@ abstract class ModJemJubileeHelper
 		static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l', 'md' => 'md');
 		static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '', 'md' => '');
 
-		$db     = Factory::getDBO();
+        $db     = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 

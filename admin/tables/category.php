@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.database.tablenested');
 
 /**
@@ -50,7 +52,7 @@ class JemTableCategory extends JTableNested
 			return;
 		}
 
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Insert columns.

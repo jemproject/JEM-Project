@@ -37,7 +37,7 @@ abstract class ModJemBannerHelper
 		static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l');
 		static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '');
 
-		$db     = Factory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 

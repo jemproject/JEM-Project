@@ -46,7 +46,7 @@ class JemViewCategory extends JemView
 
 			//initialize variables
 			$app         = Factory::getApplication();
-			$document    = Factory::getDocument();
+			$document    = $app->getDocument();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$user        = JemFactory::getUser();
@@ -157,7 +157,7 @@ class JemViewCategory extends JemView
 
 			//initialize variables
 			$app         = Factory::getApplication();
-			$document    = Factory::getDocument();
+			$document    = $app->getDocument();
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$user        = JemFactory::getUser();

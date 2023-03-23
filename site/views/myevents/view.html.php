@@ -7,11 +7,13 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+
 /**
  * Myevents-View
  */
@@ -24,7 +26,7 @@ class JemViewMyevents extends JemView
 	{
 		// initialize variables
 		$app          = Factory::getApplication();
-		$document     = Factory::getDocument();
+		$document     = $app->getDocument();
 		$jemsettings  = JemHelper::config();
 		$settings     = JemHelper::globalattribs();
 		$menu         = $app->getMenu();

@@ -31,7 +31,7 @@ abstract class ModJemWideHelper
 	{
 		mb_internal_encoding('UTF-8');
 
-		$db     = Factory::getDBO();
+        $db     = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 

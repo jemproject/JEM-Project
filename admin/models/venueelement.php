@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -51,7 +53,7 @@ class JemModelVenueelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 	//	$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -85,7 +87,7 @@ class JemModelVenueelement extends JModelLegacy
 	 */
 	protected function buildQuery()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$jemsettings      = JemHelper::config();
 		$itemid           = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -100,7 +102,7 @@ class JemModelVenueelement extends JModelLegacy
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('l.id', 'l.state', 'l.city', 'l.country', 'l.published', 'l.venue', 'l.ordering'));
 		$query->from('#__jem_venues as l');

@@ -9,6 +9,8 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Factory;
+
 JFormHelper::loadFieldClass('list');
 
 require_once __DIR__ . '/../../helpers/helper.php';
@@ -74,7 +76,7 @@ class JFormFieldCatOptions extends JFormFieldList
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('DISTINCT catid');
 		$query->from('#__jem_cats_event_relations');
@@ -146,7 +148,7 @@ class JFormFieldCatOptions extends JFormFieldList
 	 */
 	public function getCategories($id)
 	{
-		$db     = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$userid = (int) $user->get('id');
 

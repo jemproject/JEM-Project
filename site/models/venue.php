@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -177,7 +179,7 @@ class JemModelVenue extends JemModelEventslist
 	{
 		$user   = JemFactory::getUser();
 
-		$db     = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
