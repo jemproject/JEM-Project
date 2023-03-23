@@ -44,7 +44,7 @@ use Joomla\CMS\Language\Text;
         <?php endif; ?>
         <div id="j-main-container" class="j-main-container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-9">
                     <fieldset class="options-form">
                         <legend><?php echo Text::_('COM_JEM_EXPORT_EVENTS_LEGEND');?></legend>
                         <div class="width-50 fltlft" style="padding: 0 1vw;">
@@ -83,7 +83,7 @@ use Joomla\CMS\Language\Text;
                     <div class="clr"></div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <fieldset class="options-form">
                         <legend><?php echo Text::_('COM_JEM_EXPORT_OTHER_LEGEND');?></legend>
 
