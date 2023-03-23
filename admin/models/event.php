@@ -175,7 +175,7 @@ class JemModelEvent extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.event.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.event.data', array());
 
 		if (empty($data)){
 			$data = $this->getItem();
@@ -191,7 +191,7 @@ class JemModelEvent extends JemModelAdmin
 	 */
 	protected function _prepareTable($table)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
@@ -240,7 +240,7 @@ class JemModelEvent extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 		$table       = $this->getTable();

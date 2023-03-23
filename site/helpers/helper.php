@@ -1279,8 +1279,7 @@ class JemHelper
 	{
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
-        $app = Factory::getApplication();
-        $document = $app->getDocument();
+		$document = Factory::getDocument();
 		$url      = JUri::root();
 		if (!empty($suffix)) {
 			$suffix = '-' . $suffix;
@@ -1636,8 +1635,7 @@ class JemHelper
 			break;
 		} // switch
 
-        $app = Factory::getApplication();
-        $document = $app->getDocument();
+		$document = Factory::getDocument();
 		$document->addStyleDeclaration($style);
 
 		return true;
@@ -1650,8 +1648,7 @@ class JemHelper
 	 */
 	static public function loadCustomTag()
 	{
-        $app = Factory::getApplication();
-        $document = $app->getDocument();
+		$document = Factory::getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
 

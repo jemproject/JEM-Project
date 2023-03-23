@@ -19,7 +19,7 @@ if ($params->get('use_modal', 0)) {
 	$modal = 'notmodal';
 }
 /*
-if (JFactory::getApplication()->input->getInt('jem-rss','0') == 1) {		
+if (Factory::getApplication()->input->getInt('jem-rss','0') == 1) {
   ob_get_clean();
   createRSSfeed($list);
   jexit(); 

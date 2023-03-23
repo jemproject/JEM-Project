@@ -8,6 +8,7 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 
 /**
  * Raw: Category
@@ -21,7 +22,7 @@ class JemViewCategory extends JViewLegacy
 	{
 		$settings  = JemHelper::config();
 		$settings2 = JemHelper::globalattribs();
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$jinput    = $app->input;
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {

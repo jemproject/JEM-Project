@@ -171,7 +171,7 @@ class JemAttachment extends JObject
 
 		// Check access level if not a Super User on Backend.
 		$user = JemFactory::getUser();
-		if (JFactory::getApplication()->isClient('administrator') && $user->authorise('core.manage')) {
+		if (Factory::getApplication()->isClient('administrator') && $user->authorise('core.manage')) {
 			$qAccess = '';
 		} else {
 			$levels = $user->getAuthorisedViewLevels();

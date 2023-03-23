@@ -20,7 +20,7 @@ class JemViewEventslist extends JViewLegacy
 	public function display($cachable = false, $urlparams = false)
 	{
 		$app = Factory::getApplication();
-		$document = $app->getDocument();
+		$document = Factory::getDocument();
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
@@ -71,7 +71,7 @@ class JemViewEventslist extends JViewLegacy
 				$item->category    = $category;
 
 				// loads item info into rss array
-				$doc->addItem($item);
+				$document->addItem($item);
 			}
 		}
 	}

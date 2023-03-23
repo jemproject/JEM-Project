@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -44,7 +46,7 @@ class JemModelAttendee extends JModelLegacy
 		$settings = JemHelper::globalattribs();
 		$this->regname = $settings->get('global_regname','1');
 
-		$array = JFactory::getApplication()->input->get('cid', array(0), 'array');
+		$array = Factory::getApplication()->input->get('cid', array(0), 'array');
 		$this->setId((int)$array[0]);
 	}
 

@@ -111,7 +111,7 @@ class JemModelGroup extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.group.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.group.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
@@ -129,7 +129,7 @@ class JemModelGroup extends JemModelAdmin
 	protected function _prepareTable($table)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Make sure the data is valid
 		if (!$table->check()) {

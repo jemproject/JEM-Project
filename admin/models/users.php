@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -48,7 +50,7 @@ class JemModelUsers extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
@@ -141,7 +143,7 @@ class JemModelUsers extends JModelLegacy
 	 */
 	protected function _buildContentOrderBy()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$filter_order     = $app->getUserStateFromRequest( 'com_jem.users.filter_order', 'filter_order', 'u.name', 'cmd' );
 		$filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.users.filter_order_Dir', 'filter_order_Dir', '', 'word' );
@@ -162,7 +164,7 @@ class JemModelUsers extends JModelLegacy
 	 */
 	protected function _buildContentWhere()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$search = $app->getUserStateFromRequest( 'com_jem.users.search', 'search', '', 'string' );
 		$search = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );

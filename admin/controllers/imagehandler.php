@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controller');
 jimport('joomla.filesystem.file');
 
@@ -44,11 +46,11 @@ class JemControllerImagehandler extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemAdmin::config();
 
-		$file = JFactory::getApplication()->input->files->get('userfile', array(), 'array');
-		$task = JFactory::getApplication()->input->get('task', '');
+		$file = Factory::getApplication()->input->files->get('userfile', array(), 'array');
+		$task = Factory::getApplication()->input->get('task', '');
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -102,20 +104,20 @@ class JemControllerImagehandler extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('get') or jexit('Invalid Token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
 		JClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
-		$images = JFactory::getApplication()->input->get('rm', array(), 'array');
-		$folder = JFactory::getApplication()->input->get('folder', '');
+		$images = Factory::getApplication()->input->get('rm', array(), 'array');
+		$folder = Factory::getApplication()->input->get('folder', '');
 
 		if (count($images)) {
 			foreach ($images as $image) {
 				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
+					Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 					continue;
 				}
 

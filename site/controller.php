@@ -34,12 +34,11 @@ class JemController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$app = Factory::getApplication();
-		$document = $app->getDocument();
+		$document   = Factory::getDocument();
 		$user       = JemFactory::getUser();
 
 		// Set the default view name and format from the Request.
-		$jinput     = JFactory::getApplication()->input;
+		$jinput     = Factory::getApplication()->input;
 		$id         = $jinput->getInt('a_id', 0);
 		$viewName   = $jinput->getCmd('view', 'eventslist');
 		$viewFormat = $document->getType();
@@ -117,12 +116,9 @@ class JemController extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->getInt('file', 0);
-
+		$id = Factory::getApplication()->input->getInt('file', 0);
 		$path = JemAttachment::getAttachmentPath($id);
-
 		$mime = JemHelper::getMimeType($path);
-
 		$app = Factory::getApplication();
 		$document = $app->getDocument();
 		$doc->setMimeEncoding($mime);
@@ -156,7 +152,7 @@ class JemController extends JControllerLegacy
 		$res = 0;
 
 		if ($jemsettings->attachmentenabled > 0) {
-			$id	 = JFactory::getApplication()->input->getInt('id', 0);
+			$id	 = Factory::getApplication()->input->getInt('id', 0);
 			$res = JemAttachment::remove($id);
 		} // else don't delete anything
 

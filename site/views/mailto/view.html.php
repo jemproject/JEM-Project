@@ -35,7 +35,7 @@ class JemViewMailto extends JViewLegacy
 		$app         = Factory::getApplication();
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
-		$document    = $app->getDocument();
+		$document    = Factory::getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();

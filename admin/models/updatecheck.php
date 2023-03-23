@@ -38,7 +38,8 @@ class JemModelUpdatecheck extends JModelLegacy
 		$updatedata       = new stdClass();
 
 		if ($checkFile) {
-			$xml = simplexml_load_file($updateFile);
+			$xml = simplexml_load_string(file_get_contents($updateFile));
+			//$xml = simplexml_load_file($updateFile);
 
 			//version to check, not visible in table
 			$updatedata->version          = $xml->version;

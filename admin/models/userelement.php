@@ -48,7 +48,7 @@ class JemModelUserelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
@@ -79,7 +79,7 @@ class JemModelUserelement extends JModelLegacy
 	 */
 	protected function buildQuery()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$jemsettings      = JemHelper::config();
 
 		$filter_order     = $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
@@ -127,7 +127,7 @@ class JemModelUserelement extends JModelLegacy
 	 */
 	public function getPagination()
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		$limit       = $app->getUserStateFromRequest('com_jem.userelement.limit', 'limit', $jemsettings->display_num, 'int');

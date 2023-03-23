@@ -136,7 +136,7 @@ class JemCategories
 	protected function _load($id)
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -354,7 +354,7 @@ class JemCategories
 		$user      = JemFactory::getUser();
 		$userid    = (int)$user->get('id');
 		$levels    = $user->getAuthorisedViewLevels();
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$params    = $app->getParams();
 		$catswitch = $params->get('categoryswitch', '0');
 		$settings  = JemHelper::globalattribs();
@@ -483,7 +483,7 @@ class JemCategories
 		$user       = JemFactory::getUser();
 		$userid     = (int)$user->get('id');
 		$levels     = $user->getAuthorisedViewLevels();
-		$app        = JFactory::getApplication();
+		$app        = Factory::getApplication();
 
 		// start with parent
 		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;

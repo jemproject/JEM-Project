@@ -53,7 +53,7 @@ class JemModelVenueelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 	//	$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -87,7 +87,7 @@ class JemModelVenueelement extends JModelLegacy
 	 */
 	protected function buildQuery()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$jemsettings      = JemHelper::config();
 		$itemid           = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 

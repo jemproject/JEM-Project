@@ -34,7 +34,7 @@ class JemController extends JControllerLegacy
 	{
 		// Load the submenu - but not on edit views.
 		// if no view found then refert to main
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$view = $jinput->getCmd('view', 'main');
 		// add all views you won't see the submenu / sidebar
 		//  - on J! 2.5 param 'hidemainmenu' let's not show the submenu

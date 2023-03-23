@@ -50,7 +50,7 @@ class plgJemMailer extends JPlugin
 		parent::__construct($subject, $config);
 		$this->loadLanguage();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::globalattribs();
 
 		$this->_SiteName     = $app->getCfg('sitename');
@@ -978,7 +978,7 @@ class plgJemMailer extends JPlugin
 	 */
 	private function _mailer($data)
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$user = JemFactory::getUser();
 		$sent = array('ok' => 0, 'failed' => 0);
 

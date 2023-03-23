@@ -82,7 +82,7 @@ class JemTableEvent extends JTable
 	 */
 	public function check()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		if (trim($this->title) == '') {
 			$this->setError(JText::_('COM_JEM_EVENT_ERROR_NAME'));
@@ -170,7 +170,7 @@ class JemTableEvent extends JTable
 		$date        = JFactory::getDate();
 		$user        = JemFactory::getUser();
 		$userid      = $user->get('id');
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controller');
 
 /**
@@ -44,7 +46,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$jinput  = JFactory::getApplication()->input;
+		$jinput  = Factory::getApplication()->input;
 		$eventid = $jinput->getInt('id', 0);
 		$status  = $jinput->getInt('status', 0);
 		$comment = '';
@@ -134,7 +136,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$cid    = $jinput->get('cid', array(), 'array');
 		$id     = $jinput->getInt('id', 0);
 		$fid    = $jinput->getInt('Itemid', 0);
@@ -184,7 +186,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$id     = $jinput->getInt('id', 0);
 		$fid    = $jinput->getInt('Itemid', 0);
 
@@ -227,7 +229,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$params    = $app->getParams();
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 

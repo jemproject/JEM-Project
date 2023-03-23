@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 /**
  * JemView class with JEM specific extensions
  *
@@ -37,7 +39,7 @@ class JemView extends JViewLegacy
 			else {
 				$this->addTemplatePath($this->_basePath . '/views/' . $this->getName() . '/tmpl/' . $suffix);
 			}
-			$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/' . $this->getName() . '/' . $suffix);
+			$this->addTemplatePath(JPATH_THEMES . '/' . Factory::getApplication()->getTemplate() . '/html/com_jem/' . $this->getName() . '/' . $suffix);
 		}
 	}
 
@@ -68,11 +70,11 @@ class JemView extends JViewLegacy
 	{
 		// additional path for list part + corresponding override path
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
-		$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common');
+		$this->addTemplatePath(JPATH_THEMES . '/' . Factory::getApplication()->getTemplate() . '/html/com_jem/common');
 
 		if (!empty($this->_layoutStyleSuffix)) {
 			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl/'.$this->_layoutStyleSuffix);
-			$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common/'.$this->_layoutStyleSuffix);
+			$this->addTemplatePath(JPATH_THEMES . '/' . Factory::getApplication()->getTemplate() . '/html/com_jem/common/'.$this->_layoutStyleSuffix);
 		}
 	}
 
@@ -81,7 +83,7 @@ class JemView extends JViewLegacy
 	 */
 	protected function prepareDocument()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$menus = $app->getMenu();
 		$menu  = $menus->getActive();
 		$print = $app->input->getBool('print', false);

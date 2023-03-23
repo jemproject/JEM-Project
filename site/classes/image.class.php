@@ -60,31 +60,31 @@ class JemImage
 				// if there was an error, let's see what the error is about
 				switch ($image->error) {
 				case 1:
-					JFactory::getApplication()->enqueueMessage("Source file $name could not be found!", 'warning');
+					Factory::getApplication()->enqueueMessage("Source file $name could not be found!", 'warning');
 					break;
 				case 2:
-					JFactory::getApplication()->enqueueMessage("Source file $name is not readable!", 'warning');
+					Factory::getApplication()->enqueueMessage("Source file $name is not readable!", 'warning');
 					break;
 				case 3:
-					JFactory::getApplication()->enqueueMessage("Could not write target file $filename !", 'warning');
+					Factory::getApplication()->enqueueMessage("Could not write target file $filename !", 'warning');
 					break;
 				case 4:
-					JFactory::getApplication()->enqueueMessage('Unsupported source file format!', 'warning');
+					Factory::getApplication()->enqueueMessage('Unsupported source file format!', 'warning');
 					break;
 				case 5:
-					JFactory::getApplication()->enqueueMessage('Unsupported target file format!', 'warning');
+					Factory::getApplication()->enqueueMessage('Unsupported target file format!', 'warning');
 					break;
 				case 6:
-					JFactory::getApplication()->enqueueMessage('GD library version does not support target file format!', 'warning');
+					Factory::getApplication()->enqueueMessage('GD library version does not support target file format!', 'warning');
 					break;
 				case 7:
-					JFactory::getApplication()->enqueueMessage('GD library is not installed!', 'warning');
+					Factory::getApplication()->enqueueMessage('GD library is not installed!', 'warning');
 					break;
 				case 8:
-					JFactory::getApplication()->enqueueMessage('"chmod" command is disabled via configuration', 'warning');
+					Factory::getApplication()->enqueueMessage('"chmod" command is disabled via configuration', 'warning');
 					break;
 				case 9:
-					JFactory::getApplication()->enqueueMessage('"exif_read_data" function is not available', 'warning');
+					Factory::getApplication()->enqueueMessage('"exif_read_data" function is not available', 'warning');
 					break;
 				}
 			}

@@ -1,4 +1,15 @@
-<?php 
+<?php
+/**
+ * @version 2.3.12
+ * @package JEM
+ * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 class JemMailtoHelper {
     public static function addLink($url)
@@ -6,7 +17,8 @@ class JemMailtoHelper {
 		$hash = sha1($url);
 		self::cleanHashes();
 
-		$session      = JFactory::getSession();
+        $app = Factory::getApplication();
+		$session      = $app->getSession();
 		$mailto_links = $session->get('com_jem.links', array());
 
 		if (!isset($mailto_links[$hash]))
@@ -29,7 +41,8 @@ class JemMailtoHelper {
 		if (!$cleaned)
 		{
 			$past         = time() - $lifetime;
-			$session      = JFactory::getSession();
+            $app = Factory::getApplication();
+			$session      = $app->getSession();
 			$mailto_links = $session->get('com_jem.links', array());
 
 			foreach ($mailto_links as $index => $link)
@@ -48,7 +61,8 @@ class JemMailtoHelper {
 	public static function validateHash($hash)
 	{
 		$retval  = false;
-		$session = JFactory::getSession();
+        $app = Factory::getApplication();
+		$session = $app->getSession();
 
 		self::cleanHashes();
 		$mailto_links = $session->get('com_jem.links', array());

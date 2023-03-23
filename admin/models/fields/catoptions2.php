@@ -60,7 +60,7 @@ class JFormFieldCatOptions2 extends JFormField
 		//$categories = JEMCategories::getCategoriesTree(0);
 		//$Lists['parent_id'] 		= JEMCategories::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
 
-		$currentid = JFactory::getApplication()->input->getInt('id');
+		$currentid = Factory::getApplication()->input->getInt('id');
 		$categories = JEMCategories::getCategoriesTree(0);
 
         $db = Factory::getContainer()->get('DatabaseDriver');

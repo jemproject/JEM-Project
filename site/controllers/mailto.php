@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
@@ -30,7 +32,7 @@ class JemControllerMailto extends JemControllerForm
 	public function save($key = NULL, $urlVar = NULL){
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$app     = JFactory::getApplication();
+		$app     = Factory::getApplication();
 		$model   = $this->getModel('mailto');
 		$data    = $model->getData();
 		$currentUri = (string)JUri::getInstance();

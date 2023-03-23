@@ -67,7 +67,7 @@ class JFormFieldCatOptions extends JFormFieldList
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$currentid = $jinput->getInt('id');
 
         $db = Factory::getContainer()->get('DatabaseDriver');

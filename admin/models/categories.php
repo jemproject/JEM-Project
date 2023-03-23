@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.modellist');
 
 /**
@@ -59,7 +61,7 @@ class JemModelCategories extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$context = $this->context;
 
 		$extension = $app->getUserStateFromRequest('com_jem.categories.filter.extension', 'extension', 'com_jem', 'cmd');
@@ -224,7 +226,7 @@ class JemModelCategories extends JModelList
 	public function getItems()
 	{
 		$items = parent::getItems();
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 
 		foreach ($items as $item) {
 			$item->assignedevents = $this->countCatEvents($item->id);

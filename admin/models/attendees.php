@@ -35,7 +35,7 @@ class JemModelAttendees extends JModelList
 
 		parent::__construct($config);
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$eventid = $app->input->getInt('eventid', 0);
 		$this->setId($eventid);
 	}
@@ -52,7 +52,7 @@ class JemModelAttendees extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$limit      = $app->getUserStateFromRequest('com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.attendees.limitstart', 'limitstart', 0, 'int');

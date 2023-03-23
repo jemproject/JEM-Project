@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controller');
 
 /**
@@ -35,7 +37,7 @@ class JemControllerAttendee extends JControllerLegacy
 	 */
 	public function back()
 	{
-		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
 	}
 
 	/**
@@ -50,10 +52,10 @@ class JemControllerAttendee extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$attendee = JTable::getInstance('jem_register', '');
-		$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
+		$attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
 		$attendee->checkin();
 
-		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
 	}
 
 	/**
@@ -68,7 +70,7 @@ class JemControllerAttendee extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Defining JInput
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		// retrieving task "apply"
 		$task = $jinput->getCmd('task');
@@ -117,7 +119,7 @@ class JemControllerAttendee extends JControllerLegacy
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+					Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 				}
 			}
 
@@ -151,7 +153,7 @@ class JemControllerAttendee extends JControllerLegacy
 
 	public function selectUser()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$jinput->set('view', 'userelement');
 		parent::display();
 	}

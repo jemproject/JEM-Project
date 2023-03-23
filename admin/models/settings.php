@@ -55,7 +55,7 @@ class JemModelSettings extends JModelForm
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.settings.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.settings.data', array());
 
 		if (empty($data)) {
 			$data = $this->getData();
@@ -75,7 +75,7 @@ class JemModelSettings extends JModelForm
 		}
 
 		// additional data:
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$varmetakey = $jinput->get('meta_keywords','','');
 		$data['meta_keywords'] = implode(', ', array_filter($varmetakey));
 		$data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
@@ -158,7 +158,7 @@ class JemModelSettings extends JModelForm
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');

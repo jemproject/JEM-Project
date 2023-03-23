@@ -117,7 +117,7 @@ class JemModelSampledata extends JModelLegacy
 		// extract archive
 	
 		try {
-			$archiveObj = new Archive(array('tmp_path' => JFactory::getApplication()->get('tmp_path')));
+			$archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
 			$result = $archiveObj->extract($archive, $extractdir);
         } catch (\Exception $e) {
 			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
@@ -41,7 +43,7 @@ class JemModelImagehandler extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app        = JFactory::getApplication();
+		$app        = Factory::getApplication();
 		$option     = $app->input->getString('option', 'com_jem');
 		$task       = $app->input->getVar('task', '');
 		$limit      = $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -60,7 +62,7 @@ class JemModelImagehandler extends JModelLegacy
 		static $set = false;
 
 		if (!$set) {
-			$folder = JFactory::getApplication()->input->get('folder', '');
+			$folder = Factory::getApplication()->input->get('folder', '');
 			$this->setState('folder', $folder);
 
 			$set = true;

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.controller');
 
 // helper callback function to convert all elements of an array
@@ -58,7 +60,7 @@ class JemControllerImport extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$replace = JFactory::getApplication()->input->post->getInt('replace_'.$type, 0);
+		$replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
 		$object = JTable::getInstance('jem_'.$dbname, '');
 		$object_fields = get_object_vars($object);
 		$jemconfig = JemConfig::getInstance()->toRegistry();
@@ -71,7 +73,7 @@ class JemControllerImport extends JControllerLegacy
 		}
 
 		$msg = '';
-		$file = JFactory::getApplication()->input->files->get('File'.$type, array(), 'array');
+		$file = Factory::getApplication()->input->files->get('File'.$type, array(), 'array');
 
 		if (empty($file['name']))
 		{
@@ -230,7 +232,7 @@ class JemControllerImport extends JControllerLegacy
 		$tables->eltables  = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
 		$tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jinput = $app->input;
 		$step = $jinput->get('step', 0, 'INT');
 		$current = $jinput->get->get('current', 0, 'INT');

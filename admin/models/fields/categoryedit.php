@@ -42,7 +42,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		$name = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		// Load the category options for a given extension.
 
 		// For categories the old category is the category id or 0 for new category.

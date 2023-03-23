@@ -37,7 +37,7 @@ class JemModelCategoryelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$array = $jinput->get('cid', 0, 'array');
 
 		if(is_array($this) && $this->setId((int)$array[0]));
@@ -63,7 +63,7 @@ class JemModelCategoryelement extends JModelLegacy
 	 */
 	public function getData()
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 

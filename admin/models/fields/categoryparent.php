@@ -40,7 +40,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		$name = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		// For categories the old category is the category id 0 for new category.
 		if ($this->element['parent'])
 		{

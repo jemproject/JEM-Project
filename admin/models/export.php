@@ -70,7 +70,7 @@ class JemModelExport extends JModelList
 	protected function getListQuery()
 	{
 		// Retrieve variables
-		$jinput    = JFactory::getApplication()->input;
+		$jinput    = Factory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
 		$enddate   = $jinput->get('enddates', '', 'string');
 		$cats      = $jinput->get('cid', array(), 'array');
@@ -116,7 +116,7 @@ class JemModelExport extends JModelList
 	{
 		$this->populateState();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$includecategories = $jinput->get('categorycolumn', 0, 'int');
 
 		$db  = $this->getDbo();

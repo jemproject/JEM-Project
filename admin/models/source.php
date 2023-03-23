@@ -62,7 +62,7 @@ class JemModelSource extends JModelForm
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Codemirror or Editor None should be enabled
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -93,7 +93,7 @@ class JemModelSource extends JModelForm
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.source.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.source.data', array());
 
 		if (empty($data)) {
 			$data = $this->getSource();
