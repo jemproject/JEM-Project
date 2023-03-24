@@ -24,6 +24,7 @@ $gdv = JEMImage::gdVersion();
 
 			<li><?php echo $this->form->getLabel('imagewidth'); ?><span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_WARNING'), JText::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
 					<?php echo $this->WarningIcon(); ?>
+					<?php echo $this->form->getInput('imagewidth'); ?>
 				</span>
 			</li>
 
