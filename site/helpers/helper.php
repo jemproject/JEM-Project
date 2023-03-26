@@ -647,7 +647,7 @@ class JemHelper
 		$where = '';
 		$selDisabled = '';
 		if ($ownonly) {
-			$levels = Factory::getUser()->getAuthorisedViewLevels();
+			$levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
 			$allLevels = $levels;
 			if (!empty($disabledLevels)) {
 				if (!is_array($disabledLevels)) {
@@ -1135,6 +1135,7 @@ class JemHelper
 	static public function getValidIds($ids_in)
 	{
 		$ids_out = array();
+        if($ids_in) {
         $tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
         if(!empty($tmp)){
             foreach ($tmp as $id) {
@@ -1142,6 +1143,7 @@ class JemHelper
                     $ids_out[] = (int)$id;
                 }
             }
+        }
         }
 
 		return (empty($ids_out) ? false : $ids_out);
