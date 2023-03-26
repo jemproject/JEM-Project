@@ -1,7 +1,7 @@
 /**
  * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,10 +13,11 @@
 }
 
 table.month, table.week {
-	background-color:#FFFFFF;
-	/* border:2px solid #000000; -------------------------------------------------------------------------------------------*/
+	background-color:#FFF;
+	border:2px solid #000;
 	width:100%;
 }
+
 table.month {
 	table-layout:fixed;
 }
@@ -34,7 +35,7 @@ table.month {
 }
 
 .dayname {
-	color:#FFFFFF;
+	color:#FFF;
 	font-weight:bold;
 }
 
@@ -49,7 +50,7 @@ table.month {
 td.today div.daynum::before,
 td.today div.daynum::after {
 	background-color: #e0e0e0; /*#A2A3AE;*/
-	color: #000000; /*#FBFCEF;*/
+	color: #000; /*#FBFCEF;*/
 	font-weight:bold;
 	margin:0px;
 	text-align:left;
@@ -61,7 +62,7 @@ td.today div.daynum::after {
 }
 
 .daynum a {
-	color: #000000; /*#FBFCEF;*/
+	color: #000; /*#FBFCEF;*/
 	text-decoration:none;
 	/*background-color: #e0e0e0; /*inherit !important;*/
 }
@@ -103,7 +104,7 @@ div[id^='scat'] {
 	padding: 5px;
 	margin: 5px;
 	overflow:hidden;
-/* use this onlyif you eally want a break at any position
+/* use this only if you really want a break at any position
  -ms-word-break: break-all;
      word-break: break-all;
  */
@@ -114,7 +115,6 @@ div[id^='scat'] {
    -moz-hyphens: auto;
     -ms-hyphens: auto;
         hyphens: auto;
-
 }
 
 .borderfeatured {
@@ -124,6 +124,7 @@ div[id^='scat'] {
 
 div#jem .eventcontentinner a {
 	color: #333;
+	/* text-decoration:none; */
 }
 
 /* *** CALENDAR WEEK ADDITIONS START *** */
@@ -265,7 +266,7 @@ div#jem td {
 	text-align: center;
 	font-size: 10px;
 	font-weight: bold;
-	color: #ffffff; /* calendarweek: #667171 */
+	color: #FFF; /* calendarweek: #667171 */
 	border-style: none;
 	border-width:1px;
 	padding: 2px 3px;
@@ -300,13 +301,13 @@ div#jem td {
 	vertical-align: top;
 	font-size: 11px;
 	font-weight: bold;
-	background-color: #ffffff;
-	color: #000000;
+	background-color: #FFF;
+	color: #000;
 	height:90px;
 	width:90px;
 }
 
-div#jem .monthnavigation { /* delete complete construct -----------------------------------------------------------------*/
+div#jem .monthnavigation { /* delete complete construct */
     font-size: 18pt;
     font-weight: bold;
     border: 0px;
@@ -314,7 +315,7 @@ div#jem .monthnavigation { /* delete complete construct ------------------------
     vertical-align: middle;
 }
 
-div#jem .monthname { /*delete complete construct -----------------------------------------------------------------*/
+div#jem .monthname { /*delete complete construct */
     border: 0px;
     font-size: 16pt;
     padding-bottom: 10px;
@@ -322,28 +323,28 @@ div#jem .monthname { /*delete complete construct -------------------------------
 }
 
 .saturday, .sunday {
-	background-color:#fcfcfc; /* background-color:#D4D4D4; -----------------------------------------------------------*/
+	background-color:#fcfcfc; /* background-color:#D4D4D4; */
 	color: #667171;
 }
 
 .sunday a, .saturday a {
-	color: #000000;
+	color: #000;
 }
 
 .today {
 	background-color: #fefff2;
-	color: #000000;
+	color: #000;
 }
 
 .today .daynum a {
-	color:#FFFFFF;
+	color:#FFF;
 	/* calendarweek: vertical-align: top; */
 }
 
 .selectedday {
 	border-width: 1px;
 	border-style: outset;
-	background-color: #ffffff;
+	background-color: #FFF;
 }
 /* *** CALENDAR WEEK ADDITIONS END *** */
 
@@ -394,11 +395,11 @@ div#jem .monthname { /*delete complete construct -------------------------------
    }
    
    div#jem .today .daynum a {
-     color: #000000
+     color: #000
    }
    
    div#jem td.today div.daynum::after {
-     /*color: #ffffff;*/
+     /*color: #FFF;*/
      background-color: transparent;
    }
    
@@ -409,33 +410,3 @@ div#jem .monthname { /*delete complete construct -------------------------------
    }
 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

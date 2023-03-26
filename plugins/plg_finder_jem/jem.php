@@ -3,7 +3,7 @@
  * @version 2.3.12
  * @package JEM
  * @subpackage JEM Finder Plugin
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -28,6 +28,7 @@ use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
 use Joomla\Component\Finder\Administrator\Indexer\Result;
 use Joomla\Registry\Registry;
+
 class plgFinderJEM extends Adapter {
 	/**
 	 * The plugin identifier.
@@ -117,8 +118,7 @@ class plgFinderJEM extends Adapter {
 	public function onFinderCategoryChangeState($extension, $pks, $value)
 	{
 		// Make sure we're handling com_jem categories
-		if ($extension == 'com_jem')
-		{
+		if ($extension == 'com_jem') {
 			$this->categoryStateChange($pks, $value);
 		}
 	}
@@ -136,16 +136,11 @@ class plgFinderJEM extends Adapter {
 	 */
 	public function onFinderAfterDelete($context, $table)
 	{
-		if ($context == 'com_jem.event')
-		{
+		if ($context == 'com_jem.event') {
 			$id = $table->id;
-		}
-		elseif ($context == 'com_finder.index')
-		{
+		} 		elseif ($context == 'com_finder.index') {
 			$id = $table->link_id;
-		}
-		else
-		{
+		} 		else {
 			return true;
 		}
 		// Remove item from the index.
@@ -166,11 +161,9 @@ class plgFinderJEM extends Adapter {
 	public function onFinderAfterSave($context, $row, $isNew)
 	{
 		// We only want to handle events here
-		if ($context == 'com_jem.event' || $context == 'com_jem.editevent')
-		{
+		if ($context == 'com_jem.event' || $context == 'com_jem.editevent') {
 			// Check if the access levels are different
-			if (!$isNew && $this->old_access != $row->access)
-			{
+			if (!$isNew && $this->old_access != $row->access) {
 				// Process the change.
 				$this->itemAccessChange($row);
 			}
@@ -180,11 +173,9 @@ class plgFinderJEM extends Adapter {
 		}
 
 		// Check for access changes in the category
-		if ($context == 'com_jem.category')
-		{
+		if ($context == 'com_jem.category') {
 			// Check if the access levels are different
-			if (!$isNew && $this->old_cataccess != $row->access)
-			{
+			if (!$isNew && $this->old_cataccess != $row->access) {
 				$this->categoryAccessChange($row);
 			}
 		}
@@ -208,21 +199,16 @@ class plgFinderJEM extends Adapter {
 	public function onFinderBeforeSave($context, $row, $isNew)
 	{
 		// We only want to handle articles here
-		if ($context == 'com_jem.event' || $context == 'com_jem.editevent')
-		{
+		if ($context == 'com_jem.event' || $context == 'com_jem.editevent') {
 			// Query the database for the old access level if the item isn't new
-			if (!$isNew)
-			{
+			if (!$isNew) {
 				$this->checkItemAccess($row);
 			}
 		}
-
 		// Check for access levels from the category
-		if ($context == 'com_jem.category')
-		{
+		if ($context == 'com_jem.category') {
 			// Query the database for the old access level if the item isn't new
-			if (!$isNew)
-			{
+			if (!$isNew) {
 				$this->checkCategoryAccess($row);
 			}
 		}
@@ -245,13 +231,11 @@ class plgFinderJEM extends Adapter {
 	public function onFinderChangeState($context, $pks, $value)
 	{
 		// We only want to handle articles here
-		if ($context == 'com_jem.event' || $context == 'com_jem.editevent')
-		{
+		if ($context == 'com_jem.event' || $context == 'com_jem.editevent') {
 			$this->itemStateChange($pks, $value);
 		}
 		// Handle when the plugin is disabled
-		if ($context == 'com_plugins.plugin' && $value === 0)
-		{
+		if ($context == 'com_plugins.plugin' && $value === 0) {
 			$this->pluginDisable($pks);
 		}
 	}
@@ -277,7 +261,6 @@ class plgFinderJEM extends Adapter {
 
 		$item->setLanguage();
 		
-
 		// Initialize the item parameters.
 		$registry = new JRegistry;
 		$registry->loadString($item->params);
@@ -301,11 +284,10 @@ class plgFinderJEM extends Adapter {
 		$title = $this->getItemMenuTitle($item->url);
 
 		// Adjust the title if necessary.
-		if (!empty($title) && $this->params->get('use_menu_title', true))
-		{
+		if (!empty($title) && $this->params->get('use_menu_title', true)) {
 			$item->title = $title;
 		}
-
+        $item->metaauthor = !isset($item->metaauthor) ? '' : $item->metaauthor;
 		// Add the meta-author.
 		$item->metaauthor = $item->metadata->get('author');
 
@@ -320,9 +302,12 @@ class plgFinderJEM extends Adapter {
 		$item->addTaxonomy('Type', 'Event');
 
 		// Add the author taxonomy data.
-		if (!empty($item->author) || !empty($item->created_by_alias))
-		{
+		if (!empty($item->author) || !empty($item->created_by_alias)) {
 			$item->addTaxonomy('Author', !empty($item->created_by_alias) ? $item->created_by_alias : $item->author);
+		}
+
+		if(!$item->Category){
+			return true;
 		}
 
 		// Add the category taxonomy data.

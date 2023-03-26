@@ -3,7 +3,7 @@
  * @package My Attending
  * @version 2.3.10
  * @author JEM Community
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Former info:

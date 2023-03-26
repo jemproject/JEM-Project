@@ -3,7 +3,7 @@
  * @package JEM My Events for CB
  * @version 2.3.10 (for JEM v2.3.10 & CB v2.0)
  * @author JEM Community
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  */

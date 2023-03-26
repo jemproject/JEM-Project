@@ -2,13 +2,13 @@
 /**
  * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
  * Based on: https://gist.github.com/dongilbert/4195504
  */
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 

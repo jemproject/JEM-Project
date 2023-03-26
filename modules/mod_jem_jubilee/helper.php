@@ -3,7 +3,7 @@
  * @version 2.3.12
 * @package JEM
 * @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2017 joomlaeventmanager.net
+* @copyright (C) 2014-2023 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
