@@ -31,7 +31,7 @@ class JemViewHelp extends JemAdminView
 		jimport('joomla.filesystem.folder');
 
 		//initialise variables
-		$lang = Factory::getLanguage();
+		$lang = Factory::getApplication()->getLanguage();
 		$app = Factory::getApplication();
 		$this->document = $app->getDocument();
 
@@ -72,7 +72,7 @@ class JemViewHelp extends JemAdminView
 	 */
 	public function getHelpTOC($helpsearch)
 	{
-		$lang = Factory::getLanguage();
+		$lang = Factory::getApplication()->getLanguage();
 		jimport('joomla.filesystem.folder');
 
 		// Check for files in the actual language

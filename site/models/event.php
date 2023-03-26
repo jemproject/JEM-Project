@@ -117,7 +117,7 @@ class JemModelEvent extends JModelItem
 
 				# Filter contact by language
 				if ($this->getState('filter.language')) {
-					$subQuery->where('(contact.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+					$subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
 				}
 
 				$query->select('(' . $subQuery . ') as contactid2');
@@ -125,7 +125,7 @@ class JemModelEvent extends JModelItem
 				# Filter event by language
 				/* commented out yet because it's incomplete
 				if ($this->getState('filter.language')) {
-					$query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
+					$query->where('a.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
 				}
 				*/
 
