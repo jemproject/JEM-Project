@@ -64,8 +64,7 @@ class JemController extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$app = Factory::getApplication();
-		$id = $app->input->request->getInt('id', 0);
+		$id = Factory::getApplication()->input->request->getInt('id', 0);
 
 		$res = JemAttachment::remove($id);
 		if (!$res) {
