@@ -226,6 +226,18 @@ class JemTableCategory extends JTableNested
 	 */
 	public function checkCsvImport()
 	{
+        foreach (get_object_vars($this) as $k => $v) {
+            if (is_array($v) or is_object($v) or $v === NULL) {
+                continue;
+            }
+            if ($k[0] == '_') { // internal field
+                continue;
+            }
+            //Change datetime to null when its value is '000-00-00' (support J4 & J5)
+            if(strpos($v, "0000-00-00")!== FALSE){
+                $this->$k = null;
+            }
+        }
 		return true;
 	}
 

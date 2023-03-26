@@ -81,7 +81,7 @@ class JemViewMain extends JemAdminView
 	protected function quickiconButton($link, $image, $text, $modal = 0)
 	{
 		// Initialise variables
-		$lang = Factory::getLanguage();
+		$lang = Factory::getApplication()->getLanguage();
 		?>
 		<div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
 			<div class="icon">

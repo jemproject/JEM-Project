@@ -67,7 +67,7 @@ class JemViewVenue extends JemAdminView
 		//$this->document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 		
 		
-		$language = Factory::getLanguage();
+		$language = Factory::getApplication()->getLanguage();
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
 

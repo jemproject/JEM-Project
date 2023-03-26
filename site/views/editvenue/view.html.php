@@ -39,7 +39,7 @@ class JemViewEditvenue extends JemView
 		$pathway     = $app->getPathway();
 		$url         = Uri::root();
 
-		$language    = Factory::getLanguage();
+		$language    = Factory::getApplication()->getLanguage();
 		$language    = $language->getTag();
 		$language    = substr($language, 0,2);
 

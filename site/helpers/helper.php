@@ -1135,11 +1135,13 @@ class JemHelper
 	static public function getValidIds($ids_in)
 	{
 		$ids_out = array();
-        $tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
-        if(!empty($tmp)){
-            foreach ($tmp as $id) {
-                if ((int)$id > 0) {
-                    $ids_out[] = (int)$id;
+        if($ids_in) {
+            $tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
+            if (!empty($tmp)) {
+                foreach ($tmp as $id) {
+                    if ((int)$id > 0) {
+                        $ids_out[] = (int)$id;
+                    }
                 }
             }
         }
