@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.4_T
+ * @version 2.3.13
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -80,9 +80,7 @@ function jem_common_show_filter(&$obj) {
 
 <?php endif; ?>
 
-<?php /* Kopfzeile */ ?>
-
-  <div class="jem-sort jem-sort-small">
+<div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
 		<div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
 
@@ -92,7 +90,7 @@ function jem_common_show_filter(&$obj) {
 
         <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
     </div>    
-  </div>
+</div>
 
 <ul class="eventlist">
   <?php if ($this->novenues == 1) : ?>
@@ -100,7 +98,7 @@ function jem_common_show_filter(&$obj) {
   <?php else : ?>
       <?php
       // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
-      // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
+        // This detects the browser and just writes the onclick attribute if the browser is not Safari.
       $isSafari = false;
       if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
         $isSafari = true;
@@ -113,11 +111,6 @@ function jem_common_show_filter(&$obj) {
 				<?php else : ?>
 					<li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
 				<?php endif; ?>  
-
-<?php// list city ?>
-
- 
-				
   																 
                 <?php if (!empty($row->city)) : ?>
                   <div class="jem-event-info-small jem-event-city venue-big" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
@@ -127,7 +120,6 @@ function jem_common_show_filter(&$obj) {
                   <div class="jem-event-info-small jem-event-city">-</div>
                 <?php endif; ?>
 		
-            
 				<?php if ($this->params->get('showstate')) : ?>	
 					<?php if (!empty($row->state)) : ?>
 					<div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
@@ -137,7 +129,7 @@ function jem_common_show_filter(&$obj) {
 					<div class="jem-event-info-small jem-event-state">-</div>
 					<?php endif; ?>
                 <?php endif; ?>
-<?php// list venue ?>			  
+
                 <?php if (!empty($row->locid)) : ?>
                   <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
@@ -191,11 +183,6 @@ function jem_common_show_filter(&$obj) {
 			<?php endforeach; ?>
   <?php endif; ?>
 </ul>
-
-
-
-  
-
 
 <div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
