@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+
 jimport('joomla.application.component.model');
 
 /**
@@ -179,7 +181,6 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function import($tablename, $prefix, $fieldsname, &$data, $replace = true)
 	{
-		
 		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "", 'error' => 0, 'errorids' => "");
 
 		// cats_event_relations table requires different handling

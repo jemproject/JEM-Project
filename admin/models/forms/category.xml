@@ -26,17 +26,17 @@
 			description="COM_JEM_ALIAS"
 			required="false"
 		/>
-		<field 
-			name="color" 
-			type="customcolor" 
+		<field name="color" type="customcolor"
 			class="inputbox form-control"
 			default=""
 			size="8"
         	label="COM_JEM_CATEGORY_COLOR"
-        	description="COM_JEM_CATEGORY_COLOR" />	
+        	description="COM_JEM_CATEGORY_COLOR"
+		/>
 		<field name="description" type="editor"
 			hide="pagebreak,readmore"
 			class="inputbox"
+			default=""
 			width="100%"
 			label="COM_JEM_CATEGORY_DESCRIPTION"
 			description="COM_JEM_CATEGORY_DESCRIPTION_DESC"
@@ -130,9 +130,7 @@
 		/>
 	</fieldset>
 
-	<fieldset name="image"
-		label="COM_JEM_IMAGE"
-	>
+	<fieldset name="image" label="COM_JEM_IMAGE">
 		<field name="image" type="imageselect"
 			class="inputbox form-control"
 			size="40"
@@ -142,9 +140,7 @@
 		/>
 	</fieldset>
 
-	<fieldset name="meta"
-		label="JGLOBAL_FIELDSET_METADATA_OPTIONS"
-	>
+	<fieldset name="meta" label="JGLOBAL_FIELDSET_METADATA_OPTIONS">
 		<field name="meta_keywords" type="textarea"
 			class="inputbox"
 			rows="3" cols="30"
