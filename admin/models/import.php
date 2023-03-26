@@ -2,7 +2,7 @@
 /**
  * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -180,7 +180,7 @@ class JemModelImport extends JModelLegacy
 	private function import($tablename, $prefix, $fieldsname, &$data, $replace = true)
 	{
 		
-		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "", 'error' => 0, 'errorids' => "");
 
 		// cats_event_relations table requires different handling
 		if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
@@ -296,6 +296,8 @@ class JemModelImport extends JModelLegacy
 						if (!$object->insertIgnore()) {
 							if (!$object->storeCsvImport()) {
 								echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+								$rec['error']++;
+								$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 								continue;
 							} else {
 								$rec['updated']++;
@@ -306,10 +308,13 @@ class JemModelImport extends JModelLegacy
 					} else {
 						// category with id=1 detected but it's not added or updated
 						$rec['ignored']++;
+						$rec['ignoredids'] .= ($rec['ignoredids']!=""?',':'') . $row[0];
 					}
 				} else {
 					if (!$object->storeCsvImport()) {
 						echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+						$rec['error']++;
+						$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 						continue;
 					} else {
 						$rec['added']++;
@@ -322,6 +327,8 @@ class JemModelImport extends JModelLegacy
 				if (!$object->check()) {
 					$this->setError($object->getError());
 					echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+					$rec['error']++;
+					$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 					continue;
 				}
 
@@ -332,6 +339,8 @@ class JemModelImport extends JModelLegacy
 					if (!$object->insertIgnore()) {
 						if (!$object->store()) {
 							echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+							$rec['error']++;
+							$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 							continue;
 						} else {
 							$rec['updated']++;
@@ -342,6 +351,8 @@ class JemModelImport extends JModelLegacy
 				} else {
 					if (!$object->store()) {
 						echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+						$rec['error']++;
+						$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 						continue;
 					} else {
 						$rec['added']++;

@@ -2,7 +2,7 @@
 /**
  * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -15,7 +15,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Installer\InstallerScript;
-use Joomla\CMS\Filesystem\Path;
 use Joomla\Registry\Registry;
 
 /**
@@ -218,31 +217,29 @@ class com_jemInstallerScript extends InstallerScript
 	 */
 	public function preflight($type, $parent)
 	{
-		// Are we installing in J2.5?
+
+        $app = Factory::getApplication();
+		// Are we installing in J4.0?
 		$jversion = new Version();
-		$current_version = Version::MAJOR_VERSION;
+		$current_version = Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION;
+        $devLevel = Version::PATCH_VERSION;
 		$this->newRelease= Version::MAJOR_VERSION;
-		// $MINOR_VERSION = Version::MINOR_VERSION;
-		$devLevel = Version::PATCH_VERSION;
-      
 		
-		if (version_compare(JVERSION, '4.3.1', 'ge')                       ||  // J! 4.x NOT supported, but allow alpha/beta
+		if (version_compare(JVERSION, '4.4.0', 'ge') ||  // J! 4.x NOT supported, but allow alpha/beta
 		    !(($current_version >= '4.3' && $devLevel >= '0') ||
-				($current_version >= '3.10' && $devLevel >= '0') ||			
-		      ($current_version >= '3.4' && $devLevel >= '0') ||
-		      ($current_version == '3.3' && $devLevel >= '3') ||
-		      ($current_version == '3.2' && $devLevel >= '7') ||
-		      ($current_version == '2.5' && $devLevel >= '24'))) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
+		      ($current_version >= '4.2' && $devLevel >= '9') ||
+		      ($current_version == '4.1' && $devLevel >= '5') ||
+		      ($current_version == '4.0' && $devLevel >= '6') )) {
+			$app->enqueueMessage(Text::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
 			return false;
 		}
 
 		// Minimum required PHP version
-		$minPhpVersion = "5.3.1";
+		$minPhpVersion = "8.0.0";
 
 		// Abort if PHP release is older than required version
 		if(version_compare(PHP_VERSION, $minPhpVersion, '<')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'warning');
+            $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'warning');
 			return false;
 		}
 
@@ -250,7 +247,7 @@ class com_jemInstallerScript extends InstallerScript
 		if (version_compare(phpversion(), '5.4', '<') ) {
 			if (function_exists('get_magic_quotes_gpc')) {
 				if(get_magic_quotes_gpc()) {
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_PREFLIGHT_MAGIC_QUOTES_ENABLED'), 'warning');
+                    $app->enqueueMessage(Text::_('COM_JEM_PREFLIGHT_MAGIC_QUOTES_ENABLED'), 'warning');
 					return false;
 				}
 			}
@@ -262,7 +259,7 @@ class com_jemInstallerScript extends InstallerScript
 		// // abort if the current Joomla release is older than required version
 		// $jversion = new JVersion();
 		// if(version_compare($jversion->getShortVersion(), $minJoomlaVersion, '<')) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion), 'warning');
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion), 'warning');
 		// 	return false;
 		// }
 
@@ -273,7 +270,7 @@ class com_jemInstallerScript extends InstallerScript
 			// Installing component version as per Manifest file
 			// $this->newRelease = $parent->get('manifest')->version; 
 			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) { 
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'warning');
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'warning');
 				return false;
 			}
 
@@ -288,7 +285,7 @@ class com_jemInstallerScript extends InstallerScript
 		}
 
 		// $type is the type of change (install, update or discover_install)
-		echo '<p>' . Text::_('COM_JEM_PREFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';	
+		echo '<p>' . Text::_('COM_JEM_PREFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 	}
 
 	/**
@@ -676,7 +673,7 @@ class com_jemInstallerScript extends InstallerScript
 	private function updateJemMenuItems2313()
 	{
 		// get all "com_jem..." frontend entries
-		$db = Factory::getContainer()->get('DatabaseDriver');
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('id, link, params');
 		$query->from('#__menu');
@@ -742,4 +739,219 @@ class com_jemInstallerScript extends InstallerScript
 			$db->execute();
 		}
 	}
+
+	/**
+	 * Delete JEM update server entry from #__update_sites table.
+	 *
+	 * @return void
+	 */
+	private function removeUpdateServerEntry()
+	{
+		// Find entry and get id
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query->select('update_site_id');
+		$query->from('#__update_sites');
+		$query->where(array("location LIKE '%joomlaeventmanager.invalid%'"));
+		$db->setQuery($query);
+		$id = $db->loadResult();
+
+		if (!empty($id)) {
+			// remove entry
+			$query = $db->getQuery(true);
+			$query->delete('#__update_sites');
+			$query->where(array('update_site_id = ' . $db->quote($id)));
+			$db->setQuery($query);
+			$db->execute();
+
+			// but also from this table
+			$query = $db->getQuery(true);
+			$query->delete('#__update_sites_extensions');
+			$query->where(array('update_site_id = ' . $db->quote($id)));
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
+
+	/**
+	 * Remove 'htm' and 'html' from allowed attachment types.
+	 * (required when updating from 2.1.4 or below to 2.1.4.2 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemSettings2142()
+	{
+		// get all "mod_jem..." entries
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query->select('attachments_types')
+		      ->from('#__jem_settings')
+		      ->where('id = 1');
+		$db->setQuery($query);
+		try {
+			$ext = $db->loadResult();
+		} catch(Exception $e) {
+			$ext = '';
+		}
+
+		if (!empty($ext)) {
+			$ext_to_del = array('csv', 'htm', 'html', 'xml', 'css', 'doc', 'xls', 'rtf', 'ppt', 'swf', 'flv', 'avi', 'wmv', 'mov');
+			$a_ext = explode(',', $ext);
+			$new_ext = array_diff($a_ext, $ext_to_del);
+			$ext = implode(',', $new_ext);
+
+			$query = $db->getQuery(true);
+			$query->update('#__jem_settings')
+			      ->set('attachments_types = '.$db->quote($ext))
+			      ->where('id = 1');
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
+
+	/**
+	 * Move all settings from table #__jem_settings to table #__jem_config
+	 * storing every setting in it's own record.
+	 * (required when updating from 2.1.5 or below to 2.1.6 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemSettings216($onInstall = false)
+	{
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+		// load data from old #__jem_settings
+		try {
+			$query = $db->getQuery(true);
+			$query->select('*')->from('#__jem_settings')->where('id=1');
+			$db->setQuery($query);
+			$old_data = $db->loadObject();
+		} catch (Exception $ex) {
+		}
+
+		if ($onInstall && empty($old_data)) {
+			return;
+		}
+
+		// Special: swap showtime <-> globalattribs.global_show_timedetails
+		if (!empty($old_data->globalattribs) && isset($old_data->showtime)) {
+			$registry = new JRegistry;
+			$registry->loadString($old_data->globalattribs);
+			$showtime = $old_data->showtime;
+			$old_data->showtime = $registry->get('global_show_timedetails', $showtime);
+			$registry->set('global_show_timedetails', $showtime);
+			$old_data->globalattribs = $registry->toString();
+		}
+
+		if (empty($old_data)) {
+			echo "<li><span style='color:red;'>".Text::_('COM_JEM_INSTALL_ERROR').":</span> ".
+			          Text::_('COM_JEM_INSTALL_SETTINGS_NOT_FOUND')."</li>";
+		} else {
+			// save to new #__jem_config table ignoring obsolete fields
+			$old_data = get_object_vars($old_data);
+			$ignore = array('id', 'showmapserv', 'showtimedetails', 'showevdescription', 'showdetailstitle',
+			                'showdetailsadress', 'showlocdescription', 'showdetlinkvenue', 'communsolution',
+			                'communoption', 'regname', 'checked_out', 'checked_out_time', 'tld', 'lg', 'cat_num',
+			                'filter', 'display', 'icons', 'show_print_icon', 'show_email_icon', 'events_ical',
+			                'show_archive_icon', 'ownedvenuesonly', 'empty_cat'
+			               );
+			$oops = 0;
+
+			try {
+				$query = $db->getQuery(true);
+				$query->select(array($db->quoteName('keyname'), $db->quoteName('value')));
+				$query->from('#__jem_config');
+				$db->setQuery($query);
+				$list = $db->loadAssocList('keyname', 'value');
+			} catch (Exception $ex) {
+				$list = array();
+			}
+			$keys = array_keys($list);
+
+			foreach ($old_data as $k => $v) {
+				$query = $db->getQuery(true);
+				if (in_array($k, $ignore)) {
+					continue; // skip if obsolete
+				}
+				if (in_array($k, $keys)) {
+					if ($v == $list[$k]) {
+						continue; // skip if unchanged
+					}
+					// we do overwrite values already in #__jem_config by those from #__jem_settings - shouldn't we?
+					$query->update('#__jem_config');
+					$query->where(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
+				} else {
+					$query->insert('#__jem_config');
+					$query->set(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
+				}
+				$query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
+				$db->setQuery($query);
+				try {
+					$db->execute();
+				} catch (Exception $e) {
+					$oops++;
+				}
+			}
+
+			if ($oops) {
+				echo "<li><span style='color:red;'>".Text::_('COM_JEM_INSTALL_ERROR').":</span> ".
+				          Text::_('COM_JEM_INSTALL_CONFIG_NOT_STORED')."</li>";
+			} else {
+				// remove old #__jem_settings table
+				try {
+					$db->dropTable('#__jem_settings');
+					$this->useJemConfig = true;
+				} catch (Exception $ex) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Change registra on table #__jem_events from 2 to 3.
+	 * (required when updating from 2.1.7-dev3 or below to 2.1.7-dev4 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemEvents217()
+	{
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+		$query->update('#__jem_events')
+		      ->se('registra = 3')
+		      ->where('registra = 2');
+		try {
+			$db->setQuery($query)->execute();
+		} catch(Exception $e) {
+		}
+	}
+
+	/**
+	 * Deletes all JEM tables on database if option says so.
+	 *
+	 * @return void
+	 */
+	private function removeAllJemTables()
+	{
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$tables = array('#__jem_attachments',
+		                '#__jem_categories',
+		                '#__jem_cats_event_relations',
+		                '#__jem_countries',
+		                '#__jem_events',
+		                '#__jem_groupmembers',
+		                '#__jem_groups',
+		                '#__jem_register',
+		                '#__jem_settings',
+		                '#__jem_config',
+		                '#__jem_venues');
+		foreach ($tables AS $table) {
+			try {
+				$db->dropTable($table);
+			} catch (Exception $ex) {
+				// simply continue with next table
+			}
+		}
+	}
+
 }

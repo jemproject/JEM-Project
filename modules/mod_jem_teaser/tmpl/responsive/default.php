@@ -3,7 +3,7 @@
  * @version 2.3.12
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -273,9 +273,7 @@ if(substr($baseurl, -1) == '/') {
 echo '<?xml version="1.0" encoding="UTF-8" ?>';
 echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">';
 echo '<channel>';
-
-$app = Factory::getApplication();
-$document = $app->getDocument();
+  $doc = Factory::getDocument(); 
   $page_title = $doc->getTitle();
   echo '<title>'.$page_title.'</title>';
   echo '<link>'.JURI::current().'</link>';

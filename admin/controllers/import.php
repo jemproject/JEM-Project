@@ -2,7 +2,7 @@
 /**
  * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -163,10 +163,17 @@ class JemControllerImport extends JControllerLegacy
 			if (count($records)) {
 				$model = $this->getModel('import');
 				$result = $model->{$type.'import'}($fields, $records, $replace);
-				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added'])."</p>\n";
-				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated'])."</p>\n";
+				if ($result['added']) {
+					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added']) . "</p>\n";
+				}
+				if ($result['updated']){
+					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated']) . "</p>\n";
+				}
 				if ($result['ignored']){
-					$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored'])."</p>\n";
+					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Id events: " . $result['ignoredids'] . "]</p>\n";
+				}
+				if ($result['error']){
+					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']) . " [Id events: " . $result['errorids'] . "]</p>\n";
 				}
 			}
 			$this->setRedirect('index.php?option=com_jem&view=import', $msg);

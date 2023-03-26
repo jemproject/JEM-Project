@@ -7,10 +7,10 @@
  * @package JEM
  * @subpackage JEM_Listevents_Plugin
  * @author JEM Team <info@joomlaeventmanager.net>, Michael Anderau <michael@sternrenaugen.net>, Luis Raposo
- * @copyright (c) 2013-2017 joomlaeventmanager.net
+ * @copyright (c) 2013-2023 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
 
 // No, it's part of JEM package yet.
 //// Check if JEM is installed.

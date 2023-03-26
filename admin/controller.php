@@ -2,7 +2,7 @@
 /**
  * @version 2.3.12
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -64,8 +64,7 @@ class JemController extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$app = Factory::getApplication();
-		$id = $app->input->request->getInt('id', 0);
+		$id = Factory::getApplication()->input->request->getInt('id', 0);
 
 		$res = JemAttachment::remove($id);
 		if (!$res) {
