@@ -124,18 +124,19 @@ $(document).ready(function() {
 					<tr>
 						<td colspan="20">
 							<div class="row align-items-center">
-								<div class="col-md-4">
+                                <div class="col-md-9">
+                                    <?php
+                                    echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter());
+                                    ?>
+                                </div>
+								<div class="col-md-3">
 									<div class="limit float-end">
 										<?php 
 											echo $this->pagination->getLimitBox();	
 										?>
 									</div>
 								</div>
-								<div class="col-md-8">
-									<?php
-										echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); 
-									?>
-								</div>
+
 							</div>
 							
 							<?php 
