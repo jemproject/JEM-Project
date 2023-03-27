@@ -85,11 +85,10 @@ class JemTableCategory extends JTableNested
 	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
+		if ($ret < 0) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getError());
-			return false;
 		}
-		return true;
+		return $ret;
 	}
 
 	/**
@@ -116,8 +115,9 @@ class JemTableCategory extends JTableNested
 			$values[] = $this->_db->quote($v);
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if ($this->_db->execute() === false){
-			return false;
+		$results = $this->_db->execute();
+        if ($results === false){
+			return -1;
 		}
 		$id = $this->_db->insertid();
 		if ($keyName && $id) {

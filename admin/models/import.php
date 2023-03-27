@@ -181,7 +181,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function import($tablename, $prefix, $fieldsname, &$data, $replace = true)
 	{
-		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "", 'error' => 0, 'errorids' => "");
+		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "" , 'duplicated' => 0, 'duplicatedids' => "", 'replaced' => 0, 'replacedids' => "", 'error' => 0, 'errorids' => "");
 
 		// cats_event_relations table requires different handling
 		if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
@@ -294,7 +294,8 @@ class JemModelImport extends JModelLegacy
 					if ($values['id'] != '1') {
 						// We want to keep id from database so first we try to insert into database.
 						// if it fails, it means the record already exists, we can use store().
-						if (!$object->insertIgnore()) {
+						$results = $object->insertIgnore();
+						if ($results < 0) {
 							if (!$object->storeCsvImport()) {
 								echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
 								$rec['error']++;
@@ -303,7 +304,10 @@ class JemModelImport extends JModelLegacy
 							} else {
 								$rec['updated']++;
 							}
-						} else {
+						} else if( $result == 0) {
+							$rec['duplicated']++;
+							$rec['duplicatedids'] .= ($rec['duplicatedids']!=""?',':'') . $row[0];
+						}else{
 							$rec['added']++;
 						}
 					} else {
