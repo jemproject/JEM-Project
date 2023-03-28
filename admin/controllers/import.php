@@ -171,6 +171,12 @@ class JemControllerImport extends JControllerLegacy
 				if ($result['updated']){
 					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated']) . "</p>\n";
 				}
+				if ($result['duplicated']){
+					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_DUPLICATED', $result['duplicated']) . " [Id events: " . $result['duplicatedids'] . "]</p>\n";
+				}
+				if ($result['replaced']){
+					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_REPLACED', $result['replaced']) . " [Id events: " . $result['replacedids'] . "]</p>\n";
+				}
 				if ($result['ignored']){
 					$msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Id events: " . $result['ignoredids'] . "]</p>\n";
 				}
