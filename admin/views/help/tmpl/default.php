@@ -94,12 +94,7 @@ $options = array(
 			</div>
 			<div class="col-md-8">
 				<div id="datacellhelp" class="w-100">
-					<fieldset title="<?php echo Text::_('COM_JEM_HELP_VIEW'); ?>">
-						<legend>
-							<?php echo Text::_('COM_JEM_HELP_VIEW'); ?>
-						</legend>
-							<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame w-100" height="600px"></iframe>
-					</fieldset>
+					<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame w-100" height="600px"></iframe>
 				</div>
 			</div>
 		</div>
