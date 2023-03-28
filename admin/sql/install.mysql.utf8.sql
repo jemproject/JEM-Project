@@ -289,7 +289,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('attachments_types', 'txt,pdf,jpg,jpeg,gif,png,zip,tar.gz'),
 ('recurrence_anticipation', '60'),
 ('ical_max_items', '100'),
-('DEFAULTCountry', ''),
+('defaultCountry', ''),
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),
