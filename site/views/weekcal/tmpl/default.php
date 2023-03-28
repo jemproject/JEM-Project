@@ -40,7 +40,6 @@ use Joomla\CMS\Language\Text;
 	$limit = $this->params->get('daylimit', 10);
 	$evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
 	$currentWeek = $this->currentweek;
-	// $firstDate = strftime("%Y-%m-%d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
 	$firstDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
 	$showtime = $this->settings->get('global_show_timedetails', 1);
 
@@ -50,9 +49,6 @@ use Joomla\CMS\Language\Text;
 		}
 
 		//get event date
-		// $year = strftime('%Y', strtotime($row->dates));
-		// $month = strftime('%m', strtotime($row->dates));
-		// $day = strftime('%d', strtotime($row->dates));
 		$year = date('Y', strtotime($row->dates));
 		$month = date('m', strtotime($row->dates));
 		$day = date('d', strtotime($row->dates));

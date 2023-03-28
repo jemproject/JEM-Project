@@ -45,7 +45,6 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 
 			// add hint regarding date/time format accepted in edit field
 			$exampleTimestamp = strtotime("12/31/2017 23:59");
-			// $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
 			$date_format = str_replace("%","",$this->format);
 			$hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
@@ -81,7 +80,6 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 			if (empty($this->hint)) {
 				// add hint regarding date/time format accepted in edit field
 				$exampleTimestamp = strtotime("12/31/2017 23:59");
-				// $this->hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', strftime($this->format, $exampleTimestamp));
 				$this->hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($this->format, $exampleTimestamp));
 			}
 

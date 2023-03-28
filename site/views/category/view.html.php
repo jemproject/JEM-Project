@@ -86,8 +86,6 @@ class JemViewCategory extends JemView
 			$document->addScript($url.'media/com_jem/js/calendar.js');
 
 			// Retrieve date variables
-			// $year  = (int)$app->input->getInt('yearID', strftime("%Y"));
-			// $month = (int)$app->input->getInt('monthID', strftime("%m"));
 			$year  = (int)$app->input->getInt('yearID', date("Y"));
 			$month = (int)$app->input->getInt('monthID', date("m"));
 

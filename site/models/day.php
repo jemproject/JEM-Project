@@ -45,7 +45,6 @@ class JemModelDay extends JemModelEventslist
 		if ($date == 0) {
 			$dayoffset = $params->get('days');
 			$timestamp = mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
-			// $date      = strftime('%Y-%m-%d', $timestamp);
 			$date      = date('Y-m-d', $timestamp);
 
 		# a valid date has 8 characters (ymd)

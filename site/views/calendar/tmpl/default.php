@@ -46,9 +46,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 		}
 
 		//get event date
-		// $year = strftime('%Y', strtotime($row->dates));
-		// $month = strftime('%m', strtotime($row->dates));
-		// $day = strftime('%d', strtotime($row->dates));
 		$year = date('Y', strtotime($row->dates));
 		$month = date('m', strtotime($row->dates));
 		$day = date('d', strtotime($row->dates));
