@@ -825,3 +825,5 @@ a.label:focus {
 	border: 0;
 	border-bottom: 1px solid #ccc;
 }
+
+.help-toc span {font-size: 0.7em;padding-right: 1rem; color: #aaa:}
