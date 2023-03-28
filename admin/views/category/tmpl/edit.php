@@ -4,7 +4,7 @@
  * @package     JEM
  * @copyright   Copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license     https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @todo make custom colorfield so it can be used within xml
  */

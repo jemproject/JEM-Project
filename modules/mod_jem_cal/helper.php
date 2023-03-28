@@ -5,7 +5,7 @@
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Original Eventlist calendar from Christoph Lukes www.schlu.net
  * PHP Calendar (version 2.3), written by Keith Devens
