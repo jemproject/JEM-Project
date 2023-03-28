@@ -1,7 +1,4 @@
-body {
-	font-family: verdana, arial, sans-serif;
-	font-size: 9pt;
-}
+body {line-height: 1.4rem;}
 
 a:link {
 	color: #0B55C4;
@@ -19,16 +16,16 @@ a:hover {
 
 h1 {
 	color: #1B57B1;
-	font-size: 1.5em;
-	border-left: 25px solid #1B57B1;
+	font-size: 1.4em;
 	border-bottom: 1px solid #1B57B1;
-	padding: 0 0 2px 5px;
+	padding: 0 0 2px;
+	margin: 0;
 }
 
 h2 {
 	margin: 30px 0 10px;
 	font-family: Helvetica,Arial,sans-serif;
-	font-size: 1.4em;
+	font-size: 1.3em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
 	color: #1b57b1;
@@ -38,7 +35,7 @@ h2 {
 h3 {
 	margin: 20px 0px 10px;
 	font-family: Helvetica,Arial,sans-serif;
-	font-size: 1em;
+	font-size: 1.1em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
 	color: #1b57b1;
@@ -49,6 +46,16 @@ pre {
 	background-color: #fff;
 	border-left: 1px solid #aaa;
 	padding: 5px;
+}
+
+ul {
+  line-height: 1.2rem;
+  margin-left: -20px;
+  /* list-style-position: inside; */
+}
+
+ul li:not(:last-child) {
+  margin-bottom: 0.5rem;
 }
 
 .clear {
@@ -96,23 +103,19 @@ img.left {
 	border-top: 1px solid #FE8282;
 	padding: 3px 3px 3px 40px;
 	font-weight: bold;
-	font-size: 13px;
 	margin: 8px auto 0px;
 	color: #000000;
 	background-color: #FE8C8C;
-	width: 80%;
 }
 
 .attention {
 	border-left: 6px solid #FE8282;
-	border-right: 1px solid #e7e7e7;
-	border-bottom: 1px solid #e7e7e7;
-	padding: 3px 3px 20px 40px;
+	border-right: 2px solid #FE8282;
+	border-bottom: 2px solid #FE8282;
+	padding: 6px 6px 20px 44px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-attention.png) no-repeat 4px 4px;
-	font-size: 12px;
-	width: 80%;
+	background: #ffffff url(../images/icon-32-attention.png) no-repeat 6px 6px;
 }
 
 table.help {
