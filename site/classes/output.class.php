@@ -671,7 +671,7 @@ class JemOutput
 					'url'    => $url.'&amp;'.Session::getFormToken().'=1',
 					'title'  => Text::_('COM_JEM_SELECT'),
 					'width'  => '800px',
-					'height' => '450px',
+					'height' => '550px',
 					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 				)
 			);
