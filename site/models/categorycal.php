@@ -83,7 +83,6 @@ class JemModelCategoryCal extends JemModelEventslist
 		$this->setState('params', $params);
 
 		# publish state
-		//$this->setState('filter.published', 1);
 		$this->_populatePublishState($task);
 
 		###########
@@ -91,11 +90,6 @@ class JemModelCategoryCal extends JemModelEventslist
 		###########
 
 		#only select events within specified dates. (chosen month)
-		// $monthstart = mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
-		// $monthend   = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
-
-		// $filter_date_from = strftime('%Y-%m-%d', $monthstart);
-		// $filter_date_to   = strftime('%Y-%m-%d', $monthend);
 
 		$monthstart = mktime(0, 0,  1, date('m', $this->_date),   1, date('Y', $this->_date));
 		$monthend   = mktime(0, 0, -1, date('m', $this->_date)+1, 1, date('Y', $this->_date));

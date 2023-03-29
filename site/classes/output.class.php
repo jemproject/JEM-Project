@@ -1257,7 +1257,6 @@ class JemOutput
 			$format = $settings->formattime;
 		}
 
-		// $formattedTime = strftime($format, strtotime($time));
 		$formattedTime = date($format, strtotime($time));
 
 		if ($addSuffix && !empty($settings->timename)) {

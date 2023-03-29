@@ -5,9 +5,6 @@ Forked from jemproject/JEM-Project
 
 Based on Egnarts94/JEM-Project Responsive JEM
 
-## version 2.3.13
-is the 2.3.13 release **including the fixes from the community**.
-
 ## This version includes:
 - Import/Export view
 Translation via:  https://www.transifex.com/projects/p/JEM/

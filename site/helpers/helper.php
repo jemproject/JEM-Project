@@ -697,7 +697,6 @@ class JemHelper
 				$value = '0'.$value;
 			}
 
-			// $timelist[] = HTMLHelper::_('select.option', $value, ($format ? strftime($format, strtotime("$value:00:00")) : $value));
 			$timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
 		}
 
@@ -984,7 +983,6 @@ class JemHelper
 			$dateparam = array('VALUE' => 'DATE');
 
 			// for ical all day events, dtend must be send to the next day
-			// $event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
 			$event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
 
 			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
@@ -1016,7 +1014,6 @@ class JemHelper
 			if ($event->enddates == $event->dates &&
 			    strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
 			{
-				// $event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
 				$event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
 			}
 
