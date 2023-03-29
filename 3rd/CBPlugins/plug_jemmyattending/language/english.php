@@ -4,7 +4,7 @@
  * @version 2.3.10
  * @author JEM Community
  * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Former info:
  * english.php 2nd November 2007 Himangi Chhatre (Tekdi Eco Services pvt ltd)

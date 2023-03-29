@@ -4,11 +4,11 @@
  * @version 2.3.10
  * @author JEM Community
  * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Former info:
  * @copyright Copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
- * @license GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
+ * @license GNU GPLv2 <https://www.gnu.org/licenses/gpl-3.0>
  * @link     http://www.tekdi.net
  */
 defined('_JEXEC') or die;
