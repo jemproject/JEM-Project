@@ -2,7 +2,7 @@
 <cbinstall version="1.9" type="plugin" group="user">
 	<name>JEM MyEvents</name>
 	<author>JEM Community</author>
-	<creationDate>August 2016</creationDate>
+	<creationDate>April 2023</creationDate>
 	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
