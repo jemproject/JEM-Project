@@ -1473,7 +1473,7 @@ class JemOutput
 
 		$output  = '';
 		$formatD = 'Y-m-d';
-		$formatT = '%H:%M';
+		$formatT = 'H:i';
 
 		if (JemHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
