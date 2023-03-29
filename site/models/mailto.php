@@ -1,13 +1,15 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_users
- *
- * @copyright   (C) 2018 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version 2.3.15
+ * @package JEM
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 /**
  * Mailto model class.
