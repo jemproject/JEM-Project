@@ -11,8 +11,8 @@
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * @link     http://www.tekdi.net
  */
+ 
 defined('_JEXEC') or die;
-
 
 DEFINE("_JEMMYEVENTS_EDIT_ENTRY","Edit");
 DEFINE("_JEMMYEVENTS_DELETE_ENTRY","Delete");
