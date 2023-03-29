@@ -4,7 +4,7 @@
  * @version 2.3.10
  * @author JEM Community
  * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPLv2
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Former info:
  * @copyright Copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
