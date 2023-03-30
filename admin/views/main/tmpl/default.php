@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.6
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -21,6 +21,9 @@ $options = array(
 	'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
 	'useCookie' => true, // this must not be a string. Don't use quotes.
 );
+
+$application = JFactory::getApplication();
+$application->enqueueMessage(JText::_('COM_JEM_JEM4_INFORMATION'), 'warning');
 
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">
