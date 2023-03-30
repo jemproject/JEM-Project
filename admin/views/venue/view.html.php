@@ -58,6 +58,7 @@ class JemViewVenue extends JemAdminView
 
 		// Load Scripts
 		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
+		$wa->useScript('jquery');
 		
 		
 
