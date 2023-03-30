@@ -118,10 +118,12 @@ class JemController extends JControllerLegacy
 
 		$id = Factory::getApplication()->input->getInt('file', 0);
 		$path = JemAttachment::getAttachmentPath($id);
-		$mime = JemHelper::getMimeType($path);
-		$app = Factory::getApplication();
-		$document = $app->getDocument();
-		$doc->setMimeEncoding($mime);
+
+		//$mime = JemHelper::getMimeType($path);
+		//$app = Factory::getApplication();
+		//$doc = $app->getDocument();
+		//$doc->setMimeEncoding($mime);
+
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');
 		if ($fd = fopen ($path, "r"))
 		{
