@@ -10,6 +10,7 @@
  * @license https://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link http://www.kunena.org
  **/
+ 
 defined ( '_JEXEC' ) or die ();
 
 use Joomla\CMS\Factory;
