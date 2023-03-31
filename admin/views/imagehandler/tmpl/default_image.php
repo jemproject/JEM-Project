@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-<div class="item">
+<div class="item-image">
 	<div class="imgBorder center">
 		<a onclick="window.parent.SelectImage('<?php echo $this->_tmp_img->name; ?>', '<?php echo $this->_tmp_img->name; ?>');">
 			<div class="image">
