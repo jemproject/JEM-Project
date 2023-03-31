@@ -1,11 +1,12 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.15
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die ();
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -84,7 +85,6 @@ class JemViewVenue extends JemView
 			$document->addStyleDeclaration ($style);
 
 			// add javascript (using full path - see issue #590)
-			// HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
 			$document->addScript($url.'media/com_jem/js/calendar.js');
 			// Retrieve year/month variables
 			$year = $jinput->get('yearID', date("Y"),'int');

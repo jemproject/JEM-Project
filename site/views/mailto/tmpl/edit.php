@@ -1,11 +1,12 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.15
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -33,18 +34,10 @@ $params		= $this->params;
 	}
 </script>
 
-
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">
 	<div class="edit item-page p-3">
-		<?php if ($params->get('show_page_heading')) : ?>
-		<h1>
-			<?php echo $this->escape($params->get('page_heading')); ?>
-		</h1>
-		<?php endif; ?>
-
 		<form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&view=mailto&tmpl=component'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-			
 			<div id="mailto-window">
 				<h2>
 					<?php echo JText::_('COM_JEM_MAILTO_EMAIL_TO_A_FRIEND'); ?>
