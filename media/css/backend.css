@@ -564,13 +564,13 @@ table.table .pagination {
 th img {margin-left:3px;}
 img.calendar {cursor:pointer;}
 table.adminlist {border:1px solid #999;}
+input.selectcat { margin-bottom: 3px;}
 input#csvexport {
-     background:#ccc url('../images/export_excel.png') no-repeat left;
-     background-position-x: 5px;
-     border:1px solid #808080;
-     height:35px;
-     cursor:pointer;
-     padding:0 8px 0px 30px;
+     background-image: url('../images/export_excel.png');
+     background-repeat: no-repeat;
+     background-position: 8px;
+     padding-left: 30px;
+     margin-bottom: 3px;
 }
 
 .labelexport {
@@ -828,4 +828,3 @@ a.label:focus {
      border: 0;
      border-bottom: 1px solid #ccc;
 }
-

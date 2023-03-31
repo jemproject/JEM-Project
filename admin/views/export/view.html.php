@@ -39,7 +39,7 @@ class JemViewExport extends JemAdminView
 		$categories = $this->get('Categories');
 
 		//build selectlists
-		$categories = JEMCategories::buildcatselect($categories, 'cid[]', null, 0, 'multiple="multiple" size="8" class="inputbox"');
+		$categories = JEMCategories::buildcatselect($categories, 'cid[]', null, 0, 'multiple="multiple" size="8" class="inputbox form-control"');
 
 		$this->categories		= $categories;
 
