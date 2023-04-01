@@ -199,11 +199,11 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
               <?php endif; ?>
             </div>
             <div class="jem-description-teaser">
-	            <?php echo $item->eventdescription; ?>
-	            <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-	              echo '<a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
-	              endif;
-	            ?>
+            <?php echo $item->eventdescription; ?>
+            <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+              echo '<a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
+              endif;
+            ?>
 	            <?php if ($item->eventlink) : ?>
 	                <div class="jem-readmore">
 	                    <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
