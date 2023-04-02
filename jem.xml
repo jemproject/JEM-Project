@@ -52,7 +52,7 @@
 
 	<update>
 		<schemas>
-			<schemapath type="mysql">sql/updates</schemapath>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
 		</schemas>
 	</update>
 
