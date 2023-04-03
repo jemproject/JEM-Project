@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.15
+ * @version 2.3.16
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -281,8 +281,8 @@ class com_jemInstallerScript
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
         if (strtolower($type) == 'update') {
-            // Changes between 2.3.5 -> 2.3.15
-            if (version_compare($this->oldRelease, '2.3.15', 'lt') && version_compare($this->newRelease, '2.3.6', 'gt')) {
+            // Changes between 2.3.5 -> 2.3.16
+            if (version_compare($this->oldRelease, '2.3.16', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
                 // change categoriesdetailed view name in menu items
                 $this->updateJem2315();
             }
@@ -528,8 +528,38 @@ class com_jemInstallerScript
     {
         $files = array(
 
-            // obsolete since JEM 2.3.x
-            //sample '/components/com_jem/views/event/tmpl/default_unregform.php',
+            // obsolete since JEM 4.0.0
+			'/administrator/components/com_jem/sql/updates/1.9.1.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.2.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.3.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.4.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.5.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.6.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.7.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.8.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.0.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.1.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.2.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.3.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.0.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.1.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.2.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.3.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.4.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.5.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.7-dev1.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.7-dev5.sql',
+			'/administrator/components/com_jem/sql/updates/2.2.0-p1.sql',
+			'/administrator/components/com_jem/sql/updates/2.2.1-dev2.sql',
+			'/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
+			'/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
+			'/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
+			'/administrator/components/com_jem/sql/updates/2.3.1.sql',			
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
@@ -572,7 +602,7 @@ class com_jemInstallerScript
 
     /**
      * Update data items related to datetime format into JEM.
-     * (required when updating/migrating from 2.3.3 or 2.3.6 to new version 4 with support Joomla 4.x or newer)
+     * (required when updating/migrating from 2.3.3/5/6 to new version 4.0.0 with support Joomla 4.x or newer)
      *
      * @return void
      */
