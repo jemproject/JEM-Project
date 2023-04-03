@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Attending
- * @version 2.3.10
+ * @version 2.3.16
  * @author JEM Community
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL

@@ -282,7 +282,7 @@ class com_jemInstallerScript
 
         if (strtolower($type) == 'update') {
             // Changes between 2.3.5 -> 2.3.15
-            if (version_compare($this->oldRelease, '2.3.15', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
+            if (version_compare($this->oldRelease, '2.3.15', 'lt') && version_compare($this->newRelease, '2.3.6', 'gt')) {
                 // change categoriesdetailed view name in menu items
                 $this->updateJem2315();
             }
@@ -572,7 +572,7 @@ class com_jemInstallerScript
 
     /**
      * Update data items related to datetime format into JEM.
-     * (required when updating/migrating from 2.3.3 or 2.3.5 to new version 2.3.15 with support Joomla 4.2.x or newer)
+     * (required when updating/migrating from 2.3.3 or 2.3.6 to new version 4 with support Joomla 4.x or newer)
      *
      * @return void
      */
