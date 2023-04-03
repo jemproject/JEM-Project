@@ -40,13 +40,17 @@ input.button {
 }
 input.button:focus {/*background-color:#......; */}
 input#clear {
-     background: url('../images/clear.png') no-repeat scroll left center #ccc;
-     border: 1px solid #808080;
+     background: url('../images/clear.png') no-repeat scroll left center;
+     border: none;
      cursor: pointer;
-     padding-right:10px;
+     caret-color: transparent;
 }
 input#clear:focus {cursor: pointer;}
 .colorpicker {border:1px solid grey;}
+
+.css-color-settings li label {width: 140px;}
+.css-color-settings li input.form-control {display: inline-block;}
+
 div.linkicon a {
      display:block;
      border:1px solid #f0f0f0;
@@ -826,5 +830,4 @@ a.label:focus {
      font-weight: bold;
      color: #333;
      border: 0;
-     border-bottom: 1px solid #ccc;
 }
