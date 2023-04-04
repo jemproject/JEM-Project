@@ -74,7 +74,7 @@ class JFormFieldModal_Contact extends JFormField
 
 		// The current contact input field
 		$html[] = '<div class="fltlft">';
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" />';
+		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" class="form-control valid form-control-success" />';
 		$html[] = '</div>';
 
 		// The contact select button

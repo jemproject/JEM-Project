@@ -77,7 +77,7 @@ class JFormFieldModal_Venue extends JFormField
 
 		// The current venue input field
 		$html[] = '<div class="fltlft">';
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
+		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" class="form-control valid form-control-success" />';
 		$html[] = '</div>';
 
 		// The venue select button
