@@ -1,0 +1,5 @@
+-- update all JEM table from v.2.3.15 to v.2.3.16 to new JEM version with support Joomla 4
+
+UPDATE #__jem_config SET value = 'H:i' WHERE keyname = 'formattime';
+UPDATE #__jem_config SET value = 'H' WHERE keyname = 'formathour';
+UPDATE #__jem_config SET value = '{"css_backend_usecustom":"1","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_colorpicker_usecustom":"0","css_colorpicker_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}' WHERE keyname ='css';

@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -29,14 +29,14 @@ use Joomla\CMS\Language\Text;
 
     <div id="j-main-container" class="j-main-container">
         <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
-            <div class="col-md-6">
+            <div>
                 <strong><?php echo Text::_('COM_JEM_IMPORT_INSTRUCTIONS') ?></strong><br /><br />
                 <?php echo Text::_("COM_JEM_IMPORT_INSTRUCTIONS_DESC"); ?><br />
                 <?php echo Text::_("COM_JEM_IMPORT_COLUMNNAMESVENUES"); ?><br />
                 <?php echo Text::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
             </div>
             <hr>
-            <div class="col-md-6">
+            <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_VENUES'));?></strong></legend>
                     <?php echo Text::_("COM_JEM_IMPORT_VENUES_DESC"); ?><br />
@@ -52,7 +52,7 @@ use Joomla\CMS\Language\Text;
                 </fieldset>
             </div>
             <hr>
-            <div class="col-md-6">
+            <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_CATEGORIES'));?></strong></legend>
                     <?php echo Text::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br />
@@ -70,7 +70,7 @@ use Joomla\CMS\Language\Text;
                 <div class="clr"></div>
             </div>
             <hr>
-            <div class="col-md-6">
+            <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_EVENTS'));?></strong></legend>
                     <?php echo Text::_("COM_JEM_IMPORT_EVENTS_DESC"); ?><br />
@@ -87,7 +87,7 @@ use Joomla\CMS\Language\Text;
                 <div class="clr"></div>
             </div>
             <hr>
-            <div class="col-md-6">
+            <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_CAT_EVENTS'));?></strong></legend>
                     <?php echo Text::_("COM_JEM_IMPORT_CAT_EVENTS_DESC"); ?><br />

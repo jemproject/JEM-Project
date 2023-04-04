@@ -26,8 +26,8 @@
 			description="COM_JEM_ALIAS"
 			required="false"
 		/>
-		<field name="color" type="customcolor"
-			class="inputbox form-control"
+		<field name="color" type="color"
+			class="form-control"
 			default=""
 			size="8"
         	label="COM_JEM_CATEGORY_COLOR"

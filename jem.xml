@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
 	<name>com_jem</name>
-	<creationDate>March 2023</creationDate>
+	<creationDate>April 2023</creationDate>
 	<author>JEM Community</author>
 	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>2.3.12</version>
-	<description>COM_JEM_INSTALLATION_DESCRIPTION</description>
+	<version>2.3.17</version>
+	<description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
-	<!-- Runs on install/uninstall/update; New in 1.6 -->
 	<scriptfile>script.php</scriptfile>
 
 	<files folder="site">
@@ -52,7 +51,7 @@
 
 	<update>
 		<schemas>
-			<schemapath type="mysql">sql/updates</schemapath>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
 		</schemas>
 	</update>
 
@@ -88,6 +87,5 @@
 			<folder>language</folder>
 		</files>
 	</administration>
-
-	<!-- updateservers moved to package -->
+	
 </extension>

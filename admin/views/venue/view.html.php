@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -58,6 +58,7 @@ class JemViewVenue extends JemAdminView
 
 		// Load Scripts
 		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
+		$wa->useScript('jquery');
 		
 		
 

@@ -1,9 +1,9 @@
 /**
- * @version 2.3.9
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /** header icons **/
@@ -40,13 +40,14 @@ input.button {
 }
 input.button:focus {/*background-color:#......; */}
 input#clear {
-     background: url('../images/clear.png') no-repeat scroll left center #ccc;
-     border: 1px solid #808080;
+     background: url('../images/clear.png') no-repeat scroll left center;
+     border: none;
      cursor: pointer;
-     padding-right:10px;
+     caret-color: transparent;
 }
 input#clear:focus {cursor: pointer;}
 .colorpicker {border:1px solid grey;}
+
 div.linkicon a {
      display:block;
      border:1px solid #f0f0f0;
@@ -71,7 +72,7 @@ div.linkicon span {
      text-align:center;
 }
 /** * imageselect */
-div.item {
+div.item-image {
      float:left;
      border:1px solid #ccc;
      margin:3px;
@@ -564,13 +565,13 @@ table.table .pagination {
 th img {margin-left:3px;}
 img.calendar {cursor:pointer;}
 table.adminlist {border:1px solid #999;}
+input.selectcat { margin-bottom: 3px;}
 input#csvexport {
-     background:#ccc url('../images/export_excel.png') no-repeat left;
-     background-position-x: 5px;
-     border:1px solid #808080;
-     height:35px;
-     cursor:pointer;
-     padding:0 8px 0px 30px;
+     background-image: url('../images/export_excel.png');
+     background-repeat: no-repeat;
+     background-position: 8px;
+     padding-left: 30px;
+     margin-bottom: 3px;
 }
 
 .labelexport {
@@ -826,7 +827,4 @@ a.label:focus {
      font-weight: bold;
      color: #333;
      border: 0;
-     border-bottom: 1px solid #ccc;
 }
-
-.help-toc span {font-size: 0.7em;padding-right: 1rem; color: #aaa:}

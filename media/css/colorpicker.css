@@ -49,3 +49,6 @@
 	background-position:center;
 	cursor:pointer;
 }
+
+.css-color-settings li label {width: 130px;}
+.css-color-settings li div.minicolors {display: inline-block;margin-bottom: 6px;}

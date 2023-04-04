@@ -1,12 +1,13 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
 
@@ -211,6 +212,7 @@ abstract class ModJemTeaserHelper
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
 			$lists[$i]->showimagevenue   = $params->get('showimagevenue', 1);
+			$lists[$i]->showdescriptionevent   = $params->get('showdescriptionevent', 1);
 
 			# time/date
 			$lists[$i]->day         = modJEMteaserHelper::_format_day($row, $params);

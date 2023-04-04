@@ -2,9 +2,9 @@
 <cbinstall version="1.9" type="plugin" group="user">
 	<name>JEM MyAttending</name>
 	<author>JEM Community</author>
-	<creationDate>April 2016</creationDate>
+	<creationDate>April 2023</creationDate>
 	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
-	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 	<version>2.0</version>

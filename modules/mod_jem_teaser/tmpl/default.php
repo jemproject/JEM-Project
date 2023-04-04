@@ -1,12 +1,13 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
@@ -70,11 +71,12 @@ if ($params->get('use_modal', 0)) {
                                 <?php endif; ?>
 							</div>
 							<div>
-								<?php echo $item->eventdescription; ?>
+								<?php if($item->showdescriptionevent): 
+									echo $item->eventdescription; 								
+								endif; ?>
 								<?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-									echo '<a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
-									endif;
-								?>
+									echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
+								endif; ?>
 							</div>
 						</div>
 					</td>

@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -74,9 +74,9 @@ use Joomla\CMS\Language\Text;
                                 <label style="bottom: 100%;left: 0;position: sticky;" for="cid"><?php echo Text::_('COM_JEM_CATEGORY').':'; ?></label>
                                 <?php echo $this->categories; ?>
                                 <div style="clear: both"></div>
-                                <input class="button" type="button" name="selectall" value="<?php echo Text::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
-                                <input class="button" type="button" name="unselectall" value="<?php echo Text::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();">
-                                <input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;"></input>
+                                <input class="btn btn-primary selectcat" type="button" name="selectall" value="<?php echo Text::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
+                                <input class="btn btn-primary selectcat" type="button" name="unselectall" value="<?php echo Text::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();">
+                                <input id="csvexport" class="btn btn-success" type="submit" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;"></input>
                             </div>
                     </fieldset>
 
@@ -90,15 +90,15 @@ use Joomla\CMS\Language\Text;
                         <ul class="adminformlist">
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CATEGORIES'); ?></label>
-                                <input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;"></input>
+                                <input type="submit" id="csvexport" class="btn btn-success" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;"></input>
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_VENUES'); ?></label>
-                                <input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;"></input>
+                                <input type="submit" id="csvexport" class="btn btn-success" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;"></input>
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></label>
-                                <input type="submit" id="csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;"></input>
+                                <input type="submit" id="csvexport" class="btn btn-success" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;"></input>
                             </li>
                         </ul>
                     </fieldset>

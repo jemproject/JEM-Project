@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 defined('_JEXEC') or die;
 
@@ -40,7 +40,6 @@ class com_jemInstallerScript
             'folders' => 0
         );
 
-        $this->updateJemSettings216(true);
         $this->useJemConfig = true;
 
         $this->getHeader();
@@ -282,10 +281,10 @@ class com_jemInstallerScript
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
         if (strtolower($type) == 'update') {
-            // Changes between 2.3.12 -> 2.3.13
-            if (version_compare($this->oldRelease, '2.3.13', 'lt') && version_compare($this->newRelease, '2.3.12', 'gt')) {
+            // Changes between 2.3.5 -> 2.3.17
+            if (version_compare($this->oldRelease, '2.3.17', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
                 // change categoriesdetailed view name in menu items
-                $this->updateJemMenuItems2313();
+                $this->updateJem2315();
             }
         }
         elseif (strtolower($type) == 'install') {
@@ -528,97 +527,46 @@ class com_jemInstallerScript
     private function deleteObsoleteFiles()
     {
         $files = array(
-            // obsolete since JEM 1.9.2
-            '/administrator/components/com_jem/controllers/archive.php',
-            '/administrator/components/com_jem/models/archive.php',
-            '/components/com_jem/views/calendar/metadata.xml',
-            '/components/com_jem/views/categories/metadata.xml',
-            '/components/com_jem/views/categoriesdetailed/metadata.xml',
-            '/components/com_jem/views/category/metadata.xml',
-            '/components/com_jem/views/day/metadata.xml',
-            '/components/com_jem/views/editevent/metadata.xml',
-            '/components/com_jem/views/editvenue/metadata.xml',
-            '/components/com_jem/views/event/metadata.xml',
-            '/components/com_jem/views/eventslist/metadata.xml',
-            '/components/com_jem/views/myattending/metadata.xml',
-            '/components/com_jem/views/myevents/metadata.xml',
-            '/components/com_jem/views/myvenues/metadata.xml',
-            '/components/com_jem/views/search/metadata.xml',
-            '/components/com_jem/views/venue/metadata.xml',
-            '/components/com_jem/views/venues/metadata.xml',
-            // obsolete since JEM 1.9.3
-            '/components/com_jem/views/category/tmpl/default_attachments.php',
-            '/components/com_jem/views/category/tmpl/default_table.php',
-            '/components/com_jem/views/editevent/tmpl/default_attachments.php',
-            '/components/com_jem/views/editvenue/tmpl/default_attachments.php',
-            '/components/com_jem/views/eventslist/tmpl/default_table.php',
-            '/components/com_jem/views/venue/tmpl/default_attachments.php',
-            '/components/com_jem/views/weekcal/tmpl/default.xml.disabled',
-            // obsolete since JEM 1.9.4
-            // obsolete since JEM 1.9.5
-            '/administrator/components/com_jem/help/en-GB/archive.html',
-            '/administrator/components/com_jem/help/en-GB/toolbars/apunedch.png',
-            '/administrator/components/com_jem/help/en-GB/toolbars/asch.png',
-            '/administrator/components/com_jem/help/en-GB/toolbars/asuch.png',
-            '/administrator/components/com_jem/help/en-GB/toolbars/dbh.png',
-            '/administrator/components/com_jem/help/en-GB/toolbars/nedh.png',
-            '/administrator/components/com_jem/help/en-GB/toolbars/punedh.png',
-            '/administrator/components/com_jem/help/en-GB/toolbars/udh.png',
-            '/administrator/components/com_jem/help/images/icon-16-attention.png',
-            '/administrator/components/com_jem/help/images/icon-16-hint.png',
-            '/administrator/components/com_jem/models/jem.php',
-            '/administrator/components/com_jem/models/fields/imageselectevent.php',
-            '/administrator/components/com_jem/views/category/tmpl/default.php',
-            '/administrator/components/com_jem/views/category/tmpl/default_attachments.php',
-            '/administrator/components/com_jem/views/event/tmpl/addvenue.php',
-            '/administrator/components/com_jem/views/group/tmpl/default.php',
-            '/administrator/components/com_jem/views/settings/tmpl/default_basic.php',
-            '/administrator/components/com_jem/views/settings/tmpl/default_eventpage.php',
-            '/administrator/components/com_jem/views/settings/tmpl/default_navigation.php',
-            '/components/com_jem/models/myattending.php',
-            '/components/com_jem/views/editevent/tmpl/default.xml',
-            '/media/com_jem/css/calendarweek.css',
-            '/media/com_jem/css/gmapsoverlay.css',
-            '/media/com_jem/css/picker.css',
-            '/media/com_jem/images/evlogo.png',
-            '/media/com_jem/js/gmapsoverlay.js',
-            '/media/com_jem/js/picker.js',
-            '/media/com_jem/js/recurrencebackend.js',
-            '/media/com_jem/js/seobackend.js',
-            // obsolete since JEM 1.9.6
-            '/administrator/components/com_jem/models/cleanup.php',
-            '/administrator/components/com_jem/controllers/cleanup.php',
-            '/administrator/components/com_jem/help/en-GB/cleanup.html',
-            '/components/com_jem/controllers/editevent.php',
-            '/components/com_jem/controllers/editvenue.php',
-            '/components/com_jem/models/categoriesdetailed.php',
-            '/components/com_jem/views/editevent/tmpl/default.php',
-            '/components/com_jem/views/editvenue/tmpl/default.php',
-            '/components/com_jem/views/editvenue/tmpl/default.xml',
-            '/components/com_jem/views/venues/view.feed.php',
-            '/media/com_jem/js/eventscreen.js',
-            '/media/com_jem/js/geodata.js',
-            '/media/com_jem/js/jquery.geocomplete.min.js',
-            // obsolete since JEM 1.9.7
-            '/administrator/components/com_jem/classes/Snoopy.class.php',
-            // obsolete since JEM 2.1.7
-            '/components/com_jem/views/event/tmpl/default_unregform.php',
+
+            // obsolete since JEM 4.0.0
+			'/administrator/components/com_jem/sql/updates/1.9.1.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.2.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.3.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.4.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.5.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.6.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.7.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.8.sql',
+			'/administrator/components/com_jem/sql/updates/1.9.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.0.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.1.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.2.sql',
+			'/administrator/components/com_jem/sql/updates/2.0.3.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.0.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.1.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.2.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.3.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.4.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.5.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.7-dev1.sql',
+			'/administrator/components/com_jem/sql/updates/2.1.7-dev5.sql',
+			'/administrator/components/com_jem/sql/updates/2.2.0-p1.sql',
+			'/administrator/components/com_jem/sql/updates/2.2.1-dev2.sql',
+			'/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
+			'/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
+			'/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
+			'/administrator/components/com_jem/sql/updates/2.3.1.sql',			
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
         $folders = array(
-            // obsolete since JEM 1.9.2
-            '/administrator/components/com_jem/views/archive',
-            // obsolete since JEM 1.9.3
-            // obsolete since JEM 1.9.4
-            // obsolete since JEM 1.9.5
-            '/administrator/components/com_jem/views/jem',
-            '/components/com_jem/views/myattending',
-            // obsolete since JEM 1.9.6
-            '/components/com_jem/views/categoriesdetailed',
-            '/administrator/components/com_jem/views/cleanup/',
-            '/administrator/components/com_jem/help/en-GB/toolbars',
-            // obsolete since JEM 1.9.7
+            
+            // obsolete since JEM 2.3.x            
+            //sample '/administrator/components/com_jem/help/en-GB/toolbars',
         );
 
         foreach ($files as $file) {
@@ -653,100 +601,112 @@ class com_jemInstallerScript
 
 
     /**
-     * Change categoriesdetailed view to categories view in menu items related to com_jem.
-     * (required when updating from 1.9.5 or below to 1.9.6 or newer)
+     * Update data items related to datetime format into JEM.
+     * (required when updating/migrating from 2.3.3/5/6 to new version 4.0.0 with support Joomla 4.x or newer)
      *
      * @return void
      */
-    private function updateJemMenuItems2313()
+    private function updateJem2315()
     {
-        // get all "com_jem..." frontend entries
+        // write changed datetime entry '0000-00-00 ...' to null into DB
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
-        $query->select('id, link, params');
-        $query->from('#__menu');
-        $query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=categor%'"));
+		
+        //Categories table
+        $query = $db->getQuery(true);
+        $query->update('#__jem_categories');
+        $query->set("modified_time = null");
+        $query->where(array("modified_time LIKE '%0000-00-00%'"));
         $db->setQuery($query);
-        $items = $db->loadObjectList();
+        $db->execute();
 
-        foreach ($items as $item) {
-            $link = $item->link;
-            // Decode the item params
-            $reg = new JRegistry;
-            $reg->loadString($item->params);
+        $query = $db->getQuery(true);
+        $query->update('#__jem_categories');
+        $query->set("checked_out_time = null");
+        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
 
-            // get view
-            preg_match('/view=([^&]+)/', $item->link, $matches);
-            $view = $matches[1];
-return; //beta in dev
-            switch ($view) {
-                case 'categoriesdetailed':
-                    // replace view name
-                    $link = str_replace("&view=categoriesdetailed", "&view=categories", $link);
-                // fall through
-                case 'categories':
-                    // add "&id=..." if required
-                    if (strpos($link, '&id=') === false) {
-                        $link .= '&id=' . max(1, (int)$reg->get('catid', $reg->get('id', 1)));
-                    }
+        $query = $db->getQuery(true);
+		$query->update('#__jem_categories');
+        $query->set("created_time = now()");
+        $query->where(array("created_time LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
 
-                    // change params as required (order and defaults matching xml)
-                    $params = array('showemptycats' => $reg->get('showemptychilds', 1),
-                        'cat_num' => 4,
-                        'detcat_nr' => 0, // will be overwritten if aleady set
-                        'usecat' => 1,
-                        'showemptychilds' => $reg->get('empty_cats', 1));
-                    foreach ($reg->toArray() as $k => $v) {
-                        switch ($k) {
-                            case 'id':
-                            case 'catid':
-                                // remove 'id' and 'catid'
-                                break;
-                            case 'empty_cat':
-                                // rename
-                                $params['showemptycats'] = $v;
-                                break;
-                            default:
-                                $params[$k] = $v;
-                                break;
-                        }
-                    }
-                    $reg = new JRegistry;
-                    $reg->loadArray($params);
-                    break;
+        //Events table
+        $query = $db->getQuery(true);
+        $query->update('#__jem_events');
+        $query->set("created = now()");
+        $query->where(array("created LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
 
-                case 'category':
-                    // add "&id=..." if required
-                    if (strpos($link, '&id=') === false) {
-                        $link .= '&id=' . max(1, (int)$reg->get('id', 1));
+        $query = $db->getQuery(true);
+        $query->update('#__jem_events');
+        $query->set("modified = null");
+        $query->where(array("modified LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
 
-                        // and remove from params
-                        $params = array();
-                        foreach ($reg->toArray() as $k => $v) {
-                            switch ($k) {
-                                case 'id':
-                                    // remove 'id'
-                                    break;
-                                default:
-                                    $params[$k] = $v;
-                                    break;
-                            }
-                        }
-                        $reg = new JRegistry;
-                        $reg->loadArray($params);
-                    }
-                    break;
-            }
+        $query = $db->getQuery(true);
+        $query->update('#__jem_events');
+        $query->set("checked_out_time = null");
+        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
 
-            // write changed entry back into DB
-            $query = $db->getQuery(true);
-            $query->update('#__menu');
-            $query->set('link = '.$db->quote((string)$link));
-            $query->set('params = '.$db->quote((string)$reg));
-            $query->where(array('id = '.$db->quote($item->id)));
-            $db->setQuery($query);
-            $db->execute();
-        }
+        //Groups table
+        $query = $db->getQuery(true);
+        $query->update('#__jem_groups');
+        $query->set("checked_out_time = null");
+        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
+
+        //Venues table
+        $query = $db->getQuery(true);
+        $query->update('#__jem_venues');
+        $query->set("created = now()");
+        $query->where(array("created LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = $db->getQuery(true);
+        $query->update('#__jem_venues');
+        $query->set("modified = null");
+        $query->where(array("modified LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = $db->getQuery(true);
+        $query->update('#__jem_venues');
+        $query->set("checked_out_time = null");
+        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = $db->getQuery(true);
+        $query->update('#__jem_venues');
+        $query->set("publish_up = null");
+        $query->where(array("publish_up LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = $db->getQuery(true);
+        $query->update('#__jem_venues');
+        $query->set("publish_down = null");
+        $query->where(array("publish_down LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
+
+        //Attachments table
+        $query = $db->getQuery(true);
+        $query->update('#__jem_attachments');
+        $query->set("added = null");
+        $query->where(array("added LIKE '%0000-00-00%'"));
+        $db->setQuery($query);
+        $db->execute();
     }
 
 
@@ -783,158 +743,8 @@ return; //beta in dev
         }
     }
 
-    /**
-     * Remove 'htm' and 'html' from allowed attachment types.
-     * (required when updating from 2.1.4 or below to 2.1.4.2 or newer)
-     *
-     * @return void
-     */
-    private function updateJemSettings2142()
-    {
-        // get all "mod_jem..." entries
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('attachments_types')
-            ->from('#__jem_settings')
-            ->where('id = 1');
-        $db->setQuery($query);
-        try {
-            $ext = $db->loadResult();
-        } catch(Exception $e) {
-            $ext = '';
-        }
 
-        if (!empty($ext)) {
-            $ext_to_del = array('csv', 'htm', 'html', 'xml', 'css', 'doc', 'xls', 'rtf', 'ppt', 'swf', 'flv', 'avi', 'wmv', 'mov');
-            $a_ext = explode(',', $ext);
-            $new_ext = array_diff($a_ext, $ext_to_del);
-            $ext = implode(',', $new_ext);
 
-            $query = $db->getQuery(true);
-            $query->update('#__jem_settings')
-                ->set('attachments_types = '.$db->quote($ext))
-                ->where('id = 1');
-            $db->setQuery($query);
-            $db->execute();
-        }
-    }
-
-    /**
-     * Move all settings from table #__jem_settings to table #__jem_config
-     * storing every setting in it's own record.
-     * (required when updating from 2.1.5 or below to 2.1.6 or newer)
-     *
-     * @return void
-     */
-    private function updateJemSettings216($onInstall = false)
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
-        // load data from old #__jem_settings
-        try {
-            $query = $db->getQuery(true);
-            $query->select('*')->from('#__jem_settings')->where('id=1');
-            $db->setQuery($query);
-            $old_data = $db->loadObject();
-        } catch (Exception $ex) {
-        }
-
-        if ($onInstall && empty($old_data)) {
-            return;
-        }
-
-        // Special: swap showtime <-> globalattribs.global_show_timedetails
-        if (!empty($old_data->globalattribs) && isset($old_data->showtime)) {
-            $registry = new JRegistry;
-            $registry->loadString($old_data->globalattribs);
-            $showtime = $old_data->showtime;
-            $old_data->showtime = $registry->get('global_show_timedetails', $showtime);
-            $registry->set('global_show_timedetails', $showtime);
-            $old_data->globalattribs = $registry->toString();
-        }
-
-        if (empty($old_data)) {
-            echo "<li><span style='color:red;'>".Text::_('COM_JEM_INSTALL_ERROR').":</span> ".
-                Text::_('COM_JEM_INSTALL_SETTINGS_NOT_FOUND')."</li>";
-        } else {
-            // save to new #__jem_config table ignoring obsolete fields
-            $old_data = get_object_vars($old_data);
-            $ignore = array('id', 'showmapserv', 'showtimedetails', 'showevdescription', 'showdetailstitle',
-                'showdetailsadress', 'showlocdescription', 'showdetlinkvenue', 'communsolution',
-                'communoption', 'regname', 'checked_out', 'checked_out_time', 'tld', 'lg', 'cat_num',
-                'filter', 'display', 'icons', 'show_print_icon', 'show_email_icon', 'events_ical',
-                'show_archive_icon', 'ownedvenuesonly', 'empty_cat'
-            );
-            $oops = 0;
-
-            try {
-                $query = $db->getQuery(true);
-                $query->select(array($db->quoteName('keyname'), $db->quoteName('value')));
-                $query->from('#__jem_config');
-                $db->setQuery($query);
-                $list = $db->loadAssocList('keyname', 'value');
-            } catch (Exception $ex) {
-                $list = array();
-            }
-            $keys = array_keys($list);
-
-            foreach ($old_data as $k => $v) {
-                $query = $db->getQuery(true);
-                if (in_array($k, $ignore)) {
-                    continue; // skip if obsolete
-                }
-                if (in_array($k, $keys)) {
-                    if ($v == $list[$k]) {
-                        continue; // skip if unchanged
-                    }
-                    // we do overwrite values already in #__jem_config by those from #__jem_settings - shouldn't we?
-                    $query->update('#__jem_config');
-                    $query->where(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
-                } else {
-                    $query->insert('#__jem_config');
-                    $query->set(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
-                }
-                $query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
-                $db->setQuery($query);
-                try {
-                    $db->execute();
-                } catch (Exception $e) {
-                    $oops++;
-                }
-            }
-
-            if ($oops) {
-                echo "<li><span style='color:red;'>".Text::_('COM_JEM_INSTALL_ERROR').":</span> ".
-                    Text::_('COM_JEM_INSTALL_CONFIG_NOT_STORED')."</li>";
-            } else {
-                // remove old #__jem_settings table
-                try {
-                    $db->dropTable('#__jem_settings');
-                    $this->useJemConfig = true;
-                } catch (Exception $ex) {
-                }
-            }
-        }
-    }
-
-    /**
-     * Change registra on table #__jem_events from 2 to 3.
-     * (required when updating from 2.1.7-dev3 or below to 2.1.7-dev4 or newer)
-     *
-     * @return void
-     */
-    private function updateJemEvents217()
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->update('#__jem_events')
-            ->set('registra = 3')
-            ->where('registra = 2');
-        try {
-            $db->setQuery($query)->execute();
-        } catch(Exception $e) {
-        }
-    }
 
     /**
      * Deletes all JEM tables on database if option says so.

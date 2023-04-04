@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>March 2020</creationDate>
+	<creationDate>April 2023</creationDate>
 	<copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.3.12</version>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>2.3.17</version>
 	<description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -116,7 +116,15 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
-
+				<field name="showdescriptionevent" type="radio"
+					   default="1"
+					   label="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT"
+					   description="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
 				<field name="descriptionlength" type="text"
 					default="300"
 					label="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH"

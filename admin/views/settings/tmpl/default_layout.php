@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -110,7 +110,7 @@ defined('_JEXEC') or die;
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
 		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BACKGROUND'); ?></legend>
-		<ul class="adminformlist">
+		<ul class="adminformlist css-color-settings">
 			<?php foreach ($this->form->getFieldset('css_color') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
 			<?php endforeach; ?>
@@ -120,7 +120,7 @@ defined('_JEXEC') or die;
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
 		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BORDER'); ?></legend>
-		<ul class="adminformlist">
+		<ul class="adminformlist css-color-settings">
 			<?php foreach ($this->form->getFieldset('css_color_border') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
 			<?php endforeach; ?>
@@ -130,7 +130,7 @@ defined('_JEXEC') or die;
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
 		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_FONT'); ?></legend>
-		<ul class="adminformlist">
+		<ul class="adminformlist css-color-settings">
 			<?php foreach ($this->form->getFieldset('css_color_font') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
 			<?php endforeach; ?>

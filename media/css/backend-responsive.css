@@ -1,9 +1,9 @@
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /** header icons **/
@@ -41,13 +41,15 @@ input.button {
 }
 input.button:focus {/*background-color:#......; */}
 input#clear {
-	background: url('../images/clear.png') no-repeat scroll left center #CCC;
-	border: 1px solid #808080;
+     background: url('../images/clear.png') no-repeat scroll left center;
+     border: none;
 	cursor: pointer;
-	padding-right:10px;
+     caret-color: transparent;
 }
+
 input#clear:focus {cursor: pointer;}
 .colorpicker {border:1px solid grey;}
+
 div.linkicon a {
 	display:block;
 	border:1px solid #F0F0F0;
@@ -823,7 +825,6 @@ a.label:focus {
 	font-weight: bold;
 	color: #333;
 	border: 0;
-	border-bottom: 1px solid #ccc;
 }
 
 .help-toc span {font-size: 0.7em;padding-right: 1rem; color: #aaa:}

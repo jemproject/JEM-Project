@@ -1,11 +1,12 @@
 <?php
 /**
- * @version 2.3.12
+ * @version 2.3.17
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -670,7 +671,7 @@ class JemOutput
 					'url'    => $url.'&amp;'.Session::getFormToken().'=1',
 					'title'  => Text::_('COM_JEM_SELECT'),
 					'width'  => '800px',
-					'height' => '450px',
+					'height' => '550px',
 					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 				)
 			);
@@ -1472,7 +1473,7 @@ class JemOutput
 
 		$output  = '';
 		$formatD = 'Y-m-d';
-		$formatT = '%H:%M';
+		$formatT = 'H:i';
 
 		if (JemHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
