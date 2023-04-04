@@ -80,9 +80,8 @@ img.left {
 	font-weight: bold;
 	font-size: 13px;
 	margin: 8px auto 0px;
-	color: #000000;
+	color: #000;
 	background-color: #ffa909;
-	width: 80%;
 }
 
 .hint {
@@ -92,9 +91,8 @@ img.left {
 	padding: 3px 3px 20px 40px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-hint.png) no-repeat 4px 4px;
+	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 4px;
 	font-size: 12px;
-	width: 80%;
 }
 
 .attentionheader {
@@ -104,7 +102,7 @@ img.left {
 	padding: 3px 3px 3px 40px;
 	font-weight: bold;
 	margin: 8px auto 0px;
-	color: #000000;
+	color: #000;
 	background-color: #FE8C8C;
 }
 
@@ -115,11 +113,11 @@ img.left {
 	padding: 6px 6px 20px 44px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-attention.png) no-repeat 6px 6px;
+	background: #fff url(../images/icon-32-attention.png) no-repeat 6px 6px;
 }
 
 table.help {
-	background-color: #ffffff;
+	background-color: #fff;
 	border: solid 1px #d5d5d5;
 	width: 100%;
 	border-collapse: collapse;
@@ -141,7 +139,7 @@ table.help th {
 	text-align: left;
 	height: 25px;
 	color: #000;
-	background-color: #eeeeee;
+	background-color: #eee;
 }
 
 table.help td {
@@ -157,7 +155,7 @@ table.help td {
 .toolbar-list {
 	float: left;
 	color: #465584;
-	background-color: #eeeeee;
+	background-color: #eee;
 }
 .toolbar-list ul {
 	padding: 0;
@@ -178,7 +176,6 @@ table.help td {
 	float: none;
 	margin: 0 auto;
 }
-
 
 .icon-32-alert {
 	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.png");
