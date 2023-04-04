@@ -1,7 +1,7 @@
 <?php
 /**
  * @package JEM My Events for CB
- * @version 2.3.16 (for JEM v2.3.10 & CB v2.0)
+ * @version 2.3.17 (for JEM v2.3.10 & CB v2.0)
  * @author JEM Community
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
