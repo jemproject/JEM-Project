@@ -75,7 +75,7 @@ $options = array(
 							<div id="det-pane-details" class="accordion-collapse collapse show" aria-labelledby="det-pane-header" data-bs-parent="#accordionHelpForm">
 								<div class="accordion-body">
 									<fieldset class="panelform">
-									<table class="adminlist">
+									<table class="adminlist help-toc">
 										<?php
 										foreach ($this->toc as $k=>$v) {
 											echo '<tr>';

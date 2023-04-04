@@ -729,6 +729,17 @@ fieldset.adminform .inputbox {margin-left: inherit;}
      margin-top: 10px;
      padding: 2px 0 0 0;
 }
+
+.help-toc span {
+	font-size:0.8em;
+	padding-right: 1em;
+	color: #aaa
+}
+
+table.adminlist.help-toc {
+	border: none;
+}
+
 /* --- LABEL CODE ---- */
 /* Taken from Joomla! template "isis" */
 .label {
