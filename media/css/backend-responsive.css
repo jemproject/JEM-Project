@@ -50,9 +50,6 @@ input#clear {
 input#clear:focus {cursor: pointer;}
 .colorpicker {border:1px solid grey;}
 
-.css-color-settings li label {width: 120px;}
-.css-color-settings li input.form-control {display: inline-block;}
-
 div.linkicon a {
 	display:block;
 	border:1px solid #F0F0F0;
