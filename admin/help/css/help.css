@@ -78,7 +78,6 @@ img.left {
 	border-top: 1px solid #ffa909;
 	padding: 3px 3px 3px 40px;
 	font-weight: bold;
-	font-size: 13px;
 	margin: 8px auto 0px;
 	color: #000;
 	background-color: #ffa909;
@@ -88,11 +87,10 @@ img.left {
 	border-left: 6px solid #ffa909;
 	border-right: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
-	padding: 3px 3px 20px 40px;
+	padding: 12px 12px 20px 40px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 4px;
-	font-size: 12px;
+	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 15px;
 }
 
 .attentionheader {
