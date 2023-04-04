@@ -34,34 +34,6 @@ $canDo = JEMHelperBackend::getActions();
 				<fieldset class="adminform">
 					<legend><?php echo Text::_('COM_JEM_CSSMANAGER_DESCRIPTION_LEGEND');?></legend>
 					<p><?php echo Text::_('COM_JEM_CSSMANAGER_DESCRIPTION');?></p>
-				</fieldset>
-
-				<fieldset class="adminform">
-					<legend><?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_LEGEND');?></legend>
-					<p><?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_DESCRIPTION'); ?></p>
-					<h3><?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_STATUS'); ?></h3>
-					<p>
-					<?php if ($this->statusLinenumber) : ?>
-						<?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_ENABLED'); ?>
-						<br />
-						<a href="<?php echo Route::_('index.php?option=com_jem&amp;task=cssmanager.disablelinenumber');?>">
-							<?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_DISABLE'); ?>
-						</a>
-					<?php else: ?>
-						<?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_DISABLED'); ?>
-						<br />
-						<a href="<?php echo Route::_('index.php?option=com_jem&amp;task=cssmanager.setlinenumber');?>">
-							<?php echo Text::_('COM_JEM_CSSMANAGER_LINENUMBER_ENABLE'); ?>
-						</a>
-					<?php endif; ?>
-					</p>
-				</fieldset>
-
-				<div class="clr"></div>
-			</div>
-
-			<div class="col-md-6">
-				<fieldset class="adminform">
 					<legend><?php echo Text::_('COM_JEM_CSSMANAGER_FILENAMES');?></legend>
 					<?php if (!empty($this->files['css'])) : ?>
 						<ul>
@@ -78,7 +50,9 @@ $canDo = JEMHelperBackend::getActions();
 						<?php endforeach; ?>
 						</ul>
 					<?php endif; ?>
-					<br>
+					</div>
+			<div class="col-md-6">
+				<fieldset class="adminform">
 					<legend><?php echo Text::_('COM_JEM_CSSMANAGER_FILENAMES_CUSTOM');?></legend>
 					<?php if (!empty($this->files['custom'])) : ?>
 						<ul>
