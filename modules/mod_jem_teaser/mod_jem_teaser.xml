@@ -7,7 +7,7 @@
 	<creationDate>April 2023</creationDate>
 	<copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>2.3.15</version>
+	<version>2.3.16</version>
 	<description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -116,7 +116,15 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
-
+				<field name="showdescriptionevent" type="radio"
+					   default="1"
+					   label="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT"
+					   description="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
 				<field name="descriptionlength" type="text"
 					default="300"
 					label="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH"
