@@ -7,7 +7,7 @@
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
- * Original Eventlist calendar from Christoph Lukes www.schlu.net
+ * Original Eventlist calendar from Christoph Lukes
  * PHP Calendar (version 2.3), written by Keith Devens
  * http://keithdevens.com/software/php_calendar
  * see example at http://keithdevens.com/weblog
