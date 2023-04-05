@@ -506,12 +506,12 @@ Joomla.submitbutton = function(task)
 							<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_EVENT_TITLE' );	?>" />
 							<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo Text::_ ( 'COM_JEM_VENUE' );?>" />
 							<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
-							<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_DATE' );?>" />
+							<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_STARTDATE' );?>" />
 
 							<p>
-								<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_ ( 'COM_JEM_EVENT_TIME' );?>" />
+								<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_ ( 'COM_JEM_STARTTIME' );?>" />
 								<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_ ( 'COM_JEM_ENDDATE' );?>" />
-								<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_ ( 'COM_JEM_END_TIME' );?>" />
+								<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_ ( 'COM_JEM_ENDTIME' );?>" />
 							</p>
 							<br />
 
