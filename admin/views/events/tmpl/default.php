@@ -104,7 +104,7 @@ $(document).ready(function() {
 					<tr>
 						<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
             <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTDATE', 'a.dates', $listDirn, $listOrder ); ?></th>
-						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTTIME', 'a.times', $listDirn, $listOrder ); ?></th>
+						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTTIME_SHORT', 'a.times', $listDirn, $listOrder ); ?></th>
 						<th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
@@ -115,7 +115,7 @@ $(document).ready(function() {
 						<th width="1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
 						<th class="nowrap"><?php echo Text::_('COM_JEM_CREATION'); ?></th>
 						<th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
-						<th width="1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?></th>
+						<th width="1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
 						<th width="9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
 						<th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 					</tr>
@@ -176,7 +176,7 @@ $(document).ready(function() {
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
-						<td>
+						<td class="startdate">
 							<?php if ($row->checked_out) : ?>
 								<?php echo HTMLHelper::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
 							<?php endif; ?>
@@ -188,7 +188,7 @@ $(document).ready(function() {
 								<?php echo $displaydate; ?>
 							<?php endif; ?>
 						</td>
-						<td><?php echo $displaytime; ?></td>
+						<td class="starttime"><?php echo $displaytime; ?></td>
 						<td class="eventtitle">
 							<?php if ($canEdit) : ?>
 								<a href="<?php echo Route::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">

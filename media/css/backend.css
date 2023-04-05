@@ -688,6 +688,10 @@ fieldset.adminform label.btn {
 }
 .btn-margin { margin: 0 3px; }
 
+#eventList .eventtitle {}
+
+#eventList .starttime {white-space: nowrap;}
+
 .button2-left {display: inline !important;float:left;}
 div.current label,
 div.current span.faux-label {
