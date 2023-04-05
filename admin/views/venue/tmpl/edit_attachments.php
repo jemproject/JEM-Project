@@ -17,22 +17,22 @@ defined ('_JEXEC') or die;
 			<td>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE');?></div>
-					<input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>"></input>
+					<input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>" class="form-control readonly valid form-control-success w-75"></input>
 					<input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/>
 				</div>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
-					<input type="text" name="attached-name[]" style="width: 90%" value="<?php echo $file->name; ?>" />
+					<input type="text" name="attached-name[]" class="form-control valid form-control-success w-75" value="<?php echo $file->name; ?>" />
 				</div>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
-					<input type="text" name="attached-desc[]" style="width: 90%" value="<?php echo $file->description; ?>" />
+					<input type="text" name="attached-desc[]" class="form-control valid form-control-success w-75" value="<?php echo $file->description; ?>" />
 				</div>
 			</td>
 			<td>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-					<?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox','size'=>'7'), 'value', 'text', $file->access); ?>
+					<?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', $file->access); ?>
 				</div>
 			</td>
 			<td class="center">
@@ -49,21 +49,21 @@ defined ('_JEXEC') or die;
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
 					<input type="file" name="attach[]" class="attach-field"></input>
 					<?php /* see attachments.js for button's onclick function */ ?>
-					<button type="button" class="clear-attach-field button3 formelm-buttons"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
+					<button type="button" class="btn btn-primary"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
 				</div>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
-					<input type="text" name="attach-name[]" value="" style="width: 90%" />
+					<input type="text" name="attach-name[]" value="" class="form-control valid form-control-success w-75" />
 				</div>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
-					<input type="text" name="attach-desc[]" value="" style="width: 90%" />
+					<input type="text" name="attach-desc[]" value="" class="form-control valid form-control-success w-75" />
 				</div>
 			</td>
 			<td>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-					<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox','size'=>'7'), 'value', 'text', 0); ?>
+					<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', 0); ?>
 				</div>
 			</td>
 			<td>&nbsp;</td>

@@ -83,7 +83,7 @@
 		/>
 		<field name="cats" type="catoptions"
 			   multiple="true"
-			   class="inputbox"
+			   class="inputbox form-select w-50"
 			   size="4"
 			   label="COM_JEM_FIELD_CATEGORIES"
 			   labelclass=""

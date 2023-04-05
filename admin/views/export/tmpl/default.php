@@ -71,7 +71,7 @@ use Joomla\CMS\Language\Text;
                         </div>
                         <div class="width-50 fltrt" style="padding: 0 1vw;">
                             <div>
-                                <label style="bottom: 100%;left: 0;position: sticky;" for="cid"><?php echo Text::_('COM_JEM_CATEGORY').':'; ?></label>
+                                <label for="cid"><?php echo Text::_('COM_JEM_CATEGORY').':'; ?></label>
                                 <?php echo $this->categories; ?>
                                 <div style="clear: both"></div>
                                 <input class="btn btn-primary selectcat" type="button" name="selectall" value="<?php echo Text::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
