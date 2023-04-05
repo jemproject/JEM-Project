@@ -29,8 +29,7 @@
 /** linkicons **/
 div.linkicon {
 	text-align:center;
-	margin:0px 5px 5px 0px;
-	width: 60px;
+     margin:0 0 5px 0px;
 	vertical-align: text-top;
 }
 input.button {
@@ -46,16 +45,14 @@ input#clear {
 	cursor: pointer;
      caret-color: transparent;
 }
-
 input#clear:focus {cursor: pointer;}
 .colorpicker {border:1px solid grey;}
 
 div.linkicon a {
 	display:block;
 	border:1px solid #F0F0F0;
-	height:97px;
-	width:108px;
-	color:#666666;
+     height:76px;
+     width:76px;
 	vertical-align: middle;
 	text-decoration: none;
 }
@@ -65,7 +62,6 @@ div.linkicon a:hover {
 	border-right:1px solid #ccc;
 	border-bottom:1px solid #ccc;
 	background-color:#F9F9F9;
-	color:#0B55C4;
 }
 div.linkicon img {
 	padding:10px 0;
@@ -76,7 +72,7 @@ div.linkicon span {
 	text-align:center;
 }
 /** * imageselect */
-div.item {
+div.item-image {
 	float:left;
 	border:1px solid #ccc;
 	margin:3px;
@@ -100,6 +96,12 @@ div.imgBorder a:hover {
 	background-color:#F0F0F0;
 	color:#f60;
 }
+img.venue-image {
+	border: 1px #cdcdcd solid;
+	border-radius: 3px;
+	margin: 3px 0;
+	padding: 3px;
+} 
 div.controls {
 	text-align:center;
 	height:20px;
@@ -145,6 +147,7 @@ div.clear {
 	height:1px;
 	line-height:1px;
 }
+label#jform_hits-lbl {display: block;}
 .jem_centering {
 	text-align:center;
 	margin-top:0px;
@@ -566,12 +569,18 @@ table.table .pagination {
 th img {margin-left:3px;}
 img.calendar {cursor:pointer;}
 table.adminlist {border:1px solid #999;}
+input.selectcat { margin-bottom: 3px;}
 input#csvexport {
-	background:#ccc url('../images/export_excel.png') no-repeat left;
-	padding-left:20px;
-	border:1px solid #808080;
-	height:20px;
-	cursor:pointer;
+     background-image: url('../images/export_excel.png');
+     background-repeat: no-repeat;
+     background-position: 8px;
+     padding-left: 30px;
+     margin-bottom: 3px;
+}
+
+.labelexport {
+     min-width: 100px;
+     padding: 10px 0;
 }
 .select_country {max-width:210px;}
 /* scale icon to fit text height */
@@ -673,6 +682,18 @@ fieldset.adminform span.faux-label {
 fieldset.adminform label.btn {
     min-width: 135px;
 }
+.btn-margin { margin: 0 3px; }
+
+ /* to save some space: slightly smaller table of events in backend then Joomla standard  */
+table#eventList>:not(caption)>*>* {
+ padding:.75rem .75rem;
+}
+
+#eventList .eventtitle {}
+
+#eventList .starttime {white-space: nowrap;}
+
+.button2-left {display: inline !important;float:left;}
 div.current label,
 div.current span.faux-label {
 	display: block;
@@ -700,6 +721,8 @@ fieldset.panelform fieldset.radio label {
 	display:inline;
 }
 fieldset.adminform .inputbox {margin-left: inherit;}
+select.inputbox, textarea.inputbox {padding: 0.5rem;}
+
 /* -- Help --------------------------- */
 .helpFrame {
 	border-left: 0 solid #222;
@@ -770,6 +793,10 @@ a.label:focus {
 .label-info[href] {background-color: #245269;}
 .label-inverse {background-color: #333;}
 .label-inverse[href] {background-color: #1a1a1a;}
+
+.label-form {float:left; padding: 10px 0 18px 0; min-width: 100px;}
+.select-time {padding: 5px;margin-top:5px;}
+
 /* --- ALERT CODE ---- */
 /* Taken from Joomla! template "isis" */
 .alert {
@@ -824,8 +851,6 @@ a.label:focus {
 	text-align: right;
 }
 .icon-back:before{ content:"\f053" }
-
-
 .adminform legend {
 	display: block;
 	width: 100%;
