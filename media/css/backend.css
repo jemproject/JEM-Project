@@ -96,6 +96,12 @@ div.imgBorder a:hover {
      background-color:#f0f0f0;
      color:#f60;
 }
+img.venue-image {
+	border: 1px #cdcdcd solid;
+	border-radius: 3px;
+	margin: 3px 0;
+	padding: 3px;
+} 
 div.controls {
      text-align:center;
      height:20px;
@@ -680,6 +686,9 @@ fieldset.adminform span.faux-label {
 fieldset.adminform label.btn {
     min-width: 135px;
 }
+.btn-margin { margin: 0 3px; }
+
+.button2-left {display: inline !important;float:left;}
 div.current label,
 div.current span.faux-label {
      display: block;
@@ -707,6 +716,8 @@ fieldset.panelform fieldset.radio label {
      display:inline;
 }
 fieldset.adminform .inputbox {margin-left: inherit;}
+select.inputbox, textarea.inputbox {padding: 0.5rem;}
+
 /* -- Help --------------------------- */
 .helpFrame {
      border-left: 0 solid #222;
