@@ -1152,23 +1152,15 @@ class JemHelper
 	 */
 	static public function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '')
 	{
-		if (version_compare(JVERSION, '3.3', 'lt')) {
-			$tooltip = htmlspecialchars($tooltip);
-			if ($title) {
-				$title = htmlspecialchars($title);
-				$title = $title . '::';
-			}
-		} else {
-			// on Joomla! 3.3+ we must use the new tooltips
-			HTMLHelper::_('bootstrap.tooltip');
-			if (0) { /* old style using 'hasTip' */
-				$title = HTMLHelper::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
-			} else { /* new style using 'has Tooltip' */
-				$class = str_replace('hasTip', '', $class) . ' hasTooltip';
-				$title = HTMLHelper::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
-			}
-			$tooltip = '';
-		}
+        HTMLHelper::_('bootstrap.tooltip');
+        if (0) { /* old style using 'hasTip' */
+            $title = HTMLHelper::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
+        } else { /* new style using 'has Tooltip' */
+            $class = str_replace('hasTip', '', $class) . ' hasTooltip';
+            $title = HTMLHelper::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
+        }
+        $tooltip = '';
+
 
 		if ($href) {
 			$href = JRoute::_ ($href);
@@ -1729,11 +1721,7 @@ class JemHelper
 	 */
 	static public function stringURLSafe($string)
 	{
-		if (version_compare(JVERSION, '3.2', 'ge')) {
-			return JApplicationHelper::stringURLSafe($string);
-		} else {
-			return JApplication::stringURLSafe($string);
-		}
+		return JApplicationHelper::stringURLSafe($string);
 	}
 
 	/**

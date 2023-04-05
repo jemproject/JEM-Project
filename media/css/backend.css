@@ -777,7 +777,9 @@ a.label:focus {
 .label-info[href] {background-color: #245269;}
 .label-inverse {background-color: #333;}
 .label-inverse[href] {background-color: #1a1a1a;}
-.label-form {float:left; padding-top: 3px; min-width: 100px;}
+
+.label-form {float:left; padding: 10px 0 18px 0; min-width: 100px;}
+.select-time {padding: 5px;margin-top:5px;}
 
 /* --- ALERT CODE ---- */
 /* Taken from Joomla! template "isis" */

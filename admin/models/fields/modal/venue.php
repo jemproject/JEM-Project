@@ -58,7 +58,7 @@ class JFormFieldModal_Venue extends JFormField
 		
 
 		// if ($error = $db->getErrorMsg()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		//  Factory::getApplication()->enqueueMessage($error, 'warning');
 		// }
 		try
 		{
@@ -67,7 +67,7 @@ class JFormFieldModal_Venue extends JFormField
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (empty($venue)) {
@@ -96,15 +96,10 @@ class JFormFieldModal_Venue extends JFormField
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.Text::_('COM_JEM_SELECT').'
+		$html[] ='<button type="button" class="btn btn-link btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.Text::_('COM_JEM_SELECT').'
 		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
-
-		
-
-
-
 
 		// The active venue id field
 		if (0 == (int)$this->value) {

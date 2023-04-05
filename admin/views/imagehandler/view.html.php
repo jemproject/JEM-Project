@@ -62,11 +62,7 @@ class JemViewImagehandler extends JViewLegacy
 		$app->input->set('folder', $folder);
 
 		// Do not allow cache
-		if (version_compare(JVERSION, '3.0', 'ge')) {
-			$app->allowCache(false);
-		} else {
-			JResponse::allowCache(false);
-		}
+		$app->allowCache(false);
 
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
