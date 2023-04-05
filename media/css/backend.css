@@ -141,6 +141,7 @@ div.clear {
      height:1px;
      line-height:1px;
 }
+label#jform_hits-lbl {display: block;}
 .jem_centering {
      text-align:center;
      margin-top:0px;
