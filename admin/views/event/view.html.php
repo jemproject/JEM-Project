@@ -63,15 +63,6 @@ class JemViewEvent extends JemAdminView
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		if (version_compare(JVERSION, '3.0', 'lt')) {
-			$style = 'select.required {'
-					. 'background-color: #D5EEFF;'
-					. '}';
-			$this->document->addStyleDeclaration($style);
-		}
-
-		
-
 		// Load scripts
 		$wa->useScript('jquery');
 		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');

@@ -222,15 +222,7 @@ class JemHtml
 		$backend = (bool)Factory::getApplication()->isClient('administrator');
 		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
 		HTMLHelper::_('bootstrap.tooltip');
-		if (version_compare(JVERSION, '3.3', 'lt')) {
-			// on Joomla! 2.5/3.2 we use good old tooltips
-			// HTMLHelper::_('behavior.tooltip');		
-
-			$attr = 'class="hasTip" data-bs-toggle="tooltip" title="'.Text::_('COM_JEM_STATUS').'::'.Text::_($state[$canChange ? 4 : 3]).'"';
-		} else {
-			// on Joomla! 3.3+ we must use the new tooltips
-			$attr = 'class="hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), Text::_($state[$canChange ? 4 : 3]), 0).'"';
-		}
+        $attr = 'class="hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), Text::_($state[$canChange ? 4 : 3]), 0).'"';
 
 		if ($print) {
 			$html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], 'class="icon-inline-left"', $backend);

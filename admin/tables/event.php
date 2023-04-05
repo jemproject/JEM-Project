@@ -186,7 +186,7 @@ class JemTableEvent extends JTable
 			$this->modified = $date->toSql();
 			$this->modified_by = $userid;
 		} else {
-			$this->modified ='0000-00-00 00:00:00';
+			$this->modified = null;
 			if(empty($this->created_by_alias))
 				$this->created_by_alias='';
 			if(empty($this->language))

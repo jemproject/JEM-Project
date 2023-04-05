@@ -42,13 +42,13 @@ defined('_JEXEC') or die;
 						<!-- <option value="[locid]" <?php if(in_array("[locid]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 						<?php echo JText::_( 'COM_JEM_CITY' ); ?></option> -->
 						<option value="[dates]" <?php if(in_array("[dates]",$meta_key)) { echo "selected=\"selected\""; } ?>>
-						<?php echo JText::_( 'COM_JEM_DATE' ); ?></option>
+						<?php echo JText::_( 'COM_JEM_STARTDATE' ); ?></option>
 						<option value="[times]" <?php if(in_array("[times]",$meta_key)) { echo "selected=\"selected\""; } ?>>
-						<?php echo JText::_( 'COM_JEM_EVENT_TIME' ); ?></option>
+						<?php echo JText::_( 'COM_JEM_STARTTIME' ); ?></option>
 						<option value="[enddates]" <?php if(in_array("[enddates]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 						<?php echo JText::_( 'COM_JEM_ENDDATE' ); ?></option>
 						<option value="[endtimes]" <?php if(in_array("[endtimes]",$meta_key)) { echo "selected=\"selected\""; } ?>>
-						<?php echo JText::_( 'COM_JEM_END_TIME' ); ?></option>
+						<?php echo JText::_( 'COM_JEM_ENDTIME' ); ?></option>
 					</select>
 				</div>
 			</li>
@@ -57,10 +57,10 @@ defined('_JEXEC') or die;
 				<div style="display: inline-block;">
 					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_( 'COM_JEM_EVENT_TITLE' ); ?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php echo JText::_( 'COM_JEM_VENUE' ); ?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_( 'COM_JEM_DATE' ); ?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_( 'COM_JEM_EVENT_TIME' ); ?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_( 'COM_JEM_STARTDATE' ); ?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_( 'COM_JEM_STARTTIME' ); ?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_( 'COM_JEM_ENDDATE' ); ?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_( 'COM_JEM_END_TIME' ); ?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_( 'COM_JEM_ENDTIME' ); ?>" />
 					<br/>
 					<?php echo $this->form->getInput('meta_description'); ?>
 					<br/>

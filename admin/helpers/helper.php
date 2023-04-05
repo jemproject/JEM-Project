@@ -15,36 +15,22 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-// HTMLHelperSidebar exists since J! 3.0,2 but let's be a bit more established ;)
-if (version_compare(JVERSION, '3.2', 'lt')) {
-	class JemSidebarHelper extends JSubMenuHelper
-	{
-		public static function render()
-		{
-			/* Do nothing */
-		}
 
-		public static function getEntries()
-		{
-			return array();
-		}
-	}
-} else {
-	// class JemSidebarHelper extends HTMLHelperSidebar
-	class JemSidebarHelper extends JHtmlSidebar
+// class JemSidebarHelper extends HTMLHelperSidebar
+class JemSidebarHelper extends JHtmlSidebar
 
-	{
-		public static function render()
-		{
-			/* Do nothing */
-		}
+{
+    public static function render()
+    {
+        /* Do nothing */
+    }
 
-		public static function getEntries()
-		{
-			return array();
-		}
-	}
+    public static function getEntries()
+    {
+        return array();
+    }
 }
+
 
 /**
  * Helper: Backend

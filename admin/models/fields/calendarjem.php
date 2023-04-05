@@ -18,72 +18,38 @@ JFormHelper::loadFieldClass('calendar');
  *
  * @since  2.2.3
  */
-if (version_compare(JVERSION, '3.7', 'ge')) {
 
-	class JFormFieldCalendarJem extends JFormFieldCalendar
-	{
-		/**
-		 * The form field type.
-		 *
-		 * @var    string
-		 */
-		protected $type = 'CalendarJem';
+class JFormFieldCalendarJem extends JFormFieldCalendar
+{
+    /**
+     * The form field type.
+     *
+     * @var    string
+     */
+    protected $type = 'CalendarJem';
 
-		/**
-		 * Method to get the data to be passed to the layout for rendering.
-		 *
-		 * @return  array
-		 */
-		protected function getLayoutData()
-		{
-			$data = parent::getLayoutData();
+    /**
+     * Method to get the data to be passed to the layout for rendering.
+     *
+     * @return  array
+     */
+    protected function getLayoutData()
+    {
+        $data = parent::getLayoutData();
 
-			if (!empty($this->hint)) {
-				return $data;
-			}
+        if (!empty($this->hint)) {
+            return $data;
+        }
 
-			// add hint regarding date/time format accepted in edit field
-			$exampleTimestamp = strtotime("NOW");
-            $date_format = str_replace("%","",$this->format);
-			$hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
+        // add hint regarding date/time format accepted in edit field
+        $exampleTimestamp = strtotime("NOW");
+        $date_format = str_replace("%","",$this->format);
+        $hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
-			$extraData = array(
-				'hint' => $hint,
-			);
+        $extraData = array(
+            'hint' => $hint,
+        );
 
-			return array_merge($data, $extraData);
-		}
-	}
-
-} else {
-
-	class JFormFieldCalendarJem extends JFormFieldCalendar
-	{
-		/**
-		 * The form field type.
-		 *
-		 * @var    string
-		 * @note   MUST be public.
-		 */
-		public $type = 'CalendarJem';
-
-		/**
-		 * Method to get the field input markup.
-		 *
-		 * @return  string  The field input markup.
-		 */
-		protected function getInput()
-		{
-			// don't translate format; it MUST be Y-m-d to keep calendar popup working
-
-			if (empty($this->hint)) {
-				// add hint regarding date/time format accepted in edit field
-				$exampleTimestamp = strtotime("NOW");
-				$this->hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', date($this->format, $exampleTimestamp));
-			}
-
-			return parent::getInput();
-		}
-	}
-
+        return array_merge($data, $extraData);
+    }
 }
