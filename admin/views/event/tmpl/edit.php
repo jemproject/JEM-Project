@@ -526,7 +526,7 @@ Joomla.submitbutton = function(task)
 								$meta_keywords = $this->jemsettings->meta_keywords;
 							}
 							?>
-							<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
+							<textarea class="inputbox form-control" name="meta_keywords" id="meta_keywords" rows="6" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
 
 							<label for="meta_description"><?php echo Text::_ ('COM_JEM_META_DESCRIPTION') . ':';?></label>
 							<br />
@@ -538,7 +538,7 @@ Joomla.submitbutton = function(task)
 								$meta_description = $this->jemsettings->meta_description;
 							}
 							?>
-							<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
+							<textarea class="inputbox form-control" name="meta_description" id="meta_description" rows="6" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
 						</fieldset>
 
 						<fieldset class="panelform">

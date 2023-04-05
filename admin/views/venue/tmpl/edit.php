@@ -354,7 +354,7 @@ $location = JemHelper::defineCenterMap($this->form);
 						<div id="meta-event" class="accordion-collapse collapse" aria-labelledby="meta-event-header" data-bs-parent="#accordionVenueForm">
 							<div class="accordion-body">
 								<fieldset class="panelform">
-									<input type="button" class="button" value="<?php echo Text::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="meta()" />
+									<input type="button" class="btn btn-primary" value="<?php echo Text::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="meta()" />
 									<ul class="adminformlist">
 										<?php foreach($this->form->getFieldset('meta') as $field): ?>
 											<li><?php echo $field->label; ?>

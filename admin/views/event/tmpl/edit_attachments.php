@@ -54,11 +54,11 @@ defined ('_JEXEC') or die;
 				</div>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
-					<input type="text" name="attach-name[]" value="" class="form-control w-75" />
+					<input type="text" name="attach-name[]" value="" class="form-control valid form-control-success w-75" />
 				</div>
 				<div>
 					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
-					<input type="text" name="attach-desc[]" value="" class="form-control w-75" />
+					<input type="text" name="attach-desc[]" value="" class="form-control valid form-control-success w-75" />
 				</div>
 			</td>
 			<td>
@@ -71,4 +71,3 @@ defined ('_JEXEC') or die;
 		</tr>
 	</tbody>
 </table>
-

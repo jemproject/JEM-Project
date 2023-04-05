@@ -57,7 +57,7 @@ defined('_JEXEC') or die;
 							<td>
 								<input class="inputbox" name="userfile" id="userfile" type="file" />
 								<br /><br />
-								<input class="button" type="submit" value="<?php echo JText::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
+								<input class="btn btn-primary" type="submit" value="<?php echo JText::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
 							</td>
 						</tr>
 					</tbody>
