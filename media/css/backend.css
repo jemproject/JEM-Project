@@ -688,6 +688,11 @@ fieldset.adminform label.btn {
 }
 .btn-margin { margin: 0 3px; }
 
+ /* to save some space: slightly smaller table of events in backend then Joomla standard  */
+table#eventList>:not(caption)>*>* {
+ padding:.75rem .75rem;
+}
+
 #eventList .eventtitle {}
 
 #eventList .starttime {white-space: nowrap;}
