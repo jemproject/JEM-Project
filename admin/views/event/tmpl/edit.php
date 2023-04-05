@@ -222,20 +222,20 @@ Joomla.submitbutton = function(task)
 				</li>
 				<li><?php echo $this->form->getLabel('enddates'); ?> <?php echo $this->form->getInput('enddates'); ?>
 				</li>
-				<li><?php echo $this->form->getLabel('times'); ?> <?php echo $this->form->getInput('times'); ?>
+                <li><div class="label-form"><?php echo $this->form->getLabel('times'); ?></div> <?php echo $this->form->getInput('times'); ?>
 				</li>
-				<li><?php echo $this->form->getLabel('endtimes'); ?> <?php echo $this->form->getInput('endtimes'); ?>
+                <li><div class="label-form"><?php echo $this->form->getLabel('endtimes'); ?></div> <?php echo $this->form->getInput('endtimes'); ?>
 				</li>
-				<li><?php echo $this->form->getLabel('cats'); ?> <?php echo $this->form->getInput('cats'); ?>
+                <li><div class="label-form"><?php echo $this->form->getLabel('cats'); ?></div> <?php echo $this->form->getInput('cats'); ?>
 				</li>
 			</ul>
 		</fieldset>
 
 		<fieldset class="adminform">
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?>
+				<li><div class="label-form"><?php echo $this->form->getLabel('locid'); ?></div><?php echo $this->form->getInput('locid'); ?>
 				</li>
-				<li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?>
+				<li><div class="label-form"><?php echo $this->form->getLabel('contactid'); ?></div><?php echo $this->form->getInput('contactid'); ?>
 				</li>
 				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
 				</li>
