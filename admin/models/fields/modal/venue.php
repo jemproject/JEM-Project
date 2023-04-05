@@ -77,7 +77,7 @@ class JFormFieldModal_Venue extends JFormField
 
 		// The current venue input field
 		$html[] = '<div class="fltlft">';
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
+		$html[] = '  <input class="form-control" type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
 		$html[] = '</div>';
 
 		// The venue select button
@@ -96,7 +96,7 @@ class JFormFieldModal_Venue extends JFormField
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.Text::_('COM_JEM_SELECT').'
+		$html[] ='<button type="button" class="btn btn-link btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.Text::_('COM_JEM_SELECT').'
 		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
