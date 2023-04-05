@@ -93,7 +93,7 @@ class JFormFieldModal_Contact extends JFormField
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.JText::_('COM_JEM_SELECT').'
+		$html[] ='<button type="button" class="btn btn-link btn-primary"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.JText::_('COM_JEM_SELECT').'
 		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
