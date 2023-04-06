@@ -724,7 +724,6 @@ fieldset.panelform fieldset.radio label {
      display:inline;
 }
 fieldset.adminform .inputbox {margin-left: inherit;}
-select.inputbox, textarea.inputbox {padding: 0.5rem;}
 
 /* -- Help --------------------------- */
 .helpFrame {
