@@ -577,10 +577,10 @@
 				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
-				<option value="index, follow">JGLOBAL_INDEX_FOLLOW</option>
-				<option value="noindex, follow">JGLOBAL_NOINDEX_FOLLOW</option>
-				<option value="index, nofollow">JGLOBAL_INDEX_NOFOLLOW</option>
-				<option value="noindex, nofollow">JGLOBAL_NOINDEX_NOFOLLOW</option>
+				<option value="index, follow">COM_JEM_INDEX_FOLLOW</option>
+				<option value="noindex, follow">COM_JEM_NOINDEX_FOLLOW</option>
+				<option value="index, nofollow">COM_JEM_INDEX_NOFOLLOW</option>
+				<option value="noindex, nofollow">COM_JEM_NOINDEX_NOFOLLOW</option>
 			</field>
 			<field name="author" type="text"
 				   label="JAUTHOR"
