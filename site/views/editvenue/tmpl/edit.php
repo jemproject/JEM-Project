@@ -274,7 +274,7 @@ window.onload = (event) => {
 
 					<div class="map_canvas"></div>
 
-					<ul class="adminformlist">
+					<ul class="adminformlist label-button-line">
 						<li><label><?php echo Text::_('COM_JEM_STREET'); ?></label>
 							<input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
 							<input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />

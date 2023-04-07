@@ -29,12 +29,12 @@ defined('_JEXEC') or die;
 			<li><label id="jform_meta_keywords-lbl" <?php echo JEMOutput::tooltip(JText::_('COM_JEM_META_KEYWORDS'), JText::_('COM_JEM_META_KEYWORDS_DESC')); ?>>
 					<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>
 				</label>
-				<div style="display: inline-block;">
+				<div style="display: block;">
 					<?php
 						// TODO use jforms here
 						$meta_key = explode(", ", $this->data->meta_keywords);
 					?>
-					<select name="meta_keywords[]" multiple="multiple" size="5" class="inputbox" id="jform_meta_keywords">
+					<select name="meta_keywords[]" multiple="multiple" size="6" class="inputbox form-control" id="jform_meta_keywords">
 						<option value="[title]" <?php if(in_array("[title]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 						<?php echo JText::_( 'COM_JEM_EVENT_TITLE' ); ?></option>
 						<option value="[a_name]" <?php if(in_array("[a_name]",$meta_key)) { echo "selected=\"selected\""; } ?>>
@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 			</li>
 
 			<li><?php echo $this->form->getLabel('meta_description'); ?>
-				<div style="display: inline-block;">
+				<div style="display: block;">
 					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_( 'COM_JEM_EVENT_TITLE' ); ?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php echo JText::_( 'COM_JEM_VENUE' ); ?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_( 'COM_JEM_STARTDATE' ); ?>" />

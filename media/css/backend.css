@@ -48,6 +48,11 @@ input#clear {
 input#clear:focus {cursor: pointer;}
 .colorpicker {border:1px solid grey;}
 
+.label-button-line li label {width: 130px;}
+.label-button-line li div.minicolors {display: inline-block;margin-bottom: 6px;}
+.label-button-line li div.geodata-info {display: inline-block;margin-bottom: 6px;width: calc(100% - 140px);
+}
+
 div.linkicon a {
      display:block;
      border:1px solid #f0f0f0;
@@ -851,11 +856,12 @@ a.label:focus {
      text-align: right; */
 }
 .icon-back:before{ content:"\f053" }
+.admin.com_jem label[id*='jform'] {margin-top: 1rem;}
 .adminform legend {
      display: block;
      width: 100%;
      padding: 0.25rem 0;
-     margin: 2rem 0;
+     margin: 2rem 0 0;
      font-size: 1.4rem;
      line-height: 2rem;
      font-weight: bold;

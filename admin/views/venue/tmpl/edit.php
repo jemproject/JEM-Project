@@ -381,44 +381,35 @@ $location = JemHelper::defineCenterMap($this->form);
 									<div class="clr"></div>
 									<div id="mapdiv">
 										<input id="geocomplete" type="text" size="55" placeholder="<?php echo Text::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-										<input id="find-left" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA');?>" />
+										<input id="find-left" class="geobutton btn btn-primary btn-margin" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA');?>" />
 										<div class="clr"></div>
 										<div class="map_canvas"></div>
-
-										<ul class="adminformlist">
+										<ul class="adminformlist label-button-line">
 											<li><label><?php echo Text::_('COM_JEM_STREET'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_street" />
-											
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_street" />
 												<input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
-												<input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
+												<input type="hidden" class="readonly form-control valid" id="tmp_form_route" readonly="readonly" />
 												</li>
-
 											<li><label><?php echo Text::_('COM_JEM_ZIP'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" /></li>
-
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_postalCode" /></li>
 											<li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_city"/></li>
-
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_city"/></li>
 											<li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_state" /></li>
-												
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_state" /></li>
 											<li><label><?php echo Text::_('COM_JEM_VENUE'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" /></li>
-
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_venue" /></li>
 											<li><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_country" /></li>
-
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_country" /></li>
 											<li><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" /></li>
-
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_latitude" /></li>
 											<li><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label>
-												<input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" /></li>
+												<input type="text" disabled="disabled" class="readonly form-control valid w-50" id="tmp_form_longitude" /></li>
 										</ul>
 										<div class="clr"></div>
-										<input id="cp-all" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
-										<input id="cp-address" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
-										<input id="cp-venue" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
-										<input id="cp-latlong" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
+										<input id="cp-all" class="geobutton btn btn-primary btn-margin" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
+										<input id="cp-address" class="geobutton btn btn-primary btn-margin" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
+										<input id="cp-venue" class="geobutton btn btn-primary btn-margin" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
+										<input id="cp-latlong" class="geobutton btn btn-primary btn-margin" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
 									</div>
 								</fieldset>
 							</div>
