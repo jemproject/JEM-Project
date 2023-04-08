@@ -930,7 +930,7 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'com');
+		$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'com').'+('.$data->venue.')';
 
 		// google map link or include
 		switch ($mapserv)
