@@ -247,7 +247,7 @@ $(document).ready(function() {
 							if ($row->author_ip != '') {
 								$overlib		.= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br /><br />';
 							}
-							if ($row->modified != NULL) {
+							if ($row->modified != 0000-00-00 00:00:00' || NULL) {
 								$overlib 	.= Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC4') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
 							}
 							?>

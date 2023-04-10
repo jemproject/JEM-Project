@@ -175,29 +175,24 @@ $(document).ready(function() {
 						<td class="country"><?php echo $row->country ? $this->escape($row->country) : '-'; ?></td>
 						<td class="center"><?php echo $published; ?></td>
 						<td>
-							<?php echo Text::_('COM_JEM_AUTHOR').': '; ?>
-							<a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>">
-								<?php echo $row->author; ?>
-							</a>
-							<br />
-							<?php echo Text::_('COM_JEM_EMAIL').': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
 							<?php
-							$created 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC2'));
-							$modified 		= HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC2'));
+							$created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC4'));
 							$image 			= HTMLHelper::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
-
-							$overlib 		= Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
+							$overlib 		= '<br />'.Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
+							$overlib 		.= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br />';
+							$overlib 		.= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br />';
 							if ($row->author_ip != '') {
 								$overlib		.= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
 							}
-							if ($row->modified != '0000-00-00 00:00:00') {
-								$overlib 	.= Text::_('COM_JEM_EDITED_AT').': '.$modified.'<br />';
-								$overlib 	.= Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by.'<br />';
+							if ($row->modified != NULL) {
+								$overlib 	.= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC4') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
 							}
 							?>
-							<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_VENUES_STATS'), $overlib, 'editlinktip'); ?>>
-								<?php echo $image; ?>
-							</span>
+							<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>
+							
+							<a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a></span>
+							
+							
 						</td>
 						<td class="center"><?php echo $row->assignedevents; ?></td>
 						<td class="order">
