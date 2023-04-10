@@ -131,7 +131,7 @@ abstract class ModJemHelper
 			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
 			                                                 $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->text     = $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city     = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
+			if (!empty($row->city)) { $lists[$i]->city     = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8'); }
 			$lists[$i]->venueurl = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
 			$lists[$i]->featured = $row->featured;
 			
