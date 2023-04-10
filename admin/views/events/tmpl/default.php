@@ -239,10 +239,10 @@ $(document).ready(function() {
 						</td>
 						<td>
 							<?php
-							$created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC2'));
+							$created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC4'));
 							$image 			= HTMLHelper::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
 							if ($row->modified != NULL) {
-								$modified = HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC2') );
+								$modified = HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC4') );
 								}
 
 							$overlib 		= Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
