@@ -50,6 +50,7 @@ class JemViewEventslist extends JemView
 		$pathway     = $app->getPathWay();
 		$user        = JemFactory::getUser();
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$uri         = Uri::getInstance();
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -102,12 +103,12 @@ class JemViewEventslist extends JemView
 
 		if ($task == 'archive') {
 			$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=eventslist&task=archive'));
-			$print_link = Route::_('index.php?option=com_jem&view=eventslist&task=archive&tmpl=component&print=1');
+			$print_link = $uri->toString() . "?task=archive&print=1";
 			$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = Route::_('index.php?option=com_jem&view=eventslist&tmpl=component&print=1');
+			$print_link = $uri->toString() . "?print=1";
 		}
 
 		// Add site name to title if param is set
