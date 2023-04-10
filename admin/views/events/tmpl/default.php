@@ -221,7 +221,7 @@ $(document).ready(function() {
 						</td>
 						<td class="city"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 						<td class="state"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
-                        <td class="state"><?php echo $row->state ? $this->escape($row->country) : '-'; ?></td>
+                        <td class="country"><?php echo $row->country ? $this->escape($row->country) : '-'; ?></td>
 						<td class="category">
 							<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist,true)); ?>
 						</td>
