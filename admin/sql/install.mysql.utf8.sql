@@ -254,7 +254,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('autopublocate', '-2'),
 ('showcat', '1'),
 ('catfrowidth', '15%'),
-('image_filetypes', 'jpg,gif,png'),
+('image_filetypes', 'jpg,gif,png,webp'),
 ('sizelimit', '100'),
 ('imagehight', '100'),
 ('imagewidth', '100'),
