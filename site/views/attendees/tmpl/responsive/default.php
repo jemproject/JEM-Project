@@ -190,7 +190,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
             <div class="jem-event-info-small jem-attendee-remove">
               <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
-                <?php echo JemOutput::removebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip'); ?>
+                <?php echo JemOutput::removebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
               </a>
             </div>
           </li>
