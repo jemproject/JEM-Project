@@ -108,7 +108,7 @@ class JemViewEventslist extends JemView
 			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = $uri->toString() . "?print=1";
+			$print_link = $uri->toString() . "?print=1&amp;tmpl=component&amp;";
 		}
 
 		// Add site name to title if param is set
