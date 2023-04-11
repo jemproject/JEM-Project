@@ -59,14 +59,9 @@ class JemViewVenue extends JemAdminView
 		// Load Scripts
 		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
 		$wa->useScript('jquery');
-		
-		
-
 		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
 		
-		
 		//$this->document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
-		
 		
 		$language = Factory::getApplication()->getLanguage();
 		$language = $language->getTag();
