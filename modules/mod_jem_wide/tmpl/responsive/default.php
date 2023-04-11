@@ -11,15 +11,19 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 // JHtml::_('behavior.modal', 'a.flyermodal');
 
-/*$module_name = 'mod_jem_wide';
+/*
+$uri = Uri::getInstance();
+$module_name = 'mod_jem_wide';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css']);
-  $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-}*/
+  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css']);
+  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
+}
+*/
 
 $jemsettings = JemHelper::config();
 

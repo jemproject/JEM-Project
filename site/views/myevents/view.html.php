@@ -33,7 +33,6 @@ class JemViewMyevents extends JemView
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$params       = $app->getParams();
-		// $uri          = Factory::getURI();
 		$uri          = Uri::getInstance();
 		$user         = JemFactory::getUser();
 		$userId       = $user->get('id');

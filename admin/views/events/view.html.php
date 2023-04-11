@@ -12,6 +12,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+
 
 /**
  * Events-View
@@ -30,7 +32,8 @@ class JemViewEvents extends JemAdminView
 		$user 			= JemFactory::getUser();
 		$settings 		= JemHelper::globalattribs();
 		$jemsettings 	= JemAdmin::config();
-		$url 			= JUri::root();
+		$uri            = Uri::getInstance();
+		$url 			= $uri->root();
 
 		// Initialise variables.
 		$this->items		= $this->get('Items');

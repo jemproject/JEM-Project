@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -36,10 +37,10 @@ class JemControllerMailto extends JemControllerForm
 		$app     = Factory::getApplication();
 		$model   = $this->getModel('mailto');
 		$data    = $model->getData();
-		$currentUri = (string)JUri::getInstance();
+		$uri= Uri::getInstance();
 		$form = $model->getForm();
 		$post_link = $this->input->post->get('link', '', 'post');
-		$currentUri .= '&link='.$post_link;
+		$currentUri = $uri->toString() . '&link='.$post_link;
 		
 		if (!$form)
 		{
@@ -91,7 +92,7 @@ class JemControllerMailto extends JemControllerForm
 		$link     = JemMailtoHelper::validateHash($this->input->post->get('link', '', 'post'));
 		
 		// Verify that this is a local link
-		if (!$link || !JUri::isInternal($link))
+		if (!$link || !Uri::isInternal($link))
 		{
 			// Non-local url...
 			$app->enqueueMessage( JText::_('COM_JEM_MAILTO_EMAIL_NOT_SENT'), 'error');

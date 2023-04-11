@@ -162,7 +162,6 @@ class JemOutput
 			$settings  = JemHelper::globalattribs();
 			$settings2 = JemHelper::config();
 
-			// $uri = Factory::getURI();
 			$uri       = Uri::getInstance();
 			$app = Factory::getApplication();
 
@@ -201,7 +200,6 @@ class JemOutput
 		if ($addvenuelink) {
 			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			// $uri      = Factory::getURI();
 			$uri       = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
@@ -240,7 +238,6 @@ class JemOutput
 		if ($adduserslink) {
 			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			// $uri      = Factory::getURI();
 			$uri       = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
@@ -306,7 +303,6 @@ class JemOutput
 	 **/
 	static public function prepareAddEventButton($urlparams = '')
 	{
-		// $uri = Factory::getURI();
 		$uri       = Uri::getInstance();
 		$image = HTMLHelper::_('image', 'com_jem/icon-16-new.png', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
 		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
@@ -417,7 +413,6 @@ class JemOutput
 			// Initialise variables.
 			$user   = JemFactory::getUser();
 			$userId = $user->get('id');
-			// $uri    = Factory::getURI();
 			$uri       = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
@@ -519,7 +514,6 @@ class JemOutput
 			// Initialise variables.
 			$user   = JemFactory::getUser();
 			$userId = $user->get('id');
-			// $uri    = Factory::getURI();
 			$uri       = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
@@ -642,7 +636,7 @@ class JemOutput
 			//HTMLHelper::_('behavior.tooltip');
 			// require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
 
-			$uri = JUri::getInstance();
+			$uri = Uri::getInstance();
 			$base = $uri->toString(array('scheme', 'host', 'port'));
 			$template = Factory::getApplication()->getTemplate();
 			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
@@ -1096,6 +1090,7 @@ class JemOutput
 		$id_attr = $id ? 'id="'.$id.'"' : '';
 
 		$settings = JemHelper::config();
+		$uri = Uri::getInstance();
 
 		switch($type) {
 			case 'event':
@@ -1128,21 +1123,21 @@ class JemOutput
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 
-				$icon = '<img '.$attributes.' src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
 				// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-				$url = JUri::base().$image['original'];
+				$url = $uri->base().$image['original'];
 				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
 
-				$icon = '<img src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img '.$id_attr.' class="notmodal" src="'.JUri::base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;
@@ -1159,6 +1154,7 @@ class JemOutput
 
 	static public function flyer2($data, $image, $type, $id = null)
 	{
+		$uri = Uri::getInstance();
 		$id_attr = $id ? 'id="'.$id.'"' : '';
 		$settings = JemHelper::config();
 		switch($type) {
@@ -1189,21 +1185,21 @@ class JemOutput
 /*		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 
-				$icon = '<img '.$attributes.' src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
 				HTMLHelper::_('behavior.modal', 'a.flyermodal');
-				$url = JUri::base().$image['original'];
+				$url = $uri->base().$image['original'];
 				$attributes = $id_attr.' class="flyermodal flyerimage2" title="'.$info.'"';
 
-				$icon = '<img src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {*/
-		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.JURI::base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
 //		}
 		return $output;
 	}

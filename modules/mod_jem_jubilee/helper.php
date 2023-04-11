@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
@@ -39,6 +40,7 @@ abstract class ModJemJubileeHelper
         $db     = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
+        $uri    = Uri::getInstance();
 
 		# Retrieve Eventslist model for the data
 		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
@@ -264,16 +266,16 @@ abstract class ModJemJubileeHelper
 				$lists[$i]->eventimage     = '';
 				$lists[$i]->eventimageorig = '';
 			} else {
-				$lists[$i]->eventimage     = JUri::base(true).'/'.$dimage['thumb'];
-				$lists[$i]->eventimageorig = JUri::base(true).'/'.$dimage['original'];
+				$lists[$i]->eventimage     = $uri->base(true).'/'.$dimage['thumb'];
+				$lists[$i]->eventimageorig = $uri->base(true).'/'.$dimage['original'];
 			}
 
 			if ($limage == null) {
 				$lists[$i]->venueimage     = '';
 				$lists[$i]->venueimageorig = '';
 			} else {
-				$lists[$i]->venueimage     = JUri::base(true).'/'.$limage['thumb'];
-				$lists[$i]->venueimageorig = JUri::base(true).'/'.$limage['original'];
+				$lists[$i]->venueimage     = $uri->base(true).'/'.$limage['thumb'];
+				$lists[$i]->venueimageorig = $uri->base(true).'/'.$limage['original'];
 			}
 
 			# append <br /> tags on line breaking tags so they can be stripped below

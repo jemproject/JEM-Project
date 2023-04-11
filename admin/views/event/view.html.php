@@ -13,6 +13,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+
 /**
  * Event View
  */
@@ -48,7 +50,8 @@ class JemViewEvent extends JemAdminView
 		$this->settings	= JemAdmin::config();
 		$task			= $app->input->get('task', '');
 		$this->task 	= $task;
-		$url 			= JUri::root();
+		$uri            = Uri::getInstance();
+		$url 			= $uri->root();
 
 		$categories 	= JemCategories::getCategoriesTree(1);
 		$selectedcats 	= $this->get('Catsselected');

@@ -17,6 +17,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Uri\Uri;
+
 class JemHelperCountries
 {
 	/**
@@ -1076,11 +1078,12 @@ class JemHelperCountries
 	 */
 	static public function getIsoFlag($iso_code)
 	{
+		$uri = Uri::getInstance();
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);
 		}
 		if ($iso_code) {
-			$path = JUri::root().'media/com_jem/images/flags/'.strtolower($iso_code).'.gif';
+			$path = $uri->root().'media/com_jem/images/flags/'.strtolower($iso_code).'.gif';
 			return $path;
 		}
 		else

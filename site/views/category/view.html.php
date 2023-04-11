@@ -54,7 +54,6 @@ class JemViewCategory extends JemView
 			$menu        = $app->getMenu();
 			$menuitem    = $menu->getActive();
 			$params      = $app->getParams();
-			// $uri         = Factory::getURI();
 			$uri         = Uri::getInstance();
 			$pathway     = $app->getPathWay();
 			$print       = $app->input->getBool('print', false);
@@ -165,7 +164,6 @@ class JemViewCategory extends JemView
 			// HTMLHelper::_('behavior.tooltip');
 
 			// get menu information
-			// $uri      = Factory::getURI();
 			$uri      = Uri::getInstance();
 			$pathway  = $app->getPathWay();
 			$menu     = $app->getMenu();

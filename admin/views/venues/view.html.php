@@ -13,6 +13,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
 
 /**
  * View class: Venues
@@ -29,7 +31,8 @@ use Joomla\CMS\Factory;
 		$user     = JemFactory::getUser();
         $app      = Factory::getApplication();
         $document = $app->getDocument();
-		$url      = JUri::root();
+        $uri      = Uri::getInstance();
+		$url      = $uri->root();
 		$settings = JemHelper::globalattribs();
 
 		// Initialise variables.

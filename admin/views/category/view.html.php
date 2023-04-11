@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Category View
@@ -35,6 +36,7 @@ class JemViewCategory extends JemAdminView
 
         $app = Factory::getApplication();
         $this->document = $app->getDocument();
+        $uri = Uri::getInstance();
 
 		// Check for errors.
 		$errors = $this->get('Errors');
@@ -51,7 +53,7 @@ class JemViewCategory extends JemAdminView
 		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css');
 
 		// Load Script
-		$this->document->addScript(JUri::root().'media/com_jem/js/colorpicker.js');
+		$this->document->addScript($uri->root().'media/com_jem/js/colorpicker.js');
 
 		// build grouplist
 		// @todo: make a form-field for this one
