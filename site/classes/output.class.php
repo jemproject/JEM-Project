@@ -952,7 +952,7 @@ class JemOutput
 					$url = 'https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'com').'?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 				else {
-					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
