@@ -47,7 +47,6 @@ class JemViewVenue extends JemView
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$params      = $app->getParams();
-			// $uri         = Factory::getURI();
 			$uri          = Uri::getInstance();
 			$pathway     = $app->getPathWay();
 			$jinput      = $app->input;
@@ -159,7 +158,6 @@ class JemViewVenue extends JemView
 			$settings    = JemHelper::globalattribs();
 			$params      = $app->getParams('com_jem');
 			$pathway     = $app->getPathWay ();
-			// $uri         = Factory::getURI();
 			$uri          = Uri::getInstance();
 			$jinput      = $app->input;
 			$task        = $jinput->getCmd('task', '');

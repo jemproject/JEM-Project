@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Uri\Uri;
+$uri = Uri::getInstance();
 ?>
 
 <script type="text/javascript">
@@ -342,8 +344,8 @@ defined('_JEXEC') or die;
           </div>
           
           <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
-          <meta itemprop="url" content="<?php echo rtrim(JURI::base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" /> 
-          <meta itemprop="identifier" content="<?php echo rtrim(JURI::base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />                           
+          <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+          <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
           <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
             <?php if (!empty($row->locid)) : ?>
               <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -22,6 +23,7 @@ $user        = JemFactory::getUser();
 $jemsettings = JemHelper::config();
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
+$uri         = Uri::getInstance();
 
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {
@@ -35,8 +37,8 @@ if ($jemsettings->oldevent > 0) {
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="https://schema.org/Event">
   
-  <meta itemprop="url" content="<?php echo rtrim(JURI::base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-  <meta itemprop="identifier" content="<?php echo rtrim(JURI::base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />  
+  <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+  <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   
 	<div class="buttons">
 		<?php

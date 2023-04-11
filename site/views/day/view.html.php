@@ -41,7 +41,6 @@ class JemViewDay extends JemView
 		$menuitem    = $menu->getActive();
 		$document    = $app->getDocument();
 		$params      = $app->getParams();
-		// $uri         = Factory::getURI();
 		$uri         = Uri::getInstance();
 		$jinput      = $app->input;
 		$task        = $jinput->getCmd('task', '');
