@@ -165,7 +165,6 @@ div#page-parameters fieldset.adminform .el-spacer {
 }
 /* align radio buttons horizontally */
 .inputbox {
-     margin:5px;
      cursor:pointer;
 }
 /* align radio buttons on import page */
