@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
@@ -26,11 +27,13 @@ if ($flyer_link_type == 1) {
 	$modal = '';
 }
 
-/*$module_name = 'mod_jem_banner';
+/*
+$uri = Uri::getInstance();
+$module_name = 'mod_jem_banner';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css']);
-  $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
+  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css']);
+  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
 }*/
 
 $banneralignment = "jem-vertical-banner";

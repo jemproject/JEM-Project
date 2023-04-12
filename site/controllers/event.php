@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -227,13 +228,14 @@ class JemControllerEvent extends JemControllerForm
 	 */
 	protected function getReturnPage()
 	{
+        $uri = Uri::getInstance();
 		$return = Factory::getApplication()->input->get('return', null, 'base64');
 
-		if (empty($return) || !JUri::isInternal(base64_decode($return))) {
+		if (empty($return) || !Uri::isInternal(base64_decode($return))) {
 			if (!empty($this->_id)) {
 				return JRoute::_(JemHelperRoute::getEventRoute($this->_id));
 			}
-			return JUri::base();
+			return $uri->base();
 		}
 		else {
 			return base64_decode($return);

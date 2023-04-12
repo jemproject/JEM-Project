@@ -20,6 +20,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 // Import library dependencies
 jimport('joomla.event.plugin');
@@ -86,7 +87,8 @@ class plgJemMailer extends JPlugin
 		if (!array_filter($send_to)) {
 			return true;
 		}
-
+		
+		$uri      = Uri::getInstance();
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
@@ -128,7 +130,7 @@ class plgJemMailer extends JPlugin
 		}
 
 		//create link to event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description and comment
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -269,7 +271,9 @@ class plgJemMailer extends JPlugin
 		if (!array_filter($send_to)) {
 			return true;
 		}
-
+		
+		$uri = Uri::getInstance();
+		
 		// get data
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
@@ -300,7 +304,7 @@ class plgJemMailer extends JPlugin
 		$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
 		// create link to event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -366,6 +370,8 @@ class plgJemMailer extends JPlugin
 		if (!array_filter($send_to)) {
 			return true;
 		}
+		
+		$uri = Uri::getInstance();
 
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
@@ -418,7 +424,7 @@ class plgJemMailer extends JPlugin
 		}
 
 		// create link to event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -533,6 +539,8 @@ class plgJemMailer extends JPlugin
 		if (!array_filter($send_to)) {
 			return true;
 		}
+		
+		$uri = Uri::getInstance();
 
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
@@ -564,7 +572,7 @@ class plgJemMailer extends JPlugin
 		}
 
 		// Link for event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -669,6 +677,8 @@ class plgJemMailer extends JPlugin
 		if (!array_filter($send_to)) {
 			return true;
 		}
+		
+		$uri = Uri::getInstance();
 
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
@@ -698,7 +708,7 @@ class plgJemMailer extends JPlugin
 		# at this point we do have a result
 
 		// Define link for venue
-		$link = JRoute::_(JUri::root().JEMHelperRoute::getVenueRoute($venue->slug), false);
+		$link = JRoute::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
 		// Define published-state message
 		$adminstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');

@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
@@ -952,6 +953,7 @@ class JemHelper
 		$timezone_name = JemHelper::getTimeZoneName();
 		$config        = Factory::getConfig();
 		$sitename      = $config->get('sitename');
+        $uri           = Uri::getInstance();
 
 		// get categories names
 		$categories = array();
@@ -1041,7 +1043,7 @@ class JemHelper
 		$description = $event->title.'\\n';
 		$description .= Text::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		$link = JUri::root().JemHelperRoute::getEventRoute($event->slug);
+		$link = $uri->root().JemHelperRoute::getEventRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= Text::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
@@ -1272,7 +1274,8 @@ class JemHelper
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
 		$document = Factory::getDocument();
-		$url      = JUri::root();
+        $uri      = Uri::getInstance();
+		$url      = $uri->root();
 		if (!empty($suffix)) {
 			$suffix = '-' . $suffix;
 		}
