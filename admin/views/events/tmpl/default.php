@@ -98,7 +98,7 @@ $(document).ready(function() {
 			</div>
 		</fieldset>
 		<div class="clr"> </div>
-		<div class="table-responsive">
+		<div class="table">
 			<table class="table table-striped itemList" id="eventList">
 				<thead>
 					<tr>
