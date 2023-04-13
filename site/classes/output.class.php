@@ -943,7 +943,7 @@ class JemOutput
 			case 2:
 				// include iframe
 				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'com').'?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+					$url = 'https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'com').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 				else {
 					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
