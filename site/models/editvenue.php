@@ -117,7 +117,7 @@ class JemModelEditvenue extends JemModelVenue
 		$value->attachments = $files;
 
 		// Preset values on new venues
-		if (empty($itemId)) {
+		if (isset($jemsettings->defaultCountry)) && (empty($itemId)) {
 			$value->country = $jemsettings->defaultCountry;
 		}
 
