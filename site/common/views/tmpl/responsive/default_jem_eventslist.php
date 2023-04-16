@@ -103,8 +103,7 @@ function jem_common_show_filter(&$obj) {
       <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
     </div>
 	  	<?php if ($this->settings->get('global_display',1)) : ?>
-	<div class="jem_fright">
-		   
+	<div class="jem-limit-smallist">
 		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 		
