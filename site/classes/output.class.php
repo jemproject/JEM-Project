@@ -924,7 +924,7 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'com').'+('.$data->venue.')';
+		$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')';
 
 		// google map link or include
 		switch ($mapserv)
@@ -932,7 +932,7 @@ class JemOutput
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'com').'+('.$data->venue.')';
+					$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')';
 				}
 
 				$message = Text::_('COM_JEM_MAP').':';
@@ -943,10 +943,10 @@ class JemOutput
 			case 2:
 				// include iframe
 				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'com').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 				else {
-					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
