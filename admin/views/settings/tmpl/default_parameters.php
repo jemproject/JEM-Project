@@ -50,8 +50,8 @@ defined('_JEXEC') or die;
 				<li><?php echo $this->form->getLabel('global_show_detailsadress',$group); ?> <?php echo $this->form->getInput('global_show_detailsadress',$group); ?></li>
 				<li><?php echo $this->form->getLabel('global_show_detlinkvenue',$group); ?> <?php echo $this->form->getInput('global_show_detlinkvenue',$group); ?></li>
 				<li><?php echo $this->form->getLabel('global_show_mapserv',$group); ?> <?php echo $this->form->getInput('global_show_mapserv',$group); ?></li>
-				<li id="globalmap1" style="display:none"><?php echo $this->form->getLabel('global_tld',$group); ?> <?php echo $this->form->getInput('global_tld',$group); ?></li>
-				<li id="globalmap2" style="display:none"><?php echo $this->form->getLabel('global_lg',$group); ?> <?php echo $this->form->getInput('global_lg',$group); ?></li>
+				<li><?php echo $this->form->getLabel('global_tld',$group); ?> <?php echo $this->form->getInput('global_tld',$group); ?></li>
+				<li><?php echo $this->form->getLabel('global_lg',$group); ?> <?php echo $this->form->getInput('global_lg',$group); ?></li>
 			</ul>
 		</fieldset>
 	</div>
