@@ -17,19 +17,19 @@ defined('_JEXEC') or die;
 
 			<li><?php echo $this->form->getLabel('formatShortDate'); ?> 
 				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span><?php echo $this->form->getInput('formatShortDate'); ?>
 			</li>
 
 			<li><?php echo $this->form->getLabel('formatdate'); ?>
 				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span><?php echo $this->form->getInput('formatdate'); ?>
 			</li>
 
 			<li><?php echo $this->form->getLabel('formattime'); ?> 
 				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span><?php echo $this->form->getInput('formattime'); ?>
 			</li>
 
@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
 
 			<li><?php echo $this->form->getLabel('formathour'); ?> 
 				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), JText::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span><?php echo $this->form->getInput('formathour'); ?>
 			</li>
 
