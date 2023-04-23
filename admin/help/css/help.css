@@ -117,22 +117,18 @@ img.left {
 table.help {
 	background-color: #fff;
 	border: solid 1px #d5d5d5;
+	border-left: none;
+	border-right: none;
 	width: 100%;
 	border-collapse: collapse;
 	margin: 8px 0 10px 0;
 	margin-bottom: 15px;
 }
 
-table.help tr.row0 {
-	background-color: #f9f9f9;
-}
-
-table.help tr.row1 {
-	background-color: #f6f6f6;
-}
+table.help tr:nth-child(even) {background: #f9f9f9}
+table.help tr:nth-child(odd) {background: #f3f3f3}
 
 table.help th {
-	font-size: 11px;
 	padding: 6px 2px 4px 4px;
 	text-align: left;
 	height: 25px;
@@ -145,7 +141,6 @@ table.help td {
 	padding: 4px;
 	text-align: left;
 	vertical-align: top;
-	
 }
 
 .close {
