@@ -6,19 +6,12 @@
  * @version 2.3.17
  * @package JEM
  * @subpackage JEM_Listevents_Plugin
- * @author JEM Team <info@joomlaeventmanager.net>, Michael Anderau <michael@sternrenaugen.net>, Luis Raposo
+ * @author JEM Team <info@joomlaeventmanager.net>, Luis Raposo
  * @copyright (c) 2013-2023 joomlaeventmanager.net
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
-
-// No, it's part of JEM package yet.
-//// Check if JEM is installed.
-//if (!JComponentHelper::isEnabled('com_jem', true)) {
-//	throw new Exception(JText::_('Listevents for JEM works only if JoomlaEventManager (JEM) is installed: <a href=\'https://www.joomlaeventmanager.net\' target=\'_blank\'>www.joomlaeventmanager.net</a>'), 500);
-//	die();
-//}
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
