@@ -50,11 +50,11 @@ $options = array(
 									|
 									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_GET_HELP'); ?></a>
 									|
-									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/givehelp.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_GIVE_HELP'); ?></a>
+									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/contribute.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_CONTRIBUTE'); ?></a>
 									|
 									<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_CREDITS'); ?></a>
 									|
-									<?php echo HTMLHelper::_('link', 'https://www.gnu.org/licenses/gpl-3.0', Text::_('COM_JEM_LICENSE'), array('target' => 'helpFrame')) ?>
+									<?php echo HTMLHelper::_('link', 'https://www.gnu.org/licenses/gpl-3.0', Text::_('COM_JEM_LICENSE'), array('target' => '_blank')) ?>
 								
 							</div>
 						</div>
