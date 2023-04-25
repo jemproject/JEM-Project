@@ -10,14 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.modelform');
+use Joomla\CMS\MVC\Model\AdminModel;
 
 /**
  * JEM Component Settings Model
  *
  */
-class JemModelSettings extends JModelForm
+class JemModelSettings extends AdminModel
 {
 	/**
 	 * Method to get the record form.
