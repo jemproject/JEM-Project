@@ -1,0 +1,50 @@
+.jemmyattendingCBAddLink a{
+
+}
+
+.jemmyattendingCBTabTable{
+width: 100%;
+}
+
+.jemmyattendingCBTabTable td{
+padding: 3px;
+}
+
+.jemmyattendingtableheader{
+}
+
+.jemmyattendingCBTabTableTitle{
+padding:3px;
+text-align:left;
+/*width : 15%;*/
+}
+
+.jemmyattendingCBTabTableVenue{
+padding:3px;
+text-align:left;
+/*width:20%;*/
+}
+
+.jemmyattendingCBTabTableDesc{
+padding:3px;
+text-align:left;
+/*width : 45%;*/
+}
+
+.jemmyattendingCBTabTableStart{
+padding:3px;
+text-align:left;
+/*width : 10%;*/
+}
+
+.jemmyattendingCBTabTableExp{
+padding:3px;
+text-align:left;
+/*width : 10%;*/
+}
+
+.jemmyattendingCBTabTableReg{
+padding:3px;
+text-align:center;
+}
+

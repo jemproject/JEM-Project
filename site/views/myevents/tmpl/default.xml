@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_MYEVENTS_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_MYEVENTS_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="displayattendeecolumn" type="radio"
+				default="1"
+				label="COM_JEM_MYEVENTS_DISPLAYATTENDEECOLUMN"
+				description="COM_JEM_MYEVENTS_DISPLAYATTENDEECOLUMN_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+			<field name="enableemailaddress" type="radio"
+				default="0"
+				label="COM_JEM_MYEVENTS_DISPLAYEMAILADDRESS"
+				description="COM_JEM_MYEVENTS_DISPLAYEMAILADDRESS_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+		</fieldset>
+	</fields>
+</metadata>

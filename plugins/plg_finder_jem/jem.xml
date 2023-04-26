@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="finder" method="upgrade">
+	<name>plg_finder_jem</name>
+	<creationDate>April 2023</creationDate>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>2.3.17</version>
+	<description>PLG_FINDER_JEM_XML_DESCRIPTION</description>
+
+	<!-- <scriptfile>script.php</scriptfile> -->
+	<files>
+		<file plugin="jem">jem.php</file>
+		<filename>index.html</filename>
+
+		<folder>language</folder>
+	</files>
+
+	<!-- Do not remove the language tag, because the language file is needed
+		 in the administrator/language folder. The language file will only be
+		 loaded from this location when accessing the finder component at the
+		 frontend. This is a limitation in J2.5 -->
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_finder_jem.ini</language>
+	</languages>
+</extension>

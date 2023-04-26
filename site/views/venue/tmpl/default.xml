@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_VENUE_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_VENUE_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="request">
+		<fieldset name="request"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="id" type="modal_venue"
+				label="COM_JEM_SELECTVENUE"
+				description="COM_JEM_SELECTVENUE_DESC"
+				required="true"
+			/>
+		</fieldset>
+	</fields>
+</metadata>

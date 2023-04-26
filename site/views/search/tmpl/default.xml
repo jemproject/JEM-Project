@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_SEARCH_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_SEARCH_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="params">
+		<fieldset name="basic"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="introtext" type="textarea"
+				filter="safehtml"
+				default=""
+				label="COM_JEM_INTROTEXT_FIELD"
+				rows="8"
+				cols="30"
+				description="COM_JEM_INTROTEXT_FIELD_DESC"
+			/>
+			<field name="showintrotext" type="radio"
+				default="0"
+				label="COM_JEM_DISPLAY_INTROTEXT"
+				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">COM_JEM_SHOW</option>
+				<option value="0">COM_JEM_HIDE</option>
+			</field>
+			<field type="spacer" name="myspacer2" hr="true" />
+			<field name="top_category" type="categories"
+				default="0"
+				label="COM_JEM_SELECT_TOP_CATEGORY"
+				description="COM_JEM_SELECT_TOP_CATEGORY_DESC"
+			/>
+			<field name="date_filter_type" type="list"
+				default="0"
+				label="COM_JEM_DATE_FILTER_TYPE"
+				description="COM_JEM_DATE_FILTER_TYPE_DESC"
+			>
+				<option value="0">COM_JEM_EVENT_START_DATE</option>
+				<option value="1">COM_JEM_ALL_EVENT_DATES</option>
+			</field>
+			<field name="template_suffix" type="text"
+				default=""
+				label="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX"
+				description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_DESC"
+			/>
+		</fieldset>
+	</fields>
+</metadata>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="details"
+			  addfieldpath="/administrator/components/com_jem/models/fields"
+	>
+		<field name="name" type="text"
+			   class="inputbox"
+			   size="40"
+			   label="COM_JEM_GROUP_NAME"
+			   description="COM_JEM_GROUP_NAME"
+			   required="true"
+		/>
+		<field name="description" type="editor"
+			   class="inputbox"
+			   label="COM_JEM_GROUP_DESCRIPTION"
+			   description="COM_JEM_GROUP_DESCRIPTION_DESC"
+			   hide="pagebreak,readmore"
+			   filter="safehtml"
+			   rows="3" cols="40"
+		/>
+		<field name="id" type="text"
+			   class="readonly"
+			   label="JGLOBAL_FIELD_ID_LABEL"
+			   description="JGLOBAL_FIELD_ID_DESC"
+			   default="0"
+			   readonly="true"
+		/>
+		<field name="addvenue" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_GROUP_ADDVENUE"
+			   description="COM_JEM_GROUP_ADDVENUE_DESC"
+			   default="0"
+			   required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="publishvenue" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_GROUP_PUBLISHVENUE"
+			   description="COM_JEM_GROUP_PUBLISHVENUE_DESC"
+			   default="0"
+			   required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="editvenue" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_GROUP_EDITVENUE"
+			   description="COM_JEM_GROUP_EDITVENUE_DESC"
+			   default="0"
+			   required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field type="spacer" name="spacer" hr="true" />
+		<field name="addevent" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_GROUP_ADDEVENT"
+			   description="COM_JEM_GROUP_ADDEVENT_DESC"
+			   default="0"
+			   required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
+		<field name="publishevent" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_GROUP_PUBLISHEVENT"
+			   description="COM_JEM_GROUP_PUBLISHEVENT_DESC"
+			   default="0"
+			   required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
+		<field name="editevent" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_GROUP_EDITEVENT"
+			   description="COM_JEM_GROUP_EDITEVENT_DESC"
+			   default="0"
+			   required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+	</fieldset>
+</form>

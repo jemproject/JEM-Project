@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="quickicon" method="upgrade">
+	<name>Quick Icon - JEM</name>
+	<creationDate>April 2023</creationDate>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>2.3.17</version>
+	<description>JEM Quick Icon</description>
+
+	<files>
+		<filename plugin="jemquickicon">jemquickicon.php</filename>
+		<filename>index.html</filename>
+	</files>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field type="text" name="context"
+					default="mod_quickicon"
+					description="The group of this plugin (this value is compared with the group value used in Quick Icons modules to inject icons)"
+					label="Group"
+				/>
+				<field type="text" name="displayedtext"
+					default=""
+					description="Text displayed below the icon"
+					label="Icon legend"
+				/>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

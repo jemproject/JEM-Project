@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_CATEGORY_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_CATEGORY_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="request">
+		<fieldset name="request"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="id" type="categories"
+				default=""
+				label="COM_JEM_SELECT_CATEGORY"
+				description="COM_JEM_SELECT_CATEGORY_DESC"
+				required="true"
+			/>
+		</fieldset>
+	</fields>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="usecat" type="radio"
+				default="1"
+				label="COM_JEM_DISPLAYCHILDS"
+				description="COM_JEM_DISPLAYCHILDSDESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+			<field name="showemptychilds" type="radio"
+				default="1"
+				label="COM_JEM_SHOWEMPTYCHILD"
+				description="COM_JEM_SHOWEMPTYCHILDDESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+		</fieldset>
+	</fields>
+</metadata>

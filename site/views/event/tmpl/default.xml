@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_EVENT_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_EVENT_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="request">
+		<fieldset name="request"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="id" type="event"
+				label="COM_JEM_SELECT_EVENT"
+				description="COM_JEM_SELECT_EVENT_DESC"
+				required="true"
+			/>
+		</fieldset>
+	</fields>
+	
+	<!-- Add fields to the parameters object for the layout. -->
+	<fields name="params">
+	</fields>
+</metadata>

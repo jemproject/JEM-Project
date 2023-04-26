@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_VENUES_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_VENUES_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="display_venues_num" type="text"
+				size="2"
+				default="5"
+				label="COM_JEM_VENUE_NUMBER"
+				description="COM_JEM_VENUE_NUMBER_DESC"
+			/>
+		</fieldset>
+	</fields>
+</metadata>

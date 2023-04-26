@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_MYATTENDANCES_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_JEM_MYATTENDANCES_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="filtermyregs" type="radio"
+				default="1"
+				label="COM_JEM_FILTER_MYREGISTRATIONS"
+				description="COM_JEM_FILTER_MYREGISTRATIONS_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+			<field name="myregspast" type="text"
+				size="4"
+				default="1"
+				label="COM_JEM_MYREGSPAST"
+				description="COM_JEM_MYREGSPAST_DESC"
+			/>
+		</fieldset>
+	</fields>
+</metadata>

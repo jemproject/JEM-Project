@@ -1,0 +1,40 @@
+/**
+ * @version 2.3.17
+ * @package JEM
+ * @subpackage JEM Latest Events Wide Module
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+div#jemmodulewide span.event-title:before,
+div#jemmodulewide .time:before,
+div#jemmodulewide div.date:before,
+div#jemmodulewide .category:before,
+div#jemmodulewide .venue-title:before {
+	/* font:normal normal normal 1.2em/1 FontAwesome;	 */
+	font-family:"Font Awesome 5 Free";
+	padding-right: 4px;
+	font-weight: 600;
+}
+
+
+div#jemmodulewide span.event-title:before {
+	content:"\f024";
+}
+
+div#jemmodulewide .time:before {
+	content:"\f017";
+}
+
+div#jemmodulewide div.date:before {
+	content:"\f133";
+}
+
+div#jemmodulewide .category:before {
+	content:"\f02b";
+}
+
+div#jemmodulewide .venue-title:before {
+	content:"\f041";
+}
