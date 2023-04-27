@@ -331,6 +331,8 @@ class JemOutput
 		$settings  = JemHelper::globalattribs();
 		$settings2 = JemHelper::config();
 		$app       = Factory::getApplication();
+		$uri       = Uri::getInstance();
+		$jemPath   = $uri->getPath();
 
 		if ($settings->get('global_show_archive_icon',1)) {
 			if ($app->input->get('print','','int')) {
@@ -357,9 +359,9 @@ class JemOutput
 				$title = Text::_('COM_JEM_SHOW_EVENTS');
 
 				if ($id) {
-					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
+					$url = $jemPath . '?id='.$id.'&filter_reset=1';
 				} else {
-					$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
+					$url = $jemPath . '?filter_reset=1';
 				}
 			} else {
 				if ($settings->get('global_show_icons',1)) {
@@ -372,9 +374,9 @@ class JemOutput
 				$title = Text::_('COM_JEM_SHOW_ARCHIVE');
 
 				if ($id) {
-					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
+					$url = $jemPath . '?id='.$id.'&task=archive'.'&filter_reset=1';
 				} else {
-					$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
+					$url = $jemPath . '?task=archive'.'&filter_reset=1';
 				}
 			}
 
