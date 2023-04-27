@@ -6,7 +6,7 @@ Based on
 - Egnarts94/JEM-Project Responsive JEM
 
 ## To install
-An installation package will follow
+Download the installation package [pkg_jem_4.0.0.zip](https://raw.githubusercontent.com/jemproject/JEM-for-Joomla-4/main/pkg_jem_4.0.0.zip).    
 
 ## Translation:
 see https://www.transifex.com/projects/p/JEM/
