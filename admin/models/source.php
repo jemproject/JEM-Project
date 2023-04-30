@@ -120,7 +120,7 @@ class JemModelSource extends AdminModel
         # custom file?
         if ($custom !== false) {
             $file = str_replace('custom#:', '', $fileName);
-            $filePath = Path::clean(JPATH_SITE . '/' . $file);
+            $filePath = Path::clean(JPATH_ROOT . '/media/com_jem/css/custom/' . $file);
         } else {
             $file = $fileName;
             $filePath = Path::clean(JPATH_ROOT . '/media/com_jem/css/' . $file);
@@ -160,7 +160,7 @@ class JemModelSource extends AdminModel
         # custom file?
         if ($custom !== false) {
             $file = str_replace('custom#:', '', $fileName);
-            $filePath = Path::clean(JPATH_SITE . '/' . $file);
+            $filePath = Path::clean(JPATH_ROOT . '/media/com_jem/css/custom/' . $file);
         } else {
             $file = $fileName;
             $filePath = Path::clean(JPATH_ROOT . '/media/com_jem/css/' . $file);

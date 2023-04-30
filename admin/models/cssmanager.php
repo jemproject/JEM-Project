@@ -116,7 +116,7 @@ class JemModelCssmanager extends JModelLegacy
 		foreach ($custom as $cfile)
 		{
 			if ($cfile) {
-				$rf = $this->getCustomFile(JPATH_SITE.'/',$cfile);
+				$rf = $this->getCustomFile($path.'css/custom/',$cfile);
 				if ($rf->exists && $rf->ext) {
 					$result['custom'][] = $rf;
 				}
