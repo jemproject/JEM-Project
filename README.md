@@ -1,4 +1,4 @@
-# JEM 4
+# JEM 4 beta
 released 2023-04-27
 
 Based on
@@ -6,7 +6,7 @@ Based on
 - Egnarts94/JEM-Project Responsive JEM
 
 ## To install
-Download the installation package [pkg_jem_4.0.0.zip](https://raw.githubusercontent.com/jemproject/JEM-for-Joomla-4/main/pkg_jem_4.0.0.zip).    
+Download the installation package [pkg_jem_4beta.zip](https://raw.githubusercontent.com/jemproject/JEM-for-Joomla-4/main/pkg_jem_4beta.zip).    
 
 ## Translation:
 see https://www.transifex.com/projects/p/JEM/
