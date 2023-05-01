@@ -1,5 +1,5 @@
 /**
- * @version 2.3.1
+ * @version 2.3.6
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -955,6 +955,14 @@ fieldset.adminform .inputbox {
 	padding: 2px 0 0 0;
 }
 
+.help-toc span {
+	font-size:0.8em;
+	padding-right: 1em;
+}
+
+table.adminlist.help-toc {
+	border: none;
+}
 
 /* --- LABEL CODE ---- */
 /* Taken from Joomla! template "isis" */

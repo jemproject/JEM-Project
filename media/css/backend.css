@@ -35,7 +35,6 @@ div.linkicon {
 	margin:0px 5px 5px 0px;
 }
 
-
 input.button {
 	/*background-color:#......;*/
 	cursor:pointer;
@@ -954,6 +953,14 @@ fieldset.adminform .inputbox {
 	padding: 2px 0 0 0;
 }
 
+.help-toc span {
+	font-size:0.8em;
+	padding-right: 1em;
+}
+
+table.adminlist.help-toc {
+	border: none;
+}
 
 /* --- LABEL CODE ---- */
 /* Taken from Joomla! template "isis" */

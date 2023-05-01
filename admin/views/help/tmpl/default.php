@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.1
+ * @version 2.3.6
  * @package JEM
  * @copyright (C) 2013-2021 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -61,7 +61,7 @@ $options = array(
 		<div id="treecellhelp" class="width-20 fltleft">
 			<?php echo JHtml::_('sliders.start', 'det-pane', $options); ?>
 			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_SCREEN_HELP'), 'help'); ?>
-				<table class="adminlist">
+				<table class="adminlist help-toc">
 					<?php
 					foreach ($this->toc as $k=>$v) {
 						echo '<tr>';

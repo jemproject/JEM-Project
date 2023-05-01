@@ -1,5 +1,15 @@
-# Egnarts94/JEM-Project Responsive JEM
+# JEM 2.3.6
+released 2023-04-04
+
 Forked from jemproject/JEM-Project
+
+Based on Egnarts94/JEM-Project Responsive JEM
+
+## what's new?
+This release is updated to prepare for the migration to Joomla 4 and JEM4.
+Please consult the help files for more information.
+
+- and many many more...
 
 ## This version includes:
 - Import/Export view
@@ -17,12 +27,6 @@ Tips, suggestions are very welcome..
 Project Homepage: https://www.joomlaeventmanager.net/
 
 Translation via:  https://www.transifex.com/projects/p/JEM/
-
-## So, whats different?
-- There is a simple way for installation: Just use this update package - no template overrides anymore!
-- Some additional, simple settings in the backend for switching to JEM Responsive
-- The original JEM can now be used with modern icons (FontAwesome available for old JEM)
-- and many many more...
 
 ## Known Problems:
 - You can not automatically update your JEM installation via the Joomla updater. If the default JEM releases an update and you install this, JEM-Responsive is removed automatically
