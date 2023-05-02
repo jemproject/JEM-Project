@@ -159,9 +159,9 @@ class JemModelEvent extends JModelItem
 					\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 				}
 
-				// if (empty($data)) {
-				// 	throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
-				// }
+				if (empty($data)) {
+					throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+				}
 
 				# Convert parameter fields to objects.
 				$registry = new JRegistry;
