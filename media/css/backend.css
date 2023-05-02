@@ -955,7 +955,16 @@ fieldset.adminform .inputbox {
 
 .help-toc span {
 	font-size:0.8em;
-	padding-right: 1em;
+	padding-right: 0.5em;
+	color: #999;
+}
+
+.help-toc a {
+	text-decoration: none;
+}
+
+.help-toc a:hover  {
+	text-decoration: 999;
 }
 
 table.adminlist.help-toc {
