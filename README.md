@@ -6,7 +6,7 @@ Forked from jemproject/JEM-Project
 Based on Egnarts94/JEM-Project Responsive JEM
 
 ## what's new?
-This release is updated to prepare for the migration to Joomla 4 and JEM4.
+This release is updated to prepare for the migration to Joomla 4 and JEM 4.
 Please consult the help files for more information.
 
 - and many many more...
