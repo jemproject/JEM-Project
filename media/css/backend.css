@@ -961,10 +961,11 @@ fieldset.adminform .inputbox {
 
 .help-toc a {
 	text-decoration: none;
+	white-space: nowrap;
 }
 
 .help-toc a:hover  {
-	text-decoration: 999;
+	text-decoration: #999;
 }
 
 table.adminlist.help-toc {
