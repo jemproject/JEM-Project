@@ -118,12 +118,12 @@ class JemModelEvent extends JemModelAdmin
 			// Convert the params field to an array.
 			// (this may throw an exception - but there is nothings we can do)
 			$registry = new JRegistry;
-			$registry->loadString($item->attribs);
+			$registry->loadString($item->attribs ?? '{}');
 			$item->attribs = $registry->toArray();
 
 			// Convert the metadata field to an array.
 			$registry = new JRegistry;
-			$registry->loadString($item->metadata);
+			$registry->loadString($item->metadata ?? '{}');
 			$item->metadata = $registry->toArray();
 
 			$item->articletext = ($item->fulltext && trim($item->fulltext) != '') ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
