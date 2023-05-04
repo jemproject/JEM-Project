@@ -1289,7 +1289,7 @@ class JemHelper
 			# something was filled, now check if we've a valid file
 			if ($file) {
 				$file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
-				$is_file = JFile::exists(JPATH_SITE . '/' . $file);
+				$is_file = JFile::exists(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
 
 				if ($is_file) {
 					# at this point we do have a valid file but let's check the extension too.
@@ -1304,20 +1304,20 @@ class JemHelper
 			if ($is_file) {
 				# we do have a valid file so we will use it.
 				// $css = HTMLHelper::_('stylesheet', $file, array(), false);
-				$css = $document->addStyleSheet($file);
+				$css = $document->addStyleSheet($url.'media/com_jem/css/custom/' . $file);
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
 				// $files = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
-				$files = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+				$files = $document->addStyleSheet($url.'media/com_jem/css/custom/' . $css . $suffix . '.css');
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
 					// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
-					$css = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+					$css = $document->addStyleSheet($url.'media/com_jem/css/custom/' . $css . $suffix . '.css');
 
 				} else {
 					# no css for layout style configured, so use the default css
 					// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
-					$css = $document->addStyleSheet($url.'media/com_jem/css/'. $css. '.css');
+					$css = $document->addStyleSheet($url.'media/com_jem/css/custom/'. $css. '.css');
 
 				}
 			}
