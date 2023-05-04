@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\User\UserFactoryInterface;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -1203,10 +1204,10 @@ class JemCategoryNode extends JObject
 	{
 		if ($modified_user)
 		{
-			return JFactory::getUser($this->modified_user_id);
+			return Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->modified_user_id);
 		}
 
-		return JFactory::getUser($this->created_user_id);
+		return Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->created_user_id);
 	}
 
 	/**

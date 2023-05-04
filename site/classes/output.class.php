@@ -15,6 +15,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\User\UserFactoryInterface;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -427,7 +428,7 @@ class JemOutput
 			{
 				case 'editevent':
 					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $userId) {
-						$checkoutUser = Factory::getUser($item->checked_out);
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
 						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = HTMLHelper::_('date', $item->checked_out_time);
 						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
@@ -446,7 +447,7 @@ class JemOutput
 
 				case 'editvenue':
 					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
-						$checkoutUser = Factory::getUser($item->vChecked_out);
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
 						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = HTMLHelper::_('date', $item->vChecked_out_time);
 						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
@@ -465,7 +466,7 @@ class JemOutput
 
 				case 'venue':
 					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
-						$checkoutUser = Factory::getUser($item->vChecked_out);
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
 						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = HTMLHelper::_('date', $item->vChecked_out_time);
 						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
