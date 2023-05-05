@@ -46,11 +46,13 @@ class JemModelSource extends AdminModel
         $temp = $id ? (base64_decode($id)) : $id;
         $fileName = $temp;
 
-        $this->setState('filename', $fileName);
+        if(!empty($fileName))
+        {
+	        $this->setState('filename', $fileName);
 
-        // Save the syntax for later use
-        $app->setUserState('editor.source.syntax', File::getExt($fileName));
-
+	        // Save the syntax for later use
+	        $app->setUserState('editor.source.syntax', File::getExt($fileName));
+        }
         // Load the parameters.
         $params	= ComponentHelper::getParams('com_jem');
         $this->setState('params', $params);
@@ -127,17 +129,17 @@ class JemModelSource extends AdminModel
         }
 
         $item = new stdClass;
-        if ($file && file_exists($filePath)) {
-            $item->custom   = $custom !== false;
-            $item->filename = $file;
-            $item->source   = file_get_contents($filePath);
-        } else {
-            $item->custom   = false;
-            $item->filename = false;
-            $item->source   = false;
-        }
-
-        if (empty($item->source)) {
+        if(file_exists($filePath)){
+			if ($file) {
+		        $item->custom   = $custom !== false;
+		        $item->filename = $file;
+		        $item->source   = file_get_contents($filePath);
+	        } else {
+		        $item->custom   = false;
+		        $item->filename = false;
+		        $item->source   = false;
+	        }
+        }else{
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
         }
 
