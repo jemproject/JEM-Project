@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\Controller\AdminController;
 
 // Access check.
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
@@ -37,13 +38,8 @@ require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html/jemhtml.php');
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT.'/tables');
 
-// create JEM's file logger
+// Create JEM's file logger
 JemHelper::addFileLogger();
-
-// import joomla controller library
-jimport('joomla.application.component.controller');
-
-
 
 // Require the frontend base controller
 require_once (JPATH_COMPONENT.'/controller.php');
