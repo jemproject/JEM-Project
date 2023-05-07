@@ -1369,10 +1369,10 @@ class JemHelper
 			} else {
 				# search within module because JEM modules doesn't use media folder
 				$path = 'modules/' . $module . '/tmpl/' . $suffix . '/' . $css . '.css';
-				$files = HTMLHelper::_('stylesheet', $path, array(), false, true);
+				$files = HTMLHelper::_('stylesheet', $path, array());
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
-					HTMLHelper::_('stylesheet', $path, array(), false);
+					HTMLHelper::_('stylesheet', $path, array());
 					return;
 				}
 			}
@@ -1386,10 +1386,10 @@ class JemHelper
 			return;
 		} else {
 			$path = 'modules/' . $module . '/tmpl/' . $css . '.css';
-			$files = HTMLHelper::_('stylesheet', $path, array(), false, true);
+			$files = HTMLHelper::_('stylesheet', $path, array());
 			if (!empty($files)) {
 				# no css for layout style configured, so use the default css
-				HTMLHelper::_('stylesheet', $path, array(), false);
+				HTMLHelper::_('stylesheet', $path, array());
 				return;
 			}
 		}
