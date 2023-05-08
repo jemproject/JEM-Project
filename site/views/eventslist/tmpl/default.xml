@@ -50,6 +50,15 @@
 				label="COM_JEM_CATEGORYSWITCHCATS"
 				description="COM_JEM_CATEGORYSWITCHCATS_DESC"
 			/>
+			<field name="includesubcategories" type="radio"
+				   default="0"
+				   label="COM_JEM_INCLUDE_SUBCATEGORIES"
+				   description="COM_JEM_INCLUDE_SUBCATEGORIES_DESC"
+				   class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="showopendates" type="list"
 				default="0"
 				label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"

@@ -22,6 +22,7 @@
  */
 defined('_JEXEC') or die;
 
+#[AllowDynamicProperties]
 class JemCalendar
 {
 	/*

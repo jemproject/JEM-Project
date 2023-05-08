@@ -67,13 +67,13 @@ class JemTableVenue extends JTable
 		}
 
 		if (trim($this->url)) {
-			$this->url = strip_tags($this->url);
+			$this->url = mb_strtolower(strip_tags($this->url));
 
 			if (strlen($this->url) > 199) {
 				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
 				return false;
 			}
-			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
+			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9äöüáéíóúñ]+)*\.[a-z]{2,5}'
 			               .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url))
 			{
 				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));

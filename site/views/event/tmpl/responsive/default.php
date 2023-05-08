@@ -27,9 +27,9 @@ $uri         = Uri::getInstance();
 
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {
-  $enddate = strtotime($this->item->enddates?:$this->item->dates);
-  $expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
-  $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
+	$enddate = strtotime($this->item->enddates?:($this->item->dates?:date("Y-m-d")));
+	$expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
+	$document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
 // HTMLHelper::_('behavior.modal', 'a.flyermodal');
 ?>

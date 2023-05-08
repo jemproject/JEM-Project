@@ -96,7 +96,7 @@ abstract class JemUserAbstract extends JUser
 	 */
 	static function superuser()
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getApplication()->getIdentity();
 
     	if ($user->authorise('core.manage', 'com_jem')) {
     		return true;
