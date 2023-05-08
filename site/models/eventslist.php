@@ -132,30 +132,87 @@ class JemModelEventslist extends JModelList
 		################################
 
 		$catswitch = $params->get('categoryswitch', '');
-
-		# set included categories
-		if ($catswitch) {
-			$included_cats = trim($params->get('categoryswitchcats', ''));
-			if ($included_cats) {
-				$included_cats = explode(",", $included_cats);
-				$this->setState('filter.category_id', $included_cats);
-				$this->setState('filter.category_id.include', true);
+		$cats  = trim($params->get('categoryswitchcats', ''));
+		$list_cats=[];
+		if ($cats){
+			$ids_cats = explode(",", $cats);
+			if ($params->get('includesubcategories', 0))
+			{
+				//get subcategories
+				foreach($ids_cats as $idcat)
+				{
+					if (!in_array($idcat, $list_cats))
+					{
+						$list_cats[] = $idcat;
+						$child_cat   = $this->getListChildCat($idcat, 1);
+						if ($child_cat !== false) {
+							if(count($child_cat) > 0) {
+								foreach ($child_cat as $child)
+								{
+									if (!in_array($child, $list_cats))
+									{
+										$list_cats[] = (string) $child;
+									}
+								}
+							}
+						}
+					}
+				}
+			}else{
+				$list_cats=$ids_cats;
 			}
-		}
 
-		# set excluded categories
-		if (!$catswitch) {
-			$excluded_cats = trim($params->get('categoryswitchcats', ''));
-			if ($excluded_cats) {
-				$excluded_cats = explode(",", $excluded_cats);
-				$this->setState('filter.category_id', $excluded_cats);
+			if ($catswitch)
+			{
+				# set included categories
+				$this->setState('filter.category_id', $list_cats);
+				$this->setState('filter.category_id.include', true);
+			}else{
+				# set excluded categories
+				$this->setState('filter.category_id', $list_cats);
 				$this->setState('filter.category_id.include', false);
 			}
 		}
-
 		$this->setState('filter.groupby',array('a.id'));
 
-		//parent::populateState('a.dates', 'ASC');
+	}
+
+	/**
+	 * Method to get a all list of children categories (subtree) by $id category.
+	 */
+	public function getListChildCat($id, $reset){
+		$user     = JemFactory::getUser();
+		$levels   = $user->getAuthorisedViewLevels();
+		$settings = JemHelper::globalattribs();
+
+		static $catchildlist=[];
+		if($reset){
+			foreach ($catchildlist as $k => $c){
+				unset($catchildlist[$k]);
+			}
+		}
+
+		// Query
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+
+		$query->select(array('DISTINCT c.id'));
+		$query->from('#__jem_categories as c');
+		$query->where('c.published = 1');
+		$query->where('(c.access IN ('.implode(',', $levels).'))');
+		$query->where('c.parent_id =' . (int) $id);
+
+		$db->setQuery($query);
+		$cats = $db->loadObjectList();
+
+		if ($cats != null) {
+			foreach ($cats as $cat){
+				$catchildlist[] = $cat->id;
+				$this->getListChildCat($cat->id,0);
+			}
+			return $catchildlist;
+		}
+		return false;
 	}
 
 	/**
