@@ -1289,7 +1289,7 @@ class JemHelper
 			# something was filled, now check if we've a valid file
 			if ($file) {
 				$file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
-				$is_file = JFile::exists(JPATH_SITE . '/' . $file);
+				$is_file = JFile::exists(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
 
 				if ($is_file) {
 					# at this point we do have a valid file but let's check the extension too.
@@ -1304,20 +1304,20 @@ class JemHelper
 			if ($is_file) {
 				# we do have a valid file so we will use it.
 				// $css = HTMLHelper::_('stylesheet', $file, array(), false);
-				$css = $document->addStyleSheet($file);
+				$css = $document->addStyleSheet($url.'media/com_jem/css/custom/' . $file);
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
 				// $files = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true, true);
-				$files = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+				$files = $document->addStyleSheet($url.'media/com_jem/css/custom/' . $css . $suffix . '.css');
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
 					// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . $suffix . '.css', array(), true);
-					$css = $document->addStyleSheet($url.'media/com_jem/css/' . $css . $suffix . '.css');
+					$css = $document->addStyleSheet($url.'media/com_jem/css/custom/' . $css . $suffix . '.css');
 
 				} else {
 					# no css for layout style configured, so use the default css
 					// $css = HTMLHelper::_('stylesheet', 'com_jem/' . $css . '.css', array(), true);
-					$css = $document->addStyleSheet($url.'media/com_jem/css/'. $css. '.css');
+					$css = $document->addStyleSheet($url.'media/com_jem/css/custom/'. $css. '.css');
 
 				}
 			}
@@ -1369,10 +1369,10 @@ class JemHelper
 			} else {
 				# search within module because JEM modules doesn't use media folder
 				$path = 'modules/' . $module . '/tmpl/' . $suffix . '/' . $css . '.css';
-				$files = HTMLHelper::_('stylesheet', $path, array(), false, true);
+				$files = HTMLHelper::_('stylesheet', $path, array());
 				if (!empty($files)) {
 					# we have to call this stupid function twice; no other way to know if something was loaded
-					HTMLHelper::_('stylesheet', $path, array(), false);
+					HTMLHelper::_('stylesheet', $path, array());
 					return;
 				}
 			}
@@ -1386,10 +1386,10 @@ class JemHelper
 			return;
 		} else {
 			$path = 'modules/' . $module . '/tmpl/' . $css . '.css';
-			$files = HTMLHelper::_('stylesheet', $path, array(), false, true);
+			$files = HTMLHelper::_('stylesheet', $path, array());
 			if (!empty($files)) {
 				# no css for layout style configured, so use the default css
-				HTMLHelper::_('stylesheet', $path, array(), false);
+				HTMLHelper::_('stylesheet', $path, array());
 				return;
 			}
 		}
@@ -1400,9 +1400,9 @@ class JemHelper
 		$jemsettings = JemHelper::config();
 		if ($jemsettings->useiconfont == 1) {
 			# This will automaticly search for 'font-awesome.css' if site is in debug mode.
-			# Note: css files must be stored on /media/com_jem/FontAwesome/css/ to be conform to Joomla and also allow template overrides.
-			HTMLHelper::_('stylesheet', 'com_jem/FontAwesome/font-awesome.min.css', array(), true);
-			HTMLHelper::_('stylesheet', 'com_jem/FontAwesome/jem-icon-font.css', array(), true);
+			# Note: css files must be stored on /media/com_jem/css/ to be conform to Joomla and also allow template overrides.
+			HTMLHelper::_('stylesheet', 'media/vendor/fontawesome-free/css/font-awesome.min.css', array(), true);
+			HTMLHelper::_('stylesheet', 'com_jem/css/jem-icon-font.css', array(), true);
 		}
 	}
 

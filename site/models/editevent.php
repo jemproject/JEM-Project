@@ -116,7 +116,7 @@ class JemModelEditevent extends JemModelEvent
 
 		// Convert attrib field to Registry.
 		$registry = new JRegistry();
-		$registry->loadString($value->attribs);
+		$registry->loadString($value->attribs ?? '{}');
 
 		$globalregistry = JemHelper::globalattribs();
 

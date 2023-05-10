@@ -37,10 +37,11 @@ class plgQuickiconJEMquickicon extends JPlugin
 
 		return array(array(
 			'link' => 'index.php?option=com_jem',
-			'image' => $useIcons ? 'calendar' : $icon, // for J! 2.5 or e.g. Isis on J! 3.x
-			'icon' => $icon,                           // for e.g. Hathor on J! 3.x
+			'image' => 'calendar',
+			'icon' => '',
 			'text' => $text,
-			'id' => 'plg_quickicon_jemquickicon'
+			'id' => 'plg_quickicon_jemquickicon',
+            'group' => 'JEM'
 		));
 	}
 }

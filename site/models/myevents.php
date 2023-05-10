@@ -109,7 +109,7 @@ class JemModelMyevents extends JModelLegacy
 					if (empty($item->params)) {
 						// Set event params.
 						$registry = new JRegistry();
-						$registry->loadString($item->attribs);
+						$registry->loadString($item->attribs ??'{}');
 						$item->params = clone JemHelper::globalattribs();
 						$item->params->merge($registry);
 					}
