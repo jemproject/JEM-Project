@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="acymailing" method="upgrade">
-	<name>AcyMailing Tag : insert events from JEM 2.1+</name>
+	<name>AcyMailing Tag : insert events from JEM</name>
 	<creationDate>September 2017</creationDate>
 	<version>2.2.0</version>
 	<author>Acyba, JEM Community</author>
@@ -37,7 +37,7 @@
 				       label="PLG_TAGJEM_HIDE_PAST_EVENTS"
 				       description="PLG_TAGJEM_HIDE_PAST_EVENTS_DESC"
 				>
-					<option value="1">JOOMEXT_YES</option>
+					<option value="1">JYES</option>
 					<option value="0">PLG_TAGJEM_OPTION_NO_SHOW_ALL</option>
 				</field>
 				<field name="show_featured" type="radio"
@@ -55,9 +55,9 @@
 				       label="PLG_TAGJEM_SHOW_IMAGES"
 				       description="PLG_TAGJEM_SHOW_IMAGES_DESC"
 				>
-					<option value="1">JOOMEXT_YES</option>
+					<option value="1">JYES</option>
 					<option value="resized">PLG_TAGJEM_OPTION_RESIZED</option>
-					<option value="0">JOOMEXT_NO</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="img_width" type="text"
 				       size="10"
