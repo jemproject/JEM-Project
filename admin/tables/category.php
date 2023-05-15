@@ -209,8 +209,8 @@ class JemTableCategory extends JTableNested
 			$this->created_user_id = $user->get('id');
 		}
 		// Verify that the alias is unique
-		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => $this->getDbo()));
-		
+		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => Factory::getContainer()->get('DatabaseDriver')));
+
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		    && ($table->id != $this->id || $this->id == 0)) {
 			

@@ -10,13 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
  * Categories Controller
  */
-class JemControllerCategories extends JControllerAdmin
+class JemControllerCategories extends AdminController
 {
 
 	protected $text_prefix = 'COM_JEM_CATEGORIES';

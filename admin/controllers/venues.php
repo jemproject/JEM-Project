@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Controller: Venues
  */
-class JemControllerVenues extends JControllerAdmin
+class JemControllerVenues extends AdminController
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -53,8 +53,7 @@ class JemControllerVenues extends JControllerAdmin
 		} else {
 			$model = $this->getModel('venue');
 
-			jimport('joomla.utilities.arrayhelper');
-			\Joomla\Utilities\ArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// trigger delete function in the model
 			$result = $model->delete($cid);

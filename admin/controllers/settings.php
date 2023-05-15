@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Settings Controller
  */
-class JemControllerSettings extends JControllerLegacy
+class JemControllerSettings extends BaseController
 {
 
 	public function __construct($config = array())

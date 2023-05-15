@@ -11,7 +11,8 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
@@ -20,7 +21,7 @@ jimport('joomla.filesystem.file');
 /**
  * Sampledata Model
  */
-class JemModelSampledata extends JModelLegacy
+class JemModelSampledata extends BaseDatabaseModel
 {
 
 	/**

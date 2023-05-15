@@ -10,13 +10,12 @@
 defined( '_JEXEC' ) or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
  * Events Controller
  */
-class JemControllerEvents extends JControllerAdmin
+class JemControllerEvents extends AdminController
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.

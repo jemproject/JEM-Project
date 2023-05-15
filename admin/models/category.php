@@ -415,7 +415,7 @@ class JemModelCategory extends JModelAdmin
 		$parentId = (int) \Joomla\Utilities\ArrayHelper::getValue($parts, 0, 1);
 
 		$table = $this->getTable();
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user = JemFactory::getUser();
 		$extension = Factory::getApplication()->input->get('extension', '', 'word');
 		$i = 0;
@@ -584,7 +584,7 @@ class JemModelCategory extends JModelAdmin
 		$parentId = (int) $value;
 
 		$table = $this->getTable();
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$user = JemFactory::getUser();
 		$extension = Factory::getApplication()->input->get('extension', '', 'word');
@@ -742,7 +742,7 @@ class JemModelCategory extends JModelAdmin
 	 */
 	public function getGroups()
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = 'SELECT id AS value, name AS text'
 		       . ' FROM #__jem_groups'
 		       . ' ORDER BY name';

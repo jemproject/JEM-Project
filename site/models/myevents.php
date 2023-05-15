@@ -9,8 +9,11 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
 jimport('joomla.application.component.model');
-jimport('joomla.html.pagination');
 
 /**
  * JEM Component JEM Model
@@ -18,7 +21,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
 */
-class JemModelMyevents extends JModelLegacy
+class JemModelMyevents extends BaseDatabaseModel
 {
 	/**
 	 * Events data array
@@ -191,8 +194,7 @@ class JemModelMyevents extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_pagination_events)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination_events = new JPagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination_events = new Pagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination_events;
@@ -251,8 +253,8 @@ class JemModelMyevents extends JModelLegacy
 		$filter_order_Dir  = $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 
-		$filter_order      = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir  = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir

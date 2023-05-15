@@ -220,7 +220,7 @@ class JemModelVenue extends JemModelAdmin
 	 */
 	protected function _prepareTable($table)
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
 
 		// Increment version number.

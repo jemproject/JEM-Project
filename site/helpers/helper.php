@@ -13,9 +13,10 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-
-jimport('joomla.filesystem.file');
-jimport('joomla.filesystem.folder');
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
+use \Joomla\CMS\Log\LogEntry;
+use \Joomla\CMS\Log\Log;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -77,27 +78,25 @@ class JemHelper
 	 */
 	static public function addFileLogger()
 	{
-		jimport('joomla.log.log');
-
 		// Let admin choose the log level.
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 		$lvl = (int)$jemconfig->get('globalattribs.loglevel', 0);
 
 		switch ($lvl) {
 		case 1: // ERROR or higher
-			$loglevel = JLog::ERROR   * 2 - 1;
+			$loglevel = Log::ERROR   * 2 - 1;
 			break;
 		case 2: // WARNING or higher
-			$loglevel = JLog::WARNING * 2 - 1;
+			$loglevel = Log::WARNING * 2 - 1;
 			break;
 		case 3: // INFO or higher
-			$loglevel = JLog::INFO    * 2 - 1;
+			$loglevel = Log::INFO    * 2 - 1;
 			break;
 		case 4: // DEBUG or higher
-			$loglevel = JLog::DEBUG   * 2 - 1;
+			$loglevel = Log::DEBUG   * 2 - 1;
 			break;
 		case 5: // ALL
-			$loglevel = JLog::ALL;
+			$loglevel = Log::ALL;
 			break;
 		case 0: // OFF
 		default:
@@ -106,7 +105,7 @@ class JemHelper
 		}
 
 		if ($loglevel > 0) {
-			JLog::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), $loglevel, array('JEM'));
+			Log::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), $loglevel, array('JEM'));
 		}
 	}
 
@@ -117,12 +116,12 @@ class JemHelper
 	 * @param  $where   The location the message was generated, default: null
 	 * @param  $type    The log level, default: DEBUG
 	 */
-	static public function addLogEntry($message, $where = null, $type = JLog::DEBUG)
+	static public function addLogEntry($message, $where = null, $type = Log::DEBUG)
 	{
-		$logEntry = new JLogEntry($message, $type, 'JEM');
+		$logEntry = new LogEntry($message, $type, 'JEM');
 		$logEntry->where = empty($where) ? '' : ($where . '()');
 
-		JLog::add($logEntry);
+		Log::add($logEntry);
 	}
 
 	/**
@@ -482,9 +481,9 @@ class JemHelper
 				return false;
 			}
 			if (empty($usage)) {
-				JFile::delete($fullPath);
-				if (JFile::exists($fullPaththumb)) {
-					JFile::delete($fullPaththumb);
+				File::delete($fullPath);
+				if (File::exists($fullPaththumb)) {
+					File::delete($fullPaththumb);
 				}
 
 				return true;
@@ -499,14 +498,14 @@ class JemHelper
 			}
 
 			// get all files and delete if not in $used
-			$fileList = JFolder::files($fullPath);
+			$fileList = Folder::files($fullPath);
 			if ($fileList !== false) {
 				foreach ($fileList as $file)
 				{
 					if (is_file($fullPath.$file) && substr($file, 0, 1) != '.' && !isset($used[$file])) {
-						JFile::delete($fullPath.$file);
-						if (JFile::exists($fullPaththumb.$file)) {
-							JFile::delete($fullPaththumb.$file);
+						File::delete($fullPath.$file);
+						if (File::exists($fullPaththumb.$file)) {
+							File::delete($fullPaththumb.$file);
 						}
 					}
 				}
@@ -534,7 +533,7 @@ class JemHelper
 		$res         = true;
 
 		// Get list of all folders matching type (format is "$type$id")
-		$folders = JFolder::folders($basepath, ($type ? '^'.$type : '.'), false, false, array('.', '..'));
+		$folders = Folder::folders($basepath, ($type ? '^'.$type : '.'), false, false, array('.', '..'));
 
 		// Get list of all used attachments of given type
 		$fnames = array();
@@ -555,17 +554,17 @@ class JemHelper
 
 		// Delete unused files and folders (ignore 'index.html')
 		foreach ($folders as $folder) {
-			$files = JFolder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
+			$files = Folder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
 			if (!empty($files)) {
 				foreach ($files as $file) {
 					if (!array_key_exists($folder.'/'.$file, $files)) {
-						$res &= JFile::delete($basepath.'/'.$folder.'/'.$file);
+						$res &= File::delete($basepath.'/'.$folder.'/'.$file);
 					}
 				}
 			}
-			$files = JFolder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
+			$files = Folder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
 			if (empty($files)) {
-				$res &= JFolder::delete($basepath.'/'.$folder);
+				$res &= Folder::delete($basepath.'/'.$folder);
 			}
 		}
 	}
@@ -934,8 +933,7 @@ class JemHelper
 
 		$vcal = new vcalendar();
 		if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
-			jimport('joomla.filesystem.folder');
-			JFolder::create(JPATH_SITE.'/cache/com_jem');
+			Folder::create(JPATH_SITE.'/cache/com_jem');
 		}
 		$vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
 		$vcal->setProperty("calscale", "GREGORIAN");
@@ -1289,11 +1287,11 @@ class JemHelper
 			# something was filled, now check if we've a valid file
 			if ($file) {
 				$file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
-				$is_file = JFile::exists(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
+				$is_file = File::exists(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
 
 				if ($is_file) {
 					# at this point we do have a valid file but let's check the extension too.
-					$ext =  JFile::getExt($file);
+					$ext =  File::getExt($file);
 					if ($ext != 'css') {
 						# the file is valid but the extension not so let's return false
 						$is_file = false;

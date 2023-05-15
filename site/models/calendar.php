@@ -41,7 +41,7 @@ class JemModelCalendar extends JemModelEventslist
 		# parent::populateState($ordering, $direction);
 		$app          = JFactory::getApplication();
 		$params       = $app->getParams();
-		$task         = $app->input->get('task','','cmd');
+		$task         = $app->input->getCmd('task','','cmd');
 		$top_category = $params->get('top_category', 0);
 		$startdayonly = $params->get('show_only_start', false);
 

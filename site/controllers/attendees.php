@@ -10,8 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Attendees Controller
@@ -19,7 +18,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JemControllerAttendees extends JControllerLegacy
+class JemControllerAttendees extends BaseController
 {
 	/**
 	 * Constructor

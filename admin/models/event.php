@@ -194,7 +194,7 @@ class JemModelEvent extends JemModelAdmin
 	{
 		$jinput = Factory::getApplication()->input;
 
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment version number.
@@ -419,7 +419,7 @@ class JemModelEvent extends JemModelAdmin
 	protected function _storeCategoriesSelected($eventId, $categories, $frontend, $new)
 	{
 		$user = JemFactory::getUser();
-		$db   = $this->getDbo();
+		$db   = Factory::getContainer()->get('DatabaseDriver');
 
 		$eventId = (int)$eventId;
 		if (empty($eventId) || !is_array($categories)) {
@@ -504,7 +504,7 @@ class JemModelEvent extends JemModelAdmin
 			return false;
 		}
 
-		$db   = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		# Get current registrations
 		$query = $db->getQuery(true);
@@ -587,7 +587,7 @@ class JemModelEvent extends JemModelAdmin
 		}
 
 		try {
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery(
 					'UPDATE #__jem_events' .

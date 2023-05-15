@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 
 jimport('joomla.application.component.model');
 /**
@@ -164,8 +165,7 @@ class JemModelCategoryelement extends JModelLegacy
 
 		$total = count($list);
 
-		jimport('joomla.html.pagination');
-		$this->_pagination = new JPagination($total, $limitstart, $limit);
+		$this->_pagination = new Pagination($total, $limitstart, $limit);
 
 		// slice out elements based on limits
 		$list = array_slice($list, $this->_pagination->limitstart, $this->_pagination->limit);

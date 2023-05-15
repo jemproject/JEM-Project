@@ -147,7 +147,7 @@ class JemModelCssmanager extends JModelLegacy
 	 */
 	public function getStatusLinenumber()
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('params');
 		$query->from('#__extensions');

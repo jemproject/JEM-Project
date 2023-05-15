@@ -16,6 +16,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\Filesystem\File;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -1120,10 +1121,8 @@ class JemOutput
 			return;
 		}
 
-		jimport('joomla.filesystem.file');
-
 		// Does a thumbnail exist?
-		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
 				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
@@ -1182,10 +1181,9 @@ class JemOutput
 		if (empty($imagefile) || empty($image)) {
 			return;
 		}
-		jimport('joomla.filesystem.file');
 				
 		// Does a thumbnail exist?
-/*		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+/*		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
 				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';

@@ -10,13 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * Housekeeping-Controller
  */
-class JemControllerHousekeeping extends JControllerLegacy
+class JemControllerHousekeeping extends BaseController
 {
 	/**
 	 * Constructor

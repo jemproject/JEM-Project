@@ -309,7 +309,7 @@ class JemModelAttendee extends JModelLegacy
 		}
 
 		try {
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery(
 					'UPDATE #__jem_register' .

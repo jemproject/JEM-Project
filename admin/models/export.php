@@ -76,7 +76,7 @@ class JemModelExport extends JModelList
 		$cats      = $jinput->get('cid', array(), 'array');
 
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -119,7 +119,7 @@ class JemModelExport extends JModelList
 		$jinput = Factory::getApplication()->input;
 		$includecategories = $jinput->get('categorycolumn', 0, 'int');
 
-		$db  = $this->getDbo();
+		$db  = Factory::getContainer()->get('DatabaseDriver');
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 		$separator = $jemconfig->get('csv_separator', ';');
 		$delimiter = $jemconfig->get('csv_delimiter', '"');
@@ -166,7 +166,7 @@ class JemModelExport extends JModelList
 	protected function getListQuerycats()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -193,7 +193,7 @@ class JemModelExport extends JModelList
 			//add BOM to fix UTF-8 in Excel
 			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -215,7 +215,7 @@ class JemModelExport extends JModelList
 	protected function getListQueryvenues()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -241,7 +241,7 @@ class JemModelExport extends JModelList
 			//add BOM to fix UTF-8 in Excel
 			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$header = array_keys($db->getTableColumns('#__jem_venues'));
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -263,7 +263,7 @@ class JemModelExport extends JModelList
 	protected function getListQuerycatsevents()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -289,7 +289,7 @@ class JemModelExport extends JModelList
 			//add BOM to fix UTF-8 in Excel
 			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -362,7 +362,7 @@ class JemModelExport extends JModelList
 	public function getCatEvent($id)
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.

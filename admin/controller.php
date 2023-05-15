@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Controller
  */
-class JemController extends JControllerLegacy
+class JemController extends BaseController
 {
 	/**
 	 * @var    string The default view.

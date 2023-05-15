@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 
 jimport('joomla.application.component.modellist');
 // ensure JemFactory is loaded (because model is used by modules too)
@@ -114,8 +115,8 @@ class JemModelEventslist extends JModelList
 			$app->setUserState('com_jem.eventslist.'.$itemid.'.filter_order_Dir', $filter_order_DirDefault);
 		}
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {

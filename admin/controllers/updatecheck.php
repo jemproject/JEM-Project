@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Updatecheck Controller
@@ -17,7 +17,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JemControllerUpdatecheck extends JControllerLegacy
+class JemControllerUpdatecheck extends BaseController
 {
 	/**
 	 * Constructor

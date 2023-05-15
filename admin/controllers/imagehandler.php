@@ -10,9 +10,11 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Files;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Client\ClientHelper
+use Joomla\CMS\MVC\Controller\BaseController;
 
-jimport('joomla.application.component.controller');
-jimport('joomla.filesystem.file');
 
 /**
  * JEM Component Imagehandler Controller
@@ -20,7 +22,7 @@ jimport('joomla.filesystem.file');
  * @package JEM
  *
  */
-class JemControllerImagehandler extends JControllerLegacy
+class JemControllerImagehandler extends BaseController
 {
 	/**
 	 * Constructor
@@ -53,9 +55,8 @@ class JemControllerImagehandler extends JControllerLegacy
 		$task = Factory::getApplication()->input->get('task', '');
 
 		// Set FTP credentials, if given
-		jimport('joomla.client.helper');
-		JClientHelper::setCredentialsFromRequest('ftp');
-		//$ftp = JClientHelper::getCredentials('ftp');
+
+		ClientHelper::setCredentialsFromRequest('ftp');
 
 		//set the target directory
 		if ($task == 'venueimgup') {
@@ -84,7 +85,7 @@ class JemControllerImagehandler extends JControllerLegacy
 		$filepath = $base_Dir . $filename;
 
 		//upload the image
-		if (!JFile::upload($file['tmp_name'], $filepath)) {
+		if (!File::upload($file['tmp_name'], $filepath)) {
 			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); </script>\n";
 			$app->close();
 		} else {
@@ -107,8 +108,7 @@ class JemControllerImagehandler extends JControllerLegacy
 		$app = Factory::getApplication();
 
 		// Set FTP credentials, if given
-		jimport('joomla.client.helper');
-		JClientHelper::setCredentialsFromRequest('ftp');
+		ClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
 		$images = Factory::getApplication()->input->get('rm', array(), 'array');
@@ -116,7 +116,7 @@ class JemControllerImagehandler extends JControllerLegacy
 
 		if (count($images)) {
 			foreach ($images as $image) {
-				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
+				if ($image !== ::getInstance()->clean($image, 'path')) {
 					Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 					continue;
 				}
@@ -124,9 +124,9 @@ class JemControllerImagehandler extends JControllerLegacy
 				$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
 				$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 				if (is_file($fullPath)) {
-					JFile::delete($fullPath);
-					if (JFile::exists($fullPaththumb)) {
-						JFile::delete($fullPaththumb);
+					File::delete($fullPath);
+					if (File::exists($fullPaththumb)) {
+						File::delete($fullPaththumb);
 					}
 				}
 			}

@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
+
 // include files
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
@@ -37,11 +39,8 @@ JemHelper::addFileLogger();
 //perform cleanup if it wasn't done today (archive, delete, recurrence)
 JemHelper::cleanup();
 
-// import joomla controller library
-jimport('joomla.application.component.controller');
-
 // Get an instance of the controller
-$controller = JControllerLegacy::getInstance('Jem');
+$controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
 $input = Factory::getApplication()->input;

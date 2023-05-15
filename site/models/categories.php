@@ -9,7 +9,9 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
  * JEM Component Categories Model
@@ -17,7 +19,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelCategories extends JModelLegacy
+class JemModelCategories extends BaseDatabaseModel
 {
 	/**
 	 * Top category id
@@ -82,7 +84,7 @@ class JemModelCategories extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the parameters of the active menu item
 		$params = $app->getParams('com_jem');
@@ -116,7 +118,7 @@ class JemModelCategories extends JModelLegacy
 	 */
 	public function getData()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$params = $app->getParams();
 
 		// Lets load the content if it doesn't already exist
@@ -157,7 +159,7 @@ class JemModelCategories extends JModelLegacy
 
 				//create target link
 				// TODO: Move to view?
-				$task = $app->input->get('task', '');
+				$task = $app->input->getCmd('task', '');
 				if ($task == 'archive') {
 					$category->linktext   = JText::_('COM_JEM_SHOW_ARCHIVE');
 					$category->linktarget = JRoute::_(JemHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
@@ -197,7 +199,7 @@ class JemModelCategories extends JModelLegacy
 	 */
 	public function getEventdata($id)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$params = $app->getParams('com_jem');
 
 		if (empty($this->_data[$id])) {
@@ -228,7 +230,7 @@ class JemModelCategories extends JModelLegacy
 	{
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$task   = JFactory::getApplication()->input->get('task', '');
+		$task   = Factory::getApplication()->input->getCmd('task', '');
 
 		$id = (int)$id;
 
@@ -320,7 +322,7 @@ class JemModelCategories extends JModelLegacy
 			$parent_id = $this->_id;
 		}
 
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$jinput = $app->input;
 		$user   = JemFactory::getUser();
 		$userId = $user->get('id');
@@ -342,7 +344,7 @@ class JemModelCategories extends JModelLegacy
 
 		// check archive task and ensure that only categories get selected
 		// if they contain a published/archived event
-		$task   = $jinput->get('task', '');
+		$task   = $jinput->getCmd('task', '');
 		$format = $jinput->getCmd('format', '');
 
 		# inspired by JemModelEventslist
@@ -445,7 +447,7 @@ class JemModelCategories extends JModelLegacy
 		if (!$this->_showemptycats) {
 			$query .= ' AND e.access IN (' . implode(',', $levels) . ')';
 
-			$task = JFactory::getApplication()->input->get('task', '');
+			$task = Factory::getApplication()->input->getCmd('task', '');
 			if($task == 'archive') {
 				$query .= ' AND e.published = 2';
 			} else {
@@ -466,8 +468,7 @@ class JemModelCategories extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination = new Pagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 		return $this->_pagination;
 	}

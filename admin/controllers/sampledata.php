@@ -9,13 +9,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Sampledata Controller
  * @package JEM
  */
-class JemControllerSampledata extends JControllerLegacy
+class JemControllerSampledata extends BaseController
 {
 	/**
 	 * Constructor

@@ -12,8 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
 
 // helper callback function to convert all elements of an array
 function jem_convert_ansi2utf8(&$value, $key)
@@ -27,7 +26,7 @@ function jem_convert_ansi2utf8(&$value, $key)
  * @package JEM
  *
  */
-class JemControllerImport extends JControllerLegacy
+class JemControllerImport extends BaseController
 {
 	/**
 	 * Constructor

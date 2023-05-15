@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 
 /**
  * Model-Venueslist
@@ -26,21 +27,18 @@ class JemModelVenueslist extends JModelList
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JEMHelper::config();
 
 		parent::__construct($config);
 	}
-
-	
-	
 	
 	/**
 	 * Method to auto-populate the model state.
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$jinput      = $app->input;
 		$task        = $jinput->getCmd('task');
@@ -71,8 +69,8 @@ class JemModelVenueslist extends JModelList
 		
 		$filter_order		= $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order', 'filter_order', 'a.city', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order		= InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 		
 		$orderby = $filter_order . ' ' . $filter_order_Dir;
 	
@@ -103,8 +101,8 @@ class JemModelVenueslist extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$app       = JFactory::getApplication();
-		$jinput    = JFactory::getApplication()->input;
+		$app       = Factory::getApplication();
+		$jinput    = Factory::getApplication()->input;
 		$task      = $jinput->getCmd('task', '');
 		$itemid    = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 	

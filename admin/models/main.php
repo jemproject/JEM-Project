@@ -10,15 +10,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component Main Model
  *
  * @package JEM
  */
-class JemModelMain extends JModelLegacy
+class JemModelMain extends BaseDatabaseModel
 {
 	/**
 	 * Constructor

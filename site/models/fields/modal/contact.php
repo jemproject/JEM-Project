@@ -9,15 +9,16 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.form.formfield');
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Form\FormField;
+
 /**
  * Contact select
  */
-class JFormFieldModal_Contact extends JFormField
+class JFormFieldModal_Contact extends FormField
 {
 	/**
 	 * field type

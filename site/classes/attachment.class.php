@@ -10,9 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.filesystem.file');
-jimport('joomla.filesystem.folder');
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -58,7 +57,7 @@ class JemAttachment extends JObject
 			}
 
 			// check if the filetype is valid
-			$fileext = strtolower(JFile::getExt($file));
+			$fileext = strtolower(File::getExt($file));
 			if (!in_array($fileext, $allowed)) {
 				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
 				continue;
@@ -69,9 +68,9 @@ class JemAttachment extends JObject
 				continue;
 			}
 
-			if (!JFolder::exists($path)) {
+			if (!Folder::exists($path)) {
 				// try to create it
-				$res = JFolder::create($path);
+				$res = Folder::create($path);
 				if (!$res) {
 					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path, 'warning');
 					return false;
@@ -84,10 +83,10 @@ class JemAttachment extends JObject
 
 			// Make sure that the full file path is safe.
 			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
-			// Since Joomla! 3.4.0 JFile::upload has some more params to control new security parsing
+			// Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
             // switch off parsing archives for byte sequences looking like a script file extension
             // but keep all other checks running
-            JFile::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
+            File::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
 
 			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
@@ -151,7 +150,7 @@ class JemAttachment extends JObject
 		}
 
 		// first list files in the folder
-		$files = JFolder::files($path, null, false, false);
+		$files = Folder::files($path, null, false, false);
 
 		// then get info for files from db
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -273,15 +272,15 @@ class JemAttachment extends JObject
 			$created_by = $db->loadResult();
 
 			if (!$user->can('edit', $type, $itemid, $created_by)) {
-				JemHelper::addLogEntry("User {$userid} is not permritted to remove attachment " . $res->object, __METHOD__);
+				JemHelper::addLogEntry("User ${userid} is not permritted to remove attachment " . $res->object, __METHOD__);
 				return false;
 			}
 		}
 
-		JemHelper::addLogEntry("User {$userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
+		JemHelper::addLogEntry("User ${userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
 		if (file_exists($path)) {
-			JFile::delete($path);
+			File::delete($path);
 		}
 
 		$query = 'DELETE FROM #__jem_attachments '

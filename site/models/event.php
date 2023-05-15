@@ -10,13 +10,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.modelitem');
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\Language\Multilanguage;
 
 /**
  * Event-Model
  */
-class JemModelEvent extends JModelItem
+class JemModelEvent extends ItemModel
 {
 	/**
 	 * Model context string.
@@ -47,7 +48,7 @@ class JemModelEvent extends JModelItem
 		$params = $app->getParams('com_jem');
 		$this->setState('params', $params);
 
-		$this->setState('filter.language', JLanguageMultilang::isEnabled());
+		$this->setState('filter.language', Multilanguage::isEnabled());
 	}
 
 	/**
@@ -73,7 +74,7 @@ class JemModelEvent extends JModelItem
 				$user     = JemFactory::getUser();
 				$levels   = $user->getAuthorisedViewLevels();
 
-				$db    = $this->getDbo();
+				$db    = Factory::getContainer()->get('DatabaseDriver');
 				$query = $db->getQuery(true);
 
 				# Event
@@ -216,7 +217,7 @@ class JemModelEvent extends JModelItem
 		$this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
 		// Define Booked
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('COUNT(*)'));
 		$query->from('#__jem_register');
@@ -246,7 +247,7 @@ class JemModelEvent extends JModelItem
 		if ($hitcount) {
 			// Initialise variables.
 			$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery('UPDATE #__jem_events' . ' SET hits = hits + 1' . ' WHERE id = ' . (int) $pk);
 
@@ -477,7 +478,7 @@ class JemModelEvent extends JModelItem
 		// avatars should be displayed
 		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
-		$db       = $this->getDbo();
+		$db       = Factory::getContainer()->get('DatabaseDriver');
 
 		switch ($settings->get('event_show_attendeenames', 2)) {
 			case 0: // show to none
@@ -655,7 +656,7 @@ class JemModelEvent extends JModelItem
 		$status  = $app->input->getInt('reg_check', 0);
 	//	$noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
 		$comment = $app->input->getString('reg_comment', '');
-		$comment = JFilterOutput::cleanText($comment);
+		$comment = OutputFilter::cleanText($comment);
 		$regid   = $app->input->getInt('regid', 0);
 
 		$eventId = (int) $this->_registerid;

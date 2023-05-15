@@ -11,9 +11,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Client\ClientHelper
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * View class for the JEM imageselect screen
  * Based on the Joomla! media component
@@ -21,7 +24,7 @@ use Joomla\CMS\Factory;
  * @package JEM
  *
  */
-class JemViewImagehandler extends JViewLegacy
+class JemViewImagehandler extends HtmlView
 {
 
 	/**
@@ -83,7 +86,7 @@ class JemViewImagehandler extends JViewLegacy
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
-			Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
 			$this->setLayout('uploadimage');
 			$app->input->set('task', $task);
 			$this->_displayuploadimage($tpl);
@@ -122,8 +125,7 @@ class JemViewImagehandler extends JViewLegacy
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		jimport('joomla.client.helper');
-		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
+		$ftp = ClientHelper::setCredentialsFromRequest('ftp');
 
 		//assign data to template
 		$this->task        = $task;

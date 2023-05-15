@@ -9,12 +9,12 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Category Controller
  */
-class JemControllerCategory extends JControllerForm
+class JemControllerCategory extends FormController
 {
 	/**
 	 * The extension for which the categories apply.

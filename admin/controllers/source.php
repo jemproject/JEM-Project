@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * Source controller class
  */
-class JemControllerSource extends JControllerLegacy
+class JemControllerSource extends BaseController
 {
 	/**
 	 * Constructor.
