@@ -125,7 +125,7 @@ use Joomla\CMS\Language\Text;
 			}
 			?>
 
-			<?php if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) : ?> {
+			<?php if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) {
 				echo JemOutput::mapicon($this->venue, null, $this->settings);
 			}
 			?>
