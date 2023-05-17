@@ -383,7 +383,7 @@ if ($jemsettings->oldevent > 0) {
 		
 		<?php
 		$event_show_mapserv = $params->get('event_show_mapserv');
-		<?php if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
+		if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
 			<div class="jem-map">
 				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
 			</div>
