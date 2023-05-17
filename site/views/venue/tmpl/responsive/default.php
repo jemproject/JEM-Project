@@ -126,7 +126,7 @@ defined('_JEXEC') or die;
           ?>
     
           <?php
-          if ($this->settings->get('global_show_mapserv') == 1) {
+          if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) {
             echo JemOutput::mapicon($this->venue, null, $this->settings);
           }
           ?>
@@ -162,9 +162,9 @@ defined('_JEXEC') or die;
 
 	<?php
 	$global_show_mapserv = $this->settings->get('global_show_mapserv');
-	if ($global_show_mapserv == 2 || $global_show_mapserv == 3) : ?>
+	if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
 		<div class="jem-map">
-			<?php if ($global_show_mapserv == 2) : ?>
+			<?php if ($global_show_mapserv == 2 || $global_show_mapserv == 5) : ?>
 				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
 			<?php endif; ?>
 

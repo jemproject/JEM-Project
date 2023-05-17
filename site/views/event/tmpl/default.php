@@ -338,12 +338,12 @@ if ($jemsettings->oldevent > 0) {
 			}
 			?>
 
-			<?php if ($params->get('event_show_mapserv') == 1) : ?>
+			<?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
 				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
 			<?php endif; ?>
 		</dl>
 
-			<?php if ($params->get('event_show_mapserv') == 2) : ?>
+			<?php if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
 				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
 			<?php endif; ?>
 

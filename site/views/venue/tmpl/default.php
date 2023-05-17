@@ -114,13 +114,13 @@ use Joomla\CMS\Language\Text;
 			?>
 
 			<?php
-			if ($this->settings->get('global_show_mapserv') == 1) {
+			if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) : ?> {
 				echo JemOutput::mapicon($this->venue, null, $this->settings);
 			}
 			?>
 		</dl>
 		<?php
-		if ($this->settings->get('global_show_mapserv') == 2) {
+		if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) {
 			echo JemOutput::mapicon($this->venue, null, $this->settings);
 		}
 		?>
