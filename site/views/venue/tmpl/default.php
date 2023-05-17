@@ -9,8 +9,8 @@
 
 defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
-// JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
+
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
 		<?php
@@ -19,13 +19,24 @@ use Joomla\CMS\Language\Text;
 		?>
 	</div>
 
-	<?php if ($this->params->get('show_page_heading', 1)) : ?>
+	<?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
 	<h1 class="componentheading">
 		<span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
+		<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue'); ?>
 	</h1>
 	<?php endif; ?>
-
-	<div class="clr"> </div>
+  
+  <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
+    <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
+      <h2 class="jem-venue-title">
+        <?php echo $this->escape($this->venue->title);?>
+      </h2>
+    <?php else : ?>
+      <h1 class="jem-venue-title">
+        <?php echo $this->escape($this->venue->title);?>
+      </h1>
+    <?php endif; ?>
+	<?php endif; ?>
 
 	<!--Venue-->
 	<h2 class="jem">
@@ -113,18 +124,18 @@ use Joomla\CMS\Language\Text;
 			}
 			?>
 
-			<?php
-			if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) : ?> {
+			<?php if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) : ?> {
 				echo JemOutput::mapicon($this->venue, null, $this->settings);
 			}
 			?>
+			<?php endif; ?>
 		</dl>
-		<?php
-		if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) {
-			echo JemOutput::mapicon($this->venue, null, $this->settings);
-		}
-		?>
-	<?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
+		<?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?> 
+			<div class="jem-map">
+				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
+			</div>
+		<?php endif; ?>
+		<?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
 	<!-- PUBLISHING STATE -->
 		<dl>
 			<dt class="published"><?php echo Text::_('JSTATUS'); ?>:</dt>
@@ -150,7 +161,6 @@ use Joomla\CMS\Language\Text;
 		<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode; ?>">
 		<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
 	<?php endif; ?>
-
 
 	<?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
 	          $this->venuedescription != '<br />') : ?>

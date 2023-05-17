@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Language\Text;
 
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
@@ -151,10 +152,10 @@ defined('_JEXEC') or die;
 			<dt class="published hasTooltip" data-original-title="<?php echo JText::_('JSTATUS'); ?>"><?php echo JText::_('JSTATUS'); ?>:</dt>
 			<dd class="published">
 				<?php switch ($this->venue->published) {
-				case  1: echo JText::_('JPUBLISHED');   break;
-				case  0: echo JText::_('JUNPUBLISHED'); break;
-				case  2: echo JText::_('JARCHIVED');    break;
-				case -2: echo JText::_('JTRASHED');     break;
+				case  1: echo Text::_('JPUBLISHED');   break;
+				case  0: echo Text::_('JUNPUBLISHED'); break;
+				case  2: echo Text::_('JARCHIVED');    break;
+				case -2: echo Text::_('JTRASHED');     break;
 				} ?>
 			</dd>
 		</dl>
@@ -185,7 +186,7 @@ defined('_JEXEC') or die;
 	<?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
 	          $this->venuedescription != '<br />') : ?>
 
-		<h2 class="description"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
+		<h2 class="description"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
 		<div class="description no_space floattext" itemprop="description">
 			<?php echo $this->venuedescription; ?>
 		</div>
