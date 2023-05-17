@@ -65,31 +65,32 @@ $location = JemHelper::defineCenterMap($this->form);
 		f.jform_meta_keywords.value += f.jform_venue.value+', ' + f.jform_city.value;
 	}
 
-	function test(){			
-			var form = document.getElementById('venue-form');
-			var map = jQuery('#jform_map') ;
-			var streetcheck = jQuery(form.jform_street).hasClass('required');
+	function test() {
+		var form = document.getElementById('venue-form');
+		var map = $('#jform_map');
+		var streetcheck = $(form.jform_street).hasClass('required');
+		// if (map && map.checked == true) {
+		if (map && map.is(":checked")) {
+			var lat = $('#jform_latitude');
+			var lon = $('#jform_longitude');
 
-			if(map && map.checked == true) {
-				var lat = jQuery('#jform_latitude');
-				var lon = jQuery('#jform_longitude');
-
-				if(lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
-					if(!streetcheck) {
-						addrequired();
-					}
-				} else {
-					if(lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000) ) {
-						removerequired();
-					}
+			if (lat.val() == ('' || 0.000000) || lon.val() == ('' || 0.000000)) {
+				if (!streetcheck) {
+					addrequired();
 				}
-				$('#mapdiv').show();
+			} else {
+				if (lat.val() != ('' || 0.000000) && lon.val() != ('' || 0.000000)) {
+					removerequired();
+				}
 			}
+			$('#mapdiv').show();
+		}
 
-			if(map && map.checked == false) {
-				removerequired();
-				jQuery('#mapdiv').hide();
-			}
+		// if (map && map.checked == false) {
+		if (map && !map.is(":checked")) {
+			removerequired();
+			$('#mapdiv').hide();
+		}
 	}
 
 	function addrequired() {

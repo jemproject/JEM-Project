@@ -81,30 +81,31 @@ window.onload = (event) => {
 		f.jform_meta_keywords.value += f.jform_venue.value+', ' + f.jform_city.value;
 	}
 
-	function test(){
+	function test() {
 		var form = document.getElementById('venue-form');
-		var map = $('jform_map');
+		var map = $('#jform_map');
 		var streetcheck = $(form.jform_street).hasClass('required');
+		// if (map && map.checked == true) {
+		if (map && map.is(":checked")) {
+			var lat = $('#jform_latitude');
+			var lon = $('#jform_longitude');
 
-		if(map && map.checked == true) {
-			var lat = $('jform_latitude');
-			var lon = $('jform_longitude');
-
-			if(lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
-				if(!streetcheck) {
+			if (lat.val() == ('' || 0.000000) || lon.val() == ('' || 0.000000)) {
+				if (!streetcheck) {
 					addrequired();
 				}
 			} else {
-				if(lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000) ) {
+				if (lat.val() != ('' || 0.000000) && lon.val() != ('' || 0.000000)) {
 					removerequired();
 				}
 			}
-			$('mapdiv').show();
+			$('#mapdiv').show();
 		}
 
-		if(map && map.checked == false) {
+		// if (map && map.checked == false) {
+		if (map && !map.is(":checked")) {
 			removerequired();
-			$('mapdiv').hide();
+			$('#mapdiv').hide();
 		}
 	}
 
