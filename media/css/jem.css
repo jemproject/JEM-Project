@@ -509,6 +509,16 @@ div#jem table.eventtable tr td span.jem_date-2::after {
 }
 /**/
 
+#jem div.jem-map {
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
+
+#jem div.jem-map iframe {
+    width: 100%;
+    height: 300px;
+}
+
 /* -------------------
 	FILTER
 --------------------- */
