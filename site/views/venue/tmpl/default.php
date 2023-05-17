@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
+
 ?>
 
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
