@@ -666,7 +666,6 @@ div.jem_editevent form input,
 div.jem_editevent form select,
 div.jem_editevent form textarea,
 div.jem_editvenue form input,
-div.jem_editvenue form select,
 div.jem_editvenue form textarea,
 div.jem_select_users ul.adminformlist select,
 div.jem_select_users ul.adminformlist input {
@@ -675,6 +674,12 @@ div.jem_select_users ul.adminformlist input {
 	border:1px solid #808080;
 	cursor:pointer;
 }
+
+div.jem_editvenue form select {
+	margin:0 0 0.5em 0;
+	padding: 0.2em auto 0.2em 0.2em;
+	border:1px solid #808080;
+	cursor:pointer;}
 
 table#el-attachments .title {
 	padding: 4px 0;
