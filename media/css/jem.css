@@ -631,71 +631,41 @@ div.jem_editvenue form select:hover,
 div.jem_editvenue form textarea:hover,
 div.jem_select_users ul.adminformlist select:hover,
 div.jem_select_users ul.adminformlist input:hover {
-	margin:0 0 0.5em 0;
-	padding:0.2em;
 	border:1px solid #808080;
-	cursor:pointer;
 	background-color:#DDE084;
-	border:1px solid #808080;
 }
 
-div.jem_editevent form input:active, /* event */
-/*div.jem_editevent form button:active,*/
+div.jem_editevent form input:active,
 div.jem_editevent form select:active,
 div.jem_editevent form textarea:active,
-div.jem_editvenue form input:active, /* venue */
-/*div.jem_editvenue form button:active,*/
+div.jem_editvenue form input:active,
 div.jem_editvenue form select:active,
 div.jem_editvenue form textarea:active,
 div.jem_select_users ul.adminformlist select:active,
-div.jem_select_users ul.adminformlist input:active {
-	margin:0 0 0.5em 0;
-	padding:0.2em;
-	border:1px solid #808080;
-	cursor:pointer;
-	background-color:#C6CCBE;
-}
-
-div.jem_editevent form input:visited, /* event */
-/*div.jem_editevent form button:visited,*/
+div.jem_select_users ul.adminformlist input:active,
+div.jem_editevent form input:visited,
 div.jem_editevent form select:visited,
 div.jem_editevent form textarea:visited,
-div.jem_editvenue form input:visited, /* venue */
-/*div.jem_editvenue form button:visited,*/
+div.jem_editvenue form input:visited,
 div.jem_editvenue form select:visited,
 div.jem_editvenue form textarea:visited,
 div.jem_select_users ul.adminformlist select:visited,
-div.jem_select_users ul.adminformlist input:visited {
-	margin:0 0 0.5em 0;
-	padding:0.2em;
-	border:1px solid #808080;
-	cursor:pointer;
-	background-color:#C6CCBE;
-}
-
-div.jem_editevent form input:active, /* event */
-/*div.jem_editevent form button:active,*/
+div.jem_select_users ul.adminformlist input:visited,
+div.jem_editevent form input:active,
 div.jem_editevent form select:active,
 div.jem_editevent form textarea:active,
-div.jem_editvenue form input:active, /* venue */
-/*div.jem_editvenue form button:active,*/
+div.jem_editvenue form input:active,
 div.jem_editvenue form select:active,
 div.jem_editvenue form textarea:active,
 div.jem_select_users ul.adminformlist select:active,
 div.jem_select_users ul.adminformlist input:active {
-	margin:0 0 0.5em 0;
-	padding:0.2em;
-	border:1px solid #808080;
-	cursor:pointer;
 	background-color:#C6CCBE;
 }
 
-div.jem_editevent form input, /* event */
-/*div.jem_editevent form button,*/
+div.jem_editevent form input,
 div.jem_editevent form select,
 div.jem_editevent form textarea,
-div.jem_editvenue form input, /* venue */
-/*div.jem_editvenue form button,*/
+div.jem_editvenue form input,
 div.jem_editvenue form select,
 div.jem_editvenue form textarea,
 div.jem_select_users ul.adminformlist select,
@@ -704,7 +674,6 @@ div.jem_select_users ul.adminformlist input {
 	padding:0.2em;
 	border:1px solid #808080;
 	cursor:pointer;
-	/*background-color:#C6CCBE;*/
 }
 
 table#el-attachments .title {
