@@ -227,7 +227,7 @@ div#jem .pointer {
 /* used for map without api-key */
 div#jem .venue_map {
 	border: 1px solid #000;
-	width:500px;
+	width: 100%;
 }
 
 /**

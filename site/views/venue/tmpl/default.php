@@ -136,7 +136,7 @@ use Joomla\CMS\Language\Text;
 				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
 			</div>
 		<?php endif; ?>
-		<?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
+		<?php if (isset($this->venue->published) && !empty($this->show_status)) : ?>
 	<!-- PUBLISHING STATE -->
 		<dl>
 			<dt class="published"><?php echo Text::_('JSTATUS'); ?>:</dt>
