@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
 /**
  * JEM Component Settings Model
@@ -106,7 +107,7 @@ class JemModelSettings extends AdminModel
 		// Old table - deprecated, maybe already removed
 		//
 		try {
-			$settings = JTable::getInstance('Settings', 'JemTable');
+			$settings = Table::getInstance('Settings', 'JemTable');
 
 			$fields = $settings->getFields();
 			if (!empty($fields)) {

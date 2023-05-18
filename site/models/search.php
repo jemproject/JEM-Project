@@ -58,7 +58,7 @@ class JemModelSearch extends BaseDatabaseModel
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events from database
@@ -91,7 +91,7 @@ class JemModelSearch extends BaseDatabaseModel
 	 */
 	public function getData()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data)) {
@@ -180,7 +180,7 @@ class JemModelSearch extends BaseDatabaseModel
 	 */
 	protected function _buildOrderBy()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
 		$filter_order      = $this->getState('filter_order');
@@ -210,7 +210,7 @@ class JemModelSearch extends BaseDatabaseModel
 	 */
 	protected function _buildWhere()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the paramaters of the active menu item
 		$params       = $app->getParams();
@@ -343,7 +343,7 @@ class JemModelSearch extends BaseDatabaseModel
 
 	public function getCountryOptions()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 
@@ -365,7 +365,7 @@ class JemModelSearch extends BaseDatabaseModel
 
 	public function getCityOptions()
 	{
-		if (!$country = JFactory::getApplication()->input->getString('filter_country', '')) {
+		if (!$country = Factory::getApplication()->input->getString('filter_country', '')) {
 			return array();
 		}
 		$query = ' SELECT DISTINCT l.city as value, l.city as text '

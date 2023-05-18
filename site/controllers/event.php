@@ -334,7 +334,7 @@ class JemControllerEvent extends JemControllerForm
 		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->triggerEvent('onEventUserRegistered', array($register_id));
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		$msg = JText::_('COM_JEM_REGISTRATION_THANKS_FOR_RESPONSE');
@@ -364,7 +364,7 @@ class JemControllerEvent extends JemControllerForm
 		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->triggerEvent('onEventUserUnregistered', array($id));
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');

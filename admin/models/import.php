@@ -223,7 +223,7 @@ class JemModelImport extends JModelLegacy
 		$pk = $replace ? false : 'id';
 
 		// retrieve the specified table
-		$object = JTable::getInstance($tablename, $prefix);
+		$object = Table::getInstance($tablename, $prefix);
 		$objectname = get_class($object);
 		$rootkey = $this->_rootkey();
 
@@ -881,7 +881,7 @@ class JemModelImport extends JModelLegacy
 		$rec = array ('added' => 0, 'updated' => 0, 'error' => 0);
 
 		foreach ($data as $row) {
-			$object = JTable::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
+			$object = Table::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
 			$object->bind($row, $ignore);
 
 			// Make sure the data is valid

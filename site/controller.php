@@ -162,7 +162,7 @@ class JemController extends JControllerLegacy
 			jexit();
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1; // The caller expects an answer!

@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 jimport('joomla.application.component.modeladmin');
 
@@ -78,7 +79,7 @@ class JemModelCategory extends JModelAdmin
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		$parentId = $app->input->getInt('parent_id', 0);
 		$this->setState('category.parent_id', $parentId);
@@ -99,11 +100,11 @@ class JemModelCategory extends JModelAdmin
 	 * @param  string $prefix The class prefix. Optional.
 	 * @param  array  $config Configuration array for model. Optional.
 	 *
-	 * @return JTable A JTable object
+	 * @return Table A Table object
 	 */
 	public function getTable($type = 'Category', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**

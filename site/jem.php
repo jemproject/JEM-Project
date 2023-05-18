@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Table\Table;
 
 // include files
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
@@ -30,7 +31,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
-JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('jquery');
 // create JEM's file logger

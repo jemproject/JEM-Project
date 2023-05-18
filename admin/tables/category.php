@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 jimport('joomla.database.tablenested');
 
@@ -132,7 +133,7 @@ class JemTableCategory extends JTableNested
 	 *
 	 * @return boolean
 	 *
-	 * @see    JTable::check
+	 * @see    Table::check
 	 * @since  11.1
 	 */
 	public function check()
@@ -149,7 +150,7 @@ class JemTableCategory extends JTableNested
 
 		$this->alias = JemHelper::stringURLSafe($this->alias);
 		if (trim(str_replace('-', '', $this->alias)) == '') {
-			$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+			$this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
 		}
 
 		return true;
@@ -164,7 +165,7 @@ class JemTableCategory extends JTableNested
 	 *
 	 * @return mixed   Null if operation was satisfactory, otherwise returns an error
 	 *
-	 * @see    JTable::bind
+	 * @see    Table::bind
 	 * @since  11.1
 	 */
 	public function bind($array, $ignore = '')
@@ -190,14 +191,14 @@ class JemTableCategory extends JTableNested
 	}
 
 	/**
-	 * Overloaded JTable::store to set created/modified and user id.
+	 * Overloaded Table::store to set created/modified and user id.
 	 *
 	 * @param  boolean  $updateNulls  True to update fields even if they are null.
 	 * @return boolean  True on success.
 	 */
 	public function store($updateNulls = false)
 	{
-		$date = JFactory::getDate();
+		$date = Factory::getDate();
 		$user = JemFactory::getUser();
 		if ($this->id) {
 			// Existing category
@@ -209,7 +210,7 @@ class JemTableCategory extends JTableNested
 			$this->created_user_id = $user->get('id');
 		}
 		// Verify that the alias is unique
-		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => Factory::getContainer()->get('DatabaseDriver')));
+		$table = Table::getInstance('Category', 'JEMTable', array('dbo' => Factory::getContainer()->get('DatabaseDriver')));
 
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		    && ($table->id != $this->id || $this->id == 0)) {

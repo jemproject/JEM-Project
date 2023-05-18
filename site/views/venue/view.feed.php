@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-
 /**
  * Venue-Feed
  */
@@ -22,7 +21,7 @@ class JemViewVenue extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 

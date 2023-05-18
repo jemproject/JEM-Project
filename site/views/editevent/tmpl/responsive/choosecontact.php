@@ -9,7 +9,9 @@
 
 defined('_JEXEC') or die;
 
-$function = JFactory::getApplication()->input->getCmd('function', 'jSelectContact');
+use Joomla\CMS\Factory;
+
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
 ?>
 
 <script type="text/javascript">

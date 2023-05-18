@@ -10,9 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 
 /**
  * Model-CSSManager
@@ -35,7 +34,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->id = base64_encode($name);
 
 		if ($temp->exists) {
-			$ext =  JFile::getExt($path.$name);
+			$ext =  File::getExt($path.$name);
 				if ($ext != 'css') {
 					# the file is valid but the extension not so let's return false
 					$temp->ext = false;
@@ -64,7 +63,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->id = base64_encode($filename);
 
 		if ($temp->exists) {
-			$ext =  JFile::getExt($path.$name);
+			$ext =  File::getExt($path.$name);
 			if ($ext != 'css') {
 				# the file is valid but the extension not so let's return false
 				$temp->ext = false;
@@ -91,7 +90,7 @@ class JemModelCssmanager extends JModelLegacy
 		// Check if the template path exists.
 		if (is_dir($path)) {
 			// Handle the CSS files.
-			$files = JFolder::files($path.'/css', '\.css$', false, false);
+			$files = Folder::files($path.'/css', '\.css$', false, false);
 
 			foreach ($files as $file) {
 				$result['css'][] = $this->getFile($path.'/css/', $file);
@@ -134,7 +133,7 @@ class JemModelCssmanager extends JModelLegacy
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');

@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 /**
  * JEM Venue Table
  */
-class JemTableVenue extends JTable
+class JemTableVenue extends Table
 {
 	public function __construct(&$db)
 	{
@@ -53,7 +54,7 @@ class JemTableVenue extends JTable
 		if (empty($this->alias)) {
 			$this->alias = JemHelper::stringURLSafe($this->venue);
 			if (trim(str_replace('-', '', $this->alias)) == '') {
-				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+				$this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
 
@@ -120,7 +121,7 @@ class JemTableVenue extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		$date        = JFactory::getDate();
+		$date        = Factory::getDate();
 		$user        = JemFactory::getUser();
 		$userid      = $user->get('id');
 		$app         = Factory::getApplication();
@@ -354,7 +355,7 @@ class JemTableVenue extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}

@@ -34,7 +34,7 @@ class JemModelMailto extends JModelForm
 
     protected function populateState()
     {
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
         $params = $app->getParams();
 		$this->setState('params', $params);
 
@@ -74,7 +74,7 @@ class JemModelMailto extends JModelForm
 		if ($data['link'] == '')
 		{
 			// JError::raiseError(403, JText::_('COM_JEM_MAILTO_LINK_IS_MISSING'));
-            JFactory::getApplication()->enqueueMessage(JText::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
+            Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
 
 			return false;
 		}
@@ -107,7 +107,7 @@ class JemModelMailto extends JModelForm
 	 */
 	public function getData()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		$data['emailto']    = $input->get('emailto', '', 'string');
 		$data['sender']     = $input->get('sender', '', 'string');

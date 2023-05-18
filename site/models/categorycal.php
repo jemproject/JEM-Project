@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -37,7 +39,7 @@ class JemModelCategoryCal extends JemModelEventslist
 	 */
 	public function __construct()
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$params = $app->getParams();
 
 		$id = $app->input->getInt('id', 0);
@@ -74,7 +76,7 @@ class JemModelCategoryCal extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app          = JFactory::getApplication();
+		$app          = Factory::getApplication();
 		$params       = $app->getParams();
 		$itemid       = $app->input->getInt('Itemid', 0);
 		$task         = $app->input->getCmd('task', '');

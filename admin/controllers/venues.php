@@ -79,7 +79,7 @@ class JemControllerVenues extends AdminController
             $this->postDeleteHook($model,$cid);
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		$this->setRedirect( 'index.php?option=com_jem&view=venues');

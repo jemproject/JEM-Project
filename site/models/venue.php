@@ -28,7 +28,7 @@ class JemModelVenue extends JemModelEventslist
 
 	public function __construct()
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$jinput = $app->input;
 		$params = $app->getParams();
 
@@ -48,7 +48,7 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$params      = $app->getParams();
 		$jinput      = $app->input;

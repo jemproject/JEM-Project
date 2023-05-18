@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.tooltip');
 ?>
 
@@ -32,10 +34,10 @@ defined('_JEXEC') or die;
 	<div id="jem_filter" class="floattext">
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>
 		<div class="jem_fleft">
-			<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+			<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>

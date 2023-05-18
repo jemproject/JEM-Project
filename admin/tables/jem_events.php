@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM events Model class
  *
  * @package JEM
  *
  */
-class jem_events extends JTable
+class jem_events extends Table
 {
 	/**
 	 * Primary Key

@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
 
@@ -78,11 +79,11 @@ class JemModelEvent extends JemModelAdmin
 	 * @param  type   The table type to instantiate
 	 * @param  string A prefix for the table class name. Optional.
 	 * @param  array  Configuration array for model. Optional.
-	 * @return JTable A database object
+	 * @return Table A database object
 	 */
 	public function getTable($type = 'Event', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -188,7 +189,7 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param  $table JTable-object.
+	 * @param  $table Table-object.
 	 */
 	protected function _prepareTable($table)
 	{
@@ -276,11 +277,11 @@ class JemModelEvent extends JemModelAdmin
         $db = Factory::getContainer()->get('DatabaseDriver');
 		$nullDate = $db->getNullDate();
 		if (!empty($data['dates']) && ($data['dates'] != $nullDate)) {
-			$d = JFactory::getDate($data['dates'], 'UTC');
+			$d = Factory::getDate($data['dates'], 'UTC');
 			$data['dates'] = $d->format('Y-m-d', true, false);
 		}
 		if (!empty($data['enddates']) && ($data['enddates'] != $nullDate)) {
-			$d = JFactory::getDate($data['enddates'], 'UTC');
+			$d = Factory::getDate($data['enddates'], 'UTC');
 			$data['enddates'] = $d->format('Y-m-d', true, false);
 		}
 
@@ -305,7 +306,7 @@ class JemModelEvent extends JemModelAdmin
 			$data['recurrence_byday']  = $recurrencebyday;
 
 			if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != $nullDate)) {
-				$d = JFactory::getDate($data['recurrence_limit_date'], 'UTC');
+				$d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
 				$data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
 			}
 		}
@@ -561,7 +562,7 @@ class JemModelEvent extends JemModelAdmin
 			}
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		return true;

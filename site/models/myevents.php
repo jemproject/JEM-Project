@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -51,7 +52,7 @@ class JemModelMyevents extends BaseDatabaseModel
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events from database
@@ -78,7 +79,7 @@ class JemModelMyevents extends BaseDatabaseModel
 	 */
 	public function getEvents()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
@@ -246,7 +247,7 @@ class JemModelMyevents extends BaseDatabaseModel
 	 */
 	protected function _buildOrderBy()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
 		$filter_order      = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -276,7 +277,7 @@ class JemModelMyevents extends BaseDatabaseModel
 	 */
 	protected function _buildWhere()
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 		$task     = $app->input->getCmd('task', '');
 		$params   = $app->getParams();
 		$settings = JemHelper::globalattribs();

@@ -111,7 +111,7 @@ class JemControllerAttendees extends BaseController
 				}
 			}
 
-			$cache = JFactory::getCache('com_jem');
+			$cache = Factory::getCache('com_jem');
 			$cache->clean();
 
 			$msg = ($total - $skip - $error - $changed) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
@@ -167,7 +167,7 @@ class JemControllerAttendees extends BaseController
 			echo "<script> alert('".$modelAttendeeList->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');

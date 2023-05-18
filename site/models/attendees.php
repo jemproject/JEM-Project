@@ -20,7 +20,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
  * @package JEM
  *
  */
-class JemModelAttendees extends ModelLegacy
+class JemModelAttendees extends BaseDatabaseModel
 {
 	/**
 	 * Attendees data array
@@ -431,7 +431,7 @@ class JemModelAttendees extends ModelLegacy
 	 */
 	protected function _buildQueryUsers()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 
 		// no filters, hard-coded
 		$filter_order     = 'usr.name';

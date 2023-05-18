@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM venues Model class
  *
  * @package JEM
  *
  */
-class jem_venues extends JTable
+class jem_venues extends Table
 {
 	/**
 	 * Primary Key

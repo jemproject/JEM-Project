@@ -9,7 +9,9 @@
 
 defined('_JEXEC') or die;
 
-$function = JFactory::getApplication()->input->getCmd('function', 'jSelectUsers');
+use Joomla\CMS\Factory;
+
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
 $checked = 0;
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');

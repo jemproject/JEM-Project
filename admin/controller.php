@@ -73,7 +73,7 @@ class JemController extends BaseController
 			jexit();
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;

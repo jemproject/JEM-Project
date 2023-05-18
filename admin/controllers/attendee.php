@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Table\Table;
 
 /**
  * Controller: Attendee
@@ -50,7 +51,7 @@ class JemControllerAttendee extends BaseController
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$attendee = JTable::getInstance('jem_register', '');
+		$attendee = Table::getInstance('jem_register', '');
 		$attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
 		$attendee->checkin();
 
@@ -141,7 +142,7 @@ class JemControllerAttendee extends BaseController
 			}
 			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
 
-			$cache = JFactory::getCache('com_jem');
+			$cache = Factory::getCache('com_jem');
 			$cache->clean();
 		} else {
 			$msg 	= '';

@@ -35,7 +35,7 @@ class JemModelEvent extends ItemModel
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('site');
+		$app = Factory::getApplication('site');
 
 		// Load state from the request.
 		$pk = $app->input->getInt('id', 0);
@@ -242,7 +242,7 @@ class JemModelEvent extends ItemModel
 	 */
 	public function hit($pk = 0)
 	{
-		$hitcount = JFactory::getApplication()->input->getInt('hitcount', 1);
+		$hitcount = Factory::getApplication()->input->getInt('hitcount', 1);
 
 		if ($hitcount) {
 			// Initialise variables.
@@ -279,7 +279,7 @@ class JemModelEvent extends ItemModel
 		$user      = JemFactory::getUser();
 	//	$userid    = (int)$user->get('id');
 		$levels    = $user->getAuthorisedViewLevels();
-	//	$app       = JFactory::getApplication();
+	//	$app       = Factory::getApplication();
 	//	$params    = $app->getParams();
 	//	$catswitch = $params->get('categoryswitch', '0');
 		$settings  = JemHelper::globalattribs();
@@ -566,7 +566,7 @@ class JemModelEvent extends ItemModel
 	 */
 	protected function _doRegister($eventId, $uid, $uip, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
-	//	$app = JFactory::getApplication('site');
+	//	$app = Factory::getApplication('site');
 	//	$user = JemFactory::getUser();
 	//	$jemsettings = JemHelper::config();
 		$registration = (empty($uid) || empty($eventId)) ? false : $this->getUserRegistration($eventId, $uid);
@@ -649,7 +649,7 @@ class JemModelEvent extends ItemModel
 	 */
 	public function userregister()
 	{
-		$app = JFactory::getApplication('site');
+		$app = Factory::getApplication('site');
 		$user = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
 
@@ -699,7 +699,7 @@ class JemModelEvent extends ItemModel
 	 */
 	public function adduser($eventId, $uid, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
-	//	$app = JFactory::getApplication('site');
+	//	$app = Factory::getApplication('site');
 		$user = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
 

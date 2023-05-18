@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM Group Table
  *
  * @package JEM
  *
  */
-class JemTableGroup extends JTable
+class JemTableGroup extends Table
 {
 	public function __construct(&$db)
 	{
@@ -134,7 +136,7 @@ class JemTableGroup extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}

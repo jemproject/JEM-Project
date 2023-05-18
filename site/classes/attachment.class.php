@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Table\Table;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -88,7 +89,7 @@ class JemAttachment extends JObject
             // but keep all other checks running
             File::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
 
-			$table = JTable::getInstance('jem_attachments', '');
+			$table = Table::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
 			$table->object = $object;
 			if (isset($rec['customname']) && !empty($rec['customname'])) {
@@ -122,7 +123,7 @@ class JemAttachment extends JObject
 			return false;
 		}
 
-		$table = JTable::getInstance('jem_attachments', '');
+		$table = Table::getInstance('jem_attachments', '');
 		$table->load($attach['id']);
 		$table->bind($attach);
 

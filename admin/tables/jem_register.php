@@ -9,10 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * Table: Register
  */
-class jem_register extends JTable
+class jem_register extends Table
 {
 	/**
 	 * Primary Key
@@ -39,17 +41,17 @@ class jem_register extends JTable
 	}
 
 	/**
-	 * Method to store a row in the database from the JTable instance properties.
+	 * Method to store a row in the database from the Table instance properties.
 	 * If a primary key value is set the row with that primary key value will be
 	 * updated with the instance property values.  If no primary key value is set
 	 * a new row will be inserted into the database with the properties from the
-	 * JTable instance.
+	 * Table instance.
 	 *
 	 * @param  boolean  $updateNulls  True to update fields even if they are null.
 	 *
 	 * @return boolean  True on success.
 	 *
-	 * @link   https://docs.joomla.org/JTable/store
+	 * @link   https://docs.joomla.org/Table/store
 	 * @since  11.1
 	 */
 	public function store($updateNulls = false)

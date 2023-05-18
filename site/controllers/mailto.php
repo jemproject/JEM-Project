@@ -137,7 +137,7 @@ class JemControllerMailto extends JemControllerForm
 		$body    = JMailHelper::cleanBody($body);
 
 		//--------------start new code ------------
-		$mailer = JFactory::getMailer();
+		$mailer = Factory::getMailer();
 		$mailer->setSender($from);
 		$mailer->addRecipient($data['emailto']);
 		$mailer->setSubject($subject);

@@ -7,17 +7,19 @@
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-defined('_JEXEC') or die; ?>
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text; ?>
 
 <table class="table" style="width: 100%">
 	<tr>
 		<td class="sectionname" width="100%"><span
-			style="color: #C24733; font-size: 18px; font-weight: bold;"><?php echo JText::_( 'COM_JEM_REGISTERED_USER' ); ?>
+			style="color: #C24733; font-size: 18px; font-weight: bold;"><?php echo Text::_( 'COM_JEM_REGISTERED_USER' ); ?>
 			</span>
 		</td>
 		<td><div class="button2-left">
 				<div class="blank">
-					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
+					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
 					</a>
 				</div>
 			</div>
@@ -27,8 +29,8 @@ defined('_JEXEC') or die; ?>
 <br />
 <table class="adminlist">
 	<tr>
-		<td align="left"><b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?> </b>&nbsp;<?php echo $this->escape($this->event->title); ?><br />
-			<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?> </b>&nbsp;<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
+		<td align="left"><b><?php echo Text::_( 'COM_JEM_TITLE' ).':'; ?> </b>&nbsp;<?php echo $this->escape($this->event->title); ?><br />
+			<b><?php echo Text::_( 'COM_JEM_DATE' ).':'; ?> </b>&nbsp;<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
 					$this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?></td>
 	</tr>
 </table>
@@ -37,15 +39,15 @@ defined('_JEXEC') or die; ?>
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th class="title"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th class="title"><?php echo JText::_( $regname ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME' ); ?></th>
+			<th class="title"><?php echo Text::_( 'COM_JEM_NUM' ); ?></th>
+			<th class="title"><?php echo Text::_( $regname ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME' ); ?></th>
 			<?php if ($this->enableemailaddress == 1) : ?>
-			<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
+			<th class="title"><?php echo Text::_( 'COM_JEM_EMAIL' ); ?></th>
 			<?php endif; ?>
-			<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
-			<th class="title"><?php echo JText::_('COM_JEM_STATUS' ); ?></th>
+			<th class="title"><?php echo Text::_( 'COM_JEM_REGDATE' ); ?></th>
+			<th class="title"><?php echo Text::_('COM_JEM_STATUS' ); ?></th>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-			<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+			<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 			<?php endif; ?>
 		</tr>
 	</thead>

@@ -15,8 +15,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
-use \Joomla\CMS\Log\LogEntry;
-use \Joomla\CMS\Log\Log;
+use Joomla\CMS\Log\LogEntry;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Table\Table;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -186,7 +187,7 @@ class JemHelper
 				foreach ($recurrence_array as $recurrence_row)
 				{
 					// get the info of reference event for the duplicates
-					$ref_event = JTable::getInstance('Event', 'JemTable');
+					$ref_event = Table::getInstance('Event', 'JemTable');
 					$ref_event->load($recurrence_row['id']);
 
                     $db = Factory::getContainer()->get('DatabaseDriver');
@@ -214,7 +215,7 @@ class JemHelper
 							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
 							&& strtotime($recurrence_row['dates']) <= time() + 86400 * $anticipation)
 					{
-						$new_event = JTable::getInstance('Event', 'JemTable');
+						$new_event = Table::getInstance('Event', 'JemTable');
 						$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
 						$new_event->recurrence_first_id = $recurrence_row['first_id'];
 						$new_event->recurrence_counter = $recurrence_row['counter'] + 1;

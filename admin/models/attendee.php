@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 jimport('joomla.application.component.model');
 
@@ -118,7 +119,7 @@ class JemModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$data = JTable::getInstance('jem_register', '');
+			$data = Table::getInstance('jem_register', '');
 			$data->username = null;
 			if (empty($data->eventtitle)) {
 				$jinput = Factory::getApplication()->input;
@@ -144,7 +145,7 @@ class JemModelAttendee extends JModelLegacy
 			return false;
 		}
 
-		$row = JTable::getInstance('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
 		if ($row->status == 2) {
@@ -178,7 +179,7 @@ class JemModelAttendee extends JModelLegacy
 		}
 
 		// $row = $this->getTable('jem_register', '');
-		$row = JTable::getInstance('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 
 		if ($id > 0) {
 			$row->load($id);

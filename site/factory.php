@@ -21,7 +21,7 @@ require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
  * @package  JEM
  * @since    2.1.5
  */
-abstract class JemFactory extends JFactory
+abstract class JemFactory extends Factory
 {
 	/**
 	 * Get a JEM user object.

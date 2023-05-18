@@ -62,7 +62,7 @@ class JemControllerImport extends BaseController
 		JSession::checkToken() or jexit('Invalid Token');
 
 		$replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
-		$object = JTable::getInstance('jem_'.$dbname, '');
+		$object = Table::getInstance('jem_'.$dbname, '');
 		$object_fields = get_object_vars($object);
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 		$separator = $jemconfig->get('csv_separator', ';');
@@ -334,8 +334,8 @@ class JemControllerImport extends BaseController
 			}
 		} elseif ($step === 3) {
 			// We have to rebuild the hierarchy of the categories due to the plain database insertion
-			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-			$categoryTable = JTable::getInstance('Category', 'JemTable');
+			Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+			$categoryTable = Table::getInstance('Category', 'JemTable');
 			$categoryTable->rebuild();
 			$step++;
 			$link .= '&step='.$step;
