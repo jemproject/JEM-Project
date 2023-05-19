@@ -644,10 +644,7 @@ class JemOutput
 			$template = Factory::getApplication()->getTemplate();
 			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
-			// $url = 'index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($link);
 			$url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
-			
-			// $url = 'index.php?option=com_mailto&tmpl=component&template='.$template;
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
 			if ($settings->get('global_show_icons')) {
@@ -957,11 +954,20 @@ class JemOutput
 				break;
 					
 			case 3:
-				// include - Google API3
+				// include Google map with API3
 				# https://developers.google.com/maps/documentation/javascript/tutorial
-				$api		= trim($params->get('global_googleapi'));
-				$clientid	= trim($params->get('global_googleclientid'));
+				$api = $params->get('global_googleapi');
+				$clientid = $params->get('global_googleclientid');
+				$output = '';
 
+				if (empty($api) || empty($clientid)) {
+				    $output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
+				    break;
+				} else {
+				    $api = trim($api);
+				    $clientid = trim($clientid);
+				}
+				
 				$document   = $app->getDocument();
 
 				# do we have a client-ID?
@@ -977,8 +983,8 @@ class JemOutput
 				}
 
 				JemHelper::loadCss('googlemap');
-				HTMLHelper::_('script', 'com_jem/infobox.js', false, true);
-				HTMLHelper::_('script', 'com_jem/googlemap.js', false, true);
+				HTMLHelper::_('script', 'com_jem/infobox.js', null, true);
+				HTMLHelper::_('script', 'com_jem/googlemap.js', null, true);
 
 				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
