@@ -660,7 +660,6 @@ class JemOutput
 			$overlib = Text::_('COM_JEM_EMAIL_DESC');
 			$text = Text::_('COM_JEM_EMAIL');
 			$new_html = '';
-			// $n_link = 'index.php?option=com_jem&amp;view=mailto&amp;tmpl=component';
 
 			$new_html.= HTMLHelper::_(
 				'bootstrap.renderModal',
@@ -674,10 +673,6 @@ class JemOutput
 				)
 			);
 			$new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';
-			// $output = '<a href="' . Route::_($url) . '" ' . self::tooltip($text, $overlib, '', 'bottom')
-			//         . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
-
-			// return $output;
 			return $new_html;
 		}
 	}

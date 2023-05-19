@@ -42,7 +42,7 @@ $params		= $this->params;
 				<h2>
 					<?php echo Text::_('COM_JEM_MAILTO_EMAIL_TO_A_FRIEND'); ?>
 				</h2>
-				<fieldset>
+				<fieldset style="margin: 0px;">
 					<?php foreach ($this->form->getFieldset('') as $field) : ?>
 						<?php if (!$field->hidden) : ?>
 							<?php echo $field->renderField(); ?>
@@ -54,7 +54,6 @@ $params		= $this->params;
 							<div class="spinner-border spinner-grow-sm d-none" role="status">
 							<span class="visually-hidden"></span>
 							</div></button>
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo Text::_('COM_JEM_MAILTO_CANCEL'); ?></button>
 						</div>
 					</div>
 				</fieldset>
