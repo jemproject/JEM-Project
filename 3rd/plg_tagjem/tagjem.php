@@ -3,7 +3,7 @@
 /**
  * Version 2.3.17
  * @copyright Copyright (C) 2014 Ghost Art digital media.
- * @copyright Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
+ * @copyright Copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
@@ -38,7 +38,7 @@ class plgAcymailingTagjem extends CMSPlugin
             //$this->params = new JRegistry($plugin->params);
             $this->params = new acyParameter($plugin->params);
         }
-
+		$this->loadLanguage();
         $this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
     }
 
