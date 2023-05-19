@@ -28,7 +28,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 
 <div id="jem" class="jem_select_contact">
 	<h1 class='componentheading'>
-		<?php echo JText::_('COM_JEM_SELECT_CONTACT'); ?>
+		<?php echo Text::_('COM_JEM_SELECT_CONTACT'); ?>
 	</h1>
 
 	<div class="clr"></div>
@@ -43,7 +43,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
 				<button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 				<button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-				<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CONTACT') ?>');"><?php echo JText::_('COM_JEM_NOCONTACT')?></button>
+				<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CONTACT') ?>');"><?php echo Text::_('COM_JEM_NOCONTACT')?></button>
 			</div>
 			<div class="jem_fright">
 				<?php

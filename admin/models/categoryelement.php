@@ -115,7 +115,7 @@ class JemModelCategoryelement extends JModelLegacy
 
 		// Check for a database error.
 		// if ($db->getErrorNum()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		// }
 		try
 		{
@@ -124,7 +124,7 @@ class JemModelCategoryelement extends JModelLegacy
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {

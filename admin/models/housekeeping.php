@@ -66,7 +66,7 @@ class JemModelHousekeeping extends JModelLegacy
 		foreach ($images as $image)
 		{
 			if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 				$fail++;
 				continue;
 			}

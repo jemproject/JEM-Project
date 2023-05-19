@@ -317,7 +317,7 @@ class JemModelExport extends JModelList
 
 		// Check for a database error.
 		// if ($db->getErrorNum()){
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		// }
 		try
 		{
@@ -326,7 +326,7 @@ class JemModelExport extends JModelList
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {

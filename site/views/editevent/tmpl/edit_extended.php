@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 //$max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
@@ -17,7 +18,7 @@ use Joomla\CMS\Factory;
 	<!-- RECURRENCE START -->
 	<div>
 	<fieldset class="panelform">
-		<legend><?php echo JText::_('COM_JEM_RECURRENCE'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_RECURRENCE'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?></li>
 			<li id="recurrence_output"><label></label></li>
@@ -29,7 +30,7 @@ use Joomla\CMS\Factory;
 				$anticipation = $this->jemsettings->recurrence_anticipation;
 				$limitdate = new JDate('now +' . $anticipation . 'days');
 				$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
-				echo JText::sprintf(JText::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
+				echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
 				?></small></div>
 			</li>
 		</ul>
@@ -40,32 +41,32 @@ use Joomla\CMS\Factory;
 		<!--
 		var $select_output = new Array();
 			$select_output[1] = "<?php
-			echo JText::_('COM_JEM_OUTPUT_DAY');
+			echo Text::_('COM_JEM_OUTPUT_DAY');
 			?>";
 			$select_output[2] = "<?php
-			echo JText::_('COM_JEM_OUTPUT_WEEK');
+			echo Text::_('COM_JEM_OUTPUT_WEEK');
 			?>";
 			$select_output[3] = "<?php
-			echo JText::_('COM_JEM_OUTPUT_MONTH');
+			echo Text::_('COM_JEM_OUTPUT_MONTH');
 			?>";
 			$select_output[4] = "<?php
-			echo JText::_('COM_JEM_OUTPUT_WEEKDAY');
+			echo Text::_('COM_JEM_OUTPUT_WEEKDAY');
 			?>";
 
 		var $weekday = new Array();
-			$weekday[0] = new Array("MO", "<?php echo JText::_('COM_JEM_MONDAY'); ?>");
-			$weekday[1] = new Array("TU", "<?php echo JText::_('COM_JEM_TUESDAY'); ?>");
-			$weekday[2] = new Array("WE", "<?php echo JText::_('COM_JEM_WEDNESDAY'); ?>");
-			$weekday[3] = new Array("TH", "<?php echo JText::_('COM_JEM_THURSDAY'); ?>");
-			$weekday[4] = new Array("FR", "<?php echo JText::_('COM_JEM_FRIDAY'); ?>");
-			$weekday[5] = new Array("SA", "<?php echo JText::_('COM_JEM_SATURDAY'); ?>");
-			$weekday[6] = new Array("SU", "<?php echo JText::_('COM_JEM_SUNDAY'); ?>");
+			$weekday[0] = new Array("MO", "<?php echo Text::_('COM_JEM_MONDAY'); ?>");
+			$weekday[1] = new Array("TU", "<?php echo Text::_('COM_JEM_TUESDAY'); ?>");
+			$weekday[2] = new Array("WE", "<?php echo Text::_('COM_JEM_WEDNESDAY'); ?>");
+			$weekday[3] = new Array("TH", "<?php echo Text::_('COM_JEM_THURSDAY'); ?>");
+			$weekday[4] = new Array("FR", "<?php echo Text::_('COM_JEM_FRIDAY'); ?>");
+			$weekday[5] = new Array("SA", "<?php echo Text::_('COM_JEM_SATURDAY'); ?>");
+			$weekday[6] = new Array("SU", "<?php echo Text::_('COM_JEM_SUNDAY'); ?>");
 
 		var $before_last = "<?php
-			echo JText::_('COM_JEM_BEFORE_LAST');
+			echo Text::_('COM_JEM_BEFORE_LAST');
 			?>";
 		var $last = "<?php
-			echo JText::_('COM_JEM_LAST');
+			echo Text::_('COM_JEM_LAST');
 			?>";
 			start_recurrencescript("jform_recurrence_type");
 		-->
@@ -79,43 +80,43 @@ use Joomla\CMS\Factory;
 			if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
 				$recurr_limit_date = JemOutput::formatdate($rlDate);
 			} else {
-				$recurr_limit_date = JText::_('COM_JEM_UNLIMITED');
+				$recurr_limit_date = Text::_('COM_JEM_UNLIMITED');
 			}
 
 			switch ($this->item->recurr_bak->recurrence_type) {
 			case 1:
-				$recurr_type = JText::_('COM_JEM_DAYLY');
+				$recurr_type = Text::_('COM_JEM_DAYLY');
 				$recurr_info = str_ireplace('[placeholder]',
 				                            $this->item->recurr_bak->recurrence_number,
-				                            JText::_('COM_JEM_OUTPUT_DAY'));
+				                            Text::_('COM_JEM_OUTPUT_DAY'));
 				break;
 			case 2:
-				$recurr_type = JText::_('COM_JEM_WEEKLY');
+				$recurr_type = Text::_('COM_JEM_WEEKLY');
 				$recurr_info = str_ireplace('[placeholder]',
 				                            $this->item->recurr_bak->recurrence_number,
-				                            JText::_('COM_JEM_OUTPUT_WEEK'));
+				                            Text::_('COM_JEM_OUTPUT_WEEK'));
 				break;
 			case 3:
-				$recurr_type = JText::_('COM_JEM_MONTHLY');
+				$recurr_type = Text::_('COM_JEM_MONTHLY');
 				$recurr_info = str_ireplace('[placeholder]',
 				                            $this->item->recurr_bak->recurrence_number,
-				                            JText::_('COM_JEM_OUTPUT_MONTH'));
+				                            Text::_('COM_JEM_OUTPUT_MONTH'));
 				break;
 			case 4:
-				$recurr_type = JText::_('COM_JEM_WEEKDAY');
+				$recurr_type = Text::_('COM_JEM_WEEKDAY');
 				$recurr_byday = preg_replace('/(,)([^ ,]+)/', '$1 $2', $this->item->recurr_bak->recurrence_byday);
 				$recurr_days = str_ireplace(array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SO'),
-				                            array(JText::_('COM_JEM_MONDAY'), JText::_('COM_JEM_TUESDAY'),
-				                                  JText::_('COM_JEM_WEDNESDAY'), JText::_('COM_JEM_THURSDAY'),
-				                                  JText::_('COM_JEM_FRIDAY'), JText::_('COM_JEM_SATURDAY'),
-				                                  JText::_('COM_JEM_SUNDAY')),
+				                            array(Text::_('COM_JEM_MONDAY'), Text::_('COM_JEM_TUESDAY'),
+				                                  Text::_('COM_JEM_WEDNESDAY'), Text::_('COM_JEM_THURSDAY'),
+				                                  Text::_('COM_JEM_FRIDAY'), Text::_('COM_JEM_SATURDAY'),
+				                                  Text::_('COM_JEM_SUNDAY')),
 				                            $recurr_byday);
 				$recurr_num  = str_ireplace(array('5', '6'),
-				                            array(JText::_('COM_JEM_LAST'), JText::_('COM_JEM_BEFORE_LAST')),
+				                            array(Text::_('COM_JEM_LAST'), Text::_('COM_JEM_BEFORE_LAST')),
 				                            $this->item->recurr_bak->recurrence_number);
 				$recurr_info = str_ireplace(array('[placeholder]', '[placeholder_weekday]'),
 				                            array($recurr_num, $recurr_days),
-				                            JText::_('COM_JEM_OUTPUT_WEEKDAY'));
+				                            Text::_('COM_JEM_OUTPUT_WEEKDAY'));
 				break;
 			default:
 				break;
@@ -124,10 +125,10 @@ use Joomla\CMS\Factory;
 			if (!empty($recurr_type)) {
 		 ?>
 				<hr>
-				<p><strong><?php echo JText::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
+				<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
 				<ul class="adminformlist">
 					<li>
-						<label><?php echo JText::_('COM_JEM_RECURRENCE'); ?></label>
+						<label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
 						<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_type; ?>">
 					</li>
 					<li>
@@ -136,7 +137,7 @@ use Joomla\CMS\Factory;
 						<?php echo $recurr_info; ?>
 					</li>
 					<li>
-						<label><?php echo JText::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
+						<label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
 						<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_limit_date; ?>">
 					</li>
 				</ul>
@@ -148,7 +149,7 @@ use Joomla\CMS\Factory;
 	
 	<!-- CONTACT START -->
 				<fieldset class="adminform">
-				<legend><?php echo JText::_('COM_JEM_CONTACT'); ?></legend>
+				<legend><?php echo Text::_('COM_JEM_CONTACT'); ?></legend>
 				<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
 				</ul>
@@ -157,13 +158,13 @@ use Joomla\CMS\Factory;
 	
 	<!-- REGISTRATION START -->
 	<fieldset class="panelform">
-		<legend><?php echo JText::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
 		<ul class="adminformlist">
 		<?php if ($this->jemsettings->showfroregistra == 0) : ?>
-			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo JText::_('JNO'); ?></li>
+			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo Text::_('JNO'); ?></li>
 		<?php else : ?>
 			<?php if ($this->jemsettings->showfroregistra == 1) : ?>
-			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo JText::_('JYES'); ?></li>
+			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo Text::_('JYES'); ?></li>
 			<?php else : ?>
 			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?></li>
 			<?php endif; ?>
@@ -174,7 +175,7 @@ use Joomla\CMS\Factory;
 			<br/>
 			<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
 				<?php echo $this->form->getInput('unregistra_until'); ?>
-				<span id="jform_unregistra_until2"><?php echo JText::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
+				<span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
 			</li>
 			<br/><br/>			
 			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>

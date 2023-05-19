@@ -125,7 +125,7 @@ class JemControllerAttendees extends BaseController
 		$task = $this->getTask();
 
 		if (empty($pks)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
 		} else {
 			\Joomla\Utilities\ArrayHelper::toInteger($pks);
 			$model = $this->getModel('attendee');
@@ -213,7 +213,7 @@ class JemControllerAttendees extends BaseController
 		if (empty($ids))
 		{
 			$message = Text::_('JERROR_NO_ITEMS_SELECTED');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($message, 'warning');
+			Factory::getApplication()->enqueueMessage($message, 'warning');
 		}
 		else
 		{
@@ -225,7 +225,7 @@ class JemControllerAttendees extends BaseController
 			{
 				$message = $model->getError();
 				JemHelper::addLogEntry($message, __METHOD__, JLog::ERROR);
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($message, 'warning');
+				Factory::getApplication()->enqueueMessage($message, 'warning');
 			}
 			else
 			{

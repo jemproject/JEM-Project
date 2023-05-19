@@ -9,7 +9,8 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Language\Text; ?>
+use Joomla\CMS\Language\Text;
+?>
 
 <table class="table" style="width: 100%">
 	<tr>
@@ -19,7 +20,7 @@ use Joomla\CMS\Language\Text; ?>
 		</td>
 		<td><div class="button2-left">
 				<div class="blank">
-					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
+					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), Text::_('JGLOBAL_PRINT'), true); ?>
 					</a>
 				</div>
 			</div>
@@ -64,7 +65,7 @@ use Joomla\CMS\Language\Text; ?>
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<td><?php echo $row->email; ?></td>
 			<?php endif; ?>
-			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
+			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
 			<?php
 			switch ($row->status) :
 			case -1: // explicitely unregistered
@@ -80,7 +81,7 @@ use Joomla\CMS\Language\Text; ?>
 				$text = 'COM_JEM_ATTENDEES_STATUS_UNKNOWN';
 				break;
 			endswitch; ?>
-			<td><?php echo JText::_($text); ?></td>
+			<td><?php echo Text::_($text); ?></td>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<td><?php echo $row->comment; ?></td>
 			<?php endif; ?>

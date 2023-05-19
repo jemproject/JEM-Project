@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Group Table
@@ -32,7 +33,7 @@ class JemTableGroup extends Table
 	{
 		// Not typed in a category name?
 		if (trim($this->name ) == '') {
-			$this->setError(JText::_('COM_JEM_ADD_GROUP_NAME'));
+			$this->setError(Text::_('COM_JEM_ADD_GROUP_NAME'));
 			return false;
 		}
 
@@ -90,7 +91,7 @@ class JemTableGroup extends Table
 				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -125,7 +126,7 @@ class JemTableGroup extends Table
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.

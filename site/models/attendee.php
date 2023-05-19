@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component attendee Model
@@ -126,7 +127,7 @@ class JemModelAttendee extends BaseDatabaseModel
 		$attendee = $this->getData();
 
 		if (!$attendee->id) {
-			$this->setError(JText::_('COM_JEM_MISSING_ATTENDEE_ID'));
+			$this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
 			return false;
 		}
 
@@ -178,7 +179,7 @@ class JemModelAttendee extends BaseDatabaseModel
 				if ($details->booked >= $details->maxplaces)
 				{
 					if (!$details->waitinglist) {
-						\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
+						\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
 						return false;
 					}
 					$row->waiting = 1;

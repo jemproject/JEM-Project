@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/admin.php';
 
@@ -80,7 +81,7 @@ class JemModelVenue extends JemModelAdmin
 
 				if ($assignedEvents > 0)
 				{
-					$result[] = JText::_('COM_JEM_VENUE_ASSIGNED_EVENT');
+					$result[] = Text::_('COM_JEM_VENUE_ASSIGNED_EVENT');
 				}
 
 				if ($result)

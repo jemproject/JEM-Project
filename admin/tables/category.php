@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.database.tablenested');
 
@@ -140,7 +141,7 @@ class JemTableCategory extends JTableNested
 	{
 		// Check for a title.
 		if (trim($this->catname) == '') {
-			$this->setError(JText::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));
+			$this->setError(Text::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));
 			return false;
 		}
 		$this->alias = trim($this->alias);
@@ -215,7 +216,7 @@ class JemTableCategory extends JTableNested
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		    && ($table->id != $this->id || $this->id == 0)) {
 			
-			$this->setError(JText::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
+			$this->setError(Text::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
 		}
 	
@@ -260,7 +261,7 @@ class JemTableCategory extends JTableNested
 
 		// If the store failed return false.
 		if (!$stored) {
-			$e = JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $stored->getError());
+			$e = Text::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $stored->getError());
 			$this->setError($e);
 			return false;
 		}

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -59,7 +61,7 @@ defined('_JEXEC') or die;
 
 		<?php if ($i = count($row->subcats)) : ?>
 			<div class="subcategories">
-				<?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
+				<?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
 			</div>
 			<div class="subcategorieslist">
 				<?php foreach ($row->subcats as $sub) : ?>

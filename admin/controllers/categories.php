@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Language\Text;
 
 /**
  * Categories Controller
@@ -42,7 +43,7 @@ class JemControllerCategories extends AdminController
 	 */
 	public function rebuild()
 	{
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=categories', false));
 
@@ -51,11 +52,11 @@ class JemControllerCategories extends AdminController
 
 		if ($model->rebuild()) {
 			// Rebuild succeeded.
-			$this->setMessage(JText::_('COM_JEM_CATEGORIES_REBUILD_SUCCESS'));
+			$this->setMessage(Text::_('COM_JEM_CATEGORIES_REBUILD_SUCCESS'));
 			return true;
 		} else {
 			// Rebuild failed.
-			$this->setMessage(JText::_('COM_JEM_CATEGORIES_REBUILD_FAILURE'));
+			$this->setMessage(Text::_('COM_JEM_CATEGORIES_REBUILD_FAILURE'));
 			return false;
 		}
 	}
@@ -67,7 +68,7 @@ class JemControllerCategories extends AdminController
 	 */
 	public function saveorderDisabled()
 	{
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Get the arrays from the Request
 		$order = Factory::getApplication()->input->post->get('order', array(), 'array');
@@ -89,7 +90,7 @@ class JemControllerCategories extends AdminController
  	 */
  	public function deleteDisabled()
  	{
- 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+ 		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
  		// Get items to remove from the request.
  		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
@@ -97,7 +98,7 @@ class JemControllerCategories extends AdminController
 
  		if (!is_array($cid) || count($cid) < 1)
  		{
-			 \Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'warning');
+			 Factory::getApplication()->enqueueMessage(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'warning');
  		}
  		else
  		{
@@ -111,7 +112,7 @@ class JemControllerCategories extends AdminController
  			// Remove the items.
  			if ($model->delete($cid))
  			{
- 				$this->setMessage(JText::plural($this->text_prefix . '_N_ITEMS_DELETED', count($cid)));
+ 				$this->setMessage(Text::plural($this->text_prefix . '_N_ITEMS_DELETED', count($cid)));
  			}
  			else
  			{
@@ -137,7 +138,7 @@ class JemControllerCategories extends AdminController
  		$cid= Factory::getApplication()->input->post->get('cid', array(), 'array');
 
  		if (!is_array($cid) || count($cid) < 1) {
-			 \Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');
+			 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');
  		}
 
  		$model = $this->getModel('category');

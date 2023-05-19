@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/eventslist.php';
 
@@ -62,12 +63,12 @@ class JemModelDay extends JemModelEventslist
 			} else {
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 			}
 		} else {
 			//date isn't valid raise notice and use current date
 			$date = date('Ymd');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 		}
 
 		$this->_date = $date;

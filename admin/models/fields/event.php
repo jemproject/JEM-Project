@@ -10,10 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
 jimport('joomla.form.helper');
+
 JFormHelper::loadFieldClass('list');
 
 /**
@@ -66,11 +68,11 @@ class JFormFieldEvent extends JFormFieldList
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($title)) {
-			$title = JText::_('COM_JEM_SELECT_EVENT');
+			$title = Text::_('COM_JEM_SELECT_EVENT');
 		}
 		$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
@@ -87,13 +89,13 @@ class JFormFieldEvent extends JFormFieldList
 			'event-modal',
 			array(		
 				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
-				'title'  => JText::_('COM_JEM_SELECT_EVENT'),
+				'title'  => Text::_('COM_JEM_SELECT_EVENT'),
 				'width'  => '800px',
 				'height' => '450px',
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#event-modal">'.JText::_('COM_JEM_SELECT_EVENT').'
+		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#event-modal">'.Text::_('COM_JEM_SELECT_EVENT').'
 </button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';

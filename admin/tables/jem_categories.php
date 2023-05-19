@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 jimport('joomla.database.tablenested');
 
 /**
@@ -75,8 +77,8 @@ class jem_categories extends JTableNested
 	{
 		// Not typed in a category name?
 		if (trim($this->catname) == '') {
-			$this->_error = JText::_('COM_JEM_ADD_NAME_CATEGORY');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ADD_NAME_CATEGORY');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -93,7 +95,7 @@ class jem_categories extends JTableNested
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_CATEGORY_NAME_ALREADY_EXIST', $this->catname), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_CATEGORY_NAME_ALREADY_EXIST', $this->catname), 'warning');
 			return false;
 		}
 		*/

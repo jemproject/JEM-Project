@@ -26,7 +26,7 @@ use Joomla\CMS\Language\Text;
 </script>
 
 <?php if (!$this->params->get('show_page_heading', 1)) : /* hide this if page heading is shown */ ?>
-<h2><?php echo JText::_('COM_JEM_MY_EVENTS'); ?></h2>
+<h2><?php echo Text::_('COM_JEM_MY_EVENTS'); ?></h2>
 <?php endif; ?>
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
@@ -38,13 +38,13 @@ use Joomla\CMS\Language\Text;
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
 			<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>
 
 		<?php if ($this->settings->get('global_display',1)) : ?>
 		<div class="jem_fright">
-			<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+			<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 			<?php echo $this->events_pagination->getLimitBox(); ?>
 		</div>
 		<?php endif; ?>
@@ -82,7 +82,7 @@ use Joomla\CMS\Language\Text;
 			<thead>
 				<tr>
 					<?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
-					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<?php endif; ?>
 					<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -101,15 +101,15 @@ use Joomla\CMS\Language\Text;
 					<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
-					<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+					<th id="jem_atte" class="sectiontableheader" align="center"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 					<?php endif; ?>
-					<th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
+					<th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 				</tr>
 			</thead>
 
 			<tbody>
 				<?php if (empty($this->events)) : ?>
-					<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+					<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 				<?php else : ?>
 					<?php foreach ($this->events as $i => $row) : ?>
 						<tr class="row<?php echo $i % 2; ?>">
@@ -198,7 +198,7 @@ use Joomla\CMS\Language\Text;
 
 									if (!empty($row->regTotal) || empty($row->finished)) {
 									?>
-									<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
+									<a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
 										<?php echo $count; ?>
 									</a>
 									<?php

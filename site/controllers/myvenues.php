@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Myvenues Controller
@@ -77,7 +78,7 @@ class JemControllerMyvenues extends BaseController
 		$cid = $input->get('cid', array(), 'array');
 
 		if (empty($cid)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
 			$this->setRedirect(JemHelperRoute::getMyVenuesRoute());
 			return;
 		}
@@ -88,7 +89,7 @@ class JemControllerMyvenues extends BaseController
 		}
 
 		$total = count($cid);
-		$msg   = $total . ' ' . JText::_($message);
+		$msg   = $total . ' ' . Text::_($message);
 
 		$this->setRedirect(JemHelperRoute::getMyVenuesRoute(), $msg);
 	}

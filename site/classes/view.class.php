@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * JemView class with JEM specific extensions
@@ -97,7 +98,7 @@ class JemView extends JViewLegacy
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
 			// TODO
-			$this->params->def('page_heading', JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
+			$this->params->def('page_heading', Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
 		}
 
 		$title = $this->params->get('page_title', '');
@@ -105,9 +106,9 @@ class JemView extends JViewLegacy
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');
 		} elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+			$title = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
 		} elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = Text::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		$this->document->setTitle($title);
 

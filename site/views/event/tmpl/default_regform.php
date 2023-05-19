@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // The user is not already attending -> display registration form.
 
 if ($this->showRegForm && empty($this->print)) :
@@ -16,7 +18,7 @@ if ($this->showRegForm && empty($this->print)) :
 	if (($this->item->maxplaces > 0) && ($this->item->booked >= $this->item->maxplaces) && !$this->item->waitinglist && empty($this->registration->status)) :
 	?>
 	<p class="el-event-full">
-		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
+		<?php echo Text::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 	</p>
 
 	<?php else : ?>
@@ -25,14 +27,14 @@ if ($this->showRegForm && empty($this->print)) :
 		<p>
 			<?php
 			if ($this->isregistered === false) :
-				echo JText::_('COM_JEM_YOU_ARE_UNREGISTERED');
+				echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');
 			else :
 				switch ($this->isregistered) :
-				case -1: echo JText::_('COM_JEM_YOU_ARE_NOT_ATTENDING');  break;
-				case  0: echo JText::_('COM_JEM_YOU_ARE_INVITED');        break;
-				case  1: echo JText::_('COM_JEM_YOU_ARE_ATTENDING');      break;
-				case  2: echo JText::_('COM_JEM_YOU_ARE_ON_WAITINGLIST'); break;
-				default: echo JText::_('COM_JEM_YOU_ARE_UNREGISTERED');   break;
+				case -1: echo Text::_('COM_JEM_YOU_ARE_NOT_ATTENDING');  break;
+				case  0: echo Text::_('COM_JEM_YOU_ARE_INVITED');        break;
+				case  1: echo Text::_('COM_JEM_YOU_ARE_ATTENDING');      break;
+				case  2: echo Text::_('COM_JEM_YOU_ARE_ON_WAITINGLIST'); break;
+				default: echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');   break;
 				endswitch;
 			endif;
 			?>
@@ -42,9 +44,9 @@ if ($this->showRegForm && empty($this->print)) :
 				<?php if ($this->isregistered >= 1) { echo 'checked="checked"'; } ?>
 			/>
 			<?php if ($this->item->maxplaces && ($this->item->booked >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
-				<?php echo ' '.JText::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
+				<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
 			<?php else : ?>
-				<?php echo ' '.JText::_('COM_JEM_I_WILL_GO'); ?>
+				<?php echo ' '.Text::_('COM_JEM_I_WILL_GO'); ?>
 			<?php endif; ?>
 		</p>
 		<p>
@@ -52,14 +54,14 @@ if ($this->showRegForm && empty($this->print)) :
 			<input type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
 				<?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
 			/>
-			<?php echo ' '.JText::_('COM_JEM_I_WILL_NOT_GO'); ?>
+			<?php echo ' '.Text::_('COM_JEM_I_WILL_NOT_GO'); ?>
 		<?php else : ?>
 			<input type="radio" name="reg_dummy" value="" disabled="disabled" />
-			<?php echo ' '.JText::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
+			<?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
 		<?php endif; ?>
 		</p>
 		<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-		<p><?php echo JText::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
+		<p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
 		<p>
 			<textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"
 				><?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
@@ -68,7 +70,7 @@ if ($this->showRegForm && empty($this->print)) :
 		</p>
 		<?php endif; ?>
 		<p>
-			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
+			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
 		</p>
 		<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
 		<input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />

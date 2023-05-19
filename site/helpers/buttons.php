@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 /**
  * Holds the logic for attachments manipulation
  *
@@ -29,7 +31,7 @@ class JButtonFrontend extends JButton {
 //Goes inside JButtonFrontend class definition.
 public function fetchButton($type = 'Standard', $name = '', $text = '', $task = '', $list = true)
 {
-	$i18n_text = JText::_($text);
+	$i18n_text = Text::_($text);
 	$class = $this->fetchIconClass($name);
 	$doTask = $this->_getCommand($text, $task, $list);
 
@@ -75,7 +77,7 @@ public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', 
 protected function _getCommand($name, $task, $list)
 {
 	JHtml::_('behavior.framework');
-	$message = JText::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
+	$message = Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
 	$message = addslashes($message);
 
 	if ($list)

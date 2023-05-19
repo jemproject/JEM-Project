@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\Language\Text;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -694,7 +695,7 @@ class JemCategories
 		$catlist = array();
 
 		if ($top) {
-			$catlist[] = JHtml::_('select.option', '0', JText::_('COM_JEM_TOPLEVEL'));
+			$catlist[] = JHtml::_('select.option', '0', Text::_('COM_JEM_TOPLEVEL'));
 		}
 
 		$catlist = array_merge($catlist, self::getcatselectoptions($list));

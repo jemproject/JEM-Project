@@ -49,7 +49,7 @@ class JemControllerAttendee extends BaseController
 	public function cancel()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$attendee = Table::getInstance('jem_register', '');
 		$attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
@@ -67,7 +67,7 @@ class JemControllerAttendee extends BaseController
 	public function save()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Defining JInput
 		$jinput = Factory::getApplication()->input;
@@ -119,7 +119,7 @@ class JemControllerAttendee extends BaseController
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-					Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 				}
 			}
 
@@ -140,7 +140,7 @@ class JemControllerAttendee extends BaseController
 				$link = 'index.php?option=com_jem&view=attendees&eventid='.$row->event;
 				break;
 			}
-			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
+			$msg = Text::_('COM_JEM_ATTENDEE_SAVED');
 
 			$cache = Factory::getCache('com_jem');
 			$cache->clean();

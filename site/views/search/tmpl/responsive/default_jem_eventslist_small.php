@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
@@ -143,14 +144,14 @@ $uri = Uri::getInstance();
 <div id="jem_filter" class="floattext">		
 <dl class="jem-dl">
   <dt>
-    <label for="filter_type"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+    <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
   </dt>
   <dd>
     <?php echo  $this->lists['filter_types']; ?>
     <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
   </dd>
   <dt>
-    <?php echo '<label for="category">'.JText::_('COM_JEM_CATEGORY').'</label>'; ?>
+    <?php echo '<label for="category">'.Text::_('COM_JEM_CATEGORY').'</label>'; ?>
   </dt>
   <dd>
     <?php echo $this->lists['categories']; ?>

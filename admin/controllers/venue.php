@@ -55,7 +55,7 @@ class JemControllerVenue extends JemControllerForm
 
 		// but show warning if mailer is disabled
 		if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 		}
 	}
 

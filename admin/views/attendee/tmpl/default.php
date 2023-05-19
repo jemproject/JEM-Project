@@ -31,7 +31,7 @@ echo JHtml::_(
 	'user-modal',
 	array(		
 		'url'    => $selectuser_link.'&amp;'.JSession::getFormToken().'=1',
-		'title'  => JText::_('COM_JEM_SELECT'),
+		'title'  => Text::_('COM_JEM_SELECT'),
 		'width'  => '800px',
 		'height' => '450px',
 		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'

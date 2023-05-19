@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
@@ -67,10 +69,10 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<table class="adminlist">
 			<tr>
 				<td width="80%">
-					<b><?php echo JText::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
+					<b><?php echo Text::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
 					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
 					<br />
-					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
+					<b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
 						echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
 				</td>
 			</tr>
@@ -80,26 +82,26 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<?php if (empty($this->rows)) : ?>
 
 		<div class="eventtable">
-			<strong><i><?php echo JText::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
+			<strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
 		</div>
 
 		<?php else : /* empty($this->rows) */ ?>
 
 		<div id="jem_filter" class="floattext">
 			<div class="jem_fleft">
-				<label for="filter"><?php echo JText::_('COM_JEM_SEARCH'); ?></label>
+				<label for="filter"><?php echo Text::_('COM_JEM_SEARCH'); ?></label>
 				<?php echo $this->lists['filter'].'&nbsp;'; ?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
-				<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				&nbsp;
 			</div>
 			<br><br><br>
 			<div class="jem_fleft" style="white-space:nowrap;">
-				<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
+				<?php echo Text::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
 			</div>
 			<div class="jem_fright">
-				<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+				<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 				<?php echo $this->pagination->getLimitBox(); ?>
 			</div>
 		</div>
@@ -110,18 +112,18 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 			<table class="eventtable table table-striped" style="width:100%" id="articleList">
 				<thead>
 					<tr>
-						<th width="1%" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
-						<!--th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
+						<th width="1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+						<!--th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
 						<th class="title"><?php echo JHtml::_('grid.sort', $namelabel, 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if ($this->enableemailaddress == 1) : ?>
-						<th class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
+						<th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
 						<?php endif; ?>
 						<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-						<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+						<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 						<?php endif;?>
-						<th class="center"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></th>
+						<th class="center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -133,7 +135,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<?php if ($this->enableemailaddress == 1) : ?>
 						<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 						<?php endif; ?>
-						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
+						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
@@ -146,7 +148,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
 						<td class="center"><a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>"><?php echo
-							JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip', true)); ?></a>
+							JHtml::_('image','com_jem/publish_r.png', Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip', true)); ?></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>

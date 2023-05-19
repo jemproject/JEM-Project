@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Language\Text;
 
 /**
  * Controller: Venues
@@ -41,7 +42,7 @@ class JemControllerVenues extends AdminController
 	public function remove()
 	{
 		// Check for token
-		JSession::checkToken() or jexit(JText::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 		
 		$app = Factory::getApplication();
 		$user = Factory::getApplication()->getIdentity();
@@ -49,7 +50,7 @@ class JemControllerVenues extends AdminController
 		$cid = $jinput->get('cid',array(),'array');
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			throw new Exception(JText::_('COM_JEM_SELECT_AN_ITEM_TO_DELETE'), 500);
+			throw new Exception(Text::_('COM_JEM_SELECT_AN_ITEM_TO_DELETE'), 500);
 		} else {
 			$model = $this->getModel('venue');
 
@@ -59,11 +60,11 @@ class JemControllerVenues extends AdminController
 			$result = $model->delete($cid);
 			if($result['removed'])
 			{
-				$app->enqueueMessage(JText::plural($this->text_prefix.'_N_ITEMS_DELETED',$result['removedCount']));
+				$app->enqueueMessage(Text::plural($this->text_prefix.'_N_ITEMS_DELETED',$result['removedCount']));
 			}
 			if($result['error'])
 			{
-				$app->enqueueMessage(JText::_('COM_JEM_VENUES_UNABLETODELETE'),'warning');
+				$app->enqueueMessage(Text::_('COM_JEM_VENUES_UNABLETODELETE'),'warning');
 
 				foreach ($result['error'] AS $error)
 				{

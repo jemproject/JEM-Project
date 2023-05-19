@@ -9,8 +9,11 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.form.formfield');
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
+jimport('joomla.form.formfield');
+
 /**
  * Contact select
  */
@@ -54,7 +57,7 @@ class JFormFieldModal_Contact extends JFormField
 		
 
 		// if ($error = $db->getErrorMsg()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// 	Factory::getApplication()->enqueueMessage($error, 'warning');
 		// }
 		try
 		{
@@ -64,11 +67,11 @@ class JFormFieldModal_Contact extends JFormField
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (empty($contact)) {
-			$contact = JText::_('COM_JEM_SELECTCONTACT');
+			$contact = Text::_('COM_JEM_SELECTCONTACT');
 		}
 		$contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
 
@@ -80,20 +83,20 @@ class JFormFieldModal_Contact extends JFormField
 		// The contact select button
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		// $html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-		// 			JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="modal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
 		$html[] = JHtml::_(
 			'bootstrap.renderModal',
 			'contact-modal',
 			array(		
 				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
-				'title'  => JText::_('COM_JEM_SELECT'),
+				'title'  => Text::_('COM_JEM_SELECT'),
 				'width'  => '800px',
 				'height' => '450px',
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link btn-primary"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.JText::_('COM_JEM_SELECT').'
+		$html[] ='<button type="button" class="btn btn-link btn-primary"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.Text::_('COM_JEM_SELECT').'
 		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';

@@ -8,12 +8,15 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+
 $group = 'globalattribs';
 ?>
 
 <div class="width-100" style="padding: 10px 1vw;">
     <fieldset class="options-form">
-		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('event_show_attendeenames',$group); ?> <?php echo $this->form->getInput('event_show_attendeenames',$group); ?></li>
 			<li><?php echo $this->form->getLabel('event_show_more_attendeedetails',$group); ?> <?php echo $this->form->getInput('event_show_more_attendeedetails',$group); ?></li>

@@ -66,7 +66,7 @@ class JFormFieldVenueoptions extends JFormFieldList
 		}
 		catch (RuntimeException $e)
 		{
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage, 'warning');
+			Factory::getApplication()->enqueueMessage($e->getMessage, 'warning');
 		}
 
 		// Merge any additional options in the XML definition.

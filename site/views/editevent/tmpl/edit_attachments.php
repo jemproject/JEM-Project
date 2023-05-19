@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 ?>
 
 <fieldset>
-	<legend><?php echo JText::_('COM_JEM_ATTACHMENTS_LEGEND'); ?></legend>
+	<legend><?php echo Text::_('COM_JEM_ATTACHMENTS_LEGEND'); ?></legend>
 
 	<table class="adminform" id="el-attachments">
 		<tbody>

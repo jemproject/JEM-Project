@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Sampledata Controller
@@ -33,9 +34,9 @@ class JemControllerSampledata extends BaseController
 		$model = $this->getModel('sampledata');
 
 		if (!$model->loadData()) {
-			$msg = JText::_('COM_JEM_SAMPLEDATA_FAILED');
+			$msg = Text::_('COM_JEM_SAMPLEDATA_FAILED');
 		} else {
-			$msg = JText::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
+			$msg = Text::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
 		}
 
 		$link = 'index.php?option=com_jem&view=main';

@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Categories Model
@@ -147,7 +148,7 @@ class JemModelCategories extends BaseDatabaseModel
 
 				//Generate description
 				if (empty ($category->description)) {
-					$category->description = JText::_('COM_JEM_NO_DESCRIPTION');
+					$category->description = Text::_('COM_JEM_NO_DESCRIPTION');
 				} else {
 					//execute plugins
 					$category->text = $category->description;
@@ -161,10 +162,10 @@ class JemModelCategories extends BaseDatabaseModel
 				// TODO: Move to view?
 				$task = $app->input->getCmd('task', '');
 				if ($task == 'archive') {
-					$category->linktext   = JText::_('COM_JEM_SHOW_ARCHIVE');
+					$category->linktext   = Text::_('COM_JEM_SHOW_ARCHIVE');
 					$category->linktarget = JRoute::_(JemHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
 				} else {
-					$category->linktext   = JText::_('COM_JEM_SHOW_EVENTS');
+					$category->linktext   = Text::_('COM_JEM_SHOW_EVENTS');
 					$category->linktarget = JRoute::_(JemHelperRoute::getCategoryRoute($category->slug));
 				}
 			}

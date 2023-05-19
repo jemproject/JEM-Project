@@ -10,8 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\Files;
-use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Client\ClientHelper
 use Joomla\CMS\MVC\Controller\BaseController;
 
@@ -69,7 +69,7 @@ class JemControllerImagehandler extends BaseController
 
 		//do we have an upload?
 		if (empty($file['name'])) {
-			echo "<script> alert('".JText::_('COM_JEM_IMAGE_EMPTY')."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".Text::_('COM_JEM_IMAGE_EMPTY')."'); window.history.go(-1); </script>\n";
 			$app->close();
 		}
 
@@ -86,10 +86,10 @@ class JemControllerImagehandler extends BaseController
 
 		//upload the image
 		if (!File::upload($file['tmp_name'], $filepath)) {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); </script>\n";
+			echo "<script> alert('".Text::_('COM_JEM_UPLOAD_FAILED')."'); </script>\n";
 			$app->close();
 		} else {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.parent.SelectImage('$filename', '$filename'); </script>\n";
+			echo "<script> alert('".Text::_('COM_JEM_UPLOAD_COMPLETE')."'); window.parent.SelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
 	}
@@ -117,7 +117,7 @@ class JemControllerImagehandler extends BaseController
 		if (count($images)) {
 			foreach ($images as $image) {
 				if ($image !== ::getInstance()->clean($image, 'path')) {
-					Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 					continue;
 				}
 

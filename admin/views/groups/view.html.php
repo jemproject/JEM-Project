@@ -14,6 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * View class for the JEM Groups screen
  *
@@ -65,7 +66,7 @@ class JemViewGroups extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		ToolbarHelper::title(JText::_('COM_JEM_GROUPS'), 'groups');
+		ToolbarHelper::title(Text::_('COM_JEM_GROUPS'), 'groups');
 
 		/* retrieving the allowed actions for the user */
 		$canDo = JEMHelperBackend::getActions(0);

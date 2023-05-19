@@ -78,7 +78,7 @@ class JemControllerImport extends BaseController
 
 		if (empty($file['name']))
 		{
-			$msg = JText::_('COM_JEM_IMPORT_SELECT_FILE');
+			$msg = Text::_('COM_JEM_IMPORT_SELECT_FILE');
 			$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
 			return;
 		}
@@ -86,7 +86,7 @@ class JemControllerImport extends BaseController
 		if ($file['name']) {
 			$handle = fopen($file['tmp_name'], 'r');
 			if (!$handle) {
-				$msg = JText::_('COM_JEM_IMPORT_OPEN_FILE_ERROR');
+				$msg = Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR');
 				$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
 				return;
 			}
@@ -107,7 +107,7 @@ class JemControllerImport extends BaseController
 
 				// convert from ansi to utf-8 if required
 				if ($convert) {
-					$msg .= "<p>".JText::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
+					$msg .= "<p>".Text::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
 					array_walk($data, 'jem_convert_ansi2utf8');
 				}
 
@@ -122,14 +122,14 @@ class JemControllerImport extends BaseController
 
 			// If there is no validated fields, there is a problem...
 			if (!count($fields)) {
-				$msg .= "<p>".JText::_('COM_JEM_IMPORT_PARSE_ERROR')."</p>\n";
-				$msg .= "<p>".JText::_('COM_JEM_IMPORT_PARSE_ERROR_INFOTEXT')."</p>\n";
+				$msg .= "<p>".Text::_('COM_JEM_IMPORT_PARSE_ERROR')."</p>\n";
+				$msg .= "<p>".Text::_('COM_JEM_IMPORT_PARSE_ERROR_INFOTEXT')."</p>\n";
 
 				$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
 				return;
 			} else {
-				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS', $numfields)."</p>\n";
-				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_USEABLE', count($fields))."</p>\n";
+				$msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS', $numfields)."</p>\n";
+				$msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_USEABLE', count($fields))."</p>\n";
 			}
 
 			// Now get the records, meaning the rest of the rows.
@@ -140,7 +140,7 @@ class JemControllerImport extends BaseController
 				$num = count($data);
 
 				if ($numfields != $num) {
-					$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
+					$msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
 				} else {
 					// convert from ansi to utf-8 if required
 					if ($convert) {
@@ -158,7 +158,7 @@ class JemControllerImport extends BaseController
 			}
 
 			fclose($handle);
-			$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_FOUND', count($records))."</p>\n";
+			$msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_FOUND', count($records))."</p>\n";
 
 			// database update
 			if (count($records)) {
@@ -258,7 +258,7 @@ class JemControllerImport extends BaseController
 		$fromJ15 = $app->getUserStateFromRequest('com_jem.import.elimport.fromJ15', 'fromJ15', '0', 'int'); // import from Joomla! 1.5 site?
 
 		$link = 'index.php?option=com_jem&view=import';
-		$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
+		$msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
 		if ($jinput->get('startToken', 0, 'INT') || ($step === 1)) {
 			// Are the JEM tables empty at start? If no, stop import
@@ -326,11 +326,11 @@ class JemControllerImport extends BaseController
 
 				$link .= '&step='.$step.'&table='.$table.'&current='.$current.'&total='.$total;
 				//todo: we say "importing..." so we must show table of next step - but we don't know their entry count ($total).
-				$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_DB', $tables->jemtables[$table], $current, '?');
+				$msg .= Text::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_DB', $tables->jemtables[$table], $current, '?');
 			} else {
 				$step++;
 				$link .= '&step='.$step;
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
+				$msg .= Text::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
 			}
 		} elseif ($step === 3) {
 			// We have to rebuild the hierarchy of the categories due to the plain database insertion
@@ -340,9 +340,9 @@ class JemControllerImport extends BaseController
 			$step++;
 			$link .= '&step='.$step;
 			if ($copyImages) {
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES');
+				$msg .= Text::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES');
 			} else {
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED');
+				$msg .= Text::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED');
 			}
 		} elseif ($step === 4) {
 			// Copy EL images to JEM image destination?
@@ -352,9 +352,9 @@ class JemControllerImport extends BaseController
 			$step++;
 			$link .= '&step='.$step;
 			if ($copyAttachments) {
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS');
+				$msg .= Text::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS');
 			} else {
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS_SKIPPED');
+				$msg .= Text::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS_SKIPPED');
 			}
 		} elseif ($step === 5) {
 			// Copy EL images to JEM image destination?
@@ -363,7 +363,7 @@ class JemControllerImport extends BaseController
 			}
 			$step++;
 			$link .= '&step='.$step;
-			$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
+			$msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
 		} else {
 			// cleanup stored fields for users importing multiple time ;-)
 			$app->setUserState('com_jem.import.elimport.prefix', null);
@@ -375,7 +375,7 @@ class JemControllerImport extends BaseController
 			// perform forced cleanup (archive, delete, recurrence)
 			JemHelper::cleanup(true);
 
-			$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
+			$msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
 		}
 
 		$app->enqueueMessage($msg);

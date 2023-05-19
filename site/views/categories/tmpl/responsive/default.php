@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -39,7 +41,7 @@ defined('_JEXEC') or die;
       <?php echo $row->description; ?>
       <?php if ($i = count($row->subcats)) : ?>
         <h3 class="subcategories">
-          <?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
+          <?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
         </h3>
         <div class="subcategorieslist">
           <?php foreach ($row->subcats as $sub) : ?>
@@ -59,7 +61,7 @@ defined('_JEXEC') or die;
 		<?php
 			if ($this->params->get('detcat_nr', 0) > 0) {
 				$this->catrow = $row;
-        echo '<h3>'.JTEXT::_('COM_JEM_EVENTS').'</h3>';
+        echo '<h3>'.TEXT::_('COM_JEM_EVENTS').'</h3>';
 				if (empty($this->jemsettings->tablewidth)) :
           echo $this->loadTemplate('jem_eventslist'); // The new layout
         else :
@@ -68,15 +70,15 @@ defined('_JEXEC') or die;
 			}
 		?>
     <div class="jem-readmore">
-      <a href="<?php echo JRoute::_($row->linktarget); ?>" title="<?php echo JText::_('COM_JEM_CALENDAR_SHOWALL'); ?>">
+      <a href="<?php echo JRoute::_($row->linktarget); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR_SHOWALL'); ?>">
         <button class="buttonfilter btn">
-          <?php echo JText::_('COM_JEM_CALENDAR_SHOWALL') ?>
+          <?php echo Text::_('COM_JEM_CALENDAR_SHOWALL') ?>
           <?php if ($row->assignedevents > 1) :
-              echo ' - '.$row->assignedevents.' '.JTEXT::_('COM_JEM_EVENTS');
+              echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENTS');
             elseif ($row->assignedevents == 1) :
-              echo ' - '.$row->assignedevents.' '.JTEXT::_('COM_JEM_EVENT');
+              echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENT');
             else : 
-              echo '- 0 '.JTEXT::_('COM_JEM_EVENTS'); 
+              echo '- 0 '.TEXT::_('COM_JEM_EVENTS');
             endif;
           ?>
         </button>

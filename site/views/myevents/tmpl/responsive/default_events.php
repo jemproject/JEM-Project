@@ -9,12 +9,14 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.tooltip');
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
            /* hide this if page heading is shown */     ?>
-<h2><?php echo JText::_('COM_JEM_MY_EVENTS'); ?></h2>
+<h2><?php echo Text::_('COM_JEM_MY_EVENTS'); ?></h2>
 <?php endif; ?>
 
 <script type="text/javascript">
@@ -135,21 +137,21 @@ defined('_JEXEC') or die;
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>
 		<div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div>
-          <?php echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>'; ?>
+          <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->lists['filter']; ?>
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-          <button class="buttonfilter btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-          <button class="buttonfilter btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+          <button class="buttonfilter btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+          <button class="buttonfilter btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
 		<?php if ($this->settings->get('global_display',1)) : ?>
 		<div class="jem-limit-smallist">
 		<?php
-		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-			//echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+		echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+			//echo '<span class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
 		echo $this->events_pagination->getLimitBox();
 		?>
 		</div>
@@ -162,7 +164,7 @@ defined('_JEXEC') or die;
     <div class="jem-list-row jem-small-list">
       <?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
 				<div class="sectiontableheader jem-myevents-check">
-          <input type="checkbox" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </div>
       <?php endif; ?>
       <div id="jem_date" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
@@ -182,15 +184,15 @@ defined('_JEXEC') or die;
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?> 
       <?php if ($this->jemsettings->showatte == 1) : ?>
-				<div id="jem_atte" class="sectiontableheader">&nbsp;<?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
+				<div id="jem_atte" class="sectiontableheader">&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
-      <div class="jem-myevents-status" ><?php echo JText::_('JSTATUS'); ?></div>
+      <div class="jem-myevents-status" ><?php echo Text::_('JSTATUS'); ?></div>
     </div>    
   </div>
   
 	<ul class="eventlist">
 		<?php if (count((array)$this->events) == 0) : ?>
-			<li class="jem-event"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></li>
+			<li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
 		<?php else : ?>
 			<?php foreach ($this->events as $i => $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
@@ -210,7 +212,7 @@ defined('_JEXEC') or die;
             </div>
             <?php endif; ?>
 
-            <div class="jem-event-info-small jem-event-date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
+            <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
               <i class="far fa-clock" aria-hidden="true"></i>
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
@@ -226,7 +228,7 @@ defined('_JEXEC') or die;
             </div>
 
             <?php if ($this->jemsettings->showtitle == 1) : ?>
-              <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+              <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
                 <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                 <?php if (!empty($row->featured)) :?>
@@ -238,7 +240,7 @@ defined('_JEXEC') or die;
 
             <?php if ($this->jemsettings->showlocate == 1) : ?>
               <?php if (!empty($row->venue)) : ?>
-                <div class="jem-event-info-small jem-event-venue" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
+                <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) : ?>
                     <?php echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
@@ -255,7 +257,7 @@ defined('_JEXEC') or die;
 
             <?php if ($this->jemsettings->showcity == 1) : ?>
               <?php if (!empty($row->city)) : ?>
-                <div class="jem-event-info-small jem-event-city" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
+                <div class="jem-event-info-small jem-event-city" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
                   <i class="fa fa-building" aria-hidden="true"></i>
                   <?php echo $this->escape($row->city); ?>
                 </div>
@@ -266,7 +268,7 @@ defined('_JEXEC') or die;
 
             <?php if ($this->jemsettings->showstate == 1) : ?>
               <?php if (!empty($row->state)) : ?>
-                <div class="jem-event-info-small jem-event-state" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
+                <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
                   <i class="fa fa-map" aria-hidden="true"></i>
                   <?php echo $this->escape($row->state); ?>
                 </div>
@@ -276,14 +278,14 @@ defined('_JEXEC') or die;
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcat == 1) : ?>
-              <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(JText::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
+              <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
               </div>
             <?php endif; ?>
 
 					<?php if ($this->jemsettings->showatte == 1) : ?>
-					<div class="jem-event-info-small jem-event-attendees" title="<?php echo JText::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
+					<div class="jem-event-info-small jem-event-attendees" title="<?php echo Text::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
             <i class="fa fa-user" aria-hidden="true"></i>
 						<?php
 						if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
@@ -305,7 +307,7 @@ defined('_JEXEC') or die;
 
 							if (!empty($row->regTotal) || empty($row->finished)) {
 							?>
-							<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
+							<a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
 								<?php echo $count; ?>
 							</a>
 							<?php

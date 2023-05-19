@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * Mailto model class.
@@ -73,8 +74,8 @@ class JemModelMailto extends JModelForm
 
 		if ($data['link'] == '')
 		{
-			// JError::raiseError(403, JText::_('COM_JEM_MAILTO_LINK_IS_MISSING'));
-            Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
+			// JError::raiseError(403, Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'));
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
 
 			return false;
 		}

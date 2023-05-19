@@ -42,7 +42,7 @@ class JemViewSource extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 

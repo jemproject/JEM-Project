@@ -111,7 +111,7 @@ use Joomla\CMS\Language\Text;
 			<?php endif; */?>
       
       <div class="jem-readmore">
-        <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+        <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
           <button class="buttonfilter btn">
             <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
           </button>

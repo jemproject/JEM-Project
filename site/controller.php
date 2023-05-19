@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Controller
@@ -18,7 +19,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
  * @package JEM
  *
  */
-class JemController extends JControllerLegacy
+class JemController extends BaseController
 {
 	/**
 	 * Constructor
@@ -46,7 +47,7 @@ class JemController extends JControllerLegacy
 		// Check for edit form.
 		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
-			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
+			throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
 		}
 
 		$view = $this->getView($viewName, $viewFormat);

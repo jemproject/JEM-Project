@@ -12,6 +12,7 @@ defined( '_JEXEC' ) or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Groups Controller
@@ -52,7 +53,7 @@ class JemControllerGroups extends AdminController
 		$cid = $jinput->get('cid',  0, 'array');
 
 		if (!is_array($cid) || count($cid) < 1) {
-			throw new Exception(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
+			throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
 		}
 
 		$total = count($cid);
@@ -63,7 +64,7 @@ class JemControllerGroups extends AdminController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$msg = $total.' '.JText::_('COM_JEM_GROUPS_DELETED');
+		$msg = $total.' '.Text::_('COM_JEM_GROUPS_DELETED');
 
 		$this->setRedirect('index.php?option=com_jem&view=groups', $msg);
 	}

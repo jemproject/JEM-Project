@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 
@@ -96,7 +97,7 @@ class JemModelCssmanager extends JModelLegacy
 				$result['css'][] = $this->getFile($path.'/css/', $file);
 			}
 		} else {
-			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
+			$this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
 			return false;
 		}
 

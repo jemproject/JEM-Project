@@ -8,6 +8,8 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
 
 $result .= '<div class="acymailing_content" style="margin-top:12px">';
@@ -34,15 +36,15 @@ if (!empty($event->conname)) {
 	$menu = JFactory::getApplication()->getMenu();
 	$item = $menu->getItems('link', $needle, true);
 	$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-	$result .= JText::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';
+	$result .= Text::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';
 	//if (!empty($event->conemail_to)) {
 	//	$result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 	//}
 	//if (!empty($event->contelephone)) {
-	//	$result .= '<br/>'.JText::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
+	//	$result .= '<br/>'.Text::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
 	//}
 	if (!empty($event->conmobile)) {
-		$result .= '<br/>'.JText::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
+		$result .= '<br/>'.Text::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
 	}
 	$result .= '</p>';
 //	$result .= '</div>';
