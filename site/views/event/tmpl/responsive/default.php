@@ -347,9 +347,8 @@ if ($jemsettings->oldevent > 0) {
               }
             }
             ?>
-      
-            <?php if ($params->get('event_show_mapserv') == 1) : ?>
-              <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+            <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
+            	<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
             <?php endif; ?>
           </dl>
         </div>
@@ -384,25 +383,22 @@ if ($jemsettings->oldevent > 0) {
 		
 		<?php
 		$event_show_mapserv = $params->get('event_show_mapserv');
-		if ($event_show_mapserv == 2 || $event_show_mapserv == 3) : ?>
+		if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
 			<div class="jem-map">
-				<?php if ($event_show_mapserv == 2) : ?>
-					<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-				<?php endif; ?>
-
-				<?php if ($event_show_mapserv == 3) : ?>
-					<input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
-					<input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
-
-					<input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
-					<input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
-					<input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
-					<input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
-					<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
-
-					<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-				<?php endif; ?>
+				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
 			</div>
+		<?php endif; ?>
+		<?php if ($event_show_mapserv == 3) : ?>
+			<div class="jem-map">
+				<input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
+				<input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
+				<input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
+				<input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
+				<input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
+				<input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
+				<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
+				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+			</div>			
 		<?php endif; ?>
 
 		<?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''

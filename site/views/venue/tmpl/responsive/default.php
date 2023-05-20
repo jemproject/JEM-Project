@@ -8,7 +8,6 @@
  */
 
 defined('_JEXEC') or die;
-
 use Joomla\CMS\Language\Text;
 
 ?>
@@ -128,7 +127,7 @@ use Joomla\CMS\Language\Text;
           ?>
     
           <?php
-          if ($this->settings->get('global_show_mapserv') == 1) {
+          if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) {
             echo JemOutput::mapicon($this->venue, null, $this->settings);
           }
           ?>
@@ -164,10 +163,12 @@ use Joomla\CMS\Language\Text;
 
 	<?php
 	$global_show_mapserv = $this->settings->get('global_show_mapserv');
-	if ($global_show_mapserv == 2 || $global_show_mapserv == 3) : ?>
+	if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
 		<div class="jem-map">
-			<?php if ($global_show_mapserv == 2) : ?>
+			<?php if ($global_show_mapserv == 2 || $global_show_mapserv == 5) : ?>
+			<div class="jem-map">
 				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
+			</div>
 			<?php endif; ?>
 
 			<?php if ($global_show_mapserv == 3) : ?>

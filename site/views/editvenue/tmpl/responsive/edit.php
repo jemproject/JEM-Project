@@ -273,7 +273,7 @@ window.onload = (event) => {
 			<!-- VENUE-GEODATA-->
 			<?php
 			$global_show_mapserv = $this->settings->get('global_show_mapserv');
-			if ($global_show_mapserv == 2 || $global_show_mapserv == 3) : ?>
+			if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
 			<fieldset class="adminform" id="geodata">
 				<legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
 				<dl class="adminformlist jem-dl">

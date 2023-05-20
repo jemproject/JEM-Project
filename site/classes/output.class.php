@@ -645,10 +645,7 @@ class JemOutput
 			$template = Factory::getApplication()->getTemplate();
 			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
-			// $url = 'index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($link);
 			$url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
-			
-			// $url = 'index.php?option=com_mailto&tmpl=component&template='.$template;
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
 			if ($settings->get('global_show_icons')) {
@@ -923,25 +920,26 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')';
+		$url = 'https://nominatim.openstreetmap.org/ui/search.html?q=' . urlencode($data->street . ', ' . $data->postalCode . ' ' . $data->city); 
 
-		// google map link or include
+		// maps
 		switch ($mapserv)
 		{
 			case 1:
-				// link
-				if($data->latitude && $data->longitude) {
-					$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')';
-				}
+				// google map link
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {	
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
+				} else {
+				$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')'; }
 
 				$message = Text::_('COM_JEM_MAP').':';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::_('COM_JEM_LINK_TO_GOOGLE_MAP').'</a></dd>';
+				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
 				break;
 
 			case 2:
 				// include iframe
-				if($data->latitude && $data->longitude) {
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {	
 					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 				else {
@@ -950,13 +948,23 @@ class JemOutput
 
 				$output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
-
+					
 			case 3:
-				// include - Google API3
+				// include Google map with API3
+				// NOT WORKING YET 2023-05
 				# https://developers.google.com/maps/documentation/javascript/tutorial
-				$api		= trim($params->get('global_googleapi'));
-				$clientid	= trim($params->get('global_googleclientid'));
+				$api = $params->get('global_googleapi');
+				$clientid = $params->get('global_googleclientid');
+				$output = '';
 
+				if (empty($api) || empty($clientid)) {
+				    $output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
+				    break;
+				} else {
+				    $api = trim($api);
+				    $clientid = trim($clientid);
+				}
+				
 				$document   = $app->getDocument();
 
 				# do we have a client-ID?
@@ -972,13 +980,83 @@ class JemOutput
 				}
 
 				JemHelper::loadCss('googlemap');
-				HTMLHelper::_('script', 'com_jem/infobox.js', false, true);
-				HTMLHelper::_('script', 'com_jem/googlemap.js', false, true);
+				HTMLHelper::_('script', 'com_jem/infobox.js', null, true);
+				HTMLHelper::_('script', 'com_jem/googlemap.js', null, true);
 
 				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
-		}
 
+			case 4:
+				// OpenStreetMap link
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+					$lat = $data->latitude;
+					$lng = $data->longitude;   
+				} else {
+				$address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
+				$search_url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=jsonv2";
+				$websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
+
+				$httpOptions = [
+				    "http" => [
+				        "method" => "GET",
+				        "header" => "User-Agent: JEM 4.0 on" . $websiteUrl
+				    ]
+				];
+
+				$streamContext = stream_context_create($httpOptions);
+				$json = file_get_contents($search_url, false, $streamContext);
+
+				$decoded = json_decode($json, true);
+				$lat = $decoded[0]["lat"] ?? null;
+				$lng = $decoded[0]["lon"] ?? null;
+				}
+
+				if ($lat && $lng) {
+				    $url = 'https://www.openstreetmap.org/?mlat=' . htmlentities($lat) . '&mlon=' . htmlentities($lng) . '&zoom=15#map=15/' . htmlentities($lat) . '/' . htmlentities($lng);
+				} else {
+				    $url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
+				}
+								
+				$message = Text::_('COM_JEM_MAP') . ':';
+				$output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '">' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
+
+				break;
+
+			case 5:
+				// embed OpenStreetMap
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+				    $lat = $data->latitude;
+				    $lng = $data->longitude;
+				} else {  
+
+				$address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
+	 			$search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
+	 			$websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
+	 			
+	 			$httpOptions = [
+	 				"http" => [
+	 					"method" => "GET",
+	 					"header" => "User-Agent: JEM 4.0 on" . $websiteUrl
+	 					]
+	 				];
+
+	 			$streamContext = stream_context_create($httpOptions);
+	 			$json = file_get_contents($search_url, false, $streamContext);
+
+	 			$decoded = json_decode($json, true);
+	 			$lat = $decoded[0]["lat"] ?? null;
+	 			$lng = $decoded[0]["lon"] ?? null;
+	 			}
+
+	 			if ($lat && $lng) {
+				    $zoom = 15; // Adjust the zoom level as per your requirement
+				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.01)) . ',' . htmlentities(($lat - 0.01)) . ',' . htmlentities(($lng + 0.01)) . ',' . htmlentities(($lat + 0.01)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;layer=mapnik&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+	 			} else { 
+	 				$fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
+	 				$output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
+	 			}
+			break;
+		}
 		return $output;
 	}
 

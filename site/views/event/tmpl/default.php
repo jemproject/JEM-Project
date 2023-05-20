@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -22,12 +23,13 @@ $user        = JemFactory::getUser();
 $jemsettings = JemHelper::config();
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
+$uri         = Uri::getInstance();
 
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {
 	$enddate = strtotime($this->item->enddates?:($this->item->dates?:date("Y-m-d")));
-    $expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
-    $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
+	$expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
+	$document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
 
 // HTMLHelper::_('behavior.modal', 'a.flyermodal');
@@ -35,6 +37,10 @@ if ($jemsettings->oldevent > 0) {
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="https://schema.org/Event">
+  
+  <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+  <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+  
 	<div class="buttons">
 		<?php
 		$btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
@@ -46,18 +52,18 @@ if ($jemsettings->oldevent > 0) {
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-	    	<?php echo $this->escape($this->params->get('page_heading')); ?>
-	    </h1>
+        	<?php echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
 	<?php endif; ?>
 
 	<div class="clr"> </div>
 
 	<!-- Event -->
 	<h2 class="jem">
-		<?php
-		echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item);
-		echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent');
-		echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
+		<?php		
+		echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
+        echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+        echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
 		?>
 	</h2>
 
@@ -246,6 +252,8 @@ if ($jemsettings->oldevent > 0) {
 	<hr>
 
 	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+    <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+		<?php $itemid = $this->item ? $this->item->id : 0 ; ?>
 		<h2 class="location">
 			<?php
 			echo Text::_('COM_JEM_VENUE') ;
@@ -338,19 +346,20 @@ if ($jemsettings->oldevent > 0) {
 			}
 			?>
 
-			<?php if ($params->get('event_show_mapserv') == 1) : ?>
+			<?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
 				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
 			<?php endif; ?>
 		</dl>
 
-			<?php if ($params->get('event_show_mapserv') == 2) : ?>
+			<?php if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
+			<div class="jem-map">
 				<?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+			</div>
 			<?php endif; ?>
 
 			<?php if ($params->get('event_show_mapserv') == 3) : ?>
 				<input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
 				<input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
-
 				<input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
 				<input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
 				<input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
