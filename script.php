@@ -412,7 +412,7 @@ class com_jemInstallerScript
     {
         ?>
         <img src="../media/com_jem/images/jemlogo.png" alt="" style="float:left; padding-right:20px;" />
-        <h1><?php echo Text::_('COM_JEM'); ?></h1>
+        <h1><?php echo Text::_('PKG_JEM'); ?></h1>
         <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
         <?php
     }
