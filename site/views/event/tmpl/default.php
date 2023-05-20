@@ -31,6 +31,7 @@ if ($jemsettings->oldevent > 0) {
 	$expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
 	$document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
+
 // HTMLHelper::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>

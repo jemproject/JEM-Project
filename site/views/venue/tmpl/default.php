@@ -123,20 +123,18 @@ use Joomla\CMS\Language\Text;
 				<?php
 				}
 			}
-			?>
-
-			<?php if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) {
+			if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) {
 				echo JemOutput::mapicon($this->venue, null, $this->settings);
 			}
-			?>
-			<?php endif; ?>
+			endif; ?>
+			
 		</dl>
 		<?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?> 
 			<div class="jem-map">
 				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
 			</div>
-		<?php endif; ?>
-		<?php if (isset($this->venue->published) && !empty($this->show_status)) : ?>
+		<?php endif;
+		if (isset($this->venue->published) && !empty($this->show_status)) : ?>
 	<!-- PUBLISHING STATE -->
 		<dl>
 			<dt class="published"><?php echo Text::_('JSTATUS'); ?>:</dt>

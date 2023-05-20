@@ -163,7 +163,9 @@ use Joomla\CMS\Language\Text;
 
 			<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
 				<?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?>
+				<div class="jem-map">
 					<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
+				</div>
 				<?php endif; ?>
 			<?php endif; ?>
 

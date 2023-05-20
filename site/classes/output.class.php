@@ -951,6 +951,7 @@ class JemOutput
 					
 			case 3:
 				// include Google map with API3
+				// NOT WORKING YET 2023-05
 				# https://developers.google.com/maps/documentation/javascript/tutorial
 				$api = $params->get('global_googleapi');
 				$clientid = $params->get('global_googleclientid');

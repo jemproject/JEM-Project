@@ -10,8 +10,6 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
-use Joomla\CMS\Language\Text;
-
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
@@ -168,7 +166,9 @@ use Joomla\CMS\Language\Text;
 	if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
 		<div class="jem-map">
 			<?php if ($global_show_mapserv == 2 || $global_show_mapserv == 5) : ?>
+			<div class="jem-map">
 				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
+			</div>
 			<?php endif; ?>
 
 			<?php if ($global_show_mapserv == 3) : ?>
