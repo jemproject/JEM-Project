@@ -60,7 +60,7 @@ class JemAttachment extends JObject
 			// check if the filetype is valid
 			$fileext = strtolower(JFile::getExt($file));
 			if (!in_array($fileext, $allowed)) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_ATTACHMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
 				continue;
 			}
 			// check size
