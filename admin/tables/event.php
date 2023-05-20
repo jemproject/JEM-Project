@@ -10,11 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Event Table
  */
-class JemTableEvent extends JTable
+class JemTableEvent extends Table
 {
 	public function __construct(&$db)
 	{
@@ -86,7 +88,7 @@ class JemTableEvent extends JTable
 		$jinput = Factory::getApplication()->input;
 
 		if (trim($this->title) == '') {
-			$this->setError(JText::_('COM_JEM_EVENT_ERROR_NAME'));
+			$this->setError(Text::_('COM_JEM_EVENT_ERROR_NAME'));
 			return false;
 		}
 
@@ -98,7 +100,7 @@ class JemTableEvent extends JTable
 		if (empty($this->alias)) {
 			$this->alias = JemHelper::stringURLSafe($this->title);
 			if (trim(str_replace('-', '', $this->alias)) == '') {
-				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+				$this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
 
@@ -155,7 +157,7 @@ class JemTableEvent extends JTable
 		}
 
 		if ($date1 > $date2) {
-			$this->setError(JText::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
+			$this->setError(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
 			return false;
 		}
 
@@ -168,7 +170,7 @@ class JemTableEvent extends JTable
 	public function store($updateNulls = true)
 	{
 		
-		$date        = JFactory::getDate();
+		$date        = Factory::getDate();
 		$user        = JemFactory::getUser();
 		$userid      = $user->get('id');
 		$app         = Factory::getApplication();
@@ -364,7 +366,7 @@ class JemTableEvent extends JTable
 				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -399,7 +401,7 @@ class JemTableEvent extends JTable
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
@@ -410,7 +412,7 @@ class JemTableEvent extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}

@@ -12,13 +12,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-
-jimport('joomla.form.formfield');
+use Joomla\CMS\Form\FormField;
 
 /**
  * Contact select
  */
-class JFormFieldModal_Users extends JFormField
+class JFormFieldModal_Users extends FormField
 {
 	/**
 	 * field type

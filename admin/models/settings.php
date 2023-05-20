@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Settings Model
@@ -94,11 +96,11 @@ class JemModelSettings extends AdminModel
 
 		// Bind the form fields to the table
 		if (!$config->bind($data)) {
-			$this->setError(JText::_('?'));
+			$this->setError(Text::_('?'));
 			return false;
 		}
 		if (!$config->store()) {
-			$this->setError(JText::_('?'));
+			$this->setError(Text::_('?'));
 			return false;
 		}
 
@@ -106,7 +108,7 @@ class JemModelSettings extends AdminModel
 		// Old table - deprecated, maybe already removed
 		//
 		try {
-			$settings = JTable::getInstance('Settings', 'JemTable');
+			$settings = Table::getInstance('Settings', 'JemTable');
 
 			$fields = $settings->getFields();
 			if (!empty($fields)) {

@@ -8,15 +8,14 @@
  */
 
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.model');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filesystem\File;
 
 
 /**
  * Model-Updatecheck
  */
-class JemModelUpdatecheck extends JModelLegacy
+class JemModelUpdatecheck extends BaseDatabaseModel
 {
 	protected $_updatedata = null;
 
@@ -68,7 +67,7 @@ class JemModelUpdatecheck extends JModelLegacy
 	 */
 	protected static function CheckFile($filename)
 	{
-		$ext =  JFile::getExt($filename);
+		$ext =  File::getExt($filename);
 		if ($ext == 'xml') {
 			if (@file_get_contents($filename, 0, null, 0, 1)) {
 				return true;

@@ -10,14 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Categories Model
  *
  */
-class JemModelCategories extends JModelList
+class JemModelCategories extends ListModel
 {
 	/**
 	 * Constructor.
@@ -123,7 +122,7 @@ class JemModelCategories extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$user  = JemFactory::getUser();
 
@@ -238,7 +237,7 @@ class JemModelCategories extends JModelList
 
 	private function countCatEvents($id)
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$query = 'SELECT COUNT(catid) as num'

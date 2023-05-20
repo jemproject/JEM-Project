@@ -10,8 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Controller
@@ -19,7 +19,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JemController extends JControllerLegacy
+class JemController extends BaseController
 {
 	/**
 	 * Constructor
@@ -34,7 +34,8 @@ class JemController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$document   = Factory::getDocument();
+		$app        = Factory::getApplication();
+		$document   = $app->getDocument();
 		$user       = JemFactory::getUser();
 
 		// Set the default view name and format from the Request.
@@ -47,7 +48,7 @@ class JemController extends JControllerLegacy
 		// Check for edit form.
 		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
-			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
+			throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
 		}
 
 		$view = $this->getView($viewName, $viewFormat);
@@ -121,7 +122,7 @@ class JemController extends JControllerLegacy
 
 		//$mime = JemHelper::getMimeType($path);
 		//$app = Factory::getApplication();
-		//$doc = $app->getDocument();
+		//$document = $app->getDocument();
 		//$doc->setMimeEncoding($mime);
 
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');
@@ -163,7 +164,7 @@ class JemController extends JControllerLegacy
 			jexit();
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1; // The caller expects an answer!

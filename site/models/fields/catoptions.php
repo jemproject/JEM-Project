@@ -50,9 +50,9 @@ class JFormFieldCatOptions extends JFormFieldList
         $attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 
 		// Output
-		$currentid = JFactory::getApplication()->input->getInt('a_id');
+		$currentid = Factory::getApplication()->input->getInt('a_id');
 		if (!$currentid) { // special case: new event as copy of another one
-			$currentid = JFactory::getApplication()->input->getInt('from_id');
+			$currentid = Factory::getApplication()->input->getInt('from_id');
 		}
 
 		// Get the field options.
@@ -92,7 +92,7 @@ class JFormFieldCatOptions extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		$currentid = JFactory::getApplication()->input->getInt('a_id');
+		$currentid = Factory::getApplication()->input->getInt('a_id');
 		$options = self::getCategories($currentid);
 		$options = array_values($options);
 

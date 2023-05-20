@@ -8,10 +8,9 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
-
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -40,7 +39,7 @@ use Joomla\CMS\Language\Text;
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
 	$evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
-	$currentWeek = $this->currentweek;
+	$currentWeek = $this->week;
 	$firstDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
 	$showtime = $this->settings->get('global_show_timedetails', 1);
 
@@ -262,33 +261,33 @@ use Joomla\CMS\Language\Text;
 				$editicon .= '</div>';
 			}
 		}
-
-        //get border for featured event
-        $usefeaturedborder = $this->params->get('usefeaturedborder', 0);
-        $featuredbordercolor = $this->params->get('featuredbordercolor', 0);
-        $featuredclass = '';
-        $featuredstyle ='';
-        if($usefeaturedborder && $row->featured){
+		
+		//get border for featured event
+		$usefeaturedborder = $this->params->get('usefeaturedborder', 0);
+    	$featuredbordercolor = $this->params->get('featuredbordercolor', 0);
+		$featuredclass = '';
+		$featuredstyle ='';
+		if($usefeaturedborder && $row->featured){
             $featuredclass="borderfeatured";
             $featuredstyle="border-color:" . $featuredbordercolor;
-        }
+		}
 
-        //generate the output
-        // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner ' . $featuredclass . '" style="' . $featuredstyle;
-        if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
-            $content .= '; background-color:'.array_pop($catcolor).'">';
-        } else {
-            $content .=  '">' . $colorpic;
-        }
-        $content .= $editicon;
-        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $contentend . '</div>';
+		//generate the output
+		// if we have exact one color from categories we can use this as background color of event
+		$content .= '<div class="eventcontentinner ' . $featuredclass . '" style="' . $featuredstyle; 
+		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
+			$content .= '; background-color:'.array_pop($catcolor).'">';
+		} else {
+			$content .=  '">' . $colorpic;
+		}
+		$content .= $editicon;
+		$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+		$content .= $contentend . '</div>';
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;
 
-	# enable little icon right beside day number to allow event creation
+	// enable little icon right beside day number to allow event creation
 	if (!$this->print && $this->params->get('show_addevent_icon', 0) && !empty($this->permissions->canAddEvent)) {
 		$html = JemOutput::prepareAddEventButton();
 		$this->cal->enableNewEventLinks($html);
@@ -355,7 +354,7 @@ use Joomla\CMS\Language\Text;
 	<?php endif; ?>
 
 	<?php
-	# output of calendar
+	// print the calendar
 	$nrweeks = $this->params->get('nrweeks', 1);
 	echo $this->cal->showWeeksByID($currentWeek, $nrweeks);
 	?>

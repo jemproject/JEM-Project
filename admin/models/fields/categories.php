@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.formfield');
 JFormHelper::loadFieldClass('list');
@@ -34,6 +35,8 @@ class JFormFieldCategories extends JFormFieldList
 	{
 		// Load the modal behavior script.
 		// JHtml::_('behavior.modal', 'a.modal');
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
 
 		// Build the script.
 		$script = array();
@@ -46,7 +49,7 @@ class JFormFieldCategories extends JFormFieldList
 		$script[] = '	};';
 
 		// Add the script to the document head.
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$document->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display.
 		$html = array();
@@ -65,15 +68,15 @@ class JFormFieldCategories extends JFormFieldList
 			$category = $db->loadResult();
 		}
 		catch (RuntimeException $e)
-		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+		{
+			$app->enqueueMessage($e->getMessage(), 'warning');
 		}
 		// if ($error = $db->getErrorMsg()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// 	Factory::getApplication()->enqueueMessage($error, 'warning');
 		// }
 
 		if (empty($category)) {
-			$category = JText::_('COM_JEM_SELECT_CATEGORY');
+			$category = Text::_('COM_JEM_SELECT_CATEGORY');
 		}
 		$category = htmlspecialchars($category, ENT_QUOTES, 'UTF-8');
 
@@ -90,13 +93,13 @@ class JFormFieldCategories extends JFormFieldList
 			'categories-modal',
 			array(		
 				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
-				'title'  => JText::_('COM_JEM_SELECT_CATEGORY'),
+				'title'  => Text::_('COM_JEM_SELECT_CATEGORY'),
 				'width'  => '800px',
 				'height' => '450px',
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#categories-modal">'.JText::_('COM_JEM_SELECT_CATEGORY').'
+		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#categories-modal">'.Text::_('COM_JEM_SELECT_CATEGORY').'
 </button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';

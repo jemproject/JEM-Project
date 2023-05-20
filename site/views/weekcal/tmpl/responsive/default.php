@@ -8,9 +8,9 @@
  */
 
 defined('_JEXEC') or die;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -201,7 +201,7 @@ use Joomla\CMS\Language\Text;
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
 			$venue  = '<div class="location"><span class="text-label">'.Text::_('COM_JEM_VENUE_SHORT').': </span>';
-      $venue .=   !empty($row->venue) ? $this->escape($row->venue) : '-';
+			$venue .=     !empty($row->venue) ? $this->escape($row->venue) : '-';
 			$venue .= '</div>';
 		} else {
 			$venue = '';
@@ -288,7 +288,7 @@ use Joomla\CMS\Language\Text;
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;
 
-	# enable little icon right beside day number to allow event creation
+	// enable little icon right beside day number to allow event creation
 	if (!$this->print && $this->params->get('show_addevent_icon', 0) && !empty($this->permissions->canAddEvent)) {
 		$html = JemOutput::prepareAddEventButton();
 		$this->cal->enableNewEventLinks($html);
@@ -302,11 +302,9 @@ use Joomla\CMS\Language\Text;
 	<!-- Calendar buttons -->
 		<div class="calendarButtons jem-row jem-justify-start">
 				<button id="buttonshowall" class="calendarButton btn btn-outline-dark">
-	
 					<?php echo Text::_('COM_JEM_SHOWALL'); ?>
 				</button>
 				<button id="buttonhideall" class="calendarButton btn btn-outline-dark">
-	
 					<?php echo Text::_('COM_JEM_HIDEALL'); ?>
 				</button>
 		</div>
@@ -354,7 +352,7 @@ use Joomla\CMS\Language\Text;
 	<?php endif; ?>
 
 	<?php
-	# output of calendar
+	// print the calendar
 	$nrweeks = $this->params->get('nrweeks', 1);
 	echo $this->cal->showWeeksByID($currentWeek, $nrweeks);
 	?>

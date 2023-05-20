@@ -19,9 +19,10 @@ $user		= JemFactory::getUser();
 $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$document   = Factory::getApplication()->getDocument();
+$wa = $document->getWebAssetManager();
 // $wa->useScript('table.columns');
-Factory::getDocument()->addScriptDeclaration('
+$document->addScriptDeclaration('
 	Joomla.submitbutton = function(task)
 	{
 		document.adminForm.task.value=task;
@@ -33,7 +34,7 @@ Factory::getDocument()->addScriptDeclaration('
 		}
 	};
 ');
-Factory::getDocument()->addScriptDeclaration('
+$document->addScriptDeclaration('
     function submitName(node) {
       node.parentNode.previousElementSibling.childNodes[0].checked = true;
       Joomla.submitbutton("attendees.edit");

@@ -10,6 +10,7 @@
 defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -92,7 +93,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 
 		// Check for a database error.
 		// if ($db->getErrorNum()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
 		// }
 		try 
 		{
@@ -100,7 +101,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		} 
 		catch (\InvalidArgumentException $e)
 		{
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
@@ -108,7 +109,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		{
 			// Translate ROOT
 			if ($options[$i]->level == 0) {
-				$options[$i]->text = JText::_('JGLOBAL_ROOT_PARENT');
+				$options[$i]->text = Text::_('JGLOBAL_ROOT_PARENT');
 			}
 
 			$options[$i]->text = str_repeat('- ', $options[$i]->level).$options[$i]->text;
@@ -164,7 +165,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		if (isset($row) && !isset($options[0])) {
 			if ($row->parent_id == '1') {
 				$parent = new stdClass();
-				$parent->text = JText::_('JGLOBAL_ROOT_PARENT');
+				$parent->text = Text::_('JGLOBAL_ROOT_PARENT');
 				array_unshift($options, $parent);
 			}
 		}

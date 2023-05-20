@@ -11,14 +11,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controlleradmin');
-
+use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
  * JEM Component Export Controller
  *
  */
-class JemControllerExport extends JControllerAdmin
+class JemControllerExport extends AdminController
 {
 	/**
 	* Proxy for getModel.

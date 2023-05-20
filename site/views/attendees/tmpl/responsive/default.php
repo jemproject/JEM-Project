@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
@@ -66,10 +68,10 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
 	<form action="<?php echo htmlspecialchars($this->action); ?>"  method="post" name="adminForm" id="adminForm">
 		<dl class="jem-dl">
-					<dt class="jem-title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
+					<dt class="jem-title"><?php echo Text::_('COM_JEM_TITLE').':'; ?></dt>
 					<dd class="jem-title"><a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a></dd>
 
-					<dt class="jem-date"><?php echo JText::_('COM_JEM_DATE').':'; ?></dt>
+					<dt class="jem-date"><?php echo Text::_('COM_JEM_DATE').':'; ?></dt>
           <dd class="jem-date">
             <?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
           </dd>
@@ -79,7 +81,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
     <?php if (empty($this->rows)) : //ToDo EGNARTS!!! ?>
       <dl id="jem_filter" class="jem-dl">
         <dt>
-          <?php echo '<label for="filter_search">'.JText::_('COM_JEM_SEARCH').'</label>'; ?>
+          <?php echo '<label for="filter_search">'.Text::_('COM_JEM_SEARCH').'</label>'; ?>
         </dt>
         <dd class="jem-form jem-row jem-justify-start">
           <div class="jem-row jem-justify-start jem-nowrap">
@@ -87,13 +89,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
           </div>
           <div class="jem-row jem-justify-start jem-nowrap">
-            <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
           </div>
         </dd>
 
         <dt class="jem-row jem-justify-start jem-nowrap">
-          <?php echo '<label for="filter_status">'.JText::_('COM_JEM_STATUS').'</label>'; ?>
+          <?php echo '<label for="filter_status">'.Text::_('COM_JEM_STATUS').'</label>'; ?>
         </dt>
         <dd>
           <?php echo $this->lists['status']; ?>
@@ -101,13 +103,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
       </dl>
 
       <div class="eventtable">
-			<strong><i><?php echo JText::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
+			<strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
 		</div>
 
 		<?php else : /* empty($this->rows) */ ?>
       <dl id="jem_filter" class="jem-dl">
         <dt>
-          <?php echo '<label for="filter_search">'.JText::_('COM_JEM_SEARCH').'</label>'; ?>
+          <?php echo '<label for="filter_search">'.Text::_('COM_JEM_SEARCH').'</label>'; ?>
         </dt>
         <dd class="jem-form jem-row jem-justify-start">
           <div class="jem-row jem-justify-start jem-nowrap">
@@ -115,20 +117,20 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
           </div>
           <div class="jem-row jem-justify-start jem-nowrap">
-            <button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
           </div>
         </dd>
 
         <dt class="jem-row jem-justify-start jem-nowrap">
-          <?php echo '<label for="filter_status">'.JText::_('COM_JEM_STATUS').'</label>'; ?>
+          <?php echo '<label for="filter_status">'.Text::_('COM_JEM_STATUS').'</label>'; ?>
         </dt>
         <dd>
           <?php echo $this->lists['status']; ?>
         </dd>
   <div class="jem-limit-smallist">
     <?php
-      echo '<span class="jem-limit-text">'.JText::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
+      echo '<span class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
       echo $this->pagination->getLimitBox();
     ?>
   </div>
@@ -136,17 +138,17 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
       <div class="jem-sort jem-sort-small" id="articleList">
         <div class="jem-list-row jem-small-list">
-          <div class="sectiontableheader jem-attendee-number"><?php echo JText::_('COM_JEM_NUM'); ?></div>
+          <div class="sectiontableheader jem-attendee-number"><?php echo Text::_('COM_JEM_NUM'); ?></div>
           <div class="sectiontableheader jem-attendee-name"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if ($this->enableemailaddress == 1) :?>
-            <div class="sectiontableheader jem-attendee-email"><?php echo JText::_('COM_JEM_EMAIL'); ?></div>
+            <div class="sectiontableheader jem-attendee-email"><?php echo Text::_('COM_JEM_EMAIL'); ?></div>
           <?php endif; ?>
           <div class="sectiontableheader jem-attendee-regdate"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <div class="sectiontableheader jem-attendee-status"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-            <div class="sectiontableheader jem-attendee-comment"><?php echo JText::_('COM_JEM_COMMENT'); ?></div>
+            <div class="sectiontableheader jem-attendee-comment"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
           <?php endif; ?>
-          <div class="sectiontableheader jem-attendee-remove"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></div>
+          <div class="sectiontableheader jem-attendee-remove"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></div>
         </div>
       </div>
 
@@ -170,7 +172,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php endif; ?>
 
             <div class="jem-event-info-small jem-attendee-regdate">
-              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?>
+              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?>
             </div>
 
             <div class="jem-event-info-small jem-attendee-status">
@@ -190,7 +192,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
             <div class="jem-event-info-small jem-attendee-remove">
               <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
-                <?php echo JemOutput::removebutton(JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
+                <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
               </a>
             </div>
           </li>

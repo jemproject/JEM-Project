@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 
 jimport('joomla.application.component.model');
 /**
@@ -114,7 +115,7 @@ class JemModelCategoryelement extends JModelLegacy
 
 		// Check for a database error.
 		// if ($db->getErrorNum()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
 		// }
 		try
 		{
@@ -123,7 +124,7 @@ class JemModelCategoryelement extends JModelLegacy
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {
@@ -164,8 +165,7 @@ class JemModelCategoryelement extends JModelLegacy
 
 		$total = count($list);
 
-		jimport('joomla.html.pagination');
-		$this->_pagination = new JPagination($total, $limitstart, $limit);
+		$this->_pagination = new Pagination($total, $limitstart, $limit);
 
 		// slice out elements based on limits
 		$list = array_slice($list, $this->_pagination->limitstart, $this->_pagination->limit);

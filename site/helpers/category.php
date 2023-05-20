@@ -9,12 +9,12 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.categories');
+use Joomla\CMS\Categories\Categories;
 
 /**
  * Content Component Category Tree
  */
-class JEM2Categories extends JCategories
+class JEM2Categories extends Categories
 {
 	public function __construct($options = array())
 	{

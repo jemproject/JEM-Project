@@ -9,13 +9,15 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 
 <!-- IMAGE -->
 <?php if ($this->item->locimage || $this->jemsettings->imageenabled != 0) : ?>
 <fieldset class="jem_fldst_image">
-	<legend><?php echo JText::_('COM_JEM_EDITVENUE_IMAGE_LEGEND'); ?></legend>
+	<legend><?php echo Text::_('COM_JEM_EDITVENUE_IMAGE_LEGEND'); ?></legend>
 	<?php if ($this->jemsettings->imageenabled != 0) : ?>
 	<dl class="adminformlist jem-dl">
 		<dt><?php echo $this->form->getLabel('userfile'); ?></dt>
@@ -28,11 +30,11 @@ defined('_JEXEC') or die;
 		<?php endif; ?>
 		<dd><?php echo $this->form->getInput('userfile'); ?></dd>
 		<dt> </dt>
-		<dd><button type="button" class="button3 btn" onclick="document.getElementById('jform_userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
+		<dd><button type="button" class="button3 btn" onclick="document.getElementById('jform_userfile').value = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
 		<?php if ($this->item->locimage) : ?>
-		<dt><?php echo JText::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
+		<dt><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
 		<dd><?php
-						echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => JText::_('COM_JEM_REMOVE_IMAGE'), 'class' =>'btn')); ?>
+            echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' =>'btn')); ?>
 		</dd>
 		<?php endif; ?>
 		</li>
@@ -43,7 +45,7 @@ defined('_JEXEC') or die;
 <?php endif; ?>
 
 <fieldset>
-	<legend><?php echo JText::_('COM_JEM_EDITVENUE_URL_LEGEND'); ?></legend>
+	<legend><?php echo Text::_('COM_JEM_EDITVENUE_URL_LEGEND'); ?></legend>
 	<dl class="adminformlist jem-dl">
 		<dt><?php echo $this->form->getLabel('url'); ?></dt>
 		<dd><?php echo $this->form->getInput('url'); ?></dd>

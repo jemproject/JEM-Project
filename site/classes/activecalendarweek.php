@@ -121,7 +121,9 @@ class ActiveCalendarWeek extends JEMCalendar {
 	*/
 	function mkWeekDayz() {
 		$out='<tr class="daynamesRow">';
-		if ($this->weekNum) $out.="<td class=\"".$this->cssWeekNumTitle."\">".$this->weekNumTitle."</td>";
+		if ($this->weekNum) {
+			$out .= "<td class=\"" . $this->cssWeekNumTitle . "\">" . $this->weekNumTitle . "</td>";
+		}
 		for ($x=0; $x<=6; $x++) {
 			$out.=$this->mkSingleWeekDay($this->actday+$x);
 		}

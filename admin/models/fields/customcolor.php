@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Language\Text;
+
 /**
  * Color Form Field
  */
@@ -52,7 +54,7 @@ class JFormFieldCustomColor extends JFormField
 		$html	= array();
 		$html[] = '<input style="background:'.$this->value.'" type="text" name="' . $this->name . '" id="' . $this->id . '"' . ' value="'
 			. htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8') . '"' . $class . $size .$onclick. '/>';
-		$html[] = '<input title="'.JText::_('JCLEAR').'" type="text" class="button" size="1" value="" id="clear" onclick="return jClearColor(\''.$this->id.'\')">';
+		$html[] = '<input title="'.Text::_('JCLEAR').'" type="text" class="button" size="1" value="" id="clear" onclick="return jClearColor(\''.$this->id.'\')">';
 		
 		return implode("\n", $html);
 	}

@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
+use Joomla\CMS\Language\Text;
+
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
@@ -41,7 +43,7 @@ use Joomla\CMS\Language\Text;
 	<!--Venue-->
 	<h2 class="jem">
 		<?php /*
-		echo JText::_('COM_JEM_VENUE');
+		echo Text::_('COM_JEM_VENUE');
 		echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
 		echo JemOutput::copybutton($this->venue, $this->params, NULL, $this->permissions->canAddVenue, 'venue');
 		*/?>
@@ -50,48 +52,48 @@ use Joomla\CMS\Language\Text;
     <div class="jem-info">
       <?php if ($this->settings->get('global_show_detailsadress',1)) : ?>
         <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-          <dt class="title hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_TITLE'); ?>"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
+          <dt class="title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE').':'; ?></dt>
           <dd class="title">
             <?php echo $this->venue->title;?>
           </dd>
         
           <?php if (($this->settings->get('global_show_detlinkvenue', 1)) && (!empty($this->venue->url))) : ?>
-          <dt class="venue hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_WEBSITE'); ?>"><?php echo JText::_('COM_JEM_WEBSITE'); ?>:</dt>
+          <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WEBSITE'); ?>"><?php echo Text::_('COM_JEM_WEBSITE'); ?>:</dt>
           <dd class="venue">
             <a href="<?php echo $this->venue->url; ?>" target="_blank"><?php echo $this->venue->urlclean; ?></a>
           </dd>
           <?php endif; ?>
         
           <?php if ($this->venue->street) : ?>
-          <dt class="venue_street hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_STREET'); ?>"><?php echo JText::_('COM_JEM_STREET'); ?>:</dt>
+          <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
           <dd class="venue_street" itemprop="streetAddress">
             <?php echo $this->escape($this->venue->street); ?>
           </dd>
           <?php endif; ?>
     
           <?php if ($this->venue->postalCode) : ?>
-          <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_ZIP'); ?>"><?php echo JText::_('COM_JEM_ZIP'); ?>:</dt>
+          <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
           <dd class="venue_postalCode" itemprop="postalCode">
             <?php echo $this->escape($this->venue->postalCode); ?>
           </dd>
           <?php endif; ?>
     
           <?php if ($this->venue->city) : ?>
-          <dt class="venue_city hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_CITY'); ?>"><?php echo JText::_('COM_JEM_CITY'); ?>:</dt>
+          <dt class="venue_city hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_CITY'); ?>"><?php echo Text::_('COM_JEM_CITY'); ?>:</dt>
           <dd class="venue_city" itemprop="addressLocality">
             <?php echo $this->escape($this->venue->city); ?>
           </dd>
           <?php endif; ?>
     
           <?php if ($this->venue->state) : ?>
-          <dt class="venue_state hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_STATE'); ?>"><?php echo JText::_('COM_JEM_STATE'); ?>:</dt>
+          <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
           <dd class="venue_state" itemprop="addressRegion">
             <?php echo $this->escape($this->venue->state); ?>
           </dd>
           <?php endif; ?>
     
           <?php if ($this->venue->country) : ?>
-          <dt class="venue_country hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_COUNTRY'); ?>"><?php echo JText::_('COM_JEM_COUNTRY'); ?>:</dt>
+          <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
           <dd class="venue_country">
             <?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
             <meta itemprop="addressCountry" content="<?php echo $this->venue->country; ?>" />
@@ -100,13 +102,13 @@ use Joomla\CMS\Language\Text;
     
           <!-- PUBLISHING STATE -->
           <?php if (isset($this->venue->published) && !empty($this->show_status)) : ?>
-          <dt class="published hasTooltip" data-original-title="<?php echo JText::_('JSTATUS'); ?>"><?php echo JText::_('JSTATUS'); ?>:</dt>
+          <dt class="published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
           <dd class="published">
             <?php switch ($this->venue->published) {
-            case  1: echo JText::_('JPUBLISHED');   break;
-            case  0: echo JText::_('JUNPUBLISHED'); break;
-            case  2: echo JText::_('JARCHIVED');    break;
-            case -2: echo JText::_('JTRASHED');     break;
+            case  1: echo Text::_('JPUBLISHED');   break;
+            case  0: echo Text::_('JUNPUBLISHED'); break;
+            case  2: echo Text::_('JARCHIVED');    break;
+            case -2: echo Text::_('JTRASHED');     break;
             } ?>
           </dd>
           <?php endif; ?>
@@ -119,7 +121,7 @@ use Joomla\CMS\Language\Text;
             }
             if ($currentRow) {
             ?>
-            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
+            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
             <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
             <?php
             }
@@ -149,7 +151,7 @@ use Joomla\CMS\Language\Text;
 	<?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
 	<!-- PUBLISHING STATE -->
 		<dl>
-			<dt class="published hasTooltip" data-original-title="<?php echo JText::_('JSTATUS'); ?>"><?php echo JText::_('JSTATUS'); ?>:</dt>
+			<dt class="published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
 			<dd class="published">
 				<?php switch ($this->venue->published) {
 				case  1: echo Text::_('JPUBLISHED');   break;
@@ -197,7 +199,7 @@ use Joomla\CMS\Language\Text;
 
 	<!--table-->
   <h2 class="jem">
-		<?php echo JText::_('COM_JEM_EVENTS'); ?>
+		<?php echo Text::_('COM_JEM_EVENTS'); ?>
 	</h2>
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
 		<?php echo $this->loadTemplate('events_table'); ?>

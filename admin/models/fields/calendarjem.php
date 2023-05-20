@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Language\Text;
+
 JFormHelper::loadFieldClass('calendar');
 
 /**
@@ -44,7 +46,7 @@ class JFormFieldCalendarJem extends JFormFieldCalendar
         // add hint regarding date/time format accepted in edit field
         $exampleTimestamp = strtotime("NOW");
         $date_format = str_replace("%","",$this->format);
-        $hint = JText::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
+        $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
         $extraData = array(
             'hint' => $hint,

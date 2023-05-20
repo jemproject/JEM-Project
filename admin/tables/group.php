@@ -9,13 +9,16 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+
 /**
  * JEM Group Table
  *
  * @package JEM
  *
  */
-class JemTableGroup extends JTable
+class JemTableGroup extends Table
 {
 	public function __construct(&$db)
 	{
@@ -30,7 +33,7 @@ class JemTableGroup extends JTable
 	{
 		// Not typed in a category name?
 		if (trim($this->name ) == '') {
-			$this->setError(JText::_('COM_JEM_ADD_GROUP_NAME'));
+			$this->setError(Text::_('COM_JEM_ADD_GROUP_NAME'));
 			return false;
 		}
 
@@ -88,7 +91,7 @@ class JemTableGroup extends JTable
 				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -123,7 +126,7 @@ class JemTableGroup extends JTable
 		}
 		catch (RuntimeException $e)
 		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
@@ -134,7 +137,7 @@ class JemTableGroup extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}

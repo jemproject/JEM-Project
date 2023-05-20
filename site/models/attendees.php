@@ -10,8 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.model');
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component attendees Model
@@ -19,7 +20,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelAttendees extends JModelLegacy
+class JemModelAttendees extends BaseDatabaseModel
 {
 	/**
 	 * Attendees data array
@@ -100,7 +101,7 @@ class JemModelAttendees extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		//set unlimited if export or print action | task=export or task=print
-		$task = $app->input->get('task', '');
+		$task = $app->input->getCmd('task', '');
 		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 	}
 
@@ -171,8 +172,7 @@ class JemModelAttendees extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination))
 		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new Pagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
 		}
 
 		return $this->_pagination;
@@ -222,8 +222,8 @@ class JemModelAttendees extends JModelLegacy
 			$filter_order = 'u.name';
 		}
 
-		$filter_order     = JFilterInput::getinstance()->clean($filter_order,     'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getinstance()->clean($filter_order,     'cmd');
+		$filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'r.status') {
 			$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', r.waiting '.$filter_order_Dir.', u.name';
@@ -421,8 +421,7 @@ class JemModelAttendees extends JModelLegacy
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 
 		return $pagination;
 	}
@@ -432,7 +431,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	protected function _buildQueryUsers()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 
 		// no filters, hard-coded
 		$filter_order     = 'usr.name';

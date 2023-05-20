@@ -10,8 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Attendees Controller
@@ -19,7 +19,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JemControllerAttendees extends JControllerLegacy
+class JemControllerAttendees extends BaseController
 {
 	/**
 	 * Constructor
@@ -61,7 +61,7 @@ class JemControllerAttendees extends JControllerLegacy
 		JemHelper::addLogEntry("Got attendeeadd - event: ${eventid}, status: ${status}, users: " . implode(',', $uids), __METHOD__, JLog::DEBUG);
 
 		if ($total < 1) {
-			$msg = '0 ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			$msg = '0 ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED');
 		} else {
 			JPluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
@@ -112,12 +112,12 @@ class JemControllerAttendees extends JControllerLegacy
 				}
 			}
 
-			$cache = JFactory::getCache('com_jem');
+			$cache = Factory::getCache('com_jem');
 			$cache->clean();
 
-			$msg = ($total - $skip - $error - $changed) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			$msg = ($total - $skip - $error - $changed) . ' ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED');
 			if ($changed > 0) {
-				$msg .= ', ' . $changed . ' ' . JText::_('COM_JEM_REGISTERED_USERS_CHANGED');
+				$msg .= ', ' . $changed . ' ' . Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
 			}
 			$errMsgs = array_unique($errMsgs);
 			if (count($errMsgs)) {
@@ -143,7 +143,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$total  = is_array($cid) ? count($cid) : 0;
 
 		if ($total < 1) {
-			throw new Exception(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
+			throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
 		}
 
 		$modelAttendeeList = $this->getModel('attendees');
@@ -168,10 +168,10 @@ class JemControllerAttendees extends JControllerLegacy
 			echo "<script> alert('".$modelAttendeeList->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
+		$msg = $total.' '.Text::_('COM_JEM_REGISTERED_USERS_DELETED');
 
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, false), $msg);
 	}
@@ -205,14 +205,14 @@ class JemControllerAttendees extends JControllerLegacy
 			$res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($id));
 
 			if ($attendee->waiting) {
-				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
+				$msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');
 			} else {
-				$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
+				$msg = Text::_('COM_JEM_ADDED_TO_WAITING');
 			}
 		}
 		else
 		{
-			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
+			$msg = Text::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
 			$type = 'error';
 		}
 
@@ -258,15 +258,15 @@ class JemControllerAttendees extends JControllerLegacy
 		}
 
 		$cols = array();
-		$cols[] = JText::_('COM_JEM_NUM');
-		$cols[] = JText::_($jemconfig->get('globalattribs.global_regname', 1) ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME');
+		$cols[] = Text::_('COM_JEM_NUM');
+		$cols[] = Text::_($jemconfig->get('globalattribs.global_regname', 1) ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME');
 		if ($enableemailadress == 1) {
-			$cols[] = JText::_('COM_JEM_EMAIL');
+			$cols[] = Text::_('COM_JEM_EMAIL');
 		}
-		$cols[] = JText::_('COM_JEM_REGDATE');
-		$cols[] = JText::_('COM_JEM_STATUS');
+		$cols[] = Text::_('COM_JEM_REGDATE');
+		$cols[] = Text::_('COM_JEM_STATUS');
 		if ($comments) {
-			$cols[] = JText::_('COM_JEM_COMMENT');
+			$cols[] = Text::_('COM_JEM_COMMENT');
 		}
 
 		fputcsv($export, $cols, $separator, $delimiter);
@@ -281,7 +281,7 @@ class JemControllerAttendees extends JControllerLegacy
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
+			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC2'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {
@@ -291,7 +291,7 @@ class JemControllerAttendees extends JControllerLegacy
 			} else {
 				$txt_stat = 'COM_JEM_ATTENDEES_INVITED';
 			}
-			$cols[] = JText::_($txt_stat);
+			$cols[] = Text::_($txt_stat);
 			if ($comments) {
 				$comment = strip_tags($data->comment);
 				// comments are limited to 255 characters in db so we don't need to truncate them on export
