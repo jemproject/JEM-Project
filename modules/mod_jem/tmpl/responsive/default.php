@@ -47,7 +47,7 @@ $showiconcountry = $params->get('showiconcountry');
           <?php else : ?>
             <span class="event-title">
           <?php endif; ?>
-          <?php if ($showiconcountry == 1) : ?>
+          <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
               <?php echo '<img src="' . Uri::getInstance()->base() . '/media/mod_languages/images/' . strtolower($item->country) . '.gif">'; ?>
           <?php endif; ?>
           <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
