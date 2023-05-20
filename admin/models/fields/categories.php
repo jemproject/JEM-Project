@@ -35,6 +35,8 @@ class JFormFieldCategories extends JFormFieldList
 	{
 		// Load the modal behavior script.
 		// JHtml::_('behavior.modal', 'a.modal');
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
 
 		// Build the script.
 		$script = array();
@@ -47,7 +49,7 @@ class JFormFieldCategories extends JFormFieldList
 		$script[] = '	};';
 
 		// Add the script to the document head.
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$document->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display.
 		$html = array();
@@ -66,8 +68,8 @@ class JFormFieldCategories extends JFormFieldList
 			$category = $db->loadResult();
 		}
 		catch (RuntimeException $e)
-		{			
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+		{
+			$app->enqueueMessage($e->getMessage(), 'warning');
 		}
 		// if ($error = $db->getErrorMsg()) {
 		// 	Factory::getApplication()->enqueueMessage($error, 'warning');

@@ -34,7 +34,8 @@ class JemController extends BaseController
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$document   = Factory::getDocument();
+		$app        = Factory::getApplication();
+		$document   = $app->getDocument();
 		$user       = JemFactory::getUser();
 
 		// Set the default view name and format from the Request.
@@ -121,7 +122,7 @@ class JemController extends BaseController
 
 		//$mime = JemHelper::getMimeType($path);
 		//$app = Factory::getApplication();
-		//$doc = $app->getDocument();
+		//$document = $app->getDocument();
 		//$doc->setMimeEncoding($mime);
 
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');

@@ -32,7 +32,8 @@ require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
 Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$document = Factory::getApplication()->getDocument();
+$wa = $document->getWebAssetManager();
 $wa->useScript('jquery');
 // create JEM's file logger
 JemHelper::addFileLogger();
@@ -51,7 +52,7 @@ $controller->execute($input->getCmd('task'));
 $controller->redirect();
 HTMLHelper::_('bootstrap.framework');
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
-$document = Factory::getDocument();
+
 // $document->addScriptDeclaration('
 //     jQuery(document).ready(function(){
 //         var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));

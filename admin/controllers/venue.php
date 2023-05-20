@@ -9,6 +9,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
