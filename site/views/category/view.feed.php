@@ -9,18 +9,21 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Language\Text;
 
 /**
  * Category-Feed
  */
-class JemViewCategory extends JViewLegacy
+class JemViewCategory extends HtmlView
 {
 	/**
 	 * Creates the Event Feed of the Category
 	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 
@@ -56,11 +59,11 @@ class JemViewCategory extends JViewLegacy
 				$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));
 
 				// feed item description text
-				$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
-				$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
-				$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
-				$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
-				$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
+				$description  = Text::_('COM_JEM_TITLE').': '.$title.'<br />';
+				$description .= Text::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
+				$description .= Text::_('COM_JEM_CATEGORY').': '.$category.'<br />';
+				$description .= Text::_('COM_JEM_DATE').': '.$displaydate.'<br />';
+				$description .= Text::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
 
 				$created = ($row->created ? date('r', strtotime($row->created)) : '');
 

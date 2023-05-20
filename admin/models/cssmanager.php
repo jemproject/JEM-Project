@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 
 /**
  * Model-CSSManager
@@ -35,7 +35,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->id = base64_encode($name);
 
 		if ($temp->exists) {
-			$ext =  JFile::getExt($path.$name);
+			$ext =  File::getExt($path.$name);
 				if ($ext != 'css') {
 					# the file is valid but the extension not so let's return false
 					$temp->ext = false;
@@ -64,7 +64,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->id = base64_encode($filename);
 
 		if ($temp->exists) {
-			$ext =  JFile::getExt($path.$name);
+			$ext =  File::getExt($path.$name);
 			if ($ext != 'css') {
 				# the file is valid but the extension not so let's return false
 				$temp->ext = false;
@@ -91,13 +91,13 @@ class JemModelCssmanager extends JModelLegacy
 		// Check if the template path exists.
 		if (is_dir($path)) {
 			// Handle the CSS files.
-			$files = JFolder::files($path.'/css', '\.css$', false, false);
+			$files = Folder::files($path.'/css', '\.css$', false, false);
 
 			foreach ($files as $file) {
 				$result['css'][] = $this->getFile($path.'/css/', $file);
 			}
 		} else {
-			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
+			$this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
 			return false;
 		}
 
@@ -134,7 +134,7 @@ class JemModelCssmanager extends JModelLegacy
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -147,7 +147,7 @@ class JemModelCssmanager extends JModelLegacy
 	 */
 	public function getStatusLinenumber()
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('params');
 		$query->from('#__extensions');

@@ -9,8 +9,10 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
-jimport('joomla.html.pagination');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filter\InputFilter;
 
 /**
  * JEM Component JEM Model
@@ -18,7 +20,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
  */
-class JemModelMyattendances extends JModelLegacy
+class JemModelMyattendances extends BaseDatabaseModel
 {
 	protected $_attending = null;
 	protected $_total_attending = null;
@@ -31,7 +33,7 @@ class JemModelMyattendances extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events
@@ -58,7 +60,7 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	public function getAttending()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_attending)) {
@@ -113,8 +115,7 @@ class JemModelMyattendances extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination_attending)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination_attending = new JPagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination_attending = new Pagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination_attending;
@@ -168,11 +169,11 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	protected function _buildOrderByAttending()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
 		$filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order = InputFilter::getInstance()->clean($filter_order, 'cmd');
 
 		// Reverse default order for dates in archive mode
 		$filter_order_DirDefault = 'ASC';
@@ -181,7 +182,7 @@ class JemModelMyattendances extends JModelLegacy
 		}
 
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir	= ($task == 'archive') ? 'DESC' : 'ASC';
 
@@ -208,11 +209,11 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	protected function _buildAttendingWhere()
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 
 		// Get the paramaters of the active menu item
 		$params   = $app->getParams();
-		$task     = $app->input->get('task', '');
+		$task     = $app->input->getCmd('task', '');
 		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id

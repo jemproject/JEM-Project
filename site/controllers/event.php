@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -266,7 +267,7 @@ class JemControllerEvent extends JemControllerForm
 
 			// but show warning if mailer is disabled
 			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 			}
 		}
 	}
@@ -311,7 +312,7 @@ class JemControllerEvent extends JemControllerForm
 
 		$reg = $model->getUserRegistration($id);
 		if ($reg !== false && $reg->id != $rid) {
-			$msg = JText::_('COM_JEM_ALLREADY_REGISTERED');
+			$msg = Text::_('COM_JEM_ALLREADY_REGISTERED');
 			$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;
@@ -334,10 +335,10 @@ class JemControllerEvent extends JemControllerForm
 		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->triggerEvent('onEventUserRegistered', array($register_id));
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_('COM_JEM_REGISTRATION_THANKS_FOR_RESPONSE');
+		$msg = Text::_('COM_JEM_REGISTRATION_THANKS_FOR_RESPONSE');
 
 		$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg);
 	}
@@ -364,10 +365,10 @@ class JemControllerEvent extends JemControllerForm
 		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->triggerEvent('onEventUserUnregistered', array($id));
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
+		$msg = Text::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
 		$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg);
 	}
 }

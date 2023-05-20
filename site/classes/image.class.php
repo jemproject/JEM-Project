@@ -10,8 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
 
-jimport('joomla.filesystem.file');
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 
 /**
@@ -218,7 +219,7 @@ class JemImage
 				$dimage['height'] = $iminfo[1];
 			}
 
-			if (JFile::exists(JPATH_SITE.'/'.$img_thumb)) {
+			if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
 				//get imagesize of the thumbnail
 				$thumbiminfo = @getimagesize($img_thumb);
 				$dimage['thumbwidth']  = $thumbiminfo[0];
@@ -239,34 +240,34 @@ class JemImage
 
 		//check if the upload is an image...getimagesize will return false if not
 		if (!getimagesize($file['tmp_name'])) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
 			return false;
 		}
 
 		//check if the imagefiletype is valid
-		$fileext = strtolower(JFile::getExt($file['name']));
+		$fileext = strtolower(File::getExt($file['name']));
 
 		$allowable = explode(',', strtolower($filetypes));
 		array_walk($allowable, function(&$v){$v = trim($v);});
 		if (!in_array($fileext, $allowable)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
 			return false;
 		}
 
 		//Check filesize
 		if ($imagesize > $sizelimit) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
 			return false;
 		}
 
 		//XSS check
-		//$xss_check = JFile::read($file['tmp_name'], false, 256);
+		//$xss_check = File::read($file['tmp_name'], false, 256);
 		$xss_check = file_get_contents($file['tmp_name'], false, NULL, 0, 256);
 		$html_tags = array('abbr','acronym','address','applet','area','audioscope','base','basefont','bdo','bgsound','big','blackface','blink','blockquote','body','bq','br','button','caption','center','cite','code','col','colgroup','comment','custom','dd','del','dfn','dir','div','dl','dt','em','embed','fieldset','fn','font','form','frame','frameset','h1','h2','h3','h4','h5','h6','head','hr','html','iframe','ilayer','img','input','ins','isindex','keygen','kbd','label','layer','legend','li','limittext','link','listing','map','marquee','menu','meta','multicol','nobr','noembed','noframes','noscript','nosmartquotes','object','ol','optgroup','option','param','plaintext','pre','rt','ruby','s','samp','script','select','server','shadow','sidebar','small','spacer','span','strike','strong','style','sub','sup','table','tbody','td','textarea','tfoot','th','thead','title','tr','tt','ul','var','wbr','xml','xmp','!DOCTYPE', '!--');
 		foreach ($html_tags as $tag) {
 			// A tag is '<tagname ', so we need to add < and a space or '<tagname>'
 			if (stristr($xss_check, '<'.$tag.' ') || stristr($xss_check, '<'.$tag.'>')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_WARN_IE_XSS'), 'warning');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WARN_IE_XSS'), 'warning');
 				return false;
 			}
 		}
@@ -305,7 +306,7 @@ class JemImage
 
 		$now = rand();
 
-		while (JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+		while (File::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
 			$now++;
 		}
 

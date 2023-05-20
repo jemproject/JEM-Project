@@ -19,13 +19,14 @@ use Joomla\CMS\Factory;
  * @package JEM
  *
  */
+
+//Load pane behavior
+jimport('joomla.html.pane');
+
 class JemViewImport extends JemAdminView
 {
 
 	public function display($tpl = null) {
-		//Load pane behavior
-		jimport('joomla.html.pane');
-
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();

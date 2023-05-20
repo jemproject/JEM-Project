@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
 
@@ -65,11 +66,11 @@ class JemModelGroup extends JemModelAdmin
 	 * @param  type   The table type to instantiate. Optional.
 	 * @param  string A prefix for the table class name. Optional.
 	 * @param  array  Configuration data for model. Optional.
-	 * @return JTable A database object
+	 * @return Table A database object
 	 */
 	public function getTable($type = 'Group', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -123,7 +124,7 @@ class JemModelGroup extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param JTable The table object to prepare.
+	 * @param Table The table object to prepare.
 	 *
 	 */
 	protected function _prepareTable($table)

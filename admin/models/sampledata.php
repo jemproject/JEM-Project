@@ -11,7 +11,8 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
@@ -20,7 +21,7 @@ jimport('joomla.filesystem.file');
 /**
  * Sampledata Model
  */
-class JemModelSampledata extends JModelLegacy
+class JemModelSampledata extends BaseDatabaseModel
 {
 
 	/**
@@ -60,7 +61,7 @@ class JemModelSampledata extends JModelLegacy
 	public function loadData()
 	{
 		if ($this->checkForJemData()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'), 'warning');
 			return false;
 		}
 
@@ -90,7 +91,7 @@ class JemModelSampledata extends JModelLegacy
 
 		// delete temporary extraction folder
 		if (!$this->deleteTmpFolder()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
 		}
 
 		return true;
@@ -120,13 +121,13 @@ class JemModelSampledata extends JModelLegacy
 			$archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
 			$result = $archiveObj->extract($archive, $extractdir);
         } catch (\Exception $e) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
 
             return false;
         }
 
 		if ($result === false) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
 			return false;
 		}
 

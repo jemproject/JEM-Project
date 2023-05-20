@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Controller
  */
-class JemController extends JControllerLegacy
+class JemController extends BaseController
 {
 	/**
 	 * @var    string The default view.
@@ -72,7 +73,7 @@ class JemController extends JControllerLegacy
 			jexit();
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;

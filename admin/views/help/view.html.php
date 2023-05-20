@@ -14,6 +14,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Filesystem\Folder;
+
+jimport('joomla.html.pane');
 
 
 /**
@@ -26,10 +29,6 @@ class JemViewHelp extends JemAdminView
 
 	public function display($tpl = null)
 	{
-		//Load filesystem folder and pane behavior
-		jimport('joomla.html.pane');
-		jimport('joomla.filesystem.folder');
-
 		//initialise variables
 		$lang = Factory::getApplication()->getLanguage();
 		$app = Factory::getApplication();
@@ -46,7 +45,7 @@ class JemViewHelp extends JemAdminView
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if (!JFolder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+		if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
 
@@ -73,15 +72,14 @@ class JemViewHelp extends JemAdminView
 	public function getHelpTOC($helpsearch)
 	{
 		$lang = Factory::getApplication()->getLanguage();
-		jimport('joomla.filesystem.folder');
 
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if (!JFolder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+		if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
-		$files = JFolder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');
+		$files = Folder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');
 
 		$toc = array();
 		foreach ($files as $file) {

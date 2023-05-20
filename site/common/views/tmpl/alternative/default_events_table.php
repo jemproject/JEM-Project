@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.tooltip');
 ?>
 
@@ -41,28 +43,28 @@ defined('_JEXEC') or die;
 <?php
 	$sort_by = array();
 
-	$sort_by[] = JHtml::_('select.option', 'a.dates ASC', JText::_('COM_JEM_DATE') . ' ' . JText::_('COM_JEM_ORDER_ASCENDING'));
-	$sort_by[] = JHtml::_('select.option', 'a.dates DESC', JText::_('COM_JEM_DATE') . ' ' . JText::_('COM_JEM_ORDER_DESCENDING'));
+	$sort_by[] = JHtml::_('select.option', 'a.dates ASC', Text::_('COM_JEM_DATE') . ' ' . Text::_('COM_JEM_ORDER_ASCENDING'));
+	$sort_by[] = JHtml::_('select.option', 'a.dates DESC', Text::_('COM_JEM_DATE') . ' ' . Text::_('COM_JEM_ORDER_DESCENDING'));
 
 	if ($this->jemsettings->showtitle == 1) {
-		$sort_by[] = JHtml::_('select.option', 'a.title ASC', JText::_('COM_JEM_TITLE') . ' ' . JText::_('COM_JEM_ORDER_ASCENDING'));
-		$sort_by[] = JHtml::_('select.option', 'a.title DESC', JText::_('COM_JEM_TITLE') . ' ' . JText::_('COM_JEM_ORDER_DESCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'a.title ASC', Text::_('COM_JEM_TITLE') . ' ' . Text::_('COM_JEM_ORDER_ASCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'a.title DESC', Text::_('COM_JEM_TITLE') . ' ' . Text::_('COM_JEM_ORDER_DESCENDING'));
 	}
 	if ($this->jemsettings->showlocate == 1) {
-		$sort_by[] = JHtml::_('select.option', 'l.venue ASC', JText::_('COM_JEM_VENUE') . ' ' . JText::_('COM_JEM_ORDER_ASCENDING'));
-		$sort_by[] = JHtml::_('select.option', 'l.venue DESC', JText::_('COM_JEM_VENUE') . ' ' . JText::_('COM_JEM_ORDER_DESCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'l.venue ASC', Text::_('COM_JEM_VENUE') . ' ' . Text::_('COM_JEM_ORDER_ASCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'l.venue DESC', Text::_('COM_JEM_VENUE') . ' ' . Text::_('COM_JEM_ORDER_DESCENDING'));
 	}
 	if ($this->jemsettings->showcity == 1) {
-		$sort_by[] = JHtml::_('select.option', 'l.city ASC', JText::_('COM_JEM_CITY') . ' ' . JText::_('COM_JEM_ORDER_ASCENDING'));
-		$sort_by[] = JHtml::_('select.option', 'l.city DESC', JText::_('COM_JEM_CITY') . ' ' . JText::_('COM_JEM_ORDER_DESCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'l.city ASC', Text::_('COM_JEM_CITY') . ' ' . Text::_('COM_JEM_ORDER_ASCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'l.city DESC', Text::_('COM_JEM_CITY') . ' ' . Text::_('COM_JEM_ORDER_DESCENDING'));
 	}
 	if ($this->jemsettings->showstate == 1) {
-		$sort_by[] = JHtml::_('select.option', 'l.state ASC', JText::_('COM_JEM_STATE') . ' ' . JText::_('COM_JEM_ORDER_ASCENDING'));
-		$sort_by[] = JHtml::_('select.option', 'l.state DESC', JText::_('COM_JEM_STATE') . ' ' . JText::_('COM_JEM_ORDER_DESCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'l.state ASC', Text::_('COM_JEM_STATE') . ' ' . Text::_('COM_JEM_ORDER_ASCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'l.state DESC', Text::_('COM_JEM_STATE') . ' ' . Text::_('COM_JEM_ORDER_DESCENDING'));
 	}
 	if ($this->jemsettings->showcat == 1) {
-		$sort_by[] = JHtml::_('select.option', 'c.catname ASC', JText::_('COM_JEM_CATEGORY') . ' ' . JText::_('COM_JEM_ORDER_ASCENDING'));
-		$sort_by[] = JHtml::_('select.option', 'c.catname DESC', JText::_('COM_JEM_CATEGORY') . ' ' . JText::_('COM_JEM_ORDER_DESCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'c.catname ASC', Text::_('COM_JEM_CATEGORY') . ' ' . Text::_('COM_JEM_ORDER_ASCENDING'));
+		$sort_by[] = JHtml::_('select.option', 'c.catname DESC', Text::_('COM_JEM_CATEGORY') . ' ' . Text::_('COM_JEM_ORDER_DESCENDING'));
 	}
 	$this->lists['sort_by'] = JHtml::_('select.genericlist', $sort_by, 'sort_by', array('size'=>'1','class'=>'inputbox','onchange'=>'fullOrdering(\'sort_by\', \'\');'), 'value', 'text', $this->lists['order'] . ' ' . $this->lists['order_Dir']);
 ?>
@@ -71,19 +73,19 @@ defined('_JEXEC') or die;
 <div id="jem_filter" class="floattext">
 	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
-		<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+		<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
 		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-		<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		<button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+		<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
 
 	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
-		<label for="sort_by"><?php echo JText::_('COM_JEM_ORDERING'); ?></label>
+		<label for="sort_by"><?php echo Text::_('COM_JEM_ORDERING'); ?></label>
 		<?php echo $this->lists['sort_by'].' '; ?>
-		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 	</div>
 	<?php endif; ?>
@@ -133,25 +135,25 @@ defined('_JEXEC') or die;
 ?>
 <div class="eventtable">
 	<div class="row-fluid sectiontableheader">
-		<div class="span<?php echo $a_span['date']; ?>"><?php echo JText::_('COM_JEM_TABLE_DATE'); ?></div>
+		<div class="span<?php echo $a_span['date']; ?>"><?php echo Text::_('COM_JEM_TABLE_DATE'); ?></div>
 		<?php if (array_key_exists('title', $a_span)) : ?>
-		<div class="span<?php echo $a_span['title']; ?>"><?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></div>
+		<div class="span<?php echo $a_span['title']; ?>"><?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
 		<?php endif; ?>
 		<?php if (array_key_exists('venue', $a_span)) : ?>
-		<div class="span<?php echo $a_span['venue']; ?>"><?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></div>
+		<div class="span<?php echo $a_span['venue']; ?>"><?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
 		<?php endif; ?>
 		<?php if (array_key_exists('category', $a_span)) : ?>
-		<div class="span<?php echo $a_span['category']; ?>"><?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></div>
+		<div class="span<?php echo $a_span['category']; ?>"><?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
 		<?php endif; ?>
 		<?php if (array_key_exists('attendees', $a_span)) : ?>
-		<div class="span<?php echo $a_span['attendees']; ?>"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
+		<div class="span<?php echo $a_span['attendees']; ?>"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
 		<?php endif; ?>
 	</div>
 
 	<?php if (empty($this->rows)) : ?>
 		<div class="row-fluid sectiontableentry<?php echo $this->params->get('pageclass_sfx'); ?>" >
 			<div class="span12">
-				<strong><i><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></i></strong>
+				<strong><i><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></i></strong>
 			</div>
 		</div>
 	<?php else : ?>

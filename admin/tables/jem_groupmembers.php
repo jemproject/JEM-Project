@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM groupmembers Model class
  *
  * @package JEM
  *
  */
-class jem_groupmembers extends JTable
+class jem_groupmembers extends Table
 {
 	/**
 	 * Primary Key

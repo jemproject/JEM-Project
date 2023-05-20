@@ -10,13 +10,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * JEM Component Group Controller
  *
 */
-class JemControllerGroup extends JControllerForm
+class JemControllerGroup extends FormController
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.

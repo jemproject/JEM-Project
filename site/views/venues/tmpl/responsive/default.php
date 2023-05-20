@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -41,8 +43,8 @@ defined('_JEXEC') or die;
         <div class="jem-info">
           <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
             <?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
-            <dt class="venue_website hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_WEBSITE'); ?>" >
-              <?php echo JText::_('COM_JEM_WEBSITE').':'; ?>
+            <dt class="venue_website hasTooltip" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_WEBSITE'); ?>" >
+              <?php echo Text::_('COM_JEM_WEBSITE').':'; ?>
             </dt>
             <dd class="venue_website">
               <a href="<?php echo $this->escape($row->url); ?>" target="_blank">
@@ -59,8 +61,8 @@ defined('_JEXEC') or die;
             <?php endif; ?>
 
             <?php if ($row->city) : ?>
-            <dt class="venue_city hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_CITY'); ?>">
-              <?php echo JText::_('COM_JEM_CITY').':'; ?>
+            <dt class="venue_city hasTooltip" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_CITY'); ?>">
+              <?php echo Text::_('COM_JEM_CITY').':'; ?>
             </dt>
             <dd class="venue_city" itemprop="addressLocality">
               <?php echo $this->escape($row->city); ?>
@@ -68,8 +70,8 @@ defined('_JEXEC') or die;
             <?php endif; ?>
 
             <?php if ($row->state) : ?>
-            <dt class="venue_state hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_STATE'); ?>">
-              <?php echo JText::_('COM_JEM_STATE').':'; ?>
+            <dt class="venue_state hasTooltip" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>">
+              <?php echo Text::_('COM_JEM_STATE').':'; ?>
             </dt>
             <dd class="venue_state" itemprop="addressRegion">
               <?php echo $this->escape($row->state); ?>
@@ -77,8 +79,8 @@ defined('_JEXEC') or die;
             <?php endif; ?>
 
             <?php if ($row->country) : ?>
-            <dt class="venue_country hasTooltip" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_COUNTRY'); ?>">
-              <?php echo JText::_('COM_JEM_COUNTRY').':'; ?>
+            <dt class="venue_country hasTooltip" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>">
+              <?php echo Text::_('COM_JEM_COUNTRY').':'; ?>
             </dt>
             <dd class="venue_country">
               <?php if ($row->country) :
@@ -99,7 +101,7 @@ defined('_JEXEC') or die;
 
 			<?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
 			<h3 class="description">
-				<?php echo JText::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
+				<?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
 			</h3>
 			<div class="description" itemprop="description">
 				<?php echo $row->locdescription; ?>
@@ -109,9 +111,9 @@ defined('_JEXEC') or die;
 			<?php endif; */?>
       
       <div class="jem-readmore">
-        <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+        <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
           <button class="buttonfilter btn">
-            <?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
+            <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
           </button>
         </a>
       </div>

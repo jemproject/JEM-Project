@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Table\Table;
 
 /**
  * Controller: Attendee
  */
-class JemControllerAttendee extends JControllerLegacy
+class JemControllerAttendee extends BaseController
 {
 	/**
 	 * Constructor
@@ -49,9 +49,9 @@ class JemControllerAttendee extends JControllerLegacy
 	public function cancel()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-		$attendee = JTable::getInstance('jem_register', '');
+		$attendee = Table::getInstance('jem_register', '');
 		$attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
 		$attendee->checkin();
 
@@ -67,7 +67,7 @@ class JemControllerAttendee extends JControllerLegacy
 	public function save()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Defining JInput
 		$jinput = Factory::getApplication()->input;
@@ -119,7 +119,7 @@ class JemControllerAttendee extends JControllerLegacy
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-					Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 				}
 			}
 
@@ -140,9 +140,9 @@ class JemControllerAttendee extends JControllerLegacy
 				$link = 'index.php?option=com_jem&view=attendees&eventid='.$row->event;
 				break;
 			}
-			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
+			$msg = Text::_('COM_JEM_ATTENDEE_SAVED');
 
-			$cache = JFactory::getCache('com_jem');
+			$cache = Factory::getCache('com_jem');
 			$cache->clean();
 		} else {
 			$msg 	= '';

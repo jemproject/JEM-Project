@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
@@ -35,11 +37,11 @@ defined('_JEXEC') or die;
 				<td>
 				<?php
 					if ($this->updatedata->current == 0) {
-						echo '<b><font color="green">'.JText::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</font></b>';
+						echo '<b><font color="green">'.Text::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</font></b>';
 					} elseif( $this->updatedata->current == -1 ) {
-						echo '<b><font color="red">'.JText::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</font></b>';
+						echo '<b><font color="red">'.Text::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</font></b>';
 					} else {
-						echo '<b><font color="orange">'.JText::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</font></b>';
+						echo '<b><font color="orange">'.Text::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</font></b>';
 					}
 				?>
 				</td>
@@ -48,21 +50,21 @@ defined('_JEXEC') or die;
 		<br />
 		<table style="width:100%" class="adminlist">
 			<tr>
-				<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_VERSION').':'; ?></b></td>
+				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_VERSION').':'; ?></b></td>
 				<td><?php
 					echo $this->updatedata->versiondetail;
 					?>
 				</td>
 			</tr>
 			<tr>
-				<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_RELEASE_DATE').':'; ?></b></td>
+				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_RELEASE_DATE').':'; ?></b></td>
 				<td><?php
 					echo $this->updatedata->date;
 					?>
 				</td>
 			</tr>
 			<tr>
-				<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_CHANGES').':'; ?></b></td>
+				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGES').':'; ?></b></td>
 				<td><ul>
 					<?php
 					foreach ($this->updatedata->changes as $change) {
@@ -73,19 +75,19 @@ defined('_JEXEC') or die;
 				</td>
 			</tr>
 			<tr>
-				<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_INFORMATION').':'; ?></b></td>
+				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION').':'; ?></b></td>
 				<td>
-					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo JText::_('COM_JEM_UPDATECHECK_INFORMATION'); ?></a>
+					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION'); ?></a>
 				</td>
 			</tr>
 			<tr>
-				<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_FILES').':'; ?></b></td>
+				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></b></td>
 				<td>
-					<a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo JText::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a>
+					<a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a>
 				</td>
 			</tr>
 			<tr>
-				<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></b></td>
+				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></b></td>
 				<td><?php
 					echo $this->updatedata->notes;
 					?>
@@ -104,7 +106,7 @@ defined('_JEXEC') or die;
 		  		</td>
 		  		<td>
 		  		<?php
-		  			echo '<b><font color="red">'.JText::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</font></b>';
+		  			echo '<b><font color="red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</font></b>';
 		  		?>
 		  		</td>
 			</tr>
@@ -114,7 +116,7 @@ defined('_JEXEC') or die;
 		<br />
 		<table style="width:200px;" class="adminlist">
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
+		  		<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
 		  		<td><?php echo $this->updatedata->installedversion; ?>
 		  		</td>
 			</tr>

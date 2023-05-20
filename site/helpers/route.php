@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
-// Component Helper
 jimport('joomla.application.component.helper');
+
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
 

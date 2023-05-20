@@ -34,7 +34,7 @@ class JemViewEvent extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 		// HTMLHelper::_('behavior.framework');
@@ -101,7 +101,7 @@ class JemViewEvent extends JemAdminView
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo		= JemHelperBackend::getActions();
 
-		ToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_EVENT') : JText::_('COM_JEM_EDIT_EVENT'), 'eventedit');
+		ToolBarHelper::title($isNew ? Text::_('COM_JEM_ADD_EVENT') : Text::_('COM_JEM_EDIT_EVENT'), 'eventedit');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {

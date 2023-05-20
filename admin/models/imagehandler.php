@@ -10,10 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.model');
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Files;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
  * JEM Component Imagehandler Model
@@ -137,7 +136,7 @@ class JemModelImagehandler extends JModelLegacy
 			$basePath = JPATH_SITE.'/images/jem/'.$folder;
 
 			// Get the list of files and folders from the given folder
-			$fileList = JFolder::files($basePath);
+			$fileList = Folder::files($basePath);
 
 			// Iterate over the files if they exist
 			if ($fileList !== false) {
@@ -170,8 +169,7 @@ class JemModelImagehandler extends JModelLegacy
 	public function getPagination()
 	{
 		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getState('total'), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination = new Pagination($this->getState('total'), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;

@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/admin.php';
 
@@ -78,11 +80,11 @@ class JemModelEvent extends JemModelAdmin
 	 * @param  type   The table type to instantiate
 	 * @param  string A prefix for the table class name. Optional.
 	 * @param  array  Configuration array for model. Optional.
-	 * @return JTable A database object
+	 * @return Table A database object
 	 */
 	public function getTable($type = 'Event', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -188,13 +190,13 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param  $table JTable-object.
+	 * @param  $table Table-object.
 	 */
 	protected function _prepareTable($table)
 	{
 		$jinput = Factory::getApplication()->input;
 
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment version number.
@@ -276,11 +278,11 @@ class JemModelEvent extends JemModelAdmin
         $db = Factory::getContainer()->get('DatabaseDriver');
 		$nullDate = $db->getNullDate();
 		if (!empty($data['dates']) && ($data['dates'] != $nullDate)) {
-			$d = JFactory::getDate($data['dates'], 'UTC');
+			$d = Factory::getDate($data['dates'], 'UTC');
 			$data['dates'] = $d->format('Y-m-d', true, false);
 		}
 		if (!empty($data['enddates']) && ($data['enddates'] != $nullDate)) {
-			$d = JFactory::getDate($data['enddates'], 'UTC');
+			$d = Factory::getDate($data['enddates'], 'UTC');
 			$data['enddates'] = $d->format('Y-m-d', true, false);
 		}
 
@@ -305,7 +307,7 @@ class JemModelEvent extends JemModelAdmin
 			$data['recurrence_byday']  = $recurrencebyday;
 
 			if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != $nullDate)) {
-				$d = JFactory::getDate($data['recurrence_limit_date'], 'UTC');
+				$d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
 				$data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
 			}
 		}
@@ -378,7 +380,7 @@ class JemModelEvent extends JemModelAdmin
 			// Store cats
 			if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
 			//	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, JLog::ERROR);
-				$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
+				$this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
 				$saved = false;
 			}
 
@@ -386,7 +388,7 @@ class JemModelEvent extends JemModelAdmin
 			if (!$backend && ($jemsettings->regallowinvitation == 1)) {
 				if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
 				//	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, JLog::ERROR);
-					$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+					$this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
 					$saved = false;
 				}
 			}
@@ -419,7 +421,7 @@ class JemModelEvent extends JemModelAdmin
 	protected function _storeCategoriesSelected($eventId, $categories, $frontend, $new)
 	{
 		$user = JemFactory::getUser();
-		$db   = $this->getDbo();
+		$db   = Factory::getContainer()->get('DatabaseDriver');
 
 		$eventId = (int)$eventId;
 		if (empty($eventId) || !is_array($categories)) {
@@ -504,7 +506,7 @@ class JemModelEvent extends JemModelAdmin
 			return false;
 		}
 
-		$db   = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		# Get current registrations
 		$query = $db->getQuery(true);
@@ -561,7 +563,7 @@ class JemModelEvent extends JemModelAdmin
 			}
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		return true;
@@ -582,12 +584,12 @@ class JemModelEvent extends JemModelAdmin
 		\Joomla\Utilities\ArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {
-			$this->setError(JText::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+			$this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
 			return false;
 		}
 
 		try {
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery(
 					'UPDATE #__jem_events' .

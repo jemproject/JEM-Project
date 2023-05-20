@@ -10,13 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
  * JEM Component Cssmanager Controller
  */
-class JemControllerCssmanager extends JControllerAdmin
+class JemControllerCssmanager extends AdminController
 {
 
 	/**

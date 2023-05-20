@@ -19,8 +19,9 @@ jimport('joomla.application.component.controller');
 */
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
-class JemControllerPlugins extends JControllerLegacy
+class JemControllerPlugins extends BaseController
 {
 	/**
 	 * Constructor

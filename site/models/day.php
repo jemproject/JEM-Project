@@ -9,6 +9,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -25,7 +28,7 @@ class JemModelDay extends JemModelEventslist
 	{
 		parent::__construct();
 
-		$rawday = JFactory::getApplication()->input->getInt('id', null);
+		$rawday = Factory::getApplication()->input->getInt('id', null);
 		$this->setDate($rawday);
 	}
 
@@ -37,7 +40,7 @@ class JemModelDay extends JemModelEventslist
 	 */
 	public function setDate($date)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		# Get the params of the active menu item
 		$params = $app->getParams('com_jem');
@@ -60,12 +63,12 @@ class JemModelDay extends JemModelEventslist
 			} else {
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 			}
 		} else {
 			//date isn't valid raise notice and use current date
 			$date = date('Ymd');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 		}
 
 		$this->_date = $date;
@@ -86,7 +89,7 @@ class JemModelDay extends JemModelEventslist
 	{
 		# parent::populateState($ordering, $direction);
 
-		$app               = JFactory::getApplication();
+		$app               = Factory::getApplication();
 		$jemsettings       = JemHelper::config();
 		$itemid            = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 		$params            = $app->getParams();

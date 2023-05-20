@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 <form action="index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -15,14 +17,14 @@ defined('_JEXEC') or die;
 <table class="adminform">
 	<tr>
 		<td width="100%">
-			<?php echo JText::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
+			<?php echo Text::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</td>
 		<td nowrap="nowrap">
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
-			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
+			<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
 			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
 			</select>
 		</td>
@@ -32,14 +34,14 @@ defined('_JEXEC') or die;
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th class="center" width="5"><?php echo JText::_('COM_JEM_NUM'); ?></th>
+			<th class="center" width="5"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JText::_('COM_JEM_CATEGORY'); ?></th>
-			<th class="center" width="1%" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
+			<th class="title"><?php echo Text::_('COM_JEM_CATEGORY'); ?></th>
+			<th class="center" width="1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 
@@ -56,7 +58,7 @@ defined('_JEXEC') or die;
 		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_SELECT'), $row->title, 'editlinktip'); ?>>
+				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->title, 'editlinktip'); ?>>
 				<a style="cursor:pointer" onclick="window.parent.elSelectEvent('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->title ); ?>');">
 					<?php echo $this->escape($row->title); ?>
 				</a></span>

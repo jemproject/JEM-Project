@@ -8,11 +8,13 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo JText::_('COM_JEM_USER_CONTROL'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_USER_CONTROL'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('usercontrol') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
@@ -22,7 +24,7 @@ defined('_JEXEC') or die;
 </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo JText::_('COM_JEM_AC_EVENTS'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_AC_EVENTS'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('usercontrolacevent') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
@@ -33,7 +35,7 @@ defined('_JEXEC') or die;
 </div><div class="width-50 fltrt">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('showfroregistra'); ?> <?php echo $this->form->getInput('showfroregistra'); ?> </li>
 			<li id="froreg1"><?php echo $this->form->getLabel('regallowinvitation'); ?> <?php echo $this->form->getInput('regallowinvitation'); ?> </li>
@@ -43,7 +45,7 @@ defined('_JEXEC') or die;
 </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo JText::_('COM_JEM_AC_VENUES'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_AC_VENUES'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('usercontrolacvenue') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>

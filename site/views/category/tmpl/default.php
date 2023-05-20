@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.modal');
 ?>
 <div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
@@ -67,7 +69,7 @@ defined('_JEXEC') or die;
 		<div class="cat-children">
 			<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
 			<h3>
-				<?php echo JTEXT::_('COM_JEM_SUBCATEGORIES'); ?>
+				<?php echo TEXT::_('COM_JEM_SUBCATEGORIES'); ?>
 			</h3>
 			<?php endif; ?>
 			<?php echo $this->loadTemplate('subcategories'); ?>

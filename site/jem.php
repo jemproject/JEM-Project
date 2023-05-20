@@ -10,6 +10,9 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Table\Table;
+
 // include files
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
@@ -28,8 +31,9 @@ require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
-JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+$document = Factory::getApplication()->getDocument();
+$wa = $document->getWebAssetManager();
 $wa->useScript('jquery');
 // create JEM's file logger
 JemHelper::addFileLogger();
@@ -37,11 +41,8 @@ JemHelper::addFileLogger();
 //perform cleanup if it wasn't done today (archive, delete, recurrence)
 JemHelper::cleanup();
 
-// import joomla controller library
-jimport('joomla.application.component.controller');
-
 // Get an instance of the controller
-$controller = JControllerLegacy::getInstance('Jem');
+$controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
 $input = Factory::getApplication()->input;
@@ -51,7 +52,7 @@ $controller->execute($input->getCmd('task'));
 $controller->redirect();
 HTMLHelper::_('bootstrap.framework');
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
-$document = Factory::getDocument();
+
 // $document->addScriptDeclaration('
 //     jQuery(document).ready(function(){
 //         var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));

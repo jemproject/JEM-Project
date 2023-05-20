@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.model');
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Venueelement-Model
  */
-class JemModelVenueelement extends JModelLegacy
+class JemModelVenueelement extends BaseDatabaseModel
 {
 	/**
 	 * data array
@@ -151,8 +151,7 @@ class JemModelVenueelement extends JModelLegacy
 			$total = $this->_getListCount($query);
 
 			// Create the pagination object
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($total, $limitstart, $limit);
+			$this->_pagination = new Pagination($total, $limitstart, $limit);
 		}
 
 		return $this->_pagination;

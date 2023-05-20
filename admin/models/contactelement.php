@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 
 jimport('joomla.application.component.model');
 
@@ -151,8 +152,7 @@ class JemModelContactelement extends JModelLegacy
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 
 		return $pagination;
 	}

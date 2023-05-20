@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -243,7 +244,7 @@ class JemControllerVenue extends JemControllerForm
 
 			// but show warning if mailer is disabled
 			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 			}
 		}
 	}

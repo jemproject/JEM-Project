@@ -10,8 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.model');
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component users Model
@@ -19,7 +19,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelUsers extends JModelLegacy
+class JemModelUsers extends BaseDatabaseModel
 {
 	/**
 	 * data array
@@ -108,7 +108,7 @@ class JemModelUsers extends JModelLegacy
 		if (empty($this->_pagination))
 		{
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new Pagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
 		}
 
 		return $this->_pagination;

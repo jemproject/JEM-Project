@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.model');
 
@@ -118,7 +120,7 @@ class JemModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$data = JTable::getInstance('jem_register', '');
+			$data = Table::getInstance('jem_register', '');
 			$data->username = null;
 			if (empty($data->eventtitle)) {
 				$jinput = Factory::getApplication()->input;
@@ -140,11 +142,11 @@ class JemModelAttendee extends JModelLegacy
 		$attendee = $this->getData();
 
 		if (!$attendee->id) {
-			$this->setError(JText::_('COM_JEM_MISSING_ATTENDEE_ID'));
+			$this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
 			return false;
 		}
 
-		$row = JTable::getInstance('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
 		if ($row->status == 2) {
@@ -178,7 +180,7 @@ class JemModelAttendee extends JModelLegacy
 		}
 
 		// $row = $this->getTable('jem_register', '');
-		$row = JTable::getInstance('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 
 		if ($id > 0) {
 			$row->load($id);
@@ -187,7 +189,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// bind it to the table
 		if (!$row->bind($data)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+			Factory::getApplication()->enqueueMessage($row->getError(), 'error');
 			return false;
 		}
 
@@ -208,7 +210,7 @@ class JemModelAttendee extends JModelLegacy
 		$cnt = $db->loadResult();
 
 		if ($cnt > 0) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'), 'warning');
 			return false;
 		}
 
@@ -257,7 +259,7 @@ class JemModelAttendee extends JModelLegacy
 				if ($register->booked >= $event->maxplaces)
 				{
 					if (!$event->waitinglist) {
-						\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
+						Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
 						return false;
 					} else {
 						$row->waiting = 1;
@@ -274,7 +276,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// Store it in the db
 		if (!$row->store()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+			Factory::getApplication()->enqueueMessage($row->getError(), 'error');
 			return false;
 		}
 
@@ -295,7 +297,7 @@ class JemModelAttendee extends JModelLegacy
 		\Joomla\Utilities\ArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {
-			$this->setError(JText::_('JERROR_NO_ITEMS_SELECTED'));
+			$this->setError(Text::_('JERROR_NO_ITEMS_SELECTED'));
 			return false;
 		}
 
@@ -309,7 +311,7 @@ class JemModelAttendee extends JModelLegacy
 		}
 
 		try {
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery(
 					'UPDATE #__jem_register' .

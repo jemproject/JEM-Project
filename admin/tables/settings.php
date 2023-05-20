@@ -9,12 +9,14 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM Settings Table
  *
  * @deprecated since version 2.1.6
  */
-class JemTableSettings extends JTable
+class JemTableSettings extends Table
 {
 	public function __construct(&$db)
 	{

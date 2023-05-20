@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 
 jimport('joomla.application.component.model');
 
@@ -114,8 +115,7 @@ class JemModelEventelement extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination))
 		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new Pagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
 		}
 
 		return $this->_pagination;
