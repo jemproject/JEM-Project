@@ -33,7 +33,7 @@ class plgQuickiconJEMquickicon extends JPlugin
 		$useIcons = version_compare(JVERSION, '3.0', '>');
 		$icon = 'com_jem/icon-48-home.png'; // which means '/media/com_jem/images/icon-48-home.png'
 		$text = $this->params->get('displayedtext');
-		if (empty($text)) $text = JText::_('JEM-Events');
+		if (empty($text)) $text = Text::_('JEM-Events');
 
 		return array(array(
 			'link' => 'index.php?option=com_jem',

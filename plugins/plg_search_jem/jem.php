@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.plugin.plugin');
 jimport('joomla.html.parameter');
@@ -88,13 +89,13 @@ class plgSearchJEM extends JPlugin
 			return array();
 		}
 
-		$searchJEM = $db->Quote(JText::_('PLG_JEM_SEARCH_JEM'));
+		$searchJEM = $db->Quote(Text::_('PLG_JEM_SEARCH_JEM'));
 
 		$rows  = array();
 		$query = $db->getQuery(true);
 
 		if (in_array('jemevents', $areas) && $limit > 0) {
-			$areaName = JText::_(self::$_areas['jemevents']);
+			$areaName = Text::_(self::$_areas['jemevents']);
 
 			switch ($phrase) {
 				case 'exact':
@@ -197,7 +198,7 @@ class plgSearchJEM extends JPlugin
 		}
 
 		if (in_array('jemvenues', $areas) && $limit > 0) {
-			$areaName = JText::_(self::$_areas['jemvenues']);
+			$areaName = Text::_(self::$_areas['jemvenues']);
 
 			switch ($phrase) {
 				case 'exact':
@@ -269,7 +270,7 @@ class plgSearchJEM extends JPlugin
 		}
 
 		if (in_array('jemcategories', $areas) && $limit > 0) {
-			$areaName = JText::_(self::$_areas['jemcategories']);
+			$areaName = Text::_(self::$_areas['jemcategories']);
 
 			switch ($phrase) {
 				case 'exact':
