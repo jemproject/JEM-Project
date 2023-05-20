@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\InputFilter;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
@@ -26,7 +28,7 @@ class JemModelEditevent extends JemModelEvent
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Load state from the request.
 		$pk = $app->input->getInt('a_id', 0);
@@ -230,14 +232,14 @@ class JemModelEditevent extends JemModelEvent
 	 */
 	protected function buildQueryVenues()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$params           = JemHelper::globalattribs();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
-		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
 		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
@@ -296,7 +298,7 @@ class JemModelEditevent extends JemModelEvent
 	public function getVenuesPagination()
 	{
 		$jemsettings = JemHelper::config();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart  = $app->input->getInt('limitstart', 0);
 		// correct start value if required
@@ -306,8 +308,7 @@ class JemModelEditevent extends JemModelEvent
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 
 		return $pagination;
 	}
@@ -335,7 +336,7 @@ class JemModelEditevent extends JemModelEvent
 	public function getContactsPagination()
 	{
 		$jemsettings = JemHelper::config();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart  = $app->input->getInt('limitstart', 0);
 		// correct start value if required
@@ -345,8 +346,7 @@ class JemModelEditevent extends JemModelEvent
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 
 		return $pagination;
 	}
@@ -356,14 +356,14 @@ class JemModelEditevent extends JemModelEvent
 	 */
 	protected function buildQueryContacts()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$jemsettings      = JemHelper::config();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.ordering', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
-		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
 		$filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
@@ -465,7 +465,7 @@ class JemModelEditevent extends JemModelEvent
 	public function getUsersPagination()
 	{
 		$jemsettings = JemHelper::config();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$limit       = 0;//$app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart  = 0;//$app->input->getInt('limitstart', 0);
 		// correct start value if required
@@ -475,8 +475,7 @@ class JemModelEditevent extends JemModelEvent
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 
 		return $pagination;
 	}
@@ -486,7 +485,7 @@ class JemModelEditevent extends JemModelEvent
 	 */
 	protected function buildQueryUsers()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$jemsettings      = JemHelper::config();
 
 		// no filters, hard-coded

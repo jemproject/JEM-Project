@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 <div id="jem" class="jem_search<?php echo $this->pageclass_sfx;?>">
@@ -26,7 +28,7 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
   
   <h2>
-    <?php echo JText::_('COM_JEM_SEARCH_SUBMIT');?>
+    <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
   </h2>
 	<!--table-->
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">

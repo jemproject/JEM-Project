@@ -8,29 +8,30 @@
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+
 /**
  * Calendar-View
  */
 class JemViewCalendar extends JemView
 {
 	/**
-	 * Calendar-View
+	 * Creates the Calendar View
 	 */
 	public function display($tpl = null)
 	{
-		$app = Factory::getApplication();
-
 		// Load tooltips behavior
 		// JHtml::_('behavior.tooltip');
 		// JHtml::_('behavior.framework');
 
 		// initialize variables
+		$app          = Factory::getApplication();
 		$document     = $app->getDocument();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
@@ -41,6 +42,7 @@ class JemViewCalendar extends JemView
 		$top_category = (int)$params->get('top_category', 0);
 		$jinput       = $app->input;
 		$print        = $jinput->getBool('print', false);
+
 		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
 		$url 			= Uri::root();
 

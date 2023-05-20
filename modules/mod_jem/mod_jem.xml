@@ -94,6 +94,15 @@
 					<option value="1">MOD_JEM_DATE</option>
 					<option value="2">MOD_JEM_TITLE</option>
 				</field>
+				<field name="showiconcountry" type="radio"
+					   default="0"
+					   label="MOD_JEM_SHOW_ICON_COUNTRY_VENUE"
+					   description="MOD_JEM_SHOW_ICON_COUNTRY_VENUE_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
 				<field name="catid" type="categoryedit"
 					default=""
 					multiple="true"

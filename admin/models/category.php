@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.modeladmin');
 
@@ -78,7 +80,7 @@ class JemModelCategory extends JModelAdmin
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		$parentId = $app->input->getInt('parent_id', 0);
 		$this->setState('category.parent_id', $parentId);
@@ -99,11 +101,11 @@ class JemModelCategory extends JModelAdmin
 	 * @param  string $prefix The class prefix. Optional.
 	 * @param  array  $config Configuration array for model. Optional.
 	 *
-	 * @return JTable A JTable object
+	 * @return Table A Table object
 	 */
 	public function getTable($type = 'Category', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -415,7 +417,7 @@ class JemModelCategory extends JModelAdmin
 		$parentId = (int) \Joomla\Utilities\ArrayHelper::getValue($parts, 0, 1);
 
 		$table = $this->getTable();
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user = JemFactory::getUser();
 		$extension = Factory::getApplication()->input->get('extension', '', 'word');
 		$i = 0;
@@ -430,7 +432,7 @@ class JemModelCategory extends JModelAdmin
 				}
 				else {
 					// Non-fatal error
-					$this->setError(JText::_('JGLOBAL_BATCH_MOVE_PARENT_NOT_FOUND'));
+					$this->setError(Text::_('JGLOBAL_BATCH_MOVE_PARENT_NOT_FOUND'));
 					$parentId = 0;
 				}
 			}
@@ -438,7 +440,7 @@ class JemModelCategory extends JModelAdmin
 			$canCreate = ($parentId == $table->getRootId()) ? $user->authorise('core.create', $extension) : $user->authorise('core.create', $extension . '.category.' . $parentId);
 			if (!$canCreate) {
 				// Error since user cannot create in parent category
-				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
+				$this->setError(Text::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 				return false;
 			}
 		}
@@ -451,7 +453,7 @@ class JemModelCategory extends JModelAdmin
 			}
 			// Make sure we can create in root
 			elseif (!$user->authorise('core.create', $extension)) {
-				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
+				$this->setError(Text::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 				return false;
 			}
 		}
@@ -489,7 +491,7 @@ class JemModelCategory extends JModelAdmin
 				}
 				else {
 					// Not fatal error
-					$this->setError(JText::sprintf('JGLOBAL_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+					$this->setError(Text::sprintf('JGLOBAL_BATCH_MOVE_ROW_NOT_FOUND', $pk));
 					continue;
 				}
 			}
@@ -584,7 +586,7 @@ class JemModelCategory extends JModelAdmin
 		$parentId = (int) $value;
 
 		$table = $this->getTable();
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$user = JemFactory::getUser();
 		$extension = Factory::getApplication()->input->get('extension', '', 'word');
@@ -600,7 +602,7 @@ class JemModelCategory extends JModelAdmin
 				}
 				else {
 					// Non-fatal error
-					$this->setError(JText::_('JGLOBAL_BATCH_MOVE_PARENT_NOT_FOUND'));
+					$this->setError(Text::_('JGLOBAL_BATCH_MOVE_PARENT_NOT_FOUND'));
 					$parentId = 0;
 				}
 			}
@@ -608,7 +610,7 @@ class JemModelCategory extends JModelAdmin
 			$canCreate = ($parentId == $table->getRootId()) ? $user->authorise('core.create', $extension) : $user->authorise('core.create', $extension . '.category.' . $parentId);
 			if (!$canCreate) {
 				// Error since user cannot create in parent category
-				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
+				$this->setError(Text::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 				return false;
 			}
 
@@ -619,7 +621,7 @@ class JemModelCategory extends JModelAdmin
 			foreach ($pks as $pk) {
 				if (!$user->authorise('core.edit', $extension . '.category.' . $pk)) {
 					// Error since user cannot edit this category
-					$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_EDIT'));
+					$this->setError(Text::_('COM_CATEGORIES_BATCH_CANNOT_EDIT'));
 					return false;
 				}
 			}
@@ -640,7 +642,7 @@ class JemModelCategory extends JModelAdmin
 				}
 				else {
 					// Not fatal error
-					$this->setError(JText::sprintf('JGLOBAL_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+					$this->setError(Text::sprintf('JGLOBAL_BATCH_MOVE_ROW_NOT_FOUND', $pk));
 					continue;
 				}
 			}
@@ -742,7 +744,7 @@ class JemModelCategory extends JModelAdmin
 	 */
 	public function getGroups()
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = 'SELECT id AS value, name AS text'
 		       . ' FROM #__jem_groups'
 		       . ' ORDER BY name';
@@ -774,7 +776,7 @@ class JemModelCategory extends JModelAdmin
 		$cids = implode(',', $cids);
 
 		if (strlen($cids) == 0) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->stderr(), 'error');
+			Factory::getApplication()->enqueueMessage($this->_db->stderr(), 'error');
 			return false;
 		}
 
@@ -785,7 +787,7 @@ class JemModelCategory extends JModelAdmin
 		$this->_db->setQuery($query);
 
 		if (!($rows = $this->_db->loadObjectList())) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->stderr(), 'error');
+			Factory::getApplication()->enqueueMessage($this->_db->stderr(), 'error');
 			return false;
 		}
 
@@ -819,12 +821,12 @@ class JemModelCategory extends JModelAdmin
 
 		if (count($err)) {
 			$cids = implode(', ', $err);
-			$msg = JText::sprintf('COM_JEM_EVENT_ASSIGNED_CATEGORY', $cids);
+			$msg = Text::sprintf('COM_JEM_EVENT_ASSIGNED_CATEGORY', $cids);
 			return $msg;
 		}
 		else {
 			$total = count($cid);
-			$msg = JText::plural('COM_JEM_CATEGORIES_N_ITEMS_DELETED', $total);
+			$msg = Text::plural('COM_JEM_CATEGORIES_N_ITEMS_DELETED', $total);
 			return $msg;
 		}
 	}

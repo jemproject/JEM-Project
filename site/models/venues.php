@@ -25,7 +25,7 @@ class JemModelVenues extends JemModelEventslist
 	{
 		// parent::populateState($ordering, $direction);
 
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$params = $app->getParams();
 		$task   = $app->input->getCmd('task','');
 

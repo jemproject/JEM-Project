@@ -9,9 +9,13 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
 jimport('joomla.form.helper');
+
 JFormHelper::loadFieldClass('list');
 
 /**
@@ -67,7 +71,7 @@ class JFormFieldImageselect extends JFormFieldList
 		}
 		
 		// Add the script to the document head.
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getApplication()->getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display.
 		$html = array();
@@ -84,35 +88,35 @@ class JFormFieldImageselect extends JFormFieldList
 				'imageupload-modal',
 				array(		
 					'url'    => $link,
-					'title'  => JText::_('COM_JEM_UPLOAD'),
+					'title'  => Text::_('COM_JEM_UPLOAD'),
 					'width'  => '650px',
 					'height' => '500px',
 					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 				)
 			);
-			$html[] ='<button type="button" class="btn btn-primary btn-margin" data-bs-toggle="modal"  data-bs-target="#imageupload-modal">'.JText::_('COM_JEM_UPLOAD').'
+			$html[] ='<button type="button" class="btn btn-primary btn-margin" data-bs-toggle="modal"  data-bs-target="#imageupload-modal">'.Text::_('COM_JEM_UPLOAD').'
 			</button>';
 
 		$html[] ='</div></div>';
-		// $html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
+		// $html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".Text::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".Text::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\">";
 		$html[] = JHtml::_(
 			'bootstrap.renderModal',
 			'imageselect-modal',
 			array(		
 				'url'    => $link2,
-				'title'  => JText::_('COM_JEM_SELECTIMAGE'),
+				'title'  => Text::_('COM_JEM_SELECTIMAGE'),
 				'width'  => '650px',
 				'height' => '500px',
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
 			)
 		);
-		$html[] = "<button type=\"button\" class=\"btn btn-primary btn-margin\" data-bs-toggle=\"modal\" data-bs-target=\"#imageselect-modal\">".JText::_('COM_JEM_SELECTIMAGE')."
+		$html[] = "<button type=\"button\" class=\"btn btn-primary btn-margin\" data-bs-toggle=\"modal\" data-bs-target=\"#imageselect-modal\">".Text::_('COM_JEM_SELECTIMAGE')."
 		</button>";
 		$html[] = "</div></div>";
-		$html[] = "\n&nbsp;<input class=\"btn btn-danger btn-margin\" type=\"button\" onclick=\"SelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."');\" value=\"".JText::_('COM_JEM_RESET')."\" />";
+		$html[] = "\n&nbsp;<input class=\"btn btn-danger btn-margin\" type=\"button\" onclick=\"SelectImage('', '".Text::_('COM_JEM_SELECTIMAGE')."');\" value=\"".Text::_('COM_JEM_RESET')."\" />";
 		$html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";
-		$html[] = "<img src=\"../media/system/images/blank.png\" name=\"imagelib\" id=\"imagelib\" class=\"venue-image\" alt=\"".JText::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
+		$html[] = "<img src=\"../media/system/images/blank.png\" name=\"imagelib\" id=\"imagelib\" class=\"venue-image\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
 		$html[] = "<script type=\"text/javascript\">";
 		$html[] = "if (document.forms[0].a_imagename.value!='') {";
 		$html[] = "var imname = document.forms[0].a_imagename.value;";

@@ -58,7 +58,7 @@ class JemViewSearch extends JemView
 		$filter_date_from = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
 		$filter_date_to   = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
 		$filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-		$task             = $app->input->get('task', '');
+		$task             = $app->input->getCmd('task', '');
 
 		// get data from model
 		$rows = $this->get('Data');
@@ -196,7 +196,7 @@ class JemViewSearch extends JemView
 	protected function _buildSortLists()
 	{
 		$app = Factory::getApplication();
-		$task = $app->input->get('task', '');
+		$task = $app->input->getCmd('task', '');
 
 		$filter_order = $app->input->getCmd('filter_order', 'a.dates');
 		$filter_order_DirDefault = 'ASC';

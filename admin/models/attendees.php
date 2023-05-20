@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Language\Text;
 
 /**
  * Model: Attendees
  */
-class JemModelAttendees extends JModelList
+class JemModelAttendees extends ListModel
 {
 	protected $eventid = 0;
 
@@ -104,7 +104,7 @@ class JemModelAttendees extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -224,16 +224,16 @@ class JemModelAttendees extends JModelList
 		$csv = fopen('php://output', 'w');
 
 		$header = array(
-				JText::_('COM_JEM_NAME'),
-				JText::_('COM_JEM_USERNAME'),
-				JText::_('COM_JEM_EMAIL'),
-				JText::_('COM_JEM_REGDATE'),
-				JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
+				Text::_('COM_JEM_NAME'),
+				Text::_('COM_JEM_USERNAME'),
+				Text::_('COM_JEM_EMAIL'),
+				Text::_('COM_JEM_REGDATE'),
+				Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
 			);
 		if ($comments) {
-			$header[] = JText::_('COM_JEM_COMMENT');
+			$header[] = Text::_('COM_JEM_COMMENT');
 		}
-		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
+		$header[] = Text::_('COM_JEM_ATTENDEES_REGID');
 
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -251,8 +251,8 @@ class JemModelAttendees extends JModelList
 					$item->name,
 					$item->username,
 					$item->email,
-					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, JText::_('DATE_FORMAT_LC2')),
-					JText::_($txt_stat)
+					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
+					Text::_($txt_stat)
 				);
 			if ($comments) {
 				$comment = strip_tags($item->comment);

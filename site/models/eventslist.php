@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 
 jimport('joomla.application.component.modellist');
 // ensure JemFactory is loaded (because model is used by modules too)
@@ -59,7 +60,7 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$task        = $app->input->getCmd('task','');
 		$format      = $app->input->getCmd('format',false);
@@ -114,8 +115,8 @@ class JemModelEventslist extends JModelList
 			$app->setUserState('com_jem.eventslist.'.$itemid.'.filter_order_Dir', $filter_order_DirDefault);
 		}
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {
@@ -272,7 +273,7 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$task      = $app->input->getCmd('task', '');
 		$itemid    = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -805,7 +806,7 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function _populatePublishState($task)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');

@@ -33,6 +33,7 @@ $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');
 $linkloc = $params->get('linkloc');
 $linkdet = $params->get('linkdet');
+$showiconcountry = $params->get('showiconcountry');
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
@@ -45,6 +46,9 @@ $linkdet = $params->get('linkdet');
             <span class="event-title highlight_featured">
           <?php else : ?>
             <span class="event-title">
+          <?php endif; ?>
+          <?php if ($showiconcountry == 1) : ?>
+              <?php echo '<img src="' . Uri::getInstance()->base() . '/media/mod_languages/images/' . strtolower($item->country) . '.gif">'; ?>
           <?php endif; ?>
           <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
             <a href="<?php echo $item->venueurl; ?>">

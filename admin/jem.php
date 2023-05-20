@@ -11,14 +11,16 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
 
 // Access check.
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
 
 
 if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-	\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+	Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 }
 
 // Require classes
@@ -36,16 +38,16 @@ require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html/jemhtml.php');
 
 // Set the table directory
-JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+Table::addIncludePath(JPATH_COMPONENT.'/tables');
 
-// Create JEM's file logger
+// create JEM's file logger
 JemHelper::addFileLogger();
 
 // Require the frontend base controller
 require_once (JPATH_COMPONENT.'/controller.php');
 
 // Get an instance of the controller
-$controller = JControllerLegacy::getInstance('Jem');
+$controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
 $input = Factory::getApplication()->input;

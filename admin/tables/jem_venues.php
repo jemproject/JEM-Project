@@ -9,13 +9,18 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text
+
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+
 /**
  * JEM venues Model class
  *
  * @package JEM
  *
  */
-class jem_venues extends JTable
+class jem_venues extends Table
 {
 	/**
 	 * Primary Key
@@ -87,8 +92,8 @@ class jem_venues extends JTable
 	{
 		// not typed in a venue name
 		if (!trim($this->venue)) {
-			$this->_error = JText::_('COM_JEM_ADD_VENUE');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ADD_VENUE');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -101,16 +106,16 @@ class jem_venues extends JTable
 		if ($this->map) {
 			if (!trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode)) {
 				if ((!trim($this->latitude) && !trim($this->longitude))) {
-					$this->_error = JText::_('COM_JEM_ERROR_ADDRESS');
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+					$this->_error = Text::_('COM_JEM_ERROR_ADDRESS');
+					Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 					return false;
 				}
 			}
 		}
 
 		if (JFilterInput::checkAttribute(array ('href', $this->url))) {
-			$this->_error = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -118,50 +123,50 @@ class jem_venues extends JTable
 			$this->url = strip_tags($this->url);
 
 			if (strlen($this->url) > 199) {
-				$this->_error = JText::_('COM_JEM_ERROR_URL_LONG');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+				$this->_error = Text::_('COM_JEM_ERROR_URL_LONG');
+				Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
 			.'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
-				$this->_error = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+				$this->_error = Text::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
+				Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 		}
 
 		$this->street = strip_tags($this->street);
 		if (\Joomla\String\StringHelper::strlen($this->street) > 50) {
-			$this->_error = JText::_('COM_JEM_ERROR_STREET_LONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_STREET_LONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->postalCode = strip_tags($this->postalCode);
 		if (\Joomla\String\StringHelper::strlen($this->postalCode) > 10) {
-			$this->_error = JText::_('COM_JEM_ERROR_ZIP_LONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_ZIP_LONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->city = strip_tags($this->city);
 		if (\Joomla\String\StringHelper::strlen($this->city) > 50) {
-			$this->_error = JText::_('COM_JEM_ERROR_CITY_LONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_CITY_LONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->state = strip_tags($this->state);
 		if (\Joomla\String\StringHelper::strlen($this->state) > 50) {
-			$this->_error = JText::_('COM_JEM_ERROR_STATE_LONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_STATE_LONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		$this->country = strip_tags($this->country);
 		if (\Joomla\String\StringHelper::strlen($this->country) > 2) {
-			$this->_error = JText::_('COM_JEM_ERROR_COUNTRY_LONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_COUNTRY_LONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -172,7 +177,7 @@ class jem_venues extends JTable
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_VENUE_NAME_ALREADY_EXIST', $this->venue), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_VENUE_NAME_ALREADY_EXIST', $this->venue), 'warning');
 			return false;
 		}
 		*/

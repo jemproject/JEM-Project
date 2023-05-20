@@ -9,9 +9,10 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-abstract class JemControllerForm extends JControllerForm
+abstract class JemControllerForm extends FormController
 {
 	/**
 	 * Function that allows child controller access to model data
@@ -37,7 +38,7 @@ abstract class JemControllerForm extends JControllerForm
 	 *
 	 * @since   12.2
 	 */
-	protected function postSaveHook(JModelLegacy $model, $validData = array())
+	protected function postSaveHook(BaseDatabaseModel $model, $validData = array())
 	{
 		$this->_postSaveHook($model, $validData);
 	}

@@ -9,11 +9,13 @@
 
 $group = 'globalattribs';
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo JText::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
+			<legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
 			<ul class="adminformlist">
 				<?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
 					<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
@@ -23,7 +25,7 @@ defined('_JEXEC') or die;
 	</div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITEVENT'); ?></legend>
+			<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITEVENT'); ?></legend>
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('global_show_ownedvenuesonly',$group); ?> <?php echo $this->form->getInput('global_show_ownedvenuesonly',$group); ?></li>
 				<li><?php echo $this->form->getLabel('global_editevent_maxnumcustomfields',$group); ?> <?php echo $this->form->getInput('global_editevent_maxnumcustomfields',$group); ?></li>
@@ -34,7 +36,7 @@ defined('_JEXEC') or die;
 <div class="width-50 fltrt">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo JText::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
+			<legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
 			<ul class="adminformlist">
 				<?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
 					<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
@@ -44,7 +46,7 @@ defined('_JEXEC') or die;
 	</div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo JText::_('COM_JEM_VENUES'); ?></legend>
+			<legend><?php echo Text::_('COM_JEM_VENUES'); ?></legend>
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('global_show_locdescription',$group); ?> <?php echo $this->form->getInput('global_show_locdescription',$group); ?></li>
 				<li><?php echo $this->form->getLabel('global_show_detailsadress',$group); ?> <?php echo $this->form->getInput('global_show_detailsadress',$group); ?></li>
@@ -57,7 +59,7 @@ defined('_JEXEC') or die;
 	</div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITVENUE'); ?></legend>
+			<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITVENUE'); ?></legend>
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('global_editvenue_maxnumcustomfields',$group); ?> <?php echo $this->form->getInput('global_editvenue_maxnumcustomfields',$group); ?></li>
 			</ul>

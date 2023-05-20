@@ -9,15 +9,16 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.form.formfield');
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Form\FormField;
+
 /**
  * Contact select
  */
-class JFormFieldModal_Contact extends JFormField
+class JFormFieldModal_Contact extends FormField
 {
 	/**
 	 * field type
@@ -33,6 +34,9 @@ class JFormFieldModal_Contact extends JFormField
 	{
 		// Load modal behavior
 		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+
 
 		// Build the script
 		$script = array();
@@ -46,7 +50,7 @@ class JFormFieldModal_Contact extends JFormField
 		
 
 		// Add to document head
-		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$document->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
@@ -70,8 +74,8 @@ class JFormFieldModal_Contact extends JFormField
 			$contact = $db->loadResult();
 		}
 		catch (RuntimeException $e)
-		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+		{
+			$app->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($contact)) {

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 // JHtml::_('behavior.tooltip');
 ?>
 
@@ -27,17 +29,17 @@ defined('_JEXEC') or die;
 <div id="jem_filter" class="floattext">
 	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
-		<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+		<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
 		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-		<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+		<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
 
 	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
-		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 	</div>
 	<?php endif; ?>
@@ -74,7 +76,7 @@ defined('_JEXEC') or die;
 		<thead>		
 			<tr>
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
-				<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
+				<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
 				<?php endif; ?>
 				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -93,14 +95,14 @@ defined('_JEXEC') or die;
 				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showatte == 1) : ?>
-				<th id="jem_attendees" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+				<th id="jem_attendees" class="sectiontableheader" align="center"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 				<?php endif; ?>
 			</tr>
 		</thead>
 
 		<tbody>
 			<?php if (empty($this->rows)) : ?>
-				<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+				<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->rows as $row) : ?>

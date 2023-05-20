@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM settings table class
  *
@@ -16,7 +18,7 @@ defined('_JEXEC') or die;
  *
  * @deprecated since version 2.1.6
  */
-class jem_settings extends JTable
+class jem_settings extends Table
 {
 	/**
 	 * Unique Key

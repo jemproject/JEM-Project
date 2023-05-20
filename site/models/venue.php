@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 require_once __DIR__ . '/eventslist.php';
 
@@ -28,7 +29,7 @@ class JemModelVenue extends JemModelEventslist
 
 	public function __construct()
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$jinput = $app->input;
 		$params = $app->getParams();
 
@@ -48,7 +49,7 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$params      = $app->getParams();
 		$jinput      = $app->input;
@@ -207,7 +208,7 @@ class JemModelVenue extends JemModelEventslist
 		$_venue = $db->loadObject();
 
 		if (empty($_venue)) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
 			return false;
 		}
 

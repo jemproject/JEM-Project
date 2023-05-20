@@ -10,13 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Model-Events
  **/
-class JemModelEvents extends JModelList
+class JemModelEvents extends ListModel
 {
 	/**
 	 * Constructor.
@@ -104,7 +103,7 @@ class JemModelEvents extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.

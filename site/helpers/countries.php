@@ -18,6 +18,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
 
 class JemHelperCountries
 {
@@ -538,7 +539,7 @@ class JemHelperCountries
 		$options = array();
 		foreach ($countries as $country) {
 			$name = explode(',', $country['name']);
-			$options[] = JHtml::_('select.option', $country['iso2'], JText::_($name[0]), $value_tag, $text_tag);
+			$options[] = JHtml::_('select.option', $country['iso2'], Text::_($name[0]), $value_tag, $text_tag);
 		}
 		return $options;
 	}
@@ -1123,7 +1124,7 @@ class JemHelperCountries
 		$countries = self::getCountries();
 		if (isset($countries[$iso]['name'])) {
 			$c = explode(',', $countries[$iso]['name']);
-			return JText::_($c[0]);
+			return Text::_($c[0]);
 		}
 		return false;
 	}
@@ -1139,7 +1140,7 @@ class JemHelperCountries
 		}
 		$countries = self::getCountries();
 		if(isset($countries[$iso]['name']))
-		return JText::_($countries[$iso]['name']);
+		return Text::_($countries[$iso]['name']);
 	}
 
 	/**
@@ -1156,7 +1157,7 @@ class JemHelperCountries
 			return false;
 		}
 		$parts = explode(',', $full);
-		return JText::_($parts[0]);
+		return Text::_($parts[0]);
 	}
 }
 ?>

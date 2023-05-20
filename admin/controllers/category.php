@@ -9,12 +9,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Category Controller
  */
-class JemControllerCategory extends JControllerForm
+class JemControllerCategory extends FormController
 {
 	/**
 	 * The extension for which the categories apply.
@@ -115,7 +116,7 @@ class JemControllerCategory extends JControllerForm
 	 */
 	public function batchDisabled($model = null)
 	{
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Set the model
 		$model = $this->getModel('Category');

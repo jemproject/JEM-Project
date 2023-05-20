@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+
 $uri = Uri::getInstance();
 if (empty($this->catrow->events)) { return; }
 ?>
@@ -87,28 +89,28 @@ if (empty($this->catrow->events)) { return; }
 
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
-    <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_DATE'); ?></div>
+    <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_DATE'); ?></div>
     <?php if ($this->jemsettings->showtitle == 1) : ?>              
-      <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></div>
+      <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
     <?php endif; ?> 
     <?php if ($this->jemsettings->showlocate == 1) : ?>
-      <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></div>
+      <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
     <?php endif; ?>
     <?php if ($this->jemsettings->showcity == 1) : ?>
-      <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_CITY'); ?></div>
+      <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CITY'); ?></div>
     <?php endif; ?>
     <?php if ($this->jemsettings->showstate == 1) : ?>
-      <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_STATE'); ?></div>
+      <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_STATE'); ?></div>
     <?php endif; ?>
     <?php if ($this->jemsettings->showcat == 1) : ?>
-      <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></div>
+      <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
     <?php endif; ?> 
   </div>    
 </div>
 
 <ul class="eventlist">
   <?php if (empty($this->catrow->events)) : ?>
-    <li class="jem-event"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></li>
+    <li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
   <?php else : ?>
     <?php
     // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
@@ -125,7 +127,7 @@ if (empty($this->catrow->events)) { return; }
         <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
       <?php endif; ?>
                     
-            <div class="jem-event-info-small jem-event-date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
+            <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
               <i class="far fa-clock" aria-hidden="true"></i>
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
@@ -143,7 +145,7 @@ if (empty($this->catrow->events)) { return; }
             </div>
             
             <?php if ($this->jemsettings->showtitle == 1) : ?>
-              <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+              <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <i class="fa fa-comment" aria-hidden="true"></i>
                 <a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
                 <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
@@ -155,7 +157,7 @@ if (empty($this->catrow->events)) { return; }
             
             <?php if ($this->jemsettings->showlocate == 1) : ?>
               <?php if (!empty($row->locid)) : ?>
-                <div class="jem-event-info-small jem-event-venue" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
+                <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
                     <?php echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
@@ -170,7 +172,7 @@ if (empty($this->catrow->events)) { return; }
 
             <?php if ($this->jemsettings->showcity == 1) : ?>
               <?php if (!empty($row->city)) : ?>
-                <div class="jem-event-info-small jem-event-city" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
+                <div class="jem-event-info-small jem-event-city" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
                   <i class="fa fa-building" aria-hidden="true"></i>
                   <?php echo $this->escape($row->city); ?>
                 </div>
@@ -181,7 +183,7 @@ if (empty($this->catrow->events)) { return; }
             
             <?php if ($this->jemsettings->showstate == 1) : ?>
               <?php if (!empty($row->state)) : ?>
-                <div class="jem-event-info-small jem-event-state" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
+                <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
                   <i class="fa fa-map" aria-hidden="true"></i>
                   <?php echo $this->escape($row->state); ?>
                 </div>
@@ -191,7 +193,7 @@ if (empty($this->catrow->events)) { return; }
             <?php endif; ?>
             
             <?php if ($this->jemsettings->showcat == 1) : ?>
-              <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(JText::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
+              <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
               </div>

@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * JEM attachments table class
  *
  * @package JEM
  *
  */
-class jem_attachments extends JTable
+class jem_attachments extends Table
 {
 	/**
 	 * Primary Key

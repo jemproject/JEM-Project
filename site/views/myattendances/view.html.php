@@ -25,13 +25,13 @@ class JemViewMyattendances extends JemView
 	{
 		// initialize variables
 		$app         = Factory::getApplication();
-		$document    = Factory::getDocument();
+		$document    = $app->getDocument();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
 		$params      = $app->getParams();
-		$uri          = Uri::getInstance();
+		$uri         = Uri::getInstance();
 		$user        = JemFactory::getUser();
 		$pathway     = $app->getPathWay();
 		$print       = $app->input->getBool('print', false);

@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 $max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields', -1); // default to All
 ?>
 
 	<!-- CUSTOM FIELDS -->
 	<?php if ($max_custom_fields != 0) : ?>
 	<fieldset class="panelform">
-		<legend><?php echo JText::_('COM_JEM_EDITVENUE_CUSTOMFIELDS'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_EDITVENUE_CUSTOMFIELDS'); ?></legend>
 		<ul class="adminformlist">
 			<?php
 				$fields = $this->form->getFieldset('custom');
