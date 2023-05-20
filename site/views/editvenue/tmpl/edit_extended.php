@@ -7,7 +7,7 @@
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-defined('_JEXEC') or die;ç
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 

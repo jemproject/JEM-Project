@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\Files;
-use Joomla\CMS\Client\ClientHelper
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 
@@ -116,7 +116,7 @@ class JemControllerImagehandler extends BaseController
 
 		if (count($images)) {
 			foreach ($images as $image) {
-				if ($image !== ::getInstance()->clean($image, 'path')) {
+				if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
 					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 					continue;
 				}

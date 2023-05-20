@@ -327,7 +327,7 @@ use Joomla\CMS\Language\Text;
 						echo JHtml::_('jgrid.published', $row->published, $i, 'myevents.', $enabled);
 						?>
 					</div>
-				</tr>
+                </li>
 
 				<?php $i = 1 - $i; ?>
 			<?php endforeach; ?>

@@ -10,8 +10,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-
-// JHtml::_('behavior.tooltip');
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
@@ -181,7 +179,7 @@ use Joomla\CMS\Language\Text;
 						echo JHtml::_('jgrid.published', $row->published, $i, 'myvenues.', $enabled);
 						?>
 					</div>
-				</tr>
+            </li>
 
 				<?php $i = 1 - $i; ?>
 			<?php endforeach; ?>
