@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.3.17
+ * @version 4.0b3
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,7 +8,7 @@
  *
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
