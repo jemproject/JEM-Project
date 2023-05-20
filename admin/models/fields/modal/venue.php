@@ -44,7 +44,7 @@ class JFormFieldModal_Venue extends JFormField
 		$script[] = '    }';
 
 		// Add to document head
-		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getApplication()->getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();

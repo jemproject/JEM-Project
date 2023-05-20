@@ -1272,7 +1272,8 @@ class JemHelper
 	{
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
-		$document = Factory::getDocument();
+        $app      = Factory::getApplication();
+        $document = $app->getDocument();
         $uri      = Uri::getInstance();
 		$url      = $uri->root();
 		if (!empty($suffix)) {
@@ -1448,10 +1449,12 @@ class JemHelper
 	 */
 	static public function loadCustomCss()
 	{
-		$settings = self::retrieveCss();
+        $app         = Factory::getApplication();
+        $document    = $app->getDocument();
+		$settings    = self::retrieveCss();
 		$jemsettings = self::config();
 		$layoutstyle = isset($jemsettings->layoutstyle) ? (int)$jemsettings->layoutstyle : 0;
-		$style = "";
+		$style       = "";
 
 		# background-colors
 		$bg_filter            = $settings->get('css_color_bg_filter');
@@ -1629,7 +1632,6 @@ class JemHelper
 			break;
 		} // switch
 
-		$document = Factory::getDocument();
 		$document->addStyleDeclaration($style);
 
 		return true;
@@ -1642,7 +1644,8 @@ class JemHelper
 	 */
 	static public function loadCustomTag()
 	{
-		$document = Factory::getDocument();
+        $app = Factory::getApplication();
+        $document = $app->getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
 

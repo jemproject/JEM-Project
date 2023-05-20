@@ -22,7 +22,7 @@ class JemViewEventslist extends JViewLegacy
 	public function display($cachable = false, $urlparams = false)
 	{
 		$app = Factory::getApplication();
-		$document = Factory::getDocument();
+		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model

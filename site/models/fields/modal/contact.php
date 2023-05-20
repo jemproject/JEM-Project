@@ -34,6 +34,9 @@ class JFormFieldModal_Contact extends FormField
 	{
 		// Load modal behavior
 		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+
 
 		// Build the script
 		$script = array();
@@ -47,7 +50,7 @@ class JFormFieldModal_Contact extends FormField
 		
 
 		// Add to document head
-		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$document->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
@@ -71,8 +74,8 @@ class JFormFieldModal_Contact extends FormField
 			$contact = $db->loadResult();
 		}
 		catch (RuntimeException $e)
-		{			
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+		{
+			$app->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($contact)) {
