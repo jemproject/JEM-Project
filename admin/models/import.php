@@ -12,7 +12,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Files;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filesystem\File;
 
 jimport('joomla.application.component.model');
 
@@ -20,7 +21,7 @@ jimport('joomla.application.component.model');
  * JEM Component Import Model
  * @package JEM
  */
-class JemModelImport extends JModelLegacy
+class JemModelImport extends BaseDatabaseModel
 {
 	/**
 	 *  The table prefix of this site.
