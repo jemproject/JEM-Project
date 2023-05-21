@@ -23,7 +23,10 @@ use Joomla\CMS\Language\Text;
 	<?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
 	<h1 class="componentheading">
 		<span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
-		<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue'); ?>
+		<?php
+        echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
+        echo JemOutput::copybutton($this->venue, $this->params, NULL, $this->permissions->canAddVenue, 'venue');
+        ?>
 	</h1>
 	<?php endif; ?>
   
@@ -41,11 +44,7 @@ use Joomla\CMS\Language\Text;
 
 	<!--Venue-->
 	<h2 class="jem">
-		<?php
-		echo Text::_('COM_JEM_VENUE');
-		echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
-		echo JemOutput::copybutton($this->venue, $this->params, NULL, $this->permissions->canAddVenue, 'venue');
-		?>
+		<?php echo Text::_('COM_JEM_VENUE'); ?>
 	</h2>
 
 	<?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
