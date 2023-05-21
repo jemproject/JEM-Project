@@ -11,11 +11,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');
 $linkloc = $params->get('linkloc');
 $linkdet = $params->get('linkdet');
+$showiconcountry = $params->get('showiconcountry');
+$settings = JemHelper::config();
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
@@ -27,6 +30,12 @@ $linkdet = $params->get('linkdet');
                 <span class="event-title highlight_featured">
             <?php else : ?>
                 <span class="event-title">
+            <?php endif; ?>
+            <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
+                <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
+                $flagext = substr($settings->flagicons_path, strrpos($settings->flagicons_path,"-")+1) ;
+                $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
+                echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
             <?php endif; ?>
                     <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
                         <a href="<?php echo $item->venueurl; ?>">

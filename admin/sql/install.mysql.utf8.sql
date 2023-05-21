@@ -290,6 +290,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('recurrence_anticipation', '60'),
 ('ical_max_items', '100'),
 ('defaultCountry', ''),
+('flagicons_path', 'media/com_jem/images/flags/w20-png/'),
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),

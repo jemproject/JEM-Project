@@ -90,6 +90,13 @@
 			label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
 			description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
 		/>
+		<field name="flagicons_path" type="text"
+			   label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
+			   description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
+			   class="inputbox"
+			   size="40"
+			   required="true"
+		/>
 		<field name="spacer2" type="spacer"
 				hr="true"
 			/>

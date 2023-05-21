@@ -34,6 +34,7 @@ $showtitloc = $params->get('showtitloc');
 $linkloc = $params->get('linkloc');
 $linkdet = $params->get('linkdet');
 $showiconcountry = $params->get('showiconcountry');
+$settings = JemHelper::config();
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
@@ -48,7 +49,10 @@ $showiconcountry = $params->get('showiconcountry');
             <span class="event-title">
           <?php endif; ?>
           <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
-              <?php echo '<img src="' . Uri::getInstance()->base() . '/media/mod_languages/images/' . strtolower($item->country) . '.gif">'; ?>
+		    <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
+		  	$flagext = substr($settings->flagicons_path, strrpos($settings->flagicons_path,"-")+1) ;
+			$flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
+			echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
           <?php endif; ?>
           <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
             <a href="<?php echo $item->venueurl; ?>">
@@ -58,11 +62,9 @@ $showiconcountry = $params->get('showiconcountry');
             <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->text); ?>">
               <?php echo $item->text; ?>
             </a>
-          <?php
-            else :
+                        <?php else :
               echo $item->text;
-            endif;
-          ?>    
+                        endif; ?>
         </span>
         <br />
         <?php if($highlight_featured && $item->featured): ?>
@@ -76,8 +78,7 @@ $showiconcountry = $params->get('showiconcountry');
         </a>
         <?php else :
           echo $item->dateinfo;
-        endif;
-        ?>
+                        endif; ?>
         </span>
       </li>
     <?php endforeach; ?>

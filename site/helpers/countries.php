@@ -1080,11 +1080,14 @@ class JemHelperCountries
 	static public function getIsoFlag($iso_code)
 	{
 		$uri = Uri::getInstance();
+		$settings = JemHelper::config();
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);
 		}
 		if ($iso_code) {
-			$path = $uri->root().'media/com_jem/images/flags/'.strtolower($iso_code).'.gif';
+			$flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
+			$flagext = substr($settings->flagicons_path, strrpos($settings->flagicons_path,"-")+1) ;
+			$path = Uri::getInstance()->base() . $flagpath . strtolower($iso_code) . '.' . $flagext;
 			return $path;
 		}
 		else
