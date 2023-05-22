@@ -50,7 +50,7 @@ $settings = JemHelper::config();
           <?php endif; ?>
           <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
 		    <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
-		  	$flagext = substr($settings->flagicons_path, strrpos($settings->flagicons_path,"-")+1) ;
+		  	$flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
 			$flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
 			echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
           <?php endif; ?>
