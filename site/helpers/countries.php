@@ -1086,7 +1086,7 @@ class JemHelperCountries
 		}
 		if ($iso_code) {
 			$flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
-			$flagext = substr($settings->flagicons_path, strrpos($settings->flagicons_path,"-")+1) ;
+			$flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
 			$path = Uri::getInstance()->base() . $flagpath . strtolower($iso_code) . '.' . $flagext;
 			return $path;
 		}
