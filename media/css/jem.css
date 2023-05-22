@@ -284,6 +284,10 @@ div#jem dd { /* definition description */
 	margin-left: 160px;
 }
 
+div#jem .jcomments dd {
+	margin-left: 0px;
+}
+
 * html .floattext dd /* ie6 fix against the 3px jog bug */ {
 	height:1%;
 }
