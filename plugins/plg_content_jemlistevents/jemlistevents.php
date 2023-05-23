@@ -3,7 +3,7 @@
  * JemListEvent is a Plugin to display events in articles.
  * For more information visit joomlaeventmanager.net
  *
- * @version 4.0b3
+ * @version 4.0b4
  * @package JEM
  * @subpackage JEM_Listevents_Plugin
  * @author JEM Team <info@joomlaeventmanager.net>, Luis Raposo
