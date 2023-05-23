@@ -228,16 +228,16 @@ abstract class ModJemTeaserHelper
 			$lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
 
 			if ($dimage == null) {
-				$lists[$i]->eventimage     = Uri::base(true).'/media/system/images/blank.png';
-				$lists[$i]->eventimageorig = Uri::base(true).'/media/system/images/blank.png';
+				$lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.png';
+				$lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
 			} else {
 				$lists[$i]->eventimage     = Uri::base(true).'/'.$dimage['thumb'];
 				$lists[$i]->eventimageorig = Uri::base(true).'/'.$dimage['original'];
 			}
 
 			if ($limage == null) {
-				$lists[$i]->venueimage     = Uri::base(true).'/media/system/images/blank.png';
-				$lists[$i]->venueimageorig = Uri::base(true).'/media/system/images/blank.png';
+				$lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.png';
+				$lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
 			} else {
 				$lists[$i]->venueimage     = Uri::base(true).'/'.$limage['thumb'];
 				$lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
