@@ -563,10 +563,8 @@ class com_jemInstallerScript
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
-        $folders = array(
-            
-            // obsolete since JEM 2.3.x            
-            //sample '/administrator/components/com_jem/help/en-GB/toolbars',
+        $folders = array(            
+            '/media/com_jem/FontAwesome',
         );
 
         foreach ($files as $file) {

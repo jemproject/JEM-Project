@@ -80,7 +80,7 @@ class JFormFieldImageselect extends JFormFieldList
 
 		//
 		$html[] = "<div class=\"fltlft\">";
-		$html[] = "<input class=\"form-control\" style=\"background: #fff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/system/images/blank.png'}\"; />";
+		$html[] = "<input class=\"form-control\" style=\"background: #fff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/com_jem/images/blank.png'}\"; />";
 		$html[] = "</div>";
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\">";
 			$html[] = JHtml::_(
@@ -116,7 +116,7 @@ class JFormFieldImageselect extends JFormFieldList
 		$html[] = "</div></div>";
 		$html[] = "\n&nbsp;<input class=\"btn btn-danger btn-margin\" type=\"button\" onclick=\"SelectImage('', '".Text::_('COM_JEM_SELECTIMAGE')."');\" value=\"".Text::_('COM_JEM_RESET')."\" />";
 		$html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";
-		$html[] = "<img src=\"../media/system/images/blank.png\" name=\"imagelib\" id=\"imagelib\" class=\"venue-image\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
+		$html[] = "<img src=\"../media/com_jem/images/blank.png\" name=\"imagelib\" id=\"imagelib\" class=\"venue-image\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
 		$html[] = "<script type=\"text/javascript\">";
 		$html[] = "if (document.forms[0].a_imagename.value!='') {";
 		$html[] = "var imname = document.forms[0].a_imagename.value;";

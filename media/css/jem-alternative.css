@@ -1306,7 +1306,7 @@ div#jem .inline-button-right {
 	#jem div.eventtable [class*="sectiontableentry"] .city::before,
 	#jem div.eventtable [class*="sectiontableentry"] .state::before,
 	#jem div.eventtable [class*="sectiontableentry"] .country::before {
-		content: url("../images/icon-16-blank.png");
+		content: url("../images/blank.png");
 		padding-right: 4px;
 	}
 
