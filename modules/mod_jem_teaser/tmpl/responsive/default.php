@@ -176,48 +176,49 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
         <div class="jem-event-image-teaser">
           <div class="jem-row-image-teaser">
             <?php if($item->showimageevent): ?>
-              <div class="jem-eventimg-teaser">
                 <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
+                      <div class="jem-eventimg-teaser">
                       <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
                         <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
                       </a>
+                      </div>
                     <?php endif; ?>
                   <?php endif; ?>
                 <?php endif; ?>
-              </div>
             <?php endif; ?>
 
             <?php if($item->showimagevenue): ?>
-            <div class="jem-eventimg-teaser">
               <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
+                          <div class="jem-eventimg-teaser">
                           <a href="<?php echo $item->venueimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
                             <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" />
                           </a>
+                          </div>
                       <?php endif; ?>
                   <?php endif; ?>
               <?php endif; ?>
-            </div>
             <?php endif; ?>
 
             <?php if($item->showdescriptionevent): ?>
               <div class="jem-description-teaser">
-                <?php echo $item->eventdescription; ?>
-                  <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-                    echo '<a class="readmore"  href="'.$item->link.'">'.$item->linkText.'</a>';
-                  endif; ?>
-              </div>
-            <?php endif; ?>
-            <?php if ($item->eventlink) : ?>
-              <div class="jem-readmore" style="padding-left: 10px;">
-                <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
-                  <!--<button class="jem-btn btn">-->
-                  <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
-                  <!--</button>-->
-                </a>
+                <?php if($item->showdescriptionevent):
+					echo $item->eventdescription;
+                  if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+                    echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
+                  endif;
+
+                  if ($item->eventlink) : ?>
+                    <div class="jem-readmore">
+                      <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+                      <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
+                    </a>
+                    </div>
+                  <?php endif; ?>
+                <?php endif; ?>
               </div>
             <?php endif; ?> 
           </div>

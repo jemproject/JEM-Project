@@ -57,27 +57,33 @@ if ($params->get('use_modal', 0)) {
 					<td class="event-info">
 						<div class="teaser-jem">
 							<div>
-                                <?php if($item->showimageevent): ?>
-								    <?php if(!empty($item->eventimage)) : ?>
-									    <a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
-									    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
-								    <?php endif; ?>
-                                <?php endif; ?>
-                                <?php if($item->showimagevenue): ?>
-                                    <?php if(!empty($item->venueimage)) : ?>
-                                        <a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
-                                        <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-							</div>
-							<div>
-								<?php if($item->showdescriptionevent): 
-									echo $item->eventdescription; 								
-								endif; ?>
-								<?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-									echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
-								endif; ?>
-							</div>
+              <?php if($item->showimageevent): ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                  <a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
+                <?php endif; ?>
+              <?php endif; ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+                <?php if(!empty($item->venueimage)) : ?>
+                  <a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
+                <?php endif; ?>
+              <?php endif; ?>
+            </div>
+            <div>
+              <?php if($item->showdescriptionevent):
+                echo $item->eventdescription;
+                if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+                  echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
+                endif;
+
+                if ($item->eventlink) : ?>
+                    <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+                      <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
+                    </a>
+                <?php endif;
+              endif; ?>
+            </div>
 						</div>
 					</td>
 				</tr>
