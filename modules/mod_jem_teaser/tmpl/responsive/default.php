@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b3
+ * @version 4.0b4
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2023 joomlaeventmanager.net
@@ -177,7 +177,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
           <div class="jem-row-image-teaser">
             <?php if($item->showimageevent): ?>
               <div class="jem-eventimg-teaser">
-                <?php if(strpos($item->eventimage,'/media/system/images/blank.png') === false) : ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
                       <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
@@ -191,7 +191,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
 
             <?php if($item->showimagevenue): ?>
             <div class="jem-eventimg-teaser">
-              <?php if(strpos($item->venueimage,'/media/system/images/blank.png') === false) : ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
                           <a href="<?php echo $item->venueimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->venue; ?> ">

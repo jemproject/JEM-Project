@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Version 4.0b3
+ * version 4.0b4
  * @copyright Copyright (C) 2014 Ghost Art digital media.
  * @copyright Copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
  * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
