@@ -533,6 +533,7 @@ class plgJemMailer extends JPlugin
 			'creator'    => !$is_new && $this->params->get('editevent_mail_creator', '0'),
 			'registered' => !$is_new && $this->params->get('editevent_mail_registered', '0'),
 			'category'   => $is_new ? $this->params->get('newevent_mail_category', '0') : $this->params->get('editevent_mail_category', '0'),
+			'category_acl'   => $is_new ? $this->params->get('newevent_mail_category_acl', '0') : $this->params->get('editevent_mail_category_acl', '0'),
 			'group'      => $is_new ? $this->params->get('newevent_mail_group', '0') : $this->params->get('editevent_mail_group', '0'),
 		);
 
@@ -933,6 +934,45 @@ class plgJemMailer extends JPlugin
 			}
 		} else {
 			$recipients['category'] = false;
+		}
+
+		##############################
+		## RECEIVERS - CATEGORY ACL ##
+		##############################
+
+		# in here we selected the option to send an email to the email-address
+		# that's filled in the category-view.
+
+		# the data within categoryDBList needs to be validated.
+		# if the categoryDBList is empty we shoudln't send an email
+
+		if (!empty($send_to['category_acl'])) {
+			// get list groups associated of ACL category from event
+			$query = $db->getQuery(true);
+			$query->select(array('vl.rules'));
+			$query->from($db->quoteName('#__jem_cats_event_relations').' AS cer');
+			$query->join('INNER', '#__jem_categories AS cat ON cat.id = cer.catid');
+			$query->join('INNER', '#__viewlevels AS vl ON vl.id = cat.access');
+			$query->where('cer.itemid = '.$db->quote($eventid));
+			$db->setQuery($query);
+			$list_groups_jl = $db->loadResult();
+
+			//List user emails of groups list
+			$list_groups_jl = substr ($list_groups_jl, 1, -1);
+			$query = $db->getQuery(true);
+			$query->select(array('u.email'));
+			$query->from($db->quoteName('#__user_usergroup_map').' AS um');
+			$query->join('INNER', '#__users AS u ON u.id = um.user_id');
+			$query->where('um.group_id IN ('.$list_groups_jl.')');
+			$db->setQuery($query);
+			if (is_null($category_acl_receivers = $db->loadColumn(0))) {
+				return array();
+			} else {
+				$recipients['category_acl'] = array_unique($category_acl_receivers);
+			}
+
+		} else {
+			$recipients['category_acl'] = false;
 		}
 
 		#######################
