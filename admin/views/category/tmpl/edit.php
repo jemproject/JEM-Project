@@ -110,18 +110,7 @@ $wa = $this->document->getWebAssetManager();
 								</ul>
 							</fieldset>
 						</div>
-
-                        <div class="accordion-body">
-                            <fieldset class="panelform">
-                                <ul class="adminformlist">
-                                    <li>
-                                        <?php echo $this->form->getLabel('emailacljl'); ?>
-                                        <?php echo $this->form->getInput('emailacljl'); ?>
-                                    </li>
-                                </ul>
-                            </fieldset>
-                        </div>
-                    </div>
+					</div>
 				</div>
 				<div class="accordion-item">
 					<h2 class="accordion-header" id="group-header">
