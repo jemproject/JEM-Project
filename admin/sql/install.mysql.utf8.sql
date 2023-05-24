@@ -139,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
   `modified_time` datetime NULL DEFAULT NULL,
   `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
   `email` varchar(200) DEFAULT NULL,
+  `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
