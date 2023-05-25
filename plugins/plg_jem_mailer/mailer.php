@@ -981,7 +981,7 @@ class plgJemMailer extends JPlugin
 
 	/**
 	 * This method executes and send the mail
-	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 * info: https://docs.joomla.org/Sending_email_from_extensions
 	 *
 	 * @access  private
 	 * @param   object  $data  mail data object
@@ -1063,7 +1063,7 @@ class plgJemMailer extends JPlugin
 
 	/**
 	 * This method sends the mail
-	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 * info: https://docs.joomla.org/Sending_email_from_extensions
 	 *
 	 * @access  private
 	 * @param   string  $recipient  mail recipient

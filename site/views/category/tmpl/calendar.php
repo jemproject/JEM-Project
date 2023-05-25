@@ -62,7 +62,7 @@ use Joomla\CMS\Language\Text;
 			/**
 			 * $cal->setEventContent($year,$month,$day,$content,[$contentUrl,$id])
 			 *
-			 * Info from: http://www.micronetwork.de/activecalendar/demo/doc/doc_en.html
+			 * Info from: https://www.micronetwork.de/activecalendar/demo/doc/doc_en.html
 			 *
 			 * Call this method, if you want the class to create a new HTML table within the date specified by the parameters $year, $month, $day.
 			 * The parameter $content can be a string or an array.

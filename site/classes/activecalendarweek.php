@@ -14,7 +14,7 @@
 * @license: GNU LESSER GENERAL PUBLIC LICENSE;
 * Special thanks to Jeremy D. Frens, Professor, Computer Science <jdfrens@calvin.edu> for his help developing this code
 * This subclass generates weekly calendars as a html table (XHTML Valid) using the activeCalendar class
-* Support, feature requests and bug reports please at : http://www.micronetwork.de/activecalendar/
+* Support, feature requests and bug reports please at : https://www.micronetwork.de/activecalendar/
 */
 defined('_JEXEC') or die;
 

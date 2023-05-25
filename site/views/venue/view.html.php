@@ -285,7 +285,7 @@ class JemViewVenue extends JemView
 
 			// build the url
 			if (!empty($venue->url) && !preg_match('%^http(s)?://%', $venue->url)) {
-				$venue->url = 'http://' . $venue->url;
+				$venue->url = 'https://' . $venue->url;
 			}
 
 			// prepare the url for output

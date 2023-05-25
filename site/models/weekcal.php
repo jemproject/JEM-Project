@@ -240,7 +240,7 @@ class JemModelWeekcal extends JemModelEventslist
 	 * Method to get the Currentweek
 	 *
 	 * Info MYSQL WEEK
-	 * @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_week
+	 * @link https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_week
 	 */
 	public function getCurrentweek()
 	{

@@ -3,7 +3,7 @@
  * Version 2.2.0
  * @copyright	Copyright (C) 2014 Thamesmog.
  * @copyright	Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
- * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license		https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;

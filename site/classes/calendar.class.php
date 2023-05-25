@@ -16,9 +16,9 @@
  * @date: 23 Feb 2006;
  * @copyright: Giorgos Tsiledakis;
  * @license: GNU LESSER GENERAL PUBLIC LICENSE;
- * Support, feature requests and bug reports please at : http://www.micronetwork.de/activecalendar/
- * Special thanks to Corissia S.A (http://www.corissia.com) for the permission to publish the source code
- * Thanks to Maik Lindner (http://nifox.com) for his help developing this class
+ * Support, feature requests and bug reports please at : https://www.micronetwork.de/activecalendar/
+ * Special thanks to Corissia S.A (https://www.corissia.com) for the permission to publish the source code
+ * Thanks to Maik Lindner (https://nifox.com) for his help developing this class
  */
 defined('_JEXEC') or die;
 

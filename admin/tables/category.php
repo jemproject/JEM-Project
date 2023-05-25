@@ -37,7 +37,7 @@ class JemTableCategory extends JTableNested
 	 *
 	 * @return boolean  True on success.
 	 *
-	 * @link   http://docs.joomla.org/JTableNested/delete
+	 * @link   https://docs.joomla.org/JTableNested/delete
 	 */
 	public function delete($pk = null, $children = false)
 	{

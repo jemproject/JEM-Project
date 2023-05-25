@@ -4,7 +4,7 @@
  * version 4.0b4
  * @copyright Copyright (C) 2014 Ghost Art digital media.
  * @copyright Copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
- * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license   https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 
