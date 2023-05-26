@@ -271,7 +271,7 @@ div#jem dt { /* definition term */
 	float:left;
 	font-size:1em;
 	font-weight:bold;
-	width:150px;
+	width:165px;
 	background:transparent;
 }
 
@@ -748,6 +748,12 @@ div.jem_editevent form div.jem_register {
 	width: 40px;
 	text-align: right;
 }
+
+#jem form input::-webkit-outer-spin-button,
+#jem form input::-webkit-inner-spin-button {
+    opacity:1;
+}
+
 
 div.jem_box_left,
 div.jem_box_right {

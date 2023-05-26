@@ -15,13 +15,18 @@ use Joomla\CMS\Language\Text;
 
 if ($this->showRegForm && empty($this->print)) :
 
-	if (($this->item->maxplaces > 0) && ($this->item->booked >= $this->item->maxplaces) && !$this->item->waitinglist && empty($this->registration->status)) :
+	if (($this->item->maxplaces > 0) && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && !$this->item->waitinglist && empty($this->registration->status)) :
 	?>
-	<p class="el-event-full">
-		<?php echo Text::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
-	</p>
+	<?php echo Text::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 
-	<?php else : ?>
+	<?php else :
+		if($this->registereduser!==null) {
+			$placesavailableuser = $this->item->maxbookeduser - $this->registers[$this->registereduser]->places;
+		}else{
+			$placesavailableuser = $this->item->maxbookeduser;
+		}
+		$placesavailableevent = $this->item->maxplaces - $this->item->booked - $this->item->reservedplaces;
+        ?>
 
 	<form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id=' . (int)$this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
 		<p>
@@ -43,10 +48,19 @@ if ($this->showRegForm && empty($this->print)) :
 			<input type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'))"
 				<?php if ($this->isregistered >= 1) { echo 'checked="checked"'; } ?>
 			/>
-			<?php if ($this->item->maxplaces && ($this->item->booked >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
+			<?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
 				<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
-			<?php else : ?>
-				<?php echo ' '.Text::_('COM_JEM_I_WILL_GO'); ?>
+			<?php else :
+
+                if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
+					$placesavailableuser = $placesavailableevent;
+                }
+			    echo ' '.Text::_('COM_JEM_I_WILL_GO');
+                if($placesavailableuser) {
+					echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
+					echo ' <input id="addplaces" style="text-align: center; " type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">' . ' '. Text::_('COM_JEM_I_WILL_GO_3');
+				}
+                ?>
 			<?php endif; ?>
 		</p>
 		<p>
@@ -54,7 +68,14 @@ if ($this->showRegForm && empty($this->print)) :
 			<input type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
 				<?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
 			/>
-			<?php echo ' '.Text::_('COM_JEM_I_WILL_NOT_GO'); ?>
+			<?php echo ' '.Text::_('COM_JEM_I_WILL_NOT_GO');
+			if($this->registereduser!==null) {
+				if ($this->registers[$this->registereduser]->places) {
+					echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
+                    echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $this->registers[$this->registereduser]->places . '" max="' . $this->registers[$this->registereduser]->places . '" min="1">' . ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_3');
+				}
+			}
+            ?>
 		<?php else : ?>
 			<input type="radio" name="reg_dummy" value="" disabled="disabled" />
 			<?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
@@ -70,7 +91,7 @@ if ($this->showRegForm && empty($this->print)) :
 		</p>
 		<?php endif; ?>
 		<p>
-			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
+			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" <?php echo (!$this->isregistered ? 'disabled="disabled"':'')?> />
 		</p>
 		<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
 		<input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />

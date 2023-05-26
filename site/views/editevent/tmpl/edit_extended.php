@@ -179,11 +179,16 @@ use Joomla\CMS\Factory;
 			</li>
 			<br/><br/>			
 			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
-			<br/>			
-			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
+            <br/><br/>
+            <li><?php echo $this->form->getLabel('minbookeduser'); ?> <?php echo $this->form->getInput('minbookeduser'); ?></li>
+            <br/><br/>
+            <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
+            <br/><br/>
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
-			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
+			<li><?php echo $this->form->getLabel('reservedplaces'); ?> <?php echo $this->form->getInput('reservedplaces'); ?></li>
 			<?php endif; ?>
+			<br/><br/>
+            <li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
 			<br/>
 			<li><?php echo $this->form->getLabel('booked'); ?> <?php echo $this->form->getInput('booked'); ?></li>
 			<?php if ($this->item->maxplaces): ?>

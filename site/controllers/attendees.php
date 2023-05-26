@@ -49,6 +49,11 @@ class JemControllerAttendees extends BaseController
 		$jinput  = Factory::getApplication()->input;
 		$eventid = $jinput->getInt('id', 0);
 		$status  = $jinput->getInt('status', 0);
+		if($status==1) {
+			$places = $jinput->input->getInt('addplaces', 0);
+		}else {
+			$places = $jinput->input->getInt('cancelplaces', 0);
+		}
 		$comment = '';
 		$fid     = $jinput->getInt('Itemid', 0);
 		$uids    = explode(',', $jinput->getString('uids', ''));
@@ -83,7 +88,7 @@ class JemControllerAttendees extends BaseController
 					$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
 					if (!empty($reg->id) && ($old_status != $status)) {
 						JemHelper::addLogEntry("Change user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
-						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg, $reg->id);
+						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg, $reg->id);
 						if ($reg_id) {
 							$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 							++$changed;
@@ -99,7 +104,7 @@ class JemControllerAttendees extends BaseController
 						++$skip;
 					}
 				} else {
-					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
+					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg);
 					if ($reg_id) {
 						$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 					} else {
