@@ -8,7 +8,7 @@
 	<authorUrl>https://www.acymailing.com, https://www.joomlaeventmanager.net</authorUrl>
 	<copyright>Copyright (C) 2009 - 2023 ACYBA SARL - All rights reserved., Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
-	<description>This plugin enables you to insert events from JEM into any e-mail sent by AcyMailing</description>
+	<description>This plugin enables you to insert events from JEM into any email sent by AcyMailing</description>
 
 	<files>
 		<filename plugin="tagjem">tagjem.php</filename>
