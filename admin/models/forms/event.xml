@@ -355,7 +355,7 @@
 			   description="COM_JEM_RECURRENCE"
 		>
 			<option value="0">COM_JEM_NOTHING</option>
-			<option value="1">COM_JEM_DAYLY</option>
+			<option value="1">COM_JEM_DAILY</option>
 			<option value="2">COM_JEM_WEEKLY</option>
 			<option value="3">COM_JEM_MONTHLY</option>
 			<option value="4">COM_JEM_WEEKDAY</option>

@@ -72,7 +72,7 @@ class JemControllerAttendees extends BaseController
 			$dispatcher = JemFactory::getDispatcher();
 
 			// We have to check all users first if there are already records for given event.
-			// If not we have to add the records and than on success send the e-mails.
+			// If not we have to add the records and than on success send the emails.
 			$modelEventItem = $this->getModel('event');
 			$modelAttendees = $this->getModel('attendees'); // required to ensure JemModelAttendees is loaded
 			$regs = JemModelAttendees::getRegisteredUsers($eventid);
