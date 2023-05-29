@@ -678,7 +678,7 @@ class JemModelEvent extends ItemModel
 		}else{
 			if($reg) {
 				$places = $reg->places - $cancelplaces;
-				if($places>=0){
+				if($places>0){
 					$status=1;
 				}
 			}else{

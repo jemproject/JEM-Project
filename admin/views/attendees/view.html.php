@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -36,9 +37,7 @@ class JemViewAttendees extends JemAdminView
 		$filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Get data from the model

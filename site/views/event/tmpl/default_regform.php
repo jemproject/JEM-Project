@@ -46,7 +46,11 @@ if ($this->showRegForm && empty($this->print)) :
 		</p>
 		<p>
 			<input type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'))"
-				<?php if ($this->isregistered >= 1) { echo 'checked="checked"'; } ?>
+						<?php if ($this->isregistered >= 1 && $placesavailableevent) {
+                            echo 'checked="checked"';
+                        } else {
+							echo 'disabled="disabled"';
+                        } ?>
 			/>
 			<?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
 				<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
@@ -55,12 +59,21 @@ if ($this->showRegForm && empty($this->print)) :
                 if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
 					$placesavailableuser = $placesavailableevent;
                 }
-			    echo ' '.Text::_('COM_JEM_I_WILL_GO');
-                if($placesavailableuser) {
-					echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-					echo ' <input id="addplaces" style="text-align: center; " type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">' . ' '. Text::_('COM_JEM_I_WILL_GO_3');
+				if(!$this->registers[$this->registereduser]->places) {
+					echo ' ' . Text::_('COM_JEM_I_WILL_GO');
 				}
-                ?>
+				if($placesavailableuser) {
+					echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
+					echo ' <input id="addplaces" style="text-align: center;" type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">';
+                    if($this->registers[$this->registereduser]->places) {
+						echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+					}else{
+						echo ' ' . Text::_('COM_JEM_PLACES');
+                    }
+				}else{
+                    echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES');
+				}
+				?>
 			<?php endif; ?>
 		</p>
 		<p>
@@ -68,7 +81,7 @@ if ($this->showRegForm && empty($this->print)) :
 			<input type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
 				<?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
 			/>
-			<?php echo ' '.Text::_('COM_JEM_I_WILL_NOT_GO');
+			<?php echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
 			if($this->registereduser!==null) {
 				if ($this->registers[$this->registereduser]->places) {
 					echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');

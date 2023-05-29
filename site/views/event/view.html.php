@@ -62,7 +62,7 @@ class JemViewEvent extends JemView
 		$categories        = isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
 		$this->categories  = $categories;
 
-		$this->registers   = $model->getRegisters($this->state->get('event.id'));
+
 		$registration      = $this->get('UserRegistration');
 
 		$this->regs['not_attending'] = $model->getRegisters($this->state->get('event.id'), -1);
@@ -70,6 +70,14 @@ class JemViewEvent extends JemView
 		$this->regs['attending']     = $model->getRegisters($this->state->get('event.id'),  1);
 		$this->regs['waiting']       = $model->getRegisters($this->state->get('event.id'),  2);
 		$this->regs['all']           = $model->getRegisters($this->state->get('event.id'), 'all');
+
+		// loop through attendees
+		$registers_array = array();
+		if ($this->settings->get('event_show_more_attendeedetails', '0')) { // Show attendees, on waitinglist, invited and not attending.
+			$this->registers = array_merge($this->regs['attending'], $this->regs['waiting'], $this->regs['invited'], $this->regs['not_attending']);
+		} else {
+			$this->registers = $this->regs['attending'];
+		}
 
 		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);
 		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->regs, true), __METHOD__);
@@ -93,8 +101,8 @@ class JemViewEvent extends JemView
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view']   == 'event'
-		                                && $menuitem->query['id']     == $item->id);
+			&& $menuitem->query['view']   == 'event'
+			&& $menuitem->query['id']     == $item->id);
 
 		// Add router helpers.
 		$item->slug = $item->alias ? ($item->id.':'.$item->alias) : $item->id;
@@ -105,20 +113,20 @@ class JemViewEvent extends JemView
 			// Merge so that the menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem->title ? $menuitem->title : $item->title);
 			$params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			//$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from active query (in case it is an alternative menu item)
 			if (isset($menuitem->query['layout'])) {
 				$this->setLayout($menuitem->query['layout']);
-			} else
-			// Single-event menu item layout takes priority over alt layout for an event
-			if ($layout = $item->params->get('event_layout')) {
-				$this->setLayout($layout);
-			}
-
+			} else {
+				// Single-event menu item layout takes priority over alt layout for an event
+				if ($layout = $item->params->get('event_layout')) {
+					$this->setLayout($layout);
+				}
+            }
 			$item->params->merge($params);
 		} else {
 			// Merge the menu item params with the event params so that the event params take priority

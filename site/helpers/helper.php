@@ -873,10 +873,10 @@ class JemHelper
 
 		// status 1: user registered (attendee or waiting list), status -1: user exlicitely unregistered, status 0: user is invited but hadn't answered yet
 		$query = ' SELECT COUNT(id) as total,'
-		       . '        COUNT(IF(status =  1 AND waiting <= 0, 1, null)) AS registered,'
-		       . '        COUNT(IF(status =  1 AND waiting >  0, 1, null)) AS waiting,'
-		       . '        COUNT(IF(status = -1,                  1, null)) AS unregistered,'
-		       . '        COUNT(IF(status =  0,                  1, null)) AS invited,'
+		       . '        SUM(IF(status =  1 AND waiting = 0, places, 0)) AS registered,'
+		       . '        SUM(IF(status =  1 AND waiting >  0, places, 0)) AS waiting,'
+		       . '        SUM(IF(status = -1,                  places, 0)) AS unregistered,'
+		       . '        SUM(IF(status =  0,                  places, 0)) AS invited,'
 		       . '        event '
 		       . ' FROM #__jem_register '
 		       . ' WHERE event IN (' . $ids .')'
@@ -889,17 +889,19 @@ class JemHelper
 			if (isset($res[$event->id])) {
 				$event->regTotal   = $res[$event->id]->total;
 				$event->regCount   = $res[$event->id]->registered;
+				$event->reserved   = $event->reservedplaces;
 				$event->waiting    = $res[$event->id]->waiting;
 				$event->unregCount = $res[$event->id]->unregistered;
 				$event->invited    = $res[$event->id]->invited;
 			} else {
 				$event->regTotal   = 0;
 				$event->regCount   = 0;
+				$event->reserved   = 0;
 				$event->waiting    = 0;
 				$event->unregCount = 0;
 				$event->invited    = 0;
 			}
-			$event->available = max(0, $event->maxplaces - $event->regCount);
+			$event->available = max(0, $event->maxplaces - $event->regCount -$event->reservedplaces);
 		}
 
 		return $data;

@@ -867,3 +867,8 @@ a.label:focus {
      color: #333;
      border: 0;
 }
+
+input#places::-webkit-outer-spin-button,
+input#places::-webkit-inner-spin-button {
+     opacity:1;
+}

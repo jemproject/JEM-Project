@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * Controller: Attendee

@@ -16,7 +16,7 @@ use Joomla\CMS\Language\Text;
 if ($this->showRegForm && empty($this->print)) :
 
 	if (($this->item->maxplaces > 0) && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && !$this->item->waitinglist && empty($this->registration->status)) :
-	?>
+		?>
 		<?php echo Text::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 
 	<?php else :
@@ -28,84 +28,97 @@ if ($this->showRegForm && empty($this->print)) :
 		$placesavailableevent = $this->item->maxplaces - $this->item->booked - $this->item->reservedplaces;
 		?>
 
-	<form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id=' . (int)$this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
-		<p>
-			<?php
-			if ($this->isregistered === false) :
-				echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');
-			else :
-				switch ($this->isregistered) :
-				case -1: echo Text::_('COM_JEM_YOU_ARE_NOT_ATTENDING');  break;
-				case  0: echo Text::_('COM_JEM_YOU_ARE_INVITED');        break;
-				case  1: echo Text::_('COM_JEM_YOU_ARE_ATTENDING');      break;
-				case  2: echo Text::_('COM_JEM_YOU_ARE_ON_WAITINGLIST'); break;
-				default: echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');   break;
-				endswitch;
-			endif;
-			?>
-		</p>
-    <ul class="eventlist">
-      <li class="jem-event" onclick="document.getElementById('jem_register_event').click();">
-        <input id="jem_register_event" type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'));"
-          <?php if ($this->isregistered >= 1) { echo 'checked="checked"'; } ?>
-        />
-        <i class="fa fa-check-circle-o fa-lg jem-registerbutton" aria-hidden="true"></i>
-        <?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
-          	<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
-		<?php else :
-			if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
-				$placesavailableuser = $placesavailableevent;
-			}
-			echo ' '.Text::_('COM_JEM_I_WILL_GO');
-			if($placesavailableuser) {
-				echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-				echo ' <input id="addplaces" style="text-align: center;" type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">' . ' '. Text::_('COM_JEM_I_WILL_GO_3');
-			}
-			?>
-        <?php endif; ?>
-      </li>
-      
-      <li class="jem-event" onclick="document.getElementById('jem_unregister_event').click();">
-      <?php if ($this->allowAnnulation || ($this->isregistered != 1)) : ?>
-        <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'));"
-          <?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
-        />
-        <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
-		<?php echo ' '.Text::_('COM_JEM_I_WILL_NOT_GO');
-		if($this->registereduser!==null){
-			if($this->registers[$this->registereduser]->places) {
-				echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
-				echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $this->registers[$this->registereduser]->places . '" max="' . $this->registers[$this->registereduser]->places . '" min="1">' . ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_3');
-			}
-		}
-		?>
-      <?php else : ?>
-        <input type="radio" name="reg_dummy" value="" disabled="disabled" />
-        <?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
-      <?php endif; ?>
-      </li>
-      
-      <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-        <li class="jem-event jem-nopointer jem-nohover">
-          <p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
-          <div class="jem-regcomment">
-            <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"
-              ><?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
-              /* looks crazy, but required to prevent unwanted white spaces within textarea content! */
-            ?></textarea>
-          </div>
-        </li>      
-      <?php endif; ?>
-	  </ul>
-	  <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" <?php echo (!$this->isregistered ? 'disabled="disabled"':'')?> />
+        <form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id=' . (int)$this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
+            <p>
+				<?php
+				if ($this->isregistered === false) :
+					echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');
+				else :
+					switch ($this->isregistered) :
+						case -1: echo Text::_('COM_JEM_YOU_ARE_NOT_ATTENDING');  break;
+						case  0: echo Text::_('COM_JEM_YOU_ARE_INVITED');        break;
+						case  1: echo Text::_('COM_JEM_YOU_ARE_ATTENDING');      break;
+						case  2: echo Text::_('COM_JEM_YOU_ARE_ON_WAITINGLIST'); break;
+						default: echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');   break;
+					endswitch;
+				endif;
+				?>
+            </p>
+            <ul class="eventlist">
+                <li class="jem-event" onclick="document.getElementById('jem_register_event').click();">
+                    <input id="jem_register_event" type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'));"
+						<?php if ($this->isregistered >= 1 && $placesavailableevent) {
+                            echo 'checked="checked"';
+                        } else {
+							echo 'disabled="disabled"';
+                        } ?>
+                    />
+                    <i class="fa fa-check-circle-o fa-lg jem-registerbutton" aria-hidden="true"></i>
+					<?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
+						<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
+					<?php else :
+						if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
+							$placesavailableuser = $placesavailableevent;
+						}
+						if(!$this->registers[$this->registereduser]->places) {
+							echo ' ' . Text::_('COM_JEM_I_WILL_GO');
+						}
+						if($placesavailableuser) {
+							echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
+							echo ' <input id="addplaces" style="text-align: center;" type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">';
+                            if($this->registers[$this->registereduser]->places) {
+								echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+							}else{
+								echo ' ' . Text::_('COM_JEM_PLACES');
+                            }
+						}else{
+                            echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES');
+                        }
+						?>
+					<?php endif; ?>
+                </li>
 
-	
-		
-		<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
-		<input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />
-		<input type="hidden" name="task" value="event.userregister" />
-		<?php echo JHtml::_('form.token'); ?>
-	</form>
+                <li class="jem-event" onclick="document.getElementById('jem_unregister_event').click();">
+					<?php if ($this->allowAnnulation || ($this->isregistered != 1)) : ?>
+                        <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'));"
+							<?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
+                        />
+                        <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
+						<?php echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
+						if($this->registereduser!==null) {
+							if ($this->registers[$this->registereduser]->places) {
+								echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
+								echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $this->registers[$this->registereduser]->places . '" max="' . $this->registers[$this->registereduser]->places . '" min="1">' . ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_3');
+							}
+						}
+						?>
+					<?php else : ?>
+                        <input type="radio" name="reg_dummy" value="" disabled="disabled" />
+						<?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
+					<?php endif; ?>
+                </li>
+
+				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+                    <li class="jem-event jem-nopointer jem-nohover">
+                        <p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
+                        <div class="jem-regcomment">
+            <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"
+            ><?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
+				/* looks crazy, but required to prevent unwanted white spaces within textarea content! */
+				?></textarea>
+                        </div>
+                    </li>
+				<?php endif; ?>
+            </ul>
+            <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" <?php echo (!$this->isregistered ? 'disabled="disabled"':'')?> />
+
+
+
+            <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
+            <input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />
+            <input type="hidden" name="task" value="event.userregister" />
+			<?php echo JHtml::_('form.token'); ?>
+        </form>
 	<?php
 	endif; // full?
 

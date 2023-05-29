@@ -73,7 +73,6 @@ $document->addScriptDeclaration('
 		<table class="table table-striped" id="attendeeList">
 			<thead>
 				<tr>
-					<th width="1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'u.name', $listDirn, $listOrder); ?></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $listDirn, $listOrder); ?></th>
@@ -83,7 +82,8 @@ $document->addScriptDeclaration('
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-					<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
+                    <th class="title"><?php echo Text::_('COM_JEM_ATTENDEES_PLACES'); ?></th>
+					<th class="title"><?php echo Text::_('COM_JEM_LAST_COMMENT'); ?></th>
 					<?php endif;?>
 					<th class="title center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
 					<th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
@@ -117,9 +117,8 @@ $document->addScriptDeclaration('
 				foreach ($this->items as $i => $row) :
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
-					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 					<td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td> <?php // Die ID kann man doch auch als Parameter für "submitName()" nehmen. Dann muss ich nicht erst den Baum entlang hangeln ?>
-					<td><a href="#" onclick="submitName(this); return false;"><?php echo $row->name; ?></a></td>
+					<td><a href="<?php echo Route::_('index.php?option=com_jem&view=attendee&event='.$row->event . '&id='.$row->id);?>"><?php echo $row->name; ?></a></td>
 					<td><?php echo $row->username; ?></td>
 					<td class="email"><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 					<td><?php echo $row->uip == 'DISABLED' ? Text::_('COM_JEM_DISABLED') : $row->uip; ?></td>
@@ -130,10 +129,15 @@ $document->addScriptDeclaration('
 					<td class="center">
 						<?php
 						$status = (int)$row->status;
-						if ($status === 1 && $row->waiting == 1) { $status = 2; }
+						if ($status === 1 && $row->waiting == 1) {
+                            $status = 2;
+                        }
 						echo jemhtml::toggleAttendanceStatus( $i, $status, $canChange);
 						?>
 					</td>
+                    <td class="center">
+						<?php echo $row->places; ?>
+                    </td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (rtrim(\Joomla\String\StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>

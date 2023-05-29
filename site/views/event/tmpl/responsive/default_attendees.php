@@ -29,17 +29,13 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
 		<dd class="register max-places"><?php echo $maxplaces; ?></dd>
 	<?php endif; ?>
-        <?php if ($maxbookeduser > 0) : ?>
-            <dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
-            <dd class="register max-places"><?php echo $maxplaces; ?></dd>
-        <?php endif; ?>
 	<?php if (($maxplaces > 0) || ($reservedplaces > 0)) : ?>
 		<dt class="register booked-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_RESERVED_PLACES'); ?>"><?php echo Text::_('COM_JEM_RESERVED_PLACES'); ?>:</dt>
 		<dd class="register booked-places">
 		<?php if (empty($this->permissions->canEditAttendees)) : ?>
 			<?php echo $reservedplaces; ?>
 		<?php else : ?>
-			<a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo $this->item->booked; ?> <i class="icon-out-2" aria-hidden="true"></i></a>
+                    <a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo $reservedplaces; ?> <i class="icon-out-2" aria-hidden="true"></i></a>
 		<?php endif; ?>
 		</dd>
 	<?php endif; ?>
@@ -102,18 +98,11 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
           }
         }
       }
-      
-			// loop through attendees
-      $registers_array = array();
-      if ($this->settings->get('event_show_more_attendeedetails', '0')) { // Show attendees, on waitinglist, invited and not attending.
-        $registers_array = array_merge($this->regs['attending'], $this->regs['waiting'], $this->regs['invited'], $this->regs['not_attending']);
-      } else {
-        $registers_array = $this->registers;
-      }
 
-					foreach ($registers_array as $k => $register) :
-        echo '<li class="jem-registered-user">' . jem_getStatusIcon($register->status);
-        $text = '';
+			foreach ($this->registers as $k => $register) :
+        		echo '<li class="jem-registered-user">' . jem_getStatusIcon($register->status);
+        		$text = '';
+				$registedplaces = '';
 				// is a plugin catching this ?
 				if ($res = $this->dispatcher->triggerEvent('onAttendeeDisplay', array($register->uid, &$text))) :
 					echo $text;
@@ -123,7 +112,15 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 				if($register->uid == $this->user->id) {
 					$this->registereduser = $k;
 				}
-				$registedplaces =  ' [' . $register->places . ' '. mb_strtolower(($register->places>1? Text::_('COM_JEM_RESERVED_PLACES'): Text::_('COM_JEM_RESERVED_PLACE'))) . ']';
+				if($register->status==1){
+					$registedplaces =  ' [' . $register->places . ' '. mb_strtolower(($register->places>1? Text::_('COM_JEM_RESERVED_PLACES'): Text::_('COM_JEM_RESERVED_PLACE'))) . ']';
+				}else if($register->status==-1){
+					$registedplaces =  '';
+                }else if($register->status==0){
+					$registedplaces =  ' [' . $register->places . ' '. mb_strtolower(($register->places>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')))  .']';
+                }else if($register->status==2){
+					$registedplaces =  ' [' . $register->places . ' '. mb_strtolower(($register->places>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')))  .']';
+				}
 
 				// if CB
 				if ($this->settings->get('event_comunsolution', '0') == 1) :

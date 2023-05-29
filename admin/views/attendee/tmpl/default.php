@@ -8,10 +8,12 @@
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
+
 // HTMLHelper::_('behavior.modal', 'a.usermodal');
 // HTMLHelper::_('behavior.tooltip');
 // HTMLHelper::_('behavior.formvalidation');
@@ -73,7 +75,7 @@ Joomla.submitbutton = function(task)
 
 		<table  class="admintable">
 			<tr>
-				<td class="key" width="150">
+				<td class="key" style="width:150px;">
 					<label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EVENT'), Text::_('COM_JEM_EVENT_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_EVENT').':'; ?>
 					</label>
@@ -85,7 +87,7 @@ Joomla.submitbutton = function(task)
 				</td>
 			</tr>
 			<tr>
-				<td class="key" width="150">
+				<td class="key" style="width:150px;">
 					<label for="username" <?php echo JemOutput::tooltip(Text::_('COM_JEM_USER'), Text::_('COM_JEM_USER_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_USER').':'; ?>
 					</label>
@@ -102,7 +104,7 @@ Joomla.submitbutton = function(task)
 				</td>
 			</tr>
 			<tr>
-				<td class="key" width="150">
+				<td class="key" style="width:150px;">
 					<label for="status" <?php echo JemOutput::tooltip(Text::_('COM_JEM_STATUS'), Text::_('COM_JEM_STATUS_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_STATUS').':'; ?>
 					</label>
@@ -117,9 +119,21 @@ Joomla.submitbutton = function(task)
 					?>
 				</td>
 			</tr>
+            <tr>
+                <td class="key" style="width:150px;">
+                    <label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_ATTENDEES_PLACES').':'; ?>
+                    </label>
+                </td>
+                <td>
+                    <input type="number" name="places" id="places" min="0" max="<?php echo $this->row->maxbookeduser;?>"
+                           value="<?php echo !empty($this->row->places) ? $this->row->places : '0'; ?>"
+                    />
+                </td>
+            </tr>
 			<?php if (!empty($this->jemsettings->regallowcomments)): ?>
 			<tr>
-				<td class="key" width="150" style="vertical-align: baseline;">
+				<td class="key"  style="width:150px; vertical-align: baseline;">
 					<label for="comment" <?php echo JemOutput::tooltip(Text::_('COM_JEM_COMMENT'), Text::_('COM_JEM_COMMENT_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_COMMENT').':'; ?>
 					</label>
@@ -134,7 +148,7 @@ Joomla.submitbutton = function(task)
 			<?php endif; ?>
 			<?php if (1/*!$this->row->id*/): ?>
 			<tr>
-				<td class="key" width="150">
+				<td class="key" style="width:150px;">
 					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL').':'; ?>
 					</label>
