@@ -7,13 +7,13 @@
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
 
 	<version>4.0b4</version>
 	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
-	<url>http://www.joomlaeventmanager.net/</url>
+	<url>https://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
-	<packagerurl>http://www.joomlaeventmanager.net/</packagerurl>
+	<packagerurl>https://www.joomlaeventmanager.net/</packagerurl>
 
 	<scriptfile>pkg_install.php</scriptfile>
 
@@ -42,6 +42,6 @@
 	</languages>
 
 	<updateservers>
-		<server type="extension" name="JEM Update Site">http://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml</server>
+		<server type="extension" name="JEM Update Site">https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml</server>
 	</updateservers>
 </extension>

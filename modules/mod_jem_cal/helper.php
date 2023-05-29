@@ -9,9 +9,9 @@
  *
  * Original Eventlist calendar from Christoph Lukes
  * PHP Calendar (version 2.3), written by Keith Devens
- * http://keithdevens.com/software/php_calendar
- * see example at http://keithdevens.com/weblog
- * License: http://keithdevens.com/software/license
+ * https://keithdevens.com/software/php_calendar
+ * see example at https://keithdevens.com/weblog
+ * License: https://keithdevens.com/software/license
  */
 defined('_JEXEC') or die;
 

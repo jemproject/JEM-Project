@@ -76,7 +76,7 @@ class JemNomenuRules implements RulesInterface
   
 
         // echo "<pre/>";print_r($segments);die;
-        //with this url: http://localhost/j4x/my-walks/mywalk-n/walk-title.html
+        //with this url: https://localhost/j4x/my-walks/mywalk-n/walk-title.html
         // segments: [[0] => mywalk-n, [1] => walk-title]
         // vars: [[option] => com_mywalks, [view] => mywalks, [id] => 0]
 

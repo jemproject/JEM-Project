@@ -10,7 +10,7 @@
  *  <p>
  *  An InfoBox also fires the same events as a <tt>google.maps.InfoWindow</tt>.
  *
- *  @source link: http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/infobox-basic.html
+ *  @source link: https://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/infobox-basic.html
  */
 
 /*!
@@ -19,7 +19,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -403,13 +403,13 @@ InfoBox.prototype.setBoxStyle_ = function () {
     }
 
     // Fix for iOS disappearing InfoBox problem.
-    // See http://stackoverflow.com/questions/9229535/google-maps-markers-disappear-at-certain-zoom-level-only-on-iphone-ipad
+    // See https://stackoverflow.com/questions/9229535/google-maps-markers-disappear-at-certain-zoom-level-only-on-iphone-ipad
     this.div_.style.WebkitTransform = "translateZ(0)";
 
     // Fix up opacity style for benefit of MSIE:
     //
     if (typeof this.div_.style.opacity !== "undefined" && this.div_.style.opacity !== "") {
-      // See http://www.quirksmode.org/css/opacity.html
+      // See https://www.quirksmode.org/css/opacity.html
       this.div_.style.MsFilter = "\"progid:DXImageTransform.Microsoft.Alpha(Opacity=" + (this.div_.style.opacity * 100) + ")\"";
       this.div_.style.filter = "alpha(opacity=" + (this.div_.style.opacity * 100) + ")";
     }

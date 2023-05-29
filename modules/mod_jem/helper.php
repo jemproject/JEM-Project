@@ -154,8 +154,8 @@ abstract class ModJemHelper
 	 */
 	protected static function _format_url($url)
 	{
-		if(!empty($url) && strtolower(substr($url, 0, 7)) != "http://") {
-			$url = 'http://'.$url;
+		if(!empty($url) && strtolower(substr($url, 0, 7)) != "https://") {
+			$url = 'https://'.$url;
 		}
 		return $url;
 	}

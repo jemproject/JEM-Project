@@ -434,7 +434,7 @@ Joomla.submitbutton = function(task)
 
 								switch ($this->item->recurr_bak->recurrence_type) {
 									case 1:
-										$recurr_type = Text::_('COM_JEM_DAYLY');
+										$recurr_type = Text::_('COM_JEM_DAILY');
 										$recurr_info = str_ireplace('[placeholder]',
 																	$this->item->recurr_bak->recurrence_number,
 																	Text::_('COM_JEM_OUTPUT_DAY'));

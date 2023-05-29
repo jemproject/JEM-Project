@@ -7,11 +7,11 @@
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  *
- * Country list: http://erikastokes.com/mysql-help/mysql-country-table.php
- * Api country checker: http://api.worldbank.org/countries/ss
+ * Country list: https://erikastokes.com/mysql-help/mysql-country-table.php
+ * Api country checker: https://api.worldbank.org/countries/ss
  *
- * Lat+long finder: http://www.findlatitudeandlongitude.com/?loc=
- * For example:  http://www.findlatitudeandlongitude.com/?loc=Sint+Maarten&id=316082
+ * Lat+long finder: https://www.findlatitudeandlongitude.com/?loc=
+ * For example:  https://www.findlatitudeandlongitude.com/?loc=Sint+Maarten&id=316082
  *
  */
 

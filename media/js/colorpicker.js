@@ -1,14 +1,14 @@
 /*
  *	Gchats color picker by Majid Khosravi
  *	Copyright (c) 2006 - 2008 Gchat Design Studio
- *	URL: http://www.gchats.com
+ *	URL: https://www.gchats.com
  *	Last Updated: August 29 2009
  *  Gchats color picker is freely distributable under the terms of GPL license.
- *  Please visit: http://www.gchats.com for updates
+ *  Please visit: https://www.gchats.com for updates
  *  @Version 1.2
  *  
  *  The code in function testcolor is based upon:
- *  http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+ *  https://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
  *  
  *--------------------------------------------------------------------------*/
 // JavaScript Document

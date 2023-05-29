@@ -277,7 +277,7 @@ if(substr($baseurl, -1) == '/') {
     $baseurl = substr($baseurl, 0, -1);
 }
 echo '<?xml version="1.0" encoding="UTF-8" ?>';
-echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">';
+echo '<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">';
 echo '<channel>';
   $doc = Factory::getDocument(); 
   $page_title = $doc->getTitle();

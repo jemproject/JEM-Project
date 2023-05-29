@@ -606,7 +606,7 @@ class plgJemMailer extends JPlugin
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, ($event->created_by != $userid) ? $event->created_by : 0, $userid);
 
 		if ($event->modified == 0) {  //when state switches modified date is not updated
-			$event->modified = 'now'; //set to now to avoid confusing e-mail message
+			$event->modified = 'now'; //set to now to avoid confusing email message
 		}
 		#####################
 		## SENDMAIL - USER ##
@@ -721,7 +721,7 @@ class plgJemMailer extends JPlugin
 
 		$recipients = $this->_getRecipients($send_to, array('user'), 0, ($venue->created_by != $userid) ? $venue->created_by : 0, $userid, $venue_id);
 		if ($venue->modified == 0) {  //when state switches modified date is not updated
-			$venue->modified = 'now'; //set to now to avoid confusing e-mail message
+			$venue->modified = 'now'; //set to now to avoid confusing email message
 		}
 		#####################
 		## SENDMAIL - USER ##
@@ -1022,7 +1022,7 @@ class plgJemMailer extends JPlugin
 
 	/**
 	 * This method executes and send the mail
-	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 * info: https://docs.joomla.org/Sending_email_from_extensions
 	 *
 	 * @access  private
 	 * @param   object  $data  mail data object
@@ -1104,7 +1104,7 @@ class plgJemMailer extends JPlugin
 
 	/**
 	 * This method sends the mail
-	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 * info: https://docs.joomla.org/Sending_email_from_extensions
 	 *
 	 * @access  private
 	 * @param   string  $recipient  mail recipient

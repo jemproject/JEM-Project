@@ -9,9 +9,9 @@
  *
  * Original Eventlist calendar from Christoph Lukes
  * PHP Calendar (version 2.3), written by Keith Devens
- * http://keithdevens.com/software/php_calendar
- * see example at http://keithdevens.com/weblog
- * License: http://keithdevens.com/software/license
+ * https://keithdevens.com/software/php_calendar
+ * see example at https://keithdevens.com/weblog
+ * License: https://keithdevens.com/software/license
  */
 
 defined('_JEXEC') or die;
@@ -79,7 +79,7 @@ if (!function_exists('mb_convert_case')) {
 
 $title = $the_month . '&nbsp;' . $the_year;
 
-# Begin calendar. Uses a real <caption>. See http://diveintomark.org/archives/2002/07/03
+# Begin calendar. Uses a real <caption>. See https://diveintomark.org/archives/2002/07/03
 $calendar .= '<table class="mod_jemcalq_calendar" cellspacing="0" cellpadding="0">' . "\n";
 
 # Month navigation links

@@ -33,7 +33,7 @@ class JemModelUpdatecheck extends BaseDatabaseModel
 	public function getUpdatedata()
 	{
 		$installedversion = JemHelper::getParam(1, 'version', 1, 'com_jem');
-		$updateFile       = "http://www.joomlaeventmanager.net/updatecheck/update.xml";
+		$updateFile       = "https://www.joomlaeventmanager.net/updatecheck/update.xml";
 		$checkFile        = self::CheckFile($updateFile);
 		$updatedata       = new stdClass();
 

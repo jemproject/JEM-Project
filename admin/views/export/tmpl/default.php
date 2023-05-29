@@ -61,11 +61,11 @@ use Joomla\CMS\Language\Text;
                                 </li>
                                 <li>
                                     <label for="dates"><?php echo Text::_('COM_JEM_EXPORT_FROM_DATE').':'; ?></label>
-                                    <?php echo HTMLHelper::_('calendar', date("Y-m-d"), 'dates', 'dates', 'Y-m-d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
+                                    <?php echo HTMLHelper::_('calendar', date('Y-m-d',strtotime("-12 months")), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
                                 </li>
                                 <li>
                                     <label for="enddates"><?php echo Text::_('COM_JEM_EXPORT_TO_DATE').':'; ?></label>
-                                    <?php echo HTMLHelper::_('calendar', date('Y-m-d',strtotime("+6 months")), 'enddates', 'enddates', 'Y-m-d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
+                                    <?php echo HTMLHelper::_('calendar', date('Y-m-d',strtotime("+12 months")), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
                                 </li>
                             </ul>
                         </div>

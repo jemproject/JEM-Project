@@ -33,7 +33,7 @@ ini_set('gd.jpeg_ignore_warning', '1');
 class Zebra_Image {
 
     /**
-     *  If set to `true`, JPEG images will be auto-rotated according to the {@link http://keyj.emphy.de/exif-orientation-rant/ Exif Orientation Tag}
+     *  If set to `true`, JPEG images will be auto-rotated according to the {@link https://keyj.emphy.de/exif-orientation-rant/ Exif Orientation Tag}
      *  so that they are always shown correctly.
      *
      *  >   If set to `true` you must also enable exif-support with `--enable-exif`.<br>

@@ -67,7 +67,7 @@ class JemViewVenues extends JemView
 
 			//build the url
 			if (!empty($item->url) && !preg_match('%^http(s)?://%', $item->url)) {
-				$item->url = 'http://'.$item->url;
+				$item->url = 'https://'.$item->url;
 			}
 
 			//create target link
