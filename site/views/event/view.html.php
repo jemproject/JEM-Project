@@ -61,7 +61,7 @@ class JemViewEvent extends JemView
 
 		$categories        = isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
 		$this->categories  = $categories;
-
+		$this->registers   = null;
 
 		$registration      = $this->get('UserRegistration');
 
@@ -73,10 +73,22 @@ class JemViewEvent extends JemView
 
 		// loop through attendees
 		$registers_array = array();
-		if ($this->settings->get('event_show_more_attendeedetails', '0')) { // Show attendees, on waitinglist, invited and not attending.
-			$this->registers = array_merge($this->regs['attending'], $this->regs['waiting'], $this->regs['invited'], $this->regs['not_attending']);
-		} else {
-			$this->registers = $this->regs['attending'];
+		if($userId)
+		{
+			if ($this->settings->get('event_show_more_attendeedetails', '0'))
+			{ 
+				// Show attendees, on waitinglist, invited and not attending.
+				$this->registers = array_merge(
+					$this->regs['attending'],
+					$this->regs['waiting'],
+					$this->regs['invited'],
+					$this->regs['not_attending']
+				);
+			}
+			else
+			{
+				$this->registers = $this->regs['attending'];
+			}
 		}
 
 		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);

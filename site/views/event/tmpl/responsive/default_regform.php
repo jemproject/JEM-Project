@@ -47,34 +47,44 @@ if ($this->showRegForm && empty($this->print)) :
             <ul class="eventlist">
                 <li class="jem-event" onclick="document.getElementById('jem_register_event').click();">
                     <input id="jem_register_event" type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'));"
-						<?php if ($this->isregistered >= 1 && $placesavailableevent) {
-                            echo 'checked="checked"';
+                        <?php if ($this->isregistered !== false && !$placesavailableevent) {
+	                        echo 'disabled="disabled"';
                         } else {
-							echo 'disabled="disabled"';
+	                        echo 'checked="checked"';
                         } ?>
                     />
                     <i class="fa fa-check-circle-o fa-lg jem-registerbutton" aria-hidden="true"></i>
 					<?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
 						<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
 					<?php else :
-						if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
-							$placesavailableuser = $placesavailableevent;
-						}
-						if(!$this->registers[$this->registereduser]->places) {
-							echo ' ' . Text::_('COM_JEM_I_WILL_GO');
-						}
-						if($placesavailableuser) {
-							echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-							echo ' <input id="addplaces" style="text-align: center;" type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">';
-                            if($this->registers[$this->registereduser]->places) {
-								echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
-							}else{
-								echo ' ' . Text::_('COM_JEM_PLACES');
+                        if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
+                            $placesavailableuser = $placesavailableevent;
+                        }
+                        if($this->isregistered){
+                            if(!$this->registers[$this->registereduser]->places)
+                            {
+	                            echo ' ' . Text::_('COM_JEM_I_WILL_GO');
                             }
-						}else{
+                        }else{
+	                        echo ' ' . Text::_('COM_JEM_I_WILL_GO');
+                        }
+                        if($placesavailableuser) {
+                            echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
+                            echo ' <input id="addplaces" style="text-align: center;" type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">';
+	                        if($this->isregistered!==false){
+		                        if($this->registers[$this->registereduser]->places)
+		                        {
+			                        echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+		                        }else{
+                                    echo ' ' . Text::_('COM_JEM_PLACES');
+                                }
+                            }else{
+		                        echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+                            }
+                        }else{
                             echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES');
                         }
-						?>
+                        ?>
 					<?php endif; ?>
                 </li>
 
