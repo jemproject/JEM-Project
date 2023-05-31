@@ -145,6 +145,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           <?php endif; ?>
           <div class="sectiontableheader jem-attendee-regdate"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <div class="sectiontableheader jem-attendee-status"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+          <div class="sectiontableheader jem-attendee-places"><?php echo JHtml::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
             <div class="sectiontableheader jem-attendee-comment"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
           <?php endif; ?>
@@ -181,6 +182,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
               if ($status === 1 && $row->waiting == 1) { $status = 2; }
               echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
               ?>
+            </div>
+            <div class="jem-event-info-small jem-attendee-places">
+	            <?php echo $row->places; ?>
             </div>
 
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>

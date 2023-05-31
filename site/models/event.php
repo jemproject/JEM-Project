@@ -668,27 +668,58 @@ class JemModelEvent extends ItemModel
 
 		$uid = (int) $user->get('id');
 		$reg = $this->getUserRegistration($eventId);
-		
+
+		try {
+			$event = $this->getItem($eventId);
+		}
+			// some gently error handling
+		catch (Exception $e) {
+			$event = false;
+		}
+
 		if($status>0){
 			if($reg) {
-				$places = $addplaces + $reg->places;
+				if($reg->status>0)
+				{
+					$places = $addplaces + $reg->places;
+				}else{
+					$places = $addplaces;
+				}
 			}else{
 				$places = $addplaces;
+			}
+			//Detect if the reserve go to waiting list
+			if($reg->status==1)
+			{
+				$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
+				if ($event->waitinglist && $placesavailableevent <= 0)
+				{
+					$status = 2;
+				}
 			}
 		}else{
 			if($reg) {
 				$places = $reg->places - $cancelplaces;
-				if($places>0){
-					$status=1;
+				if($reg->status>=0 && $places>0){
+					$status=$reg->status;
+				}else{
+					$places = 0;
 				}
 			}else{
-				$places = $cancelplaces;
+				$places = 0;
+			}
+		}
+
+		//Review max places per user
+		if($event->maxbookeduser){
+			if($places > $event->maxbookeduser){
+				$places = $event->maxbookeduser;
 			}
 		}
 
 		// Must be logged in
 		if ($uid < 1) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return;
 		}
 

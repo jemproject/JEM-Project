@@ -20,12 +20,31 @@ if ($this->showRegForm && empty($this->print)) :
 		<?php echo Text::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 
 	<?php else :
-		if($this->registereduser!==null) {
-			$placesavailableuser = $this->item->maxbookeduser - $this->registers[$this->registereduser]->places;
+		if($this->item->maxbookeduser!=0)
+		{
+			if ($this->registereduser !== null)
+			{
+				$placesavailableuser = $this->item->maxbookeduser - $this->registers[$this->registereduser]->places;
+			}
+			else
+			{
+				$placesavailableuser = $this->item->maxbookeduser;
+			}
 		}else{
-			$placesavailableuser = $this->item->maxbookeduser;
-		}
+			$placesavailableuser= null;
+        }
+        if($this->item->maxplaces)
+        {
 		$placesavailableevent = $this->item->maxplaces - $this->item->booked - $this->item->reservedplaces;
+        }else{
+	        $placesavailableevent = false;
+        }
+	    if ($placesavailableevent!=false){
+		    if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent))
+		    {
+			    $placesavailableuser = $placesavailableevent;
+		    }
+	    }
 		?>
 
         <form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id=' . (int)$this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
@@ -47,45 +66,60 @@ if ($this->showRegForm && empty($this->print)) :
             <ul class="eventlist">
                 <li class="jem-event" onclick="document.getElementById('jem_register_event').click();">
                     <input id="jem_register_event" type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'));"
-                        <?php if ($this->isregistered !== false && !$placesavailableevent) {
+                        <?php if ($this->isregistered !== false && ($placesavailableevent===0 || $placesavailableuser===0 ) && !$this->item->waitinglist ) {
 	                        echo 'disabled="disabled"';
                         } else {
 	                        echo 'checked="checked"';
                         } ?>
                     />
                     <i class="fa fa-check-circle-o fa-lg jem-registerbutton" aria-hidden="true"></i>
-					<?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) : // full event ?>
-						<?php echo ' '.Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
-					<?php else :
-                        if($placesavailableuser>0 && ($placesavailableuser > $placesavailableevent)){
-                            $placesavailableuser = $placesavailableevent;
+					<?php if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && ($this->isregistered != 1)) {
+                        if($this->item->waitinglist)
+                        {
+                            echo ' ' . Text::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST');
+                        }else{
+	                        if($placesavailableevent===0) {
+		                        echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_EVENT');
+	                        }
                         }
-                        if($this->isregistered){
-                            if(!$this->registers[$this->registereduser]->places)
+
+					}else
+					{
+						if ($this->registereduser !== null)
+						{
+							if (!$this->registers[$this->registereduser]->places)
+							{
+								echo ' ' . Text::_('COM_JEM_I_WILL_GO');
+							}
+						}
+						else
+						{
+							echo ' ' . Text::_('COM_JEM_I_WILL_GO');
+						}
+					}
+
+					if($placesavailableuser===0) {
+						echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER');
+					}else{
+						echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
+						echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" value="' . ($placesavailableuser?? 1) . '" max="' . $placesavailableuser . '" min="0">';
+						if($this->registereduser!=null) {
+							if($this->registers[$this->registereduser]->places  && $this->registers[$this->registereduser]->status==1)
+							{
+								echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+							}else{
+								echo ' ' . mb_strtolower(Text::_('COM_JEM_PLACES')) . '.';
+							}
+						}else{
+                            if($this->item->maxbookeduser == $placesavailableuser){
+	                            echo ' ' . mb_strtolower(Text::_('COM_JEM_PLACES')) . '.';
+                            }else
                             {
-	                            echo ' ' . Text::_('COM_JEM_I_WILL_GO');
+	                            echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
                             }
-                        }else{
-	                        echo ' ' . Text::_('COM_JEM_I_WILL_GO');
-                        }
-                        if($placesavailableuser) {
-                            echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-                            echo ' <input id="addplaces" style="text-align: center;" type="number" name="addplaces" value="' . $placesavailableuser . '" max="' . $placesavailableuser . '" min="0">';
-	                        if($this->isregistered!==false){
-		                        if($this->registers[$this->registereduser]->places)
-		                        {
-			                        echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
-		                        }else{
-                                    echo ' ' . Text::_('COM_JEM_PLACES');
-                                }
-                            }else{
-		                        echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
-                            }
-                        }else{
-                            echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES');
-                        }
-                        ?>
-					<?php endif; ?>
+						}
+					}
+                    ?>
                 </li>
 
                 <li class="jem-event" onclick="document.getElementById('jem_unregister_event').click();">

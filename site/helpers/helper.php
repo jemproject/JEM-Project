@@ -804,12 +804,12 @@ class JemHelper
 		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// get event details for registration
-		$query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
+		$query = ' SELECT maxplaces, waitinglist, reservedplaces FROM #__jem_events WHERE id = ' . $db->Quote($event);
 		$db->setQuery($query);
 		$event_places = $db->loadObject();
 
 		// get attendees after deletion, and their status
-		$query = 'SELECT r.id, r.waiting '
+		$query = 'SELECT r.id, r.waiting, r.places'
 		       . ' FROM #__jem_register AS r'
 		       . ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
 		       . ' ORDER BY r.uregdate ASC '
@@ -818,30 +818,43 @@ class JemHelper
 		$res = $db->loadObjectList();
 
 		$registered = 0;
-		$waiting = array();
+		$waitingregs = array();
 		foreach ((array) $res as $r)
 		{
 			if ($r->waiting) {
-				$waiting[] = $r->id;
+				$waitingregs[] = $r;
 			} else {
-				$registered++;
+				$registered+=$r->places;
 			}
 		}
+		//Add the Reserved Places of the event
+		$registered+=$event_places->reservedplaces;
 
-		if (($registered < $event_places->maxplaces) && count($waiting))
+		if (($registered < $event_places->maxplaces) && count($waitingregs))
 		{
+			$placesavailable = $event_places->maxplaces - $registered;
 			// need to bump users to attending status
-			$bumping = array_slice($waiting, 0, $event_places->maxplaces - $registered);
-			$query = ' UPDATE #__jem_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
-			$db->setQuery($query);
-			if ($db->execute() === false) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg(), 'warning');
-			} else {
-				foreach ($bumping AS $register_id)
+			foreach ($waitingregs as $waitreg)
+			{
+				if($waitreg->places <= $placesavailable)
 				{
-					JPluginHelper::importPlugin('jem');
-					$dispatcher = JemFactory::getDispatcher();
-					$res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($register_id));
+					$query   = ' UPDATE #__jem_register SET waiting = 0 WHERE id = ' . $waitreg->id;
+					$db->setQuery($query);
+					if ($db->execute() === false)
+					{
+						Factory::getApplication()->enqueueMessage(
+							Text::_(
+								'COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'
+							) . ': ' . $db->getErrorMsg(),
+							'warning'
+						);
+					}
+					else
+					{
+						JPluginHelper::importPlugin('jem');
+						$dispatcher = JemFactory::getDispatcher();
+						$res        = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($waitreg->id));
+					}
 				}
 			}
 		}
