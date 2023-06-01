@@ -33,8 +33,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	}
 </script>
 <script type="text/javascript">
-	function jSelectUsers_newusers(ids, count, status, eventid, token) {
-		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&uids='+ids+'&'+token+'=1';
+	function jSelectUsers_newusers(ids, count, status, places, eventid, token) {
+		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&'+token+'=1';
 		SqueezeBox.close();
 	}
 </script>
@@ -136,7 +136,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<?php if ($this->enableemailaddress == 1) : ?>
 						<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 						<?php endif; ?>
-						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
+						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
 						<td class="center">
 							<?php
 							$status = (int)$row->status;

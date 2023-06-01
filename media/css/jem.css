@@ -6,6 +6,13 @@
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
+#jem .jem-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: center;
+}
 #jem ul.jem-registered-list img {
     width: 30px;
 }
@@ -1240,4 +1247,8 @@ width:auto;
 }
 #jem.jem_editevent .edit form .form-check .form-check-input{
 margin-left : 0px;
+}
+
+.jem-registered-user-owner{
+	font-weight: bold;
 }

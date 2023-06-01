@@ -300,7 +300,7 @@ class JemModelAttendees extends BaseDatabaseModel
 	public function getEvent()
 	{
 		if (empty($this->_event)) {
-			$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.waitinglist,'
+			$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist,'
 			       . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
 			       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
 			       . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
@@ -360,7 +360,7 @@ class JemModelAttendees extends BaseDatabaseModel
 		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
-		$qry->select(array('reg.uid, reg.status, reg.waiting'));
+		$qry->select(array('reg.uid, reg.status, reg.waiting, reg.places'));
 		$qry->from('#__jem_register As reg');
 		$qry->where('reg.event = ' . $eventId);
 		$db->setQuery($qry);
@@ -368,14 +368,16 @@ class JemModelAttendees extends BaseDatabaseModel
 
 	//	JemHelper::addLogEntry((string)$qry . "\n" . print_r($regs, true), __METHOD__);
 
-		foreach ($rows AS &$row) {
+		foreach ($rows as &$row) {
 			if (array_key_exists($row->id, $regs)) {
 				$row->status = $regs[$row->id]->status;
+				$row->places = $regs[$row->id]->places;
 				if ($row->status == 1 && $regs[$row->id]->waiting) {
 					++$row->status;
 				}
 			} else {
 				$row->status = -99;
+				$row->places = 0;
 			}
 		}
 

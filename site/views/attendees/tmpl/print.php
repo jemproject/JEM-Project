@@ -20,8 +20,7 @@ use Joomla\CMS\Language\Text;
 		</td>
 		<td><div class="button2-left">
 				<div class="blank">
-					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), Text::_('JGLOBAL_PRINT'), true); ?>
-					</a>
+                    <a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>
 				</div>
 			</div>
 		</td>
@@ -47,6 +46,7 @@ use Joomla\CMS\Language\Text;
 			<?php endif; ?>
 			<th class="title"><?php echo Text::_( 'COM_JEM_REGDATE' ); ?></th>
 			<th class="title"><?php echo Text::_('COM_JEM_STATUS' ); ?></th>
+			<th class="title"><?php echo Text::_('COM_JEM_PLACES' ); ?></th>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 			<?php endif; ?>
@@ -82,6 +82,7 @@ use Joomla\CMS\Language\Text;
 				break;
 			endswitch; ?>
 			<td><?php echo Text::_($text); ?></td>
+			<td><?php echo $row->places; ?></td>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<td><?php echo $row->comment; ?></td>
 			<?php endif; ?>

@@ -48,12 +48,7 @@ class JemControllerAttendees extends BaseController
 
 		$jinput  = Factory::getApplication()->input;
 		$eventid = $jinput->getInt('id', 0);
-		$status  = $jinput->getInt('status', 0);
-		if($status==1) {
-			$places = $jinput->input->getInt('addplaces', 0);
-		}else {
-			$places = $jinput->input->getInt('cancelplaces', 0);
-		}
+		$status  = $jinput->getInt('status', 0);		
 		$comment = '';
 		$fid     = $jinput->getInt('Itemid', 0);
 		$uids    = explode(',', $jinput->getString('uids', ''));
@@ -62,6 +57,19 @@ class JemControllerAttendees extends BaseController
 		$uids    = array_unique($uids);
 		$total   = is_array($uids) ? count($uids) : 0;
 		$msg     = '';
+		
+		if ($jinput->get('task', 0,'string')=="attendeeadd") {
+			$places = $jinput->input->getInt('places', 0);
+		} else {
+			if ($status == 1)
+			{
+				$places = $jinput->input->getInt('addplaces', 0);
+			}
+			else
+			{
+				$places = $jinput->input->getInt('cancelplaces', 0);
+			}
+		}
 
 		JemHelper::addLogEntry("Got attendeeadd - event: ${eventid}, status: ${status}, users: " . implode(',', $uids), __METHOD__, JLog::DEBUG);
 
@@ -270,6 +278,7 @@ class JemControllerAttendees extends BaseController
 		}
 		$cols[] = Text::_('COM_JEM_REGDATE');
 		$cols[] = Text::_('COM_JEM_STATUS');
+		$cols[] = Text::_('COM_JEM_PLACES');
 		if ($comments) {
 			$cols[] = Text::_('COM_JEM_COMMENT');
 		}
@@ -297,6 +306,7 @@ class JemControllerAttendees extends BaseController
 				$txt_stat = 'COM_JEM_ATTENDEES_INVITED';
 			}
 			$cols[] = Text::_($txt_stat);
+			$cols[] = $data->places;
 			if ($comments) {
 				$comment = strip_tags($data->comment);
 				// comments are limited to 255 characters in db so we don't need to truncate them on export

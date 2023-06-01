@@ -34,8 +34,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	}
 </script>
 <script type="text/javascript">
-	function jSelectUsers_newusers(ids, count, status, eventid, token) {
-		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&uids='+ids+'&'+token+'=1';
+    function jSelectUsers_newusers(ids, count, status, places, eventid, token) {
+        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&'+token+'=1';
 		SqueezeBox.close();
 	}
 </script>
@@ -173,7 +173,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php endif; ?>
 
             <div class="jem-event-info-small jem-attendee-regdate">
-              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?>
+              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?>
             </div>
 
             <div class="jem-event-info-small jem-attendee-status">
@@ -195,9 +195,11 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php endif;?>
 
             <div class="jem-event-info-small jem-attendee-remove">
+                <div class="center">
               <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
               </a>
+                </div>
             </div>
           </li>
         <?php endforeach; ?>

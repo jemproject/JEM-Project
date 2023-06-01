@@ -47,6 +47,7 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-content: center;
 }
 
 #jem .jem-wrap-reverse {
@@ -398,7 +399,7 @@ body.com_jem.body-overlayed {
 }
 
 #jem.jem_attendees .jem-attendee-name {
-    flex: 1 24%;
+    flex: 1 20%;
 }
 
 #jem.jem_attendees .jem-attendee-email {
@@ -411,6 +412,12 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-status {
     flex: 1 4%;
+    text-align: center;
+}
+
+#jem.jem_attendees .jem-attendee-places {
+    flex: 1 4%;
+    text-align: center;
 }
 
 #jem.jem_attendees .jem-attendee-comment {
@@ -419,6 +426,7 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-remove {
     flex: 1 4%;
+    text-align: center;
 }
 
 #jem div.jem-map {
