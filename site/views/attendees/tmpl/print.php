@@ -65,7 +65,7 @@ use Joomla\CMS\Language\Text;
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<td><?php echo $row->email; ?></td>
 			<?php endif; ?>
-			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
+			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
 			<?php
 			switch ($row->status) :
 			case -1: // explicitely unregistered

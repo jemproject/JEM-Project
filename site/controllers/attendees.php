@@ -295,7 +295,7 @@ class JemControllerAttendees extends BaseController
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC2'));
+			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC5'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {
