@@ -83,7 +83,7 @@ $document->addScriptDeclaration('
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                     <th class="title"><?php echo Text::_('COM_JEM_ATTENDEES_PLACES'); ?></th>
-					<th class="title"><?php echo Text::_('COM_JEM_LAST_COMMENT'); ?></th>
+					<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif;?>
 					<th class="title center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
 					<th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
