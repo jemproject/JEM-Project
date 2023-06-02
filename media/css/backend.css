@@ -800,8 +800,8 @@ a.label:focus {
 .label-inverse {background-color: #333;}
 .label-inverse[href] {background-color: #1a1a1a;}
 
-.label-form {float:left; padding: 10px 0 18px 0; min-width: 100px;}
-.select-time {padding: 5px;margin-top:5px;}
+.label-form {float:left; padding: 0px 0 10px 0; min-width: 100px;}
+.select-time {padding: 5px;margin-top:10px;}
 
 /* --- ALERT CODE ---- */
 /* Taken from Joomla! template "isis" */
@@ -866,4 +866,9 @@ a.label:focus {
      font-weight: bold;
      color: #333;
      border: 0;
+}
+
+input#places::-webkit-outer-spin-button,
+input#places::-webkit-inner-spin-button {
+     opacity:1;
 }

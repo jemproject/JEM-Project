@@ -12,13 +12,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Model: Attendee
  */
-class JemModelAttendee extends JModelLegacy
+class JemModelAttendee extends BaseDatabaseModel
 {
 	/**
 	 * attendee id
@@ -43,9 +42,12 @@ class JemModelAttendee extends JModelLegacy
 		parent::__construct();
 
 		$jinput = Factory::getApplication()->input;
-		$array = $jinput->get('cid',  0, 'array');
-		if(is_array($this) && $this->setId((int)$array[0]));
+		$array = $jinput->get('id',  0, 'array');
 
+		if(is_array($array))
+		{
+			$this->setId((int)$array[0]);
+		}
 	}
 
 	/**
@@ -90,7 +92,7 @@ class JemModelAttendee extends JModelLegacy
             $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
-			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist'));
+			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser'));
 			$query->from('#__jem_register as r');
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 			$query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -124,11 +126,13 @@ class JemModelAttendee extends JModelLegacy
 			$data->username = null;
 			if (empty($data->eventtitle)) {
 				$jinput = Factory::getApplication()->input;
-				$eventid = $jinput->getInt('event', 0);
+				$eventid = $jinput->getInt('eventid', 0);
 				$table = $this->getTable('Event', 'JemTable');
 				$table->load($eventid);
 				if (!empty($table->title)) {
 					$data->eventtitle = $table->title;
+					$data->event = $table->id;
+					$data->maxbookeduser = $table->maxbookeduser;
 				}
 				$data->waitinglist = isset($table->waitinglist) ? $table->waitinglist : 0;
 			}

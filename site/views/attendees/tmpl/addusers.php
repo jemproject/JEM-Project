@@ -63,9 +63,6 @@ if (empty($form)) {
 	<div class="clr"></div>
 
 	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
-		<ul class="adminformlist">
-			<li><?php echo $form->getLabel('status'); ?><?php echo $form->getInput('status'); ?></li>
-		</ul>
 
 		<?php if(1) : ?>
 		<div id="jem_filter" class="floattext">
@@ -94,6 +91,7 @@ if (empty($form)) {
 					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
 					<th width="10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
+					<th width="10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -106,11 +104,42 @@ if (empty($form)) {
 						<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 						<td align="left"><?php echo $this->escape($row->name); ?></td>
 						<td class="center"><?php echo jemhtml::toggleAttendanceStatus(0, $row->status, false); ?></td>
+						<td class="center"><?php echo $this->escape($row->places); ?></td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			</tbody>
 		</table>
+
+		<?php
+		if($this->event->maxbookeduser!=0)
+		{
+			$placesavailableuser = $this->event->maxbookeduser;
+		}else{
+			$placesavailableuser= null;
+		}
+		?>
+
+        <div class="jem-row jem-justify-start valign-baseline">
+            <div style="padding-right:5px;">
+				<?php echo Text::_('COM_JEM_SELECT');?>
+            </div>
+            <div style="padding-right:10px;">
+				<?php echo $form->getLabel('status'); ?>
+            </div>
+            <div style="padding-right:10px;">
+				<?php echo $form->getInput('status'); ?>
+            </div>
+            <div style="padding-right:5px;">
+				<?php echo Text::_('COM_JEM_SELECT');?>
+            </div>
+            <div style="padding-right:10px;">
+				<?php echo Text::_('COM_JEM_PLACES'); ?>
+            </div>
+            <div style="padding-right:10px;">
+                <input id="places" name="places" type="number" style="text-align: center; width:auto;"  value="0" max="<?php echo ($placesavailableuser>0? $placesavailableuser:($placesavailableus?? '')); ?>" min="0">
+            </div>
+        </div>
 
 		<input type="hidden" name="task" value="selectusers" />
 		<input type="hidden" name="option" value="com_jem" />
@@ -121,7 +150,7 @@ if (empty($form)) {
 		<input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
 	</form>
 	<div class="jem_fright">
-		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
+		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
 			<?php echo Text::_('COM_JEM_SAVE'); ?>
 		</button>
 	</div>

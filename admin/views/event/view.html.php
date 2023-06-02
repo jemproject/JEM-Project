@@ -60,10 +60,7 @@ class JemViewEvent extends JemAdminView
 		$Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-
 		$wa = $app->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Load scripts

@@ -34,8 +34,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	}
 </script>
 <script type="text/javascript">
-	function jSelectUsers_newusers(ids, count, status, eventid, token) {
-		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&uids='+ids+'&'+token+'=1';
+    function jSelectUsers_newusers(ids, count, status, places, eventid, token) {
+        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&'+token+'=1';
 		SqueezeBox.close();
 	}
 </script>
@@ -145,6 +145,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           <?php endif; ?>
           <div class="sectiontableheader jem-attendee-regdate"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <div class="sectiontableheader jem-attendee-status"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+          <div class="sectiontableheader jem-attendee-places"><?php echo JHtml::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
             <div class="sectiontableheader jem-attendee-comment"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
           <?php endif; ?>
@@ -172,7 +173,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php endif; ?>
 
             <div class="jem-event-info-small jem-attendee-regdate">
-              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?>
+              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?>
             </div>
 
             <div class="jem-event-info-small jem-attendee-status">
@@ -181,6 +182,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
               if ($status === 1 && $row->waiting == 1) { $status = 2; }
               echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
               ?>
+            </div>
+            <div class="jem-event-info-small jem-attendee-places">
+	            <?php echo $row->places; ?>
             </div>
 
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
@@ -191,9 +195,11 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php endif;?>
 
             <div class="jem-event-info-small jem-attendee-remove">
+                <div class="center">
               <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
               </a>
+                </div>
             </div>
           </li>
         <?php endforeach; ?>

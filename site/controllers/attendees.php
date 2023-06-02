@@ -48,7 +48,7 @@ class JemControllerAttendees extends BaseController
 
 		$jinput  = Factory::getApplication()->input;
 		$eventid = $jinput->getInt('id', 0);
-		$status  = $jinput->getInt('status', 0);
+		$status  = $jinput->getInt('status', 0);		
 		$comment = '';
 		$fid     = $jinput->getInt('Itemid', 0);
 		$uids    = explode(',', $jinput->getString('uids', ''));
@@ -57,6 +57,19 @@ class JemControllerAttendees extends BaseController
 		$uids    = array_unique($uids);
 		$total   = is_array($uids) ? count($uids) : 0;
 		$msg     = '';
+		
+		if ($jinput->get('task', 0,'string')=="attendeeadd") {
+			$places = $jinput->input->getInt('places', 0);
+		} else {
+			if ($status == 1)
+			{
+				$places = $jinput->input->getInt('addplaces', 0);
+			}
+			else
+			{
+				$places = $jinput->input->getInt('cancelplaces', 0);
+			}
+		}
 
 		JemHelper::addLogEntry("Got attendeeadd - event: ${eventid}, status: ${status}, users: " . implode(',', $uids), __METHOD__, JLog::DEBUG);
 
@@ -83,7 +96,7 @@ class JemControllerAttendees extends BaseController
 					$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
 					if (!empty($reg->id) && ($old_status != $status)) {
 						JemHelper::addLogEntry("Change user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
-						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg, $reg->id);
+						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg, $reg->id);
 						if ($reg_id) {
 							$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 							++$changed;
@@ -99,7 +112,7 @@ class JemControllerAttendees extends BaseController
 						++$skip;
 					}
 				} else {
-					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
+					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg);
 					if ($reg_id) {
 						$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 					} else {
@@ -265,6 +278,7 @@ class JemControllerAttendees extends BaseController
 		}
 		$cols[] = Text::_('COM_JEM_REGDATE');
 		$cols[] = Text::_('COM_JEM_STATUS');
+		$cols[] = Text::_('COM_JEM_PLACES');
 		if ($comments) {
 			$cols[] = Text::_('COM_JEM_COMMENT');
 		}
@@ -281,7 +295,7 @@ class JemControllerAttendees extends BaseController
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC2'));
+			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC5'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {
@@ -292,6 +306,7 @@ class JemControllerAttendees extends BaseController
 				$txt_stat = 'COM_JEM_ATTENDEES_INVITED';
 			}
 			$cols[] = Text::_($txt_stat);
+			$cols[] = $data->places;
 			if ($comments) {
 				$comment = strip_tags($data->comment);
 				// comments are limited to 255 characters in db so we don't need to truncate them on export

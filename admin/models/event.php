@@ -133,7 +133,7 @@ class JemModelEvent extends JemModelAdmin
             $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
-			$query->select(array('count(id)'));
+			$query->select('SUM(places)');
 			$query->from('#__jem_register');
 			$query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
 

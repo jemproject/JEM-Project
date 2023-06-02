@@ -86,7 +86,7 @@ class JemModelEvent extends ItemModel
 						                'a.created, a.created_by, a.published, a.registra, a.unregistra, a.unregistra_until, ' .
 						                'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
 						                'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
-						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, ' .
+						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, ' .
 						                'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
 				$query->from('#__jem_events AS a');
 
@@ -220,7 +220,7 @@ class JemModelEvent extends ItemModel
 		// Define Booked
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
-		$query->select(array('COUNT(*)'));
+		$query->select('SUM(places)');
 		$query->from('#__jem_register');
 		$query->where(array('event = ' . $db->quote($this->_item[$pk]->did), 'waiting = 0', 'status = 1'));
 		$db->setQuery($query);
@@ -431,7 +431,7 @@ class JemModelEvent extends ItemModel
 
 		// usercheck
 		// -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
-		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment'
+		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places'
 		       . ' FROM #__jem_register'
 		       . ' WHERE uid = ' . $this->_db->quote($userid)
 		       . ' AND event = ' . $this->_db->quote($eventId);
@@ -526,7 +526,7 @@ class JemModelEvent extends ItemModel
     // Get registered users
     $query = $db->getQuery(true);
     $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-           . $name . ' AS name, r.uid' . $avatar . ', r.comment'
+           . $name . ' AS name, r.uid' . $avatar . ', r.comment, r.places'
            . ' FROM #__jem_register AS r'
            . ' LEFT JOIN #__users AS u ON u.id = r.uid'
            . $join
@@ -556,6 +556,7 @@ class JemModelEvent extends ItemModel
 	 * @param  int     $uid      id of user to register
 	 * @param  mixed   $uip      ip address or false
 	 * @param  int     $status   registration status
+	 * @param  int     $places   number to add/cancel places of registration
 	 * @param  string  $comment  optional comment
 	 * @param  string &$errMsg   gets a message in error cases
 	 * @param  int     $regid    id of registration record to change or 0 if new (default)
@@ -565,7 +566,7 @@ class JemModelEvent extends ItemModel
 	 * @access protected
 	 * @return int register id on success, else false
 	 */
-	protected function _doRegister($eventId, $uid, $uip, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+	protected function _doRegister($eventId, $uid, $uip, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
 	//	$app = Factory::getApplication('site');
 	//	$user = JemFactory::getUser();
@@ -615,6 +616,7 @@ class JemModelEvent extends ItemModel
 		$obj = new stdClass();
 		$obj->event = (int)$eventId;
 		$obj->status = (int)$status;
+		$obj->places = (int)$places;
 		$obj->waiting = $onwaiting;
 		$obj->uid = (int)$uid;
 		$obj->uregdate = gmdate('Y-m-d H:i:s');
@@ -659,14 +661,65 @@ class JemModelEvent extends ItemModel
 		$comment = $app->input->getString('reg_comment', '');
 		$comment = OutputFilter::cleanText($comment);
 		$regid   = $app->input->getInt('regid', 0);
+		$addplaces = $app->input->getInt('addplaces', 0);
+		$cancelplaces = $app->input->getInt('cancelplaces', 0);
 
 		$eventId = (int) $this->_registerid;
 
 		$uid = (int) $user->get('id');
+		$reg = $this->getUserRegistration($eventId);
+
+		try {
+			$event = $this->getItem($eventId);
+		}
+			// some gently error handling
+		catch (Exception $e) {
+			$event = false;
+		}
+
+		if($status>0){
+			if($reg) {
+				if($reg->status>0)
+				{
+					$places = $addplaces + $reg->places;
+				}else{
+					$places = $addplaces;
+				}
+			}else{
+				$places = $addplaces;
+			}
+			//Detect if the reserve go to waiting list
+			$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
+			if($reg->status!=0)
+			{
+				if ($event->waitinglist && $placesavailableevent <= 0)
+				{
+					$status = 2;
+				}
+			}
+		}else{
+			if($reg) {
+				$places = $reg->places - $cancelplaces;
+				if($reg->status>=0 && $places>0){
+					$status=$reg->status;
+				}else{
+					$places = 0;
+				}
+			}else{
+				$places = 0;
+			}
+		}
+
+		//Review max places per user
+		if($event->maxbookeduser){
+			if($places > $event->maxbookeduser){
+				$places = $event->maxbookeduser;
+			}
+		}
 
 		// Must be logged in
 		if ($uid < 1) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return;
 		}
 
@@ -674,7 +727,7 @@ class JemModelEvent extends ItemModel
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
 		$errMsg = '';
-		$result = $this->_doRegister($eventId, $uid, $uip, $status, $comment, $errMsg, $regid);
+		$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
 
 		if (!$result && !empty($errMsg)) {
 			$this->setError($errMsg);
@@ -698,7 +751,7 @@ class JemModelEvent extends ItemModel
 	 * @access public
 	 * @return int register id on success, else false
 	 */
-	public function adduser($eventId, $uid, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+	public function adduser($eventId, $uid, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
 	//	$app = Factory::getApplication('site');
 		$user = JemFactory::getUser();
@@ -713,7 +766,7 @@ class JemModelEvent extends ItemModel
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$result = $this->_doRegister($eventId, $uid, $uip, $status, $comment, $errMsg, $regid, $respectPlaces);
+		$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid, $respectPlaces);
 
 		return $result;
 	}

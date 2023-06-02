@@ -336,13 +336,14 @@ Joomla.submitbutton = function(task)
 							<!--/li>
 							<li--><span id="jform_unregistra_until_span"><?php echo $this->form->getInput('unregistra_until'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
 							</li>
-							<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
-							</li>	
-							<li><label><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?></label>
-										<input type="text" value="<?php echo $this->item->booked; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
-									</li>
+							<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
+                            <li><?php echo $this->form->getLabel('minbookeduser'); ?> <?php echo $this->form->getInput('minbookeduser'); ?></li>
+                            <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
+                            <li><?php echo $this->form->getLabel('reservedplaces'); ?> <?php echo $this->form->getInput('reservedplaces'); ?></li>
+
 							<?php if ($this->item->maxplaces): ?>
-							<li><label><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
+							<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
+                                <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
 							</li>
 							<?php endif; ?>
 							<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
