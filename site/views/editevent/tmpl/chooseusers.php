@@ -51,10 +51,6 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 		<?php echo Text::_('COM_JEM_SELECT_USERS_TO_INVITE'); ?>
 	</h1>
 
-	<div class="jem_fright">
-		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo Text::_('COM_JEM_SAVE'); ?></button>
-	</div>
-
 	<div class="clr"></div>
 
 	<form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=chooseusers&tmpl=component&function='.$this->escape($function).'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
@@ -86,6 +82,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
 					<th width="10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
+					<th width="10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -108,11 +105,24 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 						?></td>
 						<td align="left"><?php echo $this->escape($row->name); ?></td>
 						<td class="center"><?php echo jemhtml::toggleAttendanceStatus( 0, $row->status, false); ?></td>
+						<td align="left"><?php echo $this->escape($row->places); ?></td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			</tbody>
 		</table>
+
+        <div class="jem-row jem-justify-start valign-baseline">
+           <div style="padding-right:5px;">
+				<?php echo Text::_('COM_JEM_SELECT');?>
+            </div>
+            <div style="padding-right:10px;">
+				<?php echo Text::_('COM_JEM_PLACES'); ?>
+            </div>
+            <div style="padding-right:10px;">
+                <input id="places" name="places" type="number" style="text-align: center; width:auto;"  value="0" max="1" min="0">
+            </div>
+        </div>
 
 		<input type="hidden" name="task" value="selectusers" />
 		<input type="hidden" name="option" value="com_jem" />
@@ -126,4 +136,9 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
+
+	<div class="jem_fright">
+		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo Text::_('COM_JEM_SAVE'); ?></button>
+	</div>
+
 </div>

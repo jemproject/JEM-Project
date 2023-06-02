@@ -36,6 +36,9 @@ if ($this->showRegForm && empty($this->print)) :
         if($this->item->maxplaces)
         {
 		$placesavailableevent = $this->item->maxplaces - $this->item->booked - $this->item->reservedplaces;
+	        if($placesavailableuser===null){
+		        $placesavailableuser=$placesavailableevent;
+            }
         }else{
 	        $placesavailableevent = false;
         }
@@ -163,7 +166,7 @@ if ($this->showRegForm && empty($this->print)) :
 		</p>
 		<?php endif; ?>
 		<p>
-			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" <?php echo (!$this->isregistered ? 'disabled="disabled"':'')?> />
+			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>"  />
 		</p>
 		<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
 		<input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />

@@ -9,14 +9,13 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-//$max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
 ?>
 
-	<!-- RECURRENCE START -->
-	<div>
+<!-- RECURRENCE START -->
+<div>
 	<fieldset class="panelform">
 		<legend><?php echo Text::_('COM_JEM_RECURRENCE'); ?></legend>
 		<ul class="adminformlist">
@@ -184,15 +183,18 @@ use Joomla\CMS\Factory;
             <br/><br/>
             <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
             <br/><br/>
-			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('reservedplaces'); ?> <?php echo $this->form->getInput('reservedplaces'); ?></li>
-			<?php endif; ?>
+            <br/><br/>
+			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
 			<br/><br/>
-            <li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
-			<br/>
-			<li><?php echo $this->form->getLabel('booked'); ?> <?php echo $this->form->getInput('booked'); ?></li>
+			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
+			<br/><br/>
+			<?php endif; ?>
+			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label> <?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></li>
+			<br/><br/>
 			<?php if ($this->item->maxplaces): ?>
-			<li><?php echo $this->form->getLabel('avplaces'); ?> <?php echo $this->form->getInput('avplaces'); ?></li>
+			<li><?php echo $this->form->getLabel('avplaces'); ?> <?php echo '<input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="' . ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces) . '" />'; ?></li>
 			<?php endif; ?>
 		<?php endif; ?>
 		</ul>

@@ -437,7 +437,7 @@ class JemModelEditevent extends JemModelEvent
         $db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
-		$qry->select(array('reg.uid, reg.status, reg.waiting'));
+		$qry->select(array('reg.uid, reg.status, reg.waiting, reg.places'));
 		$qry->from('#__jem_register As reg');
 		$qry->where('reg.event = ' . $itemId);
 		$db->setQuery($qry);
@@ -448,11 +448,13 @@ class JemModelEditevent extends JemModelEvent
 		foreach ($rows AS &$row) {
 			if (array_key_exists($row->id, $regs)) {
 				$row->status = $regs[$row->id]->status;
+				$row->places = $regs[$row->id]->places;
 				if ($row->status == 1 && $regs[$row->id]->waiting) {
 					++$row->status;
 				}
 			} else {
 				$row->status = -99;
+				$row->places = 0;
 			}
 		}
 

@@ -35,7 +35,10 @@ if ($this->showRegForm && empty($this->print)) :
         }
         if($this->item->maxplaces)
         {
-		$placesavailableevent = $this->item->maxplaces - $this->item->booked - $this->item->reservedplaces;
+			$placesavailableevent = $this->item->maxplaces - $this->item->booked - $this->item->reservedplaces;
+	        if($placesavailableuser===null){
+		        $placesavailableuser=$placesavailableevent;
+            }
         }else{
 	        $placesavailableevent = false;
         }
@@ -129,10 +132,26 @@ if ($this->showRegForm && empty($this->print)) :
                         />
                         <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
 						<?php echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
+					if($this->registereduser !== null)
+					{
+						if($this->registers[$this->registereduser]->places){
+							if($this->registers[$this->registereduser]->status==1){
+								$cancelplaces =  mb_strtolower(($this->registers[$this->registereduser]->places-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE')));
+							}else if($this->registers[$this->registereduser]->status==-1){
+								$cancelplaces =  '';
+							}else if($this->registers[$this->registereduser]->status==0){
+								$cancelplaces =  mb_strtolower(($this->registers[$this->registereduser]->places-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')));
+							}else if($this->registers[$this->registereduser]->status==2){
+								$cancelplaces =  mb_strtolower(($this->registers[$this->registereduser]->places-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')));
+							}
+						}
+					}else{
+						$cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');
+					}
 						if($this->registereduser!==null) {
 							if ($this->registers[$this->registereduser]->places) {
 								echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
-								echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $this->registers[$this->registereduser]->places . '" max="' . $this->registers[$this->registereduser]->places . '" min="1">' . ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_3');
+							echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $this->registers[$this->registereduser]->places . '" max="' . $this->registers[$this->registereduser]->places . '" min="1">' . ' ' . $cancelplaces;
 							}
 						}
 						?>
@@ -154,7 +173,7 @@ if ($this->showRegForm && empty($this->print)) :
                     </li>
 				<?php endif; ?>
             </ul>
-            <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>" <?php echo (!$this->isregistered ? 'disabled="disabled"':'')?> />
+			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>"  />
 
 
 
