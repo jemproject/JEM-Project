@@ -50,7 +50,7 @@ class JemHtml
 		$no_iconfont = (bool)Factory::getApplication()->isClient('administrator'); // requires font and css loaded which isn't yet on backend
 		$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-featured-'.$state[1], $state[3], null, $no_iconfont);
 		if ($canChange) {
-			$html = '<a href="#" onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')" title="' . Text::_($state[4]) . '">' . $html . '</a>';
+			$html = '<a href="#" onclick="return Joomla.listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')" title="' . Text::_($state[4]) . '">' . $html . '</a>';
 		}
 
 		return $html;
@@ -90,7 +90,7 @@ class JemHtml
 		$no_iconfont = (bool)Factory::getApplication()->isClient('administrator'); // requires font and css loaded which isn't yet on backend
 		$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $no_iconfont);
 		if ($canChange) {
-			$html = '<a href="#" onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')" title="' . Text::_($state[4]) . '">' . $html . '</a>';
+			$html = '<a href="#" onclick="return Joomla.listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')" title="' . Text::_($state[4]) . '">' . $html . '</a>';
 		}
 
 		return $html;
@@ -230,7 +230,7 @@ class JemHtml
 		} elseif ($canChange && !empty($state[2])) {
 			$html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $backend);
 			if ($backend) {
-				$attr .= ' onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')"';
+				$attr .= ' onclick="return Joomla.listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')"';
 				$url = '#';
 			} else {
 				$url = Route::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$i.'&'.Session::getFormToken().'=1');

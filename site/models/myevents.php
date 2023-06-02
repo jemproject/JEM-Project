@@ -216,7 +216,7 @@ class JemModelMyevents extends BaseDatabaseModel
 		# Get Events from Database
 		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist,'
 		       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
-		       . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created_by_alias, a.datimage, a.featured,'
+		       . ' a.access, a.checked_out, a.checked_out_time, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.contactid, a.created_by_alias, a.datimage, a.featured,'
 		       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
 		       . ' a.fulltext, a.hits, a.introtext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
 		       . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'

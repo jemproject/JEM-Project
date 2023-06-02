@@ -263,19 +263,19 @@ $(document).ready(function() {
 							<?php
 							if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
 								$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
-								$count = $row->regCount;
+								$count = $row->regCount+$row->reserved;
 								if ($row->maxplaces)
 								{
 									$count .= '/'.$row->maxplaces;
 									if ($row->waitinglist && $row->waiting) {
-										$count .= ' + '.$row->waiting;
+										$count .= '+'.$row->waiting;
 									}
 								}
 								if (!empty($row->unregCount)) {
-									$count .= ' - '.(int)$row->unregCount;
+									$count .= '-'.(int)$row->unregCount;
 								}
 								if (!empty($row->invited)) {
-									$count .= ', '.(int)$row->invited .' ?';
+									$count .= ','.(int)$row->invited .'?';
 								}
 								?>
 								<a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">

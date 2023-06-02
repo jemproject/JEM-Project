@@ -47,6 +47,7 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-content: center;
 }
 
 #jem .jem-wrap-reverse {
@@ -81,7 +82,7 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dt,
 #jem .jem-dl-long dt {
     float: left;
-    width: 160px;
+    width: 175px;
     overflow: hidden;
     clear: left;
     text-align: left;
@@ -266,6 +267,11 @@ body.com_jem.body-overlayed {
     width: auto;
 }
 
+#jem form input::-webkit-outer-spin-button,
+#jem form input::-webkit-inner-spin-button {
+    opacity:1;
+}
+
 #jem .jem-sort-parts div::after {
     content: "";
     border-right: 1px solid #333;
@@ -393,7 +399,7 @@ body.com_jem.body-overlayed {
 }
 
 #jem.jem_attendees .jem-attendee-name {
-    flex: 1 24%;
+    flex: 1 20%;
 }
 
 #jem.jem_attendees .jem-attendee-email {
@@ -406,6 +412,12 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-status {
     flex: 1 4%;
+    text-align: center;
+}
+
+#jem.jem_attendees .jem-attendee-places {
+    flex: 1 4%;
+    text-align: center;
 }
 
 #jem.jem_attendees .jem-attendee-comment {
@@ -414,6 +426,7 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-remove {
     flex: 1 4%;
+    text-align: center;
 }
 
 #jem div.jem-map {

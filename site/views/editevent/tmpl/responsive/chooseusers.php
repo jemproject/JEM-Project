@@ -92,6 +92,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         <div class="sectiontableheader jem-users-checkall"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></div>
         <div class="sectiontableheader jem-users-name"><?php echo Text::_('COM_JEM_NAME'); ?></div>
         <div class="sectiontableheader jem-users-state"><?php echo Text::_('COM_JEM_STATUS'); ?></div>
+        <div class="sectiontableheader jem-users-state"><?php echo Text::_('COM_JEM_PLACES'); ?></div>
       </div>
     </div>
 
@@ -126,10 +127,28 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             <div class="jem-event-info-small jem-users-state">
               <?php echo jemhtml::toggleAttendanceStatus( 0, $row->status, false); ?>
             </div>
+
+            <div class="jem-event-info-small jem-users-places">
+				<?php echo $this->escape($row->places); ?>
+            </div>
           </li>
         <?php endforeach; ?>
       <?php endif; ?>
     </ul>
+
+        <hr class="jem-hr"/>
+
+        <div class="jem-row jem-justify-start valign-baseline">
+           <div style="padding-right:5px;">
+				<?php echo Text::_('COM_JEM_SELECT');?>
+            </div>
+            <div style="padding-right:10px;">
+				<?php echo Text::_('COM_JEM_PLACES'); ?>
+            </div>
+            <div style="padding-right:10px;">
+                <input id="places" name="places" type="number" style="text-align: center; width:auto;"  value="0" max="1" min="0">
+            </div>
+        </div>
 
 		<input type="hidden" name="task" value="selectusers" />
 		<input type="hidden" name="option" value="com_jem" />

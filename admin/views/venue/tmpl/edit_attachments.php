@@ -18,7 +18,7 @@ use Joomla\CMS\Language\Text;
 		<tr>
 			<td>
 				<div>
-					<div class="title"><?php echo Jext::_('COM_JEM_ATTACHMENT_FILE');?></div>
+					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE');?></div>
 					<input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>" class="form-control readonly valid form-control-success w-75"></input>
 					<input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/>
 				</div>

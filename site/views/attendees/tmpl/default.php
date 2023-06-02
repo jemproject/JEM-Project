@@ -33,8 +33,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	}
 </script>
 <script type="text/javascript">
-	function jSelectUsers_newusers(ids, count, status, eventid, token) {
-		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&uids='+ids+'&'+token+'=1';
+	function jSelectUsers_newusers(ids, count, status, places, eventid, token) {
+		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&'+token+'=1';
 		SqueezeBox.close();
 	}
 </script>
@@ -109,7 +109,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		<?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.JSession::getFormToken().'=1'; ?>
 
 		<div class="table-responsive">
-			<table class="eventtable table table-striped" style="width:100%" id="articleList">
+			<table class="eventtable table table-striped" style="margin: 20px 0 0 0;" id="articleList">
 				<thead>
 					<tr>
 						<th width="1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
@@ -120,6 +120,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<?php endif; ?>
 						<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 						<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 						<?php endif;?>
@@ -135,7 +136,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<?php if ($this->enableemailaddress == 1) : ?>
 						<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 						<?php endif; ?>
-						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
+						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
@@ -143,12 +144,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 							echo jemhtml::toggleAttendanceStatus( $row->id, $status, true);
 							?>
 						</td>
+						<td class="center"><?php echo $row->places; ?></td>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 						<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 						<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
 						<td class="center"><a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>"><?php echo
-							JHtml::_('image','com_jem/publish_r.png', Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip', true)); ?></a>
+							JHtml::_('image','/media/com_jem/images/publish_r.png', Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip', true)); ?></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>
