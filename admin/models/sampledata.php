@@ -12,6 +12,7 @@ defined('_JEXEC') or die();
 use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use \Joomla\CMS\Language\Text;
 
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');

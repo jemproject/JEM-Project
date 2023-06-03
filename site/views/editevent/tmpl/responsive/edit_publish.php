@@ -26,7 +26,7 @@ use Joomla\CMS\Language\Text;
 				'select.genericlist',
 				$this->access,
 				'jform[access]',
-				array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access')
+				array('list.attr' => ' class="form-select inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access')
 			);
 			?>
 		</dd>

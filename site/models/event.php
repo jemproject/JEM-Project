@@ -497,6 +497,9 @@ class JemModelEvent extends ItemModel
 				break;
 			case 3: // show to all
 				break;
+			case 4: // show only to user
+				$where[] = 'u.id = ' . $user->id;
+				break;
 		}
 
 		$avatar = '';
@@ -668,6 +671,7 @@ class JemModelEvent extends ItemModel
 
 		$uid = (int) $user->get('id');
 		$reg = $this->getUserRegistration($eventId);
+		$errMsg = '';
 
 		try {
 			$event = $this->getItem($eventId);
@@ -678,35 +682,44 @@ class JemModelEvent extends ItemModel
 		}
 
 		if($status>0){
-			if($reg) {
-				if($reg->status>0)
+			if($addplaces>0)
+			{
+				if ($reg)
 				{
-					$places = $addplaces + $reg->places;
-				}else{
+					if ($reg->status > 0)
+					{
+						$places = $addplaces + $reg->places;
+					}
+					else
+					{
+						$places = $addplaces;
+					}
+				}
+				else
+				{
 					$places = $addplaces;
 				}
-			}else{
-				$places = $addplaces;
-			}
-			//Detect if the reserve go to waiting list
-			$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
-			if($reg->status!=0)
-			{
-				if ($event->waitinglist && $placesavailableevent <= 0)
+				//Detect if the reserve go to waiting list
+				$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
+				if ($reg->status != 0)
 				{
-					$status = 2;
+					if ($event->waitinglist && $placesavailableevent <= 0)
+					{
+						$status = 2;
+					}
 				}
+			}else{
+				$places = 0;
 			}
 		}else{
 			if($reg) {
 				$places = $reg->places - $cancelplaces;
 				if($reg->status>=0 && $places>0){
 					$status=$reg->status;
-				}else{
-					$places = 0;
 				}
 			}else{
 				$places = 0;
+				$errMsg = Text::_('COM_JEM_ERROR_REGISTRATION');
 			}
 		}
 
@@ -726,9 +739,10 @@ class JemModelEvent extends ItemModel
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$errMsg = '';
-		$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
 
+		if(empty($errMsg)){
+			$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
+		}
 		if (!$result && !empty($errMsg)) {
 			$this->setError($errMsg);
 		}

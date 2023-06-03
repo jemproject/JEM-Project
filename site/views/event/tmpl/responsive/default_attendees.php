@@ -112,14 +112,14 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 				if($register->uid == $this->user->id) {
 					$this->registereduser = $k;
 				}
-						if($register->status==1 && $register->places>1){
-							$registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE')));
-						}else if($register->status==-1 && $register->places>1){
-					$registedplaces =  '';
-                        }else if($register->status==0 && $register->places>1){
-							$registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')));
-                        }else if($register->status==2 && $register->places>1){
-							$registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')));
+                if($register->status==1 && $register->places>1){
+                    $registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE')));
+                }else if($register->status==-1 && $register->places>1){
+            		$registedplaces =  '';
+                }else if($register->status==0 && $register->places>1){
+                    $registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')));
+                }else if($register->status==2 && $register->places>1){
+                    $registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')));
 				}
 
 				// if CB

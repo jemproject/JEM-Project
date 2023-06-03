@@ -81,8 +81,8 @@ $document->addScriptDeclaration('
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
+                    <th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_PLACES', 'r.waiting',$listDirn, $listOrder); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-                    <th class="title"><?php echo Text::_('COM_JEM_ATTENDEES_PLACES'); ?></th>
 					<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif;?>
 					<th class="title center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
