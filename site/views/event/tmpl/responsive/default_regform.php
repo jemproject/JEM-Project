@@ -105,8 +105,11 @@ if ($this->showRegForm && empty($this->print)) :
 						echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER');
 					}else{
 						echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-						echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" value="' . ($placesavailableuser>0?1:($placesavailableuser?? 1)) . '" max="' . ($placesavailableuser>0? $placesavailableuser:($placesavailableus?? '')) . '" min="0">';
-						if($this->registereduser!=null) {
+						echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
+							. 'value="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$this->registers[$this->registereduser]->places < $placesavailableuser? $this->item->minbookeduser-$this->registers[$this->registereduser]->places:1):($placesavailableuser?? 1))
+							. '" max="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$this->registers[$this->registereduser]->places  > $placesavailableuser? $this->item->maxbookeduser-$this->registers[$this->registereduser]->places:$placesavailableuser):($placesavailableuser?? ''))
+							. '" min="' . ($this->item->minbookeduser-$this->registers[$this->registereduser]->places>1?$this->item->minbookeduser-$this->registers[$this->registereduser]->places:1) .'">';
+                        if($this->registereduser!=null) {
 							if($this->registers[$this->registereduser]->places  && $this->registers[$this->registereduser]->status==1)
 							{
 								echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
@@ -148,7 +151,7 @@ if ($this->showRegForm && empty($this->print)) :
 					}else{
 						$cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');
 					}
-						if($this->registereduser!==null) {
+					if($this->registereduser!==null) {
 							if ($this->registers[$this->registereduser]->places) {
 								echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
 							echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $this->registers[$this->registereduser]->places . '" max="' . $this->registers[$this->registereduser]->places . '" min="1">' . ' ' . $cancelplaces;

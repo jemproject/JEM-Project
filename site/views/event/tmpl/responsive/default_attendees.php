@@ -100,7 +100,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
       }
 
 			foreach ($this->registers as $k => $register) :
-        		echo '<li class="jem-registered-user">' . jem_getStatusIcon($register->status);
+				echo '<li class="' . ($this->user->id==$register->uid? 'jem-registered-user-owner':'jem-registered-user') . '">' . jem_getStatusIcon($register->status);
         		$text = '';
 				$registedplaces = '';
 				// is a plugin catching this ?
