@@ -333,7 +333,7 @@ class JemControllerEvent extends JemControllerForm
 
 		JPluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
-		$dispatcher->triggerEvent('onEventUserRegistered', array($register_id));
+		$dispatcher->triggerEvent('onEventUserRegistered', array($register_id, $reg->places));
 
 		$cache = Factory::getCache('com_jem');
 		$cache->clean();

@@ -70,7 +70,7 @@ class plgJemMailer extends JPlugin
 	 * @return  boolean
 	 *
 	 */
-	public function onEventUserRegistered($register_id)
+	public function onEventUserRegistered($register_id, $registration = false)
 	{
 		####################
 		## DEFINING ARRAY ##
@@ -107,7 +107,7 @@ class plgJemMailer extends JPlugin
 		$case_when .= $id.' END as slug';
 
 		$query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
-		                     'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment'));
+		                     'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue', 'v.city'));
 		$query->from($db->quoteName('#__jem_register').' AS r');
@@ -177,15 +177,15 @@ class plgJemMailer extends JPlugin
 			$data->subject = Text::sprintf($txt_subject, $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				}
 			}
 			$data->receivers = $recipients['user'];
@@ -228,15 +228,15 @@ class plgJemMailer extends JPlugin
 			$data->subject = Text::sprintf($txt_subject, $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				} else {
-					$data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				} else {
-					$data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				}
 			}
 			$data->recipients = $recipients['all'];
@@ -288,7 +288,7 @@ class plgJemMailer extends JPlugin
 		$case_when .= $id.' END as slug';
 
 		$query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
-		                     'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment'));
+		                     'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue', 'v.city'));
 		$query->from($db->quoteName('#__jem_register').' AS r');
@@ -321,7 +321,7 @@ class plgJemMailer extends JPlugin
 			$txt_subject     = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT';
 			$data->subject   = Text::sprintf($txt_subject, $this->_SiteName);
 			$txt_body        = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY_9' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY_9';
-			$data->body      = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+			$data->body      = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $event->places, $text_description, $link, $this->_SiteName);
 			$data->receivers = $recipients['user'];
 			$this->_mailer($data);
 		}
@@ -335,7 +335,7 @@ class plgJemMailer extends JPlugin
 			$txt_subject      = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT';
 			$data->subject    = Text::sprintf($txt_subject, $this->_SiteName);
 			$txt_body         = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY_8' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY_8';
-			$data->body       = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+			$data->body       = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $event->places, $link, $this->_SiteName);
 			$data->recipients = $recipients['all'];
 			$this->_mailer($data);
 		}
@@ -394,7 +394,7 @@ class plgJemMailer extends JPlugin
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue', 'v.city'));
 		if (empty($registration) && ((int)$register_id > 0)) {
-			$query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment'));
+			$query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment', 'r.places'));
 			$query->from($db->quoteName('#__jem_register').' AS r');
 			$query->join('INNER', '#__jem_events AS a ON r.event = a.id');
 			$query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -442,15 +442,15 @@ class plgJemMailer extends JPlugin
 			$data->subject   = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_A', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_A', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_9', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_9', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				}
 			}
 			$data->receivers = $recipients['user'];
@@ -466,15 +466,15 @@ class plgJemMailer extends JPlugin
 			$data->subject    = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				} else {
-					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_9', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_9', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				} else {
-					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_8', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_8', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				}
 			}
 			$data->recipients = $recipients['all'];

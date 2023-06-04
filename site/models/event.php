@@ -158,7 +158,7 @@ class JemModelEvent extends ItemModel
 				}
 				catch (RuntimeException $e)
 				{			
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+					Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 				}
 
 				if (empty($data)) {
@@ -200,7 +200,7 @@ class JemModelEvent extends ItemModel
 				if ($e->getCode() == 404) {
 					// Need to go thru the error handler to allow Redirect to
 					// work.
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+					Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 					return false;
 				}
 				else {
