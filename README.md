@@ -1,5 +1,5 @@
-# JEM 40b4
-released 2023-05-23
+# JEM 4.0 Release Canditate 1
+released 2023-06-04
 
 Based on
 - jemproject/JEM-Project

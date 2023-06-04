@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\Language\Text;
 ?>
 <div class="width-100" style="padding: 10px 1vw;">

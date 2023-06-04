@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,8 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-?>
-<?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
+
+if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
   <hr class="jem-hr" style="display: none;" />
 	<div class="jem-files">
 		<?php if (count($this->attachments) > 1) : ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2023 joomlaeventmanager.net
@@ -13,6 +13,7 @@
  * see example at https://keithdevens.com/weblog
  * License: https://keithdevens.com/software/license
  */
+ 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;

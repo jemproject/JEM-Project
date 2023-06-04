@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2023 joomlaeventmanager.net
@@ -17,6 +17,7 @@
  * add check for global time/date format. At the moment the output
  * format is not respecting the global-setting
  */
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;

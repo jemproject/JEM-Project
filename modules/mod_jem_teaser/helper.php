@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2023 joomlaeventmanager.net
@@ -9,7 +9,6 @@
  */
 
 defined('_JEXEC') or die;
-
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;

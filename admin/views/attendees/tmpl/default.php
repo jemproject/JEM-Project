@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+
 // HTMLHelper::_('behavior.tooltip');
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;

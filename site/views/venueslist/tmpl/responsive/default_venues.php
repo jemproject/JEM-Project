@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 $uri = Uri::getInstance();
 ?>
+
 <script type="text/javascript">
 	function tableOrdering(order, dir, view)
 	{

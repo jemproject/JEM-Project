@@ -1,12 +1,13 @@
 <?php
 /**
- * @version 4.0b4
-* @package JEM
-* @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2023 joomlaeventmanager.net
-* @copyright (C) 2005-2009 Christoph Lukes
-* @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
-*/
+ * @version 4.0rc1
+ * @package JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright (C) 2014-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;

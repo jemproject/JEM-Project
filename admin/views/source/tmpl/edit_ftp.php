@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 ?>
+
 <fieldset class="adminform" title="<?php echo Text::_('COM_JEM_CSSMANAGER_FTP_TITLE'); ?>">
 	<legend><?php echo Text::_('COM_JEM_CSSMANAGER_FTP_TITLE'); ?></legend>
 

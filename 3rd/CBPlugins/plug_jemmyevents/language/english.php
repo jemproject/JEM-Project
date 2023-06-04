@@ -1,13 +1,13 @@
 <?php
 /**
  * @package My Events
- * @version 4.0b4
+ * @version 4.0rc1
  * @author JEM Community
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Former info:
- * @copyright Copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
+ * @copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * @link     https://www.tekdi.net
  */

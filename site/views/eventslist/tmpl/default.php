@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0b4
+ * @version 4.0rc1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
+
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
