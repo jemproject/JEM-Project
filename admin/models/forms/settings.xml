@@ -311,7 +311,7 @@
 			description="COM_JEM_IMAGE_FILETYPES_DESC"
 			class="inputbox"
 			size="40"
-			default="jpg,gif,png"
+			default="jpg,gif,png,webp"
 			required="false"
 		/>
 		<field name="sizelimit" type="text"

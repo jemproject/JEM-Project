@@ -236,7 +236,7 @@ class JemImage
 	{
 		$sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
 		$imagesize = $file['size'];
-		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
 
 		//check if the upload is an image...getimagesize will return false if not
 		if (!getimagesize($file['tmp_name'])) {

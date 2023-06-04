@@ -153,7 +153,7 @@ class JemTableVenue extends Table
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/venues/';
-		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
 		$allowable = explode(',', strtolower($filetypes));
 		array_walk($allowable, function(&$v){$v = trim($v);});
 		$image_to_delete = false;
