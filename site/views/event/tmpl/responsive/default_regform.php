@@ -26,7 +26,7 @@ if ($this->showRegForm && empty($this->print)) :
 		{
 			if ($this->registereduser !== null)
 			{
-				$placesavailableuser = $this->item->maxbookeduser - $this->registers[$this->registereduser]->places;
+                $placesavailableuser = $this->item->maxbookeduser - ($this->registers[$this->registereduser]->status>0? $this->registers[$this->registereduser]->places:0);
 			}
 			else
 			{
@@ -101,7 +101,9 @@ if ($this->showRegForm && empty($this->print)) :
             <ul class="eventlist">
                 <li class="jem-event" onclick="document.getElementById('jem_register_event').click();">
                     <input id="jem_register_event" type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'));"
-						<?php if ($this->isregistered !== false && ($placesavailableevent===0 || $placesavailableuser===0 ) && (!$this->item->waitinglist || ($this->item->waitinglist && ($placesBookedUser ||  $placesavailableuser===0)))) {
+                        <?php if ($this->isregistered !== false
+                            && ($placesavailableevent===0 || ($placesavailableuser===0 && $statusRegistrationUser != 0))
+                            && (!$this->item->waitinglist || ($this->item->waitinglist && ($placesBookedUser ||  $placesavailableuser===0)))) {
 							echo 'disabled="disabled"';
 						} else {
 							echo 'checked="checked"';
