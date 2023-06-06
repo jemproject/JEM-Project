@@ -153,11 +153,11 @@ if ($this->showRegForm && empty($this->print)) :
 							{
 								echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
 							}else{
-								echo ' ' . mb_strtolower(Text::_('COM_JEM_PLACES')) . '.';
+                            echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
 							}
 						}else{
                             if($this->item->maxbookeduser == $placesavailableuser){
-	                            echo ' ' . mb_strtolower(Text::_('COM_JEM_PLACES')) . '.';
+                            echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
                             }else
                             {
 	                            echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
