@@ -21,7 +21,7 @@ use Joomla\CMS\Language\Text;
 			<tr>
 				<td style="width: 100%;">
 					<dl class="jem-dl">
-						<dt><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></dd>
+						<dt><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></dt>
 						<dd><input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>" /></dd>
 						<dd><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>" /></dd>
 

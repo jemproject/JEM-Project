@@ -138,7 +138,7 @@ use Joomla\CMS\Language\Text;
                 <dt><label> </label></dt>
                 <dd><?php echo $recurr_info; ?></dd>
                 <dt><label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label></dt>
-                <dd><input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_limit_date; ?>"></dt>
+                <dd><input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_limit_date; ?>"></dd>
             </dl>
 			<?php
 		}

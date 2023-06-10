@@ -75,7 +75,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
           <dd class="jem-date">
             <?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
           </dd>
-				</td>
 		</dl>
 
     <?php if (empty($this->rows)) : //ToDo EGNARTS!!! ?>

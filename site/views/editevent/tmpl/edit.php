@@ -200,7 +200,6 @@ $params		= $this->params;
 				?>
 		<input type="hidden" name="removeimage" id="removeimage" value="0" />
 
-			</li>
 		</ul>
 		<?php endif; ?>
 	</fieldset>

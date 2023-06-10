@@ -200,7 +200,6 @@ jQuery(document).ready(function($){
 										echo HTMLHelper::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' => 'btn')); ?>
 						</dd>
 						<?php endif; ?>
-						</li>
 					</dl>
 					<input type="hidden" name="removeimage" id="removeimage" value="0" />
 					<?php endif; ?>
