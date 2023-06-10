@@ -26,7 +26,7 @@ class JemViewEventslist extends JViewLegacy
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
-		$app->input->set('limit', $app->getCfg('feed_limit'));
+		$app->input->set('limit', $app->get('feed_limit'));
 		$rows = $this->get('Items');
 
 		if (!empty($rows)) { // prevent warning if $rows === false

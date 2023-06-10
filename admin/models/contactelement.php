@@ -57,7 +57,7 @@ class JemModelContactelement extends JModelLegacy
 
 		$app =  Factory::getApplication();
 
-		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->get('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 

@@ -69,7 +69,7 @@ class JemModelCategoryelement extends JModelLegacy
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		$limit            = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit            = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->get('list_limit'), 'int');
 		$limitstart       = $app->getUserStateFromRequest('com_jem.limitstart', 'limitstart', 0, 'int');
 		$limitstart       = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$filter_order     = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');
