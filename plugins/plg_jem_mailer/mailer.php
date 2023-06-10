@@ -56,9 +56,9 @@ class plgJemMailer extends JPlugin
 		$app = Factory::getApplication();
 		$jemsettings = JemHelper::globalattribs();
 
-		$this->_SiteName     = $app->getCfg('sitename');
-		$this->_MailFrom     = $app->getCfg('mailfrom');
-		$this->_FromName     = $app->getCfg('fromname');
+		$this->_SiteName     = $app->get('sitename');
+		$this->_MailFrom     = $app->get('mailfrom');
+		$this->_FromName     = $app->get('fromname');
 		$this->_AdminDBList  = $this->Adminlist();
 		$this->_UseLoginName = !$jemsettings->get('global_regname', 1); // regname == 1: name, 0: username (login name)
 	}
@@ -443,7 +443,7 @@ class plgJemMailer extends JPlugin
 			$data->subject   = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				} else {
 					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				}
@@ -1178,7 +1178,7 @@ class plgJemMailer extends JPlugin
 			$db->setQuery($query);
 
 			if ($db->execute() === false) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
+				Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
 				return;
 			}
 
