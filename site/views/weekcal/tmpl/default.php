@@ -40,7 +40,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
 	$evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
-	$currentWeek = $this->week;
+	$currentWeek = $this->currentweek;
 	$firstDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
 	$showtime = $this->settings->get('global_show_timedetails', 1);
 
