@@ -955,10 +955,12 @@ class plgJemMailer extends JPlugin
 			$query->join('INNER', '#__jem_categories AS cat ON cat.id = cer.catid');
 			$query->join('INNER', '#__viewlevels AS vl ON vl.id = cat.access');
 			$query->where('cer.itemid = '.$db->quote($eventid));
+			$query->where('cat.emailacljl = 1');
 			$db->setQuery($query);
 			$list_groups_jl = $db->loadResult();
 
 			//List user emails of groups list
+			if($list_groups_jl) {
 			$list_groups_jl = substr ($list_groups_jl, 1, -1);
 			$query = $db->getQuery(true);
 			$query->select(array('u.email'));
@@ -972,7 +974,9 @@ class plgJemMailer extends JPlugin
 			} else {
 				$recipients['category_acl'] = array_unique($category_acl_receivers);
 			}
-
+			}else{
+				$recipients['category_acl'] = false;
+			}
 		} else {
 			$recipients['category_acl'] = false;
 		}
