@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Eventslist-Feed
  */
-class JemViewEventslist extends JViewLegacy
+class JemViewEventslist extends HtmlView
 {
 	/**
 	 * Creates the Event Feed

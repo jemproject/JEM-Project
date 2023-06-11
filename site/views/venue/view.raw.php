@@ -9,10 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\View\HtmlView;
+
 /**
  * Raw: Venue
  */
-class JemViewVenue extends JViewLegacy
+class JemViewVenue extends HtmlView
 {
 	/**
 	 * Creates the output for the Venue view

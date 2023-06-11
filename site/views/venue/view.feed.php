@@ -11,11 +11,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Venue-Feed
  */
-class JemViewVenue extends JViewLegacy
+class JemViewVenue extends HtmlView
 {
 	/**
 	 * Creates the Event Feed of the Venue

@@ -10,13 +10,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * JemView class with JEM specific extensions
  *
  * @package JEM
  */
-class JemView extends JViewLegacy
+class JemView extends HtmlView
 {
 	/**
 	 * Layout style suffix
