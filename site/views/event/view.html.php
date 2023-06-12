@@ -465,11 +465,11 @@ class JemViewEvent extends JemView
 	*/
 		// Check for empty title and add site name if param is set
 		if (empty($title)) {
-			$title = $app->getCfg('sitename');
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = Text::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = $app->get('sitename');
+		} elseif ($app->get('sitename_pagetitles', 0) == 1) {
+			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+		} elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 		if (empty($title)) {
 			$title = $this->item->title;
@@ -480,7 +480,7 @@ class JemViewEvent extends JemView
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 
-		if ($app->getCfg('MetaAuthor') == '1') {
+		if ($app->get('MetaAuthor') == '1') {
 			$this->document->setMetaData('author', $this->item->author);
 		}
 

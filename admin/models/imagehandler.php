@@ -45,7 +45,7 @@ class JemModelImagehandler extends JModelLegacy
 		$app        = Factory::getApplication();
 		$option     = $app->input->getString('option', 'com_jem');
 		$task       = $app->input->getVar('task', '');
-		$limit      = $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit      = $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->get('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$search     = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');

@@ -13,12 +13,12 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 /**
  * mailto-View
  */
-class JemViewMailto extends JViewLegacy
+class JemViewMailto extends HtmlView
 {
-
 
 	protected $form = null;
 	protected $canDo;
@@ -85,11 +85,11 @@ class JemViewMailto extends JViewLegacy
 		$app = Factory::getApplication();
 
 		$title = $this->params->get('page_title');
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = Text::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 		$this->document->setTitle($title);
 

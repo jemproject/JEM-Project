@@ -9,10 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\View\HtmlView;
+
 /**
  * Raw: Eventlist
  */
-class JemViewEventslist extends JViewLegacy
+class JemViewEventslist extends HtmlView
 {
 	/**
 	 * Creates the output for the Eventslist view

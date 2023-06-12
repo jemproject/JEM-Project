@@ -11,11 +11,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Venue-Feed
  */
-class JemViewVenue extends JViewLegacy
+class JemViewVenue extends HtmlView
 {
 	/**
 	 * Creates the Event Feed of the Venue
@@ -27,7 +28,7 @@ class JemViewVenue extends JViewLegacy
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
-		$app->input->set('limit', $app->getCfg('feed_limit'));
+		$app->input->set('limit', $app->get('feed_limit'));
 
 		$rows  = $this->get('Items');
 		$venue = $this->get('Venue');

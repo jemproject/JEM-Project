@@ -10,13 +10,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * JemView class with JEM specific extensions
  *
  * @package JEM
  */
-class JemView extends JViewLegacy
+class JemView extends HtmlView
 {
 	/**
 	 * Layout style suffix
@@ -104,11 +105,11 @@ class JemView extends JViewLegacy
 		$title = $this->params->get('page_title', '');
 
 		if (empty($title)) {
-			$title = $app->getCfg('sitename');
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = Text::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = $app->get('sitename');
+		} elseif ($app->get('sitename_pagetitles', 0) == 1) {
+			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+		} elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 		$this->document->setTitle($title);
 

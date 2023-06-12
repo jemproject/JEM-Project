@@ -96,6 +96,7 @@ function jem_common_show_filter(&$obj) {
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->rows as $row) : ?>
+                    <tr>
 					<?php $odd = 1 - $odd; ?>
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 				<?php if ($this->params->get('showstate')) : ?>

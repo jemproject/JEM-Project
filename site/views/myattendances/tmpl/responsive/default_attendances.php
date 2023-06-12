@@ -107,9 +107,16 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php endif; ?>
   }
 
+    .jem-sort #jem_places,
+    #jem .jem-event .jem-myattendances-places {
+        flex: 0 5%;
+	    text-align: center;
+    }
+
   .jem-sort #jem_status,
   #jem .jem-event .jem-myattendances-status {
-    flex: 0 1%;
+        flex: 0 5%;
+	    text-align: center;
   }
     .jem-sort #jem_comment,
   #jem .jem-event .jem-myattendances-comments {
@@ -176,9 +183,8 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
-      <?php /*if ($this->event->waitinglist):*/ ?>
-        <div id="jem_status" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php /*endif;*/?>
+      <div id="jem_places" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <div id="jem_status" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
         <div id="jem_comment" class="sectiontableheader"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
       <?php endif; ?>
@@ -265,6 +271,10 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
               <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
             </div>
           <?php endif; ?>
+
+            <div class="jem-event-info-small jem-myattendances-places" title="<?php echo Text::_('COM_JEM_TABLE_PLACES').': '.$this->escape($row->places); ?>">
+                <?php echo $this->escape($row->places); ?>
+            </div>            
 
 					<div class="jem-event-info-small jem-myattendances-status">
 						<?php

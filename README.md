@@ -1,4 +1,4 @@
-# JEM 4.0 Release Canditate 1
+# JEM 4.0 Release Candidate 1
 released 2023-06-04
 
 Based on

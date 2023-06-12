@@ -69,7 +69,7 @@ class JemViewImport extends JemAdminView
 		// Do not show default prefix #__ but its replacement value
 		$this->prefixToShow = $progress->prefix;
 		if (empty($this->prefixToShow) || $this->prefixToShow == "#__") {
-			$this->prefixToShow = $app->getCfg('dbprefix');
+			$this->prefixToShow = $app->get('dbprefix');
 		}
 
 		// add toolbar

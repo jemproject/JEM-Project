@@ -13,10 +13,11 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 /**
  * View class: Attendee
  */
-class JemViewAttendee extends JViewLegacy {
+class JemViewAttendee extends HtmlView {
 
 	public function display($tpl = null)
 	{

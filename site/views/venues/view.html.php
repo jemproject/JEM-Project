@@ -101,11 +101,11 @@ class JemViewVenues extends JemView
 		}
 
 		// Add site name to title if param is set
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 		}
 
 		//Set Page title

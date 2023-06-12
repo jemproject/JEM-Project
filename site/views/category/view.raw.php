@@ -10,11 +10,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Raw: Category
  */
-class JemViewCategory extends JViewLegacy
+class JemViewCategory extends HtmlView
 {
 	/**
 	 * Creates the output for the Category view
