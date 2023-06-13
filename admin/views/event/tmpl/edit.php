@@ -33,6 +33,7 @@ $options = array(
 $wa = $this->document->getWebAssetManager();
 		$wa->useScript('keepalive')
 			->useScript('form.validate')
+    ->useScript('inlinehelp')
 			->useScript('multiselect');
 
 // Create shortcut to parameters.
