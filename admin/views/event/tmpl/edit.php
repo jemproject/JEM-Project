@@ -30,9 +30,6 @@ $options = array(
 		'useCookie' => true, // this must not be a string. Don't use quotes.
 );
 
-// HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.formvalidation');
-// HTMLHelper::_('behavior.keepalive');
 $wa = $this->document->getWebAssetManager();
 		$wa->useScript('keepalive')
 			->useScript('form.validate')
@@ -426,7 +423,7 @@ Joomla.submitbutton = function(task)
 						<?php /* show "old" recurrence settings for information */
 							if (!empty($this->item->recurr_bak->recurrence_type)) {
 								$recurr_type = '';
-								$nullDate = JFactory::getDbo()->getNullDate();
+                                $nullDate = Factory::getContainer()->get('DatabaseDriver')->getNullDate();
 								$rlDate = $this->item->recurr_bak->recurrence_limit_date;
 								if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
 									$recurr_limit_date = JemOutput::formatdate($rlDate);

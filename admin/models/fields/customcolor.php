@@ -9,6 +9,7 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -45,7 +46,7 @@ class JFormFieldCustomColor extends JFormField
 		$script[] = '	}';
 			
 		// Add the script to the document head.
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
 		
 		// Initialize JavaScript field attributes.
 		$onclick = ' onclick="openPicker(\''.$this->id.'\', -200, 20)"';
