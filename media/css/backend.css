@@ -108,10 +108,9 @@ img.venue-image {
 	padding: 3px;
 } 
 div.controls {
-     text-align:center;
+     text-align:left;
      height:20px;
      line-height:20px;
-     border-top:1px solid #ddd;
 }
 div.controls img {vertical-align:middle;}
 div.imageinfo {
