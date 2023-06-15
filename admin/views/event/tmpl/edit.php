@@ -212,36 +212,23 @@ Joomla.submitbutton = function(task)
 			</legend>
 			
 			<ul class="adminformlist">
-			
-				<li><?php echo $this->form->getLabel('title');?> <?php echo $this->form->getInput('title'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('alias'); ?> <?php echo $this->form->getInput('alias'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('dates'); ?> <?php echo $this->form->getInput('dates'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('enddates'); ?> <?php echo $this->form->getInput('enddates'); ?>
-				</li>
-                <li><div class="label-form"><?php echo $this->form->getLabel('times'); ?></div> <?php echo $this->form->getInput('times'); ?>
-				</li>
-                <li><div class="label-form"><?php echo $this->form->getLabel('endtimes'); ?></div> <?php echo $this->form->getInput('endtimes'); ?>
-				</li>
-                <li><div class="label-form"><?php echo $this->form->getLabel('cats'); ?></div> <?php echo $this->form->getInput('cats'); ?>
-				</li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('title'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('dates'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('enddates'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('times'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('cats'); ?></div></li>
 			</ul>
 		</fieldset>
 
 		<fieldset class="adminform">
 			<ul class="adminformlist">
-				<li><div class="label-form"><?php echo $this->form->getLabel('locid'); ?></div><?php echo $this->form->getInput('locid'); ?>
-				</li>
-				<li><div class="label-form"><?php echo $this->form->getLabel('contactid'); ?></div><?php echo $this->form->getInput('contactid'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('featured'); ?> <?php echo $this->form->getInput('featured'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('access'); ?> <?php echo $this->form->getInput('access'); ?>
-				</li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
 			</ul>
 		</fieldset>
 
