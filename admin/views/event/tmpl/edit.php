@@ -274,18 +274,12 @@ Joomla.submitbutton = function(task)
 				<div id="publishing-details" class="accordion-collapse collapse show" aria-labelledby="publishing-details-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('created_by'); ?> <?php echo $this->form->getInput('created_by'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('hits'); ?> <?php echo $this->form->getInput('hits'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('created'); ?> <?php echo $this->form->getInput('created'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('modified'); ?> <?php echo $this->form->getInput('modified'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('version'); ?> <?php echo $this->form->getInput('version'); ?>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('created_by'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('hits'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('created'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('modified'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('version'); ?></div></li>
 						</ul>
 					</div>
 				</div>
@@ -316,24 +310,19 @@ Joomla.submitbutton = function(task)
 				<div id="registra" class="accordion-collapse collapse" aria-labelledby="registra-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
-							<!--/li>
-							<li--><span id="jform_unregistra_until_span"><?php echo $this->form->getInput('unregistra_until'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
-							</li>
-							<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
-                            <li><?php echo $this->form->getLabel('minbookeduser'); ?> <?php echo $this->form->getInput('minbookeduser'); ?></li>
-                            <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
-                            <li><?php echo $this->form->getLabel('reservedplaces'); ?> <?php echo $this->form->getInput('reservedplaces'); ?></li>
-
+							<li><div class="label-form"><?php echo $this->form->renderfield('registra'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('minbookeduser'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('maxbookeduser'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('reservedplaces'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
 							<?php if ($this->item->maxplaces): ?>
-							<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
-                                <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
-							</li>
+                                <li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
+                                    <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
+                                </li>
 							<?php endif; ?>
-							<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
-							</li>
+                            <li></li>
 						</ul>
 					</div>
 				</div>
@@ -349,8 +338,7 @@ Joomla.submitbutton = function(task)
 				<div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('datimage'); ?> <?php echo $this->form->getInput('datimage'); ?>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('datimage'); ?></div></li>
 						</ul>
 					</div>
 				</div>
@@ -365,13 +353,12 @@ Joomla.submitbutton = function(task)
 				<div id="recurrence" class="accordion-collapse collapse" aria-labelledby="recurrence-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type'); ?></div></li>
 							<li id="recurrence_output" class="m-3">
 							<label></label>
 							</li>
 							<li id="counter_row" style="display: none;">
-								<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
+                                <div class="label-form"><?php echo $this->form->renderfield('recurrence_limit_date'); ?></div>
 								<br><div><small>
 								<?php
 								$anticipation	= $this->jemsettings->recurrence_anticipation;
