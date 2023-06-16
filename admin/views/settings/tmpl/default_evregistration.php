@@ -18,10 +18,10 @@ $group = 'globalattribs';
     <fieldset class="options-form">
 		<legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('event_show_attendeenames',$group); ?> <?php echo $this->form->getInput('event_show_attendeenames',$group); ?></li>
-			<li><?php echo $this->form->getLabel('event_show_more_attendeedetails',$group); ?> <?php echo $this->form->getInput('event_show_more_attendeedetails',$group); ?></li>
-			<li><?php echo $this->form->getLabel('event_comunsolution',$group); ?> <?php echo $this->form->getInput('event_comunsolution',$group); ?></li>
-			<li><?php echo $this->form->getLabel('event_comunoption',$group); ?> <?php echo $this->form->getInput('event_comunoption',$group); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('event_show_attendeenames',$group); ?></div></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('event_show_more_attendeedetails',$group); ?></div></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('event_comunsolution',$group); ?></div></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('event_comunoption',$group); ?></div></li>
 		</ul>
 	</fieldset>
 </div>

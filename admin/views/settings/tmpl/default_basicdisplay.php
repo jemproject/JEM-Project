@@ -15,35 +15,19 @@ use Joomla\CMS\Language\Text;
     <fieldset class="options-form">
 		<legend><?php echo Text::_( 'COM_JEM_DISPLAY_SETTINGS' ); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('showdetails'); ?> <?php echo $this->form->getInput('showdetails'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('showdetails'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('formatShortDate'); ?> 
-				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span><?php echo $this->form->getInput('formatShortDate'); ?>
-			</li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('formatShortDate'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('formatdate'); ?>
-				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span><?php echo $this->form->getInput('formatdate'); ?>
-			</li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('formatdate'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('formattime'); ?> 
-				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span><?php echo $this->form->getInput('formattime'); ?>
-			</li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('formattime'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('timename'); ?> <?php echo $this->form->getInput('timename'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('timename'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('formathour'); ?> 
-				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
-					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span><?php echo $this->form->getInput('formathour'); ?>
-			</li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('formathour'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('storeip'); ?> <?php echo $this->form->getInput('storeip'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('storeip'); ?></div></li>
 		</ul>
 	</fieldset>
 </div>

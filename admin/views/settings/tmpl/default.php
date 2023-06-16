@@ -26,6 +26,7 @@ $wa = $this->document->getWebAssetManager();
 		$wa
 			->useScript('keepalive')
 			->useStyle('jem.colorpicker')
+			->useScript('inlinehelp')
 			->useScript('form.validate');
 
 

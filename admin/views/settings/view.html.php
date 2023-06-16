@@ -112,7 +112,8 @@ class JemViewSettings extends JemAdminView
 		ToolbarHelper::cancel('settings.cancel');
 
 		ToolbarHelper::divider();
-		ToolbarHelper::help('settings', true);
+		ToolbarHelper::inlinehelp();
+		ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/');
 	}
 
 	protected function WarningIcon()

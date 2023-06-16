@@ -29,8 +29,8 @@ $group = 'globalattribs';
         <fieldset class="options-form">
 			<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITEVENT'); ?></legend>
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('global_show_ownedvenuesonly',$group); ?> <?php echo $this->form->getInput('global_show_ownedvenuesonly',$group); ?></li>
-				<li><?php echo $this->form->getLabel('global_editevent_maxnumcustomfields',$group); ?> <?php echo $this->form->getInput('global_editevent_maxnumcustomfields',$group); ?></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_ownedvenuesonly',$group); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_editevent_maxnumcustomfields',$group); ?></div></li>
 			</ul>
 		</fieldset>
 	</div>
@@ -50,12 +50,12 @@ $group = 'globalattribs';
         <fieldset class="options-form">
 			<legend><?php echo Text::_('COM_JEM_VENUES'); ?></legend>
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('global_show_locdescription',$group); ?> <?php echo $this->form->getInput('global_show_locdescription',$group); ?></li>
-				<li><?php echo $this->form->getLabel('global_show_detailsadress',$group); ?> <?php echo $this->form->getInput('global_show_detailsadress',$group); ?></li>
-				<li><?php echo $this->form->getLabel('global_show_detlinkvenue',$group); ?> <?php echo $this->form->getInput('global_show_detlinkvenue',$group); ?></li>
-				<li><?php echo $this->form->getLabel('global_show_mapserv',$group); ?> <?php echo $this->form->getInput('global_show_mapserv',$group); ?></li>
-				<li><?php echo $this->form->getLabel('global_tld',$group); ?> <?php echo $this->form->getInput('global_tld',$group); ?></li>
-				<li><?php echo $this->form->getLabel('global_lg',$group); ?> <?php echo $this->form->getInput('global_lg',$group); ?></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_locdescription',$group); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_detailsadress',$group); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_detlinkvenue',$group); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_mapserv',$group); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_tld',$group); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_lg',$group); ?></div></li>
 			</ul>
 		</fieldset>
 	</div>

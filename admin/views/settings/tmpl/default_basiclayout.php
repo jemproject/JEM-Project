@@ -15,8 +15,8 @@ use Joomla\CMS\Language\Text;
     <fieldset class="options-form">
 		<legend><?php echo Text::_( 'COM_JEM_LAYOUT_STYLE_SETTINGS' ); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('layoutstyle'); ?> <?php echo $this->form->getInput('layoutstyle'); ?></li>
-			<li><?php echo $this->form->getLabel('useiconfont'); ?> <?php echo $this->form->getInput('useiconfont'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('layoutstyle'); ?></div></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('useiconfont'); ?></div></li>
 		</ul>
 	</fieldset>
 </div>
