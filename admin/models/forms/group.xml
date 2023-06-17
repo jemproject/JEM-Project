@@ -10,7 +10,6 @@
 			   class="inputbox"
 			   size="40"
 			   label="COM_JEM_GROUP_NAME"
-			   description="COM_JEM_GROUP_NAME"
 			   required="true"
 		/>
 		<field name="description" type="editor"

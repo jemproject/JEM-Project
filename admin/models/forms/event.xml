@@ -32,14 +32,12 @@
 			   class="inputbox"
 			   size="40"
 			   label="COM_JEM_EVENT_TITLE"
-			   description="COM_JEM_EVENT_TITLE"
 			   required="true"
 		/>
 		<field name="alias" type="text"
 			   class="inputbox"
 			   size="40"
 			   label="COM_JEM_ALIAS"
-			   description="COM_JEM_ALIAS"
 			   required="false"
 		/>
 		<field name="datdescription" type="editor"
@@ -52,7 +50,6 @@
 		/>
 		<field name="dates" type="calendarjem"
 			   label="COM_JEM_STARTDATE"
-			   description="COM_JEM_STARTDATE"
 			   class="inputbox"
 			   size="22"
 			   format="Y-m-d"
@@ -62,7 +59,6 @@
 		/>
 		<field name="enddates" type="calendarjem"
 			   label="COM_JEM_ENDDATE"
-			   description="COM_JEM_ENDDATE"
 			   class="inputbox"
 			   size="22"
 			   format="Y-m-d"
@@ -74,14 +70,12 @@
 			   class="inputbox"
 			   size="10"
 			   label="COM_JEM_STARTTIME"
-			   description="COM_JEM_STARTTIME"
 			   required="false"
 		/>
 		<field name="endtimes" type="endtime"
 			   class="inputbox"
 			   size="10"
 			   label="COM_JEM_ENDTIME"
-			   description="COM_JEM_ENDTIME"
 			   required="false"
 		/>
 		<field name="cats" type="catoptions"
@@ -90,7 +84,6 @@
 			   size="4"
 			   label="COM_JEM_FIELD_CATEGORIES"
 			   labelclass=""
-			   description="COM_JEM_FIELD_CATEGORIES"
 			   required="true"
 		/>
 		<field name="hits" type="hits"
@@ -111,7 +104,6 @@
 		<field name="created" type="calendar"
 			   class="readonly"
 			   label="JGLOBAL_FIELD_CREATED_LABEL"
-			   description="JGLOBAL_FIELD_CREATED_DESC"
 			   size="22"
 			   default="now"
 			   readonly="true"
@@ -122,7 +114,6 @@
 		<field name="modified" type="calendar"
 			   class="readonly"
 			   label="JGLOBAL_FIELD_MODIFIED_LABEL"
-			   description="COM_JEM_EDITED_AT"
 			   size="22"
 			   readonly="true"
 			   format="Y-m-d H:i:s"
@@ -134,7 +125,6 @@
 			   readonly="true"
 			   class="readonly"
 			   label="COM_JEM_REVISED"
-			   description="COM_JEM_REVISED"
 		/>
 		<field name="created_by" type="user"
 			   label="JGLOBAL_FIELD_CREATED_BY_LABEL"
@@ -164,14 +154,12 @@
 	>
 		<field name="locid" type="modal_venue"
 			   label="COM_JEM_VENUE"
-			   description="COM_JEM_VENUE"
 			   size="40"
 			   required="false"
 			   default="0"
 		/>
 		<field name="contactid" type="modal_contact"
 			   label="COM_JEM_CONTACT"
-			   description="COM_JEM_CONTACT"
 			   size="40"
 			   required="false"
 			    default="0"
