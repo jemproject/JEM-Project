@@ -56,16 +56,25 @@ use Joomla\CMS\Language\Text;
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
 					<input type="text" name="attach-name[]" value="" class="form-control valid form-control-success w-75" />
+                    <div id="jform_attach_name-desc" class="hide-aware-inline-help d-none">
+                        <small class="form-text"><?php echo Text::_('COM_JEM_ATTACHMENT_NAME_DESC'); ?></small>
+                    </div>
 				</div>
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
 					<input type="text" name="attach-desc[]" value="" class="form-control valid form-control-success w-75" />
+                    <div id="jform_attach_desc-desc" class="hide-aware-inline-help d-none">
+                        <small class="form-text"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION_DESC'); ?></small>
+                    </div>
 				</div>
 			</td>
 			<td>
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
 					<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', 0); ?>
+                    <div id="jform_attach_access-desc" class="hide-aware-inline-help d-none">
+                        <small class="form-text"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS_DESC'); ?></small>
+                    </div>
 				</div>
 			</td>
 			<td>&nbsp;</td>
