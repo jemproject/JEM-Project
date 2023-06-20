@@ -703,9 +703,13 @@ class JemModelEvent extends ItemModel
 				$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
 				if ($reg->status != 0)
 				{
-					if ($event->waitinglist && $placesavailableevent <= 0)
-					{
-						$status = 2;
+					if($event->maxplaces){
+						$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
+						if ($event->waitinglist && $placesavailableevent <= 0) {
+							$status = 2;
+						}
+					}else {
+						$status = 1;
 					}
 				}
 			}else{
