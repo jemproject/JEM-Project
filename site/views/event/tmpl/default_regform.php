@@ -176,13 +176,13 @@ if ($this->showRegForm && empty($this->print)) :
 					{
 							if($placesRegisteredUser){
 								if($statusRegistrationUser==1){
-									$cancelplaces =  mb_strtolower(($placesRegisteredUser-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE')));
+									$cancelplaces =  ($placesRegisteredUser-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE'));
 								}else if($statusRegistrationUser==-1){
 									$cancelplaces =  '';
 								}else if($statusRegistrationUser==0){
-									$cancelplaces =  mb_strtolower(($placesRegisteredUser-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')));
+									$cancelplaces =  ($placesRegisteredUser-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE'));
 								}else if($statusRegistrationUser==2){
-									$cancelplaces =  mb_strtolower(($placesRegisteredUser-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')));
+									$cancelplaces =  ($placesRegisteredUser-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE'));
 								}
 
 								echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
