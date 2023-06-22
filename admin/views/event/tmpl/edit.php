@@ -426,7 +426,7 @@ Joomla.submitbutton = function(task)
 						<?php /* show "old" recurrence settings for information */
 							if (!empty($this->item->recurr_bak->recurrence_type)) {
 								$recurr_type = '';
-								$nullDate = JFactory::getDbo()->getNullDate();
+                                $nullDate = Factory::getContainer()->get('DatabaseDriver')->getNullDate();
 								$rlDate = $this->item->recurr_bak->recurrence_limit_date;
 								if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
 									$recurr_limit_date = JemOutput::formatdate($rlDate);

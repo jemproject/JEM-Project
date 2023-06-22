@@ -68,7 +68,7 @@ class plgSearchJEM extends JPlugin
         $app    = Factory::getApplication();
         $user   = JemFactory::getUser();
         $groups = implode(',', $user->getAuthorisedViewLevels());
-        $tag    = Factory::getLanguage()->getTag();
+        $tag    = Factory::getApplication()->getLanguage()->getTag();
 
         require_once(JPATH_SITE . '/components/com_jem/helpers/route.php');
 

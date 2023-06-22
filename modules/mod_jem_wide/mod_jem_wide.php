@@ -22,7 +22,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-Factory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
 $list = ModJemWideHelper::getList($params);
 
