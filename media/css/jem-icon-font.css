@@ -55,14 +55,14 @@ jem-featuredicon
 #jem .jem-mailbutton,
 #jem .jem-icalbutton,
 #jem .jem-exportbutton {
-  color: initial;
+    color: initial;
 }
 
 #jem .jem-publishbutton,
 #jem .jem-publishstateicon-published,
 #jem .jem-attendance-status-fa-check-circle,
 #jem .jem-registerbutton {
-  color: #03b903;
+    color: #03b903;
 }
 
 #jem .jem-unpublishbutton,
@@ -70,17 +70,17 @@ jem-featuredicon
 #jem .jem-attendance-status-fa-times-circle,
 #jem .jem-removebutton,
 #jem .jem-unregisterbutton {
-  color: #f30000;
+    color: #f30000;
 }
 
 #jem .jem-trashbutton,
 #jem .jem-publishstateicon-trashed,
 #jem .jem-attendance-status-fa-circle-o {
-  color: #6f6f6f;
+    color: #6f6f6f;
 }
 
 #jem .jem-attendance-status-fa-question-circle {
-  color: #0377cc;
+    color: #0377cc;
 }
 
 #jem .jem-publishstateicon-archived,
@@ -88,19 +88,21 @@ jem-featuredicon
 #jem .jem-featured-fa-star, /*featured*/
 #jem .jem-attendance-status-fa-exclamation-circle,
 #jem .jem-attendance-status-fa-hourglass-half {
-  color: #da8812;
+    color: #da8812;
 }
 
 #jem .jem-backbutton {
-  color: #03b903;
+    color: #03b903;
 }
 
 #jem .jem-recurrenceicon {
-	color: #da8812;
+    color: #da8812;
 }
+
 #jem .jem-recurrencefirsticon {
-	color: #f30000;
+    color: #f30000;
 }
+
 /*
 #jem .jem-recurrencefirsticon {
 	margin-left: 0.4em;

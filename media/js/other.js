@@ -10,18 +10,26 @@
  * this file manages the js script for adding/removing attachements in event
  */
 //  window.addEvent('domready', function() {
-jQuery(document).ready(function($){
- 	$('#userfile-remove').on('click', function(event){
-		var di = document.getElementById('datimage');
-		if (di) { di.style.display = 'none'; }
-		var li = document.getElementById('locimage');
-		if (li) { li.style.display = 'none'; }
-		var ufr = document.getElementById('userfile-remove');
-		if (ufr) { ufr.style.display = 'none'; }
-		var ri = document.getElementById('removeimage');
-		if (ri) { ri.value = '1'; }
-	});
-	
+jQuery(document).ready(function ($) {
+    $('#userfile-remove').on('click', function (event) {
+        var di = document.getElementById('datimage');
+        if (di) {
+            di.style.display = 'none';
+        }
+        var li = document.getElementById('locimage');
+        if (li) {
+            li.style.display = 'none';
+        }
+        var ufr = document.getElementById('userfile-remove');
+        if (ufr) {
+            ufr.style.display = 'none';
+        }
+        var ri = document.getElementById('removeimage');
+        if (ri) {
+            ri.value = '1';
+        }
+    });
 
- }); 
+
+});
 
