@@ -61,11 +61,13 @@ if ($jemsettings->oldevent > 0) {
 
 	<!-- Event -->
 	<h2 class="jem">
-		<?php		
-		echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
-        echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
-        echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
-		?>
+        <div style="white-space: nowrap;">
+            <?php
+            echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
+            echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+            echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
+            ?>
+        </div>
 	</h2>
 
 	<?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
