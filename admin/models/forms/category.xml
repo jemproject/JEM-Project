@@ -26,6 +26,7 @@
 			class="inputbox" size="20"
 			label="COM_JEM_ALIAS"
 			required="false"
+			hint="JFIELD_ALIAS_PLACEHOLDER"
 		/>
 		<field name="color" type="color"
 			class="form-control"
