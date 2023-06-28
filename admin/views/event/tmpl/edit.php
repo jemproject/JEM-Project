@@ -317,6 +317,7 @@ Joomla.submitbutton = function(task)
                             <li><div class="label-form"><?php echo $this->form->renderfield('maxbookeduser'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('reservedplaces'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
 							<?php if ($this->item->maxplaces): ?>
                                 <li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
                                     <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />

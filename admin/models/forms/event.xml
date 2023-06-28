@@ -342,6 +342,15 @@
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field>
+		<field name="requestanswer" type="checkbox"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_REQUEST_ANSWER_ASSISTENCE"
+			   description="COM_JEM_REQUEST_ANSWER_ASSISTENCE_DESC"
+			   default="0"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="recurrence"

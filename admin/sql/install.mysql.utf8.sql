@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `maxbookeduser` int(11) NOT NULL DEFAULT 1,
   `reservedplaces`  int(11) NOT NULL DEFAULT 0,
   `waitinglist` tinyint(1) NOT NULL DEFAULT '0',
+  `requestanswer` tinyint(1) NOT NULL DEFAULT '0',
   `hits` int(11) unsigned NOT NULL DEFAULT '0',
   `published` tinyint(1) NOT NULL DEFAULT '0',
   `contactid` int(10) NOT NULL DEFAULT '0',
