@@ -7,16 +7,16 @@
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 #main a:link, #main a:visited {
-	text-decoration: none;
-	color: inherit;
+    text-decoration: none;
+    color: inherit;
 }
 
 div#jem {
-	border: 0px;
+    border: 0px;
 }
 
 div#jem h2 {
-	border: none;
+    border: none;
 }
 
 div#jem .flyerimage {
@@ -24,35 +24,35 @@ div#jem .flyerimage {
 }
 
 a[href]:after {
-	content: none !important;
+    content: none !important;
 }
 
 @media print {
-  
-  div#jem .buttons {
-    display: none;
-  }
 
-  a[href]:after {
-    content: none !important;
-  }
+    div#jem .buttons {
+        display: none;
+    }
 
-  abbr[title]:after {
-    content: none;
-  }
+    a[href]:after {
+        content: none !important;
+    }
 
-   .ir a:after,
-  a[href^="javascript:"]:after,
-  a[href^="#"]:after {
-    content: none;
-  }
+    abbr[title]:after {
+        content: none;
+    }
 
-  a:link:after, a:visited:after {
-    content: none;
-  }
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: none;
+    }
+
+    a:link:after, a:visited:after {
+        content: none;
+    }
 
 
-  div#jem .flyerimage {
-      border: none;
-  }
+    div#jem .flyerimage {
+        border: none;
+    }
 }

@@ -39,6 +39,7 @@
 			   size="40"
 			   label="COM_JEM_ALIAS"
 			   required="false"
+               hint="JFIELD_ALIAS_PLACEHOLDER"
 		/>
 		<field name="datdescription" type="editor"
 			   hide="pagebreak,readmore"

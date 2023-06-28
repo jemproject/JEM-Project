@@ -1383,7 +1383,7 @@ class JemOutput
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - <span class="jem_date-1">';
+				$output .= ' - <span class="jem_date2">';
 				if ($showDayLink) {
 					$output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
 				}
@@ -1398,7 +1398,7 @@ class JemOutput
 			if ($showTime && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
 			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
-				$output .= '<span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
+				$output .= '<span class="jem_time-2">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
 			}
 		} else {
 			$output .= '<span class="jem_date-1">'.Text::_('COM_JEM_OPEN_DATE').'</span>';

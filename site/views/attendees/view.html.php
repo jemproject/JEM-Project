@@ -60,6 +60,7 @@ class JemViewAttendees extends JemView
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
 		//get vars

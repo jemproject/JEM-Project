@@ -74,21 +74,22 @@ class JemViewEvent extends JemView
 
 		// loop through attendees
 		$registers_array = array();
-		if($userId)
+		if($this->regs['all'])
 		{
-			if ($this->settings->get('event_show_more_attendeedetails', '0'))
-			{ 
-				// Show attendees, on waitinglist, invited and not attending.
-				$this->registers = array_merge(
-					$this->regs['attending'],
-					$this->regs['waiting'],
-					$this->regs['invited'],
-					$this->regs['not_attending']
-				);
-			}
-			else
-			{
-				$this->registers = $this->regs['attending'];
+			if($userId){
+				if ($this->settings->get('event_show_more_attendeedetails', '0'))
+				{
+					$this->registers = $this->regs['all'];
+				}
+				else
+				{
+					$this->registers = $this->regs['attending'];
+				}
+			}else{
+				if ($this->settings->get('event_show_attendeenames', '0')==3)
+				{
+					$this->registers = $this->regs['attending'];
+				}
 			}
 		}
 

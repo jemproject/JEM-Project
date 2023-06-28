@@ -74,10 +74,12 @@ if ($jemsettings->oldevent > 0) {
         ?>
         <dt class="jem-when hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHEN'); ?>"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
         <dd class="jem-when">
-          <?php
-          echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
-          echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
-          ?>
+            <div style="white-space: nowrap;">
+              <?php
+              echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+              echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+              ?>
+            </div>
         </dd>
         <?php if ($this->item->locid != 0) : ?>
         <dt class="jem-where hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHERE'); ?>"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>

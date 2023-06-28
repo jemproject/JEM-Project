@@ -23,6 +23,8 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_ALIAS"
+			description="COM_JEM_ALIAS"
+			hint="JFIELD_ALIAS_PLACEHOLDER"
 		/>
 		<field name="url" type="text"
 			class="inputbox"

@@ -147,7 +147,7 @@ if ($this->showRegForm && empty($this->print)) :
 						echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
 							. 'value="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->minbookeduser-$placesBookedUser:1):($placesavailableuser?? 1))
 							. '" max="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->maxbookeduser-$placesBookedUser:$placesavailableuser):($placesavailableuser?? ''))
-							. '" min="' . ($placesavailableuser>0? ($placesBookedUser-$this->item->minbookeduser > 0? $placesBookedUser-$this->item->minbookeduser:1):1) .'">';
+							. '" min="' . ($placesavailableuser>0? ($placesBookedUser-$this->item->minbookeduser >= 0? 1: $this->item->minbookeduser-$placesBookedUser):0) .'">';
 						if($this->registereduser!=null) {
 							if($placesBookedUser  && $statusRegistrationUser==1)
 							{
@@ -176,13 +176,13 @@ if ($this->showRegForm && empty($this->print)) :
 					{
 							if($placesRegisteredUser){
 								if($statusRegistrationUser==1){
-									$cancelplaces =  mb_strtolower(($placesRegisteredUser-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE')));
+									$cancelplaces =  ($placesRegisteredUser-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE'));
 								}else if($statusRegistrationUser==-1){
 									$cancelplaces =  '';
 								}else if($statusRegistrationUser==0){
-									$cancelplaces =  mb_strtolower(($placesRegisteredUser-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')));
+									$cancelplaces =  ($placesRegisteredUser-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE'));
 								}else if($statusRegistrationUser==2){
-									$cancelplaces =  mb_strtolower(($placesRegisteredUser-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')));
+									$cancelplaces =  ($placesRegisteredUser-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE'));
 								}
 
 								echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
@@ -208,7 +208,7 @@ if ($this->showRegForm && empty($this->print)) :
 		</p>
 		<?php endif; ?>
 		<p>
-			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo Text::_('COM_JEM_REGISTER'); ?>"  />
+			<input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
 		</p>
 
 		<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />

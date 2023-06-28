@@ -32,7 +32,9 @@ body.com_jem.body-overlayed {
 /* ----- */
 
 #jem h1.componentheading i.fa,
-#jem h1.componentheading i.fas {font-size: 1.332rem;}
+#jem h1.componentheading i.fas {
+    font-size: 1.332rem;
+}
 
 #jem .buttons {
     float: right;
@@ -195,9 +197,9 @@ body.com_jem.body-overlayed {
 }
 
 #jem_filter {
-    padding: 10px 0 5px 0;
+    padding: 10px 5px 5px 10px;
     align-items: baseline;
-	background-color: #ffa500;
+    background-color: #ffa500;
 }
 
 #jem_filter div {
@@ -269,7 +271,7 @@ body.com_jem.body-overlayed {
 
 #jem form input::-webkit-outer-spin-button,
 #jem form input::-webkit-inner-spin-button {
-    opacity:1;
+    opacity: 1;
 }
 
 #jem .jem-sort-parts div::after {
@@ -551,10 +553,12 @@ body.com_jem.body-overlayed {
             padding-top: 0px;
             padding-bottom: 0px;
         }
+
         #jem .jem-dl dt:first-child,
         #jem .jem-dl-long dt:first-child {
             margin-top: 0;
         }
+
         #jem .jem-dl dd,
         #jem .jem-dl-long dd {
             margin-left: 0;
@@ -562,44 +566,53 @@ body.com_jem.body-overlayed {
             padding-bottom: 0px;
             padding-left: 5px;
         }
+
         #jem .jem_limit {
             flex-wrap: wrap;
         }
+
         #jem .jem-event-details {
             order: -1;
             flex-basis: 100%
         }
+
         #jem .jem-list-img {
             margin-right: 0;
             margin-top: 10px;
         }
+
         #jem .jem-catimg {
             float: none;
             clear: both;
         }
+
         #jem .jem-sort-small .jem-small-list div {
             flex-basis: 30%;
         }
+
         #jem .jem-event-info-small {
             flex-basis: 100% !important;
         }
     }
 }
 
-@media only all and (max-width: 30rem) {}
-
-@media only all and (max-width: 74.938rem) and (min-width: 60rem) {}
-
-@media only all and (min-width: 75rem) {}
-
-#jem .form-check-input{
-width:1em !important;
+@media only all and (max-width: 30rem) {
 }
 
-.jem-readmore .btn , #find-left.btn{
-background-color:#f0f0f0;
+@media only all and (max-width: 74.938rem) and (min-width: 60rem) {
 }
 
-.jem-registered-user-owner{
-	font-weight: bold;
+@media only all and (min-width: 75rem) {
+}
+
+#jem .form-check-input {
+    width: 1em !important;
+}
+
+.jem-readmore .btn, #find-left.btn {
+    background-color: #f0f0f0;
+}
+
+.jem-registered-user-owner {
+    font-weight: bold;
 }

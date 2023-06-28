@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Uri\Uri;
 
 $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
 ?>
@@ -113,13 +114,13 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					$this->registereduser = $k;
 				}
                 if($register->status==1 && $register->places>1){
-                    $registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE')));
+                    $registedplaces =  ' + ' . $register->places-1 . ' '. ($register->places-1>1? Text::_('COM_JEM_BOOKED_PLACES'): Text::_('COM_JEM_BOOKED_PLACE'));
                 }else if($register->status==-1 && $register->places>1){
             		$registedplaces =  '';
                 }else if($register->status==0 && $register->places>1){
-                    $registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE')));
+                    $registedplaces =  ' + ' . $register->places-1 . ' '. ($register->places-1>1? Text::_('COM_JEM_INVITED_PLACES'): Text::_('COM_JEM_INVITED_PLACE'));
                 }else if($register->status==2 && $register->places>1){
-                    $registedplaces =  ' + ' . $register->places-1 . ' '. mb_strtolower(($register->places-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE')));
+                    $registedplaces =  ' + ' . $register->places-1 . ' '. ($register->places-1>1? Text::_('COM_JEM_WAITING_PLACES'): Text::_('COM_JEM_WAITING_PLACE'));
 				}
 
 				// if CB
@@ -186,7 +187,10 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 2:
 					//echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
-					<input class="btn btn-warning" type="button" value="<?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>"/>
+                    <?php $returnUrl  = JURI::getInstance()->toString();
+                    $urlLogin   = 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl); ?>
+                    <button class="btn btn-warning"  onclick="location.href='<?php echo $urlLogin;?>'" type="button">
+                        <?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
 			
 					<?php //insert Breezing Form hack here
 					/*<input class="btn btn-secondary" type="button" value="<?php echo Text::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
