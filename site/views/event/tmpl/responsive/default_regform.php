@@ -86,7 +86,11 @@ if ($this->showRegForm && empty($this->print)) :
                             echo Text::_('COM_JEM_YOU_ARE_INVITED');
                             break;
                         case  1:
-                            echo Text::_('COM_JEM_YOU_ARE_ATTENDING');
+                            if($this->allowAnnulation) {
+                                echo Text::_('COM_JEM_YOU_ARE_ATTENDING');
+                            }else{
+                                echo substr(Text::_('COM_JEM_YOU_ARE_ATTENDING'), 0,strpos(Text::_('COM_JEM_YOU_ARE_ATTENDING'), "<br>"));
+                            }
                             break;
                         case  2:
                             echo Text::_('COM_JEM_YOU_ARE_ON_WAITINGLIST');
@@ -145,25 +149,27 @@ if ($this->showRegForm && empty($this->print)) :
                     if ($placesavailableuser === 0) {
                         echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER');
                     } else {
-                        echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-                        echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
-                            . 'value="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->minbookeduser - $placesBookedUser : 1) : ($placesavailableuser ?? 1))
-                            . '" max="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->maxbookeduser - $placesBookedUser : $placesavailableuser) : ($placesavailableuser ?? ''))
-                            . '" min="' . ($placesavailableuser > 0 ? ($placesBookedUser - $this->item->minbookeduser >= 0 ? 1 : $this->item->minbookeduser - $placesBookedUser) : 0) . '">';
-                        if ($this->registereduser != null) {
-                            if($placesBookedUser  && $statusRegistrationUser==1)
-                            {
-                                echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+                        if( $this->item->maxbookeduser > 1) {
+                            echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
+                            echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
+                                . 'value="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->minbookeduser - $placesBookedUser : 1) : ($placesavailableuser ?? 1))
+                                . '" max="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->maxbookeduser - $placesBookedUser : $placesavailableuser) : ($placesavailableuser ?? ''))
+                                . '" min="' . ($placesavailableuser > 0 ? ($placesBookedUser - $this->item->minbookeduser >= 0 ? 1 : $this->item->minbookeduser - $placesBookedUser) : 0) . '">';
+                            if ($this->registereduser != null) {
+                                if ($placesBookedUser && $statusRegistrationUser == 1) {
+                                    echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+                                } else {
+                                    echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
+                                }
                             } else {
-                                echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
+                                if ($this->item->maxbookeduser == $placesavailableuser) {
+                                    echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
+                                } else {
+                                    echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+                                }
                             }
-                        } else {
-                            if ($this->item->maxbookeduser == $placesavailableuser) {
-                                echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
-                            }else
-                            {
-                                echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
-                            }
+                        }else{
+                            echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
                         }
                     }
                     ?>
@@ -179,22 +185,22 @@ if ($this->showRegForm && empty($this->print)) :
                             echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
                             if($this->registereduser !== null)
                             {
-                            if ($placesRegisteredUser) {
-                            if ($statusRegistrationUser == 1) {
-                            $cancelplaces = ($placesRegisteredUser - 1 > 1 ? Text::_('COM_JEM_BOOKED_PLACES') : Text::_('COM_JEM_BOOKED_PLACE'));
-                            } else if ($statusRegistrationUser == -1) {
-                            $cancelplaces = '';
-                            } else if ($statusRegistrationUser == 0) {
-                            $cancelplaces = ($placesRegisteredUser - 1 > 1 ? Text::_('COM_JEM_INVITED_PLACES') : Text::_('COM_JEM_INVITED_PLACE'));
-                            } else if ($statusRegistrationUser == 2) {
-                            $cancelplaces = ($placesRegisteredUser - 1 > 1 ? Text::_('COM_JEM_WAITING_PLACES') : Text::_('COM_JEM_WAITING_PLACE'));
-                            }
+                                if ($placesRegisteredUser) {
+                                    if ($statusRegistrationUser == 1) {
+                                        $cancelplaces = ($placesRegisteredUser - 1 > 1 ? Text::_('COM_JEM_BOOKED_PLACES') : Text::_('COM_JEM_BOOKED_PLACE'));
+                                    } else if ($statusRegistrationUser == -1) {
+                                        $cancelplaces = '';
+                                    } else if ($statusRegistrationUser == 0) {
+                                        $cancelplaces = ($placesRegisteredUser - 1 > 1 ? Text::_('COM_JEM_INVITED_PLACES') : Text::_('COM_JEM_INVITED_PLACE'));
+                                    } else if ($statusRegistrationUser == 2) {
+                                        $cancelplaces = ($placesRegisteredUser - 1 > 1 ? Text::_('COM_JEM_WAITING_PLACES') : Text::_('COM_JEM_WAITING_PLACE'));
+                                    }
 
-                            echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
-                            echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $placesRegisteredUser . '" max="' . $placesRegisteredUser . '" min="1">' . ' ' . $cancelplaces;
-                            }
+                                    echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
+                                    echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $placesRegisteredUser . '" max="' . $placesRegisteredUser . '" min="1">' . ' ' . $cancelplaces;
+                                }
                             }else{
-                            $cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');
+                                $cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');
                             }
                             ?>
                         <?php else : ?>
