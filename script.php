@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0rc1
+ * @version 4.0.0
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -282,7 +282,7 @@ class com_jemInstallerScript
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
         if (strtolower($type) == 'update') {
-            // Changes between 2.3.5 -> 4.0b4
+            // Changes between 2.3.5 -> 4.0
             if (version_compare($this->oldRelease, '4.0', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
                 // change categoriesdetailed view name in menu items
                 $this->updateJem2315();
