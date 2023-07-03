@@ -11,19 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
-// JHtml::_('behavior.tooltip');							 
 ?>
-	<?php /*?>	
-<style>
-div#jem_filter select {
-    width: auto;
-    margin-right:10px;
-    border: 1px solid #808080;
-	background-color: #C6CCBE;
-	cursor: pointer;
-}
-</style>
-	<?php */?>	
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
@@ -40,17 +28,16 @@ function jem_common_show_filter(&$obj) {
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-    <div>
-      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-    </div>
-    <div class="jem-row jem-justify-start jem-nowrap">
-      <?php echo $this->lists['filter']; ?>
-      <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-    </div>
-    <div class="jem-row jem-justify-start jem-nowrap">
-      <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button> 
-    </div>
+            <?php if ($this->settings->get('global_show_filter',1)) : ?>
+                <div class="jem_fleft">
+                    <label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
+                    <?php echo $this->lists['filter'].'&nbsp;'; ?>
+                    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+                    <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+                    <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                </div>
+            <?php endif; ?>
+
 	  	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
 		   
