@@ -1,4 +1,4 @@
-# JEM v4.0.0-stable
+# JEM 4.0.0-stable
 released 2023-07-03
 
 Based on
