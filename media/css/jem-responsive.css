@@ -50,6 +50,7 @@ body.com_jem.body-overlayed {
     flex-wrap: wrap;
     justify-content: space-between;
     align-content: center;
+    align-items: center;
 }
 
 #jem .jem-wrap-reverse {
@@ -172,11 +173,11 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    padding: 10px;
+    gap: 5px;
 }
 
 #jem #limit {
-    padding: 0;
+    padding: 0 10px;
     margin: 0;
     width: 80px;
 }
