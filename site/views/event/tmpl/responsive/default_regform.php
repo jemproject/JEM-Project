@@ -177,7 +177,6 @@ if ($this->showRegForm && empty($this->print)) :
                             <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
                             <?php
                             echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
-                            ?>
                             if($this->registereduser !== null)
                             {
                             if ($placesRegisteredUser) {
