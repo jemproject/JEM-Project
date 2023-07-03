@@ -227,7 +227,7 @@ class com_jemInstallerScript
         $devLevel = Version::PATCH_VERSION;
         $this->newRelease = (string) $parent->manifest->version;
 
-        if (version_compare(JVERSION, '4.4.0', 'ge') ||  // J! 4.x NOT supported, but allow alpha/beta
+        if (version_compare(JVERSION, '5.0.0', 'ge') || // J! 5.x NOT supported, but allow alpha/beta
             !(($current_version >= '4.3' && $devLevel >= '0') ||
                 ($current_version >= '4.2' && $devLevel >= '9') ||
                 ($current_version == '4.1' && $devLevel >= '5') ||
