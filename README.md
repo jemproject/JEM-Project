@@ -1,5 +1,5 @@
-# JEM 4.0.0
-released 2023-07-04
+# JEM v4.0.0-stable
+released 2023-07-03
 
 Based on
 - jemproject/JEM-Project
