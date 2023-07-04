@@ -34,27 +34,31 @@ class JemModelUpdatecheck extends BaseDatabaseModel
 	public function getUpdatedata()
 	{
 		$installedversion = JemHelper::getParam(1, 'version', 1, 'com_jem');
-		$updateFile       = "https://www.joomlaeventmanager.net/updatecheck/update.xml";
+		$updateFile       = "https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml";
 		$checkFile        = self::CheckFile($updateFile);
 		$updatedata       = new stdClass();
 
 		if ($checkFile) {
 			$xml = simplexml_load_string(file_get_contents($updateFile));
-			//$xml = simplexml_load_file($updateFile);
+			$jversion = JVERSION;
+			foreach($xml->update as $updatexml) {
+				$version = $updatexml->targetplatform["version"]->__toString();
+				if (preg_match('/^' . $version . '/', $jversion)) {
+					//version to check, not visible in table
+					$updatedata->version = $updatexml->version;
 
-			//version to check, not visible in table
-			$updatedata->version          = $xml->version;
-
-			//in table
-			$updatedata->versiondetail    = $xml->versiondetail;
-			$updatedata->date             = JemOutput::formatdate($xml->date);
-			$updatedata->info             = $xml->info;
-			$updatedata->download         = $xml->download;
-			$updatedata->notes            = $xml->notes;
-			$updatedata->changes          = explode(';', $xml->changes);
-			$updatedata->failed           = 0;
-			$updatedata->installedversion = $installedversion;
-			$updatedata->current          = version_compare($installedversion, $updatedata->version);
+					//in table
+					$updatedata->versiondetail    = $updatexml->version;
+					$updatedata->date             = JemOutput::formatdate($updatexml->date);
+					$updatedata->info             = $updatexml->infourl;
+					$updatedata->download         = $updatexml->downloads->downloadurl;
+					$updatedata->notes            = $updatexml->notes;
+					$updatedata->changes          = explode(';', $updatexml->changes);
+					$updatedata->failed           = 0;
+					$updatedata->installedversion = $installedversion;
+					$updatedata->current          = version_compare($installedversion, $updatedata->version);
+				}
+			}
 		} else {
 			$updatedata->failed           = 1;
 			$updatedata->installedversion = $installedversion;
