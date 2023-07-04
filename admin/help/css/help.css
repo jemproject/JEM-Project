@@ -177,6 +177,9 @@ table.help td {
 	margin: 0 auto;
 }
 
+ul.update-instructions li {padding-bottom: 0.5rem}
+
+ul.update-instructions li i {color: #1b57b1; font-weight: bold;}
 
 .icon-32-alert {
 	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.png");

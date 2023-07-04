@@ -9,22 +9,37 @@
 <body>
 <h1>How to update to JEM 4 for Joomla 4 and PHP 8</h1>
 
-<ol>
-<li>Update to JEM 2.3.6</li>
+<p>Upgrading from a previous version to JEM 4 requires a procedure to follow. It's not as simple as 1,2,3, please read the following instructions carefully:</p>
+<p>If you are on a clean JEM 2.3.5 for Joomla 3 (if you have template overrides for JEM, you must adapt them by yourself!).</p>
+<h3>Preparation</h3>
+<ul class="update-instructions">
 <li>Make a backup!</li>
-<li>Disable the JEM extensions, all jem plugins, all JEM modules</li>
-<li>(During upgrade process, it suggested to switch to Joomla3 default template "Protostar")</li>
-<li>To prepare the update from Joomla 3 to Joomla 4, go to <i>Components</i> > <i>Joomla! Update</i>, choose <i>Options</i> and in <i>Update Channel</i> choose <i>Joomla Next</i>.</li>
-<li>Save.</li>
-<li>Then you get the informations about which other components are not ready. Perhaps you have to disable/uninstall other components/modules/plugins not prepared for Joomla 4</li>
-<li>Update to php 8.x</li>
-<li>Then upgrade from Joomla 3 to Joomla 4.</li>
-<li>Install JEM 4</li>
-<li>Before switching to the frontend, change the positions of the JEM-modules and the main menue, to the positions of your new Joomla 4 template (e.g. the Joomla 4 default template "cassiopeia"!</li>
-<li>Enable all JEM 4 extension (component, modules, plugins)</li>
-<li>Adapt the JEM settings (there are changes: e.g. date and time format)</li>
-<li>Check if everything is functioning correctly!</li>
-<li>Finish :-)</li>
-</ol>
+<li>Update to Joomla 3.10.11</li>
+<li>Update to JEM 2.3.6 (Premigration version)
+</li>
+<li>Make a new backup!</li></ul>
+
+<h3>Step 1: Update Joomla to Version 4</h3>
+<p>During upgrade process, it's suggested to switch to Joomla 3 default template "Protostar" and disable all template overrides</p>
+<ul class="update-instructions">
+<li><strong>Disable</strong> all JEM extensions, component, all JEM plugins, all JEM modules. <strong>DON'T uninstall!</strong></li>
+<li>To prepare the update from Joomla 3 to Joomla 4, go to <i>Components</i> &gt; <i>Joomla! Updates</i>, under <i>Options</i> as the <i>Update Channel</i> choose <i>Joomla Next</i>
+<li>Save</li></ul>
+<p>You'll get now the Joomla 4 update informations and "Pre-Update Check", which includes a check of all components and shows which of them are not ready to migrate. Perhaps you have to disable/uninstall other components/modules/plugins which are not yet ready for Joomla 4</p>
+<ul class="update-instructions">
+<li>Update your webspace to run under php 8+</li>
+<li>Upgrade from Joomla 3 to Joomla 4 (choose the tab "Live Update" under "Joomla Update").</li>
+</ul>
+<h3>Step 2: Install JEM 4</h3>
+<p>Now you are in Joomla 4 (which looks different than in Joomla 3). Maybe you have to login again.</p>
+<ul class="update-instructions">
+<li>In the admin menu on the left go to <i>System</i>, then under <i>Install</i> choose <i>Extensions</i></li>
+<li>Install JEM 4, either with the web installer or by uploading the package you downloaded on <a href="https://www.joomlaeventmanager.net/download" target="_blank">www.joomlaeventmanager.net/download</a></li>
+<li>Before switching to the frontend, change the positions of the JEM modules and the main menu module, to the positions of your new Joomla 4 template (e.g. the Joomla 4 default template "cassiopeia")</li>
+<li>If you get a red error window, go to <i>System</i> &gt; <i>Global Configuration</i> &gt; <i>Site</i> in the box <i>SEO</i> and disable <i>Use URL Rewriting</i></li>
+<li>Enable all JEM 4 (component, modules, plugins)</li>
+<li>Adapt the JEM settings (there are changes: e.g. date/time format)</li>
+<li>Check if everything works fine!</li></ul>
+<p>Finished</p>
 </body>
 </html>
