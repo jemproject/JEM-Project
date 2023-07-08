@@ -8,6 +8,12 @@ Based on
 ## To install
 Download the installation package here from the repo and install it :-)  
 
+## Documentation
+https://www.joomlaeventmanager.net/documentation/basics
+
+## Community Support
+https://www.joomlaeventmanager.net/forum
+
 ## Translation:
 see https://app.transifex.com/jemproject/
 
