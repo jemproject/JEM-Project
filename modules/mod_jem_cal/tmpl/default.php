@@ -1,20 +1,24 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
- * Original Eventlist calendar from Christoph Lukes www.schlu.net
+ * Original Eventlist calendar from Christoph Lukes
  * PHP Calendar (version 2.3), written by Keith Devens
- * http://keithdevens.com/software/php_calendar
- * see example at http://keithdevens.com/weblog
- * License: http://keithdevens.com/software/license
+ * https://keithdevens.com/software/php_calendar
+ * see example at https://keithdevens.com/weblog
+ * License: https://keithdevens.com/software/license
  */
 
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 
 # Ensure $use_ajax is defined and boolean
 $use_ajax = !empty($use_ajax);
@@ -28,7 +32,7 @@ jQuery(document).ready(function(){
 });
 function mod_jem_cal_click_<?php print $module->id; ?>(url) {
 	jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-		jQuery(".hasTooltip").tooltip();
+		jQuery(".hasTooltip").tooltip({'html':true});		
 	});
 }
 </script>
@@ -49,38 +53,38 @@ $uxtime_first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 # Remember that mktime will automatically correct if invalid dates are entered
 #  for instance, mktime(0,0,0,12,32,1997) will be the date for Jan 1, 1998
 #  this provides a built in "rounding" feature to generate_calendar()
-$month_weekday = gmstrftime('%w', $uxtime_first_of_month);
+$month_weekday = gmdate('w', $uxtime_first_of_month);
 $days_in_month = gmdate('t', $uxtime_first_of_month);
 
 $day_names_long  = array('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY');
 $day_names_short = array('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT');
 $month_names     = array('', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER');
 
-$month_name_short = JText::_($month_names[(int)$month] . '_SHORT');
-$month_name_long  = JText::_($month_names[(int)$month]);
+$month_name_short = Text::_($month_names[(int)$month] . '_SHORT');
+$month_name_long  = Text::_($month_names[(int)$month]);
 $weekday  = ($month_weekday + 7 - $first_day) % 7;    # adjust for $first_day of week
 $the_year = $Year_length ? $year : substr($year, -2); # full or last two digits
 
 if (!function_exists('mb_convert_case')) {
 	$the_month = ucfirst(htmlentities($Month_length ? $month_name_short : $month_name_long, ENT_COMPAT, "UTF-8"));
-	$the_month_prev  = ucfirst(htmlentities(JText::_($month_names[(int)$prev_month]  . ($Month_length ? '_SHORT' : '')), ENT_COMPAT, "UTF-8"));
-	$the_month_next  = ucfirst(htmlentities(JText::_($month_names[(int)$next_month]  . ($Month_length ? '_SHORT' : '')), ENT_COMPAT, "UTF-8"));
-	$the_month_today = ucfirst(htmlentities(JText::_($month_names[(int)$today_month] . ($Month_length ? '_SHORT' : '')), ENT_COMPAT, "UTF-8"));
+	$the_month_prev  = ucfirst(htmlentities(Text::_($month_names[(int)$prev_month]  . ($Month_length ? '_SHORT' : '')), ENT_COMPAT, "UTF-8"));
+	$the_month_next  = ucfirst(htmlentities(Text::_($month_names[(int)$next_month]  . ($Month_length ? '_SHORT' : '')), ENT_COMPAT, "UTF-8"));
+	$the_month_today = ucfirst(htmlentities(Text::_($month_names[(int)$today_month] . ($Month_length ? '_SHORT' : '')), ENT_COMPAT, "UTF-8"));
 } else {
 	$the_month = mb_convert_case($Month_length ? $month_name_short : $month_name_long, MB_CASE_TITLE, "UTF-8");
-	$the_month_prev  = mb_convert_case(JText::_($month_names[(int)$prev_month]  . ($Month_length ? '_SHORT' : '')), MB_CASE_TITLE, "UTF-8");
-	$the_month_next  = mb_convert_case(JText::_($month_names[(int)$next_month]  . ($Month_length ? '_SHORT' : '')), MB_CASE_TITLE, "UTF-8");
-	$the_month_today = mb_convert_case(JText::_($month_names[(int)$today_month] . ($Month_length ? '_SHORT' : '')), MB_CASE_TITLE, "UTF-8");
+	$the_month_prev  = mb_convert_case(Text::_($month_names[(int)$prev_month]  . ($Month_length ? '_SHORT' : '')), MB_CASE_TITLE, "UTF-8");
+	$the_month_next  = mb_convert_case(Text::_($month_names[(int)$next_month]  . ($Month_length ? '_SHORT' : '')), MB_CASE_TITLE, "UTF-8");
+	$the_month_today = mb_convert_case(Text::_($month_names[(int)$today_month] . ($Month_length ? '_SHORT' : '')), MB_CASE_TITLE, "UTF-8");
 }
 
 $title = $the_month . '&nbsp;' . $the_year;
 
-# Begin calendar. Uses a real <caption>. See http://diveintomark.org/archives/2002/07/03
+# Begin calendar. Uses a real <caption>. See https://diveintomark.org/archives/2002/07/03
 $calendar .= '<table class="mod_jemcalq_calendar" cellspacing="0" cellpadding="0">' . "\n";
 
 # Month navigation links
 # use $url_base_nojs or $url_base_ajax followed by $props_prev, $props_home, or $props_next
-$navi_nojs  = '<caption class="mod_jemcalq_calendar-month" id="mod_jem_cal_' . $module->id . '_navi_nojs" style="display:' . (!$use_ajax || empty($module->in_ajax_call) ? 'table-caption' : 'none') . '">';
+$navi_nojs  = '<caption class="mod_jemcalq_calendar-month caption-top" id="mod_jem_cal_' . $module->id . '_navi_nojs" style="display:' . (!$use_ajax || empty($module->in_ajax_call) ? 'table-caption' : 'none') . '">';
 $navi_nojs .= $props_prev_year ? ('<a href="' . htmlspecialchars($url_base_nojs . $props_prev_year) . '" title="' . $the_month . ' ' . $prev_year . '">&lt;&lt;</a>&nbsp;&nbsp;') : '&lt;&lt;&nbsp;&nbsp;';
 $navi_nojs .= $props_prev      ? ('<a href="' . htmlspecialchars($url_base_nojs . $props_prev) . '" title="' . $the_month_prev . ' ' . $prev_month_year . '">&lt;</a>&nbsp;&nbsp;') : '&lt;&nbsp;&nbsp;';
 $navi_nojs .= $props_home      ? ('<span class="evtq_home"><a href="' . htmlspecialchars($url_base_nojs . $props_home) . '" title="' . $the_month_today . ' ' . $today_year . '">' . $title . '</a></span>') : $title;
@@ -90,7 +94,7 @@ $navi_nojs .= '</caption>';
 $calendar  .= $navi_nojs;
 
 if ($use_ajax) {
-	$navi_ajax  = '<caption class="mod_jemcalq_calendar-month" id="mod_jem_cal_' . $module->id . '_navi_ajax" style="display:' . (empty($module->in_ajax_call) ? 'none' : 'table-caption') . '">';
+	$navi_ajax  = '<caption class="mod_jemcalq_calendar-month caption-top" id="mod_jem_cal_' . $module->id . '_navi_ajax" style="display:' . (empty($module->in_ajax_call) ? 'none' : 'table-caption') . '">';
 	$navi_ajax .= $props_prev_year ? ('<a href="#" title="' . $the_month . ' ' . $prev_year . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_prev_year) . '\'); return false;">&lt;&lt;</a>&nbsp;&nbsp;') : '&lt;&lt;&nbsp;&nbsp;';
 	$navi_ajax .= $props_prev      ? ('<a href="#" title="' . $the_month_prev . ' ' . $prev_month_year . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_prev) . '\'); return false;">&lt;</a>&nbsp;&nbsp;') : '&lt;&nbsp;&nbsp;';
 	$navi_ajax .= $props_home      ? ('<span class="evtq_home"><a href="#" title="' . $the_month_today . ' ' . $today_year . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_home) . '\'); return false;">' . $title . '</a></span>') : $title;
@@ -106,12 +110,12 @@ if ($day_name_length) {
 	# If day_name_length is >3, the full name of the day will be printed
 	if ($day_name_length > 3) {
 		for ($d = 0; $d < 7; ++$d) {
-			$dayname = JText::_($day_names_long[($d + $first_day) % 7]);
+			$dayname = Text::_($day_names_long[($d + $first_day) % 7]);
 			$calendar .= '<th class="mod_jemcalq_daynames" abbr="' . $dayname . '">&nbsp;' . $dayname . '&nbsp;</th>';
 		}
 	} else {
 		for ($d = 0; $d < 7; ++$d) {
-			$dayname = JText::_($day_names_short[($d + $first_day) % 7]);
+			$dayname = Text::_($day_names_short[($d + $first_day) % 7]);
 			if (function_exists('mb_substr')) {
 				$calendar .= '<th class="mod_jemcalq_daynames" abbr="' . $dayname . '">&nbsp;' . mb_substr($dayname, 0, $day_name_length, 'UTF-8') . '&nbsp;</th>';
 			} else {
@@ -123,7 +127,7 @@ if ($day_name_length) {
 }
 
 # Today
-$config    = JFactory::getConfig();
+$config    = Factory::getConfig();
 $tzoffset  = $config->get('config.offset');
 $time      = time() + (($tzoffset + $Time_offset) * 60 * 60); //25/2/08 Change for v 0.6 to incorporate server offset into time;
 $today     = date('j', $time);
@@ -166,9 +170,9 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
 				$title = explode('+%+%+', $title);
 				if ($Show_Tooltips_Title == 1) {
 					if (count($title) > 1) {
-						$tipTitle = count($title) . ' ' . JText::_($CalTooltipsTitlePl);
+						$tipTitle = count($title) . ' ' . Text::_($CalTooltipsTitlePl);
 					} else {
-						$tipTitle = '1 ' . JText::_($CalTooltipsTitle);
+						$tipTitle = '1 ' . Text::_($CalTooltipsTitle);
 					}
 				} else {
 					$tipTitle = '';
@@ -197,7 +201,7 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
 				# J! version < 3.2.7: title already within $tip to ensure always '::' is present
 				# But with J! 3.3+ is a bug in script so we need to use the bad 'hasTooltip'
 				#  which is default of class parameter.
-				$calendar .= JHtml::tooltip($tip, $tipTitle, 'tooltip.png', $space . $day, $link);
+				$calendar .= HTMLHelper::tooltip($tip, $tipTitle, 'tooltip.png', $space . $day, $link);
 			}
 
 			$calendar .= '</td>';

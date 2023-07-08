@@ -1,12 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 /**
  * Event-View
@@ -34,11 +42,11 @@ class JemViewEvent extends JemView
 	{
 		$jemsettings       = JemHelper::config();
 		$settings          = JemHelper::globalattribs();
-		$app               = JFactory::getApplication();
+		$app               = Factory::getApplication();
 		$user              = JemFactory::getUser();
 		$userId            = $user->get('id');
 		$dispatcher        = JemFactory::getDispatcher();
-		$document          = JFactory::getDocument();
+		$document 		   = $app->getDocument();
 		$model             = $this->getModel();
 		$menu              = $app->getMenu();
 		$menuitem          = $menu->getActive();
@@ -54,8 +62,8 @@ class JemViewEvent extends JemView
 
 		$categories        = isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
 		$this->categories  = $categories;
+		$this->registers   = null;
 
-		$this->registers   = $model->getRegisters($this->state->get('event.id'));
 		$registration      = $this->get('UserRegistration');
 
 		$this->regs['not_attending'] = $model->getRegisters($this->state->get('event.id'), -1);
@@ -64,19 +72,40 @@ class JemViewEvent extends JemView
 		$this->regs['waiting']       = $model->getRegisters($this->state->get('event.id'),  2);
 		$this->regs['all']           = $model->getRegisters($this->state->get('event.id'), 'all');
 
+		// loop through attendees
+		$registers_array = array();
+		if($this->regs['all'])
+		{
+			if($userId){
+				if ($this->settings->get('event_show_more_attendeedetails', '0'))
+				{
+					$this->registers = $this->regs['all'];
+				}
+				else
+				{
+					$this->registers = $this->regs['attending'];
+				}
+			}else{
+				if ($this->settings->get('event_show_attendeenames', '0')==3)
+				{
+					$this->registers = $this->regs['attending'];
+				}
+			}
+		}
+
 		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);
 		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->regs, true), __METHOD__);
 
 		// check for data error
 		if (empty($this->item)) {
-			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 			return false;
 		}
 
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
 			return false;
 		}
 
@@ -86,8 +115,8 @@ class JemViewEvent extends JemView
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view']   == 'event'
-		                                && $menuitem->query['id']     == $item->id);
+			&& $menuitem->query['view']   == 'event'
+			&& $menuitem->query['id']     == $item->id);
 
 		// Add router helpers.
 		$item->slug = $item->alias ? ($item->id.':'.$item->alias) : $item->id;
@@ -98,20 +127,20 @@ class JemViewEvent extends JemView
 			// Merge so that the menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem->title ? $menuitem->title : $item->title);
 			$params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			//$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from active query (in case it is an alternative menu item)
 			if (isset($menuitem->query['layout'])) {
 				$this->setLayout($menuitem->query['layout']);
-			} else
-			// Single-event menu item layout takes priority over alt layout for an event
-			if ($layout = $item->params->get('event_layout')) {
-				$this->setLayout($layout);
-			}
-
+			} else {
+				// Single-event menu item layout takes priority over alt layout for an event
+				if ($layout = $item->params->get('event_layout')) {
+					$this->setLayout($layout);
+				}
+            }
 			$item->params->merge($params);
 		} else {
 			// Merge the menu item params with the event params so that the event params take priority
@@ -119,7 +148,7 @@ class JemViewEvent extends JemView
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
-			$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getEventRoute($item->slug)));
+			$pathway->addItem($pagetitle, Route::_(JemHelperRoute::getEventRoute($item->slug)));
 
 			// Check for alternative layouts (since we are not in a single-event menu item)
 			// Single-event menu item layout takes priority over alt layout for an event
@@ -136,7 +165,7 @@ class JemViewEvent extends JemView
 
 		// Check the view access to the event (the model has already computed the values).
 		if (!$item->params->get('access-view')) { // && !$item->params->get('show_noauth') &&  $user->get('guest')) { - not supported yet
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			return;
 		}
 
@@ -152,23 +181,23 @@ class JemViewEvent extends JemView
 
 		// Process the content plugins //
 		JPluginHelper::importPlugin('content');
-		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$item, &$this->params, $offset));
+		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$item, &$this->params, $offset));
 
 		$item->event = new stdClass();
-		$results = $dispatcher->trigger('onContentAfterTitle', array('com_jem.event', &$item, &$this->params, $offset));
+		$results = $dispatcher->triggerEvent('onContentAfterTitle', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayTitle = trim(implode("\n", $results));
 
-		$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_jem.event', &$item, &$this->params, $offset));
+		$results = $dispatcher->triggerEvent('onContentBeforeDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->beforeDisplayContent = trim(implode("\n", $results));
 
-		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
+		$results = $dispatcher->triggerEvent('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
 		
-		//use temporary class var to trigger content prepare plugin for venue description
+		//use temporary class var to triggerEvent content prepare plugin for venue description
 		$tempVenue = new stdClass();
 		$tempVenue->text = $item->locdescription;
 		$tempVenue->title = $item->venue;
-		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
+		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
 		$item->locdescription = $tempVenue->text;
 		$item->venue = $tempVenue->title;
 		
@@ -178,9 +207,11 @@ class JemViewEvent extends JemView
 		}
 
 		// Escape strings for HTML output
-		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
+		$pageclass_sfx 		 =  $this->item->params->get('pageclass_sfx');
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+		
 
-		$this->print_link = JRoute::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
+		$this->print_link = Route::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
 		// Get images
 		$this->dimage = JemImage::flyercreator($item->datimage, 'event');
@@ -308,7 +339,7 @@ class JemViewEvent extends JemView
 			$item->pluginevent->onEventEnd = false;
 		} else {
 			JPluginHelper::importPlugin('jem', 'comments');
-			$results = $dispatcher->trigger('onEventEnd', array($item->did, $this->escape($item->title)));
+			$results = $dispatcher->triggerEvent('onEventEnd', array($item->did, $this->escape($item->title)));
 			$item->pluginevent->onEventEnd = trim(implode("\n", $results));
 		}
 
@@ -325,11 +356,12 @@ class JemViewEvent extends JemView
 		}
 		$this->registration  = $registration;
 		$this->dispatcher    = $dispatcher;
-		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
+		$pageclass_sfx 		 =  $item->params->get('pageclass_sfx');
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->itemid        = $menuitem ? $menuitem->id : false;
 
 		$this->_prepareDocument();
-
+		
 		parent::display($tpl);
 	}
 
@@ -384,7 +416,7 @@ class JemViewEvent extends JemView
 	 */
 	protected function _prepareDocument()
 	{
-		$app     = JFactory::getApplication();
+		$app     = Factory::getApplication();
 	//	$menus   = $app->getMenu();
 	//	$pathway = $app->getPathway();
 
@@ -406,7 +438,7 @@ class JemViewEvent extends JemView
 		if ($menu) {
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
-			$this->params->def('page_heading', JText::_('JGLOBAL_JEM_EVENT'));
+			$this->params->def('page_heading', Text::_('JGLOBAL_JEM_EVENT'));
 		}
 	*/
 		$title = $this->params->get('page_title', '');
@@ -434,11 +466,11 @@ class JemViewEvent extends JemView
 	*/
 		// Check for empty title and add site name if param is set
 		if (empty($title)) {
-			$title = $app->getCfg('sitename');
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = $app->get('sitename');
+		} elseif ($app->get('sitename_pagetitles', 0) == 1) {
+			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+		} elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 		if (empty($title)) {
 			$title = $this->item->title;
@@ -449,7 +481,7 @@ class JemViewEvent extends JemView
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 
-		if ($app->getCfg('MetaAuthor') == '1') {
+		if ($app->get('MetaAuthor') == '1') {
 			$this->document->setMetaData('author', $this->item->author);
 		}
 
@@ -464,7 +496,7 @@ class JemViewEvent extends JemView
 		if (!empty($this->item->page_title)) {
 			$this->item->title = $this->item->title . ' - ' . $this->item->page_title;
 			$this->document->setTitle($this->item->page_title . ' - '
-					. JText::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
+					. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
 		}
 	}
 }

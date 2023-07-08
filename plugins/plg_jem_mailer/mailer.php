@@ -1,11 +1,11 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Mailer Plugin
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @todo: change onEventUserRegistered
  * there is a check for the waitinglist and that one is looking
@@ -17,7 +17,12 @@
  * add check for global time/date format. At the moment the output
  * format is not respecting the global-setting
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 // Import library dependencies
 jimport('joomla.event.plugin');
@@ -48,12 +53,12 @@ class plgJemMailer extends JPlugin
 		parent::__construct($subject, $config);
 		$this->loadLanguage();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::globalattribs();
 
-		$this->_SiteName     = $app->getCfg('sitename');
-		$this->_MailFrom     = $app->getCfg('mailfrom');
-		$this->_FromName     = $app->getCfg('fromname');
+		$this->_SiteName     = $app->get('sitename');
+		$this->_MailFrom     = $app->get('mailfrom');
+		$this->_FromName     = $app->get('fromname');
 		$this->_AdminDBList  = $this->Adminlist();
 		$this->_UseLoginName = !$jemsettings->get('global_regname', 1); // regname == 1: name, 0: username (login name)
 	}
@@ -66,7 +71,7 @@ class plgJemMailer extends JPlugin
 	 * @return  boolean
 	 *
 	 */
-	public function onEventUserRegistered($register_id)
+	public function onEventUserRegistered($register_id, $registration = false)
 	{
 		####################
 		## DEFINING ARRAY ##
@@ -85,12 +90,13 @@ class plgJemMailer extends JPlugin
 			return true;
 		}
 
+		$uri      = Uri::getInstance();
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
-		$db       = JFactory::getDBO();
+		$db       = Factory::getContainer()->get('DatabaseDriver');
 		$query    = $db->getQuery(true);
 
 		$case_when  = ' CASE WHEN ';
@@ -102,7 +108,7 @@ class plgJemMailer extends JPlugin
 		$case_when .= $id.' END as slug';
 
 		$query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
-		                     'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment'));
+			'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue', 'v.city'));
 		$query->from($db->quoteName('#__jem_register').' AS r');
@@ -126,7 +132,7 @@ class plgJemMailer extends JPlugin
 		}
 
 		//create link to event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description and comment
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -143,44 +149,44 @@ class plgJemMailer extends JPlugin
 		if (!empty($recipients['user'])) {
 			$data = new stdClass();
 			switch ($event->status) {
-			case -1: // not attanding
-				$txt_subject = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_SUBJECT';
-				if ($attendeeid != $userid) {
-					$txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($comment ? 'B' : 'A');
-				} else {
-					$txt_body = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_BODY_' . ($comment ? 'A' : '9');
-				}
-				break;
-			case  1: // attending
-				$txt_subject = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_SUBJECT';
-				if ($attendeeid != $userid) {
-					$txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF'.$waiting.'_BODY_' . ($comment ? 'B' : 'A');
-				} else {
-					$txt_body = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
-				}
-				break;
-			default: // whatever
-				if ($attendeeid != $userid) {
-					$txt_subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
-					$txt_body = 'PLG_JEM_MAILER_USER_REG_INVITATION_BODY_' . ($comment ? 'B' : 'A');
-				} else {
-					$txt_subject = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_SUBJECT';
-					$txt_body = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_BODY_' . ($comment ? 'A' : '9');
-				}
-				break;
+				case -1: // not attanding
+					$txt_subject = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_SUBJECT';
+					if ($attendeeid != $userid) {
+						$txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($comment ? 'B' : 'A');
+					} else {
+						$txt_body = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_BODY_' . ($comment ? 'A' : '9');
+					}
+					break;
+				case  1: // attending
+					$txt_subject = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_SUBJECT';
+					if ($attendeeid != $userid) {
+						$txt_body = 'PLG_JEM_MAILER_USER_REG_ONBEHALF'.$waiting.'_BODY_' . ($comment ? 'B' : 'A');
+					} else {
+						$txt_body = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
+					}
+					break;
+				default: // whatever
+					if ($attendeeid != $userid) {
+						$txt_subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
+						$txt_body = 'PLG_JEM_MAILER_USER_REG_INVITATION_BODY_' . ($comment ? 'B' : 'A');
+					} else {
+						$txt_subject = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_SUBJECT';
+						$txt_body = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_BODY_' . ($comment ? 'A' : '9');
+					}
+					break;
 			}
-			$data->subject = JText::sprintf($txt_subject, $this->_SiteName);
+			$data->subject = Text::sprintf($txt_subject, $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body = JText::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body = JText::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body = JText::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body = JText::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
 				}
 			}
 			$data->receivers = $recipients['user'];
@@ -194,44 +200,44 @@ class plgJemMailer extends JPlugin
 		if (!empty($recipients['all'])) {
 			$data = new stdClass();
 			switch ($event->status) {
-			case -1: // not attanding
-				$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_SUBJECT';
-				if ($attendeeid != $userid) {
-					$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($comment ? 'A' : '9');
-				} else {
-					$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_BODY_' . ($comment ? '9' : '8');
-				}
-				break;
-			case  1: // attending
-				$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_SUBJECT';
-				if ($attendeeid != $userid) {
-					$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
-				} else {
-					$txt_body = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_BODY_' . ($comment ? '9' : '8');
-				}
-				break;
-			default: // whatever
-				if ($attendeeid != $userid) {
-					$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_SUBJECT';
-					$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_BODY_' . ($comment ? 'A' : '9');
-				} else {
-					$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_SUBJECT';
-					$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_BODY_' . ($comment ? '9' : '8');
-				}
-				break;
+				case -1: // not attanding
+					$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_SUBJECT';
+					if ($attendeeid != $userid) {
+						$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF_NOT_ATTEND_BODY_' . ($comment ? 'A' : '9');
+					} else {
+						$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_BODY_' . ($comment ? '9' : '8');
+					}
+					break;
+				case  1: // attending
+					$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_SUBJECT';
+					if ($attendeeid != $userid) {
+						$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_ONBEHALF'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
+					} else {
+						$txt_body = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_BODY_' . ($comment ? '9' : '8');
+					}
+					break;
+				default: // whatever
+					if ($attendeeid != $userid) {
+						$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_SUBJECT';
+						$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_BODY_' . ($comment ? 'A' : '9');
+					} else {
+						$txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_SUBJECT';
+						$txt_body = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_BODY_' . ($comment ? '9' : '8');
+					}
+					break;
 			}
-			$data->subject = JText::sprintf($txt_subject, $this->_SiteName);
+			$data->subject = Text::sprintf($txt_subject, $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body = JText::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				} else {
-					$data->body = JText::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body = JText::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				} else {
-					$data->body = JText::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
 				}
 			}
 			$data->recipients = $recipients['all'];
@@ -268,8 +274,10 @@ class plgJemMailer extends JPlugin
 			return true;
 		}
 
+		$uri = Uri::getInstance();
+
 		// get data
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when  = ' CASE WHEN ';
@@ -281,7 +289,7 @@ class plgJemMailer extends JPlugin
 		$case_when .= $id.' END as slug';
 
 		$query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
-		                     'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment'));
+			'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue', 'v.city'));
 		$query->from($db->quoteName('#__jem_register').' AS r');
@@ -298,7 +306,7 @@ class plgJemMailer extends JPlugin
 		$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
 		// create link to event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -312,9 +320,9 @@ class plgJemMailer extends JPlugin
 		if (!empty($recipients['user'])) {
 			$data            = new stdClass();
 			$txt_subject     = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT';
-			$data->subject   = JText::sprintf($txt_subject, $this->_SiteName);
+			$data->subject   = Text::sprintf($txt_subject, $this->_SiteName);
 			$txt_body        = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY_9' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY_9';
-			$data->body      = JText::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+			$data->body      = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $event->places, $text_description, $link, $this->_SiteName);
 			$data->receivers = $recipients['user'];
 			$this->_mailer($data);
 		}
@@ -326,9 +334,9 @@ class plgJemMailer extends JPlugin
 		if (!empty($recipients['all'])) {
 			$data             = new stdClass();
 			$txt_subject      = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT';
-			$data->subject    = JText::sprintf($txt_subject, $this->_SiteName);
+			$data->subject    = Text::sprintf($txt_subject, $this->_SiteName);
 			$txt_body         = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY_8' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY_8';
-			$data->body       = JText::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+			$data->body       = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $event->places, $link, $this->_SiteName);
 			$data->recipients = $recipients['all'];
 			$this->_mailer($data);
 		}
@@ -365,12 +373,14 @@ class plgJemMailer extends JPlugin
 			return true;
 		}
 
+		$uri = Uri::getInstance();
+
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
-		$db 	  = JFactory::getDBO();
+		$db       = Factory::getContainer()->get('DatabaseDriver');
 		$query	  = $db->getQuery(true);
 
 		$case_when  = ' CASE WHEN ';
@@ -385,7 +395,7 @@ class plgJemMailer extends JPlugin
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue', 'v.city'));
 		if (empty($registration) && ((int)$register_id > 0)) {
-			$query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment'));
+			$query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment', 'r.places'));
 			$query->from($db->quoteName('#__jem_register').' AS r');
 			$query->join('INNER', '#__jem_events AS a ON r.event = a.id');
 			$query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -416,7 +426,7 @@ class plgJemMailer extends JPlugin
 		}
 
 		// create link to event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -430,18 +440,18 @@ class plgJemMailer extends JPlugin
 
 		if (!empty($recipients['user'])) {
 			$data            = new stdClass();
-			$data->subject   = JText::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
+			$data->subject   = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body  = JText::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body  = JText::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body  = JText::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_A', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_A', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				} else {
-					$data->body  = JText::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_9', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_9', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
 				}
 			}
 			$data->receivers = $recipients['user'];
@@ -454,18 +464,18 @@ class plgJemMailer extends JPlugin
 
 		if (!empty($recipients['all'])) {
 			$data             = new stdClass();
-			$data->subject    = JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
+			$data->subject    = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body   = JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				} else {
-					$data->body   = JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body   = JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_9', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_9', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				} else {
-					$data->body   = JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_8', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
+					$data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_8', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
 				}
 			}
 			$data->recipients = $recipients['all'];
@@ -504,14 +514,14 @@ class plgJemMailer extends JPlugin
 	}
 
 	/**
-	* This method handles any mailings triggered by an event store action
-	*
-	* @access  public
-	* @param   int  $event_id  Event identifier
-	* @param   int  $is_new    Event new or edited
-	* @return  boolean
-	*
-	*/
+	 * This method handles any mailings triggered by an event store action
+	 *
+	 * @access  public
+	 * @param   int  $event_id  Event identifier
+	 * @param   int  $is_new    Event new or edited
+	 * @return  boolean
+	 *
+	 */
 	public function onEventEdited($event_id, $is_new)
 	{
 		####################
@@ -524,6 +534,7 @@ class plgJemMailer extends JPlugin
 			'creator'    => !$is_new && $this->params->get('editevent_mail_creator', '0'),
 			'registered' => !$is_new && $this->params->get('editevent_mail_registered', '0'),
 			'category'   => $is_new ? $this->params->get('newevent_mail_category', '0') : $this->params->get('editevent_mail_category', '0'),
+			'category_acl'   => $is_new ? $this->params->get('newevent_mail_category_acl', '0') : $this->params->get('editevent_mail_category_acl', '0'),
 			'group'      => $is_new ? $this->params->get('newevent_mail_group', '0') : $this->params->get('editevent_mail_group', '0'),
 		);
 
@@ -532,12 +543,14 @@ class plgJemMailer extends JPlugin
 			return true;
 		}
 
+		$uri = Uri::getInstance();
+
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
-		$db       = JFactory::getDBO();
+		$db       = Factory::getContainer()->get('DatabaseDriver');
 		$query    = $db->getQuery(true);
 
 		$case_when  = ' CASE WHEN ';
@@ -562,39 +575,39 @@ class plgJemMailer extends JPlugin
 		}
 
 		// Link for event
-		$link = JRoute::_(JUri::root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
 
 		// Define published-state message
 		switch ($event->published) {
-		case 1:
-			$adminstate = JText::sprintf('PLG_JEM_MAILER_EVENT_PUBLISHED', $link);
-			$userstate = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EVENT_PUBLISHED', $link);
-			break;
-		case -2:
-			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_TRASHED');
-			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_TRASHED');
-			break;
-		case 0:
-			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_UNPUBLISHED');
-			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNPUBLISHED');
-			break;
-		case 2:
-			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
-			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
-			break;
-		default: /* TODO: fallback unknown / undefined */
-			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
-			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
-			break;
+			case 1:
+				$adminstate = Text::sprintf('PLG_JEM_MAILER_EVENT_PUBLISHED', $link);
+				$userstate = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EVENT_PUBLISHED', $link);
+				break;
+			case -2:
+				$adminstate = Text::_('PLG_JEM_MAILER_EVENT_TRASHED');
+				$userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_TRASHED');
+				break;
+			case 0:
+				$adminstate = Text::_('PLG_JEM_MAILER_EVENT_UNPUBLISHED');
+				$userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNPUBLISHED');
+				break;
+			case 2:
+				$adminstate = Text::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
+				$userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
+				break;
+			default: /* TODO: fallback unknown / undefined */
+				$adminstate = Text::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
+				$userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
+				break;
 		}
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, ($event->created_by != $userid) ? $event->created_by : 0, $userid);
 
 		if ($event->modified == 0) {  //when state switches modified date is not updated
-			$event->modified = 'now'; //set to now to avoid confusing e-mail message
+			$event->modified = 'now'; //set to now to avoid confusing email message
 		}
 		#####################
 		## SENDMAIL - USER ##
@@ -604,13 +617,13 @@ class plgJemMailer extends JPlugin
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
+				$created = JHtml::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName, $event->title);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
 			} else {
-				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
+				$modified = JHtml::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName, $event->title);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
 			}
 
 			$data->receivers = $recipients['user'];
@@ -625,13 +638,13 @@ class plgJemMailer extends JPlugin
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$created = JHtml::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
-				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$modified = JHtml::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
 
 			$data->recipients = $recipients['all'];
@@ -668,12 +681,14 @@ class plgJemMailer extends JPlugin
 			return true;
 		}
 
+		$uri = Uri::getInstance();
+
 		$user     = JemFactory::getUser();
 		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
-		$db 	= JFactory::getDBO();
+		$db     = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$case_when = ' CASE WHEN ';
@@ -696,18 +711,18 @@ class plgJemMailer extends JPlugin
 		# at this point we do have a result
 
 		// Define link for venue
-		$link = JRoute::_(JUri::root().JEMHelperRoute::getVenueRoute($venue->slug), false);
+		$link = JRoute::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
 		// Define published-state message
-		$adminstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
-		$userstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
+		$adminstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
+		$userstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
 
 		// Strip tags/scripts,etc from description
 		$text_description = JFilterOutput::cleanText($venue->locdescription);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), 0, ($venue->created_by != $userid) ? $venue->created_by : 0, $userid, $venue_id);
 		if ($venue->modified == 0) {  //when state switches modified date is not updated
-			$venue->modified = 'now'; //set to now to avoid confusing e-mail message
+			$venue->modified = 'now'; //set to now to avoid confusing email message
 		}
 		#####################
 		## SENDMAIL - USER ##
@@ -720,13 +735,13 @@ class plgJemMailer extends JPlugin
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date($venue->created, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
+				$created = JHtml::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
 			} else {
-				$modified = JHtml::Date($venue->modified, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
+				$modified = JHtml::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
 			}
 
 			$data->receivers = $recipients['user'];
@@ -743,14 +758,14 @@ class plgJemMailer extends JPlugin
 			# is the venue new or edited?
 			if ($is_new) {
 				# the venue is new and we send a mail to adminDBList
-				$created = JHtml::Date($venue->created, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+				$created = JHtml::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 			} else {
 				# the venue is edited and we send a mail to adminDBList
-				$modified = JHtml::Date($venue->modified, JText::_('DATE_FORMAT_LC2'));
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+				$modified = JHtml::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
+				$data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 			}
 
 			$data->recipients = $recipients['all'];
@@ -765,7 +780,7 @@ class plgJemMailer extends JPlugin
 	 */
 	private function _getRecipients(array $send_to, array $skip, $eventid, $creatorid, $userid, $venueid = 0)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		######################
 		## RECEIVERS - USER ##
@@ -922,6 +937,50 @@ class plgJemMailer extends JPlugin
 			$recipients['category'] = false;
 		}
 
+		##############################
+		## RECEIVERS - CATEGORY ACL ##
+		##############################
+
+		# in here we selected the option to send an email to the email-address
+		# that's filled in the category-view.
+
+		# the data within categoryDBList needs to be validated.
+		# if the categoryDBList is empty we shoudln't send an email
+
+		if (!empty($send_to['category_acl'])) {
+			// get list groups associated of ACL category from event
+			$query = $db->getQuery(true);
+			$query->select(array('vl.rules'));
+			$query->from($db->quoteName('#__jem_cats_event_relations').' AS cer');
+			$query->join('INNER', '#__jem_categories AS cat ON cat.id = cer.catid');
+			$query->join('INNER', '#__viewlevels AS vl ON vl.id = cat.access');
+			$query->where('cer.itemid = '.$db->quote($eventid));
+			$query->where('cat.emailacljl = 1');
+			$db->setQuery($query);
+			$list_groups_jl = $db->loadResult();
+
+			//List user emails of groups list
+			if($list_groups_jl) {
+			$list_groups_jl = substr ($list_groups_jl, 1, -1);
+			$query = $db->getQuery(true);
+			$query->select(array('u.email'));
+			$query->from($db->quoteName('#__user_usergroup_map').' AS um');
+			$query->join('INNER', '#__users AS u ON u.id = um.user_id');
+			$query->where('um.group_id IN ('.$list_groups_jl.')');
+			$query->where('u.block = 0');
+			$db->setQuery($query);
+			if (is_null($category_acl_receivers = $db->loadColumn(0))) {
+				return array();
+			} else {
+				$recipients['category_acl'] = array_unique($category_acl_receivers);
+			}
+			}else{
+				$recipients['category_acl'] = false;
+			}
+		} else {
+			$recipients['category_acl'] = false;
+		}
+
 		#######################
 		## RECEIVERS - GROUP ##
 		#######################
@@ -968,7 +1027,7 @@ class plgJemMailer extends JPlugin
 
 	/**
 	 * This method executes and send the mail
-	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 * info: https://docs.joomla.org/Sending_email_from_extensions
 	 *
 	 * @access  private
 	 * @param   object  $data  mail data object
@@ -976,7 +1035,7 @@ class plgJemMailer extends JPlugin
 	 */
 	private function _mailer($data)
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$user = JemFactory::getUser();
 		$sent = array('ok' => 0, 'failed' => 0);
 
@@ -997,7 +1056,7 @@ class plgJemMailer extends JPlugin
 
 				# show a message if something failed and user is at least event editor
 				if (!empty($sent['failed']) && $user->can('edit', 'event')) {
-					$app->enqueueMessage(JText::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
+					$app->enqueueMessage(Text::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
 				}
 			}
 
@@ -1006,13 +1065,13 @@ class plgJemMailer extends JPlugin
 		# $data->recipients contains email addresses as array keys with cause(s) as value
 		elseif (isset($data->recipients) && is_array($data->recipients)) {
 			$txt_because = array(
-				'admin'      => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ADMIN'),
-				'creator'    => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ITEM_CREATOR'),
-				'ev-creator' => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_EVENT_CREATOR'),
-				'group'      => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_GROUP_MEMBER'),
-				'category'   => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED'),
-				'registered' => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE')
-				);
+				'admin'      => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ADMIN'),
+				'creator'    => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ITEM_CREATOR'),
+				'ev-creator' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_EVENT_CREATOR'),
+				'group'      => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_GROUP_MEMBER'),
+				'category'   => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED'),
+				'registered' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE')
+			);
 
 			# for all recipients...
 			#  key is the email address
@@ -1029,7 +1088,7 @@ class plgJemMailer extends JPlugin
 
 				$body = $data->body;
 				if (!empty($why)) {
-					$body .= JText::sprintf('PLG_JEM_MAILER_RECIPIENT_BECAUSE_1', implode(', ', $why));
+					$body .= Text::sprintf('PLG_JEM_MAILER_RECIPIENT_BECAUSE_1', implode(', ', $why));
 				}
 
 				$ret = $this->_send($receiver, $data->subject, $body);
@@ -1038,7 +1097,7 @@ class plgJemMailer extends JPlugin
 
 			# show a message if something failed and user is at least event editor
 			if (!empty($sent['failed']) && $user->can('edit', 'event')) {
-				$app->enqueueMessage(JText::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
+				$app->enqueueMessage(Text::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
 			}
 
 			return true;
@@ -1050,7 +1109,7 @@ class plgJemMailer extends JPlugin
 
 	/**
 	 * This method sends the mail
-	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 * info: https://docs.joomla.org/Sending_email_from_extensions
 	 *
 	 * @access  private
 	 * @param   string  $recipient  mail recipient
@@ -1064,7 +1123,7 @@ class plgJemMailer extends JPlugin
 
 		try {
 			$mail = JFactory::getMailer();
-		//	$mail->set('exceptions', false);
+			//	$mail->set('exceptions', false);
 			$mail->setSender(array($this->_MailFrom, $this->_FromName));
 			$mail->setSubject($subject);
 
@@ -1081,17 +1140,17 @@ class plgJemMailer extends JPlugin
 			$ret = $mail->send();
 			// Check for an error
 			if ($ret instanceof Exception) {
-				JemHelper::addLogEntry(JText::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $ret->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+				JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $ret->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
 			}
 			elseif (empty($ret)) {
-				JemHelper::addLogEntry(JText::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+				JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient), __METHOD__ . '#' . __LINE__, JLog::WARNING);
 			}
 			else {
 				$result = true;
 			}
 		}
 		catch (Exception $e) {
-			JemHelper::addLogEntry(JText::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $e->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+			JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $e->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
 		}
 
 		return $result;
@@ -1102,7 +1161,8 @@ class plgJemMailer extends JPlugin
 	 */
 	private function Adminlist()
 	{
-		$additional_mails	= array_filter(explode(',', trim($this->params->get('admin_receivers'))));
+		$admin_receiver = $this->params->get('admin_receivers');
+		$additional_mails	=(!empty($admin_receiver) ? (array_filter(explode(',', ($admin_receiver  ? trim($admin_receiver) : $admin_receiver)))) :array()) ;
 		// remove whitespaces around each entry, then check if valid email address
 		foreach ($additional_mails as $k => $v) {
 			$additional_mails[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
@@ -1112,7 +1172,7 @@ class plgJemMailer extends JPlugin
 		if ($this->params->get('fetch_admin_mails', '0')) {
 
 			// get data
-			$db 	= JFactory::getDBO();
+			$db     = Factory::getContainer()->get('DatabaseDriver');
 			$query	= $db->getQuery(true);
 
 			$query->select(array('u.id','u.email','u.name'));
@@ -1122,7 +1182,7 @@ class plgJemMailer extends JPlugin
 			$db->setQuery($query);
 
 			if ($db->execute() === false) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
+				Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
 				return;
 			}
 

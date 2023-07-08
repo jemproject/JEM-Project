@@ -1,20 +1,23 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Model: Attendee
  */
-class JemModelAttendee extends JModelLegacy
+class JemModelAttendee extends BaseDatabaseModel
 {
 	/**
 	 * attendee id
@@ -38,10 +41,13 @@ class JemModelAttendee extends JModelLegacy
 	{
 		parent::__construct();
 
-		$jinput = JFactory::getApplication()->input;
-		$array = $jinput->get('cid',  0, 'array');
-		if(is_array($this) && $this->setId((int)$array[0]));
+		$jinput = Factory::getApplication()->input;
+		$array = $jinput->get('id',  0, 'array');
 
+		if(is_array($array))
+		{
+			$this->setId((int)$array[0]);
+		}
 	}
 
 	/**
@@ -83,10 +89,10 @@ class JemModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
-			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist'));
+			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser'));
 			$query->from('#__jem_register as r');
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 			$query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -116,15 +122,17 @@ class JemModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$data = JTable::getInstance('jem_register', '');
+			$data = Table::getInstance('jem_register', '');
 			$data->username = null;
 			if (empty($data->eventtitle)) {
-				$jinput = JFactory::getApplication()->input;
-				$eventid = $jinput->getInt('event', 0);
+				$jinput = Factory::getApplication()->input;
+				$eventid = $jinput->getInt('eventid', 0);
 				$table = $this->getTable('Event', 'JemTable');
 				$table->load($eventid);
 				if (!empty($table->title)) {
 					$data->eventtitle = $table->title;
+					$data->event = $table->id;
+					$data->maxbookeduser = $table->maxbookeduser;
 				}
 				$data->waitinglist = isset($table->waitinglist) ? $table->waitinglist : 0;
 			}
@@ -138,11 +146,11 @@ class JemModelAttendee extends JModelLegacy
 		$attendee = $this->getData();
 
 		if (!$attendee->id) {
-			$this->setError(JText::_('COM_JEM_MISSING_ATTENDEE_ID'));
+			$this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
 			return false;
 		}
 
-		$row = JTable::getInstance('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
 		if ($row->status == 2) {
@@ -175,7 +183,8 @@ class JemModelAttendee extends JModelLegacy
 			}
 		}
 
-		$row = $this->getTable('jem_register', '');
+		// $row = $this->getTable('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 
 		if ($id > 0) {
 			$row->load($id);
@@ -184,13 +193,13 @@ class JemModelAttendee extends JModelLegacy
 
 		// bind it to the table
 		if (!$row->bind($data)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+			Factory::getApplication()->enqueueMessage($row->getError(), 'error');
 			return false;
 		}
 
 		// sanitise id field
 		$row->id = (int)$row->id;
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
 		// Check if user is already registered to this event
 		$query = $db->getQuery(true);
@@ -205,7 +214,7 @@ class JemModelAttendee extends JModelLegacy
 		$cnt = $db->loadResult();
 
 		if ($cnt > 0) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'), 'warning');
 			return false;
 		}
 
@@ -254,7 +263,7 @@ class JemModelAttendee extends JModelLegacy
 				if ($register->booked >= $event->maxplaces)
 				{
 					if (!$event->waitinglist) {
-						\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
+						Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
 						return false;
 					} else {
 						$row->waiting = 1;
@@ -271,7 +280,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// Store it in the db
 		if (!$row->store()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+			Factory::getApplication()->enqueueMessage($row->getError(), 'error');
 			return false;
 		}
 
@@ -292,7 +301,7 @@ class JemModelAttendee extends JModelLegacy
 		\Joomla\Utilities\ArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {
-			$this->setError(JText::_('JERROR_NO_ITEMS_SELECTED'));
+			$this->setError(Text::_('JERROR_NO_ITEMS_SELECTED'));
 			return false;
 		}
 
@@ -306,7 +315,7 @@ class JemModelAttendee extends JModelLegacy
 		}
 
 		try {
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery(
 					'UPDATE #__jem_register' .

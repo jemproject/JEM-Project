@@ -1,13 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Event View
@@ -28,22 +34,24 @@ class JemViewEvent extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
-		JHtml::_('behavior.framework');
-		JHtml::_('behavior.modal', 'a.modal');
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.framework');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.formvalidation');
 
 		//initialise variables
 		$jemsettings 	= JemHelper::config();
-		$document		= JFactory::getDocument();
+		$app            = Factory::getApplication();
+		$this->document = $app->getDocument();
 		$user 			= JemFactory::getUser();
 		$this->settings	= JemAdmin::config();
-		$task			= JFactory::getApplication()->input->get('task', '');
+		$task			= $app->input->get('task', '');
 		$this->task 	= $task;
-		$url 			= JUri::root();
+		$uri            = Uri::getInstance();
+		$url 			= $uri->root();
 
 		$categories 	= JemCategories::getCategoriesTree(1);
 		$selectedcats 	= $this->get('Catsselected');
@@ -52,20 +60,16 @@ class JemViewEvent extends JemAdminView
 		$Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
-		if (version_compare(JVERSION, '3.0', 'lt')) {
-			$style = 'select.required {'
-					. 'background-color: #D5EEFF;'
-					. '}';
-			$document->addStyleDeclaration($style);
-		}
+		$wa = $app->getDocument()->getWebAssetManager();
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Load scripts
-		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		JHtml::_('script', 'com_jem/recurrence.js', false, true);
-		JHtml::_('script', 'com_jem/unlimited.js', false, true);
-		JHtml::_('script', 'com_jem/seo.js', false, true);
+		$wa->useScript('jquery');
+		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+		$wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
+		$wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
+		$wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
+		
 
 		// JQuery noConflict
 		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
@@ -87,36 +91,36 @@ class JemViewEvent extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		$user		= JemFactory::getUser();
 		$isNew		= ($this->item->id == 0);
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo		= JemHelperBackend::getActions();
 
-		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_EVENT') : JText::_('COM_JEM_EDIT_EVENT'), 'eventedit');
+		ToolBarHelper::title($isNew ? Text::_('COM_JEM_ADD_EVENT') : Text::_('COM_JEM_EDIT_EVENT'), 'eventedit');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
-			JToolBarHelper::apply('event.apply');
-			JToolBarHelper::save('event.save');
+			ToolBarHelper::apply('event.apply');
+			ToolBarHelper::save('event.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-			JToolBarHelper::save2new('event.save2new');
+			ToolBarHelper::save2new('event.save2new');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::save2copy('event.save2copy');
+			ToolBarHelper::save2copy('event.save2copy');
 		}
 
 		if (empty($this->item->id))  {
-			JToolBarHelper::cancel('event.cancel');
+			ToolBarHelper::cancel('event.cancel');
 		} else {
-			JToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editevents', true);
+		ToolBarHelper::divider();
+		ToolBarHelper::help('editevents', true);
 	}
 }
 ?>

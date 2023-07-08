@@ -1,32 +1,35 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+
 ?>
 
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
-    <div id="jem-date" class="sectiontableheader"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_DATE'); ?></div>
+    <div id="jem-date" class="sectiontableheader"><i class="fa fa-clock" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_DATE'); ?></div>
     <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>           
-      <div id="jem-title" class="sectiontableheader"><i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></div>
+      <div id="jem-title" class="sectiontableheader"><i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
     <?php endif; ?> 
     <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
-      <div id="jem-location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></div>
+      <div id="jem-location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
     <?php endif; ?>
     <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
-      <div id="jem-city" class="sectiontableheader"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_CITY'); ?></div>
+      <div id="jem-city" class="sectiontableheader"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CITY'); ?></div>
     <?php endif; ?>
     <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
-      <div id="jem-state" class="sectiontableheader"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_STATE'); ?></div>
+      <div id="jem-state" class="sectiontableheader"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_STATE'); ?></div>
     <?php endif; ?>
     <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
-      <div id="jem-category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></div>
+      <div id="jem-category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
     <?php endif; ?> 
   </div>
 </div>
@@ -46,8 +49,8 @@ defined('_JEXEC') or die;
 				<?php else : ?>
           <li class="jem-event jem-list-row jem-small-list" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php endif; ?>              
-              <div class="jem-event-info-small jem-event-date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <i class="fa fa-clock" aria-hidden="true"></i>
                 <?php 
                 if ($item->date && $params->get('datemethod', 1) == 2) :
                   echo $item->date;
@@ -63,8 +66,8 @@ defined('_JEXEC') or die;
               </div>
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
-                <div class="jem-event-info-small jem-event-title" title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
-                  <i class="fa fa-comment-o" aria-hidden="true"></i>
+                <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
+                  <i class="fa fa-comment" aria-hidden="true"></i>
                   <?php if ($params->get('linkevent') == 1) : ?>
                   <a href="<?php echo $item->eventlink; ?>">
                     <?php echo $item->title; ?>
@@ -80,7 +83,7 @@ defined('_JEXEC') or die;
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                 <?php if (!empty($item->venue)) : ?>
-                  <div class="jem-event-info-small jem-event-venue" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
+                  <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                     <?php if ($params->get('linkvenue') == 1) : ?>
                       <?php echo "<a href='".$item->venuelink."'>".$item->venue."</a>"; ?>
@@ -95,8 +98,8 @@ defined('_JEXEC') or die;
 
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
                 <?php if (!empty($item->city)) : ?>
-                  <div class="jem-event-info-small jem-event-city" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
-                    <i class="fa fa-building-o" aria-hidden="true"></i>
+                  <div class="jem-event-info-small jem-event-city" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
+                    <i class="fa fa-building" aria-hidden="true"></i>
                     <?php echo $item->city; ?>
                   </div>
                 <?php else : ?>
@@ -106,8 +109,8 @@ defined('_JEXEC') or die;
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
                 <?php if (!empty($item->state)) : ?>
-                  <div class="jem-event-info-small jem-event-state" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
-                    <i class="fa fa-map-o" aria-hidden="true"></i>
+                  <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
+                    <i class="fa fa-map" aria-hidden="true"></i>
                     <?php echo $item->state; ?>
                   </div>
                 <?php else : ?>
@@ -116,7 +119,7 @@ defined('_JEXEC') or die;
               <?php endif; ?>
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
-                <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(JText::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
+                <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                   <i class="fa fa-tag" aria-hidden="true"></i>
                   <?php echo $item->catname; ?>
                 </div>

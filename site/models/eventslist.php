@@ -1,13 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 
 jimport('joomla.application.component.modellist');
 // ensure JemFactory is loaded (because model is used by modules too)
@@ -57,7 +60,7 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$task        = $app->input->getCmd('task','');
 		$format      = $app->input->getCmd('format',false);
@@ -112,8 +115,8 @@ class JemModelEventslist extends JModelList
 			$app->setUserState('com_jem.eventslist.'.$itemid.'.filter_order_Dir', $filter_order_DirDefault);
 		}
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {
@@ -130,30 +133,87 @@ class JemModelEventslist extends JModelList
 		################################
 
 		$catswitch = $params->get('categoryswitch', '');
-
-		# set included categories
-		if ($catswitch) {
-			$included_cats = trim($params->get('categoryswitchcats', ''));
-			if ($included_cats) {
-				$included_cats = explode(",", $included_cats);
-				$this->setState('filter.category_id', $included_cats);
-				$this->setState('filter.category_id.include', true);
+		$cats  = trim($params->get('categoryswitchcats', ''));
+		$list_cats=[];
+		if ($cats){
+			$ids_cats = explode(",", $cats);
+			if ($params->get('includesubcategories', 0))
+			{
+				//get subcategories
+				foreach($ids_cats as $idcat)
+				{
+					if (!in_array($idcat, $list_cats))
+					{
+						$list_cats[] = $idcat;
+						$child_cat   = $this->getListChildCat($idcat, 1);
+						if ($child_cat !== false) {
+							if(count($child_cat) > 0) {
+								foreach ($child_cat as $child)
+								{
+									if (!in_array($child, $list_cats))
+									{
+										$list_cats[] = (string) $child;
+									}
+								}
+							}
+						}
+					}
+				}
+			}else{
+				$list_cats=$ids_cats;
 			}
-		}
 
-		# set excluded categories
-		if (!$catswitch) {
-			$excluded_cats = trim($params->get('categoryswitchcats', ''));
-			if ($excluded_cats) {
-				$excluded_cats = explode(",", $excluded_cats);
-				$this->setState('filter.category_id', $excluded_cats);
+			if ($catswitch)
+			{
+				# set included categories
+				$this->setState('filter.category_id', $list_cats);
+				$this->setState('filter.category_id.include', true);
+			}else{
+				# set excluded categories
+				$this->setState('filter.category_id', $list_cats);
 				$this->setState('filter.category_id.include', false);
 			}
 		}
-
 		$this->setState('filter.groupby',array('a.id'));
 
-		//parent::populateState('a.dates', 'ASC');
+	}
+
+	/**
+	 * Method to get a all list of children categories (subtree) by $id category.
+	 */
+	public function getListChildCat($id, $reset){
+		$user     = JemFactory::getUser();
+		$levels   = $user->getAuthorisedViewLevels();
+		$settings = JemHelper::globalattribs();
+
+		static $catchildlist=[];
+		if($reset){
+			foreach ($catchildlist as $k => $c){
+				unset($catchildlist[$k]);
+			}
+		}
+
+		// Query
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+
+		$query->select(array('DISTINCT c.id'));
+		$query->from('#__jem_categories as c');
+		$query->where('c.published = 1');
+		$query->where('(c.access IN ('.implode(',', $levels).'))');
+		$query->where('c.parent_id =' . (int) $id);
+
+		$db->setQuery($query);
+		$cats = $db->loadObjectList();
+
+		if ($cats != null) {
+			foreach ($cats as $cat){
+				$catchildlist[] = $cat->id;
+				$this->getListChildCat($cat->id,0);
+			}
+			return $catchildlist;
+		}
+		return false;
 	}
 
 	/**
@@ -213,7 +273,7 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$task      = $app->input->getCmd('task', '');
 		$itemid    = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -223,14 +283,14 @@ class JemModelEventslist extends JModelList
 		$levels    = $user->getAuthorisedViewLevels();
 
 		# Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		# Event
 		$query->select(
 				$this->getState('list.select',
 				'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
+				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
 				'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
 			)
 		);
@@ -541,7 +601,7 @@ class JemModelEventslist extends JModelList
 		$settings = JemHelper::globalattribs();
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';
@@ -695,9 +755,9 @@ class JemModelEventslist extends JModelList
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
 						# ensure we only generate days of current month in this loop
-						if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
+						if (date('m', $this->_date) == date('m', $nextday)) {
 							$multi[$counter] = clone $item;
-							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
+							$multi[$counter]->dates = date('Y-m-d', $nextday);
 
 							if ($multi[$counter]->dates < $item->enddates) {
 								$multi[$counter]->multi = 'middle';
@@ -746,7 +806,7 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function _populatePublishState($task)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');

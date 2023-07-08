@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component search Model
@@ -17,7 +20,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelSearch extends JModelLegacy
+class JemModelSearch extends BaseDatabaseModel
 {
 	/**
 	 * Events data array
@@ -55,7 +58,7 @@ class JemModelSearch extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events from database
@@ -73,7 +76,7 @@ class JemModelSearch extends JModelLegacy
 
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
-		$task = $app->input->get('task', '');
+		$task = $app->input->getCmd('task', '');
 		if (($task == 'archive') && ($filter_order == 'a.dates')) {
 			$filter_order_DirDefault = 'DESC';
 		}
@@ -88,7 +91,7 @@ class JemModelSearch extends JModelLegacy
 	 */
 	public function getData()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data)) {
@@ -124,8 +127,7 @@ class JemModelSearch extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination = new Pagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
@@ -178,15 +180,15 @@ class JemModelSearch extends JModelLegacy
 	 */
 	protected function _buildOrderBy()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
 		$filter_order      = $this->getState('filter_order');
 		$filter_order_Dir  = $this->getState('filter_order_Dir');
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 
-		$filter_order      = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir  = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
@@ -208,11 +210,11 @@ class JemModelSearch extends JModelLegacy
 	 */
 	protected function _buildWhere()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the paramaters of the active menu item
 		$params       = $app->getParams();
-		$task         = $app->input->get('task', '');
+		$task         = $app->input->getCmd('task', '');
 		$user         = JemFactory::getUser();
 		$levels       = $user->getAuthorisedViewLevels();
 		$top_category = $params->get('top_category', 1);
@@ -268,22 +270,22 @@ class JemModelSearch extends JModelLegacy
 		{
 			if ($filter_date_from && strtotime($filter_date_from))
 			{
-				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
+				$filter_date_from = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_from)));
 				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
 			}
 			if ($filter_date_to && strtotime($filter_date_to))
 			{
-				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
+				$filter_date_to = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_to)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 			}
 		} else {
 			// match only on start date
 			if ($filter_date_from && strtotime($filter_date_from)) {
-				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
+				$filter_date_from = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_from)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_from .') >= 0';
 			}
 			if ($filter_date_to && strtotime($filter_date_to)) {
-				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
+				$filter_date_to = $this->_db->Quote(date('Y-m-d', strtotime($filter_date_to)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 			}
 		}
@@ -341,7 +343,7 @@ class JemModelSearch extends JModelLegacy
 
 	public function getCountryOptions()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 
@@ -363,7 +365,7 @@ class JemModelSearch extends JModelLegacy
 
 	public function getCityOptions()
 	{
-		if (!$country = JFactory::getApplication()->input->getString('filter_country', '')) {
+		if (!$country = Factory::getApplication()->input->getString('filter_country', '')) {
 			return array();
 		}
 		$query = ' SELECT DISTINCT l.city as value, l.city as text '
@@ -385,8 +387,8 @@ class JemModelSearch extends JModelLegacy
 	 */
 	public function getCategoryTree()
 	{
-		$app = JFactory::getApplication();
-		$db = JFactory::getDBO();
+		$app = Factory::getApplication();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams('com_jem');
@@ -405,14 +407,23 @@ class JemModelSearch extends JModelLegacy
 		       . $where
 		       . ' ORDER BY c.lft'
 		       ;
-		$db->setQuery($query);
-		$mitems = $db->loadObjectList();
+		
+
+		try
+		{
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+		}
 
 		// Check for a database error.
-		if ($db->getErrorNum())
-		{
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
-		}
+		// if ($db->getErrorNum())
+		// {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
 
 		if (!$mitems) {
 			$mitems = array();

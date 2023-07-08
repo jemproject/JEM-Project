@@ -1,19 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-defined( '_JEXEC' ) or die;
 
-jimport('joomla.application.component.controlleradmin');
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Language\Text;
 
 /**
  * Events Controller
  */
-class JemControllerEvents extends JControllerAdmin
+class JemControllerEvents extends AdminController
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -43,11 +46,11 @@ class JemControllerEvents extends JControllerAdmin
 	public function featured()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
 		$user   = JemFactory::getUser();
-		$ids    = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$ids    = Factory::getApplication()->input->get('cid', array(), 'array');
 		$values = array('featured' => 1, 'unfeatured' => 0);
 		$task   = $this->getTask();
 		$value  = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
@@ -60,12 +63,12 @@ class JemControllerEvents extends JControllerAdmin
 			if (!$glob_auth && !$user->can('publish', 'event', (int)$id)) {
 				// Prune items that you can't change.
 				unset($ids[$i]);
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'notice');
 			}
 		}
 
 		if (empty($ids)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
 		}
 		else {
 			// Get the model.
@@ -73,7 +76,7 @@ class JemControllerEvents extends JControllerAdmin
 
 			// Publish the items.
 			if (!$model->featured($ids, $value)) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($model->getError(), 'warning');
+				Factory::getApplication()->enqueueMessage($model->getError(), 'warning');
 			}
 		}
 

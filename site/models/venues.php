@@ -1,15 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/eventslist.php';
+use Joomla\CMS\Factory;
+
+require_once __DIR__ . '/eventslist.php';
 
 /**
  * Model: Venues
@@ -23,7 +25,7 @@ class JemModelVenues extends JemModelEventslist
 	{
 		// parent::populateState($ordering, $direction);
 
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$params = $app->getParams();
 		$task   = $app->input->getCmd('task','');
 
@@ -56,7 +58,7 @@ class JemModelVenues extends JemModelEventslist
 		$levels = $user->getAuthorisedViewLevels();
 
 		// Query
-		$db     = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$case_when_l  = ' CASE WHEN ';
@@ -137,7 +139,7 @@ class JemModelVenues extends JemModelEventslist
 	{
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$db     = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$query->select(array('a.id'));
@@ -204,7 +206,7 @@ class JemModelVenues extends JemModelEventslist
 		$settings = JemHelper::globalattribs();
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';

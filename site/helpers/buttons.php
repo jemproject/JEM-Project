@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 /**
  * Holds the logic for attachments manipulation
@@ -29,7 +31,7 @@ class JButtonFrontend extends JButton {
 //Goes inside JButtonFrontend class definition.
 public function fetchButton($type = 'Standard', $name = '', $text = '', $task = '', $list = true)
 {
-	$i18n_text = JText::_($text);
+	$i18n_text = Text::_($text);
 	$class = $this->fetchIconClass($name);
 	$doTask = $this->_getCommand($text, $task, $list);
 
@@ -75,7 +77,7 @@ public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', 
 protected function _getCommand($name, $task, $list)
 {
 	JHtml::_('behavior.framework');
-	$message = JText::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
+	$message = Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
 	$message = addslashes($message);
 
 	if ($list)

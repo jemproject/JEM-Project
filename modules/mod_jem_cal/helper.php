@@ -1,19 +1,24 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
- * Original Eventlist calendar from Christoph Lukes www.schlu.net
+ * Original Eventlist calendar from Christoph Lukes
  * PHP Calendar (version 2.3), written by Keith Devens
- * http://keithdevens.com/software/php_calendar
- * see example at http://keithdevens.com/weblog
- * License: http://keithdevens.com/software/license
+ * https://keithdevens.com/software/php_calendar
+ * see example at https://keithdevens.com/weblog
+ * License: https://keithdevens.com/software/license
  */
+ 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
@@ -64,7 +69,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 	 */
 	public static function getAjax()
 	{
-		$app     = JFactory::getApplication();
+		$app     = Factory::getApplication();
 		$modid   = $app->input->getInt('modjemcal_id');
 		# JModuleHelper doesn't provide module by id - but we
 		$module = self::getModuleById($modid);
@@ -83,7 +88,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 		# Set params for the model
 		$model->setState('params', $params);
 
-		$db       = JFactory::getDbo();
+		$db       = Factory::getDbo();
 		$user     = JemFactory::getUser();
 		$levels   = $user->getAuthorisedViewLevels();
 		$settings = JemHelper::globalattribs();
@@ -101,8 +106,8 @@ abstract class ModJemCalHelper extends JModuleHelper
 		# Only select events within specified date range. (choosen month)
 		$monthstart = mktime(0, 0,  1, $greq_month,     1, $greq_year);
 		$monthend   = mktime(0, 0, -1, $greq_month + 1, 1, $greq_year);
-		$filter_date_from = $db->Quote(strftime('%Y-%m-%d', $monthstart));
-		$filter_date_to   = $db->Quote(strftime('%Y-%m-%d', $monthend));
+		$filter_date_from = $db->Quote(date('Y-m-d', $monthstart));
+		$filter_date_to   = $db->Quote(date('Y-m-d', $monthend));
 		$where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $filter_date_from . ') >= 0';
 		$model->setState('filter.calendar_from', $where_from);
 		$where_to = ' DATEDIFF(a.dates, ' . $filter_date_to . ') <= 0';
@@ -211,7 +216,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 				for ($count = $event->created_day; $count <= $eday; $count++) {
 
 					$uxdate = mktime(0, 0, 0, $greq_month, $count, $greq_year);
-					$tdate = strftime('%Y%m%d',$uxdate);// Toni change Joomla 1.5
+					$tdate = date('Ymd',$uxdate);// Toni change Joomla 1.5
 
 					if (empty($days[$count][1])) {
 						$cut = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
@@ -241,11 +246,11 @@ abstract class ModJemCalHelper extends JModuleHelper
 					}
 					if (($StraightToDetails == 1) and ($stod == 1)) {
 						if ($FixItemID == 0) {
-							$link = JRoute::_(JemHelperRoute::getEventRoute($event->slug));
+							$link = Route::_(JemHelperRoute::getEventRoute($event->slug));
 						} else {
-							# Create the link - copied from Jroute
+							# Create the link - copied from Route
 							$evlink = JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
-							$link = JRoute::_($evlink);
+							$link = Route::_($evlink);
 						}
 					} else {
 						/// @todo fix the getroute link
@@ -256,12 +261,12 @@ abstract class ModJemCalHelper extends JModuleHelper
 							} else {
 								$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams;
 							}
-							$link = JRoute::_($evlink);
+							$link = Route::_($evlink);
 							//$link = JemHelperRoute::getRoute($tdate, 'day');
 						} else {
-							# Create the link - copied from Jroute
+							# Create the link - copied from Route
 							$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams . '&Itemid=' . $FixItemID;
-							$link = JRoute::_($evlink);
+							$link = Route::_($evlink);
 						}
 					}
 					$days[$count] = array($link,$title);

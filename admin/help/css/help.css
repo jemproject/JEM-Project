@@ -1,7 +1,4 @@
-body {
-	font-family: verdana, arial, sans-serif;
-	line-height: 1.4em;
-}
+body {line-height: 1.4rem;}
 
 a:link {
 	color: #0B55C4;
@@ -19,16 +16,16 @@ a:hover {
 
 h1 {
 	color: #1B57B1;
-	font-size: 1.5em;
-	border-left: 25px solid #1B57B1;
+	font-size: 1.4em;
 	border-bottom: 1px solid #1B57B1;
-	padding: 0 0 2px 5px;
+	padding: 0 0 2px;
+	margin: 0;
 }
 
 h2 {
 	margin: 30px 0 10px;
 	font-family: Helvetica,Arial,sans-serif;
-	font-size: 1.4em;
+	font-size: 1.3em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
 	color: #1b57b1;
@@ -38,7 +35,7 @@ h2 {
 h3 {
 	margin: 20px 0px 10px;
 	font-family: Helvetica,Arial,sans-serif;
-	font-size: 1em;
+	font-size: 1.1em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
 	color: #1b57b1;
@@ -51,13 +48,23 @@ pre {
 	padding: 5px;
 }
 
+ul {
+  line-height: 1.2rem;
+  margin-left: -20px;
+  /* list-style-position: inside; */
+}
+
+ul li:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
 .clear {
 	clear: both;
 }
 
 img.left {
 	float: left;
-	padding-right: 4px;
+	padding-right: 10px;
 }
 
 .box {
@@ -69,82 +76,71 @@ img.left {
 	border-left: 6px solid #ffa909;
 	border-right: 1px solid #e7e7e7;
 	border-top: 1px solid #ffa909;
-	padding: 3px 3px 3px 40px;
+	padding: 3px 3px 3px 54px;
 	font-weight: bold;
-	font-size: 13px;
 	margin: 8px auto 0px;
-	color: #000000;
+	color: #000;
 	background-color: #ffa909;
-	width: 80%;
 }
 
 .hint {
 	border-left: 6px solid #ffa909;
 	border-right: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
-	padding: 3px 3px 20px 40px;
+	padding: 12px 12px 20px 54px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-hint.png) no-repeat 4px 4px;
-	font-size: 12px;
-	width: 80%;
+	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 15px;
 }
 
 .attentionheader {
 	border-left: 6px solid #FE8282;
 	border-right: 1px solid #e7e7e7;
 	border-top: 1px solid #FE8282;
-	padding: 3px 3px 3px 40px;
+	padding: 3px 3px 3px 54px;
 	font-weight: bold;
-	font-size: 13px;
 	margin: 8px auto 0px;
-	color: #000000;
+	color: #000;
 	background-color: #FE8C8C;
-	width: 80%;
 }
 
 .attention {
 	border-left: 6px solid #FE8282;
-	border-right: 1px solid #e7e7e7;
-	border-bottom: 1px solid #e7e7e7;
-	padding: 3px 3px 20px 40px;
+	border-right: 2px solid #FE8282;
+	border-bottom: 2px solid #FE8282;
+	padding: 6px 6px 20px 54px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-attention.png) no-repeat 4px 4px;
-	font-size: 12px;
-	width: 80%;
+	background: #fff url(../images/icon-32-attention.png) no-repeat 6px 6px;
 }
 
 table.help {
-	background-color: #ffffff;
+	background-color: #fff;
 	border: solid 1px #d5d5d5;
+	border-left: none;
+	border-right: none;
 	width: 100%;
 	border-collapse: collapse;
 	margin: 8px 0 10px 0;
 	margin-bottom: 15px;
-	width: 100%;
 }
 
-table.help tr.row0 {
-	background-color: #f9f9f9;
-}
-
-table.help tr.row1 {
-	background-color: #f6f6f6;
-}
+table.help tr:nth-child(even) {background: #f9f9f9}
+table.help tr:nth-child(odd) {background: #f3f3f3}
 
 table.help th {
-	font-size: 11px;
 	padding: 6px 2px 4px 4px;
 	text-align: left;
 	height: 25px;
 	color: #000;
-	background-color: #eeeeee;
+	background-color: #eee;
+	vertical-align: top;
 }
 
 table.help td {
-	padding: 3px;
+	padding: 4px;
 	text-align: left;
+	vertical-align: top;
 }
 
 .close {
@@ -155,7 +151,7 @@ table.help td {
 .toolbar-list {
 	float: left;
 	color: #465584;
-	background-color: #eeeeee;
+	background-color: #eee;
 }
 .toolbar-list ul {
 	padding: 0;
@@ -176,10 +172,6 @@ table.help td {
 	float: none;
 	margin: 0 auto;
 }
-
-ul.update-instructions li {padding-bottom: 0.5rem}
-
-ul.update-instructions li i {color: #1b57b1; font-weight: bold;}
 
 .icon-32-alert {
 	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.png");

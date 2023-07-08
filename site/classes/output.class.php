@@ -1,17 +1,28 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2022 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\Filesystem\File;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
 
-JHtml::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
+// HTMLHelper::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
 
 /**
  * Holds the logic for all output related things
@@ -23,12 +34,12 @@ class JemOutput
 	 */
 	static public function footer()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if ($app->input->get('print','','int')) {
 			return;
 		} else {
-			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+			echo '<font color="grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 		}
 	}
 
@@ -105,7 +116,7 @@ class JemOutput
 		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
 			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
 		}
-		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event')))) {
+		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist')))) {
 			$buttons[$idx][] = JemOutput::icalbutton($slug, $view); // slug: for '&id='
 		}
 		if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
@@ -153,24 +164,24 @@ class JemOutput
 			$settings  = JemHelper::globalattribs();
 			$settings2 = JemHelper::config();
 
-			$uri = JFactory::getURI();
-			$app = JFactory::getApplication();
+			$uri       = Uri::getInstance();
+			$app = Factory::getApplication();
 
 			if ($app->input->get('print','','int')) {
 				return;
 			}
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/submitevent.png', 'fa fa-fw fa-lg fa-calendar-plus-o jem-submitbutton', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isSite());
+				$image = jemhtml::icon( 'com_jem/submitevent.png', 'fa fa-fw fa-lg fa-calendar-plus jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
 			} else {
-				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
+				$image = Text::_('COM_JEM_DELIVER_NEW_EVENT');
 			}
 
 			$url = 'index.php?option=com_jem&task=event.add&return='.base64_encode($uri).'&a_id=0';
-			$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
+			$overlib = Text::_('COM_JEM_SUBMIT_EVENT_DESC');
+			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -189,25 +200,25 @@ class JemOutput
 	static public function addvenuebutton($addvenuelink, $params, $settings2)
 	{
 		if ($addvenuelink) {
-			$app      = JFactory::getApplication();
+			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			$uri      = JFactory::getURI();
+			$uri       = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
 				return;
 			}
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/addvenue.png', 'fa fa-fw fa-lg fa-plus-square jem-addvenuebutton', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isSite());
+				$image = jemhtml::icon( 'com_jem/addvenue.png', 'fa fa-fw fa-lg fa-plus-square jem-addvenuebutton', Text::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isClient('site'));
 			} else {
-				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
+				$image = Text::_('COM_JEM_DELIVER_NEW_VENUE');
 			}
 
 			$url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode($uri).'&a_id=0';
-			$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
+			$overlib = Text::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
+			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -227,25 +238,40 @@ class JemOutput
 	static public function addusersbutton($adduserslink, $eventid)
 	{
 		if ($adduserslink) {
-			$app      = JFactory::getApplication();
+			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			$uri      = JFactory::getURI();
+			$uri       = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
 				return;
 			}
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/icon-16-new.png', 'fa fa-fw fa-lg fa-user-plus jem-addusersbutton', JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, !$app->isSite());
+				$image = jemhtml::icon( 'com_jem/icon-16-new.png', 'fa fa-fw fa-lg fa-user-plus jem-addusersbutton', Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, !$app->isClient('site'));
 			} else {
-				$image = JText::_('COM_JEM_ADD_USER_REGISTRATIONS');
+				$image = Text::_('COM_JEM_ADD_USER_REGISTRATIONS');
 			}
 
-			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.JSession::getFormToken().'=1';
-			$overlib = JText::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.Session::getFormToken().'=1';
+			$overlib = Text::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
+			// $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+
+
+			$output= HTMLHelper::_(
+				'bootstrap.renderModal',
+				'adduser-modal',
+				array(		
+					'url'    => $url,
+					'title'  => Text::_('COM_JEM_SELECT'),
+					'width'  => '800px',
+					'height' => '450px',
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				)
+			);
+			$output.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#adduser-modal" ' .  self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom'). '>' . $image . '</a>';
+
 
 			return $output;
 		}
@@ -262,9 +288,9 @@ class JemOutput
 	 **/
 	static public function removebutton($text, $attributes = array())
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 
-		$output = JHtml::_('jemhtml.icon', 'com_jem/publish_r.png', 'fa fa-lg fa-times-circle jem-removebutton', $text, $attributes, !$app->isSite());
+		$output = jemhtml::icon( 'com_jem/publish_r.png', 'fa fa-lg fa-times-circle jem-removebutton', $text, $attributes, !$app->isClient('site'));
 
 		return $output;
 	}
@@ -279,14 +305,14 @@ class JemOutput
 	 **/
 	static public function prepareAddEventButton($urlparams = '')
 	{
-		$uri = JFactory::getURI();
-		$image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
+		$uri       = Uri::getInstance();
+		$image = HTMLHelper::_('image', 'com_jem/icon-16-new.png', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
 		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
 		if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
 			$url .= '&'.$urlparams;
 		}
 		$html  = '<div class="inline-button-right">';
-		$html .= JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), JText::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
+		$html .= HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), Text::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
 		$html .= '</div>';
 
 		return $html;
@@ -306,14 +332,16 @@ class JemOutput
 	{
 		$settings  = JemHelper::globalattribs();
 		$settings2 = JemHelper::config();
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
+		$uri       = Uri::getInstance();
+		$jemPath   = $uri->getPath();
 
 		if ($settings->get('global_show_archive_icon',1)) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			$view = $app->input->getWord('view');
 
@@ -323,38 +351,38 @@ class JemOutput
 
 			if ($task == 'archive') {
 				if ($settings->get('global_show_icons',1)) {
-					$image = JHtml::_('jemhtml.icon', 'com_jem/el.png', 'fa fa-fw fa-lg fa-calendar jem-archivebutton-return', JText::_('COM_JEM_SHOW_EVENTS'), NULL, !$app->isSite());
+					$image = jemhtml::icon( 'com_jem/el.png', 'fa fa-fw fa-lg fa-calendar jem-archivebutton-return', Text::_('COM_JEM_SHOW_EVENTS'), NULL, !$app->isClient('site'));
 				} else {
-					$image = JText::_('COM_JEM_SHOW_EVENTS');
+					$image = Text::_('COM_JEM_SHOW_EVENTS');
 				}
 
 				// TODO: Title and overlib just fit to events view
-				$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
-				$title = JText::_('COM_JEM_SHOW_EVENTS');
+				$overlib = Text::_('COM_JEM_SHOW_EVENTS_DESC');
+				$title = Text::_('COM_JEM_SHOW_EVENTS');
 
 				if ($id) {
-					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
+					$url = $jemPath . '?id='.$id.'&filter_reset=1';
 				} else {
-					$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
+					$url = $jemPath . '?filter_reset=1';
 				}
 			} else {
 				if ($settings->get('global_show_icons',1)) {
-					$image = JHtml::_('jemhtml.icon', 'com_jem/archive_front.png', 'fa fa-fw fa-lg fa-archive jem-archivebutton', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, !$app->isSite());
+   					$image = jemhtml::icon( 'com_jem/archive_front.png', 'fa fa-fw fa-lg fa-archive jem-archivebutton', Text::_('COM_JEM_SHOW_ARCHIVE'), NULL, !$app->isClient('site'));
 				} else {
-					$image = JText::_('COM_JEM_SHOW_ARCHIVE');
+					$image = Text::_('COM_JEM_SHOW_ARCHIVE');
 				}
 
-				$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
-				$title = JText::_('COM_JEM_SHOW_ARCHIVE');
+				$overlib = Text::_('COM_JEM_SHOW_ARCHIVE_DESC');
+				$title = Text::_('COM_JEM_SHOW_ARCHIVE');
 
 				if ($id) {
-					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
+					$url = $jemPath . '?id='.$id.'&task=archive'.'&filter_reset=1';
 				} else {
-					$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
+					$url = $jemPath . '?task=archive'.'&filter_reset=1';
 				}
 			}
 
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
+			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -375,7 +403,7 @@ class JemOutput
 	static public function editbutton($item, $params, $attribs, $allowedtoedit, $view)
 	{
 		if ($allowedtoedit) {
-			$app = JFactory::getApplication();
+			$app = Factory::getApplication();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -389,10 +417,10 @@ class JemOutput
 			// Initialise variables.
 			$user   = JemFactory::getUser();
 			$userId = $user->get('id');
-			$uri    = JFactory::getURI();
+			$uri       = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = 1; //$settings->get('global_show_icons', 1);
@@ -401,58 +429,58 @@ class JemOutput
 			{
 				case 'editevent':
 					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $userId) {
-						$checkoutUser = JFactory::getUser($item->checked_out);
-						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
-						$date = JHtml::_('date', $item->checked_out_time);
-						return '<span ' . self::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
+						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
+						$date = HTMLHelper::_('date', $item->checked_out_time);
+						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
 					}
 
 					if ($showIcon) {
-						$image = JHtml::_('jemhtml.icon', 'com_jem/calendar_edit.png', 'fa fa-fw fa-pencil-square-o jem-editbutton', JText::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isSite());
+						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
 					} else {
-						$image = JText::_('COM_JEM_EDIT_EVENT');
+						$image = Text::_('COM_JEM_EDIT_EVENT');
 					}
 					$id = isset($item->did) ? $item->did : $item->id;
-					$overlib = JText::_('COM_JEM_EDIT_EVENT_DESC');
-					$text = JText::_('COM_JEM_EDIT_EVENT');
+					$overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+					$text = Text::_('COM_JEM_EDIT_EVENT');
 					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
 				case 'editvenue':
 					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
-						$checkoutUser = JFactory::getUser($item->vChecked_out);
-						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
-						$date = JHtml::_('date', $item->vChecked_out_time);
-						return '<span ' . self::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
+						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
+						$date = HTMLHelper::_('date', $item->vChecked_out_time);
+						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
 					}
 
 					if ($showIcon) {
-						$image = JHtml::_('jemhtml.icon', 'com_jem/calendar_edit.png', 'fa fa-fw fa-pencil-square-o jem-editbutton', JText::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isSite());
+						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
 					} else {
-						$image = JText::_('COM_JEM_EDIT_VENUE');
+						$image = Text::_('COM_JEM_EDIT_VENUE');
 					}
 					$id = $item->locid;
-					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
-					$text = JText::_('COM_JEM_EDIT_VENUE');
+					$overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
+					$text = Text::_('COM_JEM_EDIT_VENUE');
 					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
 				case 'venue':
 					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
-						$checkoutUser = JFactory::getUser($item->vChecked_out);
-						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
-						$date = JHtml::_('date', $item->vChecked_out_time);
-						return '<span ' . self::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
+						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
+						$date = HTMLHelper::_('date', $item->vChecked_out_time);
+						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
 					}
 
 					if ($showIcon) {
-						$image = JHtml::_('jemhtml.icon', 'com_jem/calendar_edit.png', 'fa fa-fw fa-pencil-square-o jem-editbutton', JText::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isSite());
+						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
 					} else {
-						$image = JText::_('COM_JEM_EDIT_VENUE');
+						$image = Text::_('COM_JEM_EDIT_VENUE');
 					}
 					$id = $item->id;
-					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
-					$text = JText::_('COM_JEM_EDIT_VENUE');
+					$overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
+					$text = Text::_('COM_JEM_EDIT_VENUE');
 					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 			}
@@ -461,7 +489,7 @@ class JemOutput
 				return; // we need at least url to generate useful output
 			}
 
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib));
+			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib));
 
 			return $output;
 		}
@@ -481,7 +509,7 @@ class JemOutput
 	static public function copybutton($item, $params, $attribs, $allowedtoadd, $view)
 	{
 		if ($allowedtoadd) {
-			$app = JFactory::getApplication();
+			$app = Factory::getApplication();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -490,10 +518,10 @@ class JemOutput
 			// Initialise variables.
 			$user   = JemFactory::getUser();
 			$userId = $user->get('id');
-			$uri    = JFactory::getURI();
+			$uri       = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = 1; //$settings->get('global_show_icons', 1);
@@ -502,37 +530,37 @@ class JemOutput
 			{
 				case 'editevent':
 					if ($showIcon) {
-						$image = JHtml::_('jemhtml.icon', 'com_jem/calendar_copy.png', 'fa fa-fw fa-files-o jem-copybutton', JText::_('COM_JEM_COPY_EVENT'), NULL, !$app->isSite());
+						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_EVENT'), NULL, !$app->isClient('site'));
 					} else {
-						$image = JText::_('COM_JEM_COPY_EVENT');
+						$image = Text::_('COM_JEM_COPY_EVENT');
 					}
 					$id = isset($item->did) ? $item->did : $item->id;
-					$overlib = JText::_('COM_JEM_COPY_EVENT_DESC');
-					$text = JText::_('COM_JEM_COPY_EVENT');
+					$overlib = Text::_('COM_JEM_COPY_EVENT_DESC');
+					$text = Text::_('COM_JEM_COPY_EVENT');
 					$url = 'index.php?option=com_jem&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
 				case 'editvenue':
 					if ($showIcon) {
-						$image = JHtml::_('jemhtml.icon', 'com_jem/calendar_copy.png', 'fa fa-fw fa-files-o jem-copybutton', JText::_('COM_JEM_COPY_VENUE'), NULL, !$app->isSite());
+						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
 					} else {
-						$image = JText::_('COM_JEM_COPY_VENUE');
+						$image = Text::_('COM_JEM_COPY_VENUE');
 					}
 					$id = $item->locid;
-					$overlib = JText::_('COM_JEM_COPY_VENUE_DESC');
-					$text = JText::_('COM_JEM_COPY_VENUE');
+					$overlib = Text::_('COM_JEM_COPY_VENUE_DESC');
+					$text = Text::_('COM_JEM_COPY_VENUE');
 					$url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
 				case 'venue':
 					if ($showIcon) {
-						$image = JHtml::_('jemhtml.icon', 'com_jem/calendar_copy.png', 'fa fa-fw fa-files-o jem-copybutton', JText::_('COM_JEM_COPY_VENUE'), NULL, !$app->isSite());
+						$image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
 					} else {
-						$image = JText::_('COM_JEM_COPY_VENUE');
+						$image = Text::_('COM_JEM_COPY_VENUE');
 					}
 					$id = $item->id;
-					$overlib = JText::_('COM_JEM_COPY_VENUE_DESC');
-					$text = JText::_('COM_JEM_COPY_VENUE');
+					$overlib = Text::_('COM_JEM_COPY_VENUE_DESC');
+					$text = Text::_('COM_JEM_COPY_VENUE');
 					$url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 			}
@@ -541,7 +569,7 @@ class JemOutput
 				return; // we need at least url to generate useful output
 			}
 
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib));
+			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib));
 
 			return $output;
 		}
@@ -555,35 +583,35 @@ class JemOutput
 	 */
 	static public function printbutton($print_link, $params)
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 		$settings = JemHelper::globalattribs();
 
 		if ($settings->get('global_show_print_icon',0)) {
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
 			if ($settings->get('global_show_icons',1)) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/printButton.png', 'fa fa-fw fa-lg fa-print jem-printbutton', JText::_('JGLOBAL_PRINT'), NULL, !$app->isSite());
+				$image = jemhtml::icon( 'com_jem/printButton.png', 'fa fa-fw fa-lg fa-print jem-printbutton', Text::_('JGLOBAL_PRINT'), NULL, !$app->isClient('site'));
 			} else {
-				$image = JText::_('COM_JEM_PRINT');
+				$image = Text::_('COM_JEM_PRINT');
 			}
 
 			if ($app->input->get('print','','int')) {
 				//button in popup
-				$overlib = JText::_('COM_JEM_PRINT_DESC');
-				$text = JText::_('COM_JEM_PRINT');
-				$title = 'title='.JText::_('JGLOBAL_PRINT');
-				$pimage = JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), $title, true);
-				$output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
+				$overlib = Text::_('COM_JEM_PRINT_DESC');
+				$text = Text::_('COM_JEM_PRINT');
+				// $title = 'title='.Text::_('JGLOBAL_PRINT');
+				// $pimage = HTMLHelper::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), $title, true);
+				// $output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
+				$output = '<a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>';
 			} else {
 				//button in view
-				$overlib = JText::_('COM_JEM_PRINT_DESC');
-				$text = JText::_('COM_JEM_PRINT');
-				$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
+				$overlib = Text::_('COM_JEM_PRINT_DESC');
+				$text = Text::_('COM_JEM_PRINT');
+				$output = '<a href="' . Route::_($print_link) . '&tmpl=component" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
 				        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
 			}
-
 			return $output;
 		}
 		return;
@@ -601,7 +629,7 @@ class JemOutput
 	 */
 	static public function mailbutton($slug, $view, $params)
 	{
-		$app 		= JFactory::getApplication();
+		$app 		= Factory::getApplication();
 		$settings	= JemHelper::globalattribs();
 
 		if ($settings->get('global_show_email_icon')) {
@@ -609,29 +637,40 @@ class JemOutput
 				return;
 			}
 
-			JHtml::_('behavior.tooltip');
-			require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
+			//HTMLHelper::_('behavior.tooltip');
+			// require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
 
-			$uri = JUri::getInstance();
+			$uri = Uri::getInstance();
 			$base = $uri->toString(array('scheme', 'host', 'port'));
-			$template = JFactory::getApplication()->getTemplate();
-			$link = $base.JRoute::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
+			$template = Factory::getApplication()->getTemplate();
+			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
-			$url = 'index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($link);
+			$url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
 			if ($settings->get('global_show_icons')) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/emailButton.png', 'fa fa-fw fa-lg fa-envelope-o jem-mailbutton', JText::_('JGLOBAL_EMAIL'), NULL, !$app->isSite());
+				$image = jemhtml::icon( 'com_jem/emailButton.png', 'fa fa-fw fa-lg fa-envelope jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
 			} else {
-				$image = JText::_('COM_JEM_EMAIL');
+				$image = Text::_('COM_JEM_EMAIL');
 			}
 
-			$overlib = JText::_('COM_JEM_EMAIL_DESC');
-			$text = JText::_('COM_JEM_EMAIL');
-			$output = '<a href="' . JRoute::_($url) . '" ' . self::tooltip($text, $overlib, '', 'bottom')
-			        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
+			$overlib = Text::_('COM_JEM_EMAIL_DESC');
+			$text = Text::_('COM_JEM_EMAIL');
+			$new_html = '';
 
-			return $output;
+			$new_html.= HTMLHelper::_(
+				'bootstrap.renderModal',
+				'mailto-modal',
+				array(		
+					'url'    => $url.'&amp;'.Session::getFormToken().'=1',
+					'title'  => Text::_('COM_JEM_SELECT'),
+					'width'  => '800px',
+					'height' => '550px',
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				)
+			);
+			$new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';
+			return $new_html;
 		}
 	}
 
@@ -643,7 +682,7 @@ class JemOutput
 	 */
 	static public function icalbutton($slug, $view)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$settings = JemHelper::globalattribs();
 
 		if ($settings->get('global_show_ical_icon','0')==1) {
@@ -651,19 +690,19 @@ class JemOutput
 				return;
 			}
 
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons','0')==1) {
-				$image = JHtml::_('jemhtml.icon', 'com_jem/iCal2.0.png', 'fa fa-fw fa-lg fa-calendar-check-o jem-icalbutton', JText::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isSite());
+				$image = jemhtml::icon( 'com_jem/iCal2.0.png', 'fa fa-fw fa-lg fa-calendar-check jem-icalbutton', Text::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isClient('site'));
 			} else {
-				$image = JText::_('COM_JEM_EXPORT_ICS');
+				$image = Text::_('COM_JEM_EXPORT_ICS');
 			}
 
-			$overlib = JText::_('COM_JEM_ICAL_DESC');
-			$text = JText::_('COM_JEM_ICAL');
+			$overlib = Text::_('COM_JEM_ICAL_DESC');
+			$text = Text::_('COM_JEM_ICAL');
 
 			$url = 'index.php?option=com_jem&view='.$view.'&id='.$slug.'&format=raw&layout=ics';
-			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
+			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -677,21 +716,21 @@ class JemOutput
 	 */
 	static public function publishbutton($prefix)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if (empty($prefix) || $app->input->get('print','','int')) {
 			// button in popup or wrong call
 			$output = '';
 		} else {
 			// button in view
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
-			$image = JHtml::_('jemhtml.icon', 'com_jem/publish.png', 'fa fa-fw fa-lg fa-check-circle jem-publishbutton', JText::_('COM_JEM_PUBLISH'), NULL, !$app->isSite());
-			$overlib = JText::_('COM_JEM_PUBLISH_DESC');
-			$text = JText::_('COM_JEM_PUBLISH');
+			$image = jemhtml::icon( 'com_jem/publish.png', 'fa fa-fw fa-lg fa-check-circle jem-publishbutton', Text::_('COM_JEM_PUBLISH'), NULL, !$app->isClient('site'));
+			$overlib = Text::_('COM_JEM_PUBLISH_DESC');
+			$text = Text::_('COM_JEM_PUBLISH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".publish'));";
-			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+			$output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -705,21 +744,21 @@ class JemOutput
 	 */
 	static public function trashbutton($prefix)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if (empty($prefix) || $app->input->get('print','','int')) {
 			// button in popup or wrong call
 			$output = '';
 		} else {
 			// button in view
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
-			$image = JHtml::_('jemhtml.icon', 'com_jem/trash.png', 'fa fa-fw fa-lg fa-trash jem-trashbutton', JText::_('COM_JEM_TRASH'), NULL, !$app->isSite());
-			$overlib = JText::_('COM_JEM_TRASH_DESC');
-			$text = JText::_('COM_JEM_TRASH');
+			$image = jemhtml::icon( 'com_jem/trash.png', 'fa fa-fw fa-lg fa-trash jem-trashbutton', Text::_('COM_JEM_TRASH'), NULL, !$app->isClient('site'));
+			$overlib = Text::_('COM_JEM_TRASH_DESC');
+			$text = Text::_('COM_JEM_TRASH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".trash'));";
-			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+			$output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -733,21 +772,21 @@ class JemOutput
 	 */
 	static public function unpublishbutton($prefix)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if (empty($prefix) || $app->input->get('print','','int')) {
 			// button in popup or wrong call
 			$output = '';
 		} else {
 			// button in view
-			JHtml::_('behavior.tooltip');
+			//HTMLHelper::_('behavior.tooltip');
 
-			$image = JHtml::_('jemhtml.icon', 'com_jem/unpublish.png', 'fa fa-fw fa-lg fa-eye-slash jem-unpublishbutton', JText::_('COM_JEM_UNPUBLISH'), NULL, !$app->isSite());
-			$overlib = JText::_('COM_JEM_UNPUBLISH_DESC');
-			$text = JText::_('COM_JEM_UNPUBLISH');
+			$image = jemhtml::icon( 'com_jem/unpublish.png', 'fa fa-fw fa-lg fa-eye-slash jem-unpublishbutton', Text::_('COM_JEM_UNPUBLISH'), NULL, !$app->isClient('site'));
+			$overlib = Text::_('COM_JEM_UNPUBLISH_DESC');
+			$text = Text::_('COM_JEM_UNPUBLISH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".unpublish'));";
-			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+			$output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -761,22 +800,22 @@ class JemOutput
 	 */
 	static public function exportbutton($eventid)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
-		JHtml::_('behavior.tooltip');
+		//HTMLHelper::_('behavior.tooltip');
 
-		$image = JHtml::_('jemhtml.icon', 'com_jem/export_excel.png', 'fa fa-fw fa-lg fa-download jem-exportbutton', JText::_('COM_JEM_EXPORT'), NULL, !$app->isSite());
+		$image = jemhtml::icon( 'com_jem/export_excel.png', 'fa fa-fw fa-lg fa-download jem-exportbutton', Text::_('COM_JEM_EXPORT'), NULL, !$app->isClient('site'));
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
 			$output = '';
 		} else {
 			//button in view
-			$overlib = JText::_('COM_JEM_EXPORT_DESC');
-			$text = JText::_('COM_JEM_EXPORT');
+			$overlib = Text::_('COM_JEM_EXPORT_DESC');
+			$text = Text::_('COM_JEM_EXPORT');
 
 			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . JSession::getFormToken() . '=1';
-			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+			$output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -790,24 +829,24 @@ class JemOutput
 	 */
 	static public function backbutton($backlink, $view)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$id  = $app->input->getInt('id');
 		$fid = $app->input->getInt('Itemid');
 
-		JHtml::_('behavior.tooltip');
+		//HTMLHelper::_('behavior.tooltip');
 
-		$image = JHtml::_('jemhtml.icon', 'com_jem/icon-16-back.png', 'fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton', JText::_('COM_JEM_BACK'), NULL, !$app->isSite());
+		$image = jemhtml::icon( 'com_jem/icon-16-back.png', 'fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton', Text::_('COM_JEM_BACK'), NULL, !$app->isClient('site'));
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
 			$output = '';
 		} else {
 			//button in view
-			$overlib = JText::_('COM_JEM_BACK');
-			$text = JText::_('COM_JEM_BACK');
+			$overlib = Text::_('COM_JEM_BACK');
+			$text = Text::_('COM_JEM_BACK');
 
 			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task='.$view.'.back';
-			$output = '<a href="' . JRoute::_($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+			$output = '<a href="' . Route::_($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -825,18 +864,14 @@ class JemOutput
 	static public function tooltip($title, $text, $classes = '', $position = '')
 	{
 		$result = array();
-		if (version_compare(JVERSION, '3.3', 'lt')) {
-			// on Joomla! 2.5/3.2 we use good old tooltips
-			JHtml::_('behavior.tooltip');
-			$result = 'class="'.$classes.' hasTip" title="'.$title.'::'.$text.'"';
-		} else {
-			// on Joomla! 3.3+ we must use the new tooltips
-			JHtml::_('bootstrap.tooltip');
-			$result = 'class="'.$classes.' hasTooltip" title="'.JHtml::tooltipText($title, $text, 0).'"';
-			if (!empty($position) && (array_search($position, array('top', 'bottom', 'left', 'right')) !== false)) {
-				$result .= ' data-placement="'.$position.'"';
-			}
+
+		// on Joomla! 3.3+ we must use the new tooltips
+		// HTMLHelper::_('bootstrap.tooltip');
+		$result = 'class="'.$classes.' hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText($title, $text, 0).'"';
+		if (!empty($position) && (array_search($position, array('top', 'bottom', 'left', 'right')) !== false)) {
+			$result .= ' data-placement="'.$position.'"';
 		}
+
 		return $result;
 	}
 
@@ -847,6 +882,7 @@ class JemOutput
 	 */
 	static public function mapicon($data, $view, $params)
 	{
+		$app = Factory::getApplication();
 		$settings = JemHelper::globalattribs();
 
 		//stop if disabled
@@ -869,7 +905,7 @@ class JemOutput
 		}
 
 		//Link to map
-		$mapimage = JHtml::_('jemhtml.icon', 'com_jem/map_icon.png', 'fa fa-map', JText::_('COM_JEM_MAP'), 'class="jem-mapicon"');
+		$mapimage = jemhtml::icon( 'com_jem/map_icon.png', 'fa fa-map', Text::_('COM_JEM_MAP'), 'class="jem-mapicon"');
 
 		//set var
 		$output = null;
@@ -884,38 +920,52 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'https://nominatim.openstreetmap.org/ui/search.html?q=' . urlencode($data->street . ', ' . $data->postalCode . ' ' . $data->city); 
 
-		// google map link or include
+		// maps
 		switch ($mapserv)
 		{
 			case 1:
-				// link
-				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
-				}
+				// google map link
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {	
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
+				} else {
+				$url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')'; }
 
-				$message = JText::_('COM_JEM_MAP').':';
+				$message = Text::_('COM_JEM_MAP').':';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a></dd>';
+				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
 				break;
 
 			case 2:
 				// include iframe
-				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {	
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+				}
+				else {
+					$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
-
+					
 			case 3:
-				// include - Google API3
+				// include Google map with API3
+				// NOT WORKING YET 2023-05
 				# https://developers.google.com/maps/documentation/javascript/tutorial
-				$api		= trim($params->get('global_googleapi'));
-				$clientid	= trim($params->get('global_googleclientid'));
+				$api = $params->get('global_googleapi');
+				$clientid = $params->get('global_googleclientid');
+				$output = '';
 
-				$document 	= JFactory::getDocument();
+				if (empty($api) || empty($clientid)) {
+				    $output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
+				    break;
+				} else {
+				    $api = trim($api);
+				    $clientid = trim($clientid);
+				}
+				
+				$document   = $app->getDocument();
 
 				# do we have a client-ID?
 				if ($clientid) {
@@ -930,13 +980,83 @@ class JemOutput
 				}
 
 				JemHelper::loadCss('googlemap');
-				JHtml::_('script', 'com_jem/infobox.js', false, true);
-				JHtml::_('script', 'com_jem/googlemap.js', false, true);
+				HTMLHelper::_('script', 'com_jem/infobox.js', null, true);
+				HTMLHelper::_('script', 'com_jem/googlemap.js', null, true);
 
 				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
-		}
 
+			case 4:
+				// OpenStreetMap link
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+					$lat = $data->latitude;
+					$lng = $data->longitude;   
+				} else {
+				$address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
+				$search_url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=jsonv2";
+				$websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
+
+				$httpOptions = [
+				    "http" => [
+				        "method" => "GET",
+				        "header" => "User-Agent: JEM 4.0 on" . $websiteUrl
+				    ]
+				];
+
+				$streamContext = stream_context_create($httpOptions);
+				$json = file_get_contents($search_url, false, $streamContext);
+
+				$decoded = json_decode($json, true);
+				$lat = $decoded[0]["lat"] ?? null;
+				$lng = $decoded[0]["lon"] ?? null;
+				}
+
+				if ($lat && $lng) {
+				    $url = 'https://www.openstreetmap.org/?mlat=' . htmlentities($lat) . '&mlon=' . htmlentities($lng) . '&zoom=15#map=15/' . htmlentities($lat) . '/' . htmlentities($lng);
+				} else {
+				    $url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
+				}
+								
+				$message = Text::_('COM_JEM_MAP') . ':';
+				$output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '">' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
+
+				break;
+
+			case 5:
+				// embed OpenStreetMap
+				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+				    $lat = $data->latitude;
+				    $lng = $data->longitude;
+				} else {  
+
+				$address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
+	 			$search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
+	 			$websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
+	 			
+	 			$httpOptions = [
+	 				"http" => [
+	 					"method" => "GET",
+	 					"header" => "User-Agent: JEM 4.0 on" . $websiteUrl
+	 					]
+	 				];
+
+	 			$streamContext = stream_context_create($httpOptions);
+	 			$json = file_get_contents($search_url, false, $streamContext);
+
+	 			$decoded = json_decode($json, true);
+	 			$lat = $decoded[0]["lat"] ?? null;
+	 			$lng = $decoded[0]["lon"] ?? null;
+	 			}
+
+	 			if ($lat && $lng) {
+				    $zoom = 15; // Adjust the zoom level as per your requirement
+				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;layer=mapnik&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+	 			} else { 
+	 				$fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
+	 				$output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
+	 			}
+			break;
+		}
 		return $output;
 	}
 
@@ -949,7 +1069,7 @@ class JemOutput
 	 */
 	static public function recurrenceicon($event, $showinline = true, $showtitle = true)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$settings = JemHelper::globalattribs();
 		$settings2 = JemHelper::config();
 		$item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
@@ -963,10 +1083,10 @@ class JemOutput
 		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
 		/* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
 		$icon  = $first ? 'fa fa-fw fa-refresh jem-recurrencefirsticon' : 'fa fa-fw fa-refresh jem-recurrenceicon';
-		$showinline &= !($settings2->useiconfont == 1 && $app->isSite());
+		$showinline &= !($settings2->useiconfont == 1 && $app->isClient('site'));
 		$attr_class = $showinline ? ('class="icon-inline" ') : '';
-		$attr_title = $showtitle  ? ('title="' . JText::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
-		$output = JHtml::_('jemhtml.icon', $image, $icon, JText::_('COM_JEM_RECURRING_EVENT'), $attr_class . $attr_title, !$app->isSite());
+		$attr_title = $showtitle  ? ('title="' . Text::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
+		$output = jemhtml::icon($image, $icon, Text::_('COM_JEM_RECURRING_EVENT'), $attr_class . $attr_title, !$app->isClient('site'));
 
 		return $output;
 	}
@@ -982,7 +1102,7 @@ class JemOutput
 	static public function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
 	{
 		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// early return
 		if (is_object($item)) {
@@ -1000,22 +1120,22 @@ class JemOutput
 		case -2: // trashed
 			$image = 'com_jem/trash.png';
 			$icon = 'fa fa-fw fa-lg fa-trash jem-publishstateicon-trashed';
-			$alt   = JText::_('JTRASHED');
+			$alt   = Text::_('JTRASHED');
 			break;
 		case  0: // unpublished F10C: fa-circle-o F070: fa-eye-slash, F192: fa-dot-circle-o
 			$image = 'com_jem/publish_x.png';
 			$icon = 'fa fa-fw fa-lg fa-eye-slash jem-publishstateicon-unpublished';
-			$alt   = JText::_('JUNPUBLISHED');
+			$alt   = Text::_('JUNPUBLISHED');
 			break;
 		case  1: // published F06E: fa-eye
 			$image = 'com_jem/publish.png';
 			$icon = 'fa fa-fw fa-lg fa-check-circle jem-publishstateicon-published';
-			$alt   = JText::_('JPUBLISHED');
+			$alt   = Text::_('JPUBLISHED');
 			break;
 		case  2: // archived
 			$image = 'com_jem/archive_front.png';
 			$icon = 'fa fa-fw fa-lg fa-archive jem-publishstateicon-archived';
-			$alt   = JText::_('JARCHIVED');
+			$alt   = Text::_('JARCHIVED');
 			break;
 		default: // unknown state - abort!
 			return '';
@@ -1030,7 +1150,7 @@ class JemOutput
 			$attributes['title'] = $alt;
 		}
 
-		$output = JHtml::_('jemhtml.icon', $image, $icon, $alt, $attributes, !$app->isSite());
+		$output = jemhtml::icon( $image, $icon, $alt, $attributes, !$app->isClient('site'));
 
 		return $output;
 	}
@@ -1047,6 +1167,7 @@ class JemOutput
 		$id_attr = $id ? 'id="'.$id.'"' : '';
 
 		$settings = JemHelper::config();
+		$uri = Uri::getInstance();
 
 		switch($type) {
 			case 'event':
@@ -1073,27 +1194,25 @@ class JemOutput
 			return;
 		}
 
-		jimport('joomla.filesystem.file');
-
 		// Does a thumbnail exist?
-		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 
-				$icon = '<img '.$attributes.' src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
-				JHtml::_('behavior.modal', 'a.flyermodal');
-				$url = JUri::base().$image['original'];
+				// HTMLHelper::_('behavior.modal', 'a.flyermodal');
+				$url = $uri->base().$image['original'];
 				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
 
-				$icon = '<img src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img '.$id_attr.' class="notmodal" src="'.JUri::base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;
@@ -1110,6 +1229,7 @@ class JemOutput
 
 	static public function flyer2($data, $image, $type, $id = null)
 	{
+		$uri = Uri::getInstance();
 		$id_attr = $id ? 'id="'.$id.'"' : '';
 		$settings = JemHelper::config();
 		switch($type) {
@@ -1134,27 +1254,26 @@ class JemOutput
 		if (empty($imagefile) || empty($image)) {
 			return;
 		}
-		jimport('joomla.filesystem.file');
 				
 		// Does a thumbnail exist?
-/*		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+/*		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 
-				$icon = '<img '.$attributes.' src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
-				JHtml::_('behavior.modal', 'a.flyermodal');
-				$url = JUri::base().$image['original'];
+				HTMLHelper::_('behavior.modal', 'a.flyermodal');
+				$url = $uri->base().$image['original'];
 				$attributes = $id_attr.' class="flyermodal flyerimage2" title="'.$info.'"';
 
-				$icon = '<img src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {*/
-		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.JURI::base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
 //		}
 		return $output;
 	}
@@ -1206,7 +1325,7 @@ class JemOutput
 			$format = $settings->formattime;
 		}
 
-		$formattedTime = strftime($format, strtotime($time));
+		$formattedTime = date($format, strtotime($time));
 
 		if ($addSuffix && !empty($settings->timename)) {
 			$formattedTime .= ' '.$settings->timename;
@@ -1249,7 +1368,7 @@ class JemOutput
 		if (JemHelper::isValidDate($dateStart)) {
 			$output .= '<span class="jem_date-1">';
 			if ($showDayLink) {
-				$output .= '<a href="'.JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')).'">';
+				$output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')).'">';
 			}
 			$output .= self::formatdate($dateStart, $dateFormat);
 			if ($showDayLink) {
@@ -1264,9 +1383,9 @@ class JemOutput
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - <span class="jem_date-1">';
+				$output .= ' - <span class="jem_date2">';
 				if ($showDayLink) {
-					$output .= '<a href="'.JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
+					$output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
 				}
 				$output .= self::formatdate($dateEnd, $dateFormat);
 				if ($showDayLink) {
@@ -1279,10 +1398,10 @@ class JemOutput
 			if ($showTime && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
 			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
-				$output .= '<span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
+				$output .= '<span class="jem_time-2">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
 			}
 		} else {
-			$output .= '<span class="jem_date-1">'.JText::_('COM_JEM_OPEN_DATE').'</span>';
+			$output .= '<span class="jem_date-1">'.Text::_('COM_JEM_OPEN_DATE').'</span>';
 
 			if ($showTime) {
 				if (JemHelper::isValidTime($timeStart)) {
@@ -1333,7 +1452,7 @@ class JemOutput
 
 		if (empty($dateFormat)) {
 			// Use format saved in settings if specified or format in language file otherwise
-			$dateFormat = empty($jemconfig->formatShortDate) ? JText::_('COM_JEM_FORMAT_SHORT_DATE') : $jemconfig->formatShortDate;
+			$dateFormat = empty($jemconfig->formatShortDate) ? Text::_('COM_JEM_FORMAT_SHORT_DATE') : $jemconfig->formatShortDate;
 		}
 
 		if (JemHelper::isValidDate($dateStart)) {
@@ -1343,7 +1462,7 @@ class JemOutput
 				$outDate .= ' - ' . self::formatdate($dateEnd, $dateFormat);
 			}
 		} else {
-			$outDate = JText::_('COM_JEM_OPEN_DATE');
+			$outDate = Text::_('COM_JEM_OPEN_DATE');
 		}
 
 		if ($showTime && JemHelper::isValidTime($timeStart)) {
@@ -1399,7 +1518,7 @@ class JemOutput
 		$params = is_array($dateStart) ? $dateStart : array('dateStart' => $dateStart, 'timeStart' => $timeStart, 'dateEnd' => $dateEnd, 'timeEnd' => $timeEnd, 'showTime' => $showTime);
 		$params['addSuffix'] = true;
 		// Use format saved in settings if specified or format in language file otherwise
-		$params['dateFormat'] = (isset($settings->formatShortDate) && $settings->formatShortDate) ? $settings->formatShortDate : JText::_('COM_JEM_FORMAT_SHORT_DATE');
+		$params['dateFormat'] = (isset($settings->formatShortDate) && $settings->formatShortDate) ? $settings->formatShortDate : Text::_('COM_JEM_FORMAT_SHORT_DATE');
 
 		if (isset($settings->datemode) && ($settings->datemode == 2)) {
 			return self::formatDateTime2Lines($params);
@@ -1421,7 +1540,7 @@ class JemOutput
 
 		$output  = '';
 		$formatD = 'Y-m-d';
-		$formatT = '%H:%M';
+		$formatT = 'H:i';
 
 		if (JemHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
@@ -1477,7 +1596,7 @@ class JemOutput
 		}
 
 		//Format date
-		$parsed = strftime('%Y-%m-%d %H:%M:%S', $sec);
+		$parsed = date('Y-m-d H:i:s', $sec);
 
 		$date = array('year'  => (int) substr($parsed, 0, 4),
 		              'month' => (int) substr($parsed, 5, 2),
@@ -1508,12 +1627,12 @@ class JemOutput
 					if ($backend) {
 						$path = $category->path;
 						$path = str_replace('/', ' &#187; ', $path);
-						$value  = '<span ' . self::tooltip(JText::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip') . '>';
+						$value  = '<span ' . self::tooltip(Text::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip') . '>';
 						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . $category->id . '">' .
 						              $category->catname . '</a>';
 						$value .= '</span>';
 					} else {
-						$value  = '<a href="' . JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
+						$value  = '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
 						              $category->catname . '</a>';
 					}
 				} else {

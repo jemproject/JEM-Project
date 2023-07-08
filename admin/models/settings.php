@@ -1,21 +1,24 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modelform');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Settings Model
  *
  */
-class JemModelSettings extends JModelForm
+class JemModelSettings extends AdminModel
 {
 	/**
 	 * Method to get the record form.
@@ -53,7 +56,7 @@ class JemModelSettings extends JModelForm
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.settings.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.settings.data', array());
 
 		if (empty($data)) {
 			$data = $this->getData();
@@ -73,7 +76,7 @@ class JemModelSettings extends JModelForm
 		}
 
 		// additional data:
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$varmetakey = $jinput->get('meta_keywords','','');
 		$data['meta_keywords'] = implode(', ', array_filter($varmetakey));
 		$data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
@@ -93,11 +96,11 @@ class JemModelSettings extends JModelForm
 
 		// Bind the form fields to the table
 		if (!$config->bind($data)) {
-			$this->setError(JText::_('?'));
+			$this->setError(Text::_('?'));
 			return false;
 		}
 		if (!$config->store()) {
-			$this->setError(JText::_('?'));
+			$this->setError(Text::_('?'));
 			return false;
 		}
 
@@ -105,13 +108,13 @@ class JemModelSettings extends JModelForm
 		// Old table - deprecated, maybe already removed
 		//
 		try {
-			$settings = JTable::getInstance('Settings', 'JemTable');
+			$settings = Table::getInstance('Settings', 'JemTable');
 
 			$fields = $settings->getFields();
 			if (!empty($fields)) {
 				// Bind the form fields to the table
 				if (!$settings->bind($data,'')) {
-					$this->setError($this->_db->getErrorMsg());
+					$this->setError($settings->getError());
 					return false;
 				}
 
@@ -134,7 +137,7 @@ class JemModelSettings extends JModelForm
 				$settings->id = 1;
 
 				if (!$settings->store()) {
-					$this->setError($this->_db->getErrorMsg());
+					$this->setError($settings->getError());
 					return false;
 				}
 			}
@@ -156,7 +159,7 @@ class JemModelSettings extends JModelForm
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -208,7 +211,7 @@ class JemModelSettings extends JModelForm
 		$config->vs_gd = $gd_version;
 
 		// Get info about all JEM parts
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('name', 'type', 'enabled', 'manifest_cache'));
 		$query->from('#__extensions');

@@ -1,16 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Client\ClientHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
+
 
 /**
  * JEM Component Imagehandler Controller
@@ -18,7 +22,7 @@ jimport('joomla.filesystem.file');
  * @package JEM
  *
  */
-class JemControllerImagehandler extends JControllerLegacy
+class JemControllerImagehandler extends BaseController
 {
 	/**
 	 * Constructor
@@ -44,16 +48,15 @@ class JemControllerImagehandler extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemAdmin::config();
 
-		$file = JFactory::getApplication()->input->files->get('userfile', array(), 'array');
-		$task = JFactory::getApplication()->input->get('task', '');
+		$file = Factory::getApplication()->input->files->get('userfile', array(), 'array');
+		$task = Factory::getApplication()->input->get('task', '');
 
 		// Set FTP credentials, if given
-		jimport('joomla.client.helper');
-		JClientHelper::setCredentialsFromRequest('ftp');
-		//$ftp = JClientHelper::getCredentials('ftp');
+
+		ClientHelper::setCredentialsFromRequest('ftp');
 
 		//set the target directory
 		if ($task == 'venueimgup') {
@@ -66,7 +69,7 @@ class JemControllerImagehandler extends JControllerLegacy
 
 		//do we have an upload?
 		if (empty($file['name'])) {
-			echo "<script> alert('".JText::_('COM_JEM_IMAGE_EMPTY')."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".Text::_('COM_JEM_IMAGE_EMPTY')."'); window.history.go(-1); </script>\n";
 			$app->close();
 		}
 
@@ -82,11 +85,11 @@ class JemControllerImagehandler extends JControllerLegacy
 		$filepath = $base_Dir . $filename;
 
 		//upload the image
-		if (!JFile::upload($file['tmp_name'], $filepath)) {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); </script>\n";
+		if (!File::upload($file['tmp_name'], $filepath)) {
+			echo "<script> alert('".Text::_('COM_JEM_UPLOAD_FAILED')."'); </script>\n";
 			$app->close();
 		} else {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.parent.SelectImage('$filename', '$filename'); </script>\n";
+			echo "<script> alert('".Text::_('COM_JEM_UPLOAD_COMPLETE')."'); window.parent.SelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
 	}
@@ -102,29 +105,28 @@ class JemControllerImagehandler extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('get') or jexit('Invalid Token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Set FTP credentials, if given
-		jimport('joomla.client.helper');
-		JClientHelper::setCredentialsFromRequest('ftp');
+		ClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
-		$images = JFactory::getApplication()->input->get('rm', array(), 'array');
-		$folder = JFactory::getApplication()->input->get('folder', '');
+		$images = Factory::getApplication()->input->get('rm', array(), 'array');
+		$folder = Factory::getApplication()->input->get('folder', '');
 
 		if (count($images)) {
 			foreach ($images as $image) {
-				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
+				if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 					continue;
 				}
 
 				$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
 				$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 				if (is_file($fullPath)) {
-					JFile::delete($fullPath);
-					if (JFile::exists($fullPaththumb)) {
-						JFile::delete($fullPaththumb);
+					File::delete($fullPath);
+					if (File::exists($fullPaththumb)) {
+						File::delete($fullPaththumb);
 					}
 				}
 			}

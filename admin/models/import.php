@@ -1,13 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filesystem\File;
 
 jimport('joomla.application.component.model');
 
@@ -15,7 +22,7 @@ jimport('joomla.application.component.model');
  * JEM Component Import Model
  * @package JEM
  */
-class JemModelImport extends JModelLegacy
+class JemModelImport extends BaseDatabaseModel
 {
 	/**
 	 *  The table prefix of this site.
@@ -47,7 +54,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	public function __construct()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$this->elprefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
 		if ($this->elprefix == '') {
 			$this->elprefix = '#__';
@@ -178,7 +185,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function import($tablename, $prefix, $fieldsname, &$data, $replace = true)
 	{
-		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "" , 'duplicated' => 0, 'duplicatedids' => "", 'replaced' => 0, 'replacedids' => "", 'error' => 0, 'errorids' => "");
 
 		// cats_event_relations table requires different handling
 		if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
@@ -193,7 +200,7 @@ class JemModelImport extends JModelLegacy
 				}
 			}
 			if (($itemidx === false) || ($catidx === false)) {
-				echo JText::_('COM_JEM_IMPORT_PARSE_ERROR') . "\n";
+				echo Text::_('COM_JEM_IMPORT_PARSE_ERROR') . "\n";
 				return $rec;
 			}
 
@@ -202,12 +209,12 @@ class JemModelImport extends JModelLegacy
 				// collect categories for each event; we get array( itemid => array( catid => ordering ) )
 				$events[$row[$itemidx]][$row[$catidx]] = ($orderidx !== false) ? $row[$orderidx] : 0;
 			}
-
+		
 			// store data
 			return $this->storeCatsEventRelations($events, $replace);
 		}
 
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// in case imported data has no key field explicitely add it with value 0 and don't try to replace
 		$presetkey = in_array('id', $fieldsname) ? false : 'id';
@@ -218,7 +225,7 @@ class JemModelImport extends JModelLegacy
 		$pk = $replace ? false : 'id';
 
 		// retrieve the specified table
-		$object = JTable::getInstance($tablename, $prefix);
+		$object = Table::getInstance($tablename, $prefix);
 		$objectname = get_class($object);
 		$rootkey = $this->_rootkey();
 
@@ -271,7 +278,8 @@ class JemModelImport extends JModelLegacy
 					}
 				}
 			} // if 'JemTableCategory'
-
+		
+			
 			// Bind the data
 			$object->reset(); // clear old data first - which does NOT reset 'id' !
 			$object->bind($values);
@@ -281,7 +289,7 @@ class JemModelImport extends JModelLegacy
 				// Make sure the data is valid
 				if (!$object->checkCsvImport()) {
 					$this->setError($object->getError());
-					echo JText::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+					echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
 					continue;
 				}
 
@@ -290,23 +298,32 @@ class JemModelImport extends JModelLegacy
 					if ($values['id'] != '1') {
 						// We want to keep id from database so first we try to insert into database.
 						// if it fails, it means the record already exists, we can use store().
-						if (!$object->insertIgnore()) {
+						$results = $object->insertIgnore();
+						if ($results < 0) {
 							if (!$object->storeCsvImport()) {
-								echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+								echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+								$rec['error']++;
+								$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 								continue;
 							} else {
 								$rec['updated']++;
 							}
-						} else {
+						} else if( $result == 0) {
+							$rec['duplicated']++;
+							$rec['duplicatedids'] .= ($rec['duplicatedids']!=""?',':'') . $row[0];
+						}else{
 							$rec['added']++;
 						}
 					} else {
 						// category with id=1 detected but it's not added or updated
 						$rec['ignored']++;
+						$rec['ignoredids'] .= ($rec['ignoredids']!=""?',':'') . $row[0];
 					}
 				} else {
 					if (!$object->storeCsvImport()) {
-						echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+						echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+						$rec['error']++;
+						$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 						continue;
 					} else {
 						$rec['added']++;
@@ -318,7 +335,9 @@ class JemModelImport extends JModelLegacy
 				// Make sure the data is valid
 				if (!$object->check()) {
 					$this->setError($object->getError());
-					echo JText::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+					echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+					$rec['error']++;
+					$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 					continue;
 				}
 
@@ -328,7 +347,9 @@ class JemModelImport extends JModelLegacy
 					// if it fails, it means the record already exists, we can use store().
 					if (!$object->insertIgnore()) {
 						if (!$object->store()) {
-							echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+							echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+							$rec['error']++;
+							$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 							continue;
 						} else {
 							$rec['updated']++;
@@ -338,7 +359,9 @@ class JemModelImport extends JModelLegacy
 					}
 				} else {
 					if (!$object->store()) {
-						echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+						echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+						$rec['error']++;
+						$rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
 						continue;
 					} else {
 						$rec['added']++;
@@ -389,7 +412,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function storeCatsEventRelations(array $events, $replace = true)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$columns = array('catid', 'itemid', 'ordering');
 		$result  = array('added' => 0, 'updated' => 0, 'ignored' => 0);
 
@@ -542,22 +565,28 @@ class JemModelImport extends JModelLegacy
 	public function getTablesCount($tables, $prefix)
 	{
 		$db = $this->_db;
-
+		$db_tables = $db->setQuery('SHOW TABLES')->loadColumn();
+		$db_prefix = $db->getPrefix();
+	
 		foreach ($tables as $table => $value) {
-			$query = $db->getQuery('true');
+			if(in_array($db_prefix.$table,$db_tables)){
+				$query = $db->getQuery('true');
+				
+				$query->select('COUNT(*)')
+					->from($db->quoteName($prefix.$table));
 
-			$query->select('COUNT(*)')
-			      ->from($db->quoteName($prefix.$table));
+				$db->setQuery($query);
 
-			$db->setQuery($query);
-
-			try {
-				$tables[$table] = $db->loadResult();
-				// Don't count the root category
-				if (strcasecmp($table, 'jem_categories') == 0) {
-					$tables[$table]--;
+				try {
+					$tables[$table] = $db->loadResult();
+					// Don't count the root category
+					if (strcasecmp($table, 'jem_categories') == 0) {
+						$tables[$table];
+					}
+				} catch (Exception $e) {
+					$tables[$table] = null;
 				}
-			} catch (Exception $e) {
+			}else{
 				$tables[$table] = null;
 			}
 
@@ -622,7 +651,7 @@ class JemModelImport extends JModelLegacy
 	{
 		// attachments - MUST be transformed after potential objects are stored!
 		if (strcasecmp($tablename, 'attachments') === 0) {
-			$default_view_level = JFactory::getConfig()->get('access', 1);
+			$default_view_level = Factory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
 			$current_user_id    = JemFactory::getUser()->get('id');
 			$valid_user_ids     = $this->_getUserIds();
@@ -647,7 +676,7 @@ class JemModelImport extends JModelLegacy
 		}
 		// categories
 		elseif (strcasecmp($tablename, 'categories') === 0) {
-			$default_view_level = JFactory::getConfig()->get('access', 1);
+			$default_view_level = Factory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
 			$current_user_id    = JemFactory::getUser()->get('id');
 			$valid_user_ids     = $this->_getUserIds();
@@ -700,7 +729,7 @@ class JemModelImport extends JModelLegacy
 		}
 		// events
 		elseif (strcasecmp($tablename, 'events') === 0) {
-			$default_view_level = JFactory::getConfig()->get('access', 1);
+			$default_view_level = Factory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
 			$cat_levels         = $this->_getCategoryViewLevels();
 			$current_user_id    = JemFactory::getUser()->get('id');
@@ -854,13 +883,13 @@ class JemModelImport extends JModelLegacy
 		$rec = array ('added' => 0, 'updated' => 0, 'error' => 0);
 
 		foreach ($data as $row) {
-			$object = JTable::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
+			$object = Table::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
 			$object->bind($row, $ignore);
 
 			// Make sure the data is valid
 			if (!$object->check()) {
 				$this->setError($object->getError());
-				echo JText::_('COM_JEM_IMPORT_ERROR_CHECK').$object->getError()."\n";
+				echo Text::_('COM_JEM_IMPORT_ERROR_CHECK').$object->getError()."\n";
 				continue ;
 			}
 
@@ -870,7 +899,7 @@ class JemModelImport extends JModelLegacy
 				// it means the record already exists, we can use store().
 				if (!$object->insertIgnore()) {
 					if (!$object->store()) {
-						echo JText::_('COM_JEM_IMPORT_ERROR_STORE').$this->_db->getErrorMsg()."\n";
+						echo Text::_('COM_JEM_IMPORT_ERROR_STORE').$object->getError()."\n";
 						$rec['error']++;
 						continue ;
 					} else {
@@ -881,7 +910,7 @@ class JemModelImport extends JModelLegacy
 				}
 			} else {
 				if (!$object->store()) {
-					echo JText::_('COM_JEM_IMPORT_ERROR_STORE').$this->_db->getErrorMsg()."\n";
+					echo Text::_('COM_JEM_IMPORT_ERROR_STORE').$object->getError()."\n";
 					$rec['error']++;
 					continue ;
 				} else {
@@ -913,8 +942,6 @@ class JemModelImport extends JModelLegacy
 	 */
 	public function copyImages()
 	{
-		jimport('joomla.filesystem.file');
-		jimport('joomla.filesystem.folder');
 
 		$folders = array('categories', 'events', 'venues');
 
@@ -927,12 +954,12 @@ class JemModelImport extends JModelLegacy
 			$fromFolder = JPATH_SITE.'/images/eventlist/'.$folder.'/';
 			$toFolder   = JPATH_SITE.'/images/jem/'.$folder.'/';
 
-			if (JFolder::exists($fromFolder) && JFolder::exists($toFolder)) {
-				$files = JFolder::files($fromFolder, null, false, false);
+			if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
+				$files = Folder::files($fromFolder, null, false, false);
 
 				foreach ($files as $file) {
-					if (!JFile::exists($toFolder.$file)) {
-						JFile::copy($fromFolder.$file, $toFolder.$file);
+					if (!File::exists($toFolder.$file)) {
+						File::copy($fromFolder.$file, $toFolder.$file);
 					}
 				}
 			}
@@ -952,31 +979,31 @@ class JemModelImport extends JModelLegacy
 		$fromFolder = JPATH_SITE.'/media/com_eventlist/attachments/';
 		$toFolder   = JPATH_SITE.'/'.$jemsettings->attachments_path.'/';
 
-		if (!JFolder::exists($toFolder)) {
-			JFolder::create($toFolder);
+		if (!Folder::exists($toFolder)) {
+			Folder::create($toFolder);
 		}
 
-		if (JFolder::exists($fromFolder) && JFolder::exists($toFolder)) {
-			$files = JFolder::files($fromFolder, null, false, false);
+		if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
+			$files = Folder::files($fromFolder, null, false, false);
 			foreach ($files as $file) {
-				if (!JFile::exists($toFolder.$file)) {
-					JFile::copy($fromFolder.$file, $toFolder.$file);
+				if (!File::exists($toFolder.$file)) {
+					File::copy($fromFolder.$file, $toFolder.$file);
 				}
 			}
 
 			// attachments are stored in folders like "event123"
 			// so we need to walk through all these subfolders
-			$folders = JFolder::folders($fromFolder, null, false, false);
+			$folders = Folder::folders($fromFolder, null, false, false);
 			foreach ($folders as $folder) {
-				if (!JFolder::exists($toFolder.$folder)) {
-					JFolder::create($toFolder.$folder);
+				if (!Folder::exists($toFolder.$folder)) {
+					Folder::create($toFolder.$folder);
 				}
 
-				$files = JFolder::files($fromFolder.$folder, null, false, false);
+				$files = Folder::files($fromFolder.$folder, null, false, false);
 				$folder .= '/';
 				foreach ($files as $file) {
-					if (!JFile::exists($toFolder.$folder.$file)) {
-						JFile::copy($fromFolder.$folder.$file, $toFolder.$folder.$file);
+					if (!File::exists($toFolder.$folder.$file)) {
+						File::copy($fromFolder.$folder.$file, $toFolder.$folder.$file);
 					}
 				}
 			}
@@ -992,7 +1019,7 @@ class JemModelImport extends JModelLegacy
 	{
 		if (empty(static::$_user_ids))
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('a.id')
 			      ->from($db->quoteName('#__users') . ' AS a')
@@ -1014,7 +1041,7 @@ class JemModelImport extends JModelLegacy
 	{
 		if (empty(static::$_view_levels))
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('a.id')
 			      ->from($db->quoteName('#__viewlevels') . ' AS a')
@@ -1034,7 +1061,7 @@ class JemModelImport extends JModelLegacy
 	 */
 	protected function _getCategoryViewLevels()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('a.id, a.access')
 		      ->from($db->quoteName('#__jem_categories') . ' AS a')
@@ -1058,7 +1085,7 @@ class JemModelImport extends JModelLegacy
 	{
 		$ret = $defaultLevel;
 
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('c.access')
 		      ->from($db->quoteName($this->elprefix.'eventlist_categories') . ' AS c')
@@ -1093,7 +1120,7 @@ class JemModelImport extends JModelLegacy
 		$ok = preg_match('/([^0-9]+)([0-9]+)/', $object, $matches);
 		if ($ok && (count($matches) == 3)) {
 			$id = $matches[2];
-			$db = JFactory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 
 			switch ($matches[1]) {
@@ -1128,21 +1155,23 @@ class JemModelImport extends JModelLegacy
 	 */
 	private function _rootkey()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('c.id');
 		$query->from('#__jem_categories AS c');
 		$query->where('c.alias LIKE "root"');
 		$db->setQuery($query);
-		$key = $db->loadResult();
+		
 
 		// Check for DB error.
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
-			return false;
-		}
-		else {
+		try
+		{
+			$key = $db->loadResult();
 			return $key;
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 	}
 }

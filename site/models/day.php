@@ -1,14 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/eventslist.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
+require_once __DIR__ . '/eventslist.php';
 
 /**
  * Model-Day
@@ -24,7 +28,7 @@ class JemModelDay extends JemModelEventslist
 	{
 		parent::__construct();
 
-		$rawday = JFactory::getApplication()->input->getInt('id', null);
+		$rawday = Factory::getApplication()->input->getInt('id', null);
 		$this->setDate($rawday);
 	}
 
@@ -36,7 +40,7 @@ class JemModelDay extends JemModelEventslist
 	 */
 	public function setDate($date)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		# Get the params of the active menu item
 		$params = $app->getParams('com_jem');
@@ -45,7 +49,7 @@ class JemModelDay extends JemModelEventslist
 		if ($date == 0) {
 			$dayoffset = $params->get('days');
 			$timestamp = mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
-			$date      = strftime('%Y-%m-%d', $timestamp);
+			$date      = date('Y-m-d', $timestamp);
 
 		# a valid date has 8 characters (ymd)
 		} elseif (strlen($date) == 8) {
@@ -59,12 +63,12 @@ class JemModelDay extends JemModelEventslist
 			} else {
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 			}
 		} else {
 			//date isn't valid raise notice and use current date
 			$date = date('Ymd');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
 		}
 
 		$this->_date = $date;
@@ -85,7 +89,7 @@ class JemModelDay extends JemModelEventslist
 	{
 		# parent::populateState($ordering, $direction);
 
-		$app               = JFactory::getApplication();
+		$app               = Factory::getApplication();
 		$jemsettings       = JemHelper::config();
 		$itemid            = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 		$params            = $app->getParams();

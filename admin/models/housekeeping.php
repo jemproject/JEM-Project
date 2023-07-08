@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
@@ -64,7 +66,7 @@ class JemModelHousekeeping extends JModelLegacy
 		foreach ($images as $image)
 		{
 			if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 				$fail++;
 				continue;
 			}
@@ -91,7 +93,7 @@ class JemModelHousekeeping extends JModelLegacy
 	 */
 	public function cleanupCatsEventRelations()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$db->setQuery('DELETE cat FROM #__jem_cats_event_relations as cat'
 				.' LEFT OUTER JOIN #__jem_events as e ON cat.itemid = e.id'
@@ -113,7 +115,7 @@ class JemModelHousekeeping extends JModelLegacy
 	{
 		$result = true;
 		$tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'register', 'venues');
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		foreach ($tables as $table) {
 			$db->setQuery('TRUNCATE #__jem_'.$table);
@@ -139,7 +141,7 @@ class JemModelHousekeeping extends JModelLegacy
 	 */
 	public function getCountcats()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('*'));
 		$query->from('#__jem_cats_event_relations');

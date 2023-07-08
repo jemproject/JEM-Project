@@ -1,12 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-defined('_JEXEC') or die();
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 
 jimport('joomla.application.component.model');
 /**
@@ -35,7 +39,7 @@ class JemModelCategoryelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$array = $jinput->get('cid', 0, 'array');
 
 		if(is_array($this) && $this->setId((int)$array[0]));
@@ -61,11 +65,11 @@ class JemModelCategoryelement extends JModelLegacy
 	 */
 	public function getData()
 	{
-		$app    = JFactory::getApplication();
-		$db     = JFactory::getDBO();
+		$app    = Factory::getApplication();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		$limit            = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit            = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->get('list_limit'), 'int');
 		$limitstart       = $app->getUserStateFromRequest('com_jem.limitstart', 'limitstart', 0, 'int');
 		$limitstart       = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$filter_order     = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');
@@ -107,12 +111,20 @@ class JemModelCategoryelement extends JModelLegacy
 				// . ' ORDER BY c.parent_id, c.ordering';
 				. $orderby;
 
-		$db->setQuery($query);
-		$mitems = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// if ($db->getErrorNum()) {
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
+		try
+		{
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {
@@ -153,8 +165,7 @@ class JemModelCategoryelement extends JModelLegacy
 
 		$total = count($list);
 
-		jimport('joomla.html.pagination');
-		$this->_pagination = new JPagination($total, $limitstart, $limit);
+		$this->_pagination = new Pagination($total, $limitstart, $limit);
 
 		// slice out elements based on limits
 		$list = array_slice($list, $this->_pagination->limitstart, $this->_pagination->limit);

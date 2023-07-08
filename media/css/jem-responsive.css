@@ -1,9 +1,9 @@
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 
@@ -31,6 +31,11 @@ body.com_jem.body-overlayed {
 
 /* ----- */
 
+#jem h1.componentheading i.fa,
+#jem h1.componentheading i.fas {
+    font-size: 1.332rem;
+}
+
 #jem .buttons {
     float: right;
 }
@@ -44,6 +49,8 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-content: center;
+    align-items: center;
 }
 
 #jem .jem-wrap-reverse {
@@ -78,7 +85,7 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dt,
 #jem .jem-dl-long dt {
     float: left;
-    width: 160px;
+    width: 175px;
     overflow: hidden;
     clear: left;
     text-align: left;
@@ -166,12 +173,13 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    padding: 10px;
+    gap: 5px;
 }
 
 #jem #limit {
-    padding: 0;
+    padding: 0 10px;
     margin: 0;
+    width: 80px;
 }
 
 #jem .jem_limit {
@@ -190,9 +198,9 @@ body.com_jem.body-overlayed {
 }
 
 #jem_filter {
-    padding: 10px 0 5px 0;
+    padding: 10px 5px 5px 10px;
     align-items: baseline;
-	background-color: #ffa500;
+    background-color: #ffa500;
 }
 
 #jem_filter div {
@@ -234,13 +242,15 @@ body.com_jem.body-overlayed {
 }
 
 #jem .icon-arrow-up-3::before {
-    font-family: FontAwesome !important;
-    content: "\00a0\f0de" !important;
+    /* font-family: FontAwesome !important; */
+    /* content: "\00a0\f0de" !important; */
+    content: "\f0de" !important;
 }
 
 #jem .icon-arrow-down-3::before {
-    font-family: FontAwesome !important;
-    content: "\00a0\f0dd" !important;
+    /* font-family: FontAwesome !important; */
+    /* content: "\00a0\f0dd" !important; */
+    content: "\f0dd" !important;
 }
 
 #jem img.icon-inline {
@@ -258,6 +268,11 @@ body.com_jem.body-overlayed {
 #jem select,
 #jem input {
     width: auto;
+}
+
+#jem form input::-webkit-outer-spin-button,
+#jem form input::-webkit-inner-spin-button {
+    opacity: 1;
 }
 
 #jem .jem-sort-parts div::after {
@@ -314,7 +329,7 @@ body.com_jem.body-overlayed {
 #jem .jem-list-row {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     justify-content: flex-start;
 }
 
@@ -387,7 +402,7 @@ body.com_jem.body-overlayed {
 }
 
 #jem.jem_attendees .jem-attendee-name {
-    flex: 1 24%;
+    flex: 1 20%;
 }
 
 #jem.jem_attendees .jem-attendee-email {
@@ -400,6 +415,12 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-status {
     flex: 1 4%;
+    text-align: center;
+}
+
+#jem.jem_attendees .jem-attendee-places {
+    flex: 1 4%;
+    text-align: center;
 }
 
 #jem.jem_attendees .jem-attendee-comment {
@@ -408,6 +429,7 @@ body.com_jem.body-overlayed {
 
 #jem.jem_attendees .jem-attendee-remove {
     flex: 1 4%;
+    text-align: center;
 }
 
 #jem div.jem-map {
@@ -532,10 +554,12 @@ body.com_jem.body-overlayed {
             padding-top: 0px;
             padding-bottom: 0px;
         }
+
         #jem .jem-dl dt:first-child,
         #jem .jem-dl-long dt:first-child {
             margin-top: 0;
         }
+
         #jem .jem-dl dd,
         #jem .jem-dl-long dd {
             margin-left: 0;
@@ -543,32 +567,53 @@ body.com_jem.body-overlayed {
             padding-bottom: 0px;
             padding-left: 5px;
         }
+
         #jem .jem_limit {
             flex-wrap: wrap;
         }
+
         #jem .jem-event-details {
             order: -1;
             flex-basis: 100%
         }
+
         #jem .jem-list-img {
             margin-right: 0;
             margin-top: 10px;
         }
+
         #jem .jem-catimg {
             float: none;
             clear: both;
         }
+
         #jem .jem-sort-small .jem-small-list div {
             flex-basis: 30%;
         }
+
         #jem .jem-event-info-small {
             flex-basis: 100% !important;
         }
     }
 }
 
-@media only all and (max-width: 30rem) {}
+@media only all and (max-width: 30rem) {
+}
 
-@media only all and (max-width: 74.938rem) and (min-width: 60rem) {}
+@media only all and (max-width: 74.938rem) and (min-width: 60rem) {
+}
 
-@media only all and (min-width: 75rem) {}
+@media only all and (min-width: 75rem) {
+}
+
+#jem .form-check-input {
+    width: 1em !important;
+}
+
+.jem-readmore .btn, #find-left.btn {
+    background-color: #f0f0f0;
+}
+
+.jem-registered-user-owner {
+    font-weight: bold;
+}

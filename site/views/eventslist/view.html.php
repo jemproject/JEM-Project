@@ -1,12 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 /**
  * Eventslist-View
@@ -26,21 +34,23 @@ class JemViewEventslist extends JemView
 	 */
 	public function display($tpl = null)
 	{
+		
 		// Initialize variables
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
-		$document    = JFactory::getDocument();
+		$document    = $app->getDocument();
 		$params      = $app->getParams();
-		$uri         = JFactory::getURI();
+		$uri         = Uri::getInstance();
 		$jinput      = $app->input;
 		$task        = $jinput->getCmd('task', '');
 		$print       = $jinput->getBool('print', false);
 		$pathway     = $app->getPathWay();
 		$user        = JemFactory::getUser();
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$uri         = Uri::getInstance();
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -79,7 +89,7 @@ class JemViewEventslist extends JemView
 		$noevents = (!$rows) ? 1 : 0;
 
 		// params
-		$pagetitle     = $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_EVENTS'));
+		$pagetitle     = $params->def('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_EVENTS'));
 		$pageheading   = $params->def('page_heading', $params->get('page_title'));
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
@@ -92,21 +102,21 @@ class JemViewEventslist extends JemView
 		}
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=eventslist&task=archive'));
-			$print_link = JRoute::_('index.php?option=com_jem&view=eventslist&task=archive&tmpl=component&print=1');
-			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
-			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=eventslist&task=archive'));
+			$print_link = $uri->toString() . "?task=archive&print=1";
+			$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = JRoute::_('index.php?option=com_jem&view=eventslist&tmpl=component&print=1');
+			$print_link = $uri->toString() . "?print=1&amp;tmpl=component&amp;";
 		}
 
 		// Add site name to title if param is set
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 		}
 
 		// Set Page title
@@ -121,29 +131,29 @@ class JemViewEventslist extends JemView
 		// add alternate feed link
 		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
+		$document->addHeadLink(Route::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
+		$document->addHeadLink(Route::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		// search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
+			$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+			$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
+			$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+			$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
+			$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 		$lists['search'] = $search;
 
 		// Create the pagination object
@@ -162,7 +172,7 @@ class JemViewEventslist extends JemView
 		$this->settings      = $settings;
 		$this->permissions   = $permissions;
 		$this->pagetitle     = $pagetitle;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = ($pageclass_sfx ? htmlspecialchars($pageclass_sfx): $pageclass_sfx);
 
 		$this->_prepareDocument();
 		parent::display($tpl);
@@ -175,7 +185,7 @@ class JemViewEventslist extends JemView
 	{
 		// TODO: Refactor with parent _prepareDocument() function
 
-	//	$app   = JFactory::getApplication();
+	//	$app   = Factory::getApplication();
 	//	$menus = $app->getMenu();
 
 		if ($this->params->get('menu-meta_description'))

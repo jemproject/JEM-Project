@@ -1,17 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Venue Table
  */
-class JemTableVenue extends JTable
+class JemTableVenue extends Table
 {
 	public function __construct(&$db)
 	{
@@ -38,10 +43,10 @@ class JemTableVenue extends JTable
 	 */
 	public function check()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		if (trim($this->venue) == '') {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_NAME'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_NAME'));
 			return false;
 		}
 
@@ -50,30 +55,30 @@ class JemTableVenue extends JTable
 		if (empty($this->alias)) {
 			$this->alias = JemHelper::stringURLSafe($this->venue);
 			if (trim(str_replace('-', '', $this->alias)) == '') {
-				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+				$this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
 
 		if ($this->map) {
 			if (!trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode)) {
 				if ((!trim($this->latitude) && !trim($this->longitude))) {
-					$this->setError(JText::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
+					$this->setError(Text::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
 					return false;
 				}
 			}
 		}
 
 		if (trim($this->url)) {
-			$this->url = strip_tags($this->url);
+			$this->url = mb_strtolower(strip_tags($this->url));
 
 			if (strlen($this->url) > 199) {
-				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
+				$this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
 				return false;
 			}
-			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
+			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9äöüáéíóúñ]+)*\.[a-z]{2,5}'
 			               .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url))
 			{
-				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
+				$this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
 				return false;
 			}
 		}
@@ -81,31 +86,31 @@ class JemTableVenue extends JTable
 		$this->street = strip_tags($this->street);
 		$streetlength = \Joomla\String\StringHelper::strlen($this->street);
 		if ($streetlength > 50) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_STREET'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_STREET'));
 			return false;
 		}
 
 		$this->postalCode = strip_tags($this->postalCode);
 		if (\Joomla\String\StringHelper::strlen($this->postalCode) > 10) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_POSTALCODE'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_POSTALCODE'));
 			return false;
 		}
 
 		$this->city = strip_tags($this->city);
 		if (\Joomla\String\StringHelper::strlen($this->city) > 50) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_CITY'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_CITY'));
 			return false;
 		}
 
 		$this->state = strip_tags($this->state);
 		if (\Joomla\String\StringHelper::strlen($this->state) > 50) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_STATE'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_STATE'));
 			return false;
 		}
 
 		$this->country = strip_tags($this->country);
 		if (\Joomla\String\StringHelper::strlen($this->country) > 2) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_COUNTRY'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_COUNTRY'));
 			return false;
 		}
 
@@ -117,15 +122,15 @@ class JemTableVenue extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		$date        = JFactory::getDate();
+		$date        = Factory::getDate();
 		$user        = JemFactory::getUser();
 		$userid      = $user->get('id');
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 
 		// Check if we're in the front or back
-		if ($app->isAdmin()) {
+		if ($app->isClient('administrator')) {
 			$backend = true;
 		} else {
 			$backend = false;
@@ -148,7 +153,7 @@ class JemTableVenue extends JTable
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/venues/';
-		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
 		$allowable = explode(',', strtolower($filetypes));
 		array_walk($allowable, function(&$v){$v = trim($v);});
 		$image_to_delete = false;
@@ -229,9 +234,11 @@ class JemTableVenue extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;
@@ -302,7 +309,7 @@ class JemTableVenue extends JTable
 				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -322,14 +329,23 @@ class JemTableVenue extends JTable
 		$query->update($this->_db->quoteName($this->_tbl));
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
-		$this->_db->setQuery($query . $checkin);
-		$this->_db->execute();
+		
 
 		// Check for a database error.
 		// TODO: use exception handling
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+
+		try
+		{
+			$this->_db->setQuery($query . $checkin);
+			$this->_db->execute();
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
@@ -340,7 +356,7 @@ class JemTableVenue extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}

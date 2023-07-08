@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 /**
  * JEM user class with additional functions.
@@ -94,7 +96,7 @@ abstract class JemUserAbstract extends JUser
 	 */
 	static function superuser()
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getApplication()->getIdentity();
 
     	if ($user->authorise('core.manage', 'com_jem')) {
     		return true;
@@ -128,7 +130,7 @@ abstract class JemUserAbstract extends JUser
 	public function ismaintainer($action, $eventid = false)
 	{
 		// lets look if the user is a maintainer
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = 'SELECT gr.id' . ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
@@ -189,7 +191,7 @@ abstract class JemUserAbstract extends JUser
 		 *
 		 * views: venues, venue, editvenue
 		 */
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
@@ -223,7 +225,7 @@ abstract class JemUserAbstract extends JUser
 			return false;
 		}
 
-		$db	= JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
 		if (is_array($asset) && !empty($asset)) {
 			array_walk($asset, function(&$v, $k, $db) { $v = $db->quoteName($v); }, $db);
@@ -342,7 +344,7 @@ abstract class JemUserAbstract extends JUser
 		}
 
 		// We have to check ALL categories, also those not seen by user.
-		$db = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = 'SELECT DISTINCT c.*' . $disable
 		        . ' FROM #__jem_categories AS c'
 		        . ' WHERE c.published = 1'
@@ -494,7 +496,7 @@ abstract class JemUserAbstract extends JUser
 
 						$levels = $this->getAuthorisedViewLevels();
 						// We have to check ALL categories, also those not seen by user.
-						$db = JFactory::getDBO();
+                        $db = Factory::getContainer()->get('DatabaseDriver');
 						$query  = 'SELECT DISTINCT c.id, c.groupid, c.access'
 						        . ' FROM #__jem_categories AS c';
 						if (!empty($id)) {
@@ -539,43 +541,19 @@ abstract class JemUserAbstract extends JUser
 
 }
 
-if (version_compare(JVERSION, '3.4', 'lt')) {
-	// on Joomla prior 3.4.0 getInstance expects only one parameter
-
-	/**
-	 * JEM user class with additional functions.
-	 * Compatible with Joomla prior 3.4.0.
-	 *
-	 * @package JEM
-	 *
-	 * @see JemUserAbstract
-	 */
-	class JemUser extends JemUserAbstract
-	{
-		static function getInstance($id = 0)
-		{
-			return parent::_getInstance($id);
-		}
-	}
-
-} else {
-	// since Joomla 3.4.0 getInstance has a second parameter
-
-	/**
-	 * JEM user class with additional functions.
-	 * Compatible with Joomla since 3.4.0.
-	 *
-	 * @package JEM
-	 *
-	 * @see JemUserAbstract
-	 */
-	class JemUser extends JemUserAbstract
-	{
-		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
-		{
-			// we don't need this helper
-			return parent::_getInstance($id);
-		}
-	}
-
+/**
+ * JEM user class with additional functions.
+ * Compatible with Joomla since 3.4.0.
+ *
+ * @package JEM
+ *
+ * @see JemUserAbstract
+ */
+class JemUser extends JemUserAbstract
+{
+    static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+    {
+        // we don't need this helper
+        return parent::_getInstance($id);
+    }
 }

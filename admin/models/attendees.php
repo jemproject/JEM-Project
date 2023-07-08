@@ -1,20 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Language\Text;
 
 /**
  * Model: Attendees
  */
-class JemModelAttendees extends JModelList
+class JemModelAttendees extends ListModel
 {
 	protected $eventid = 0;
 
@@ -33,7 +35,7 @@ class JemModelAttendees extends JModelList
 
 		parent::__construct($config);
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$eventid = $app->input->getInt('eventid', 0);
 		$this->setId($eventid);
 	}
@@ -50,9 +52,9 @@ class JemModelAttendees extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
-		$limit      = $app->getUserStateFromRequest('com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit      = $app->getUserStateFromRequest('com_jem.attendees.limit', 'limit', $app->get('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.attendees.limitstart', 'limitstart', 0, 'int');
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -102,7 +104,7 @@ class JemModelAttendees extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -163,7 +165,7 @@ class JemModelAttendees extends JModelList
 	 */
 	public function getEvent()
 	{
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('id','title','dates','maxplaces','waitinglist'));
 		$query->from('#__jem_events');
@@ -186,7 +188,7 @@ class JemModelAttendees extends JModelList
 		{
 			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_register'));
@@ -222,16 +224,16 @@ class JemModelAttendees extends JModelList
 		$csv = fopen('php://output', 'w');
 
 		$header = array(
-				JText::_('COM_JEM_NAME'),
-				JText::_('COM_JEM_USERNAME'),
-				JText::_('COM_JEM_EMAIL'),
-				JText::_('COM_JEM_REGDATE'),
-				JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
+				Text::_('COM_JEM_NAME'),
+				Text::_('COM_JEM_USERNAME'),
+				Text::_('COM_JEM_EMAIL'),
+				Text::_('COM_JEM_REGDATE'),
+				Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
 			);
 		if ($comments) {
-			$header[] = JText::_('COM_JEM_COMMENT');
+			$header[] = Text::_('COM_JEM_COMMENT');
 		}
-		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
+		$header[] = Text::_('COM_JEM_ATTENDEES_REGID');
 
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -249,8 +251,8 @@ class JemModelAttendees extends JModelList
 					$item->name,
 					$item->username,
 					$item->email,
-					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, JText::_('DATE_FORMAT_LC2')),
-					JText::_($txt_stat)
+					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
+					Text::_($txt_stat)
 				);
 			if ($comments) {
 				$comment = strip_tags($item->comment);

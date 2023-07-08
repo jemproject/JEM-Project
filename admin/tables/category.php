@@ -1,12 +1,17 @@
 <?php
 /**
- * @version     2.3.6
- * @package     JEM
- * @copyright   Copyright (C) 2013-2021 joomlaeventmanager.net
- * @copyright   Copyright (C) 2005-2009 Christoph Lukes
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version 4.0.0
+ * @package JEM
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.database.tablenested');
 
@@ -32,7 +37,7 @@ class JemTableCategory extends JTableNested
 	 *
 	 * @return boolean  True on success.
 	 *
-	 * @link   http://docs.joomla.org/JTableNested/delete
+	 * @link   https://docs.joomla.org/JTableNested/delete
 	 */
 	public function delete($pk = null, $children = false)
 	{
@@ -50,22 +55,22 @@ class JemTableCategory extends JTableNested
 			return;
 		}
 
-		$db = JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Insert columns.
-		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access', 'published');
+		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access','title','published');
 
 		// Insert values.
-		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'), 1, 1);
+		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'),1, $db->quote('root'),1);
 
 		// Prepare the insert query.
 		$query
 		->insert($db->quoteName('#__jem_categories'))
 		->columns($db->quoteName($columns))
 		->values(implode(',', $values));
-
 		$db->setQuery($query);
+		
 		$db->execute();
 
 		return $db->insertid();
@@ -83,11 +88,10 @@ class JemTableCategory extends JTableNested
 	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
-			return false;
+		if ($ret < 0) {
+			$this->setError(get_class($this).'::store failed - '.$this->_db->getError());
 		}
-		return true;
+		return $ret;
 	}
 
 	/**
@@ -114,8 +118,9 @@ class JemTableCategory extends JTableNested
 			$values[] = $this->_db->quote($v);
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if ($this->_db->execute() === false){
-			return false;
+		$results = $this->_db->execute();
+        if ($results === false){
+			return -1;
 		}
 		$id = $this->_db->insertid();
 		if ($keyName && $id) {
@@ -129,14 +134,14 @@ class JemTableCategory extends JTableNested
 	 *
 	 * @return boolean
 	 *
-	 * @see    JTable::check
+	 * @see    Table::check
 	 * @since  11.1
 	 */
 	public function check()
 	{
 		// Check for a title.
 		if (trim($this->catname) == '') {
-			$this->setError(JText::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));
+			$this->setError(Text::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));
 			return false;
 		}
 		$this->alias = trim($this->alias);
@@ -146,7 +151,7 @@ class JemTableCategory extends JTableNested
 
 		$this->alias = JemHelper::stringURLSafe($this->alias);
 		if (trim(str_replace('-', '', $this->alias)) == '') {
-			$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+			$this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
 		}
 
 		return true;
@@ -161,7 +166,7 @@ class JemTableCategory extends JTableNested
 	 *
 	 * @return mixed   Null if operation was satisfactory, otherwise returns an error
 	 *
-	 * @see    JTable::bind
+	 * @see    Table::bind
 	 * @since  11.1
 	 */
 	public function bind($array, $ignore = '')
@@ -187,16 +192,15 @@ class JemTableCategory extends JTableNested
 	}
 
 	/**
-	 * Overloaded JTable::store to set created/modified and user id.
+	 * Overloaded Table::store to set created/modified and user id.
 	 *
 	 * @param  boolean  $updateNulls  True to update fields even if they are null.
 	 * @return boolean  True on success.
 	 */
 	public function store($updateNulls = false)
 	{
-		$date = JFactory::getDate();
+		$date = Factory::getDate();
 		$user = JemFactory::getUser();
-
 		if ($this->id) {
 			// Existing category
 			$this->modified_time = $date->toSql();
@@ -207,14 +211,15 @@ class JemTableCategory extends JTableNested
 			$this->created_user_id = $user->get('id');
 		}
 		// Verify that the alias is unique
-		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => $this->getDbo()));
+		$table = Table::getInstance('Category', 'JEMTable', array('dbo' => Factory::getContainer()->get('DatabaseDriver')));
+
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		    && ($table->id != $this->id || $this->id == 0)) {
-
-			$this->setError(JText::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
+			
+			$this->setError(Text::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
 		}
-
+	
 		return parent::store($updateNulls);
 	}
 
@@ -224,6 +229,18 @@ class JemTableCategory extends JTableNested
 	 */
 	public function checkCsvImport()
 	{
+        foreach (get_object_vars($this) as $k => $v) {
+            if (is_array($v) or is_object($v) or $v === NULL) {
+                continue;
+            }
+            if ($k[0] == '_') { // internal field
+                continue;
+            }
+            //Change datetime to null when its value is '000-00-00' (support J4 & J5)
+            if(strpos($v, "0000-00-00")!== FALSE){
+                $this->$k = null;
+            }
+        }
 		return true;
 	}
 
@@ -244,7 +261,7 @@ class JemTableCategory extends JTableNested
 
 		// If the store failed return false.
 		if (!$stored) {
-			$e = JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $this->_db->getErrorMsg());
+			$e = Text::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $stored->getError());
 			$this->setError($e);
 			return false;
 		}

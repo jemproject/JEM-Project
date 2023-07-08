@@ -1,36 +1,38 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
-?>
-<?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
+
+use Joomla\CMS\Language\Text;
+
+if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
   <hr class="jem-hr" style="display: none;" />
 	<div class="jem-files">
 		<?php if (count($this->attachments) > 1) : ?>
-			<h2 class="jem-files"><?php echo JText::_('COM_JEM_FILES') ; ?></h2>
+			<h2 class="jem-files"><?php echo Text::_('COM_JEM_FILES') ; ?></h2>
 		<?php else : ?>
-			<h2 class="jem-files"><?php echo JText::_('COM_JEM_FILE') ; ?></h2>
+			<h2 class="jem-files"><?php echo Text::_('COM_JEM_FILE') ; ?></h2>
 		<?php endif; ?>
 		<dl class="jem-dl">
 			<?php foreach ($this->attachments as $index=>$file) : ?>
-        <dt class="jem-files" data-placement="bottom" data-original-title="<?php echo JText::_('COM_JEM_FILE'); ?>"><?php echo JText::_('COM_JEM_FILE').' '.($index+1); ?>:</dt>
+        <dt class="jem-files" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_FILE'); ?>"><?php echo Text::_('COM_JEM_FILE').' '.($index+1); ?>:</dt>
 				<dd class="jem-files">
 					<?php
-					$overlib = JText::_('COM_JEM_FILE').': '.$this->escape($file->file);
+					$overlib = Text::_('COM_JEM_FILE').': '.$this->escape($file->file);
 					if (!empty($file->name)) {
-						$overlib .= '<br />'.JText::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
+						$overlib .= '<br />'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
 					}
 					if (!empty($file->description)) {
-						$overlib .= '<br />'.JText::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
+						$overlib .= '<br />'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
 					}
 					?>
-					<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_DOWNLOAD'), $overlib, 'jem-files'); ?>>
+					<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_DOWNLOAD'), $overlib, 'jem-files'); ?>>
 					<?php
 						$filename	= $this->escape($file->name ? $file->name : $file->file);
 						$image		= $filename.'&nbsp;<i class="fa fa-download"></i>';

@@ -1,14 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/eventslist.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
+Use Joomla\Utilities\ArrayHelper;
+
+require_once __DIR__ . '/eventslist.php';
 
 /**
  * Model: Category
@@ -33,7 +38,7 @@ class JemModelCategory extends JemModelEventslist
 	 */
 	public function __construct()
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		// Get the parameters of the active menu item
 		$params = $app->getParams();
 
@@ -90,7 +95,7 @@ class JemModelCategory extends JemModelEventslist
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initiliase variables.
-		$app         = JFactory::getApplication('site');
+		$app         = Factory::getApplication('site');
 		$jemsettings = JemHelper::config();
 		$task        = $app->input->getCmd('task','');
 		$format      = $app->input->getCmd('format',false);
@@ -105,7 +110,9 @@ class JemModelCategory extends JemModelEventslist
 		$menuParams = new JRegistry;
 
 		if ($menu = $app->getMenu()->getActive()) {
-			$menuParams->loadString($menu->params);
+			// $menu_params = $menu->getParams();
+			// $menuParams->loadString($menu->params);
+			$menuParams->loadString($menu->getParams());
 		}
 
 		$mergedParams = clone $menuParams;
@@ -155,8 +162,8 @@ class JemModelCategory extends JemModelEventslist
 			$filter_order_DirDefault = 'DESC';
 		}
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {
@@ -244,8 +251,8 @@ class JemModelCategory extends JemModelEventslist
 	protected function getListQuery()
 	{
 		//$params  = $this->state->params;
-		//$jinput  = JFactory::getApplication()->input;
-		//$task    = $jinput->get('task','','cmd');
+		//$jinput  = Factory::getApplication()->input;
+		//$task    = $jinput->getCmd('task','','cmd');
 
 		// Create a new query object.
 		$query = parent::getListQuery();
@@ -303,8 +310,7 @@ class JemModelCategory extends JemModelEventslist
 		if (sizeof($this->_children)) {
 			$params = $this->getState()->get('params');
 			if ($params->get('orderby_pri') == 'alpha' || $params->get('orderby_pri') == 'ralpha') {
-				jimport('joomla.utilities.arrayhelper');
-				\Joomla\Utilities\ArrayHelper::sortObjects($this->_children, 'title', ($params->get('orderby_pri') == 'alpha') ? 1 : -1);
+				ArrayHelper::sortObjects($this->_children, 'title', ($params->get('orderby_pri') == 'alpha') ? 1 : -1);
 			}
 		}
 

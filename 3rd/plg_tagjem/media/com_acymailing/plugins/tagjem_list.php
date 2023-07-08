@@ -1,14 +1,18 @@
 <?php
 /**
- * Version 2.3.6
- * @copyright	Copyright (C) 2014 Thamesmog.
- * @copyright	Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
- * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * Based on Eventlist11 tag and JEM specific code by JEM Community
+ * Version 4.0.0
+ * JEM Tag Plugin for AcyMailing 5.x
+ * @copyright (C) 2014 Thamesmog.
+ * @copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * Based on Eventlist tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
+
 $result .= '<div class="acymailing_content">';
 $result .= '<br/>';
 $link = JemHelperRoute::getEventRoute($event->slug);
@@ -60,15 +64,15 @@ if (!empty($event->conname)) {
 	$item = $menu->getItems('link', $needle, true);
 	$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 
-	$result .= JText::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';
+	$result .= Text::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';
 	if (!empty($event->conemail_to)) {
 		$result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 	}
 	//if (!empty($event->contelephone)) {
-	//	$result .= '<br/>'.JText::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
+	//	$result .= '<br/>'.Text::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
 	//}
 	if (!empty($event->conmobile)) {
-		$result .= '<br/>'.JText::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
+		$result .= '<br/>'.Text::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
 	}
 	$result .= '</p>';
 	//$result .= '</div>';

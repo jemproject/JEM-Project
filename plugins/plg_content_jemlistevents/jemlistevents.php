@@ -3,21 +3,15 @@
  * JemListEvent is a Plugin to display events in articles.
  * For more information visit joomlaeventmanager.net
  *
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM_Listevents_Plugin
- * @author JEM Team <info@joomlaeventmanager.net>, Michael Anderau <michael@sternrenaugen.net>, Luis Raposo
- * @copyright (c) 2013-2017 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @author JEM Team <info@joomlaeventmanager.net>, Luis Raposo
+ * @copyright (c) 2013-2023 joomlaeventmanager.net
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-defined('_JEXEC') or die();
 
-// No, it's part of JEM package yet.
-//// Check if JEM is installed.
-//if (!JComponentHelper::isEnabled('com_jem', true)) {
-//	throw new Exception(JText::_('Listevents for JEM works only if JoomlaEventManager (JEM) is installed: <a href=\'https://www.joomlaeventmanager.net\' target=\'_blank\'>www.joomlaeventmanager.net</a>'), 500);
-//	die();
-//}
+defined('_JEXEC') or die;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
@@ -242,7 +236,7 @@ class PlgContentJemlistevents extends JPlugin
 		case 'today': // events of today.
 			//$offset_minutes = ($offset_hourss * 60);
 			$timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-			$to_date = strftime('%Y-%m-%d', $timestamp);
+			$to_date = date('Y-m-d', $timestamp);
 			$model->setState('filter.published', 1);
 			$model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
 			$where = ' DATEDIFF (a.dates, "'. $to_date .'") = 0';
@@ -257,7 +251,7 @@ class PlgContentJemlistevents extends JPlugin
 			$model->setState('filter.published', 1);
 			$model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
 			$timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-			$to_date = strftime('%Y-%m-%d', $timestamp);
+			$to_date = date('Y-m-d', $timestamp);
 			$where = ' DATEDIFF (a.dates, "'. $to_date .'") >= 0';
 			$model->setState('filter.calendar_to', $where);
 			break;
@@ -266,7 +260,7 @@ class PlgContentJemlistevents extends JPlugin
 			$offset_minutes = ($offset_hourss * 60);
 			$model->setState('filter.published', 1);
 			$model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
-			$to_date = strftime('%Y-%m-%d', $timestamp);
+			$to_date = date('Y-m-d', $timestamp);
 			$where = ' DATEDIFF (a.dates, "'. $to_date .'") > 0';
 			$model->setState('filter.calendar_to', $where);
 			break;

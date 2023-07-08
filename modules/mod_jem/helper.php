@@ -1,13 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Module
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
@@ -27,7 +32,7 @@ abstract class ModJemHelper
 	{
 		mb_internal_encoding('UTF-8');
 
-		$db       = JFactory::getDBO();
+        $db       = Factory::getContainer()->get('DatabaseDriver');
 		$user     = JemFactory::getUser();
 		$levels   = $user->getAuthorisedViewLevels();
 		$settings = JemHelper::config();
@@ -39,7 +44,7 @@ abstract class ModJemHelper
 			if (isset($settings->formatShortDate) && $settings->formatShortDate) {
 				$dateFormat = $settings->formatShortDate;
 			} else {
-				$dateFormat = JText::_('COM_JEM_FORMAT_SHORT_DATE');
+				$dateFormat = Text::_('COM_JEM_FORMAT_SHORT_DATE');
 			}
 		}
 		$timeFormat = $params->get('formattime', '');
@@ -122,13 +127,15 @@ abstract class ModJemHelper
 
 			$lists[++$i] = new stdClass;
 
-			$lists[$i]->link     = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+			$lists[$i]->link     = Route::_(JemHelperRoute::getEventRoute($row->slug));
 			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
 			                                                 $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->text     = $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city     = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->venueurl = !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
-
+			$lists[$i]->city     = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->country  = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venueurl = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
+			$lists[$i]->featured = $row->featured;
+			
 			# provide custom fields
 			for ($n = 1; $n <= 10; ++$n) {
 				$var = 'custom'.$n;
@@ -147,8 +154,8 @@ abstract class ModJemHelper
 	 */
 	protected static function _format_url($url)
 	{
-		if(!empty($url) && strtolower(substr($url, 0, 7)) != "http://") {
-			$url = 'http://'.$url;
+		if(!empty($url) && strtolower(substr($url, 0, 7)) != "https://") {
+			$url = 'https://'.$url;
 		}
 		return $url;
 	}

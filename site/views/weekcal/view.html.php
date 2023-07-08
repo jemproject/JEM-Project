@@ -1,12 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 /**
  * Weekcal-View
@@ -19,11 +25,11 @@ class JemViewWeekcal extends JemView
 	public function display($tpl = null)
 	{
 		// Load tooltips behavior
-		JHtml::_('behavior.tooltip');
+		// JHtml::_('behavior.tooltip');
 
 		// initialize variables
-		$app          = JFactory::getApplication();
-		$document     = JFactory::getDocument();
+		$app          = Factory::getApplication();
+		$document     = $app->getDocument();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
 		$jemsettings  = JemHelper::config();
@@ -35,6 +41,7 @@ class JemViewWeekcal extends JemView
 		$print        = $jinput->getBool('print', false);
 
 		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
+		$url 			= Uri::root();
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -55,7 +62,7 @@ class JemViewWeekcal extends JemView
 		$style = '
 		div#jem .eventcontentinner a,
 		div#jem .eventandmore a {
-			color: ' . $evlinkcolor . ';
+			color:' . $evlinkcolor . ';
 		}
 		.eventcontentinner {
 			background-color:'.$evbackgroundcolor .';
@@ -63,6 +70,7 @@ class JemViewWeekcal extends JemView
 		.eventandmore {
 			background-color:'.$eventandmorecolor .';
 		}
+
 		.today .daynum {
 			background-color:'.$currentdaycolor.';
 		}';
@@ -70,12 +78,16 @@ class JemViewWeekcal extends JemView
 		$document->addStyleDeclaration($style);
 
 		// add javascript (using full path - see issue #590)
-		JHtml::_('script', 'media/com_jem/js/calendar.js');
+		// JHtml::_('script', 'media/com_jem/js/calendar.js');
+		$document->addScript($url.'media/com_jem/js/calendar.js');
 
+		$year  = (int)$jinput->getInt('yearID', date("Y"));
+		$week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
+
+		// get data from model and set the month
 		$model = $this->getModel();
+
 		$rows = $this->get('Items');
-		$currentweek = $this->get('Currentweek');
-		$currentyear = Date("Y");
 
 		// Set Page title
 		$pagetitle = $params->def('page_title', $menuitem->title);
@@ -83,11 +95,11 @@ class JemViewWeekcal extends JemView
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 		}
 
 		$document->setTitle($pagetitle);
@@ -99,13 +111,17 @@ class JemViewWeekcal extends JemView
 		$permissions->canAddEvent = $user->can('add', 'event', false, false, $catIds);
 		$permissions->canAddVenue = $user->can('add', 'venue', false, false, $catIds);
 
-		$itemid = $jinput->getInt('Itemid', 0);
+		$itemid  = $jinput->getInt('Itemid', 0);
+
 		$partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
-		$print_link = JRoute::_('index.php?option=com_jem&view=weekcal' . $partItemid . '&print=1&tmpl=component');
+		$partDate = ($year ? ('&yearID=' . $year) : '') . ($week ? ('&weekID=' . $week) : '');
+		$url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid;
+
+		$print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
 
 		// init calendar
-		$cal = new activeCalendarWeek($currentyear,1,1);
-		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
+		$cal = new activeCalendarWeek($year,1,1);
+		$cal->enableWeekNum(Text::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		$cal->setFirstWeekDay($params->get('firstweekday', 0));
 		$cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
 
@@ -114,9 +130,9 @@ class JemViewWeekcal extends JemView
 		$this->jemsettings   = $jemsettings;
 		$this->settings      = $settings;
 		$this->permissions   = $permissions;
-		$this->currentweek   = $currentweek;
+		$this->currentweek   = $week;
 		$this->cal           = $cal;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->print_link    = $print_link;
 		$this->print         = $print;
 

@@ -1,20 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  */
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
  * JEM Component Cssmanager Controller
  */
-class JemControllerCssmanager extends JControllerAdmin
+class JemControllerCssmanager extends AdminController
 {
 
 	/**
@@ -47,12 +48,16 @@ class JemControllerCssmanager extends JControllerAdmin
 		$this->setRedirect('index.php?option=com_jem&view=main');
 	}
 
+	public function back()
+	{
+		$this->setRedirect('index.php?option=com_jem&view=main');
+	}
 	/**
 	 *
 	 */
 	public function linenumber()
 	{
-		$task  = JFactory::getApplication()->input->get('task', '');
+		$task  = Factory::getApplication()->input->get('task', '');
 		$model = $this->getModel();
 
 		switch ($task)

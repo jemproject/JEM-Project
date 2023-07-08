@@ -1,14 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
+use \Joomla\CMS\Uri\Uri;
 
 /**
  * View class Group
@@ -26,6 +31,8 @@ class JemViewGroup extends JemAdminView
 	public function display($tpl = null)
 	{
 		// Initialise variables.
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$this->form	 = $this->get('Form');
 		$this->item	 = $this->get('Item');
 		$this->state = $this->get('State');
@@ -33,25 +40,26 @@ class JemViewGroup extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			$app->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
-		JHtml::_('behavior.modal', 'a.modal');
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.formvalidation');
 
 		//initialise variables
 		$jemsettings = JemHelper::config();
-		$document	= JFactory::getDocument();
 		$this->settings	= JemAdmin::config();
-		$task		= JFactory::getApplication()->input->get('task', '');
+		$task		= $app->input->get('task', '');
 		$this->task = $task;
-		$url 		= JUri::root();
+		$url 		= Uri::root();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = $app->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		$maintainers 		= $this->get('Members');
 		$available_users 	= $this->get('Available');
 
@@ -60,8 +68,8 @@ class JemViewGroup extends JemAdminView
 
 		//create selectlists
 		$lists = array();
-		$lists['maintainers']		= JHtml::_('select.genericlist', $maintainers, 'maintainers[]', array('class'=>'inputbox','size'=>'20','onDblClick'=>'moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])', 'multiple'=>'multiple', 'style'=>'padding: 6px; width: 98%;'), 'value', 'text');
-		$lists['available_users']	= JHtml::_('select.genericlist', $available_users, 'available_users', array('class'=>'inputbox','size'=>'20','onDblClick'=>'moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])', 'multiple'=>'multiple','style'=>'padding: 6px; width: 98%;'), 'value', 'text');
+		$lists['maintainers']		= HTMLHelper::_('select.genericlist', $maintainers, 'maintainers[]', array('class'=>'inputbox','size'=>'20','onDblClick'=>'moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])', 'multiple'=>'multiple', 'style'=>'padding: 6px; width: 98%;'), 'value', 'text');
+		$lists['available_users']	= HTMLHelper::_('select.genericlist', $available_users, 'available_users', array('class'=>'inputbox','size'=>'20','onDblClick'=>'moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])', 'multiple'=>'multiple','style'=>'padding: 6px; width: 98%;'), 'value', 'text');
 
 		$this->jemsettings		= $jemsettings;
 		$this->lists 		= $lists;
@@ -77,36 +85,36 @@ class JemViewGroup extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		$user		= JemFactory::getUser();
 		$isNew		= ($this->item->id == 0);
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo		= JemHelperBackend::getActions();
 
-		JToolBarHelper::title($isNew ? JText::_('COM_JEM_GROUP_ADD') : JText::_('COM_JEM_GROUP_EDIT'), 'groupedit');
+		ToolbarHelper::title($isNew ? Text::_('COM_JEM_GROUP_ADD') : Text::_('COM_JEM_GROUP_EDIT'), 'groupedit');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
-			JToolBarHelper::apply('group.apply');
-			JToolBarHelper::save('group.save');
+			ToolbarHelper::apply('group.apply');
+			ToolbarHelper::save('group.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-			JToolBarHelper::save2new('group.save2new');
+			ToolbarHelper::save2new('group.save2new');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::save2copy('group.save2copy');
+			ToolbarHelper::save2copy('group.save2copy');
 		}
 
 		if (empty($this->item->id))  {
-			JToolBarHelper::cancel('group.cancel');
+			ToolbarHelper::cancel('group.cancel');
 		} else {
-			JToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editgroup', true);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('editgroup', true);
 	}
 }
 ?>

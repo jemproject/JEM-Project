@@ -1,18 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Table\Table;
+
 /**
  * Table: Register
  */
-class jem_register extends JTable
+class jem_register extends Table
 {
 	/**
 	 * Primary Key
@@ -39,17 +41,17 @@ class jem_register extends JTable
 	}
 
 	/**
-	 * Method to store a row in the database from the JTable instance properties.
+	 * Method to store a row in the database from the Table instance properties.
 	 * If a primary key value is set the row with that primary key value will be
 	 * updated with the instance property values.  If no primary key value is set
 	 * a new row will be inserted into the database with the properties from the
-	 * JTable instance.
+	 * Table instance.
 	 *
 	 * @param  boolean  $updateNulls  True to update fields even if they are null.
 	 *
 	 * @return boolean  True on success.
 	 *
-	 * @link   https://docs.joomla.org/JTable/store
+	 * @link   https://docs.joomla.org/Table/store
 	 * @since  11.1
 	 */
 	public function store($updateNulls = false)
@@ -75,9 +77,11 @@ class jem_register extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;

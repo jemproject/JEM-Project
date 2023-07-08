@@ -1,21 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Sampledata Controller
  * @package JEM
  */
-class JemControllerSampledata extends JControllerLegacy
+class JemControllerSampledata extends BaseController
 {
 	/**
 	 * Constructor
@@ -33,9 +34,9 @@ class JemControllerSampledata extends JControllerLegacy
 		$model = $this->getModel('sampledata');
 
 		if (!$model->loadData()) {
-			$msg = JText::_('COM_JEM_SAMPLEDATA_FAILED');
+			$msg = Text::_('COM_JEM_SAMPLEDATA_FAILED');
 		} else {
-			$msg = JText::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
+			$msg = Text::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
 		}
 
 		$link = 'index.php?option=com_jem&view=main';

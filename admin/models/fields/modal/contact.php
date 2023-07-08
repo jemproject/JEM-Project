@@ -1,12 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.formfield');
 
@@ -27,51 +31,73 @@ class JFormFieldModal_Contact extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.modal');
+		// JHtml::_('behavior.modal', 'a.modal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectContact_'.$this->id.'(id, name, object) {';
-		$script[] = '        document.id("'.$this->id.'_id").value = id;';
-		$script[] = '        document.id("'.$this->id.'_name").value = name;';
-		$script[] = '        SqueezeBox.close();';
+		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '        document.getElementById("'.$this->id.'_name").value = name;';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#contact-modal").modal("hide");';
 		$script[] = '    }';
 
 		// Add to document head
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getApplication()->getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component&amp;function=jSelectContact_'.$this->id;
 
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('name');
 		$query->from('#__contact_details');
 		$query->where(array('id='.(int)$this->value));
-		$db->setQuery($query);
+		
+
+		// if ($error = $db->getErrorMsg()) {
+		// 	Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
+		try
+		{
+			$db->setQuery($query);
 
 		$contact = $db->loadResult();
-
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (empty($contact)) {
-			$contact = JText::_('COM_JEM_SELECTCONTACT');
+			$contact = Text::_('COM_JEM_SELECTCONTACT');
 		}
 		$contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
 
 		// The current contact input field
 		$html[] = '<div class="fltlft">';
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" />';
+		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" class="form-control valid form-control-success" />';
 		$html[] = '</div>';
 
 		// The contact select button
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="modal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
+		$html[] = JHtml::_(
+			'bootstrap.renderModal',
+			'contact-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => Text::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link btn-primary"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.Text::_('COM_JEM_SELECT').'
+		</button>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

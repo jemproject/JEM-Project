@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 <script type="text/javascript">
@@ -26,18 +28,18 @@ defined('_JEXEC') or die;
 		<table>
 			<tr>
 				<td>
-					<label for="filter_type"><?php echo JText::_('COM_JEM_FILTER');  ?></label>
+					<label for="filter_type"><?php echo Text::_('COM_JEM_FILTER');  ?></label>
 				</td>
 				<td>
 					<?php echo $this->lists['filter_types']; ?>
 					<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-					<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-					<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+					<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+					<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<?php echo '<label for="category">'.JText::_('COM_JEM_CATEGORY').'</label>&nbsp;'; ?>
+					<?php echo '<label for="category">'.Text::_('COM_JEM_CATEGORY').'</label>&nbsp;'; ?>
 				</td>
 				<td>
 					<?php echo $this->lists['categories']; ?>
@@ -45,16 +47,16 @@ defined('_JEXEC') or die;
 			</tr>
 			<tr>
 				<td>
-					<?php echo '<label for="date">'.JText::_('COM_JEM_SEARCH_DATE').'</label>&nbsp;'; ?>
+					<?php echo '<label for="date">'.Text::_('COM_JEM_SEARCH_DATE').'</label>&nbsp;'; ?>
 				</td>
 				<td>
-					<div class="nowrap"><?php echo Jtext::_('COM_JEM_SEARCH_FROM'); ?><?php echo $this->lists['date_from'];?></div>
-					<div class="nowrap"><?php echo Jtext::_('COM_JEM_SEARCH_TO'); ?><?php echo $this->lists['date_to'];?></div>
+					<div class="nowrap"><?php echo text::_('COM_JEM_SEARCH_FROM'); ?><?php echo $this->lists['date_from'];?></div>
+					<div class="nowrap"><?php echo text::_('COM_JEM_SEARCH_TO'); ?><?php echo $this->lists['date_to'];?></div>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<?php echo '<label for="continent">'.JText::_('COM_JEM_CONTINENT').'</label>&nbsp;'; ?>
+					<?php echo '<label for="continent">'.Text::_('COM_JEM_CONTINENT').'</label>&nbsp;'; ?>
 				</td>
 				<td>
 					<?php echo $this->lists['continents'];?>
@@ -63,7 +65,7 @@ defined('_JEXEC') or die;
 			<?php if ($this->filter_continent): ?>
 			<tr>
 				<td>
-					<?php echo '<label for="country">'.JText::_('COM_JEM_COUNTRY').'</label>&nbsp;'; ?>
+					<?php echo '<label for="country">'.Text::_('COM_JEM_COUNTRY').'</label>&nbsp;'; ?>
 				</td>
 				<td>
 					<?php echo $this->lists['countries'];?>
@@ -73,7 +75,7 @@ defined('_JEXEC') or die;
 			<?php if ($this->filter_continent && $this->filter_country): ?>
 			<tr>
 				<td>
-					<?php echo '<label for="city">'.JText::_('COM_JEM_CITY').'</label>&nbsp;';?>
+					<?php echo '<label for="city">'.Text::_('COM_JEM_CITY').'</label>&nbsp;';?>
 				</td>
 				<td>
 					<?php echo $this->lists['cities'];?>
@@ -82,12 +84,12 @@ defined('_JEXEC') or die;
 			<?php endif; ?>
 			<tr>
 				<td colspan="2">
-					<input class="btn btn-primary" type="submit" value="<?php echo JText::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
+					<input class="btn btn-primary" type="submit" value="<?php echo Text::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
 				</td>
 			</tr>
 		</table>
 			<div class="jem_fright">
-		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 	</div>
 	</div>
@@ -96,7 +98,7 @@ defined('_JEXEC') or die;
 </div>
 
 <div class="table-responsive">
-	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 		<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -139,7 +141,7 @@ defined('_JEXEC') or die;
 
 		<tbody>
 			<?php if (empty($this->rows)) : ?>
-				<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS_FOUND'); ?></td></tr>
+				<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS_FOUND'); ?></td></tr>
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->rows as $row) : ?>

@@ -1,21 +1,24 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  *
- * Country list: http://erikastokes.com/mysql-help/mysql-country-table.php
- * Api country checker: http://api.worldbank.org/countries/ss
+ * Country list: https://erikastokes.com/mysql-help/mysql-country-table.php
+ * Api country checker: https://api.worldbank.org/countries/ss
  *
- * Lat+long finder: http://www.findlatitudeandlongitude.com/?loc=
- * For example:  http://www.findlatitudeandlongitude.com/?loc=Sint+Maarten&id=316082
+ * Lat+long finder: https://www.findlatitudeandlongitude.com/?loc=
+ * For example:  https://www.findlatitudeandlongitude.com/?loc=Sint+Maarten&id=316082
  *
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
 
 class JemHelperCountries
 {
@@ -536,7 +539,7 @@ class JemHelperCountries
 		$options = array();
 		foreach ($countries as $country) {
 			$name = explode(',', $country['name']);
-			$options[] = JHtml::_('select.option', $country['iso2'], JText::_($name[0]), $value_tag, $text_tag);
+			$options[] = JHtml::_('select.option', $country['iso2'], Text::_($name[0]), $value_tag, $text_tag);
 		}
 		return $options;
 	}
@@ -1076,11 +1079,15 @@ class JemHelperCountries
 	 */
 	static public function getIsoFlag($iso_code)
 	{
+		$uri = Uri::getInstance();
+		$settings = JemHelper::config();
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);
 		}
 		if ($iso_code) {
-			$path = JUri::root().'media/com_jem/images/flags/'.strtolower($iso_code).'.gif';
+			$flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
+			$flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
+			$path = Uri::getInstance()->base() . $flagpath . strtolower($iso_code) . '.' . $flagext;
 			return $path;
 		}
 		else
@@ -1120,7 +1127,7 @@ class JemHelperCountries
 		$countries = self::getCountries();
 		if (isset($countries[$iso]['name'])) {
 			$c = explode(',', $countries[$iso]['name']);
-			return JText::_($c[0]);
+			return Text::_($c[0]);
 		}
 		return false;
 	}
@@ -1136,7 +1143,7 @@ class JemHelperCountries
 		}
 		$countries = self::getCountries();
 		if(isset($countries[$iso]['name']))
-		return JText::_($countries[$iso]['name']);
+		return Text::_($countries[$iso]['name']);
 	}
 
 	/**
@@ -1153,7 +1160,7 @@ class JemHelperCountries
 			return false;
 		}
 		$parts = explode(',', $full);
-		return JText::_($parts[0]);
+		return Text::_($parts[0]);
 	}
 }
 ?>

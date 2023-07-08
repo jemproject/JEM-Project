@@ -1,18 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Raw: Category
  */
-class JemViewCategory extends JViewLegacy
+class JemViewCategory extends HtmlView
 {
 	/**
 	 * Creates the output for the Category view
@@ -21,7 +24,7 @@ class JemViewCategory extends JViewLegacy
 	{
 		$settings  = JemHelper::config();
 		$settings2 = JemHelper::globalattribs();
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$jinput    = $app->input;
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {

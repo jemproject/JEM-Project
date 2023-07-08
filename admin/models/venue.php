@@ -1,14 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/admin.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+
+require_once __DIR__ . '/admin.php';
 
 /**
  * Model: Venue
@@ -60,7 +65,7 @@ class JemModelVenue extends JemModelAdmin
 		{
 			$pksTodelete = array();
 			$errorNotice = array();
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 			foreach ($pks as $pk)
 			{
 				$result = array();
@@ -76,7 +81,7 @@ class JemModelVenue extends JemModelAdmin
 
 				if ($assignedEvents > 0)
 				{
-					$result[] = JText::_('COM_JEM_VENUE_ASSIGNED_EVENT');
+					$result[] = Text::_('COM_JEM_VENUE_ASSIGNED_EVENT');
 				}
 
 				if ($result)
@@ -144,11 +149,11 @@ class JemModelVenue extends JemModelAdmin
 	 * @param  string The table to instantiate
 	 * @param  string A prefix for the table class name. Optional.
 	 * @param  array  Configuration array for model. Optional.
-	 * @return JTable A database object
+	 * @return Table A database object
 	 */
 	public function getTable($type = 'Venue', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -201,7 +206,7 @@ class JemModelVenue extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.venue.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.venue.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
@@ -213,11 +218,11 @@ class JemModelVenue extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param $table JTable-object.
+	 * @param $table Table-object.
 	 */
 	protected function _prepareTable($table)
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
 
 		// Increment version number.
@@ -232,13 +237,13 @@ class JemModelVenue extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 		$task        = $jinput->get('task', '', 'cmd');
 
 		// Check if we're in the front or back
-		$backend = (bool)$app->isAdmin();
+		$backend = (bool)$app->isClient('administrator');
 		$new     = (bool)empty($data['id']);
 
 		// Store IP of author only.
@@ -246,7 +251,16 @@ class JemModelVenue extends JemModelAdmin
 			$author_ip = $jinput->get('author_ip', '', 'string');
 			$data['author_ip'] = $author_ip;
 		}
-
+	
+		$data['modified'] = (isset($data['modified']) && !empty($data['modified'])) ? $data['modified'] : null;
+		$data['publish_up'] = (isset($data['publish_up']) && !empty($data['publish_up'])) ? $data['publish_up'] : null;
+		$data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : null;
+		$data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : null;
+		$data['attribs'] = (isset($data['attribs'])) ? $data['attribs'] : '';
+		$data['language'] = (isset($data['language'])) ? $data['language'] : '';
+		$data['latitude'] = (isset($data['latitude']) && !empty($data['latitude'])) ? $data['latitude'] : 0;
+		$data['longitude'] = (isset($data['longitude']) && !empty($data['longitude'])) ? $data['longitude'] : 0;
+	
 		// Store as copy - reset creation date, modification fields, hit counter, version
 		if ($task == 'save2copy') {
 			unset($data['created']);

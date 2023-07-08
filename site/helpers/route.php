@@ -1,16 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-// Component Helper
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.helper');
+
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
 
@@ -39,6 +41,7 @@ abstract class JEMHelperRoute
 	 */
 	public static function getRoute($id, $view = 'event', $category = null)
 	{
+		
 		// Deprecation warning.
 		JLog::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', JLog::WARNING, 'deprecated');
 
@@ -129,6 +132,7 @@ abstract class JEMHelperRoute
 			$link .= '&Itemid='.$item;
 		}
 		elseif ($item = self::_findItem()) {
+			// $link .= '&Itemid='.$item;
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
@@ -221,7 +225,7 @@ abstract class JEMHelperRoute
 	 */
 	protected static function _findItem($needles = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$menus = $app->getMenu('site');
 
 		// Prepare the reverse lookup array.
@@ -312,3 +316,4 @@ abstract class JEMHelperRoute
 	}
 }
 ?>
+

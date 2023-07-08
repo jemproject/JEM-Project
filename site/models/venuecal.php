@@ -1,14 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/eventslist.php';
+use Joomla\CMS\Factory;
+
+require_once __DIR__ . '/eventslist.php';
 
 /**
  * Model-Venuecal
@@ -34,7 +37,7 @@ class JemModelVenueCal extends JemModelEventslist
 	 */
 	public function __construct()
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 	//	$jemsettings = JemHelper::config();
 		$jinput      = $app->input;
 		$params      = $app->getParams();
@@ -69,7 +72,7 @@ class JemModelVenueCal extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app          = JFactory::getApplication();
+		$app          = Factory::getApplication();
 		$params       = $app->getParams();
 		$itemid       = $app->input->getInt('Itemid', 0);
 		$task         = $app->input->getCmd('task', '');
@@ -86,11 +89,12 @@ class JemModelVenueCal extends JemModelEventslist
 		###########
 
 		#only select events within specified dates. (chosen month)
-		$monthstart = mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
-		$monthend   = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
-		$filter_date_from = strftime('%Y-%m-%d', $monthstart);
-		$filter_date_to   = strftime('%Y-%m-%d', $monthend);
+		$monthstart = mktime(0, 0,  1, date('m', $this->_date),   1, date('Y', $this->_date));
+		$monthend   = mktime(0, 0, -1, date('m', $this->_date)+1, 1, date('Y', $this->_date));
+
+		$filter_date_from = date('Y-m-d', $monthstart);
+		$filter_date_to   = date('Y-m-d', $monthend);
 
 		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $this->_db->Quote($filter_date_from) .') >= 0';
 		$this->setState('filter.calendar_from', $where);

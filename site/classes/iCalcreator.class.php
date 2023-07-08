@@ -5,8 +5,8 @@
  * This file is a PHP implementation of rfc2445/rfc5545.
  *
  * @copyright Copyright (c) 2007-2014 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @link      http://kigkonsult.se/iCalcreator/index.php
- * @license   http://kigkonsult.se/downloads/dl.php?f=LGPL
+ * @link      https://kigkonsult.se/iCalcreator/index.php
+ * @license   https://kigkonsult.se/downloads/dl.php?f=LGPL
  * @package   iCalcreator
  * @version   v2.20
  */
@@ -31,7 +31,7 @@ defined('_JEXEC') or die; /* added to prevent direct call */
  *         Do NOT remove or change version!!
  *
  * @copyright Copyright (c) 2007-2014 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @license   http://kigkonsult.se/downloads/dl.php?f=LGPL
+ * @license   https://kigkonsult.se/downloads/dl.php?f=LGPL
  */
 define( 'ICALCREATOR_VERSION', 'iCalcreator 2.20' );
 /*********************************************************************************/
@@ -189,7 +189,7 @@ class vcalendar {
  * creates formatted output for calendar property prodid
  *
  * @copyright copyright (c) 2007-2013 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @license   http://kigkonsult.se/downloads/dl.php?f=LGPL
+ * @license   https://kigkonsult.se/downloads/dl.php?f=LGPL
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @since 2.12.11 - 2012-05-13
  * @return string
@@ -212,7 +212,7 @@ class vcalendar {
  * make default value for calendar prodid, do NOT alter or remove this method or invoke of this method
  *
  * @copyright copyright (c) 2007-2013 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * @license   http://kigkonsult.se/downloads/dl.php?f=LGPL
+ * @license   https://kigkonsult.se/downloads/dl.php?f=LGPL
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @since 2.6.8 - 2009-12-30
  * @return void
@@ -714,7 +714,7 @@ class vcalendar {
         }
         break;
       case 'FILENAME':
-        $value   = trim( $value );
+        $value   = $value ?  trim( $value ) : $value;
         $dirfile = $this->directory.$this->delimiter.$value;
         if( file_exists( $dirfile )) {
             /* local file exists */
@@ -736,7 +736,7 @@ class vcalendar {
           return FALSE;
         break;
       case 'FORMAT':
-        $value   = trim( strtolower( $value ));
+        $value   =$value ? trim( strtolower( $value )) : $value;
         if( 'xcal' == $value ) {
           $this->format             = 'xcal';
           $this->attributeDelimiter = $this->nl;
@@ -751,7 +751,7 @@ class vcalendar {
         $res = TRUE;
         break;
       case 'LANGUAGE': // set language for calendar component as defined in [RFC 1766]
-        $value   = trim( $value );
+        $value   =$value ? trim( $value ) : $value;
         $this->language = $value;
         $this->_makeProdid();
         $subcfg  = array( 'LANGUAGE' => $value );
@@ -777,7 +777,7 @@ class vcalendar {
         $res = TRUE;
         break;
       case 'UNIQUE_ID':
-        $value   = trim( $value );
+        $value   =$value ? trim( $value ) : $value;
         $this->unique_id = $value;
         $this->_makeProdid();
         $subcfg  = array( 'UNIQUE_ID' => $value );
@@ -1747,7 +1747,7 @@ class vcalendar {
       case 'xcal':
         $calendarInit  = '<?xml version="1.0" encoding="UTF-8"?>'.$this->nl.
                          '<!DOCTYPE vcalendar PUBLIC "-//IETF//DTD XCAL/iCalendar XML//EN"'.$this->nl.
-                         '"http://www.ietf.org/internet-drafts/draft-ietf-calsch-many-xcal-01.txt"';
+                         '"https://www.ietf.org/internet-drafts/draft-ietf-calsch-many-xcal-01.txt"';
         $calendarStart = '>'.$this->nl.'<vcalendar';
         break;
       default:
@@ -2172,7 +2172,7 @@ class calendarComponent {
  */
   function setAttendee( $value, $params=FALSE, $index=FALSE ) {
     if( empty( $value )) if( $this->getConfig( 'allowEmpty' )) $value = ''; else return FALSE;
-          // ftp://, http://, mailto:, file://, gopher://, news:, nntp://, telnet://, wais://, prospero://  may exist.. . also in params
+          // ftp://, https://, mailto:, file://, gopher://, news:, nntp://, telnet://, wais://, prospero://  may exist.. . also in params
     if( !empty( $value )) {
       if( FALSE === ( $pos = strpos( substr( $value, 0, 9 ), ':' )))
         $value = 'MAILTO:'.$value;
@@ -4874,7 +4874,7 @@ class calendarComponent {
         break;
       case 'LANGUAGE':
          // set language for calendar component as defined in [RFC 1766]
-        $value  = trim( $value );
+        $value  =$value ? trim( $value ) : $value;
         if( empty( $this->language ) || !$softUpdate )
           $this->language = $value;
         $subcfg = array( 'LANGUAGE' => $value );
@@ -4893,7 +4893,7 @@ class calendarComponent {
         $res    = TRUE;
         break;
       case 'UNIQUE_ID':
-        $value  = trim( $value );
+        $value  =$value ? trim( $value ) : $value;
         $this->unique_id = $value;
         $subcfg = array( 'UNIQUE_ID' => $value );
         $res    = TRUE;
@@ -5487,7 +5487,7 @@ class calendarComponent {
           if( FALSE !== strpos( $part, ',' )) {
             $part = explode( ',', $part );
             foreach( $part as $thePart ) {
-              $thePart = trim( $thePart );
+              $thePart =  $thePart ? trim( $thePart ) : $thePart;
               if( !empty( $thePart )) {
                 if( !isset( $output[$thePart] ))
                   $output[$thePart] = 1;
@@ -5497,7 +5497,7 @@ class calendarComponent {
             }
           }
           else {
-            $part = trim( $part );
+            $part =  $part ? trim( $part ) :  $part;
             if( !isset( $output[$part] ))
               $output[$part] = 1;
             else
@@ -5508,7 +5508,7 @@ class calendarComponent {
       elseif( FALSE !== strpos( $content, ',' )) {
         $content = explode( ',', $content );
         foreach( $content as $thePart ) {
-          $thePart = trim( $thePart );
+          $thePart =$thePart  ? trim( $thePart ) : $thePart ;
           if( !empty( $thePart )) {
             if( !isset( $output[$thePart] ))
               $output[$thePart] = 1;
@@ -5518,7 +5518,7 @@ class calendarComponent {
         }
       } // end elseif( FALSE !== strpos( $content, ',' ))
       else {
-        $content = trim( $content );
+        $content = $content ? trim( $content ) : $content;
         if( !empty( $content )) {
           if( !isset( $output[$content] ))
             $output[$content] = 1;
@@ -8743,7 +8743,7 @@ class iCalUtilityFunctions {
       }
       $byte          = ord( $tmp[$x] );
       $string       .= $tmp[$x];
-      switch( TRUE ) { // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+      switch( TRUE ) { // see https://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
         case(( $byte >= 0x20 ) && ( $byte <= 0x7F )): // characters U-00000000 - U-0000007F (same as ASCII)
           $cCnt     += 1;
           break;                                      // add a one byte character

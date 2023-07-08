@@ -1,19 +1,22 @@
 <?php
 
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 //$max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields', -1); // default to All
 ?>
 
 <fieldset>
-	<legend><?php echo JText::_('COM_JEM_EDITVENUE_PUBLISHING_LEGEND'); ?></legend>
+	<legend><?php echo Text::_('COM_JEM_EDITVENUE_PUBLISHING_LEGEND'); ?></legend>
 	<dl class="adminformlist jem-dl">
 		<dt><?php echo $this->form->getLabel('published'); ?></dt>
 		<dd><?php echo $this->form->getInput('published'); ?></dd>
@@ -22,8 +25,8 @@ defined('_JEXEC') or die;
 
 <!-- META -->
 <fieldset class="">
-	<legend><?php echo JText::_('COM_JEM_METADATA'); ?></legend>
-	<input type="button" class="button btn" value="<?php echo JText::_('COM_JEM_ADD_VENUE_CITY'); ?>" onclick="meta()" />
+	<legend><?php echo Text::_('COM_JEM_METADATA'); ?></legend>
+	<input type="button" class="button btn" value="<?php echo Text::_('COM_JEM_ADD_VENUE_CITY'); ?>" onclick="meta()" />
 	<p>&nbsp;</p>
 	<?php foreach ($this->form->getFieldset('meta') as $field) : ?>
 	<dl class="jem-dl">

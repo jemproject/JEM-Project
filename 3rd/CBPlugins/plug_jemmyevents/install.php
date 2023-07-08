@@ -1,10 +1,10 @@
 <?php
 /**
  * @package JEM My Events for CB
- * @version 2.3.6 for JEM v2.1 & CB v2.0
+ * @version 4.0.0 (for JEM 4.0 & CB v2.8)
  * @author JEM Community
- * @copyright (C) 2013-2015 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  */
 

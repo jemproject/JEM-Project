@@ -1,15 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Myevents Controller
@@ -17,7 +19,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JemControllerMyevents extends JControllerLegacy
+class JemControllerMyevents extends BaseController
 {
 	/**
 	 * Constructor
@@ -38,13 +40,13 @@ class JemControllerMyevents extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 
 		$cid = $input->get('cid', array(), 'array');
 
 		if (empty($cid)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
 			$this->setRedirect(JemHelperRoute::getMyEventsRoute());
 			return;
 		}
@@ -55,7 +57,7 @@ class JemControllerMyevents extends JControllerLegacy
 		}
 
 		$total = count($cid);
-		$msg   = $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
+		$msg   = $total.' '.Text::_('COM_JEM_EVENT_PUBLISHED');
 
 		$this->setRedirect(JemHelperRoute::getMyEventsRoute(), $msg);
 	}
@@ -68,13 +70,13 @@ class JemControllerMyevents extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 
 		$cid = $input->get('cid', array(), 'array');
 
 		if (empty($cid)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'), 'notice');
 			$this->setRedirect(JemHelperRoute::getMyEventsRoute());
 			return;
 		}
@@ -85,7 +87,7 @@ class JemControllerMyevents extends JControllerLegacy
 		}
 
 		$total = count($cid);
-		$msg   = $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
+		$msg   = $total.' '.Text::_('COM_JEM_EVENT_UNPUBLISHED');
 
 		$this->setRedirect(JemHelperRoute::getMyEventsRoute(), $msg);
 	}
@@ -101,13 +103,13 @@ class JemControllerMyevents extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 
 		$cid = $input->get('cid', array(), 'array');
 
 		if (empty($cid)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SELECT_ITEM_TO_TRASH'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_TRASH'), 'notice');
 			$this->setRedirect(JemHelperRoute::getMyEventsRoute());
 			return;
 		}
@@ -118,7 +120,7 @@ class JemControllerMyevents extends JControllerLegacy
 		}
 
 		$total = count($cid);
-		$msg   = $total.' '.JText::_('COM_JEM_EVENT_TRASHED');
+		$msg   = $total.' '.Text::_('COM_JEM_EVENT_TRASHED');
 
 		$this->setRedirect(JemHelperRoute::getMyEventsRoute(), $msg);
 	}

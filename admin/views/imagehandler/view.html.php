@@ -1,15 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Client\ClientHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 
 /**
  * View class for the JEM imageselect screen
@@ -18,7 +24,7 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class JemViewImagehandler extends JViewLegacy
+class JemViewImagehandler extends HtmlView
 {
 
 	/**
@@ -26,10 +32,10 @@ class JemViewImagehandler extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$option = $app->input->getString('option', 'com_jem');
 
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		if ($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
@@ -59,15 +65,13 @@ class JemViewImagehandler extends JViewLegacy
 		$app->input->set('folder', $folder);
 
 		// Do not allow cache
-		if (version_compare(JVERSION, '3.0', 'ge')) {
-			$app->allowCache(false);
-		} else {
-			JResponse::allowCache(false);
-		}
+		$app->allowCache(false);
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		//get images
 		$images = $this->get('images');
 		$pagination = $this->get('Pagination');
@@ -82,7 +86,7 @@ class JemViewImagehandler extends JViewLegacy
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
 			$this->setLayout('uploadimage');
 			$app->input->set('task', $task);
 			$this->_displayuploadimage($tpl);
@@ -108,17 +112,20 @@ class JemViewImagehandler extends JViewLegacy
 	protected function _displayuploadimage($tpl = null)
 	{
 		//initialise variables
-		$uri         = JFactory::getURI()->toString();
+		$uri         =Uri::getInstance();
+		$uri         = $uri->toString();
 		$jemsettings = JemAdmin::config();
 
 		//get vars
-		$task = JFactory::getApplication()->input->get('task', '');
+		$task = Factory::getApplication()->input->get('task', '');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		jimport('joomla.client.helper');
-		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
+		$ftp = ClientHelper::setCredentialsFromRequest('ftp');
 
 		//assign data to template
 		$this->task        = $task;

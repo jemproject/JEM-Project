@@ -1,12 +1,19 @@
 <?php
 /**
- * @version     2.3.6
- * @package     JEM
- * @copyright   Copyright (C) 2013-2021 joomlaeventmanager.net
- * @copyright   Copyright (C) 2005-2009 Christoph Lukes
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version 4.0.0
+ * @package JEM
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Category View
@@ -27,22 +34,26 @@ class JemViewCategory extends JemAdminView
 		$this->state	= $this->get('State');
 		$this->canDo	= JemHelperBackend::getActions($this->state->get('category.component'));
 
-
-		$document	= JFactory::getDocument();
+        $app = Factory::getApplication();
+        $this->document = $app->getDocument();
+        $uri = Uri::getInstance();
 
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
-
+		$wa = $app->getDocument()->getWebAssetManager();
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
+			
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css');
 
 		// Load Script
-		$document->addScript(JUri::root().'media/com_jem/js/colorpicker.js');
+		$this->document->addScript($uri->root().'media/com_jem/js/colorpicker.js');
 
 		// build grouplist
 		// @todo: make a form-field for this one
@@ -50,17 +61,17 @@ class JemViewCategory extends JemAdminView
 
 		$grouplist = array();
 		if (!empty($this->item->groupid) && !array_key_exists($this->item->groupid, $groups)) {
-			$grouplist[] = JHtml::_('select.option', $this->item->groupid, JText::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $this->item->groupid));
+			$grouplist[] = HTMLHelper::_('select.option', $this->item->groupid, Text::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $this->item->groupid));
 		}
-		$grouplist[] = JHtml::_('select.option', '0', JText::_('COM_JEM_CATEGORY_NO_GROUP'));
+		$grouplist[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_CATEGORY_NO_GROUP'));
 		$grouplist   = array_merge($grouplist, $groups);
 
-		$Lists['groups'] = JHtml::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->item->groupid);
+		$Lists['groups'] = HTMLHelper::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox form-select m-0'), 'value', 'text', $this->item->groupid);
 		$this->Lists     = $Lists;
 
 		parent::display($tpl);
 
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		$app->input->set('hidemainmenu', true);
 		$this->addToolbar();
 	}
 
@@ -79,38 +90,38 @@ class JemViewCategory extends JemAdminView
 		// Get the results for each action.
 		$canDo = JemHelperBackend::getActions();
 
-		$title = JText::_('COM_JEM_CATEGORY_BASE_'.($isNew?'ADD':'EDIT').'_TITLE');
+		$title = Text::_('COM_JEM_CATEGORY_BASE_'.($isNew?'ADD':'EDIT').'_TITLE');
 		// Prepare the toolbar.
-		JToolBarHelper::title($title, 'category-'.($isNew?'add':'edit').' -category-'.($isNew?'add':'edit'));
+		ToolbarHelper::title($title, 'category-'.($isNew?'add':'edit').' -category-'.($isNew?'add':'edit'));
 
 		// For new records, check the create permission.
 		if ($isNew && (count($user->getAuthorisedCategories('com_jem', 'core.create')) > 0)) {
-			JToolBarHelper::apply('category.apply');
-			JToolBarHelper::save('category.save');
-			JToolBarHelper::save2new('category.save2new');
+			ToolbarHelper::apply('category.apply');
+			ToolbarHelper::save('category.save');
+			ToolbarHelper::save2new('category.save2new');
 		}
 
 		// If not checked out, can save the item.
 		elseif (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId))) {
-			JToolBarHelper::apply('category.apply');
-			JToolBarHelper::save('category.save');
+			ToolbarHelper::apply('category.apply');
+			ToolbarHelper::save('category.save');
 			if ($canDo->get('core.create')) {
-				JToolBarHelper::save2new('category.save2new');
+				ToolbarHelper::save2new('category.save2new');
 			}
 		}
 
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create')) {
-			JToolBarHelper::save2copy('category.save2copy');
+			ToolbarHelper::save2copy('category.save2copy');
 		}
 
 		if (empty($this->item->id))  {
-			JToolBarHelper::cancel('category.cancel');
+			ToolbarHelper::cancel('category.cancel');
 		} else {
-			JToolBarHelper::cancel('category.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('category.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editcategories', true);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('editcategories', true);
 	}
 }

@@ -1,136 +1,204 @@
 <?php
 /**
- * @version     2.3.6
- * @package     JEM
- * @copyright   Copyright (C) 2013-2021 joomlaeventmanager.net
- * @copyright   Copyright (C) 2005-2009 Christoph Lukes
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version 4.0.0
+ * @package JEM
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @todo make custom colorfield so it can be used within xml
  */
+ 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
 // Include the component HTML helpers.
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
 // Load the tooltip behavior.
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+// HTMLHelper::_('behavior.tooltip');
+// HTMLHelper::_('behavior.formvalidation');
+// HTMLHelper::_('behavior.keepalive');
+$wa = $this->document->getWebAssetManager();
+		$wa->useStyle('jem.colorpicker')
+			->useScript('keepalive')
+			->useScript('form.validate');
 ?>
 
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
-		if (task == 'category.cancel' || document.formvalidator.isValid(document.id('item-form'))) {
+		if (task == 'category.cancel' || document.formvalidator.isValid(document.getElementById('item-form'))) {
 			<?php
-			echo $this->form->getField('description')->save();
+			//echo $this->form->getField('description')->save();
 			?>
 			Joomla.submitform(task, document.getElementById('item-form'));
 		} else {
-			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
+			alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 		}
 	}
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="item-form" class="form-validate">
-	<div class="width-60 fltlft">
-		<fieldset class="adminform">
-			<legend><?php echo JText::_('COM_JEM_CATEGORY_FIELDSET_DETAILS');?></legend>
-			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('catname'); ?>
-				<?php echo $this->form->getInput('catname'); ?></li>
-
-				<li><?php echo $this->form->getLabel('alias'); ?>
-				<?php echo $this->form->getInput('alias'); ?></li>
-
-				<li><?php echo $this->form->getLabel('extension'); ?>
-				<?php echo $this->form->getInput('extension'); ?></li>
-
-				<li><?php echo $this->form->getLabel('parent_id'); ?>
-				<?php echo $this->form->getInput('parent_id'); ?></li>
-
-				<li><?php echo $this->form->getLabel('published'); ?>
-				<?php echo $this->form->getInput('published'); ?></li>
-
-				<li><?php echo $this->form->getLabel('access'); ?>
-				<?php echo $this->form->getInput('access'); ?></li>
-				
-				<li><?php echo $this->form->getLabel('color'); ?>
-				<?php echo $this->form->getInput('color'); ?></li>
-				
-				<li><?php echo $this->form->getLabel('id'); ?>
-				<?php echo $this->form->getInput('id'); ?></li>
-			</ul>
-			<div class="clr"></div>
-			<?php echo $this->form->getLabel('description'); ?>
-			<div class="clr"></div>
-			<?php echo $this->form->getInput('description'); ?>
-		</fieldset>
-	</div>
-
-	<div class="width-40 fltrt">
-		<?php echo JHtml::_('sliders.start', 'categories-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
-			<?php echo $this->loadTemplate('options'); ?>
-			<div class="clr"></div>
-
-			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_CATEGORY_FIELDSET_EMAIL'), 'confemail'); ?>
-			<fieldset class="panelform">
+<form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="item-form" class="form-validate">
+	<div class="row">
+		<div class="col-md-7">
+			<fieldset class="adminform">
+				<legend><?php echo Text::_('COM_JEM_CATEGORY_FIELDSET_DETAILS');?></legend>
 				<ul class="adminformlist">
-					<li>
-						<?php echo $this->form->getLabel('email'); ?>
-						<?php echo $this->form->getInput('email'); ?>
-					</li>
+					<li><?php echo $this->form->getLabel('catname'); ?>
+					<?php echo $this->form->getInput('catname'); ?></li>
+
+					<li><?php echo $this->form->getLabel('alias'); ?>
+					<?php echo $this->form->getInput('alias'); ?></li>
+
+					<li><?php echo $this->form->getLabel('extension'); ?>
+					<?php echo $this->form->getInput('extension'); ?></li>
+
+					<li><?php echo $this->form->getLabel('parent_id'); ?>
+					<?php echo $this->form->getInput('parent_id'); ?></li>
+
+					<li><?php echo $this->form->getLabel('published'); ?>
+					<?php echo $this->form->getInput('published'); ?></li>
+
+					<li><?php echo $this->form->getLabel('access'); ?>
+					<?php echo $this->form->getInput('access'); ?></li>
+					
+					<li><?php echo $this->form->getLabel('color'); ?>
+					<?php echo $this->form->getInput('color'); ?></li>
+					
+					<li><?php echo $this->form->getLabel('id'); ?>
+					<?php echo $this->form->getInput('id'); ?></li>
 				</ul>
+				<div class="clr"></div>
+				<?php echo $this->form->getLabel('description'); ?>
+				<div class="clr"></div>
+				<?php echo $this->form->getInput('description'); ?>
 			</fieldset>
+		</div>
 
-			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_GROUP'), 'group'); ?>
-			<fieldset class="panelform">
-				<ul class="adminformlist">
-					<li><label for="groups"> <?php echo JText::_('COM_JEM_GROUP').':'; ?></label>
-					<?php echo $this->Lists['groups']; ?></li>
-				</ul>
-			</fieldset>
+		<div class="col-md-5">
+			<?php //echo HTMLHelper::_('sliders.start', 'categories-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
+			<div class="accordion" id="accordionCategoriesForm">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="publishing-details-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#publishing-details" aria-expanded="true" aria-controls="publishing-details">
+						<?php echo Text::_('COM_JEM_FIELDSET_PUBLISHING'); ?>
+					</button>
+					</h2>
+					<div id="publishing-details" class="accordion-collapse collapse show" aria-labelledby="publishing-details-header" data-bs-parent="#accordionCategoriesForm">
+						<div class="accordion-body">
+							<?php echo $this->loadTemplate('options'); ?>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="confemail-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#confemail" aria-expanded="true" aria-controls="confemail">
+						<?php echo Text::_('COM_JEM_CATEGORY_FIELDSET_EMAIL'); ?>
+					</button>
+					</h2>
+					<div id="confemail" class="accordion-collapse collapse" aria-labelledby="confemail-header" data-bs-parent="#accordionCategoriesForm">
+						<div class="accordion-body">
+							<fieldset class="panelform">
+								<ul class="adminformlist">
+									<li>
+										<?php echo $this->form->getLabel('email'); ?>
+										<?php echo $this->form->getInput('email'); ?>
+									</li>
+								</ul>
+							</fieldset>
+						</div>
 
-		<!-- START OF PANEL IMAGE -->
-		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'category-image'); ?>
+                        <div class="accordion-body">
+                            <fieldset class="panelform">
+                                <ul class="adminformlist">
+                                    <li>
+                                        <?php echo $this->form->getLabel('emailacljl'); ?>
+                                        <?php echo $this->form->getInput('emailacljl'); ?>
+                                    </li>
+                                </ul>
+                            </fieldset>
+                        </div>
+                    </div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="group-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#group" aria-expanded="true" aria-controls="group">
+						<?php echo Text::_('COM_JEM_GROUP'); ?>
+					</button>
+					</h2>
+					<div id="group" class="accordion-collapse collapse" aria-labelledby="group-header" data-bs-parent="#accordionCategoriesForm">
+						<div class="accordion-body">
+							<ul class="adminformlist">
+								<li><label for="groups"> <?php echo Text::_('COM_JEM_GROUP').':'; ?></label>
+								<?php echo $this->Lists['groups']; ?></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- START OF PANEL IMAGE -->
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="category-image-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#category-image" aria-expanded="true" aria-controls="category-image">
+						<?php echo Text::_('COM_JEM_IMAGE'); ?>
+					</button>
+					</h2>
+					<div id="category-image" class="accordion-collapse collapse" aria-labelledby="category-image-header" data-bs-parent="#accordionCategoriesForm">
+						<div class="accordion-body">
+							<fieldset class="panelform">
+								<ul class="adminformlist">
+									<li><?php echo $this->form->getLabel('image'); ?> <?php echo $this->form->getInput('image'); ?>
+									</li>
+								</ul>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="meta-options-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#meta-options" aria-expanded="true" aria-controls="meta-options">
+						<?php echo Text::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'); ?>
+					</button>
+					</h2>
+					<div id="meta-options" class="accordion-collapse collapse" aria-labelledby="meta-options-header" data-bs-parent="#accordionCategoriesForm">
+						<div class="accordion-body">
+							<fieldset class="panelform">
+								<?php echo $this->loadTemplate('metadata'); ?>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
 
-		<fieldset class="panelform">
-			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('image'); ?> <?php echo $this->form->getInput('image'); ?>
-				</li>
-			</ul>
-		</fieldset>
 
 
-		<?php echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
-		<fieldset class="panelform">
-			<?php echo $this->loadTemplate('metadata'); ?>
-		</fieldset>
-
-		<?php  $fieldSets = $this->form->getFieldsets('attribs'); ?>
-		<?php foreach ($fieldSets as $name => $fieldSet) : ?>
-			<?php $label = !empty($fieldSet->label) ? $fieldSet->label : 'COM_JEM_'.$name.'_FIELDSET_LABEL'; ?>
-			<?php if ($name != 'editorConfig' && $name != 'basic-limited') : ?>
-				<?php echo JHtml::_('sliders.panel', JText::_($label), $name.'-options'); ?>
-				<?php if (isset($fieldSet->description) && trim($fieldSet->description)) : ?>
-					<p class="tip"><?php echo $this->escape(JText::_($fieldSet->description));?></p>
-				<?php endif; ?>
-				<fieldset class="panelform">
-					<ul class="adminformlist">
-					<?php foreach ($this->form->getFieldset($name) as $field) : ?>
-						<li><?php echo $field->label; ?>
-						<?php echo $field->input; ?></li>
-					<?php endforeach; ?>
-					</ul>
-				</fieldset>
-			<?php endif ?>
-		<?php endforeach; ?>
-	<?php echo JHtml::_('sliders.end'); ?>
+			<?php  $fieldSets = $this->form->getFieldsets('attribs'); ?>
+			<?php foreach ($fieldSets as $name => $fieldSet) : ?>
+				<?php $label = !empty($fieldSet->label) ? $fieldSet->label : 'COM_JEM_'.$name.'_FIELDSET_LABEL'; ?>
+				<?php if ($name != 'editorConfig' && $name != 'basic-limited') : ?>
+					<?php echo HTMLHelper::_('sliders.panel', Text::_($label), $name.'-options'); ?>
+					<?php if (isset($fieldSet->description) && trim($fieldSet->description)) : ?>
+						<p class="tip"><?php echo $this->escape(Text::_($fieldSet->description));?></p>
+					<?php endif; ?>
+					<fieldset class="panelform">
+						<ul class="adminformlist">
+						<?php foreach ($this->form->getFieldset($name) as $field) : ?>
+							<li><?php echo $field->label; ?>
+							<?php echo $field->input; ?></li>
+						<?php endforeach; ?>
+						</ul>
+					</fieldset>
+				<?php endif ?>
+			<?php endforeach; ?>
+			<?php //echo HTMLHelper::_('sliders.end'); ?>
+		</div>
 	</div>
 	<div class="clr"></div>
 	<div>
 		<input type="hidden" name="task" value="" />
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 	</div>
 </form>

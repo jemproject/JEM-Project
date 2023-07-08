@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component attendee Model
@@ -17,7 +20,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelAttendee extends JModelLegacy
+class JemModelAttendee extends BaseDatabaseModel
 {
 	/**
 	 * Attendee id
@@ -44,7 +47,7 @@ class JemModelAttendee extends JModelLegacy
 		$settings = JemHelper::globalattribs();
 		$this->regname = $settings->get('global_regname','1');
 
-		$array = JFactory::getApplication()->input->get('cid', array(0), 'array');
+		$array = Factory::getApplication()->input->get('cid', array(0), 'array');
 		$this->setId((int)$array[0]);
 	}
 
@@ -111,7 +114,7 @@ class JemModelAttendee extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data)) {
-			$data = JTable::getInstance('jem_register', '');
+			$data = Table::getInstance('jem_register', '');
 			$data->username = null;
 			$this->_data = $data;
 		}
@@ -124,11 +127,11 @@ class JemModelAttendee extends JModelLegacy
 		$attendee = $this->getData();
 
 		if (!$attendee->id) {
-			$this->setError(JText::_('COM_JEM_MISSING_ATTENDEE_ID'));
+			$this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
 			return false;
 		}
 
-		$row = JTable::getInstance('jem_register', '');
+		$row = Table::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = $attendee->waiting ? 0 : 1;
 
@@ -176,7 +179,7 @@ class JemModelAttendee extends JModelLegacy
 				if ($details->booked >= $details->maxplaces)
 				{
 					if (!$details->waitinglist) {
-						\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
+						\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
 						return false;
 					}
 					$row->waiting = 1;

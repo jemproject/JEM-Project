@@ -1,19 +1,24 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-defined('_JEXEC') or die();
 
-jimport('joomla.application.component.modelitem');
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\MVC\Model\ItemModel;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 
 /**
  * Event-Model
  */
-class JemModelEvent extends JModelItem
+class JemModelEvent extends ItemModel
 {
 	/**
 	 * Model context string.
@@ -31,7 +36,7 @@ class JemModelEvent extends JModelItem
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('site');
+		$app = Factory::getApplication('site');
 
 		// Load state from the request.
 		$pk = $app->input->getInt('id', 0);
@@ -44,7 +49,7 @@ class JemModelEvent extends JModelItem
 		$params = $app->getParams('com_jem');
 		$this->setState('params', $params);
 
-		$this->setState('filter.language', JLanguageMultilang::isEnabled());
+		$this->setState('filter.language', Multilanguage::isEnabled());
 	}
 
 	/**
@@ -70,7 +75,7 @@ class JemModelEvent extends JModelItem
 				$user     = JemFactory::getUser();
 				$levels   = $user->getAuthorisedViewLevels();
 
-				$db    = $this->getDbo();
+				$db    = Factory::getContainer()->get('DatabaseDriver');
 				$query = $db->getQuery(true);
 
 				# Event
@@ -81,7 +86,7 @@ class JemModelEvent extends JModelItem
 						                'a.created, a.created_by, a.published, a.registra, a.unregistra, a.unregistra_until, ' .
 						                'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
 						                'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
-						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, ' .
+						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, ' .
 						                'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
 				$query->from('#__jem_events AS a');
 
@@ -115,7 +120,7 @@ class JemModelEvent extends JModelItem
 
 				# Filter contact by language
 				if ($this->getState('filter.language')) {
-					$subQuery->where('(contact.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+					$subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
 				}
 
 				$query->select('(' . $subQuery . ') as contactid2');
@@ -123,7 +128,7 @@ class JemModelEvent extends JModelItem
 				# Filter event by language
 				/* commented out yet because it's incomplete
 				if ($this->getState('filter.language')) {
-					$query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
+					$query->where('a.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
 				}
 				*/
 
@@ -141,15 +146,23 @@ class JemModelEvent extends JModelItem
 
 				# Get the item
 				//$query->group('a.id');
-				$db->setQuery($query);
-				$data = $db->loadObject();
+				
+				// if ($error = $db->getErrorMsg()) {
+				// 	throw new Exception($error);
+				// }
+				try
+				{
+					$db->setQuery($query);
+					$data = $db->loadObject();
 
-				if ($error = $db->getErrorMsg()) {
-					throw new Exception($error);
+				}
+				catch (RuntimeException $e)
+				{			
+					Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 				}
 
 				if (empty($data)) {
-					throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+					throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
 				}
 
 				# Convert parameter fields to objects.
@@ -187,7 +200,7 @@ class JemModelEvent extends JModelItem
 				if ($e->getCode() == 404) {
 					// Need to go thru the error handler to allow Redirect to
 					// work.
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+					Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 					return false;
 				}
 				else {
@@ -205,9 +218,9 @@ class JemModelEvent extends JModelItem
 		$this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
 		// Define Booked
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
-		$query->select(array('COUNT(*)'));
+		$query->select('SUM(places)');
 		$query->from('#__jem_register');
 		$query->where(array('event = ' . $db->quote($this->_item[$pk]->did), 'waiting = 0', 'status = 1'));
 		$db->setQuery($query);
@@ -230,12 +243,12 @@ class JemModelEvent extends JModelItem
 	 */
 	public function hit($pk = 0)
 	{
-		$hitcount = JFactory::getApplication()->input->getInt('hitcount', 1);
+		$hitcount = Factory::getApplication()->input->getInt('hitcount', 1);
 
 		if ($hitcount) {
 			// Initialise variables.
 			$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery('UPDATE #__jem_events' . ' SET hits = hits + 1' . ' WHERE id = ' . (int) $pk);
 
@@ -267,13 +280,13 @@ class JemModelEvent extends JModelItem
 		$user      = JemFactory::getUser();
 	//	$userid    = (int)$user->get('id');
 		$levels    = $user->getAuthorisedViewLevels();
-	//	$app       = JFactory::getApplication();
+	//	$app       = Factory::getApplication();
 	//	$params    = $app->getParams();
 	//	$catswitch = $params->get('categoryswitch', '0');
 		$settings  = JemHelper::globalattribs();
 
 		// Query
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';
@@ -418,7 +431,7 @@ class JemModelEvent extends JModelItem
 
 		// usercheck
 		// -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
-		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment'
+		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places'
 		       . ' FROM #__jem_register'
 		       . ' WHERE uid = ' . $this->_db->quote($userid)
 		       . ' AND event = ' . $this->_db->quote($eventId);
@@ -466,7 +479,7 @@ class JemModelEvent extends JModelItem
 		// avatars should be displayed
 		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
-		$db       = $this->getDbo();
+		$db       = Factory::getContainer()->get('DatabaseDriver');
 
 		switch ($settings->get('event_show_attendeenames', 2)) {
 			case 0: // show to none
@@ -483,6 +496,9 @@ class JemModelEvent extends JModelItem
 				}
 				break;
 			case 3: // show to all
+				break;
+			case 4: // show only to user
+				$where[] = 'u.id = ' . $user->id;
 				break;
 		}
 
@@ -513,7 +529,7 @@ class JemModelEvent extends JModelItem
     // Get registered users
     $query = $db->getQuery(true);
     $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-           . $name . ' AS name, r.uid' . $avatar . ', r.comment'
+           . $name . ' AS name, r.uid' . $avatar . ', r.comment, r.places'
            . ' FROM #__jem_register AS r'
            . ' LEFT JOIN #__users AS u ON u.id = r.uid'
            . $join
@@ -543,6 +559,7 @@ class JemModelEvent extends JModelItem
 	 * @param  int     $uid      id of user to register
 	 * @param  mixed   $uip      ip address or false
 	 * @param  int     $status   registration status
+	 * @param  int     $places   number to add/cancel places of registration
 	 * @param  string  $comment  optional comment
 	 * @param  string &$errMsg   gets a message in error cases
 	 * @param  int     $regid    id of registration record to change or 0 if new (default)
@@ -552,9 +569,9 @@ class JemModelEvent extends JModelItem
 	 * @access protected
 	 * @return int register id on success, else false
 	 */
-	protected function _doRegister($eventId, $uid, $uip, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+	protected function _doRegister($eventId, $uid, $uip, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
-	//	$app = JFactory::getApplication('site');
+	//	$app = Factory::getApplication('site');
 	//	$user = JemFactory::getUser();
 	//	$jemsettings = JemHelper::config();
 		$registration = (empty($uid) || empty($eventId)) ? false : $this->getUserRegistration($eventId, $uid);
@@ -569,7 +586,7 @@ class JemModelEvent extends JModelItem
 		}
 
 		if (empty($event)) {
-			$errMsg = JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+			$errMsg = Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
 			return false;
 		}
 
@@ -579,7 +596,7 @@ class JemModelEvent extends JModelItem
 				// check if the user should go on waiting list
 				if ($event->booked >= $event->maxplaces) {
 					if (!$event->waitinglist) {
-						$this->setError(JText::_('COM_JEM_EVENT_FULL_NOTICE'));
+						$this->setError(Text::_('COM_JEM_EVENT_FULL_NOTICE'));
 						return false;
 					}
 					$onwaiting = 1;
@@ -588,20 +605,21 @@ class JemModelEvent extends JModelItem
 		}
 		elseif ($status == 2) {
 			if ($respectPlaces && !$event->waitinglist) {
-				$errMsg = JText::_('COM_JEM_NO_WAITINGLIST');
+				$errMsg = Text::_('COM_JEM_NO_WAITINGLIST');
 				return false;
 			}
 			$onwaiting = 1;
 			$status = 1;
 		}
 		elseif ($respectPlaces && ($oldstat == 1) && ($status == -1) && !$event->unregistra) {
-			$errMsg = JText::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED');
+			$errMsg = Text::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED');
 			return false;
 		}
 
 		$obj = new stdClass();
 		$obj->event = (int)$eventId;
 		$obj->status = (int)$status;
+		$obj->places = (int)$places;
 		$obj->waiting = $onwaiting;
 		$obj->uid = (int)$uid;
 		$obj->uregdate = gmdate('Y-m-d H:i:s');
@@ -621,7 +639,7 @@ class JemModelEvent extends JModelItem
 		}
 		catch (Exception $e) {
 			// we have a unique user-event key so registering twice will fail
-			$errMsg = JText::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
+			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
 				                                       : 'COM_JEM_ERROR_REGISTRATION');
 			return false;
 		}
@@ -637,32 +655,98 @@ class JemModelEvent extends JModelItem
 	 */
 	public function userregister()
 	{
-		$app = JFactory::getApplication('site');
+		$app = Factory::getApplication('site');
 		$user = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
 
 		$status  = $app->input->getInt('reg_check', 0);
 	//	$noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
 		$comment = $app->input->getString('reg_comment', '');
-		$comment = JFilterOutput::cleanText($comment);
+		$comment = OutputFilter::cleanText($comment);
 		$regid   = $app->input->getInt('regid', 0);
+		$addplaces = $app->input->getInt('addplaces', 0);
+		$cancelplaces = $app->input->getInt('cancelplaces', 0);
 
 		$eventId = (int) $this->_registerid;
 
 		$uid = (int) $user->get('id');
+		$reg = $this->getUserRegistration($eventId);
+		$errMsg = '';
+
+		try {
+			$event = $this->getItem($eventId);
+		}
+			// some gently error handling
+		catch (Exception $e) {
+			$event = false;
+		}
+
+		if($status>0){
+			if($addplaces>0)
+			{
+				if ($reg)
+				{
+					if ($reg->status > 0)
+					{
+						$places = $addplaces + $reg->places;
+					}
+					else
+					{
+						$places = $addplaces;
+					}
+				}
+				else
+				{
+					$places = $addplaces;
+				}
+				//Detect if the reserve go to waiting list
+				$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
+				if ($reg->status != 0)
+				{
+					if($event->maxplaces){
+						$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
+						if ($event->waitinglist && $placesavailableevent <= 0) {
+							$status = 2;
+						}
+					}else {
+						$status = 1;
+					}
+				}
+			}else{
+				$places = 0;
+			}
+		}else{
+			if($reg) {
+				$places = $reg->places - $cancelplaces;
+				if($reg->status>=0 && $places>0){
+					$status=$reg->status;
+				}
+			}else{
+				$places = 0;
+				$errMsg = Text::_('COM_JEM_ERROR_REGISTRATION');
+			}
+		}
+
+		//Review max places per user
+		if($event->maxbookeduser){
+			if($places > $event->maxbookeduser){
+				$places = $event->maxbookeduser;
+			}
+		}
 
 		// Must be logged in
 		if ($uid < 1) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return;
 		}
 
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$errMsg = '';
-		$result = $this->_doRegister($eventId, $uid, $uip, $status, $comment, $errMsg, $regid);
 
+		if(empty($errMsg)){
+			$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
+		}
 		if (!$result && !empty($errMsg)) {
 			$this->setError($errMsg);
 		}
@@ -685,22 +769,22 @@ class JemModelEvent extends JModelItem
 	 * @access public
 	 * @return int register id on success, else false
 	 */
-	public function adduser($eventId, $uid, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+	public function adduser($eventId, $uid, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
-	//	$app = JFactory::getApplication('site');
+	//	$app = Factory::getApplication('site');
 		$user = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
 
 		// Acting user must be logged in
 		if ($user->get('id') < 1) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$result = $this->_doRegister($eventId, $uid, $uip, $status, $comment, $errMsg, $regid, $respectPlaces);
+		$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid, $respectPlaces);
 
 		return $result;
 	}
@@ -719,7 +803,7 @@ class JemModelEvent extends JModelItem
 
 		// Must be logged in
 		if ($userid < 1) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return;
 		}
 

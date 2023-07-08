@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- *
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 
 /**
  * View class for the JEM Groups screen
@@ -36,13 +39,15 @@ class JemViewGroups extends JemAdminView
 		$this->state      = $this->get('State');
 
 		// loading Mootools
-		JHtml::_('behavior.framework');
+		// HTMLHelper::_('behavior.framework');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// add style to description of the tooltip (hastip)
-		JHtml::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.tooltip');
 
 		// assign data to template
 		$this->user			= $user;
@@ -60,30 +65,30 @@ class JemViewGroups extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_GROUPS'), 'groups');
+		ToolbarHelper::title(Text::_('COM_JEM_GROUPS'), 'groups');
 
 		/* retrieving the allowed actions for the user */
 		$canDo = JEMHelperBackend::getActions(0);
 
 		/* create */
 		if (($canDo->get('core.create'))) {
-			JToolBarHelper::addNew('group.add');
+			ToolbarHelper::addNew('group.add');
 		}
 
 		/* edit */
 		if (($canDo->get('core.edit'))) {
-			JToolBarHelper::editList('group.edit');
-			JToolBarHelper::divider();
+			ToolbarHelper::editList('group.edit');
+			ToolbarHelper::divider();
 		}
 
 		if ($canDo->get('core.edit.state')) {
-			JToolBarHelper::checkin('groups.checkin');
+			ToolbarHelper::checkin('groups.checkin');
 		}
 
-		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
+		ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
 
-		JToolBarHelper::divider();
-		JToolBarHelper::help('listgroups', true);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('listgroups', true);
 	}
 }
 ?>

@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
@@ -31,7 +33,7 @@ class JemModelEditvenue extends JemModelVenue
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Load state from the request.
 		$pk = $app->input->getInt('a_id', 0);
@@ -117,7 +119,7 @@ class JemModelEditvenue extends JemModelVenue
 		$value->attachments = $files;
 
 		// Preset values on new venues
-		if (empty($itemId)) {
+		if (isset($jemsettings->defaultCountry) && empty($itemId)) {
 			$value->country = $jemsettings->defaultCountry;
 		}
 

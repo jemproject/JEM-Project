@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 <script type="text/javascript">
@@ -25,17 +27,17 @@ defined('_JEXEC') or die;
 <div id="jem_filter" class="floattext">
 	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
-		<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+		<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
 		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-		<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+		<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
 
 	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
-		<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
 	</div>
 	<?php endif; ?>
@@ -43,7 +45,7 @@ defined('_JEXEC') or die;
 <?php endif; ?>
 
 <div class="table-responsive">
-	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 		<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -86,7 +88,7 @@ defined('_JEXEC') or die;
 
 		<tbody>
 			<?php if (empty($this->rows)) : ?>
-				<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+				<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->rows as $row) : ?>

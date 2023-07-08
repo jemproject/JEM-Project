@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="jem" method="upgrade">
-	<name>plg_jem_comments</name>
-	<creationDate>March 2020</creationDate>
-	<author>JEM Community</author>
-	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<copyright>copyright (C) 2013-2020 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.3.6</version>
-	<description>PLG_JEM_COMMENTS_XML_DESCRIPTION</description>
+    <name>plg_jem_comments</name>
+    <creationDate>July 2023</creationDate>
+    <author>JEM Community</author>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <version>4.0.0</version>
+    <description>PLG_JEM_COMMENTS_XML_DESCRIPTION</description>
 
-	<files>
-		<filename plugin="comments">comments.php</filename>
-		<filename>index.html</filename>
+    <files>
+        <filename plugin="comments">comments.php</filename>
+        <filename>index.html</filename>
 
-		<folder>language</folder>
-	</files>
+        <folder>language</folder>
+    </files>
 
-	<config>
-		<fields name="params">
-			<fieldset name="basic">
-				<field type="list" name="commentsystem"
-					label="PLG_JEM_COMMENTS_COMMENTSYSTEM"
-					default="0"
-					description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
-				>
-					<option value="0">PLG_JEM_COMMENTS_NONE</option>
-					<option value="2">PLG_JEM_COMMENTS_JCOMMENTS</option>
-				</field>
-			</fieldset>
-		</fields>
-	</config>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field type="list" name="commentsystem"
+                       label="PLG_JEM_COMMENTS_COMMENTSYSTEM"
+                       default="0"
+                       description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
+                >
+                    <option value="0">PLG_JEM_COMMENTS_NONE</option>
+                    <option value="2">PLG_JEM_COMMENTS_JCOMMENTS</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
 </extension>

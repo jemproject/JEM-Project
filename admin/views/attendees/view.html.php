@@ -1,14 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
 
 /**
  * View class: Attendees
@@ -17,8 +21,8 @@ class JemViewAttendees extends JemAdminView
 {
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-		$db  = JFactory::getDBO();
+		$app = Factory::getApplication();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$this->jemsettings = JemHelper::config();
 
@@ -33,7 +37,8 @@ class JemViewAttendees extends JemAdminView
 		$filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Get data from the model
 		$event = $this->get('Event');
@@ -45,38 +50,38 @@ class JemViewAttendees extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
 		// check for data error
 		if (empty($event)) {
-			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 			return false;
 		}
 
  		if (JemHelper::isValidDate($event->dates)) {
 			$event->dates = JemOutput::formatdate($event->dates);
 		} else {
-			$event->dates = JText::_('COM_JEM_OPEN_DATE');
+			$event->dates = Text::_('COM_JEM_OPEN_DATE');
 		}
 
 		//build filter selectlist
 		$filters = array();
-		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
+		$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_USERNAME'));
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search'] = $filter_search;
 
 		// registration status
-		$options = array(JHtml::_('select.option', -2, JText::_('COM_JEM_ATT_FILTER_ALL')),
-		                 JHtml::_('select.option',  0, JText::_('COM_JEM_ATT_FILTER_INVITED')),
-		                 JHtml::_('select.option', -1, JText::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
-		                 JHtml::_('select.option',  1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
-		                 JHtml::_('select.option',  2, JText::_('COM_JEM_ATT_FILTER_WAITING')));
-		$lists['status'] = JHtml::_('select.genericlist', $options, 'filter_status', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
+		$options = array(HTMLHelper::_('select.option', -2, Text::_('COM_JEM_ATT_FILTER_ALL')),
+		                 HTMLHelper::_('select.option',  0, Text::_('COM_JEM_ATT_FILTER_INVITED')),
+		                 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
+		                 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATT_FILTER_ATTENDING')),
+		                 HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATT_FILTER_WAITING')));
+		$lists['status'] = HTMLHelper::_('select.genericlist', $options, 'filter_status', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
 
 		//assign to template
 		$this->lists 		= $lists;
@@ -94,7 +99,7 @@ class JemViewAttendees extends JemAdminView
 	protected function _displayprint($tpl = null)
 	{
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		$rows = $this->get('Items');
 		$event = $this->get('Event');
@@ -102,7 +107,7 @@ class JemViewAttendees extends JemAdminView
 		if (JemHelper::isValidDate($event->dates)) {
 			$event->dates = JemOutput::formatdate($event->dates);
 		} else {
-			$event->dates = JText::_('COM_JEM_OPEN_DATE');
+			$event->dates = Text::_('COM_JEM_OPEN_DATE');
 		}
 
 		//assign data to template
@@ -118,17 +123,17 @@ class JemViewAttendees extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_REGISTERED_USERS'), 'users');
+		ToolbarHelper::title(Text::_('COM_JEM_REGISTERED_USERS'), 'users');
 
-		JToolBarHelper::addNew('attendees.add');
-		JToolBarHelper::editList('attendees.edit');
-		JToolBarHelper::custom('attendees.setNotAttending', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETNOTATTENDING'), true);
-		JToolBarHelper::custom('attendees.setAttending', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
+		ToolbarHelper::addNew('attendees.add');
+		ToolbarHelper::editList('attendees.edit');
+		ToolbarHelper::custom('attendees.setNotAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETNOTATTENDING'), true);
+		ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
 		if ($this->event->waitinglist) {
-			JToolBarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+			ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
 		}
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom('attendees.export', 'download', 'download', JText::_('COM_JEM_EXPORT'), false);
+		ToolbarHelper::spacer();
+		ToolbarHelper::custom('attendees.export', 'download', 'download', Text::_('COM_JEM_EXPORT'), false);
 
 		$eventid 	= $this->event->id;
 		$link_print = 'index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;eventid='.$eventid;
@@ -136,10 +141,10 @@ class JemViewAttendees extends JemAdminView
 		$bar = JToolBar::getInstance('toolbar');
 		$bar->appendButton('Popup', 'print', 'COM_JEM_PRINT', $link_print, 600, 300);
 
-		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
-		JToolBarHelper::divider();
-		JToolBarHelper::help('registereduser', true);
+		ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
+		ToolbarHelper::spacer();
+		ToolbarHelper::custom('attendees.back', 'back', 'back', Text::_('COM_JEM_ATT_BACK'), false);
+		ToolbarHelper::divider();
+		ToolbarHelper::help('registereduser', true);
 	}
 }

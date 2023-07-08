@@ -1,13 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Filesystem\Folder;
+
+jimport('joomla.html.pane');
 
 
 /**
@@ -20,23 +29,23 @@ class JemViewHelp extends JemAdminView
 
 	public function display($tpl = null)
 	{
-		//Load filesystem folder and pane behavior
-		jimport('joomla.html.pane');
-		jimport('joomla.filesystem.folder');
-
 		//initialise variables
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getApplication()->getLanguage();
+		$app = Factory::getApplication();
+		$this->document = $app->getDocument();
 
 		//get vars
-		$helpsearch = JFactory::getApplication()->input->getString('filter_search', '');
+		$helpsearch = Factory::getApplication()->input->getString('filter_search', '');
 
-		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// // Load css
+		// JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = $app->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if (!JFolder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+		if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
 
@@ -62,16 +71,15 @@ class JemViewHelp extends JemAdminView
 	 */
 	public function getHelpTOC($helpsearch)
 	{
-		$lang = JFactory::getLanguage();
-		jimport('joomla.filesystem.folder');
+		$lang = Factory::getApplication()->getLanguage();
 
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if (!JFolder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+		if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
-		$files = JFolder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');
+		$files = Folder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');
 
 		$toc = array();
 		foreach ($files as $file) {
@@ -99,7 +107,7 @@ class JemViewHelp extends JemAdminView
 	protected function addToolbar()
 	{
 		//create the toolbar
-		JToolBarHelper::title(JText::_('COM_JEM_HELP'), 'help');
+		ToolbarHelper::title(Text::_('COM_JEM_HELP'), 'help');
 	}
 }
 ?>

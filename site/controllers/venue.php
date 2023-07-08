@@ -1,12 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -156,7 +161,7 @@ class JemControllerVenue extends JemControllerForm
 	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
 	{
 		// Need to override the parent method completely.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$tmpl   = $jinput->getCmd('tmpl', '');
 		$layout = $jinput->getCmd('layout', 'edit');
 		$task   = $jinput->getCmd('task', '');
@@ -204,10 +209,11 @@ class JemControllerVenue extends JemControllerForm
 	 */
 	protected function getReturnPage()
 	{
-		$return = JFactory::getApplication()->input->get('return', null, 'base64');
+        $uri = Uri::getInstance();
+		$return = Factory::getApplication()->input->get('return', null, 'base64');
 
-		if (empty($return) || !JUri::isInternal(base64_decode($return))) {
-			return JUri::base();
+		if (empty($return) || !Uri::isInternal(base64_decode($return))) {
+			return $uri->base();
 		}
 		else {
 			return base64_decode($return);
@@ -234,11 +240,11 @@ class JemControllerVenue extends JemControllerForm
 			// trigger all jem plugins
 			JPluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
-			$dispatcher->trigger('onVenueEdited', array($id, $isNew));
+			$dispatcher->triggerEvent('onVenueEdited', array($id, $isNew));
 
 			// but show warning if mailer is disabled
 			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 			}
 		}
 	}

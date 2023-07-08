@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 $jemsettings = JemHelper::config();
 
@@ -87,7 +89,7 @@ $jemsettings = JemHelper::config();
 				<?php endif; ?>       
           <div class="jem-event-details">
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
-            <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
+            <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
               <?php echo JemOutput::recurrenceicon($item); ?>
               <?php echo JemOutput::publishstateicon($item); ?>
@@ -97,7 +99,7 @@ $jemsettings = JemHelper::config();
             </h4>
             
             <?php elseif ($params->get('linkevent') == 0) : //Display title as title of jem-event without link ?>
-            <h4 title="<?php echo JText::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
+            <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <?php echo $item->title . JemOutput::recurrenceicon($item) . JemOutput::publishstateicon($item); ?>
               <?php if (!empty($item->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
@@ -109,19 +111,19 @@ $jemsettings = JemHelper::config();
             <div class="jem-list-row"> 
               
               <?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
-                <div class="jem-event-info date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>
+                <div class="jem-event-info date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                  <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                   <?php echo $item->date; ?>
                 </div>
               <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
-                <div class="jem-event-info time" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>
+                <div class="jem-event-info time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                  <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                   <?php echo $item->dateinfo; ?>
                 </div>
               <?php endif; ?>
               
               <?php if (!empty($item->venue) && (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue'))) : ?>
-                <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
+                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if ($params->get('linkvenue') == 1) : ?>
                     <?php echo "<a href='".$item->venuelink."'>".$item->venue."</a>"; ?>
@@ -132,21 +134,21 @@ $jemsettings = JemHelper::config();
               <?php endif; ?>
 
               <?php if ((!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) && (!empty($item->city))) : ?>
-                <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
-                  <i class="fa fa-building-o" aria-hidden="true"></i>
+                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$item->city; ?>">
+                  <i class="fa fa-building" aria-hidden="true"></i>
                   <?php echo $item->city; ?>
                 </div>
               <?php endif; ?>
               
               <?php if ((!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) && (!empty($item->state))): ?>
-                <div class="jem-event-info" title="<?php echo JText::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
-                  <i class="fa fa-map-o" aria-hidden="true"></i>
+                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$item->state; ?>">
+                  <i class="fa fa-map" aria-hidden="true"></i>
                   <?php echo $item->state; ?>
                 </div>
               <?php endif;?> 
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
-                <div class="jem-event-info" title="<?php echo strip_tags(JText::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
+                <div class="jem-event-info" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                   <i class="fa fa-tag" aria-hidden="true"></i>
                   <?php echo $item->catname; ?>
                 </div>

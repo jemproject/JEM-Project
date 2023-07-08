@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 
 /**
  * Model-CSSManager
@@ -32,7 +35,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->id = base64_encode($name);
 
 		if ($temp->exists) {
-			$ext =  JFile::getExt($path.$name);
+			$ext =  File::getExt($path.$name);
 				if ($ext != 'css') {
 					# the file is valid but the extension not so let's return false
 					$temp->ext = false;
@@ -61,7 +64,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->id = base64_encode($filename);
 
 		if ($temp->exists) {
-			$ext =  JFile::getExt($path.$name);
+			$ext =  File::getExt($path.$name);
 			if ($ext != 'css') {
 				# the file is valid but the extension not so let's return false
 				$temp->ext = false;
@@ -88,13 +91,13 @@ class JemModelCssmanager extends JModelLegacy
 		// Check if the template path exists.
 		if (is_dir($path)) {
 			// Handle the CSS files.
-			$files = JFolder::files($path.'/css', '\.css$', false, false);
+			$files = Folder::files($path.'/css', '\.css$', false, false);
 
 			foreach ($files as $file) {
 				$result['css'][] = $this->getFile($path.'/css/', $file);
 			}
 		} else {
-			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
+			$this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
 			return false;
 		}
 
@@ -113,7 +116,7 @@ class JemModelCssmanager extends JModelLegacy
 		foreach ($custom as $cfile)
 		{
 			if ($cfile) {
-				$rf = $this->getCustomFile(JPATH_SITE.'/',$cfile);
+				$rf = $this->getCustomFile($path.'css/custom/',$cfile);
 				if ($rf->exists && $rf->ext) {
 					$result['custom'][] = $rf;
 				}
@@ -131,7 +134,7 @@ class JemModelCssmanager extends JModelLegacy
 	 */
 	protected function populateState()
 	{
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -144,7 +147,7 @@ class JemModelCssmanager extends JModelLegacy
 	 */
 	public function getStatusLinenumber()
 	{
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('params');
 		$query->from('#__extensions');
@@ -162,7 +165,7 @@ class JemModelCssmanager extends JModelLegacy
 	public function setStatusLinenumber($status)
 	{
 		// read the existing component value(s)
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('params')
 		      ->from('#__extensions')

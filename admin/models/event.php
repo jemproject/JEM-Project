@@ -1,14 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/admin.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+
+require_once __DIR__ . '/admin.php';
 
 /**
  * Event model.
@@ -75,11 +80,11 @@ class JemModelEvent extends JemModelAdmin
 	 * @param  type   The table type to instantiate
 	 * @param  string A prefix for the table class name. Optional.
 	 * @param  array  Configuration array for model. Optional.
-	 * @return JTable A database object
+	 * @return Table A database object
 	 */
 	public function getTable($type = 'Event', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -115,20 +120,20 @@ class JemModelEvent extends JemModelAdmin
 			// Convert the params field to an array.
 			// (this may throw an exception - but there is nothings we can do)
 			$registry = new JRegistry;
-			$registry->loadString($item->attribs);
+			$registry->loadString($item->attribs ?? '{}');
 			$item->attribs = $registry->toArray();
 
 			// Convert the metadata field to an array.
 			$registry = new JRegistry;
-			$registry->loadString($item->metadata);
+			$registry->loadString($item->metadata ?? '{}');
 			$item->metadata = $registry->toArray();
 
-			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
+			$item->articletext = ($item->fulltext && trim($item->fulltext) != '') ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
 
-			$db = JFactory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
-			$query->select(array('count(id)'));
+			$query->select('SUM(places)');
 			$query->from('#__jem_register');
 			$query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
 
@@ -173,7 +178,7 @@ class JemModelEvent extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.event.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.event.data', array());
 
 		if (empty($data)){
 			$data = $this->getItem();
@@ -185,13 +190,13 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param  $table JTable-object.
+	 * @param  $table Table-object.
 	 */
 	protected function _prepareTable($table)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment version number.
@@ -238,24 +243,27 @@ class JemModelEvent extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 		$table       = $this->getTable();
 
 		// Check if we're in the front or back
-		$backend = (bool)$app->isAdmin();
+		$backend = (bool)$app->isClient('administrator');
 		$new     = (bool)empty($data['id']);
 
 		// Variables
 		$cats             = $data['cats'];
-		$invitedusers     = $data['invited'];
+		$invitedusers     = isset($data['invited']) ? $data['invited'] : '';
 		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
 		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords     = $jinput->get('meta_keywords', '', '');
 		$metadescription  = $jinput->get('meta_description', '', '');
 		$task             = $jinput->get('task', '', 'cmd');
-
+		$data['metadata']  = isset($data['metadata']) ? $data['metadata'] : '';
+		$data['attribs']  = isset($data['attribs']) ? $data['attribs'] : '';
+		$data['ordering']  = isset($data['ordering']) ? $data['ordering'] : '';
+	
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
 			$this->cleanCache();
@@ -267,38 +275,39 @@ class JemModelEvent extends JemModelAdmin
 		}
 
 		// convert international date formats...
-		$nullDate = JFactory::getDbo()->getNullDate();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+		$nullDate = $db->getNullDate();
 		if (!empty($data['dates']) && ($data['dates'] != $nullDate)) {
-			$d = JFactory::getDate($data['dates'], 'UTC');
+			$d = Factory::getDate($data['dates'], 'UTC');
 			$data['dates'] = $d->format('Y-m-d', true, false);
 		}
 		if (!empty($data['enddates']) && ($data['enddates'] != $nullDate)) {
-			$d = JFactory::getDate($data['enddates'], 'UTC');
+			$d = Factory::getDate($data['enddates'], 'UTC');
 			$data['enddates'] = $d->format('Y-m-d', true, false);
 		}
 
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
-			$data['recurrence_number']     = '';
-			$data['recurrence_byday']      = '';
-			$data['recurrence_counter']    = '';
-			$data['recurrence_type']       = '';
-			$data['recurrence_limit']      = '';
-			$data['recurrence_limit_date'] = '';
-			$data['recurrence_first_id']   = '';
+			$data['recurrence_number']     = '0';
+			$data['recurrence_byday']      = '0';
+			$data['recurrence_counter']    = '0';
+			$data['recurrence_type']       = '0';
+			$data['recurrence_limit']      = '0';
+			$data['recurrence_limit_date'] = null;
+			$data['recurrence_first_id']   = '0';
 		} else {
 			if (!$new) {
 				// edited event maybe part of a recurrence set
 				// -> drop event from set
-				$data['recurrence_first_id'] = '';
-				$data['recurrence_counter']  = '';
+				$data['recurrence_first_id'] = '0';
+				$data['recurrence_counter']  = '0';
 			}
 
 			$data['recurrence_number'] = $recurrencenumber;
 			$data['recurrence_byday']  = $recurrencebyday;
 
 			if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != $nullDate)) {
-				$d = JFactory::getDate($data['recurrence_limit_date'], 'UTC');
+				$d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
 				$data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
 			}
 		}
@@ -371,7 +380,7 @@ class JemModelEvent extends JemModelAdmin
 			// Store cats
 			if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
 			//	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, JLog::ERROR);
-				$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
+				$this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
 				$saved = false;
 			}
 
@@ -379,7 +388,7 @@ class JemModelEvent extends JemModelAdmin
 			if (!$backend && ($jemsettings->regallowinvitation == 1)) {
 				if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
 				//	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, JLog::ERROR);
-					$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+					$this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
 					$saved = false;
 				}
 			}
@@ -412,7 +421,7 @@ class JemModelEvent extends JemModelAdmin
 	protected function _storeCategoriesSelected($eventId, $categories, $frontend, $new)
 	{
 		$user = JemFactory::getUser();
-		$db   = $this->getDbo();
+		$db   = Factory::getContainer()->get('DatabaseDriver');
 
 		$eventId = (int)$eventId;
 		if (empty($eventId) || !is_array($categories)) {
@@ -459,9 +468,9 @@ class JemModelEvent extends JemModelAdmin
 		if (!empty($add_cats)) {
 			$query = $db->getQuery(true);
 			$query->insert($db->quoteName('#__jem_cats_event_relations'))
-			      ->columns($db->quoteName(array('catid', 'itemid')));
+			      ->columns($db->quoteName(array('catid', 'itemid','ordering')));
 			foreach ($add_cats as $catid) {
-				$query->values((int)$catid . ',' . $eventId);
+				$query->values((int)$catid . ',' . $eventId.','.'0');
 			}
 			$db->setQuery($query);
 			$ret &= ($db->execute() !== false);
@@ -497,7 +506,7 @@ class JemModelEvent extends JemModelAdmin
 			return false;
 		}
 
-		$db   = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		# Get current registrations
 		$query = $db->getQuery(true);
@@ -528,7 +537,7 @@ class JemModelEvent extends JemModelAdmin
 
 				if ($ret !== false) {
 					$id = $db->insertid();
-					$dispatcher->trigger('onEventUserRegistered', array($id));
+					$dispatcher->triggerEvent('onEventUserRegistered', array($id));
 				}
 			}
 		}
@@ -549,12 +558,12 @@ class JemModelEvent extends JemModelAdmin
 				}
 
 				if ($ret !== false) {
-					$dispatcher->trigger('onEventUserUnregistered', array($eventId, $reg));
+					$dispatcher->triggerEvent('onEventUserUnregistered', array($eventId, $reg));
 				}
 			}
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		return true;
@@ -575,21 +584,19 @@ class JemModelEvent extends JemModelAdmin
 		\Joomla\Utilities\ArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {
-			$this->setError(JText::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+			$this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
 			return false;
 		}
 
 		try {
-			$db = $this->getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$db->setQuery(
 					'UPDATE #__jem_events' .
 					' SET featured = '.(int) $value.
 					' WHERE id IN ('.implode(',', $pks).')'
 			);
-			if ($db->execute() === false) {
-				throw new Exception($db->getErrorMsg());
-			}
+			$db->execute() ;
 
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());

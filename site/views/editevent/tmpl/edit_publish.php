@@ -1,18 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
 ?>
 			<!--START PUBLISHING FIELDSET -->
 			<fieldset>
-				<legend><?php echo JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'); ?></legend>
+				<legend><?php echo Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'); ?></legend>
 					<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
@@ -27,18 +30,18 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 
 			<!-- START META FIELDSET -->
 			<fieldset class="">
-				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
+				<legend><?php echo Text::_('COM_JEM_META_HANDLING'); ?></legend>
 					<div class="formelm-area">
-						<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_TIME' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_ENDTIME' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_TITLE' );	?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo Text::_ ( 'COM_JEM_VENUE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_DATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_ ( 'COM_JEM_TIME' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_ ( 'COM_JEM_ENDDATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_ ( 'COM_JEM_ENDTIME' );?>" />
 						<br />
 						<label for="meta_keywords">
-							<?php echo JText::_('COM_JEM_META_KEYWORDS').':';?>
+							<?php echo Text::_('COM_JEM_META_KEYWORDS').':';?>
 						</label>
 						<?php
 						if (! empty ( $this->item->meta_keywords )) {
@@ -51,7 +54,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 					</div>
 					<div class="formelm-area">
 						<label for="meta_description">
-							<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
+							<?php echo Text::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
 						</label>
 						<?php
 						if (! empty ( $this->item->meta_description )) {
@@ -67,7 +70,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 					<script type="text/javascript">
 					<!--
 						starter("<?php
-						echo JText::_ ( 'COM_JEM_META_ERROR' );
+						echo Text::_ ( 'COM_JEM_META_ERROR' );
 						?>");	// window.onload is already in use, call the function manualy instead
 					-->
 					</script>

@@ -1,14 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Based on: https://gist.github.com/dongilbert/4195504
  */
-defined('_JEXEC') or die();
+ 
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.modellist');
 
@@ -68,13 +71,13 @@ class JemModelExport extends JModelList
 	protected function getListQuery()
 	{
 		// Retrieve variables
-		$jinput    = JFactory::getApplication()->input;
+		$jinput    = Factory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
 		$enddate   = $jinput->get('enddates', '', 'string');
 		$cats      = $jinput->get('cid', array(), 'array');
 
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -114,10 +117,10 @@ class JemModelExport extends JModelList
 	{
 		$this->populateState();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$includecategories = $jinput->get('categorycolumn', 0, 'int');
 
-		$db  = $this->getDbo();
+		$db  = Factory::getContainer()->get('DatabaseDriver');
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 		$separator = $jemconfig->get('csv_separator', ';');
 		$delimiter = $jemconfig->get('csv_delimiter', '"');
@@ -164,7 +167,7 @@ class JemModelExport extends JModelList
 	protected function getListQuerycats()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -191,7 +194,7 @@ class JemModelExport extends JModelList
 			//add BOM to fix UTF-8 in Excel
 			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -213,7 +216,7 @@ class JemModelExport extends JModelList
 	protected function getListQueryvenues()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -239,7 +242,7 @@ class JemModelExport extends JModelList
 			//add BOM to fix UTF-8 in Excel
 			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$header = array_keys($db->getTableColumns('#__jem_venues'));
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -261,7 +264,7 @@ class JemModelExport extends JModelList
 	protected function getListQuerycatsevents()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -287,7 +290,7 @@ class JemModelExport extends JModelList
 			//add BOM to fix UTF-8 in Excel
 			fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		}
-		$db = $this->getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
 		fputcsv($csv, $header, $separator, $delimiter);
 
@@ -308,16 +311,23 @@ class JemModelExport extends JModelList
 	{
 		// @todo alter function
 
-		$db    = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$where = ' WHERE c.published = 1';
 		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
-		$db->setQuery($query);
-
-		$mitems = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum()){
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// if ($db->getErrorNum()){
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
+		try
+		{
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems) {
@@ -353,7 +363,7 @@ class JemModelExport extends JModelList
 	public function getCatEvent($id)
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.

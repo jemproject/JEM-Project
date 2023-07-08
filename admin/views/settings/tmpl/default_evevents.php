@@ -1,16 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+
 // Create shortcut to parameters.
-
-
 $params = $this->state->get('params');
-
 $params = $params->toArray();
 
 // This checks if the config options have ever been saved. If they haven't they will fall back to the original settings.
@@ -22,13 +24,11 @@ $params['show_article_options'] = '1';
 $params['show_urls_images_backend'] = '0';
 $params['show_urls_images_frontend'] = '0';
 endif;
-
-defined('_JEXEC') or die;
 ?>
 
-<div class="width-100">
-	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_EVENTS'); ?></legend>
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
+		<legend><?php echo Text::_('COM_JEM_EVENTS'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('evevents') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>

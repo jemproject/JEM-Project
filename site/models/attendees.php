@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component attendees Model
@@ -17,7 +20,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelAttendees extends JModelLegacy
+class JemModelAttendees extends BaseDatabaseModel
 {
 	/**
 	 * Attendees data array
@@ -75,7 +78,7 @@ class JemModelAttendees extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 
@@ -98,7 +101,7 @@ class JemModelAttendees extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		//set unlimited if export or print action | task=export or task=print
-		$task = $app->input->get('task', '');
+		$task = $app->input->getCmd('task', '');
 		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 	}
 
@@ -169,8 +172,7 @@ class JemModelAttendees extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination))
 		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new Pagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
 		}
 
 		return $this->_pagination;
@@ -211,7 +213,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	protected function _buildContentOrderBy()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.uregdate', 'cmd' );
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',        'word' );
@@ -220,8 +222,8 @@ class JemModelAttendees extends JModelLegacy
 			$filter_order = 'u.name';
 		}
 
-		$filter_order     = JFilterInput::getinstance()->clean($filter_order,     'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getinstance()->clean($filter_order,     'cmd');
+		$filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'r.status') {
 			$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', r.waiting '.$filter_order_Dir.', u.name';
@@ -241,7 +243,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	protected function _buildContentWhere()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
@@ -298,7 +300,7 @@ class JemModelAttendees extends JModelLegacy
 	public function getEvent()
 	{
 		if (empty($this->_event)) {
-			$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.waitinglist,'
+			$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist,'
 			       . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
 			       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
 			       . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
@@ -355,10 +357,10 @@ class JemModelAttendees extends JModelLegacy
 
 		// Add registration status if available
 		$eventId    = $this->_id;
-		$db         = JFactory::getDBO();
+		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
-		$qry->select(array('reg.uid, reg.status, reg.waiting'));
+		$qry->select(array('reg.uid, reg.status, reg.waiting, reg.places'));
 		$qry->from('#__jem_register As reg');
 		$qry->where('reg.event = ' . $eventId);
 		$db->setQuery($qry);
@@ -366,14 +368,16 @@ class JemModelAttendees extends JModelLegacy
 
 	//	JemHelper::addLogEntry((string)$qry . "\n" . print_r($regs, true), __METHOD__);
 
-		foreach ($rows AS &$row) {
+		foreach ($rows as &$row) {
 			if (array_key_exists($row->id, $regs)) {
 				$row->status = $regs[$row->id]->status;
+				$row->places = $regs[$row->id]->places;
 				if ($row->status == 1 && $regs[$row->id]->waiting) {
 					++$row->status;
 				}
 			} else {
 				$row->status = -99;
+				$row->places = 0;
 			}
 		}
 
@@ -389,7 +393,7 @@ class JemModelAttendees extends JModelLegacy
 			return array();
 		}
 
-		$db  = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
@@ -409,7 +413,7 @@ class JemModelAttendees extends JModelLegacy
 	public function getUsersPagination()
 	{
 		$jemsettings = JemHelper::config();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.addusers.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart  = $app->input->getInt('limitstart', 0);
 		// correct start value if required
@@ -419,8 +423,7 @@ class JemModelAttendees extends JModelLegacy
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = new Pagination($total, $limitstart, $limit);
 
 		return $pagination;
 	}
@@ -430,7 +433,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	protected function _buildQueryUsers()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 
 		// no filters, hard-coded
 		$filter_order     = 'usr.name';
@@ -440,7 +443,7 @@ class JemModelAttendees extends JModelLegacy
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('usr.id, usr.name'));
 		$query->from('#__users As usr');

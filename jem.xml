@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="2.5" method="upgrade">
+<extension type="component" method="upgrade">
 	<name>com_jem</name>
-	<creationDate>November 2022</creationDate>
+	<creationDate>July 2023</creationDate>
 	<author>JEM Community</author>
-	<copyright>Copyright (C) 2013-2022 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>2.3.6</version>
-	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+	<version>4.0.0</version>
+	<description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
-	<!-- Runs on install/uninstall/update; New in 1.6 -->
 	<scriptfile>script.php</scriptfile>
 
 	<files folder="site">
@@ -20,6 +19,7 @@
 		<filename>router.php</filename>
 		<filename>index.html</filename>
 
+		<folder>services</folder>
 		<folder>classes</folder>
 		<folder>common</folder>
 		<folder>controllers</folder>
@@ -33,7 +33,6 @@
 		<filename>index.html</filename>
 		<folder>images</folder>
 		<folder>css</folder>
-		<folder>FontAwesome</folder>
 		<folder>js</folder>
 	</media>
 
@@ -51,7 +50,7 @@
 
 	<update>
 		<schemas>
-			<schemapath type="mysql">sql/updates</schemapath>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
 		</schemas>
 	</update>
 
@@ -87,6 +86,5 @@
 			<folder>language</folder>
 		</files>
 	</administration>
-
-	<!-- updateservers moved to package -->
+	
 </extension>

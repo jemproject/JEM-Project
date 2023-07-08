@@ -1,17 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Wide Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 // get module helper
-require_once(dirname(__FILE__).'/helper.php');
+require_once __DIR__ . '/helper.php';
 
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -20,7 +22,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
 $list = ModJemWideHelper::getList($params);
 

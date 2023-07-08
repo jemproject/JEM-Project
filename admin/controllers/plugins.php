@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -17,7 +17,11 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
 */
-class JemControllerPlugins extends JControllerLegacy
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+
+class JemControllerPlugins extends BaseController
 {
 	/**
 	 * Constructor
@@ -35,7 +39,7 @@ class JemControllerPlugins extends JControllerLegacy
 	 */
 	public function plugins()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = $db->getQuery(true);
 		$query->select(array('count(*)'));
@@ -48,11 +52,12 @@ class JemControllerPlugins extends JControllerLegacy
 
 		//any plugins installed? if not redirect to installation screen
 		if ($total > 0){
-			$link = 'index.php?option=com_plugins&filter_search=jem';
+			// $link = 'index.php?option=com_plugins&filter_search=jem';
+			$link = 'index.php?option=com_plugins&filter[search]=jem';
 			$msg = "";
 		} else {
 			$link = 'index.php?option=com_installer';
-			$msg = JText::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
+			$msg = Text::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
 		}
 		$this->setRedirect($link, $msg);
 	}

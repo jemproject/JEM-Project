@@ -1,15 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+use Joomla\CMS\Language\Text;
+
+// JHtml::_('behavior.tooltip');
 ?>
 
 <script type="text/javascript">
@@ -24,7 +26,7 @@ JHtml::_('behavior.tooltip');
 </script>
 
 <?php if (!$this->params->get('show_page_heading', 1)) : /* hide this if page heading is shown */ ?>
-<h2><?php echo JText::_('COM_JEM_MY_VENUES'); ?></h2>
+<h2><?php echo Text::_('COM_JEM_MY_VENUES'); ?></h2>
 <?php endif; ?>
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
@@ -32,17 +34,17 @@ JHtml::_('behavior.tooltip');
 	<div id="jem_filter" class="floattext">
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>
 		<div class="jem_fleft">
-			<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+			<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button class="buttonfilter btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="buttonfilter btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="buttonfilter btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button class="buttonfilter btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>
 
 		<?php if ($this->settings->get('global_display',1)) : ?>
 		<div class="jem_fright">
-			<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+			<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 			<?php echo $this->venues_pagination->getLimitBox(); ?>
 		</div>
 		<?php endif; ?>
@@ -70,7 +72,7 @@ JHtml::_('behavior.tooltip');
 			<thead>
 				<tr>
 					<?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
-					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<?php endif; ?>
 					<?php if (/*$this->jemsettings->showlocate ==*/ 1) : ?>
 					<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -81,13 +83,13 @@ JHtml::_('behavior.tooltip');
 					<?php if ($this->jemsettings->showstate == 1) : ?>
 					<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
-					<th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
+					<th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 				</tr>
 			</thead>
 
 			<tbody>
 				<?php if (empty($this->venues)) : ?>
-					<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_VENUES'); ?></td></tr>
+					<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></td></tr>
 				<?php else : ?>
 					<?php foreach ($this->venues as $i => $row) : ?>
 						<tr class="row<?php echo $i % 2; ?>">

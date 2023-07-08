@@ -1,17 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\Language\Text;
+
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
+#[AllowDynamicProperties]
 class JemCategories
 {
 	/**
@@ -133,8 +138,8 @@ class JemCategories
 	 */
 	protected function _load($id)
 	{
-		$db = JFactory::getDbo();
-		$app = JFactory::getApplication();
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$app = Factory::getApplication();
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -352,13 +357,13 @@ class JemCategories
 		$user      = JemFactory::getUser();
 		$userid    = (int)$user->get('id');
 		$levels    = $user->getAuthorisedViewLevels();
-		$app       = JFactory::getApplication();
+		$app       = Factory::getApplication();
 		$params    = $app->getParams();
 		$catswitch = $params->get('categoryswitch', '0');
 		$settings  = JemHelper::globalattribs();
 
 		// Query
-		$db    = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';
@@ -426,7 +431,7 @@ class JemCategories
 
 	public function getPath()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$parentcats = array();
 		$cid = $this->id;
 		$user = JemFactory::getUser();
@@ -476,12 +481,12 @@ class JemCategories
 	 */
 	static protected function buildParentCats($cid)
 	{
-		$db         = JFactory::getDBO();
+		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$parentcats = array();
 		$user       = JemFactory::getUser();
 		$userid     = (int)$user->get('id');
 		$levels     = $user->getAuthorisedViewLevels();
-		$app        = JFactory::getApplication();
+		$app        = Factory::getApplication();
 
 		// start with parent
 		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;
@@ -575,7 +580,7 @@ class JemCategories
 	 */
 	static public function getCategoriesTree($published = false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$state = array(0,1);
@@ -590,13 +595,21 @@ class JemCategories
 		$where .= ' AND access IN ('.implode(',', $levels).')';
 
 		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, lft';
-		$db->setQuery($query);
-		$mitems = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum())
+		// if ($db->getErrorNum())
+		// {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+		// }
+		try
 		{
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+			$db->setQuery($query);
+			$mitems = $db->loadObjectList();
+		}
+		catch (RuntimeException $e)
+		{			
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		if (!$mitems)
@@ -682,7 +695,7 @@ class JemCategories
 		$catlist = array();
 
 		if ($top) {
-			$catlist[] = JHtml::_('select.option', '0', JText::_('COM_JEM_TOPLEVEL'));
+			$catlist[] = JHtml::_('select.option', '0', Text::_('COM_JEM_TOPLEVEL'));
 		}
 
 		$catlist = array_merge($catlist, self::getcatselectoptions($list));
@@ -719,7 +732,7 @@ class JemCategories
 	 */
 	static public function getChilds($id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 AND access IN ('.implode(',', $levels).')';
@@ -1192,10 +1205,10 @@ class JemCategoryNode extends JObject
 	{
 		if ($modified_user)
 		{
-			return JFactory::getUser($this->modified_user_id);
+			return Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->modified_user_id);
 		}
 
-		return JFactory::getUser($this->created_user_id);
+		return Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->created_user_id);
 	}
 
 	/**

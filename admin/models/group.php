@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/admin.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+
+require_once __DIR__ . '/admin.php';
 
 /**
  * JEM Component Group Model
@@ -63,11 +66,11 @@ class JemModelGroup extends JemModelAdmin
 	 * @param  type   The table type to instantiate. Optional.
 	 * @param  string A prefix for the table class name. Optional.
 	 * @param  array  Configuration data for model. Optional.
-	 * @return JTable A database object
+	 * @return Table A database object
 	 */
 	public function getTable($type = 'Group', $prefix = 'JemTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -109,7 +112,7 @@ class JemModelGroup extends JemModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jem.edit.group.data', array());
+		$data = Factory::getApplication()->getUserState('com_jem.edit.group.data', array());
 
 		if (empty($data)) {
 			$data = $this->getItem();
@@ -121,13 +124,13 @@ class JemModelGroup extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param JTable The table object to prepare.
+	 * @param Table The table object to prepare.
 	 *
 	 */
 	protected function _prepareTable($table)
 	{
-		$db  = JFactory::getDbo();
-		$app = JFactory::getApplication();
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$app = Factory::getApplication();
 
 		// Make sure the data is valid
 		if (!$table->check()) {

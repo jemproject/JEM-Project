@@ -1,12 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -43,14 +48,14 @@ defined('_JEXEC') or die;
 		}
 
 		//get event date
-		$year = strftime('%Y', strtotime($row->dates));
-		$month = strftime('%m', strtotime($row->dates));
-		$day = strftime('%d', strtotime($row->dates));
+		$year = date('Y', strtotime($row->dates));
+		$month = date('m', strtotime($row->dates));
+		$day = date('d', strtotime($row->dates));
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
-			$var1a = JRoute::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
-			$var1b = JText::_('COM_JEM_AND_MORE');
+			$var1a = Route::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
+			$var1b = Text::_('COM_JEM_AND_MORE');
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
 			$id = 'eventandmore';
 
@@ -68,7 +73,7 @@ defined('_JEXEC') or die;
 			$end = JemOutput::formattime($row->endtimes);
 
 			if ($start != '') {
-				$timehtml = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_TIME_SHORT').': </span>';
+				$timehtml = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_TIME_SHORT').': </span>';
 				$timehtml .= $start;
 				if ($end != '') {
 					$timehtml .= ' - '.$end;
@@ -77,8 +82,8 @@ defined('_JEXEC') or die;
 			}
 		}
 
-		$eventname  = '<div class="eventName">'.JText::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
-		$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+		$eventname  = '<div class="eventName">'.Text::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
+		$detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
 		//initialize variables
 		$multicatname = '';
@@ -92,7 +97,7 @@ defined('_JEXEC') or die;
 		//walk through categories assigned to an event
 		foreach((array)$row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
-			$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+			$detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
 			$content    .= '<div id="catz" class="cat'.$category->id.'">';
@@ -137,15 +142,15 @@ defined('_JEXEC') or die;
 			switch ($row->multi) {
 			case 'first': // first day
 				$multi_mode = 1;
-				$multi_icon = JHtml::_("image","com_jem/arrow-left.png",'', NULL, true);
+				$multi_icon = HTMLHelper::_("image","com_jem/arrow-left.png",'', NULL, true);
 				break;
 			case 'middle': // middle day
 				$multi_mode = 2;
-				$multi_icon = JHtml::_("image","com_jem/arrow-middle.png",'', NULL, true);
+				$multi_icon = HTMLHelper::_("image","com_jem/arrow-middle.png",'', NULL, true);
 				break;
 			case 'zlast': // last day
 				$multi_mode = 3;
-				$multi_icon = JHtml::_("image","com_jem/arrow-right.png",'', NULL, true);
+				$multi_icon = HTMLHelper::_("image","com_jem/arrow-right.png",'', NULL, true);
 				break;
 			}
 		}
@@ -194,7 +199,7 @@ defined('_JEXEC') or die;
 
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
-			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
+			$venue  = '<div class="location"><span class="text-label">'.Text::_('COM_JEM_VENUE_SHORT').': </span>';
 			$venue .=     !empty($row->venue) ? $this->escape($row->venue) : '-';
 			$venue .= '</div>';
 		} else {
@@ -205,12 +210,12 @@ defined('_JEXEC') or die;
 		$statusicon = '';
 		if (isset($row->published) && ($row->published != 1)) {
 			$statusicon  = JemOutput::publishstateicon($row);
-			$eventstate  = '<div class="eventstate"><span class="text-label">'.JText::_('JSTATUS').': </span>';
+			$eventstate  = '<div class="eventstate"><span class="text-label">'.Text::_('JSTATUS').': </span>';
 			switch ($row->published) {
-			case  1: $eventstate .= JText::_('JPUBLISHED');   break;
-			case  0: $eventstate .= JText::_('JUNPUBLISHED'); break;
-			case  2: $eventstate .= JText::_('JARCHIVED');    break;
-			case -2: $eventstate .= JText::_('JTRASHED');     break;
+			case  1: $eventstate .= Text::_('JPUBLISHED');   break;
+			case  0: $eventstate .= Text::_('JUNPUBLISHED'); break;
+			case  2: $eventstate .= Text::_('JARCHIVED');    break;
+			case -2: $eventstate .= Text::_('JTRASHED');     break;
 			}
 			$eventstate .= '</div>';
 		} else {
@@ -218,7 +223,7 @@ defined('_JEXEC') or die;
 		}
 
 		//date in tooltip
-		$multidaydate = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_DATE').': </span>';
+		$multidaydate = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_DATE').': </span>';
 		switch ($multi_mode) {
 		case 1:  // first day
 			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
@@ -255,20 +260,28 @@ defined('_JEXEC') or die;
 				$editicon .= '</div>';
 			}
 		}
+		
+		//get border for featured event
+		$usefeaturedborder = $this->params->get('usefeaturedborder', 0);
+    	$featuredbordercolor = $this->params->get('featuredbordercolor', 0);
+		$featuredclass = '';
+		$featuredstyle ='';
+		if($usefeaturedborder && $row->featured){
+            $featuredclass="borderfeatured";
+            $featuredstyle="border-color:" . $featuredbordercolor;
+		}
 
 		//generate the output
 		// if we have exact one color from categories we can use this as background color of event
+		$content .= '<div class="eventcontentinner ' . $featuredclass . '" style="' . $featuredstyle; 
 		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
-			$content .= '<div class="eventcontentinner" style="background-color:'.array_pop($catcolor).'">';
-			$content .= $editicon;
-			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-			$content .= $contentend . '</div>';
+			$content .= '; background-color:'.array_pop($catcolor).'">';
 		} else {
-			$content .= '<div class="eventcontentinner">' . $colorpic;
-			$content .= $editicon;
-			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-			$content .= $contentend . '</div>';
+			$content .=  '">' . $colorpic;
 		}
+		$content .= $editicon;
+		$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+		$content .= $contentend . '</div>';
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;
@@ -288,10 +301,10 @@ defined('_JEXEC') or die;
 		<div class="calendarButtons">
 			<div class="calendarButtonsToggle">
 				<div id="buttonshowall" class="btn btn-outline-dark">
-					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+					<?php echo Text::_('COM_JEM_SHOWALL'); ?>
 				</div>
 				<div id="buttonhideall" class="btn btn-outline-dark">
-					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+					<?php echo Text::_('COM_JEM_HIDEALL'); ?>
 				</div>
 			</div>
 		</div>
@@ -351,18 +364,18 @@ defined('_JEXEC') or die;
 	<!-- Calendar buttons -->
 		<div class="calendarButtons">
 			<div class="calendarButtonsToggle">
-				<div id="buttonshowall" class="btn btn-outline-dark">
-					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+				<div id="buttonshowall" class="btn btn-outline-dark me-2">
+					<?php echo Text::_('COM_JEM_SHOWALL'); ?>
 				</div>
 				<div id="buttonhideall" class="btn btn-outline-dark">
-					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+					<?php echo Text::_('COM_JEM_HIDEALL'); ?>
 				</div>
 			</div>
 		</div>
 		<div class="clr"></div>
 
 	<!-- Calendar Legend -->
-		<div class="calendarLegends">
+		<div class="calendarLegends mt-4">
 			<?php
 			if ($displayLegend == 1) {
 
@@ -384,7 +397,7 @@ defined('_JEXEC') or die;
 							# build legend
 							if (array_key_exists($cat->id, $countcatevents)) {
 							?>
-								<div class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
+								<div class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
 									<?php
 									if (isset($cat->color) && $cat->color) {
 										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';

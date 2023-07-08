@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /**
@@ -14,8 +14,9 @@
 * @license: GNU LESSER GENERAL PUBLIC LICENSE;
 * Special thanks to Jeremy D. Frens, Professor, Computer Science <jdfrens@calvin.edu> for his help developing this code
 * This subclass generates weekly calendars as a html table (XHTML Valid) using the activeCalendar class
-* Support, feature requests and bug reports please at : http://www.micronetwork.de/activecalendar/
+* Support, feature requests and bug reports please at : https://www.micronetwork.de/activecalendar/
 */
+
 defined('_JEXEC') or die;
 
 require_once('calendar.class.php');
@@ -121,7 +122,9 @@ class ActiveCalendarWeek extends JEMCalendar {
 	*/
 	function mkWeekDayz() {
 		$out='<tr class="daynamesRow">';
-		if ($this->weekNum) $out.="<td class=\"".$this->cssWeekNumTitle."\">".$this->weekNumTitle."</td>";
+		if ($this->weekNum) {
+			$out .= "<td class=\"" . $this->cssWeekNumTitle . "\">" . $this->weekNumTitle . "</td>";
+		}
 		for ($x=0; $x<=6; $x++) {
 			$out.=$this->mkSingleWeekDay($this->actday+$x);
 		}

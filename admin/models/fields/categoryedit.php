@@ -1,12 +1,16 @@
 <?php
 /**
- * @version     2.3.6
- * @package     JEM
- * @copyright   Copyright (C) 2013-2021 joomlaeventmanager.net
- * @copyright   Copyright (C) 2005-2009 Christoph Lukes
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version 4.0.0
+ * @package JEM
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('JPATH_BASE') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -40,7 +44,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		$name = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		// Load the category options for a given extension.
 
 		// For categories the old category is the category id or 0 for new category.
@@ -58,7 +62,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			//$extension = $this->element['extension'] ? (string) $this->element['extension'] : (string) $jinput->get('option','com_content');
 		}
 
-		$db		= JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('a.id AS value, a.catname AS text, a.level, a.published');
@@ -112,13 +116,13 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			$options = $db->loadObjectList();
 
 			// Check for a database error.
-			if ($db->getErrorNum()) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
-			}
+			// if ($db->getErrorNum()) {
+			// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+			// }
 		}
 		catch (RuntimeException $e)
 		{
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getErrorMsg(), 'warning');
+			Factory::getApplication()->enqueueMessage($e->getErrorMsg(), 'warning');
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
@@ -141,7 +145,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			{
 					if ($options[$i]->level == 0)
 					{
-						$options[$i]->text = JText::_('JGLOBAL_ROOT_PARENT');
+						$options[$i]->text = Text::_('JGLOBAL_ROOT_PARENT');
 					}
 			}
 
@@ -217,10 +221,10 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		{
 			if ($row->parent_id == '1') {
 				$parent = new stdClass();
-				$parent->text = JText::_('JGLOBAL_ROOT_PARENT');
+				$parent->text = Text::_('JGLOBAL_ROOT_PARENT');
 				array_unshift($options, $parent);
 			}
-			array_unshift($options, JHtml::_('select.option', '0', JText::_('JGLOBAL_ROOT')));
+			array_unshift($options, JHtml::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
 		}
 
 		// Merge any additional options in the XML definition.

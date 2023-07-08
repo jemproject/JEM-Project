@@ -1,13 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 /**
  * Venues-View
 */
@@ -18,8 +24,8 @@ class JemViewVenues extends JemView
 	 */
 	public function display($tpl = null)
 	{
-		$app         = JFactory::getApplication();
-		$document    = JFactory::getDocument();
+		$app         = Factory::getApplication();
+		$document    = $app->getDocument();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$user        = JemFactory::getUser();
@@ -62,12 +68,12 @@ class JemViewVenues extends JemView
 
 			//build the url
 			if (!empty($item->url) && !preg_match('%^http(s)?://%', $item->url)) {
-				$item->url = 'http://'.$item->url;
+				$item->url = 'https://'.$item->url;
 			}
 
 			//create target link
-			$item->linkEventsArchived = JRoute::_(JemHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
-			$item->linkEventsPublished = JRoute::_(JemHelperRoute::getVenueRoute($item->venueslug));
+			$item->linkEventsArchived = Route::_(JemHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
+			$item->linkEventsPublished = Route::_(JemHelperRoute::getVenueRoute($item->venueslug));
 
 			$item->EventsPublished = $model->AssignedEvents($item->locid,"1");
 			$item->EventsArchived = $model->AssignedEvents($item->locid,"2");
@@ -85,21 +91,21 @@ class JemViewVenues extends JemView
     //$pathway->setItemName(1, $menuitem->title);
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=venues&task=archive'));
-			$print_link = JRoute::_('index.php?option=com_jem&view=venues&task=archive&print=1&tmpl=component');
-			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
-			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=venues&task=archive'));
+			$print_link = Route::_('index.php?option=com_jem&view=venues&task=archive&print=1&tmpl=component');
+			$pagetitle   .= ' - '.Text::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - '.Text::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = JRoute::_('index.php?option=com_jem&view=venues&print=1&tmpl=component');
+			$print_link = Route::_('index.php?option=com_jem&view=venues&print=1&tmpl=component');
 		}
 
 		// Add site name to title if param is set
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 		}
 
 		//Set Page title
@@ -127,7 +133,7 @@ class JemViewVenues extends JemView
 		$this->show_status   = $permissions->canEditPublishVenue;
 		$this->task          = $task;
 		$this->pagetitle     = $pagetitle;
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		parent::display($tpl);
 	}

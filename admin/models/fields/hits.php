@@ -1,17 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('JPATH_BASE') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
 
 /**
  * Hits Field.
  */
-class JFormFieldHits extends JFormField
+class JFormFieldHits extends FormField
 {
 	/**
 	 * The form field type.
@@ -26,8 +30,8 @@ class JFormFieldHits extends JFormField
 	 */
 	protected function getInput()
 	{
-		$onclick	= ' onclick="document.id(\''.$this->id.'\').value=\'0\';"';
+		$onclick	= ' onclick="document.getElementById(\''.$this->id.'\').value=\'0\';"';
 
-		return '<input style="border:0;" type="text" name="'.$this->name.'" id="'.$this->id.'" value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'" readonly="readonly" /><input type="button"'.$onclick.' value="'.JText::_('COM_JEM_RESET_HITS').'" class="button"/>';
+		return '<input type="text" name="'.$this->name.'" id="'.$this->id.'" class="form-control field-user-input-name valid form-control-success w-20" value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'" readonly="readonly" style="display:inline-block;" /><input type="button"'.$onclick.' value="'.Text::_('COM_JEM_RESET_HITS').'" class="btn btn-primary selectcat" />';
 	}
 }

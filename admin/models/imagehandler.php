@@ -1,17 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
  * JEM Component Imagehandler Model
@@ -41,10 +42,10 @@ class JemModelImagehandler extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app        = JFactory::getApplication();
+		$app        = Factory::getApplication();
 		$option     = $app->input->getString('option', 'com_jem');
 		$task       = $app->input->getVar('task', '');
-		$limit      = $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit      = $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->get('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$search     = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
@@ -60,7 +61,7 @@ class JemModelImagehandler extends JModelLegacy
 		static $set = false;
 
 		if (!$set) {
-			$folder = JFactory::getApplication()->input->get('folder', '');
+			$folder = Factory::getApplication()->input->get('folder', '');
 			$this->setState('folder', $folder);
 
 			$set = true;
@@ -135,7 +136,7 @@ class JemModelImagehandler extends JModelLegacy
 			$basePath = JPATH_SITE.'/images/jem/'.$folder;
 
 			// Get the list of files and folders from the given folder
-			$fileList = JFolder::files($basePath);
+			$fileList = Folder::files($basePath);
 
 			// Iterate over the files if they exist
 			if ($fileList !== false) {
@@ -168,8 +169,7 @@ class JemModelImagehandler extends JModelLegacy
 	public function getPagination()
 	{
 		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getState('total'), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination = new Pagination($this->getState('total'), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;

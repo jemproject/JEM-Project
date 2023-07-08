@@ -1,16 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
-jimport('joomla.html.pagination');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filter\InputFilter;
 
 /**
  * JEM Component JEM Model
@@ -18,7 +20,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
  */
-class JemModelMyattendances extends JModelLegacy
+class JemModelMyattendances extends BaseDatabaseModel
 {
 	protected $_attending = null;
 	protected $_total_attending = null;
@@ -31,7 +33,7 @@ class JemModelMyattendances extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events
@@ -58,7 +60,7 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	public function getAttending()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_attending)) {
@@ -113,8 +115,7 @@ class JemModelMyattendances extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination_attending)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination_attending = new JPagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination_attending = new Pagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination_attending;
@@ -137,7 +138,7 @@ class JemModelMyattendances extends JModelLegacy
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.published, '
 		       . ' a.recurrence_type, a.recurrence_first_id,'
 		       . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
-		       . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra,'
+		       . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, r.places, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra,'
 		       . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
 		       . ' a.waitinglist, r.status, r.waiting, r.comment,'
 		       . ' l.id, l.venue, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
@@ -168,11 +169,11 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	protected function _buildOrderByAttending()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
 		$filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order = InputFilter::getInstance()->clean($filter_order, 'cmd');
 
 		// Reverse default order for dates in archive mode
 		$filter_order_DirDefault = 'ASC';
@@ -181,7 +182,7 @@ class JemModelMyattendances extends JModelLegacy
 		}
 
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir	= ($task == 'archive') ? 'DESC' : 'ASC';
 
@@ -208,11 +209,11 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	protected function _buildAttendingWhere()
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 
 		// Get the paramaters of the active menu item
 		$params   = $app->getParams();
-		$task     = $app->input->get('task', '');
+		$task     = $app->input->getCmd('task', '');
 		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id

@@ -1,15 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- *
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+ 
 defined('_JEXEC') or die();
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\Archive\Archive;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use \Joomla\CMS\Language\Text;
+
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
@@ -18,7 +22,7 @@ jimport('joomla.filesystem.file');
 /**
  * Sampledata Model
  */
-class JemModelSampledata extends JModelLegacy
+class JemModelSampledata extends BaseDatabaseModel
 {
 
 	/**
@@ -58,12 +62,11 @@ class JemModelSampledata extends JModelLegacy
 	public function loadData()
 	{
 		if ($this->checkForJemData()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'), 'warning');
 			return false;
 		}
 
 		$scriptfile = $this->sampleDataDir . 'sampledata.sql';
-
 		// load sql file
 		if (!($buffer = file_get_contents($scriptfile))) {
 			return false;
@@ -76,7 +79,6 @@ class JemModelSampledata extends JModelLegacy
 		foreach ($queries as $query) {
 			$query = trim($query);
 			if ($query != '' && $query[0] != '#') {
-				
 				$this->_db->setQuery($query);
 				$this->_db->execute();
 			}
@@ -90,7 +92,7 @@ class JemModelSampledata extends JModelLegacy
 
 		// delete temporary extraction folder
 		if (!$this->deleteTmpFolder()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
 		}
 
 		return true;
@@ -115,10 +117,18 @@ class JemModelSampledata extends JModelLegacy
 		$archive = JPath::clean($archive);
 
 		// extract archive
-		$result = JArchive::extract($archive, $extractdir);
+	
+		try {
+			$archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
+			$result = $archiveObj->extract($archive, $extractdir);
+        } catch (\Exception $e) {
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
+
+            return false;
+        }
 
 		if ($result === false) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
 			return false;
 		}
 
@@ -136,7 +146,7 @@ class JemModelSampledata extends JModelLegacy
 		}
 		$filelist['files'] = $files;
 		$filelist['folder'] = $extractdir;
-
+		
 		return $filelist;
 	}
 
@@ -234,7 +244,7 @@ class JemModelSampledata extends JModelLegacy
 	 */
 	private function checkForJemData()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		$query->select("id");
@@ -257,7 +267,7 @@ class JemModelSampledata extends JModelLegacy
 	 */
 	private function assignAdminId()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = $db->getQuery(true);
 		$query->select("id");

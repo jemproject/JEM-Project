@@ -1,10 +1,10 @@
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Latest Events Basic Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /*
@@ -39,17 +39,21 @@
   margin-bottom: 10px;
 }
 
-#jemmodulebasic ul li:before {
+/* #jemmodulebasic ul li:before {
   position: absolute;
   left: -1.5em;
   font-family: FontAwesome;
   content: "\f073";
-}
+} */
 
 #jemmodulebasic .event-title {
   -ms-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+}
+
+.highlight_featured{
+  font-weight: bold;
 }
 
 @media print {

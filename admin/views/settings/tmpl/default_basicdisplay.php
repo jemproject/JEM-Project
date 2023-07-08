@@ -1,43 +1,46 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
-<div class="width-100">
-	<fieldset class="adminform">
-		<legend><?php echo JText::_( 'COM_JEM_DISPLAY_SETTINGS' ); ?></legend>
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
+		<legend><?php echo Text::_( 'COM_JEM_DISPLAY_SETTINGS' ); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('showdetails'); ?> <?php echo $this->form->getInput('showdetails'); ?></li>
 
-			<li><?php echo $this->form->getLabel('formatShortDate'); ?> <?php echo $this->form->getInput('formatShortDate'); ?>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATE_MANUAL'), JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
-					<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span>
+			<li><?php echo $this->form->getLabel('formatShortDate'); ?> 
+				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+				</span><?php echo $this->form->getInput('formatShortDate'); ?>
 			</li>
 
-			<li><?php echo $this->form->getLabel('formatdate'); ?> <?php echo $this->form->getInput('formatdate'); ?>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATE_MANUAL'), JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
-					<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span>
+			<li><?php echo $this->form->getLabel('formatdate'); ?>
+				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+				</span><?php echo $this->form->getInput('formatdate'); ?>
 			</li>
 
-			<li><?php echo $this->form->getLabel('formattime'); ?> <?php echo $this->form->getInput('formattime'); ?>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_STRFTIME_MANUAL'), JText::_('COM_JEM_PHP_STRFTIME_MANUAL_DESC'), 'error'); ?>>
-					<a href="http://www.php.net/strftime" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span>
+			<li><?php echo $this->form->getLabel('formattime'); ?> 
+				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+				</span><?php echo $this->form->getInput('formattime'); ?>
 			</li>
 
 			<li><?php echo $this->form->getLabel('timename'); ?> <?php echo $this->form->getInput('timename'); ?></li>
 
-			<li><?php echo $this->form->getLabel('formathour'); ?> <?php echo $this->form->getInput('formathour'); ?>
-				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_STRFTIME_MANUAL'), JText::_('COM_JEM_PHP_STRFTIME_MANUAL_DESC'), 'error'); ?>>
-					<a href="http://www.php.net/strftime" target="_blank"><?php echo $this->WarningIcon(); ?></a>
-				</span>
+			<li><?php echo $this->form->getLabel('formathour'); ?> 
+				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL'), Text::_('COM_JEM_PHP_DATETIME_FORMAT_MANUAL_DESC'), 'error'); ?>>
+					<a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters" target="_blank"><?php echo $this->WarningIcon(); ?></a>
+				</span><?php echo $this->form->getInput('formathour'); ?>
 			</li>
 
 			<li><?php echo $this->form->getLabel('storeip'); ?> <?php echo $this->form->getInput('storeip'); ?></li>

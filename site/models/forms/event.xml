@@ -34,7 +34,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_DATE_DESC"
 			class="inputbox"
 			size="22"
-			format="%Y-%m-%d"
+			format="Y-m-d"
 			translateformat="true"
 			filter="string"
 			showtime="false"
@@ -44,7 +44,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_ENDDATE_DESC"
 			class="inputbox"
 			size="22"
-			format="%Y-%m-%d"
+			format="Y-m-d"
 			translateformat="true"
 			filter="string"
 			showtime="false"
@@ -89,7 +89,7 @@
 			size="22"
 			default="now"
 			readonly="true"
-			format="%Y-%m-%d %H:%M:%S"
+			format="Y-m-d H:i:s"
 			translateformat="true"
 			filter="user_utc"
 		/>
@@ -99,7 +99,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_EDITED_AT"
 			size="22"
 			readonly="true"
-			format="%Y-%m-%d %H:%M:%S"
+			format="Y-m-d H:i:s"
 			translateformat="true"
 			filter="user_utc"
 		/>
@@ -142,6 +142,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
 			size="40"
 			required="false"
+		    default="0"
 		/>
 		<field name="contactid" type="modal_contact"
 			label="COM_JEM_EDITEVENT_FIELD_CONTACT"
@@ -289,40 +290,62 @@
 			min="0"
 			max="999"
 		/>
-		<field name="maxplaces" type="text"
+		<field name="maxplaces" type="number"
 			size="4"
 			class="inputbox"
 			label="COM_JEM_EDITEVENT_FIELD_MAX_PLACES"
 			description="COM_JEM_EDITEVENT_FIELD_MAX_PLACES_DESC"
+			filter="integer"
+			default="0"
+			min="0"
+		/>
+		<field name="minbookeduser" type="number"
+			   size="4"
+			   class="inputbox"
+			   label="COM_JEM_MINIMUM_BOOKED_PLACES_PER_USER"
+			   description="COM_JEM_MINIMUM_BOOKED_PLACES_PER_USER_DESC"
+			   filter="integer"
+			   default="1"
+			   min="1"
+		/>
+		<field name="maxbookeduser" type="number"
+			   size="4"
+			   class="inputbox"
+			   label="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER"
+			   description="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER_DESC"
+			   filter="integer"
+			   default="1"
+			   min="0"
+		/>
+		<field name="reservedplaces" type="number"
+			   size="4"
+			   class="inputbox"
+			   label="COM_JEM_RESERVED_PLACES"
+			   description="COM_JEM_RESERVED_PLACES_DESC"
+			   filter="integer"
+			   default="0"
+			   min="0"
 		/>
 		<field name="invited" type="modal_users"
 			label="COM_JEM_EDITEVENT_FIELD_INVITED_USERS"
 			description="COM_JEM_EDITEVENT_FIELD_INVITED_USERS_DESC"
 			size="4"
 			required="false"
-		/>
-		<field name="booked" type="text"
-			size="4"
-			class="readonly"
-			readonly="readonly"
-			disabled="disabled"
-			label="COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES"
-			description="COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES_DESC"
-		/>
+		/>	
 		<field name="avplaces" type="text"
 			size="4"
 			class="readonly"
 			readonly="readonly"
 			disabled="disabled"
-			label="COM_JEM_EDITEVENT_FIELD_AVAILABLE_PLACES"
-			description="COM_JEM_EDITEVENT_FIELD_AVAILABLE_PLACES_DESC"
+			label="COM_JEM_AVAILABLE_PLACES"
+			description="COM_JEM_AVAILABLE_PLACES_DESC"
 		/>
 		<field name="waitinglist" type="checkbox"
 			size="20"
 			class="inputbox"
 			label="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST"
 			description="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST_DESC"
-			value="1"
+			value="0"
 			default="0"
 		/>
 	</fieldset>
@@ -336,7 +359,7 @@
 			description="COM_JEM_EDITEVENT_FIELD_RECURRENCE"
 		>
 			<option value="0">COM_JEM_NOTHING</option>
-			<option value="1">COM_JEM_DAYLY</option>
+			<option value="1">COM_JEM_DAILY</option>
 			<option value="2">COM_JEM_WEEKLY</option>
 			<option value="3">COM_JEM_MONTHLY</option>
 			<option value="4">COM_JEM_WEEKDAY</option>

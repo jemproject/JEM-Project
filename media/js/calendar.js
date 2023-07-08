@@ -1,59 +1,66 @@
-window.addEvent('domready', function() {
-	/* categories filtering */
-	$$('.eventCat').each(
-		function(item, index) {
-			item.addEvent( 'click', function() {
-				$$('.jlcalendar .'+item.getProperty('id')).each(
-					function(eventcat) {
-						if ( eventcat.getStyle('display') == 'none' ) {
-							eventcat.setStyle('display', 'block');
-							item.removeClass('catoff');
-						}
-						else {
-							eventcat.setStyle('display', 'none');
-							item.addClass('catoff');
-						}
-					}
-				);
-			});
-		}
-	);
+// window.addEvent('domready', function() {
+jQuery(document).ready(function ($) {
 
-	/* Show all */
-	btn = $('buttonshowall');
-	if (btn) {
-		btn.addEvent( 'click', function() {
-			$$('.jlcalendar .eventcontent').each(
-				function(eventcat) {
-					el = eventcat.getElements('div[class^=cat]');
-					el.setStyle('display', 'block');
-				}
-			);
+    /* categories filtering */
+    $('.eventCat').each(
+        function (index, item) {
 
-			$$('#jlcalendarlegend .eventCat').each(
-				function(eventcat) {
-					eventcat.removeClass('catoff');
-				}
-			);
-		});
-	}
+            $(item).on('click', function () {
+                $('.jlcalendar .' + $(item).attr('id')).each(
+                    function (index, eventcat) {
+                        eventcat = $(eventcat);
+                        if (eventcat.css('display') == 'none') {
+                            eventcat.css('display', 'block');
+                            $(item).removeClass('catoff');
+                        } else {
+                            eventcat.css('display', 'none');
+                            $(item).addClass('catoff');
+                        }
+                    }
+                );
+            });
+        }
+    );
 
-	/* Hide all */
-	btn = $('buttonhideall');
-	if (btn) {
-		btn.addEvent( 'click', function() {
-			$$('.jlcalendar .eventcontent').each(
-				function(eventcat) {
-					el = eventcat.getElements('div[class^=cat]');
-					el.setStyle('display', 'none');
-				}
-			);
+    /* Show all */
+    btn = $('#buttonshowall');
+    if (btn) {
+        btn.on('click', function () {
+            $('.jlcalendar .eventcontent').each(
+                function (index, eventcat) {
+                    el = $(eventcat).find('div[class^=cat]');
+                    el.css('display', 'block');
+                }
+            );
 
-			$$('#jlcalendarlegend .eventCat').each(
-				function(eventcat) {
-					eventcat.addClass('catoff');
-				}
-			);
-		});
-	}
+            $('#jlcalendarlegend .eventCat').each(
+                function (index, eventcat) {
+                    $(eventcat).removeClass('catoff');
+                }
+            );
+        });
+    }
+
+    /* Hide all */
+    btn = $('#buttonhideall');
+    if (btn) {
+        btn.on('click', function () {
+            $('.jlcalendar .eventcontent').each(
+                function (index, eventcat) {
+                    el = $(eventcat).find('div[class^=cat]');
+                    el.css('display', 'none');
+                }
+            );
+
+            $('#jlcalendarlegend .eventCat').each(
+                function (index, eventcat) {
+                    $(eventcat).addClass('catoff');
+                }
+            );
+        });
+    }
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {html: true})
+    })
 });

@@ -2,18 +2,18 @@
 <extension type="package" version="2.5" method="upgrade">
 	<name>pkg_jem</name>
 	<packagename>jem</packagename>
-	<creationDate>November 2022</creationDate>
-	<copyright>Copyright (C) 2013-2022 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<creationDate>July 2023</creationDate>
+	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
 
-	<version>2.3.6</version>
+	<version>4.0.0</version>
 	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
-	<url>http://www.joomlaeventmanager.net/</url>
+	<url>https://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
-	<packagerurl>http://www.joomlaeventmanager.net/</packagerurl>
+	<packagerurl>https://www.joomlaeventmanager.net/</packagerurl>
 
 	<scriptfile>pkg_install.php</scriptfile>
 
@@ -34,6 +34,7 @@
 		<file type="plugin" id="jem" group="finder">plg_finder_jem.zip</file>
 		<file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>
 		<file type="plugin" id="mailer" group="jem">plg_jem_mailer.zip</file>
+		<file type="plugin" id="jem" group="quickicon">plg_quickicon_jem.zip</file>
 	</files>
 
 	<languages folder="language">
@@ -41,6 +42,6 @@
 	</languages>
 
 	<updateservers>
-		<server type="extension" name="JEM Update Site">http://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml</server>
+		<server type="extension" name="JEM Update Site">https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml</server>
 	</updateservers>
 </extension>

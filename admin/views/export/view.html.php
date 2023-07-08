@@ -1,14 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * View class Export
@@ -24,16 +28,19 @@ class JemViewExport extends JemAdminView
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document	= JFactory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = $app->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories = $this->get('Categories');
 
 		//build selectlists
-		$categories = JEMCategories::buildcatselect($categories, 'cid[]', null, 0, 'multiple="multiple" size="8 class="inputbox"');
+		$categories = JEMCategories::buildcatselect($categories, 'cid[]', null, 0, 'multiple="multiple" size="8" class="inputbox form-control"');
 
 		$this->categories		= $categories;
 
@@ -49,11 +56,11 @@ class JemViewExport extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
+		ToolbarHelper::title(Text::_('COM_JEM_EXPORT'), 'tableexport');
 
-		JToolBarHelper::back();
-		JToolBarHelper::divider();
-		JToolBarHelper::help('export', true);
+		ToolbarHelper::back();
+		ToolbarHelper::divider();
+		ToolbarHelper::help('export', true);
 	}
 }
 ?>

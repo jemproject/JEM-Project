@@ -1,16 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Wide Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal', 'a.flyermodal');
+
+use Joomla\CMS\Language\Text;
+// JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 
 <div class="jemmodulewide<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulewide">
@@ -91,6 +93,6 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php endforeach; ?>
 	</table>
 <?php else : ?>
-	<?php echo JText::_('MOD_JEM_WIDE_NO_EVENTS'); ?>
+	<?php echo Text::_('MOD_JEM_WIDE_NO_EVENTS'); ?>
 <?php endif; ?>
 </div>

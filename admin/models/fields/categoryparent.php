@@ -1,12 +1,16 @@
 <?php
 /**
- * @version     2.3.6
- * @package     JEM
- * @copyright   Copyright (C) 2013-2021 joomlaeventmanager.net
- * @copyright   Copyright (C) 2005-2009 Christoph Lukes
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version 4.0.0
+ * @package JEM
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('JPATH_BASE') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -38,7 +42,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		$name = (string) $this->element['name'];
 
 		// Let's get the id for the current item, either category or content item.
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		// For categories the old category is the category id 0 for new category.
 		if ($this->element['parent'])
 		{
@@ -52,7 +56,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 			$oldCat = $this->form->getValue($name);
 		}
 
-		$db		= JFactory::getDbo();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('a.id AS value, a.title AS text, a.level');
@@ -85,11 +89,19 @@ class JFormFieldCategoryParent extends JFormFieldList
 		// Get the options.
 		$db->setQuery($query);
 
-		$options = $db->loadObjectList();
+		
 
 		// Check for a database error.
-		if ($db->getErrorNum()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+		// if ($db->getErrorNum()) {
+		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
+		// }
+		try 
+		{
+			$options = $db->loadObjectList();
+		} 
+		catch (\InvalidArgumentException $e)
+		{
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
@@ -97,7 +109,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		{
 			// Translate ROOT
 			if ($options[$i]->level == 0) {
-				$options[$i]->text = JText::_('JGLOBAL_ROOT_PARENT');
+				$options[$i]->text = Text::_('JGLOBAL_ROOT_PARENT');
 			}
 
 			$options[$i]->text = str_repeat('- ', $options[$i]->level).$options[$i]->text;
@@ -153,7 +165,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		if (isset($row) && !isset($options[0])) {
 			if ($row->parent_id == '1') {
 				$parent = new stdClass();
-				$parent->text = JText::_('JGLOBAL_ROOT_PARENT');
+				$parent->text = Text::_('JGLOBAL_ROOT_PARENT');
 				array_unshift($options, $parent);
 			}
 		}

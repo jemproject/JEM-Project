@@ -1,16 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
-jimport('joomla.html.pagination');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filter\InputFilter;
 
 /**
  * JEM Component JEM Model
@@ -18,7 +20,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
  */
-class JemModelMyvenues extends JModelLegacy
+class JemModelMyvenues extends BaseDatabaseModel
 {
 	/**
 	 * Venues data array
@@ -41,7 +43,7 @@ class JemModelMyvenues extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events
@@ -68,7 +70,7 @@ class JemModelMyvenues extends JModelLegacy
 	 */
 	public function getVenues()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
@@ -133,8 +135,7 @@ class JemModelMyvenues extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_pagination_venues))
 		{
-			jimport('joomla.html.pagination');
-			$this->_pagination_venues = new JPagination($this->getTotalVenues(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination_venues = new Pagination($this->getTotalVenues(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination_venues;
@@ -211,13 +212,13 @@ class JemModelMyvenues extends JModelLegacy
 	 */
 	protected function _buildOrderByVenues()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
-		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', l.venue ASC';
@@ -236,7 +237,7 @@ class JemModelMyvenues extends JModelLegacy
 	 */
 	protected function _buildVenuesWhere()
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 		$user     = JemFactory::getUser();
 		$settings = JemHelper::globalattribs();
 

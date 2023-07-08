@@ -1,19 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Model-Events
  **/
-class JemModelEvents extends JModelList
+class JemModelEvents extends ListModel
 {
 	/**
 	 * Constructor.
@@ -101,7 +103,7 @@ class JemModelEvents extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db    = $this->getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -128,6 +130,10 @@ class JemModelEvents extends JModelList
 		// Join over the view access level.
 		$query->select('vl.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS vl ON vl.id = a.access');
+
+        // Join over the country.
+        $query->select('co.name AS country');
+        $query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
 
 		// Filter by published state
 		$published = $this->getState('filter_state');
@@ -194,14 +200,17 @@ class JemModelEvents extends JModelList
 							break;
 						case 6:
 							/* search country */
-							$query->where('loc.country LIKE '.$search);
+							$query->where('co.name LIKE '.$search);
 							break;
 						case 7:
 							/* search all */
-							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+                            $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+                            $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+                            $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.')');
 							break;
 						default:
-							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+                            /* search event and location (city, state, country)*/
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.')');
 					}
 				}
 			}
@@ -265,7 +274,7 @@ class JemModelEvents extends JModelList
 		$levels = $user->getAuthorisedViewLevels();
 
 		# Query
-		$db     = JFactory::getDBO();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';

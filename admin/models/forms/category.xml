@@ -25,18 +25,19 @@
 			label="COM_JEM_ALIAS"
 			description="COM_JEM_ALIAS"
 			required="false"
+			hint="JFIELD_ALIAS_PLACEHOLDER"
 		/>
-		<field 
-			name="color" 
-			type="customcolor" 
-			class="inputbox"
+		<field name="color" type="color"
+			class="form-control"
 			default=""
 			size="8"
         	label="COM_JEM_CATEGORY_COLOR"
-        	description="COM_JEM_CATEGORY_COLOR" />	
+        	description="COM_JEM_CATEGORY_COLOR"
+		/>
 		<field name="description" type="editor"
 			hide="pagebreak,readmore"
 			class="inputbox"
+			default=""
 			width="100%"
 			label="COM_JEM_CATEGORY_DESCRIPTION"
 			description="COM_JEM_CATEGORY_DESCRIPTION_DESC"
@@ -128,13 +129,20 @@
 			class="inputbox"
 			label="COM_JEM_CATEGORY_INPUT_EMAIL"
 		/>
+		<field name="emailacljl" type="radio"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_CATEGORY_SEND_EMAIL_USER_ACL"
+			   description="COM_JEM_CATEGORY_SEND_EMAIL_USER_ACL_DESC"
+			   default="0"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
 	</fieldset>
 
-	<fieldset name="image"
-		label="COM_JEM_IMAGE"
-	>
+	<fieldset name="image" label="COM_JEM_IMAGE">
 		<field name="image" type="imageselect"
-			class="inputbox"
+			class="inputbox form-control"
 			size="40"
 			label="COM_JEM_IMAGESELECT"
 			imagetype="categories"
@@ -142,9 +150,7 @@
 		/>
 	</fieldset>
 
-	<fieldset name="meta"
-		label="JGLOBAL_FIELDSET_METADATA_OPTIONS"
-	>
+	<fieldset name="meta" label="JGLOBAL_FIELDSET_METADATA_OPTIONS">
 		<field name="meta_keywords" type="textarea"
 			class="inputbox"
 			rows="3" cols="30"

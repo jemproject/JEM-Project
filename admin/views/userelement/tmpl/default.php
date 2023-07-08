@@ -1,14 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+use Joomla\CMS\Language\Text;
+
+// JHtml::_('behavior.tooltip');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=userelement&tmpl=component" method="post" id="adminForm" name="adminForm">
@@ -17,8 +20,8 @@ JHtml::_('behavior.tooltip');
 		<tr>
 			<td width="100%">
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-				<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+				<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</td>
 		</tr>
 	</table>
@@ -26,7 +29,7 @@ JHtml::_('behavior.tooltip');
 	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
-				<th class="center" width="5"><?php echo JText::_('COM_JEM_NUM'); ?></th>
+				<th class="center" width="5"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 				<th class="title"><?php echo JHtml::_('grid.sort', 'Name', 'u.name', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 				<th class="title"><?php echo JHtml::_('grid.sort', 'Username', 'u.username', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 				<th class="title"><?php echo JHtml::_('grid.sort', 'Email', 'u.email', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
@@ -50,7 +53,7 @@ JHtml::_('behavior.tooltip');
 			<tr class="<?php echo "row$k"; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td>
-					<span <?php echo JemOutput::tooltip(JText::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
+					<span <?php echo JemOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
 					<a style="cursor:pointer" onclick="window.parent.modalSelectUser('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->name ); ?>');">
 						<?php echo $this->escape($row->name); ?>
 					</a></span>

@@ -1,14 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal');
+use Joomla\CMS\Language\Text;
+
+// JHtml::_('behavior.modal');
 ?>
 <div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -66,7 +69,7 @@ JHtml::_('behavior.modal');
 		<div class="cat-children">
 			<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
 			<h3>
-				<?php echo JTEXT::_('COM_JEM_SUBCATEGORIES'); ?>
+				<?php echo TEXT::_('COM_JEM_SUBCATEGORIES'); ?>
 			</h3>
 			<?php endif; ?>
 			<?php echo $this->loadTemplate('subcategories'); ?>

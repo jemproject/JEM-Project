@@ -1,16 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
 jimport('joomla.application.component.model');
-jimport('joomla.html.pagination');
 
 /**
  * JEM Component JEM Model
@@ -18,7 +22,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
 */
-class JemModelMyevents extends JModelLegacy
+class JemModelMyevents extends BaseDatabaseModel
 {
 	/**
 	 * Events data array
@@ -48,7 +52,7 @@ class JemModelMyevents extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 
 		//get the number of events from database
@@ -75,7 +79,7 @@ class JemModelMyevents extends JModelLegacy
 	 */
 	public function getEvents()
 	{
-		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$pop = Factory::getApplication()->input->getBool('pop', false);
 		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
@@ -109,7 +113,7 @@ class JemModelMyevents extends JModelLegacy
 					if (empty($item->params)) {
 						// Set event params.
 						$registry = new JRegistry();
-						$registry->loadString($item->attribs);
+						$registry->loadString($item->attribs ??'{}');
 						$item->params = clone JemHelper::globalattribs();
 						$item->params->merge($registry);
 					}
@@ -191,8 +195,7 @@ class JemModelMyevents extends JModelLegacy
 	{
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_pagination_events)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination_events = new JPagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination_events = new Pagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination_events;
@@ -213,7 +216,7 @@ class JemModelMyevents extends JModelLegacy
 		# Get Events from Database
 		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist,'
 		       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
-		       . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created_by_alias, a.datimage, a.featured,'
+		       . ' a.access, a.checked_out, a.checked_out_time, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.contactid, a.created_by_alias, a.datimage, a.featured,'
 		       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
 		       . ' a.fulltext, a.hits, a.introtext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
 		       . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
@@ -244,15 +247,15 @@ class JemModelMyevents extends JModelLegacy
 	 */
 	protected function _buildOrderBy()
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
 		$filter_order      = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir  = $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 
-		$filter_order      = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir  = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
@@ -274,7 +277,7 @@ class JemModelMyevents extends JModelLegacy
 	 */
 	protected function _buildWhere()
 	{
-		$app      = JFactory::getApplication();
+		$app      = Factory::getApplication();
 		$task     = $app->input->getCmd('task', '');
 		$params   = $app->getParams();
 		$settings = JemHelper::globalattribs();

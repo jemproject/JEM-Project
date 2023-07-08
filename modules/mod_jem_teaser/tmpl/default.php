@@ -1,16 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 if ($params->get('use_modal', 0)) {
-	JHtml::_('behavior.modal', 'a.flyermodal');
+	// JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
 } else {
 	$modal = 'notmodal';
@@ -54,23 +57,33 @@ if ($params->get('use_modal', 0)) {
 					<td class="event-info">
 						<div class="teaser-jem">
 							<div>
-								<?php if(!empty($item->eventimage)) : ?>
-									<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
-									<img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
-								<?php else : ?>
-								<?php endif; ?>
-								<?php if(!empty($item->venueimage)) : ?>
-									<a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
-									<img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
-								<?php endif; ?>
-							</div>
-							<div>
-								<?php echo $item->eventdescription; ?>
-								<?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-									echo '<a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
-									endif;
-								?>
-							</div>
+              <?php if($item->showimageevent): ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                  <a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
+                <?php endif; ?>
+              <?php endif; ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+                <?php if(!empty($item->venueimage)) : ?>
+                  <a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
+                <?php endif; ?>
+              <?php endif; ?>
+            </div>
+            <div>
+              <?php if($item->showdescriptionevent):
+                echo $item->eventdescription;
+                if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+                  echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
+                endif;
+
+                if ($item->eventlink) : ?>
+                    <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+                      <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
+                    </a>
+                <?php endif;
+              endif; ?>
+            </div>
 						</div>
 					</td>
 				</tr>
@@ -107,7 +120,7 @@ if ($params->get('use_modal', 0)) {
 			</table>
 		<?php endforeach; ?>
 	<?php else : ?>
-		<?php echo JText::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
+		<?php echo Text::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
 	<?php endif; ?>
 	</div>
 </div>

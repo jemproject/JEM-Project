@@ -1,12 +1,14 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
@@ -19,7 +21,7 @@ require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
  * @package  JEM
  * @since    2.1.5
  */
-abstract class JemFactory extends JFactory
+abstract class JemFactory extends Factory
 {
 	/**
 	 * Get a JEM user object.
@@ -73,10 +75,6 @@ abstract class JemFactory extends JFactory
 	 */
 	public static function getDispatcher()
 	{
-		if (version_compare(JVERSION, '3.0', 'ge')) {
-			return JEventDispatcher::getInstance();
-		} else {
-			return JDispatcher::getInstance();
-		}
+        return Factory::getApplication();
 	}
 }

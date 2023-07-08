@@ -3,11 +3,11 @@
 	<name>mod_jem</name>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>March 2020</creationDate>
-	<copyright>copyright (C) 2013-2020 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.3.6</version>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+	<creationDate>July 2023</creationDate>
+	<copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>4.0.0</version>
 	<description>MOD_JEM_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -48,6 +48,16 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
+				<field name="highlight_featured" type="radio"
+					   default="0"
+					   label="MOD_JEM_HIGHLIGHT_FEATURED"
+					   description="MOD_JEM_HIGHLIGHT_FEATURED_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+
 				<field name="offset_hours" type="text"
 					default=""
 					label="MOD_JEM_OFFSET_HOURS"
@@ -62,7 +72,7 @@
 					<option value="1">MOD_JEM_TITLE</option>
 				</field>
 				<field name="cuttitle" type="text"
-					default="18"
+					default="30"
 					label="MOD_JEM_MAX_TITLE_LENGTH"
 					description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
 				/>
@@ -84,6 +94,15 @@
 					<option value="1">MOD_JEM_DATE</option>
 					<option value="2">MOD_JEM_TITLE</option>
 				</field>
+				<field name="showiconcountry" type="radio"
+					   default="0"
+					   label="MOD_JEM_SHOW_ICON_COUNTRY_VENUE"
+					   description="MOD_JEM_SHOW_ICON_COUNTRY_VENUE_DESC"
+					   class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
 				<field name="catid" type="categoryedit"
 					default=""
 					multiple="true"
@@ -103,7 +122,7 @@
 					description="MOD_JEM_DATE_FORMAT_DESC"
 				/>
 				<field name="formattime" type="text"
-					default="%H:%M"
+					default="H:i"
 					label="MOD_JEM_TIME_FORMAT"
 					description="MOD_JEM_TIME_FORMAT_DESC"
 				/>

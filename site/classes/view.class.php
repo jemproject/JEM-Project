@@ -1,19 +1,23 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * JemView class with JEM specific extensions
  *
  * @package JEM
  */
-class JemView extends JViewLegacy
+class JemView extends HtmlView
 {
 	/**
 	 * Layout style suffix
@@ -37,7 +41,7 @@ class JemView extends JViewLegacy
 			else {
 				$this->addTemplatePath($this->_basePath . '/views/' . $this->getName() . '/tmpl/' . $suffix);
 			}
-			$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/' . $this->getName() . '/' . $suffix);
+			$this->addTemplatePath(JPATH_THEMES . '/' . Factory::getApplication()->getTemplate() . '/html/com_jem/' . $this->getName() . '/' . $suffix);
 		}
 	}
 
@@ -68,11 +72,11 @@ class JemView extends JViewLegacy
 	{
 		// additional path for list part + corresponding override path
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
-		$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common');
+		$this->addTemplatePath(JPATH_THEMES . '/' . Factory::getApplication()->getTemplate() . '/html/com_jem/common');
 
 		if (!empty($this->_layoutStyleSuffix)) {
 			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl/'.$this->_layoutStyleSuffix);
-			$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common/'.$this->_layoutStyleSuffix);
+			$this->addTemplatePath(JPATH_THEMES . '/' . Factory::getApplication()->getTemplate() . '/html/com_jem/common/'.$this->_layoutStyleSuffix);
 		}
 	}
 
@@ -81,7 +85,7 @@ class JemView extends JViewLegacy
 	 */
 	protected function prepareDocument()
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$menus = $app->getMenu();
 		$menu  = $menus->getActive();
 		$print = $app->input->getBool('print', false);
@@ -95,17 +99,17 @@ class JemView extends JViewLegacy
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
 			// TODO
-			$this->params->def('page_heading', JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
+			$this->params->def('page_heading', Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
 		}
 
 		$title = $this->params->get('page_title', '');
 
 		if (empty($title)) {
-			$title = $app->getCfg('sitename');
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
-		} elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = $app->get('sitename');
+		} elseif ($app->get('sitename_pagetitles', 0) == 1) {
+			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+		} elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 		$this->document->setTitle($title);
 

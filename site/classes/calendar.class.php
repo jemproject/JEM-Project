@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /**
@@ -16,12 +16,15 @@
  * @date: 23 Feb 2006;
  * @copyright: Giorgos Tsiledakis;
  * @license: GNU LESSER GENERAL PUBLIC LICENSE;
- * Support, feature requests and bug reports please at : http://www.micronetwork.de/activecalendar/
- * Special thanks to Corissia S.A (http://www.corissia.com) for the permission to publish the source code
- * Thanks to Maik Lindner (http://nifox.com) for his help developing this class
+ * Support, feature requests and bug reports please at : https://www.micronetwork.de/activecalendar/
+ * Special thanks to Corissia S.A (https://www.corissia.com) for the permission to publish the source code
+ * Thanks to Maik Lindner (https://nifox.com) for his help developing this class
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
+#[AllowDynamicProperties]
 class JemCalendar
 {
 	/*
@@ -401,9 +404,9 @@ class JemCalendar
 	var $javaScriptDay=false;
 	var $monthNames=false;
 	var $dayNames=false;
-	var $calEventContent=false;
-	var $calEventContentUrl=false;
-	var $calEventContentId=false;
+	var $calEventContent=[];
+	var $calEventContentUrl=[];
+	var $calEventContentId=[];
 	var $calInit=0;
 	var $weekNum=false;
 	var $WeekUrl=false;
@@ -582,8 +585,12 @@ class JemCalendar
 		}
 		$out='<tr class="daysRow">';
 		$cor=0;
-		if ($this->startOnSun) $cor=1;
-		if ($this->weekNum) $out.="<td class=\"".$this->cssWeekNum."\">".$this->mkWeekNum(1+$cor)."</td>";
+		if ($this->startOnSun) {
+			$cor=1;
+		}
+		if ($this->weekNum) {
+			$out.="<td class=\"".$this->cssWeekNum."\">".$this->mkWeekNum(1+$cor)."</td>";
+		}
 		$monthday=0;
 		$nmonthday=1;
 		for ($x=0; $x<=6; $x++) {
@@ -591,25 +598,37 @@ class JemCalendar
 				$monthday++;
 				$out.=$this->mkDay($monthday);
 			} else {
-				if ($showNoMonthDays==0) $out.="<td class=\"".$this->cssNoMonthDay."\"></td>";
-				else $out.="<td class=\"".$this->cssNoMonthDay."\">".($this->getMonthDays($pMonth,$pYear)-($this->firstday-1)+$x)."</td>";
+				if ($showNoMonthDays==0) {
+					$out.="<td class=\"".$this->cssNoMonthDay."\"></td>";
+				} else {
+					$out.="<td class=\"".$this->cssNoMonthDay."\">".($this->getMonthDays($pMonth,$pYear)-($this->firstday-1)+$x)."</td>";
+				}
 			}
 		}
 		$out.="</tr>\n";
 		$goon=$monthday+1;
 		$stop=0;
 		for ($x=0; $x<=6; $x++) {
-			if ($goon>$this->maxdays) break;
-			if ($stop==1) break;
+			if ($goon>$this->maxdays) {
+				break;
+			}
+			if ($stop==1) {
+				break;
+			}
 			$out.='<tr class="daysRow">';
 			if ($this->weekNum) $out.="<td class=\"".$this->cssWeekNum."\">".$this->mkWeekNum($goon+$cor)."</td>";
 				for ($i=$goon; $i<=$goon+6; $i++) {
 					if ($i>$this->maxdays) {
-						if ($showNoMonthDays==0) $out.="<td class=\"".$this->cssNoMonthDay."\"></td>";
-						else $out.='<td class="'.$this->cssNoMonthDay.'"><div class="daynum">'.$nmonthday++.'</div></td>';
+						if ($showNoMonthDays==0) {
+							$out.="<td class=\"".$this->cssNoMonthDay."\"></td>";
+						}
+						else {
+							$out.='<td class="'.$this->cssNoMonthDay.'"><div class="daynum">'.$nmonthday++.'</div></td>';
+						}
 						$stop=1;
+					} else {
+						$out.=$this->mkDay($i);
 					}
-					else $out.=$this->mkDay($i);
 				}
 			$goon=$goon+7;
 			$out.="</tr>\n";
@@ -624,7 +643,6 @@ class JemCalendar
 	*/
 	function mkDay($var) {
 		$eventContent = $this->mkEventContent($var);
-
 		$linktext = $var;
 		if ($this->dayLinks) {
 			if ($eventContent) {
@@ -801,18 +819,18 @@ class JemCalendar
 		if (!$var) $var=@$this->actmonth;
 		if ($this->monthNames) return $this->monthNames[$var-1];
 		switch($var) {
-			case 1: return JText::_($this->jan);
-			case 2: return JText::_($this->feb);
-			case 3: return JText::_($this->mar);
-			case 4: return JText::_($this->apr);
-			case 5: return JText::_($this->may);
-			case 6: return JText::_($this->jun);
-			case 7: return JText::_($this->jul);
-			case 8: return JText::_($this->aug);
-			case 9: return JText::_($this->sep);
-			case 10: return JText::_($this->oct);
-			case 11: return JText::_($this->nov);
-			case 12: return JText::_($this->dec);
+			case 1: return Text::_($this->jan);
+			case 2: return Text::_($this->feb);
+			case 3: return Text::_($this->mar);
+			case 4: return Text::_($this->apr);
+			case 5: return Text::_($this->may);
+			case 6: return Text::_($this->jun);
+			case 7: return Text::_($this->jul);
+			case 8: return Text::_($this->aug);
+			case 9: return Text::_($this->sep);
+			case 10: return Text::_($this->oct);
+			case 11: return Text::_($this->nov);
+			case 12: return Text::_($this->dec);
 		}
 	}
 	/*
@@ -823,13 +841,13 @@ class JemCalendar
 	function getDayName($var=false) {
 		if ($this->dayNames) return $this->dayNames[$var];
 		switch($var) {
-			case 0: return JText::_($this->sun);
-			case 1: return JText::_($this->mon);
-			case 2: return JText::_($this->tue);
-			case 3: return JText::_($this->wed);
-			case 4: return JText::_($this->thu);
-			case 5: return JText::_($this->fri);
-			case 6: return JText::_($this->sat);
+			case 0: return Text::_($this->sun);
+			case 1: return Text::_($this->mon);
+			case 2: return Text::_($this->tue);
+			case 3: return Text::_($this->wed);
+			case 4: return Text::_($this->thu);
+			case 5: return Text::_($this->fri);
+			case 6: return Text::_($this->sat);
 		}
 	}
 	/*
@@ -896,7 +914,7 @@ class JemCalendar
 	 * @return array
 	 */
 	function hasEventContent($var) {
-		$hasContent = false;
+		$hasContent = [];
 		if ($this->calEventContent) {
 			$checkTime = $this->mkActiveTime(0, 0, 1, $this->actmonth, $var, $this->actyear);
 			$n = is_array($this->calEventContent) ? count($this->calEventContent) : 0;

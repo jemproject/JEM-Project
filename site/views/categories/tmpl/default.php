@@ -1,12 +1,15 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
@@ -58,7 +61,7 @@ defined('_JEXEC') or die;
 
 		<?php if ($i = count($row->subcats)) : ?>
 			<div class="subcategories">
-				<?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
+				<?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
 			</div>
 			<div class="subcategorieslist">
 				<?php foreach ($row->subcats as $sub) : ?>

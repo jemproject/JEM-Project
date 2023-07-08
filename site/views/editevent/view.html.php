@@ -1,13 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-defined('_JEXEC') or die();
 
+defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
 /**
  * Editevent-View
  */
@@ -41,15 +46,15 @@ class JemViewEditevent extends JemView
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
-		$document    = JFactory::getDocument();
+		$document    = $app->getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
 		$pathway     = $app->getPathway();
-		$url         = JUri::root();
+		$url         = Uri::root();
 
 		// Get model data.
 		$this->state = $this->get('State');
@@ -66,16 +71,16 @@ class JemViewEditevent extends JemView
 
 		// check for data error
 		if (empty($item)) {
-			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 			return false;
 		}
 
 		// check for guest
 		if ($userId == 0) {
-			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-
+		
 		if (empty($item->id)) {
 			$authorised = (bool)$user->can('add', 'event');
 		} else {
@@ -86,25 +91,25 @@ class JemViewEditevent extends JemView
 		$authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
 
 		if ($authorised !== true) {
-			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-
+	
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
 		                                && ($menuitem->query['view']   == 'editevent')
-		                                && (0 == $item->id)); // menu item is always for new event
+		                                && (0 == $item->id) && (!isset($_GET['from_id']))); // menu item is always for new event
 
-		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITEVENT_ADD_EVENT')
-		                          : JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
+		$title = ($item->id == 0) ? Text::_('COM_JEM_EDITEVENT_ADD_EVENT')
+		                          : Text::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
 
 		if ($useMenuItemParams) {
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
 			$params->def('page_title', $pagetitle);
 			$params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
       //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from menu item if one is set else from event if there is one set
@@ -113,10 +118,11 @@ class JemViewEditevent extends JemView
 			} elseif ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-
+			
 			$item->params->merge($params);
 		} else {
 			$pagetitle = $title;
+			
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
@@ -173,27 +179,38 @@ class JemViewEditevent extends JemView
 		$access2      = JemHelper::getAccesslevelOptions(true, $access);
 		$this->access = $access2;
 
-		JHtml::_('behavior.formvalidation');
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.formvalidation');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 
 		// Load scripts
-		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		JHtml::_('script', 'com_jem/recurrence.js', false, true);
-		JHtml::_('script', 'com_jem/seo.js', false, true);
-		JHtml::_('script', 'com_jem/unlimited.js', false, true);
-		JHtml::_('script', 'com_jem/other.js', false, true);
+		// HTMLHelper::_('jquery.framework');
+		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/recurrence.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/seo.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/unlimited.js', false, true);
+		// HTMLHelper::_('script', 'com_jem/other.js', false, true);
+		// $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js');
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+		// $wa->useScript('jquery');
+		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+		$wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
+		$wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
+		$wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
+		$wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
+
 
 		// Escape strings for HTML output
-		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
+		$pageclass_sfx 		 = $item->params->get('pageclass_sfx');
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
 		$this->jemsettings   = $jemsettings;
 		$this->settings      = $settings;
-		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
+		$this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
 		$permissions = new stdClass();
@@ -212,9 +229,9 @@ class JemViewEditevent extends JemView
 		}
 
 		// configure image field: show max. file size, and possibly mark field as required
-		$tip = JText::_('COM_JEM_UPLOAD_IMAGE');
+		$tip = Text::_('COM_JEM_UPLOAD_IMAGE');
 		if ((int)$jemsettings->sizelimit > 0) {
-			$tip .= ' <br/>' . JText::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+			$tip .= ' <br/>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
 		}
 		$this->form->setFieldAttribute('userfile', 'description', $tip);
 		if ($jemsettings->imageenabled == 2) {
@@ -237,14 +254,14 @@ class JemViewEditevent extends JemView
 	 */
 	protected function _prepareDocument()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		$title = $this->params->get('page_title');
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$title = Text::sprintf('JPAGETITLE', $app->get('sitename'), $title);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$title = Text::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 		$this->document->setTitle($title);
 
@@ -269,11 +286,11 @@ class JemViewEditevent extends JemView
 	 */
 	protected function _displaychoosevenue($tpl)
 	{
-		$app         = JFactory::getApplication();
-		$jinput      = JFactory::getApplication()->input;
+		$app         = Factory::getApplication();
+		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = JFactory::getDBO();
-		$document    = JFactory::getDocument();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
+		$document    = $app->getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
@@ -287,23 +304,23 @@ class JemViewEditevent extends JemView
 		$rows       = $this->get('Venues');
 		$pagination = $this->get('VenuesPagination');
 
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// filter state
-		$lists['state'] = JHtml::_('grid.state', $filter_state);
+		$lists['state'] = HTMLHelper::_('grid.state', $filter_state);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order']     = $filter_order;
 
-		$document->setTitle(JText::_('COM_JEM_SELECT_VENUE'));
+		$document->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
 		JemHelper::loadCss('jem');
 
 		$filters = array();
-		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
-		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
-		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));
+		$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_CITY'));
+		$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_STATE'));
+		$searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		$this->rows         = $rows;
 		$this->searchfilter = $searchfilter;
@@ -320,11 +337,11 @@ class JemViewEditevent extends JemView
 	 */
 	protected function _displaychoosecontact($tpl)
 	{
-		$app         = JFactory::getApplication();
-		$jinput      = JFactory::getApplication()->input;
+		$app         = Factory::getApplication();
+		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = JFactory::getDBO();
-		$document    = JFactory::getDocument();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
+		$document    = $app->getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -333,13 +350,13 @@ class JemViewEditevent extends JemView
 		$limitstart       = $jinput->get('limitstart', '0', 'int');
 		$limit            = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
 
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');
 
-		$document->setTitle(JText::_('COM_JEM_SELECT_CONTACT'));
+		$document->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 
 		// Get/Create the model
 		$rows       = $this->get('Contacts');
@@ -351,11 +368,11 @@ class JemViewEditevent extends JemView
 
 		//Build search filter
 		$filters = array();
-		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
-	/*	$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS')); */ // data security
-		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
+	/*	$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS')); */ // data security
+		$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
+		$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
+		$searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;
@@ -375,11 +392,11 @@ class JemViewEditevent extends JemView
 	 */
 	protected function _displaychooseusers($tpl)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = JFactory::getDBO();
-		$document    = JFactory::getDocument();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
+		$document    = $app->getDocument();
 		$model       = $this->getModel();
 
 		// no filters, hard-coded
@@ -391,13 +408,13 @@ class JemViewEditevent extends JemView
 		$limit            = 0;
 		$eventId          = $jinput->getInt('a_id', 0);
 
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');
 
-		$document->setTitle(JText::_('COM_JEM_SELECT_USERS_TO_INVITE'));
+		$document->setTitle(Text::_('COM_JEM_SELECT_USERS_TO_INVITE'));
 
 		// Get/Create the model
 		$model->setState('event.id', $eventId);
@@ -410,8 +427,8 @@ class JemViewEditevent extends JemView
 
 		//Build search filter - unused
 		$filters = array();
-		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
+		$searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter - unused
 		$lists['search']= $search;

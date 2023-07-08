@@ -1,22 +1,23 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- *
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Groups Controller
  *
  */
-class JemControllerGroups extends JControllerAdmin
+class JemControllerGroups extends AdminController
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -47,11 +48,11 @@ class JemControllerGroups extends JControllerAdmin
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
 
 		if (!is_array($cid) || count($cid) < 1) {
-			throw new Exception(JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
+			throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
 		}
 
 		$total = count($cid);
@@ -62,7 +63,7 @@ class JemControllerGroups extends JControllerAdmin
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$msg = $total.' '.JText::_('COM_JEM_GROUPS_DELETED');
+		$msg = $total.' '.Text::_('COM_JEM_GROUPS_DELETED');
 
 		$this->setRedirect('index.php?option=com_jem&view=groups', $msg);
 	}

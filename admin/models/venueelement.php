@@ -1,20 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Venueelement-Model
  */
-class JemModelVenueelement extends JModelLegacy
+class JemModelVenueelement extends BaseDatabaseModel
 {
 	/**
 	 * data array
@@ -51,7 +53,7 @@ class JemModelVenueelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 	//	$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -85,7 +87,7 @@ class JemModelVenueelement extends JModelLegacy
 	 */
 	protected function buildQuery()
 	{
-		$app              = JFactory::getApplication();
+		$app              = Factory::getApplication();
 		$jemsettings      = JemHelper::config();
 		$itemid           = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
@@ -100,7 +102,7 @@ class JemModelVenueelement extends JModelLegacy
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-		$db = JFactory::getDBO();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('l.id', 'l.state', 'l.city', 'l.country', 'l.published', 'l.venue', 'l.ordering'));
 		$query->from('#__jem_venues as l');
@@ -149,8 +151,7 @@ class JemModelVenueelement extends JModelLegacy
 			$total = $this->_getListCount($query);
 
 			// Create the pagination object
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($total, $limitstart, $limit);
+			$this->_pagination = new Pagination($total, $limitstart, $limit);
 		}
 
 		return $this->_pagination;

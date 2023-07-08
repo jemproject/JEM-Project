@@ -1,18 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- *
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-defined('_JEXEC') or die();
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * JEM Component Settings Controller
  */
-class JemControllerSettings extends JControllerLegacy
+class JemControllerSettings extends BaseController
 {
 
 	public function __construct($config = array())
@@ -68,10 +72,10 @@ class JemControllerSettings extends JControllerLegacy
 	public function save()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$data = $app->input->get('jform', array(), 'array');
 
 		$task = $this->getTask();
@@ -80,13 +84,13 @@ class JemControllerSettings extends JControllerLegacy
 
 		// Access check.
 		if (!$this->allowSave()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
 		}
 
 		// Validate the posted data.
 		$form = $model->getForm();
 		if (!$form) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($model->getError(), 'error');
+			Factory::getApplication()->enqueueMessage($model->getError(), 'error');
 			return false;
 		}
 
@@ -123,12 +127,12 @@ class JemControllerSettings extends JControllerLegacy
 			$app->setUserState($context . '.data', $data);
 
 			// Redirect back to the edit screen.
-			$this->setMessage(JText::sprintf('JERROR_SAVE_FAILED', $model->getError()), 'warning');
+			$this->setMessage(Text::sprintf('JERROR_SAVE_FAILED', $model->getError()), 'warning');
 			$this->setRedirect(JRoute::_('index.php?option=com_jem&view=settings', false));
 			return false;
 		}
 
-		$this->setMessage(JText::_('COM_JEM_SETTINGS_SAVED'));
+		$this->setMessage(Text::_('COM_JEM_SETTINGS_SAVED'));
 
 		// Redirect the user and adjust session state based on the chosen task.
 		switch ($task)
@@ -158,11 +162,11 @@ class JemControllerSettings extends JControllerLegacy
 	public function cancel()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Check if the user is authorized to do this.
 		if (!JemFactory::getUser()->authorise('core.admin', 'com_jem')) {
-			JFactory::getApplication()->redirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));
+			Factory::getApplication()->redirect('index.php', Text::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}
 

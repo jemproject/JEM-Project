@@ -1,30 +1,34 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Language\Text;
 
 /**
  * Category-Feed
  */
-class JemViewCategory extends JViewLegacy
+class JemViewCategory extends HtmlView
 {
 	/**
 	 * Creates the Event Feed of the Category
 	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-		$doc = JFactory::getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
-		$app->input->set('limit', $app->getCfg('feed_limit'));
+		$app->input->set('limit', $app->get('feed_limit'));
 		$rows = $this->get('Items');
 
 		if (!empty($rows)) {
@@ -55,11 +59,11 @@ class JemViewCategory extends JViewLegacy
 				$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));
 
 				// feed item description text
-				$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
-				$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
-				$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
-				$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
-				$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
+				$description  = Text::_('COM_JEM_TITLE').': '.$title.'<br />';
+				$description .= Text::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
+				$description .= Text::_('COM_JEM_CATEGORY').': '.$category.'<br />';
+				$description .= Text::_('COM_JEM_DATE').': '.$displaydate.'<br />';
+				$description .= Text::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
 
 				$created = ($row->created ? date('r', strtotime($row->created)) : '');
 
@@ -72,7 +76,7 @@ class JemViewCategory extends JViewLegacy
 				$item->category    = $category;
 
 				// loads item info into rss array
-				$doc->addItem($item);
+				$document->addItem($item);
 			}
 		}
 	}

@@ -1,60 +1,83 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.modal', 'a.usermodal');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
 
-$selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
+// HTMLHelper::_('behavior.modal', 'a.usermodal');
+// HTMLHelper::_('behavior.tooltip');
+// HTMLHelper::_('behavior.formvalidation');
+// HTMLHelper::_('behavior.keepalive');
+HTMLHelper::_('jquery.framework');
+
+$app = Factory::getApplication();
+$document = $app->getDocument();
+$wa = $document->getWebAssetManager();
+		$wa->useScript('jquery')
+		->useScript('keepalive')
+			->useScript('form.validate');
+
+$selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
+echo JHtml::_(
+	'bootstrap.renderModal',
+	'user-modal',
+	array(		
+		'url'    => $selectuser_link.'&amp;'.JSession::getFormToken().'=1',
+		'title'  => Text::_('COM_JEM_SELECT'),
+		'width'  => '800px',
+		'height' => '450px',
+		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+	)
+);
 ?>
 
 <script type="text/javascript">
-
-	function modalSelectUser(id, username)
+function modalSelectUser(id, username)
+{
+		jQuery('#uid').val(id)  ;
+		jQuery('#username').val(username);
+		// window.parent.SqueezeBox.close();
+		jQuery("#user-modal").modal("hide");
+}	
+Joomla.submitbutton = function(task)
 	{
-		$('uid').value = id;
-		$('username').value = username;
-		window.parent.SqueezeBox.close();
-	}
-
-	Joomla.submitbutton = function(task)
-	{
-		if (task == 'attendee.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
+		if (task == 'attendee.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
 			if (task == 'attendee.cancel' || document.getElementById('adminForm').uid.value != 0) {
 				Joomla.submitform(task, document.getElementById('adminForm'));
 			} else {
-				alert("<?php echo JText::_('COM_JEM_SELECT_AN_USER', true); ?>");
+				alert("<?php echo Text::_('COM_JEM_SELECT_AN_USER', true); ?>");
 				return false;
 			}
 		} else {
-			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
+			alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 		}
 	}
 </script>
 
 
-<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendee'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
-	<fieldset><legend><?php echo JText::_('COM_JEM_DETAILS'); ?></legend>
+<form action="<?php echo Route::_('index.php?option=com_jem&view=attendee'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+	<fieldset><legend><?php echo Text::_('COM_JEM_DETAILS'); ?></legend>
 		<?php if (!empty($this->row->id)) : ?>
 		<p>
-			<?php echo JText::_('COM_JEM_EDITATTENDEE_NOTICE'); ?>
+			<?php echo Text::_('COM_JEM_EDITATTENDEE_NOTICE'); ?>
 		</p>
 		<?php endif; ?>
 
 		<table  class="admintable">
 			<tr>
-				<td class="key" width="150">
-					<label for="eventtitle" <?php echo JemOutput::tooltip(JText::_('COM_JEM_EVENT'), JText::_('COM_JEM_EVENT_DESC')); ?>>
-						<?php echo JText::_('COM_JEM_EVENT').':'; ?>
+				<td class="key" style="width:150px;">
+					<label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EVENT'), Text::_('COM_JEM_EVENT_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_EVENT').':'; ?>
 					</label>
 				</td>
 				<td>
@@ -64,40 +87,55 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 				</td>
 			</tr>
 			<tr>
-				<td class="key" width="150">
-					<label for="username" <?php echo JemOutput::tooltip(JText::_('COM_JEM_USER'), JText::_('COM_JEM_USER_DESC')); ?>>
-						<?php echo JText::_('COM_JEM_USER').':'; ?>
+				<td class="key" style="width:150px;">
+					<label for="username" <?php echo JemOutput::tooltip(Text::_('COM_JEM_USER'), Text::_('COM_JEM_USER_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_USER').':'; ?>
 					</label>
 				</td>
 				<td>
 					<input type="text" name="username" id="username" readonly="readonly" value="<?php echo $this->row->username; ?>" />
 					<input type="hidden" name="uid" id="uid" value="<?php echo $this->row->uid; ?>" />
-					<a class="usermodal" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-						<span><?php echo JText::_('COM_JEM_SELECT_USER')?></span>
+					<!-- <a class="usermodal" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+						<span><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
+					</a> -->
+					<a class="usermodal" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#user-modal">
+						<span><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
 					</a>
 				</td>
 			</tr>
 			<tr>
-				<td class="key" width="150">
-					<label for="status" <?php echo JemOutput::tooltip(JText::_('COM_JEM_STATUS'), JText::_('COM_JEM_STATUS_DESC')); ?>>
-						<?php echo JText::_('COM_JEM_STATUS').':'; ?>
+				<td class="key" style="width:150px;">
+					<label for="status" <?php echo JemOutput::tooltip(Text::_('COM_JEM_STATUS'), Text::_('COM_JEM_STATUS_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_STATUS').':'; ?>
 					</label>
 				</td>
 				<td>
 					<?php
-					$options = array(JHtml::_('select.option',  0, JText::_('COM_JEM_ATTENDEES_INVITED')),
-					                 JHtml::_('select.option', -1, JText::_('COM_JEM_ATTENDEES_NOT_ATTENDING')),
-					                 JHtml::_('select.option',  1, JText::_('COM_JEM_ATTENDEES_ATTENDING')),
-						             JHtml::_('select.option',  2, JText::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
-					echo JHtml::_('select.genericlist', $options, 'status', array('id' => 'reg_status', 'list.select' => $this->row->status));
+					$options = array(HTMLHelper::_('select.option',  0, Text::_('COM_JEM_ATTENDEES_INVITED')),
+					                 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATTENDEES_NOT_ATTENDING')),
+					                 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATTENDEES_ATTENDING')),
+						             HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
+					echo HTMLHelper::_('select.genericlist', $options, 'status', array('id' => 'reg_status', 'list.select' => $this->row->status));
 					?>
 				</td>
 			</tr>
+            <tr>
+                <td class="key" style="width:150px;">
+                    <label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_ATTENDEES_PLACES').':'; ?>
+                    </label>
+                </td>
+                <td>
+                    <input type="number" name="places" id="places" min="0" max="<?php echo $this->row->maxbookeduser;?>"
+                           value="<?php echo !empty($this->row->places) ? $this->row->places : '0'; ?>"
+                    />
+                </td>
+            </tr>
 			<?php if (!empty($this->jemsettings->regallowcomments)): ?>
 			<tr>
-				<td class="key" width="150" style="vertical-align: baseline;">
-					<label for="comment" <?php echo JemOutput::tooltip(JText::_('COM_JEM_COMMENT'), JText::_('COM_JEM_COMMENT_DESC')); ?>>
-						<?php echo JText::_('COM_JEM_COMMENT').':'; ?>
+				<td class="key"  style="width:150px; vertical-align: baseline;">
+					<label for="comment" <?php echo JemOutput::tooltip(Text::_('COM_JEM_COMMENT'), Text::_('COM_JEM_COMMENT_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_COMMENT').':'; ?>
 					</label>
 				</td>
 				<td>
@@ -110,9 +148,9 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 			<?php endif; ?>
 			<?php if (1/*!$this->row->id*/): ?>
 			<tr>
-				<td class="key" width="150">
-					<label for="sendemail" <?php echo JemOutput::tooltip(JText::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), JText::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>
-						<?php echo JText::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL').':'; ?>
+				<td class="key" style="width:150px;">
+					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>
+						<?php echo Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL').':'; ?>
 					</label>
 				</td>
 				<td>
@@ -123,7 +161,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		</table>
 	</fieldset>
 
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 	<input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
 	<input type="hidden" name="task" value="" />
@@ -132,5 +170,5 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 
 <?php
 //keep session alive while editing
-JHtml::_('behavior.keepalive');
+// HTMLHelper::_('behavior.keepalive');
 ?>

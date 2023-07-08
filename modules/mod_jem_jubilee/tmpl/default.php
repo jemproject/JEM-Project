@@ -1,13 +1,16 @@
 <?php
 /**
- * @version 2.3.6
-* @package JEM
-* @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2019 joomlaeventmanager.net
-* @copyright (C) 2005-2009 Christoph Lukes
-* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
-*/
+ * @version 4.0.0
+ * @package JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright (C) 2014-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 $datemethod      = (int)$params->get('datemethod', 0);
 $showtime        = (int)$params->get('showtime', 0);
@@ -22,7 +25,7 @@ $user_color_is_dark = $params->get('usercolor_is_dark', false);
 $date            = (array)$params->get('date');
 
 if ($flyer_link_type == 1) {
-	JHtml::_('behavior.modal', 'a.flyermodal');
+	// JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
 } elseif ($flyer_link_type == 0) {
 	$modal = 'notmodal';
@@ -64,7 +67,7 @@ if ($flyer_link_type == 1) {
 	<?php if ($i == 0) : ?>
 		<div class="clr"></div>
 		<div class="hr"><hr /></div>
-		<p><?php echo JText::_('MOD_JEM_JUBILEE_NO_EVENTS'); ?></p>
+		<p><?php echo Text::_('MOD_JEM_JUBILEE_NO_EVENTS'); ?></p>
 	<?php else : ?>
 		<?php foreach ($list as $item) : ?>
 			<div class="clr"></div>
@@ -85,7 +88,7 @@ if ($flyer_link_type == 1) {
 					<div class="banner-jem">
 						<div>
 							<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="<?php echo $modal;?>"
-							   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : JText::_('MOD_JEM_JUBILEE_CLICK_TO_ENLARGE'); ?> ">
+							   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('MOD_JEM_JUBILEE_CLICK_TO_ENLARGE'); ?> ">
 								<img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
 							</a>
 						</div>

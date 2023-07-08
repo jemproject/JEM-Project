@@ -1,12 +1,20 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 /**
  * Attendees-view
@@ -16,12 +24,12 @@ class JemViewAttendees extends JemView
 {
 	public function display($tpl = null)
 	{
-		$app  = JFactory::getApplication();
+		$app  = Factory::getApplication();
 		$user = JemFactory::getUser();
 
 		//redirect if not logged in
 		if (!$user->get('id')) {
-			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+			$app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
 		}
 
@@ -40,18 +48,19 @@ class JemViewAttendees extends JemView
 		}
 
 		//initialise variables
-		$document	= JFactory::getDocument();
+		$document   = $app->getDocument();
 		$settings	= $this->settings;
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
-		$uri 		= JFactory::getURI();
+		$uri        = Uri::getInstance();
 
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
 		//get vars
@@ -68,19 +77,19 @@ class JemViewAttendees extends JemView
 
 		// Merge params.
 		// Because this view is not useable for menu item we always overwrite $params.
-		$pagetitle = JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES') . ' - ' . $event->title;
-		$params->set('page_heading', JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES')); // event title is shown separate
+		$pagetitle = Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') . ' - ' . $event->title;
+		$params->set('page_heading', Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES')); // event title is shown separate
 		//$params->set('show_page_heading', 1); // always show?
 		$params->set('introtext', ''); // there can't be an introtext
 		$params->set('showintrotext', 0);
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
-		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		if ($app->get('sitename_pagetitles', 0) == 1) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 		}
 
 		$document->setTitle($pagetitle);
@@ -94,10 +103,10 @@ class JemViewAttendees extends JemView
       //$pathway->setItemName(1, $menuitem->title);
 		}
 		$pathway->addItem('Att:'.$event->title);
-
+		
 		// Emailaddress
 		$enableemailaddress = $params->get('enableemailaddress', 0);
-
+		
 		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
 		$backlink = 'attendees';
 
@@ -105,22 +114,22 @@ class JemViewAttendees extends JemView
 		//build filter selectlist
 		$filters = array();
 		if ($settings->get('global_regname', '1')) {
-			$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+			$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
 		} else {
-			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
+			$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_USERNAME'));
 		}
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
 		$lists['search'] = $search;
 
 		// attendee status
-		$options = array(JHtml::_('select.option', -2, JText::_('COM_JEM_ATT_FILTER_ALL')),
-		                 JHtml::_('select.option',  0, JText::_('COM_JEM_ATT_FILTER_INVITED')),
-		                 JHtml::_('select.option', -1, JText::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
-		                 JHtml::_('select.option',  1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
-		                 JHtml::_('select.option',  2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
-		$lists['status'] = JHtml::_('select.genericlist', $options, 'filter_status', array('class'=>'inputbox','onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
+		$options = array(HTMLHelper::_('select.option', -2, Text::_('COM_JEM_ATT_FILTER_ALL')),
+		                 HTMLHelper::_('select.option',  0, Text::_('COM_JEM_ATT_FILTER_INVITED')),
+		                 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
+		                 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATT_FILTER_ATTENDING')),
+		                 HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATT_FILTER_WAITING'))) ;
+		$lists['status'] = HTMLHelper::_('select.genericlist', $options, 'filter_status', array('class'=>'inputbox','onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -138,7 +147,8 @@ class JemViewAttendees extends JemView
 		$this->print_link	= $print_link;
 		$this->item			= $menuitem;
 		$this->action		= $uri->toString();
-		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+
 
 		parent::display($tpl);
 	}
@@ -150,8 +160,8 @@ class JemViewAttendees extends JemView
 	 */
 	protected function _displayprint($tpl = null)
 	{
-		$document	= JFactory::getDocument();
-		$app		= JFactory::getApplication();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$params		= $app->getParams();
 
 		// Load css
@@ -181,10 +191,10 @@ class JemViewAttendees extends JemView
 	 */
 	protected function _displayaddusers($tpl)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
+		$document    = $app->getDocument();
 		$jinput      = $app->input;
-	//	$db          = JFactory::getDBO();
-		$document    = JFactory::getDocument();
+	//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$model       = $this->getModel();
 		$event       = $this->get('Event');
 
@@ -197,13 +207,13 @@ class JemViewAttendees extends JemView
 	//	$limit            = $app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $this->jemsettings->display_num, 'int');
 	//	$eventId          = !empty($event->id) ? $event->id : 0;
 
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');
 
-		$document->setTitle(JText::_('COM_JEM_SELECT_USERS_AND_STATUS'));
+		$document->setTitle(Text::_('COM_JEM_SELECT_USERS_AND_STATUS'));
 
 		// Get/Create the model
 	//	$model->setState('event.id', $eventId);
@@ -216,8 +226,8 @@ class JemViewAttendees extends JemView
 
 		//Build search filter - unused
 		$filters = array();
-		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
+		$searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter - unused
 		$lists['search'] = $search;

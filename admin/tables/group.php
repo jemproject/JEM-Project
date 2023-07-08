@@ -1,13 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Group Table
@@ -15,7 +18,7 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class JemTableGroup extends JTable
+class JemTableGroup extends Table
 {
 	public function __construct(&$db)
 	{
@@ -30,7 +33,7 @@ class JemTableGroup extends JTable
 	{
 		// Not typed in a category name?
 		if (trim($this->name ) == '') {
-			$this->setError(JText::_('COM_JEM_ADD_GROUP_NAME'));
+			$this->setError(Text::_('COM_JEM_ADD_GROUP_NAME'));
 			return false;
 		}
 
@@ -88,7 +91,7 @@ class JemTableGroup extends JTable
 				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -108,14 +111,22 @@ class JemTableGroup extends JTable
 		$query->update($this->_db->quoteName($this->_tbl));
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
-		$this->_db->setQuery($query . $checkin);
-		$this->_db->execute();
+	
 
 		// Check for a database error.
 		// TODO: use exception handling
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+		try
+		{
+			$this->_db->setQuery($query . $checkin);
+			$this->_db->execute();
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
@@ -126,7 +137,7 @@ class JemTableGroup extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}

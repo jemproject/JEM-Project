@@ -1,13 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * Categoryelement-View
@@ -17,13 +22,13 @@ class JemViewCategoryelement extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$document	= JFactory::getDocument();
-		$db			= JFactory::getDBO();
-		$app 		= JFactory::getApplication();
+		$app 		= Factory::getApplication();
+		$document   = $app->getDocument();
+		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal');
+		// HTMLHelper::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.modal');
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');
@@ -33,17 +38,20 @@ class JemViewCategoryelement extends JViewLegacy {
 		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		//prepare document
-		$document->setTitle(JText::_('COM_JEM_SELECT_CATEGORY'));
+		$document->setTitle(Text::_('COM_JEM_SELECT_CATEGORY'));
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+	
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Get data from the model
 		$rows = $this->get('Data');
 		$pagination = $this->get('Pagination');
 
 		//publish unpublished filter
-		$lists['state'] = JHtml::_('grid.state', $filter_state);
+		$lists['state'] = HTMLHelper::_('grid.state', $filter_state);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

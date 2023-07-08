@@ -1,13 +1,19 @@
 <?php
 /**
- * @version 2.3.6
-* @package JEM
-* @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2017 joomlaeventmanager.net
-* @copyright (C) 2005-2009 Christoph Lukes
-* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
-*/
+ * @version 4.0.0
+ * @package JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright (C) 2014-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
@@ -32,9 +38,10 @@ abstract class ModJemJubileeHelper
 		static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l', 'md' => 'md');
 		static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '', 'md' => '');
 
-		$db     = JFactory::getDBO();
+        $db     = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
+        $uri    = Uri::getInstance();
 
 		# Retrieve Eventslist model for the data
 		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
@@ -173,9 +180,9 @@ abstract class ModJemJubileeHelper
 			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
 		}
 
-		if ($params->get('flyer_link_type', 0) == 1) {
-			JHtml::_('behavior.modal', 'a.flyermodal');
-		}
+		// if ($params->get('flyer_link_type', 0) == 1) {
+		// 	JHtml::_('behavior.modal', 'a.flyermodal');
+		// }
 
 		####
 		# Retrieve the available Events
@@ -219,11 +226,11 @@ abstract class ModJemJubileeHelper
 			# check view access
 			if (in_array($row->access, $levels)) {
 				# We know that user has the privilege to view the event
-				$lists[$i]->link = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
-				$lists[$i]->linkText = JText::_('MOD_JEM_JUBILEE_READMORE');
+				$lists[$i]->link = Route::_(JemHelperRoute::getEventRoute($row->slug));
+				$lists[$i]->linkText = Text::_('MOD_JEM_JUBILEE_READMORE');
 			} else {
-				$lists[$i]->link = JRoute::_('index.php?option=com_users&view=login');
-				$lists[$i]->linkText = JText::_('MOD_JEM_JUBILEE_READMORE_REGISTER');
+				$lists[$i]->link = Route::_('index.php?option=com_users&view=login');
+				$lists[$i]->linkText = Text::_('MOD_JEM_JUBILEE_READMORE_REGISTER');
 			}
 
 			# cut title
@@ -240,8 +247,8 @@ abstract class ModJemJubileeHelper
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? JRoute::_(JemHelperRoute::getEventRoute($row->slug)) : '';
-			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
+			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
 
 			# time/date
 			/* depending on settongs we need:
@@ -260,16 +267,16 @@ abstract class ModJemJubileeHelper
 				$lists[$i]->eventimage     = '';
 				$lists[$i]->eventimageorig = '';
 			} else {
-				$lists[$i]->eventimage     = JUri::base(true).'/'.$dimage['thumb'];
-				$lists[$i]->eventimageorig = JUri::base(true).'/'.$dimage['original'];
+				$lists[$i]->eventimage     = $uri->base(true).'/'.$dimage['thumb'];
+				$lists[$i]->eventimageorig = $uri->base(true).'/'.$dimage['original'];
 			}
 
 			if ($limage == null) {
 				$lists[$i]->venueimage     = '';
 				$lists[$i]->venueimageorig = '';
 			} else {
-				$lists[$i]->venueimage     = JUri::base(true).'/'.$limage['thumb'];
-				$lists[$i]->venueimageorig = JUri::base(true).'/'.$limage['original'];
+				$lists[$i]->venueimage     = $uri->base(true).'/'.$limage['thumb'];
+				$lists[$i]->venueimageorig = $uri->base(true).'/'.$limage['original'];
 			}
 
 			# append <br /> tags on line breaking tags so they can be stripped below
@@ -284,7 +291,7 @@ abstract class ModJemJubileeHelper
 			}
 
 			if (empty($description)) {
-				$lists[$i]->eventdescription = JText::_('MOD_JEM_JUBILEE_NO_DESCRIPTION');
+				$lists[$i]->eventdescription = Text::_('MOD_JEM_JUBILEE_NO_DESCRIPTION');
 			} elseif (mb_strlen($description) > $max_desc_length) {
 				$lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
 			} else {
@@ -358,8 +365,8 @@ abstract class ModJemJubileeHelper
 	 */
 	protected static function _get_local_now($cleartime = true)
 	{
-		$app    = JFactory::getApplication();
-		$user   = JFactory::getUser();
+		$app    = Factory::getApplication();
+		$user   = Factory::getUser();
 		$offset = $app->get('offset');
 		$userTz = $user->getParam('timezone', $offset);
 
@@ -417,13 +424,13 @@ abstract class ModJemJubileeHelper
 		# construct date string
 		if ($years > 0) {
 			$fmt4 = $years === 1 ? '_YEAR' : '_YEARS';
-			$date = JText::sprintf($fmt1 . $fmt2 . $fmt3 . $fmt4 . $fmt5, $years);
+			$date = Text::sprintf($fmt1 . $fmt2 . $fmt3 . $fmt4 . $fmt5, $years);
 		} elseif ($months > 1) {
 			$fmt4 = '_MONTHS';
-			$date = JText::sprintf($fmt1 . $fmt2 . $fmt3 . $fmt4 . $fmt5, $months);
+			$date = Text::sprintf($fmt1 . $fmt2 . $fmt3 . $fmt4 . $fmt5, $months);
 		} else {
 			$fmt4 = '_DAYS';
-			$date = JText::sprintf($fmt1 . $fmt2 . $fmt3 . $fmt4 . $fmt5, $days);
+			$date = Text::sprintf($fmt1 . $fmt2 . $fmt3 . $fmt4 . $fmt5, $days);
 		}
 
 		return $date;
@@ -469,11 +476,11 @@ abstract class ModJemJubileeHelper
 
 				# Check if today, tomorrow, or yesterday
 				if (is_object($diffStart) && ($daysStart == 0)) {
-					$date = JText::_('MOD_JEM_JUBILEE_TODAY');
+					$date = Text::_('MOD_JEM_JUBILEE_TODAY');
 				} elseif (is_object($diffStart) && ($daysStart == 1)) {
-					$date = JText::_('MOD_JEM_JUBILEE_TOMORROW');
+					$date = Text::_('MOD_JEM_JUBILEE_TOMORROW');
 				} elseif (is_object($diffStart) && ($daysStart == -1)) {
-					$date = JText::_('MOD_JEM_JUBILEE_YESTERDAY');
+					$date = Text::_('MOD_JEM_JUBILEE_YESTERDAY');
 				}
 				# This one isn't very different from the DAYS AGO output but it seems
 				# adequate to use different language strings here.
@@ -514,7 +521,7 @@ abstract class ModJemJubileeHelper
 				if (/*($dates_stamp >= $today_stamp) &&*/ ($enddates_stamp > $dates_stamp)) {
 					$startdate = JemOutput::formatdate($row->dates, $dateFormat);
 					$enddate = JemOutput::formatdate($row->enddates, $dateFormat);
-					$date = JText::sprintf('MOD_JEM_JUBILEE_FROM_UNTIL', $startdate, $enddate);
+					$date = Text::sprintf('MOD_JEM_JUBILEE_FROM_UNTIL', $startdate, $enddate);
 					# additionally show endtime
 					$endtimes = $row->endtimes;
 				}
@@ -522,7 +529,7 @@ abstract class ModJemJubileeHelper
 				# Currently running multiday event (Until 18.08.2008)
 				elseif ($row->enddates && ($enddates_stamp >= $today_stamp) && ($dates_stamp < $today_stamp)) {
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
-					$date = JText::sprintf('MOD_JEM_JUBILEE_UNTIL', $enddate);
+					$date = Text::sprintf('MOD_JEM_JUBILEE_UNTIL', $enddate);
 					# show endtime instead of starttime
 					$times = false;
 					$endtimes = $row->endtimes;
@@ -530,7 +537,7 @@ abstract class ModJemJubileeHelper
 				# Singleday event
 				else {
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
-					$date = JText::sprintf('MOD_JEM_JUBILEE_ON_DATE', $startdate);
+					$date = Text::sprintf('MOD_JEM_JUBILEE_ON_DATE', $startdate);
 					# additionally show endtime, but on single day events only to prevent user confusion
 					if (empty($row->enddates)) {
 						$endtimes = $row->endtimes;

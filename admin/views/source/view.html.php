@@ -1,13 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
 
 /**
  * Source view
@@ -36,7 +42,7 @@ class JemViewSource extends JemAdminView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+			\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
@@ -50,21 +56,21 @@ class JemViewSource extends JemAdminView
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
 		$user  = JemFactory::getUser();
 		$canDo = JemHelperBackend::getActions(0);
 
-		JToolBarHelper::title(JText::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
+		ToolbarHelper::title(Text::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
 
 		// Can save the item.
 		if ($canDo->get('core.edit')) {
-			JToolBarHelper::apply('source.apply');
-			JToolBarHelper::save('source.save');
+			ToolbarHelper::apply('source.apply');
+			ToolbarHelper::save('source.save');
 		}
 
-		JToolBarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
-		JToolBarHelper::divider();
-		JToolBarHelper::help('editcss', true);
+		ToolbarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
+		ToolbarHelper::divider();
+		ToolbarHelper::help('editcss', true);
 	}
 }

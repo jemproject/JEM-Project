@@ -1,20 +1,23 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * Controller: Attendee
  */
-class JemControllerAttendee extends JControllerLegacy
+class JemControllerAttendee extends BaseController
 {
 	/**
 	 * Constructor
@@ -35,7 +38,7 @@ class JemControllerAttendee extends JControllerLegacy
 	 */
 	public function back()
 	{
-		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
 	}
 
 	/**
@@ -47,13 +50,13 @@ class JemControllerAttendee extends JControllerLegacy
 	public function cancel()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-		$attendee = JTable::getInstance('jem_register', '');
-		$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
+		$attendee = Table::getInstance('jem_register', '');
+		$attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
 		$attendee->checkin();
 
-		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
 	}
 
 	/**
@@ -65,10 +68,10 @@ class JemControllerAttendee extends JControllerLegacy
 	public function save()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Defining JInput
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		// retrieving task "apply"
 		$task = $jinput->getCmd('task');
@@ -109,15 +112,15 @@ class JemControllerAttendee extends JControllerLegacy
 				$dispatcher = JemFactory::getDispatcher();
 				// there was a user and it's overwritten by a new user -> send unregister mails
 				if ($old_uid && ($old_uid != $uid)) {
-					$dispatcher->trigger('onEventUserUnregistered', array($old_data->event, $old_data));
+					$dispatcher->triggerEvent('onEventUserUnregistered', array($old_data->event, $old_data));
 				}
 				// there is a new user which wasn't before -> send register mails
 				if ($uid && (($old_uid != $uid) || ($row->status != $old_status))) {
-					$dispatcher->trigger('onEventUserRegistered', array($row->id));
+					$dispatcher->triggerEvent('onEventUserRegistered', array($row->id));
 				}
 				// but show warning if mailer is disabled
 				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 				}
 			}
 
@@ -138,9 +141,9 @@ class JemControllerAttendee extends JControllerLegacy
 				$link = 'index.php?option=com_jem&view=attendees&eventid='.$row->event;
 				break;
 			}
-			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
+			$msg = Text::_('COM_JEM_ATTENDEE_SAVED');
 
-			$cache = JFactory::getCache('com_jem');
+			$cache = Factory::getCache('com_jem');
 			$cache->clean();
 		} else {
 			$msg 	= '';
@@ -151,7 +154,7 @@ class JemControllerAttendee extends JControllerLegacy
 
 	public function selectUser()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$jinput->set('view', 'userelement');
 		parent::display();
 	}

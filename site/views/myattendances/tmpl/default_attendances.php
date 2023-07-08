@@ -1,15 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2022 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.tooltip');
+use Joomla\CMS\Language\Text;
+
+// JHtml::_('behavior.tooltip');
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 ?>
@@ -25,7 +27,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	}
 </script>
 
-<h2><?php echo JText::_('COM_JEM_REGISTERED_TO'); ?></h2>
+<h2><?php echo Text::_('COM_JEM_REGISTERED_TO'); ?></h2>
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
@@ -33,17 +35,17 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<div id="jem_filter" class="floattext">
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>
 		<div class="jem_fleft">
-			<label for="filter"><?php echo JText::_('COM_JEM_FILTER'); ?></label>
+			<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button class="btn btn-primary" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button class="btn btn-secondary" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>
 
 		<?php if ($this->settings->get('global_display',1)) : ?>
 		<div class="jem_fright">
-			<label for="limit"><?php echo JText::_('COM_JEM_DISPLAY_NUM'); ?></label>
+			<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 			<?php echo $this->attending_pagination->getLimitBox(); ?>
 		</div>
 		<?php endif; ?>
@@ -51,7 +53,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<?php endif; ?>
 
 	<div class="table-responsive">
-		<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
+		<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
 			<colgroup>
 				<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -89,18 +91,17 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<?php if ($this->jemsettings->showcat == 1) : ?>
 					<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
-					<?php /*if ($this->event->waitinglist):*/ ?>
-					<th id="jem_status" class="sectiontableheader center" align="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-					<?php /*endif;*/?>
+                    <th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                   	<th id="jem_status" class="sectiontableheader center" align="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-					<th id="jem_comment" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+					<th id="jem_comment" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif; ?>
 				</tr>
 			</thead>
 
 			<tbody>
 			<?php if (empty($this->attending)) : ?>
-				<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+				<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->attending as $row) : ?>
@@ -165,11 +166,15 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 						</td>
 						<?php endif; ?>
 
+                        <td class="center" headers="jem_places" align="left" valign="top">
+                            <?php echo !empty($row->places) ? $this->escape($row->places) : '-'; ?>
+                        </td>
+                        
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
 							if ($status === 1 && $row->waiting == 1) { $status = 2; }
-							echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->id, $status, false, $this->print);
+							echo jemhtml::toggleAttendanceStatus($row->id, $status, false, $this->print);
 							?>
 						</td>
 

@@ -1,20 +1,24 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.form.formfield');
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Form\FormField;
 
 /**
  * Contact select
  */
-class JFormFieldModal_Contact extends JFormField
+class JFormFieldModal_Contact extends FormField
 {
 	/**
 	 * field type
@@ -29,38 +33,53 @@ class JFormFieldModal_Contact extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectContact_'.$this->id.'(id, name, object) {';
-		$script[] = '        document.id("'.$this->id.'_id").value = id;';
-		$script[] = '        document.id("'.$this->id.'_name").value = name;';
-		$script[] = '        SqueezeBox.close();';
+		$script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+		$script[] = '        document.getElementById("'.$this->id.'_name").value = name;';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#contact-modal").modal("hide");';
 		$script[] = '    }';
 
+		
+
 		// Add to document head
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$document->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosecontact&amp;tmpl=component&amp;function=jSelectContact_'.$this->id;
 
-		$db = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('name');
 		$query->from('#__contact_details');
 		$query->where(array('id='.(int)$this->value));
 		$db->setQuery($query);
 
-		$contact = $db->loadResult();
+		// $contact = $db->loadResult();
 
-		if ($error = $db->getErrorMsg()) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// if ($error = $db->getErrorMsg()) {
+		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+		// }
+
+		try
+		{
+			$contact = $db->loadResult();
+		}
+		catch (RuntimeException $e)
+		{
+			$app->enqueueMessage($e->getMessage(), 'warning');
 		}
 
 		if (empty($contact)) {
-			$contact = JText::_('COM_JEM_SELECT_CONTACT');
+			$contact = Text::_('COM_JEM_SELECT_CONTACT');
 		}
 		$contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
 
@@ -68,8 +87,23 @@ class JFormFieldModal_Contact extends JFormField
 		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" />';
 
 		// The contact select button
-		$html[] = '    <a class="flyermodal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
+
+		$html[] = HTMLHelper::_(
+			'bootstrap.renderModal',
+			'contact-modal',
+			array(		
+				'url'    => $link.'&amp;'.Session::getFormToken().'=1',
+				'title'  => Text::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.Text::_('COM_JEM_SELECT').'
+		</button>';
+
 
 		// The active contact id field
 		if (0 == (int)$this->value) {

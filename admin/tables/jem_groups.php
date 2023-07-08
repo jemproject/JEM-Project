@@ -1,13 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM groups Model class
@@ -15,7 +18,7 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class jem_groups extends JTable
+class jem_groups extends Table
 {
 	/**
 	 * Primary Key
@@ -42,8 +45,8 @@ class jem_groups extends JTable
 	{
 		// Not typed in a category name?
 		if (trim($this->name) == '') {
-			$this->_error = JText::_('COM_JEM_ADD_GROUP_NAME');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ADD_GROUP_NAME');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -53,7 +56,7 @@ class jem_groups extends JTable
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::sprintf('COM_JEM_GROUP_NAME_ALREADY_EXIST', $this->name), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_GROUP_NAME_ALREADY_EXIST', $this->name), 'warning');
 			return false;
 		}
 
@@ -71,9 +74,10 @@ class jem_groups extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;

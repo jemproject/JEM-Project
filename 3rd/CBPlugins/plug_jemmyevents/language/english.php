@@ -1,18 +1,18 @@
 <?php
 /**
  * @package My Events
- * @version 2.3.6
+ * @version 4.0.0
  * @author JEM Community
- * @copyright (C) 2013-2015 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Former info:
- * @copyright Copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
- * @license GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
- * @link     http://www.tekdi.net
+ * @copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @link     https://www.tekdi.net
  */
+ 
 defined('_JEXEC') or die;
-
 
 DEFINE("_JEMMYEVENTS_EDIT_ENTRY","Edit");
 DEFINE("_JEMMYEVENTS_DELETE_ENTRY","Delete");

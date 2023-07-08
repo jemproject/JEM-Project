@@ -1,15 +1,17 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Component Controller
@@ -17,7 +19,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JemController extends JControllerLegacy
+class JemController extends BaseController
 {
 	/**
 	 * Constructor
@@ -32,11 +34,12 @@ class JemController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		$document   = JFactory::getDocument();
+		$app        = Factory::getApplication();
+		$document   = $app->getDocument();
 		$user       = JemFactory::getUser();
 
 		// Set the default view name and format from the Request.
-		$jinput     = JFactory::getApplication()->input;
+		$jinput     = Factory::getApplication()->input;
 		$id         = $jinput->getInt('a_id', 0);
 		$viewName   = $jinput->getCmd('view', 'eventslist');
 		$viewFormat = $document->getType();
@@ -45,7 +48,7 @@ class JemController extends JControllerLegacy
 		// Check for edit form.
 		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
-			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
+			throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
 		}
 
 		$view = $this->getView($viewName, $viewFormat);
@@ -69,6 +72,7 @@ class JemController extends JControllerLegacy
 				case 'venue':
 				case 'venues':
 				case 'venueslist':	
+				case 'mailto':	
 				case 'weekcal':
 					$model = $this->getModel($viewName);
 					break;
@@ -113,14 +117,14 @@ class JemController extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->getInt('file', 0);
-
+		$id = Factory::getApplication()->input->getInt('file', 0);
 		$path = JemAttachment::getAttachmentPath($id);
 
-		$mime = JemHelper::getMimeType($path);
+		//$mime = JemHelper::getMimeType($path);
+		//$app = Factory::getApplication();
+		//$document = $app->getDocument();
+		//$doc->setMimeEncoding($mime);
 
-		$doc = JFactory::getDocument();
-		$doc->setMimeEncoding($mime);
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');
 		if ($fd = fopen ($path, "r"))
 		{
@@ -151,7 +155,7 @@ class JemController extends JControllerLegacy
 		$res = 0;
 
 		if ($jemsettings->attachmentenabled > 0) {
-			$id	 = JFactory::getApplication()->input->getInt('id', 0);
+			$id	 = Factory::getApplication()->input->getInt('id', 0);
 			$res = JemAttachment::remove($id);
 		} // else don't delete anything
 
@@ -160,7 +164,7 @@ class JemController extends JControllerLegacy
 			jexit();
 		}
 
-		$cache = JFactory::getCache('com_jem');
+		$cache = Factory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1; // The caller expects an answer!

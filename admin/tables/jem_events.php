@@ -1,13 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM events Model class
@@ -15,7 +18,7 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class jem_events extends JTable
+class jem_events extends Table
 {
 	/**
 	 * Primary Key
@@ -127,16 +130,16 @@ class jem_events extends JTable
 		}
 
 		if (preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
-			$this->_error = JText::_('WRONGSTARTTIMEFORMAT'.': '.$this->times);
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('WRONGSTARTTIMEFORMAT'.': '.$this->times);
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 		if (empty($this->times) || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
 			$this->times = NULL;
 		}
 		if (preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)) {
-			$this->_error = JText::_('WRONGENDTIMEFORMAT'.': '.$this->endtimes);
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('WRONGENDTIMEFORMAT'.': '.$this->endtimes);
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 		if (empty($this->endtimes) || empty($this->times) || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)
@@ -149,14 +152,14 @@ class jem_events extends JTable
 		$titlelength = \Joomla\String\StringHelper::strlen($this->title);
 
 		if ($this->title == '') {
-			$this->_error = JText::_('COM_JEM_ADD_TITLE');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ADD_TITLE');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		if ($titlelength > 100) {
-			$this->_error = JText::_('COM_JEM_ERROR_TITLE_LONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_ERROR_TITLE_LONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
@@ -167,23 +170,23 @@ class jem_events extends JTable
 		}
 
 		if ($this->dates && !preg_match("/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/", $this->dates)) {
-			$this->_error = JText::_('COM_JEM_DATE_WRONG');
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+			$this->_error = Text::_('COM_JEM_DATE_WRONG');
+			Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 			return false;
 		}
 
 		if (isset($this->enddates)) {
 			if (!preg_match("/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/", $this->enddates)) {
-				$this->_error = JText::_('COM_JEM_ENDDATE_WRONG_FORMAT');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+				$this->_error = Text::_('COM_JEM_ENDDATE_WRONG_FORMAT');
+				Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 		}
 
 /*		if (isset($this->recurrence_limit_date)) {
 			if (!preg_match("/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/", $this->recurrence_limit_date)) {
-	 				$this->_error = JText::_('COM_JEM_WRONGRECURRENCEDATEFORMAT');
-	 				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+	 				$this->_error = Text::_('COM_JEM_WRONGRECURRENCEDATEFORMAT');
+	 				Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 	 				return false;
 			}
 		}
@@ -191,24 +194,24 @@ class jem_events extends JTable
 
 		if (isset($this->times) && $this->times) {
 			if (!preg_match("/^[0-2][0-9]:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
-				$this->_error = JText::_('WRONGSTARTTIMEFORMAT'.': '.$this->times);
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+				$this->_error = Text::_('WRONGSTARTTIMEFORMAT'.': '.$this->times);
+				Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 		}
 
 		if (isset($this->endtimes) && $this->endtimes) {
 			if (!preg_match("/^[0-2][0-9]:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)) {
-				$this->_error = JText::_('COM_JEM_WRONGENDTIMEFORMAT');
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+				$this->_error = Text::_('COM_JEM_WRONGENDTIMEFORMAT');
+				Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 				return false;
 			}
 		}
 
 		//No venue or category choosen?
 		//if ($this->locid == '') {
-		//	$this->_error = JText::_('COM_JEM_VENUE_EMPTY');
-		//	\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+		//	$this->_error = Text::_('COM_JEM_VENUE_EMPTY');
+		//	Factory::getApplication()->enqueueMessage($this->_error, 'warning');
 		//	return false;
 		//}
 
@@ -226,9 +229,10 @@ class jem_events extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;

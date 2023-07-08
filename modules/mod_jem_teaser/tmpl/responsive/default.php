@@ -1,33 +1,40 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2020 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
 if ($params->get('use_modal', 0)) {
-	JHtml::_('behavior.modal', 'a.flyermodal');
+	// JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
 } else {
 	$modal = 'notmodal';
 }
 /*
-if (JFactory::getApplication()->input->getInt('jem-rss','0') == 1) {		
+if (Factory::getApplication()->input->getInt('jem-rss','0') == 1) {
   ob_get_clean();
   createRSSfeed($list);
   jexit(); 
 }
 */
 
-/*$module_name = 'mod_jem_teaser';
+/*
+$uri = Uri::getInstance();
+$module_name = 'mod_jem_teaser';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css']);
-  $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
+  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css']);
+  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
 }*/
 ?>
 
@@ -35,8 +42,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
  <?php
  $imagewidth = 'inherit';
  if ($jemsettings->imagewidth != 0) {
-  $imagewidth = $jemsettings->imagewidth / 2; 
-  $imagewidth = $imagewidth.'px';
+  $imagewidth = $jemsettings->imagewidth .'px';
  }
  $imagewidthstring = 'jem-imagewidth';
  if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
@@ -130,14 +136,14 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
         <div class="jem-event-details-teaser">
           <div class="jem-row-teaser jem-teaser-datecat">
             <?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
-              <div class="date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php //endif; ?>
             <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
-              <div class="time" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->dateinfo; ?>
               </div>
             <?php //endif; ?>
@@ -149,8 +155,8 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
             <?php */endif; ?>
             <?php if (!empty($item->venue)) : ?>
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
-                <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
+                <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
                 <?php if ($item->venuelink) : ?>
                   <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
                 <?php else : ?>
@@ -160,39 +166,62 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
-              <div class="category" title="<?php echo JText::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-                <i class="fa fa-tag" aria-hidden="true"></i>
+              <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
+                <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
                 <?php echo $item->catname; ?>
               </div>
             <?php endif; ?>
           </div>
-          <div class="jem-description-teaser">
-            <?php //uncomment this construct to disable the eventimage ?>
-            <?php if(strpos($item->eventimage,'/media/system/images/blank.png') === false) : ?>
-              <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
-                <?php if(!empty($item->eventimage)) : ?>
-                  <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
-                    <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
-                  </a>
+        </div>
+        <div class="jem-event-image-teaser">
+          <div class="jem-row-image-teaser">
+            <?php if($item->showimageevent): ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                  <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
+                    <?php if(!empty($item->eventimage)) : ?>
+                      <div class="jem-eventimg-teaser">
+                      <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                        <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
+                      </a>
+                      </div>
+                    <?php endif; ?>
+                  <?php endif; ?>
                 <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if($item->showimagevenue): ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+                  <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
+                      <?php if(!empty($item->venueimage)) : ?>
+                          <div class="jem-eventimg-teaser">
+                          <a href="<?php echo $item->venueimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                            <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" />
+                          </a>
+                          </div>
+                      <?php endif; ?>
+                  <?php endif; ?>
               <?php endif; ?>
             <?php endif; ?>
-            
-            <?php echo $item->eventdescription; ?>
-            <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-              echo '<a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
-              endif;
-            ?>          
-          </div> 
-          <?php if ($item->eventlink) : ?>
-          <div class="jem-readmore">
-            <a href="<?php echo $item->eventlink ?>" title="<?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
-              <!--<button class="jem-btn btn">-->
-              <?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
-              <!--</button>-->
-            </a>
+
+            <?php if($item->showdescriptionevent): ?>
+              <div class="jem-description-teaser">
+                <?php if($item->showdescriptionevent):
+					echo $item->eventdescription;
+                  if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+                    echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
+                  endif;
+
+                  if ($item->eventlink) : ?>
+                    <div class="jem-readmore">
+                      <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+                      <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
+                    </a>
+                    </div>
+                  <?php endif; ?>
+                <?php endif; ?>
+              </div>
+            <?php endif; ?> 
           </div>
-          <?php endif; ?>
         </div>
       </div>
       <?php 
@@ -202,7 +231,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
       ?>
     <?php endforeach; ?>
 	<?php else : ?>
-		<?php echo JText::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
+		<?php echo Text::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
 	<?php endif; ?>
 	</div>
 </div>
@@ -248,9 +277,9 @@ if(substr($baseurl, -1) == '/') {
     $baseurl = substr($baseurl, 0, -1);
 }
 echo '<?xml version="1.0" encoding="UTF-8" ?>';
-echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">';
+echo '<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">';
 echo '<channel>';
-  $doc = JFactory::getDocument(); 
+  $doc = Factory::getDocument(); 
   $page_title = $doc->getTitle();
   echo '<title>'.$page_title.'</title>';
   echo '<link>'.JURI::current().'</link>';

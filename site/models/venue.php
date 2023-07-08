@@ -1,14 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__) . '/eventslist.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
+require_once __DIR__ . '/eventslist.php';
 
 /**
  * Model: venue
@@ -25,7 +29,7 @@ class JemModelVenue extends JemModelEventslist
 
 	public function __construct()
 	{
-		$app    = JFactory::getApplication();
+		$app    = Factory::getApplication();
 		$jinput = $app->input;
 		$params = $app->getParams();
 
@@ -45,7 +49,7 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$params      = $app->getParams();
 		$jinput      = $app->input;
@@ -177,7 +181,7 @@ class JemModelVenue extends JemModelEventslist
 	{
 		$user   = JemFactory::getUser();
 
-		$db     = JFactory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
@@ -204,7 +208,7 @@ class JemModelVenue extends JemModelEventslist
 		$_venue = $db->loadObject();
 
 		if (empty($_venue)) {
-			$this->setError(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
+			$this->setError(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
 			return false;
 		}
 

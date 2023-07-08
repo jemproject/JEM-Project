@@ -1,11 +1,16 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+
 // Create shortcut to parameters.
 $params = $this->state->get('params');
 
@@ -21,14 +26,13 @@ $params['show_urls_images_backend'] = '0';
 $params['show_urls_images_frontend'] = '0';
 endif;
 
-defined('_JEXEC') or die;
 $group = 'attribs';
 
 ?>
 
 <div class="width-100">
 	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_EVENT'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_EVENT'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('basic') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
@@ -41,7 +45,7 @@ $group = 'attribs';
 		</ul>
 	</fieldset>
 	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_VENUE'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_VENUE'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('event_show_locdescription',$group); ?> <?php echo $this->form->getInput('event_show_locdescription',$group); ?></li>
 			<li><?php echo $this->form->getLabel('event_show_detailsadress',$group); ?> <?php echo $this->form->getInput('event_show_detailsadress',$group); ?></li>
@@ -53,7 +57,7 @@ $group = 'attribs';
 	</fieldset>
 	<div class="width-100">
 	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('event_comunsolution',$group); ?> <?php echo $this->form->getInput('event_comunsolution',$group); ?></li>
 			<li id="comm1" style="display:none"><?php echo $this->form->getLabel('event_comunoption',$group); ?> <?php echo $this->form->getInput('event_comunoption',$group); ?></li>

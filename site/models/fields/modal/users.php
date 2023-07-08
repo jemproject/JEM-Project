@@ -1,20 +1,23 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.form.formfield');
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
 
 /**
  * Contact select
  */
-class JFormFieldModal_Users extends JFormField
+class JFormFieldModal_Users extends FormField
 {
 	/**
 	 * field type
@@ -29,18 +32,19 @@ class JFormFieldModal_Users extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.flyermodal');
+		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectUsers_'.$this->id.'(ids, count, object) {';
-		$script[] = '        document.id("'.$this->id.'_ids").value = ids;';
-		$script[] = '        document.id("'.$this->id.'_count").value = count;';
-		$script[] = '        SqueezeBox.close();';
+		$script[] = '        document.getElementById("'.$this->id.'_ids").value = ids;';
+		$script[] = '        document.getElementById("'.$this->id.'_count").value = count;';
+		// $script[] = '        SqueezeBox.close();';
+		$script[] = '        $("#user-modal").modal("hide");';
 		$script[] = '    }';
 
 		// Add to document head
-		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
@@ -55,24 +59,32 @@ class JFormFieldModal_Users extends JFormField
 		$idlist = implode(',', $ids);
 
 		if (!empty($idlist)) {
-			$db = JFactory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('COUNT(id)');
 			$query->from('#__users');
 			$query->where('id IN ('.$idlist.')');
 			$db->setQuery($query);
 
-			$count = (int)$db->loadResult();
+			
 
-			if ($error = $db->getErrorMsg()) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+			// if ($error = $db->getErrorMsg()) {
+			// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+			// }
+			try
+			{
+				$count = (int)$db->loadResult();
+			}
+			catch (RuntimeException $e)
+			{			
+				\Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
 			}
 		} else {
 			$count = 0;
 		}
 
 	//	if (empty($count)) {
-	//		$count = JText::_('COM_JEM_SELECT_USERS');
+	//		$count = Text::_('COM_JEM_SELECT_USERS');
 	//	}
 	//	$count = htmlspecialchars($count, ENT_QUOTES, 'UTF-8');
 
@@ -80,8 +92,21 @@ class JFormFieldModal_Users extends JFormField
 		$html[] = '  <input type="text" id="'.$this->id.'_count" value="'.$count.'" disabled="disabled" size="4" />';
 
 		// The contact select button
-		$html[] = '    <a class="flyermodal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-					JText::_('COM_JEM_SELECT').'</a>';
+		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// 			Text::_('COM_JEM_SELECT').'</a>';
+		$html[] = HTMLHelper::_(
+			'bootstrap.renderModal',
+			'user-modal',
+			array(		
+				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'title'  => Text::_('COM_JEM_SELECT'),
+				'width'  => '800px',
+				'height' => '450px',
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+			)
+		);
+		$html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#user-modal">'.Text::_('COM_JEM_SELECT').'
+		</button>';
 
 		// class='required' for client side validation
 		$class = '';

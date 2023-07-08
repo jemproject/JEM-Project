@@ -1,21 +1,26 @@
 <?php
 /**
- * @version 2.3.6
-* @package JEM
-* @subpackage JEM Banner Module
-* @copyright (C) 2014-2019 joomlaeventmanager.net
-* @copyright (C) 2005-2009 Christoph Lukes
-* @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
-*/
+ * @version 4.0.0
+ * @package JEM
+ * @subpackage JEM Banner Module
+ * @copyright (C) 2014-2023 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
+$imagewidthmax   = (int)$params->get('imagewidthmax', 0);
 
 if ($flyer_link_type == 1) {
-	JHtml::_('behavior.modal', 'a.flyermodal');
+	// JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
 } elseif ($flyer_link_type == 0) {
 	$modal = 'notmodal';
@@ -23,11 +28,13 @@ if ($flyer_link_type == 1) {
 	$modal = '';
 }
 
-/*$module_name = 'mod_jem_banner';
+/*
+$uri = Uri::getInstance();
+$module_name = 'mod_jem_banner';
 $css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
 if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[JUri::base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css']);
-  $document->addStylesheet(JURI::base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
+  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css']);
+  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
 }*/
 
 $banneralignment = "jem-vertical-banner";
@@ -76,8 +83,8 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
   }
   
   #jemmodulebanner .jem-eventimg-banner img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
+    <?php echo ($imagewidthmax? 'width:' . $imagewidthmax .'px': 'max-width:'. $imagewidth); ?>;
+    height: <?php echo ($imagewidthmax? 'auto' : $imageheight); ?>;
   }
   
   @media not print {
@@ -137,42 +144,42 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                  *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
                  */
           ?>
-          <?php /* wenn kein Kalenderblatt angezeigt wird */ ?>
+          <?php /* when no calendar sheet is displayed */ ?>
           <?php if ($showcalendar == 0) : ?>
             <?php if ($item->date && $datemethod == 2) :?>
-              <div class="date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+              <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php endif; ?>
 
             <?php if ($item->date && $datemethod == 1) :?>
-              <div class="date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+              <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php if ($item->time && $datemethod == 1) :?>
-              <div class="time" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->time; ?>
               </div>
             <?php endif; ?>
             <?php endif; ?>
-          <?php /* wenn Kalenderblatt angezeigt wird */ ?>
+          <?php /* when calendar sheet is displayed */ ?>
           <?php else : ?>
-            <?php /* wenn Zeitdifferenz angezeigt werden soll */ ?>
+            <?php /* if time difference should be displayed */ ?>
             <?php if ($item->date && $datemethod == 2) : ?>
-              <div class="date" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+              <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                 <?php echo $item->date; ?>
               </div>
             <?php endif; ?>
 
-            <?php /* wenn Datum angezeigt werden soll */ ?>
+            <?php /* if date is to be displayed */ ?>
             <?php if ($item->time && $datemethod == 1) :?>
             <?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
-              <div class="time" title="<?php echo JText::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                 <?php echo $item->time; ?>
               </div>
             <?php endif; ?>
@@ -180,8 +187,8 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           
           <?php /*venue*/ ?>
           <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
-            <div class="venue-title" title="<?php echo JText::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-              <i class="fa fa-map-marker" aria-hidden="true"></i>
+            <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
+              <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
               <?php if ($item->venuelink) : ?>
                 <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
               <?php else : ?>
@@ -192,8 +199,8 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 
           <?php /*category*/ ?>
           <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
-            <div class="category" title="<?php echo JText::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-              <i class="fa fa-tag" aria-hidden="true"></i>
+            <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
+              <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
               <?php echo $item->catname; ?>
             </div>
           <?php endif; ?>
@@ -203,7 +210,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <div class="jem-eventimg-banner">
             <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
             <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="<?php echo $modal;?>"
-               title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : JText::_('MOD_JEM_BANNER_CLICK_TO_ENLARGE'); ?> ">
+               title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('MOD_JEM_BANNER_CLICK_TO_ENLARGE'); ?> ">
               <img class="<?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
             </a>
           </div>
@@ -215,9 +222,9 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           </div>    
           <?php if (isset($item->link)) : ?>
             <div class="jem-readmore-banner">   
-              <a href="<?php echo $item->link ?>" title="<?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+              <a href="<?php echo $item->link ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
                 <!--<button class="jem-btn btn">-->
-                <?php echo JText::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
+                <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
                 <!--</button>-->
               </a>
             </div>
@@ -231,7 +238,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 			<?php endif; ?>
 		<?php endforeach; ?>
 	<?php else : ?>
-		<?php echo JText::_('MOD_JEM_BANNER_NO_EVENTS'); ?>
+		<?php echo Text::_('MOD_JEM_BANNER_NO_EVENTS'); ?>
 	<?php endif; ?>
 	</div>
 </div>

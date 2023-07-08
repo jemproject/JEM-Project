@@ -1,15 +1,18 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
+
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 
 /**
@@ -53,36 +56,36 @@ class JemImage
 		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_NOT_BOXED, -1)) {
 
 			//only admins will see these errors
-			if (JFactory::getUser()->authorise('core.manage')) {
+			if (Factory::getApplication()->getIdentity()->authorise('core.manage')) {
 
 				// if there was an error, let's see what the error is about
 				switch ($image->error) {
 				case 1:
-					JFactory::getApplication()->enqueueMessage("Source file $name could not be found!", 'warning');
+					Factory::getApplication()->enqueueMessage("Source file $name could not be found!", 'warning');
 					break;
 				case 2:
-					JFactory::getApplication()->enqueueMessage("Source file $name is not readable!", 'warning');
+					Factory::getApplication()->enqueueMessage("Source file $name is not readable!", 'warning');
 					break;
 				case 3:
-					JFactory::getApplication()->enqueueMessage("Could not write target file $filename !", 'warning');
+					Factory::getApplication()->enqueueMessage("Could not write target file $filename !", 'warning');
 					break;
 				case 4:
-					JFactory::getApplication()->enqueueMessage('Unsupported source file format!', 'warning');
+					Factory::getApplication()->enqueueMessage('Unsupported source file format!', 'warning');
 					break;
 				case 5:
-					JFactory::getApplication()->enqueueMessage('Unsupported target file format!', 'warning');
+					Factory::getApplication()->enqueueMessage('Unsupported target file format!', 'warning');
 					break;
 				case 6:
-					JFactory::getApplication()->enqueueMessage('GD library version does not support target file format!', 'warning');
+					Factory::getApplication()->enqueueMessage('GD library version does not support target file format!', 'warning');
 					break;
 				case 7:
-					JFactory::getApplication()->enqueueMessage('GD library is not installed!', 'warning');
+					Factory::getApplication()->enqueueMessage('GD library is not installed!', 'warning');
 					break;
 				case 8:
-					JFactory::getApplication()->enqueueMessage('"chmod" command is disabled via configuration', 'warning');
+					Factory::getApplication()->enqueueMessage('"chmod" command is disabled via configuration', 'warning');
 					break;
 				case 9:
-					JFactory::getApplication()->enqueueMessage('"exif_read_data" function is not available', 'warning');
+					Factory::getApplication()->enqueueMessage('"exif_read_data" function is not available', 'warning');
 					break;
 				}
 			}
@@ -216,7 +219,7 @@ class JemImage
 				$dimage['height'] = $iminfo[1];
 			}
 
-			if (JFile::exists(JPATH_SITE.'/'.$img_thumb)) {
+			if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
 				//get imagesize of the thumbnail
 				$thumbiminfo = @getimagesize($img_thumb);
 				$dimage['thumbwidth']  = $thumbiminfo[0];
@@ -233,38 +236,38 @@ class JemImage
 	{
 		$sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
 		$imagesize = $file['size'];
-		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
 
 		//check if the upload is an image...getimagesize will return false if not
 		if (!getimagesize($file['tmp_name'])) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
 			return false;
 		}
 
 		//check if the imagefiletype is valid
-		$fileext = strtolower(JFile::getExt($file['name']));
+		$fileext = strtolower(File::getExt($file['name']));
 
 		$allowable = explode(',', strtolower($filetypes));
 		array_walk($allowable, function(&$v){$v = trim($v);});
 		if (!in_array($fileext, $allowable)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
 			return false;
 		}
 
 		//Check filesize
 		if ($imagesize > $sizelimit) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
 			return false;
 		}
 
 		//XSS check
-		//$xss_check = JFile::read($file['tmp_name'], false, 256);
+		//$xss_check = File::read($file['tmp_name'], false, 256);
 		$xss_check = file_get_contents($file['tmp_name'], false, NULL, 0, 256);
 		$html_tags = array('abbr','acronym','address','applet','area','audioscope','base','basefont','bdo','bgsound','big','blackface','blink','blockquote','body','bq','br','button','caption','center','cite','code','col','colgroup','comment','custom','dd','del','dfn','dir','div','dl','dt','em','embed','fieldset','fn','font','form','frame','frameset','h1','h2','h3','h4','h5','h6','head','hr','html','iframe','ilayer','img','input','ins','isindex','keygen','kbd','label','layer','legend','li','limittext','link','listing','map','marquee','menu','meta','multicol','nobr','noembed','noframes','noscript','nosmartquotes','object','ol','optgroup','option','param','plaintext','pre','rt','ruby','s','samp','script','select','server','shadow','sidebar','small','spacer','span','strike','strong','style','sub','sup','table','tbody','td','textarea','tfoot','th','thead','title','tr','tt','ul','var','wbr','xml','xmp','!DOCTYPE', '!--');
 		foreach ($html_tags as $tag) {
 			// A tag is '<tagname ', so we need to add < and a space or '<tagname>'
 			if (stristr($xss_check, '<'.$tag.' ') || stristr($xss_check, '<'.$tag.'>')) {
-				\Joomla\CMS\Factory::getApplication()->enqueueMessage(JText::_('COM_JEM_WARN_IE_XSS'), 'warning');
+				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WARN_IE_XSS'), 'warning');
 				return false;
 			}
 		}
@@ -303,7 +306,7 @@ class JemImage
 
 		$now = rand();
 
-		while (JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+		while (File::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
 			$now++;
 		}
 

@@ -1,18 +1,21 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+
 ?>
-<div class="width-50 fltlft">
-	<div class="width-100">
-		<fieldset class="adminform">
-			<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CONFIGINFO'); ?></legend>
+<div class="width-100" style="padding: 10px 1vw;">
+    <div class="width-100" style="padding: 10px 1vw;">
+        <fieldset class="options-form">
+			<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CONFIGINFO'); ?></legend>
 			<br>
 			<table class="adminlist table">
 				<?php
@@ -37,30 +40,38 @@ defined('_JEXEC') or die;
 				                         ,'AcyMailing Tag : insert events from JEM 2.1+'
 				                                              => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
 				                         );
+                ?>
+                <tr>
+					<th><u><?php echo Text::_('COM_JEM_NAME'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_MAIN_CONFIG_VS'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_DATE'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_STATE'); ?></u></th>
+                </tr>
+                <?php
 				foreach ($known_extensions as $name => $label) {
 					if (!empty($this->config->$name)) { ?>
 					<tr>
-						<td><?php echo JText::_($label).': '; ?></td>
+						<td><?php echo Text::_($label).': '; ?></td>
 						<td><b><?php echo $this->config->$name->version; ?></b></td>
 						<td><?php echo $this->config->$name->creationDate; ?></td>
-						<td><?php echo empty($this->config->$name->enabled) ? JText::_('COM_JEM_DISABLED') : ''; ?></td>
+						<td><?php echo empty($this->config->$name->enabled) ? Text::_('COM_JEM_DISABLED') : ''; ?></td>
 					</tr>
 					<?php
 					}
 				}
 				?>
 					<tr>
-						<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PHP').': '; ?></td>
+						<td><?php echo Text::_('COM_JEM_MAIN_CONFIG_VS_PHP').': '; ?></td>
 						<td colspan="3"><b><?php echo $this->config->vs_php; ?> </b></td>
 					</tr>
 					<?php if (!empty($this->config->vs_php_magicquotes)) : ?>
 					<tr>
-						<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PHP_MAGICQUOTES').': '; ?></td>
+						<td><?php echo Text::_('COM_JEM_MAIN_CONFIG_VS_PHP_MAGICQUOTES').': '; ?></td>
 						<td colspan="3"><b><?php echo $this->config->vs_php_magicquotes; ?> </b></td>
 					</tr>
 					<?php endif; ?>
 					<tr>
-						<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_GD').': '; ?></td>
+						<td><?php echo Text::_('COM_JEM_MAIN_CONFIG_VS_GD').': '; ?></td>
 						<td colspan="3"><b><?php echo $this->config->vs_gd; ?> </b></td>
 					</tr>
 				</table>

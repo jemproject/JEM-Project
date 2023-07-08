@@ -1,17 +1,22 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * JEM Event Table
  */
-class JemTableEvent extends JTable
+class JemTableEvent extends Table
 {
 	public function __construct(&$db)
 	{
@@ -24,11 +29,13 @@ class JemTableEvent extends JTable
 	public function bind($array, $ignore = '')
 	{
 		// in here we are checking for the empty value of the checkbox
-
+		
 		if (!isset($array['registra'])) {
 			$array['registra'] = 0 ;
 		}
-
+		if(isset($array['contactid'])){
+			$array['contactid'] = (int) $array['contactid'];
+		}
 		if (!isset($array['unregistra'])) {
 			$array['unregistra'] = 0 ;
 		}
@@ -78,10 +85,10 @@ class JemTableEvent extends JTable
 	 */
 	public function check()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		if (trim($this->title) == '') {
-			$this->setError(JText::_('COM_JEM_EVENT_ERROR_NAME'));
+			$this->setError(Text::_('COM_JEM_EVENT_ERROR_NAME'));
 			return false;
 		}
 
@@ -93,7 +100,7 @@ class JemTableEvent extends JTable
 		if (empty($this->alias)) {
 			$this->alias = JemHelper::stringURLSafe($this->title);
 			if (trim(str_replace('-', '', $this->alias)) == '') {
-				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+				$this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
 
@@ -108,7 +115,8 @@ class JemTableEvent extends JTable
 
 
 		// Dates
-		$nullDate = JFactory::getDbo()->getNullDate();
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$nullDate = $db->getNullDate();
 
 		if (empty($this->enddates) || ($this->enddates == $nullDate)) {
 			$this->enddates = null;
@@ -149,7 +157,7 @@ class JemTableEvent extends JTable
 		}
 
 		if ($date1 > $date2) {
-			$this->setError(JText::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
+			$this->setError(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
 			return false;
 		}
 
@@ -161,25 +169,31 @@ class JemTableEvent extends JTable
 	 */
 	public function store($updateNulls = true)
 	{
-		$date        = JFactory::getDate();
+		
+		$date        = Factory::getDate();
 		$user        = JemFactory::getUser();
 		$userid      = $user->get('id');
-		$app         = JFactory::getApplication();
+		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 
 		// Check if we're in the front or back
-		if ($app->isAdmin()) {
+		if ($app->isClient('administrator')) {
 			$backend = true;
 		} else {
 			$backend = false;
 		}
-
 		if ($this->id) {
 			// Existing event
 			$this->modified = $date->toSql();
 			$this->modified_by = $userid;
 		} else {
+			$this->modified = null;
+			if(empty($this->created_by_alias))
+				$this->created_by_alias='';
+			if(empty($this->language))
+				$this->language='';
+
 			// New event
 			if (!intval($this->created)) {
 				$this->created = $date->toSql();
@@ -192,7 +206,7 @@ class JemTableEvent extends JTable
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/events/';
-		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
 		$allowable = explode(',', strtolower($filetypes));
 		array_walk($allowable, function(&$v){$v = trim($v);});
 		$image_to_delete = false;
@@ -213,6 +227,7 @@ class JemTableEvent extends JTable
 
 				if (!empty($file['name'])) {
 					// only on first event, skip on recurrence events
+					
 					if (empty($this->recurrence_first_id)) {
 						//check the image
 						$check = JemImage::check($file, $jemsettings);
@@ -256,7 +271,7 @@ class JemTableEvent extends JTable
 				$this->published = 0;
 			}
 		}
-
+		
 		// item must be stored BEFORE image deletion
 		$ret = parent::store($updateNulls);
 		if ($ret && $image_to_delete) {
@@ -277,9 +292,10 @@ class JemTableEvent extends JTable
 	 */
 	public function insertIgnore($updateNulls = false)
 	{
-		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if (!$ret) {
-			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+		try {
+			$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		} catch (RuntimeException $e){
+			$this->setError(get_class($this).'::store failed - '.$e->getMessage());
 			return false;
 		}
 		return true;
@@ -350,7 +366,7 @@ class JemTableEvent extends JTable
 				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -370,14 +386,22 @@ class JemTableEvent extends JTable
 		$query->update($this->_db->quoteName($this->_tbl));
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
-		$this->_db->setQuery($query . $checkin);
-		$this->_db->execute();
+		
 
 		// Check for a database error.
 		// TODO: use exception handling
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// if ($this->_db->getErrorNum()) {
+		// 	$this->setError($this->_db->getErrorMsg());
+		// 	return false;
+		// }
+		try
+		{
+			$this->_db->setQuery($query . $checkin);
+			$this->_db->execute();
+		}
+		catch (RuntimeException $e)
+		{			
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
@@ -388,7 +412,7 @@ class JemTableEvent extends JTable
 			}
 		}
 
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		// If the Table instance value is in the list of primary keys that were set, set the instance.
 		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}
@@ -415,7 +439,7 @@ class JemTableEvent extends JTable
 		$id = $this->id;
 
 		if (parent::delete($pk)) {
-			$db = JFactory::getDbo();
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
 			$query->where('itemid = '.$db->quote($id));

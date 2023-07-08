@@ -1,80 +1,105 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2022 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-JHtml::_('behavior.keepalive');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.calendar');
-JHtml::_('behavior.formvalidation');
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
+// HTMLHelper::_('behavior.keepalive');
+// HTMLHelper::_('behavior.tooltip');
+// HTMLHelper::_('behavior.calendar');
+// HTMLHelper::_('behavior.formvalidation');
+
+$app = Factory::getApplication();
+$document = $app->getDocument();
+$wa = $document->getWebAssetManager();
+		$wa->useScript('keepalive')
+			->useScript('form.validate');
+			//->useScript('behavior.calendar');
 
 // Create shortcut to parameters.
 $params		= $this->params;
-$settings	= json_decode($this->item->attribs);
+// $settings	= json_decode($this->item->attribs);
+
 ?>
 
 <script type="text/javascript">
-window.addEvent('domready', function(){
-	checkmaxplaces();
-});
+	jQuery(document).ready(function($){
+		
+		// window.onload = (event) => {
+		// // window.addEvent('domready', function(){
+		// 	checkmaxplaces();
+		// }
 
-	function checkmaxplaces(){
-		var maxplaces = $('jform_maxplaces');
+		function checkmaxplaces(){
+			var maxplaces = $('jform_maxplaces');
 
-		if (maxplaces != null){
-			$('jform_maxplaces').addEvent('change', function(){
-				if ($('event-available')) {
-					var val = parseInt($('jform_maxplaces').value);
-					var booked = parseInt($('event-booked').value);
-					$('event-available').value = (val-booked);
-				}
-			});
+			if (maxplaces != null){
+				$('#jform_maxplaces').on('change', function(){
+					if ($('#event-available')) {
+						var val = parseInt($('#jform_maxplaces').val());
+						var booked = parseInt($('#event-booked').val());
+						$('event-available').val() = (val-booked);
+					}
+				});
 
-			$('jform_maxplaces').addEvent('keyup', function(){
-				if ($('event-available')) {
-					var val = parseInt($('jform_maxplaces').value);
-					var booked = parseInt($('event-booked').value);
-					$('event-available').value = (val-booked);
-				}
-			});
+				$('#jform_maxplaces').on('keyup', function(){
+					if ($('event-available')) {
+						var val = parseInt($('jform_maxplaces').val());
+						var booked = parseInt($('event-booked').val());
+						$('event-available').val() = (val-booked);
+					}
+				});
+			}
 		}
-	}
+		checkmaxplaces();
+	});
 </script>
 <script type="text/javascript">
 	Joomla.submitbutton = function(task) {
-		if (task == 'event.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
-			<?php echo $this->form->getField('articletext')->save(); ?>
+		if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
+			<?php //echo $this->form->getField('articletext')->save(); ?>
 			Joomla.submitform(task);
 		} else {
-			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
+			alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 		}
 	}
 </script>
 <script type="text/javascript">
-window.addEvent('domready', function(){
-	$("jform_unregistra").addEvent('change', showUnregistraUntil);
+// window.addEvent('domready', function(){
+// window.onload = (event) => {
+	jQuery(document).ready(function($){
+		var showUnregistraUntil = function(){
+			var unregistra = $("#jform_unregistra");
+			// var unregistramode = unregistra.options[unregistra.selectedIndex].val();
+			var unregistramode = unregistra.val();
 
-	showUnregistraUntil();
-});
+			if (unregistramode == 2) {
+				document.getElementById('jform_unregistra_until').style.display = '';
+				document.getElementById('jform_unregistra_until2').style.display = '';
+			} else {
+				document.getElementById('jform_unregistra_until').style.display = 'none';
+				document.getElementById('jform_unregistra_until2').style.display = 'none';
+			}
+		}
 
-function showUnregistraUntil()
-{
-	var unregistra = $("jform_unregistra");
-	var unregistramode = unregistra.options[unregistra.selectedIndex].value;
+		$("#jform_unregistra").on('change', showUnregistraUntil);
+		showUnregistraUntil();
+	})
 
-	if (unregistramode == 2) {
-		document.getElementById('jform_unregistra_until').style.display = '';
-		document.getElementById('jform_unregistra_until2').style.display = '';
-	} else {
-		document.getElementById('jform_unregistra_until').style.display = 'none';
-		document.getElementById('jform_unregistra_until2').style.display = 'none';
-	}
-}
+	
+// }
+
+
 </script>
 
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">
@@ -85,10 +110,10 @@ function showUnregistraUntil()
 		</h1>
 		<?php endif; ?>
 
-		<form enctype="multipart/form-data" action="<?php echo JRoute::_('index.php?option=com_jem&a_id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+		<form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-				<button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo JText::_('JSAVE') ?></button>
-				<button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
+				<button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
+				<button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
 
 		<br>
 			<?php if ($this->item->recurrence_type > 0) : ?>
@@ -97,13 +122,13 @@ function showUnregistraUntil()
 					<?php echo JemOutput::recurrenceicon($this->item, false, false); ?>
 				</div>
 				<div class="floattext" style="margin-left:36px;">
-					<strong><?php echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
+					<strong><?php echo Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
 					<br>
 					<?php
 						if (!empty($this->item->recurrence_type) && empty($this->item->recurrence_first_id)) {
-							echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
+							echo nl2br(Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
 						} else {
-							echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TEXT'));
+							echo nl2br(Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TEXT'));
 						}
 					?>
 				</div>
@@ -116,14 +141,16 @@ function showUnregistraUntil()
 			</div>
 			<?php endif; ?>
 
-			<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
+			<?php //echo HTMLHelper::_('tabs.start', 'det-pane'); ?>
 
 			<!-- DETAILS TAB -->
 
-			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab' ); ?>
+			<?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab' ); ?>
+			<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'editevent-infotab', 'recall' => true, 'breakpoint' => 768]); ?>
+			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-infotab', Text::_('COM_JEM_EDITEVENT_INFO_TAB')); ?>
 
 			<fieldset>
-				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
+				<legend><?php echo Text::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
 					<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('title'); ?><?php echo $this->form->getInput('title'); ?></li>
 					<?php if (is_null($this->item->id)):?>
@@ -139,7 +166,7 @@ function showUnregistraUntil()
 				</ul>
 			</fieldset>
 			<fieldset>
-				<legend><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>
+				<legend><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>
 
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('articletext'); ?>
@@ -149,7 +176,7 @@ function showUnregistraUntil()
 	<!-- IMAGE -->
 	<?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
 	<fieldset class="jem_fldst_image">
-		<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
 		if ($this->item->datimage) :
 			echo JemOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
@@ -163,42 +190,52 @@ function showUnregistraUntil()
 				<?php echo $this->form->getLabel('userfile'); ?> <?php echo $this->form->getInput('userfile'); ?>
 			</li>
 			<li>
-				<button type="button" class="button3" onclick="document.getElementById('jform_userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
+				<button type="button" class="button3" onclick="document.getElementById('jform_userfile').val() = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button>
 </li>
 	<?php
 				if ($this->item->datimage) :
-					echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => JText::_('COM_JEM_REMOVE_IMAGE')));
+					echo HTMLHelper::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE')));
 
 				endif;
 				?>
 		<input type="hidden" name="removeimage" id="removeimage" value="0" />
 
-			</li>
 		</ul>
 		<?php endif; ?>
 	</fieldset>
 	<?php endif; ?>
 
 			<!-- EXTENDED TAB -->
-			<?php echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-extendedtab', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB')); ?>
+			<?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
 			<?php echo $this->loadTemplate('extended'); ?>
 
 			<!-- PUBLISH TAB -->
-
-			<?php  echo JHtml::_('tabs.panel', JText::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-publishtab', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB')); ?>
+			<?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
 			<?php echo $this->loadTemplate('publish'); ?>
 
 			<!-- ATTACHMENTS TAB -->
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
 			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
-			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
+			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
+			<?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
 			<?php endif; ?>
 
 			<!-- OTHER TAB -->
-			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
+			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
+			<?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
 			<?php echo $this->loadTemplate('other'); ?>
 
-			<?php echo JHtml::_('tabs.end'); ?>
+
+			<?php //echo HTMLHelper::_('tabs.end'); ?>
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 			<input type="hidden" name="task" value="" />
 			<input type="hidden" name="return" value="<?php echo $this->return_page;?>" />
@@ -206,7 +243,7 @@ function showUnregistraUntil()
 			<?php if($this->params->get('enable_category', 0) == 1) :?>
 			<input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1);?>"/>
 			<?php endif;?>
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</form>
 	</div>
 

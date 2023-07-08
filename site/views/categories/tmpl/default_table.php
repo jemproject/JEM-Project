@@ -1,17 +1,19 @@
 <?php
 /**
- * @version 2.3.6
+ * @version 4.0.0
  * @package JEM
- * @copyright (C) 2013-2021 joomlaeventmanager.net
+ * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 ?>
 
 <div class="table-responsive">
-	<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 		<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -33,28 +35,28 @@ defined('_JEXEC') or die;
 
 		<thead>
 			<tr>
-				<th id="jem_date_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_DATE'); ?></th>
+				<th id="jem_date_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_DATE'); ?></th>
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
-				<th id="jem_title_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></th>
+				<th id="jem_title_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
-				<th id="jem_location_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></th>
+				<th id="jem_location_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-				<th id="jem_city_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_CITY'); ?></th>
+				<th id="jem_city_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_CITY'); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-				<th id="jem_state_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_STATE'); ?></th>
+				<th id="jem_state_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_STATE'); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcat == 1) : ?>
-				<th id="jem_category_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></th>
+				<th id="jem_category_cat<?php echo $this->catrow->id; ?>" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></th>
 				<?php endif; ?>
 			</tr>
 		</thead>
 
 		<tbody>
 			<?php if (empty($this->catrow->events)) : ?>
-				<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+				<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->catrow->events as $row) : ?>
