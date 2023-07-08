@@ -26,10 +26,6 @@ $options = array(
 	'useCookie' => true, // this must not be a string. Don't use quotes.
 );
 
-// Update Warning on JEM CP.
-$application = JFactory::getApplication();
-$application->enqueueMessage(JText::_('COM_JEM_JEM4_INFORMATION'), 'warning');
-
 ?>
 <style>
 	.jem-wei-menus .card{
