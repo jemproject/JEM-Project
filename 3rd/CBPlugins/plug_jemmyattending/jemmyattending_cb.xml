@@ -2,13 +2,13 @@
 <cbinstall version="1.9" type="plugin" group="user">
 	<name>JEM MyAttending</name>
 	<author>JEM Community</author>
-	<creationDate>April 2023</creationDate>
+	<creationDate>July 2023</creationDate>
 	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<version>2.0</version>
-	<release>2.3.10</release>
+	<version>4.0</version>
+	<release>4.0.0</release>
 	<description>This plugin will show events where the user is attending.</description>
 	<files>
 		<filename plugin="jemmyattending_cb">jemmyattending_cb.php</filename>
