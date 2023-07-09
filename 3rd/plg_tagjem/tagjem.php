@@ -1,10 +1,11 @@
 <?php
 /**
- * version 4.0b4
+ * version 4.0.0
+ * JEM Tag Plugin for AcyMailing 5.x
  * @copyright (C) 2014 Ghost Art digital media.
  * @copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
- * @license   https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
- * Based on Eventlist11 tag and JEM specific code by JEM Community
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * Based on Eventlist tag and JEM specific code by JEM Community
  */
 
 defined('_JEXEC') or die('Restricted access');
