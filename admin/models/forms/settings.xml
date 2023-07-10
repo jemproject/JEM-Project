@@ -268,7 +268,7 @@
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="2">COM_JEM_OPTIONAL</option>
+			<option value="2">COM_JEM_USE_EVENT_SETTING</option>
 		</field>
 		<!--field name="showfrounregistra" type="list"
 			label="COM_JEM_SUBMIT_UNREGISTER"
