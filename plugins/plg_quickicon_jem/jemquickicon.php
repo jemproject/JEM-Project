@@ -39,7 +39,7 @@ class plgQuickiconJEMquickicon extends JPlugin
         $icon     = 'com_jem/icon-48-home.png'; // which means '/media/com_jem/images/icon-48-home.png'
         $text     = $this->params->get('displayedtext');
         if (empty($text)) {
-            $text = Text::_('COM_JEM_JEM_FULLNAME');
+            $text = Text::_('Joomla Event Manager');
         }
 
         return array(
