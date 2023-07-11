@@ -1205,10 +1205,50 @@ class JemOutput
 			} else {
 				// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 				$url = $uri->base().$image['original'];
-				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
+				$icon = '<img class="lightbox-image" src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '
+				<style>
+					.lightbox-overlay {
+						position: fixed;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						background-color: rgba(0, 0, 0, 0.8);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						z-index: 9999;
+					}
+					
+					.lightbox-content {
+						max-width: 90%;
+						max-height: 90%;
+					}
+				</style>';
+				$output .= '<div class="lightbox-container"><div class="flyerimage">'.$icon.'</div></div>';
+				$output .= '
+				<script>
+  $(function() {
+    $(".jem-img").on("click", ".lightbox-image", function(event) {
+      event.stopPropagation();
+      var imageSource = $(this).attr("src");
+      var largeImageSource = imageSource.replace(\'/small/\', \'/\');
+        
+      // Remove any existing lightbox overlays
+      $(".lightbox-overlay").remove();
 
-				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
+      var lightboxHtml = \'<div class="lightbox-overlay"><img class="lightbox-content" src="\' + largeImageSource + \'"></div>\';
+
+      $(this).closest(".jem-img").append(lightboxHtml);
+
+      $(".lightbox-overlay").on("click", function() {
+        $(this).remove();
+      });
+    });
+  });
+</script>
+';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
