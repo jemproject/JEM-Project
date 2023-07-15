@@ -39,7 +39,7 @@ class JemOutput
 		if ($app->input->get('print','','int')) {
 			return;
 		} else {
-			echo '<font color="grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+			echo '<span style="color: grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></span>';
 		}
 	}
 
@@ -1196,7 +1196,7 @@ class JemOutput
 
 		// Does a thumbnail exist?
 		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-			// get size of original image
+			// get size of original image			
 			list($imagewidth, $imageheight) = getimagesize($uri->base().$image['original']);
 			
 			// if "Enable Pop Up Thumbnail" is disabled
@@ -1208,24 +1208,22 @@ class JemOutput
 			// if "Enable Pop Up Thumbnail" is enabled and lightbox disabled
 			elseif (($settings->gddisabled == 1) && ($settings->lightbox == 0)) {
 				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='. $imagewidth.',height='.$imageheight.',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
-
 				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			}
-				
+
 			// if "Enable Pop Up Thumbnail" and lightbox are enabled
 			elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
 				$url = $uri->base().$image['original'];
 				$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" title="'.$info.'"';
 				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-  				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
+				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
 			$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
-
 		return $output;
 	}
 
