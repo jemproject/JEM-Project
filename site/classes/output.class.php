@@ -42,7 +42,45 @@ class JemOutput
 			echo '<span style="color: grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></span>';
 		}
 	}
+	
+	
+/**
+ * Writes stlyes and JS for lightbox.
+ */
+static public function lightbox()
+{	$settings = JemHelper::config();
+	$app = Factory::getApplication();
+	if (($settings->gddisabled == 1) && ($settings->lightbox == 1))
+	{
+		echo '<!--  styles and JS for lightbox -->
+		<div class="lightbox-overlay">
+			<div class="lightbox-content">
+				<img class="lightbox-image" src="" alt="Full Size Image" />
+			</div>
+		</div>
+    		
+		<script>
+			$(document).ready(function() {
+    		// Open lightbox when thumbnail image is clicked
+      		$(\'a[rel="lightbox"]\').click(function(e) {
+       			e.preventDefault();
+    			var imageUrl = $(this).attr(\'href\');
+       			$(\'.lightbox-image\').attr(\'src\', imageUrl);
+       			$(\'.lightbox-overlay\').fadeIn();
+    		});
 
+      		// Close lightbox when overlay is clicked
+   			$(\'.lightbox-overlay\').click(function() {
+       			$(\'.lightbox-overlay\').fadeOut();
+   			});
+   		});
+		</script>';
+		}
+	else {
+  		return;
+	}
+}
+	
 	/**
 	 * Creates the button bar shown on frontend view's top right corner.
 	 *
