@@ -435,5 +435,27 @@ if ($jemsettings->oldevent > 0) {
 	</div>
 </div>
 
-<?php }
-?>
+<?php } ?>
+
+<div class="lightbox-overlay">
+	<div class="lightbox-content">
+		<img class="lightbox-image" src="" alt="Full Size Image" />
+	</div>
+</div>
+     		
+<script>
+    $(document).ready(function() {
+      // Open lightbox when thumbnail image is clicked
+      $('a[rel="lightbox"]').click(function(e) {
+        e.preventDefault();
+        var imageUrl = $(this).attr('href');
+        $('.lightbox-image').attr('src', imageUrl);
+        $('.lightbox-overlay').fadeIn();
+      });
+
+      // Close lightbox when overlay is clicked
+      $('.lightbox-overlay').click(function() {
+        $('.lightbox-overlay').fadeOut();
+      });
+    });
+  </script>
