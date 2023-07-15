@@ -35,7 +35,7 @@ use Joomla\CMS\Language\Text;
                 <?php echo Text::_("COM_JEM_IMPORT_COLUMNNAMESVENUES"); ?><br />
                 <?php echo Text::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
             </div>
-            <hr>
+            <hr />
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_VENUES'));?></strong></legend>
@@ -51,7 +51,7 @@ use Joomla\CMS\Language\Text;
                     <input type="submit" id="venue-file-upload-submit" value="<?php echo Text::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvvenuesimport';return true;"/>
                 </fieldset>
             </div>
-            <hr>
+            <hr />
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_CATEGORIES'));?></strong></legend>
@@ -69,7 +69,7 @@ use Joomla\CMS\Language\Text;
                 </fieldset>
                 <div class="clr"></div>
             </div>
-            <hr>
+            <hr />
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_EVENTS'));?></strong></legend>
@@ -86,7 +86,7 @@ use Joomla\CMS\Language\Text;
                 </fieldset>
                 <div class="clr"></div>
             </div>
-            <hr>
+            <hr />
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_CAT_EVENTS'));?></strong></legend>
