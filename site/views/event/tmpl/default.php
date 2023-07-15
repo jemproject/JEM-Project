@@ -407,4 +407,7 @@ if ($jemsettings->oldevent > 0) {
 </div>
 
 <?php }
+
+echo JemOutput::lightbox();
 ?>
+
