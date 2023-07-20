@@ -52,28 +52,12 @@ static public function lightbox()
 	$app = Factory::getApplication();
 	if (($settings->gddisabled == 1) && ($settings->lightbox == 1))
 	{
-		echo '<!--  styles and JS for lightbox -->
-		<div class="lightbox-overlay">
-			<div class="lightbox-content">
-				<img class="lightbox-image" src="" alt="Full Size Image" />
-			</div>
-		</div>
-    		
-		<script>
-			$(document).ready(function() {
-    		// Open lightbox when thumbnail image is clicked
-      		$(\'a[rel="lightbox"]\').click(function(e) {
-       			e.preventDefault();
-    			var imageUrl = $(this).attr(\'href\');
-       			$(\'.lightbox-image\').attr(\'src\', imageUrl);
-       			$(\'.lightbox-overlay\').fadeIn();
-    		});
-
-      		// Close lightbox when overlay is clicked
-   			$(\'.lightbox-overlay\').click(function() {
-       			$(\'.lightbox-overlay\').fadeOut();
-   			});
-   		});
+		$document = Factory::getDocument();
+		$document->addStyleSheet(Uri::base() .'/media/com_jem/css/lightbox.min.css');
+		echo '<script src="' . Uri::base(true) . '/media/com_jem/js/lightbox.min.js"></script>
+			 <script>lightbox.option({
+   				   \'showImageNumberLabel\': false,
+   			 })
 		</script>';
 		}
 	else {
@@ -1234,8 +1218,6 @@ static public function lightbox()
 
 		// Does a thumbnail exist?
 		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-			// get size of original image			
-			list($imagewidth, $imageheight) = getimagesize($uri->base().$image['original']);
 			
 			// if "Enable Pop Up Thumbnail" is disabled
 			if ($settings->gddisabled == 0)	{
@@ -1253,10 +1235,10 @@ static public function lightbox()
 			// if "Enable Pop Up Thumbnail" and lightbox are enabled
 			elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
 				$url = $uri->base().$image['original'];
-				$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" title="'.$info.'"';
-				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
-
+				$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image" title="'.$info.'" data-title="'.$info.'"';
+				$icon = '<img class="example-thumbnail" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>'; 
+				
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
