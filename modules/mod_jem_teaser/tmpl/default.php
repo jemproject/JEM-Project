@@ -13,8 +13,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
 if ($params->get('use_modal', 0)) {
-	// JHtml::_('behavior.modal', 'a.flyermodal');
-	$modal = 'flyermodal';
+	echo JemOutput::lightbox();
+	$modal = 'lightbox';
 } else {
 	$modal = 'notmodal';
 }
@@ -59,13 +59,13 @@ if ($params->get('use_modal', 0)) {
 							<div>
               <?php if($item->showimageevent): ?>
                 <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
-                  <a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                  <a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal;?>" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                     <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
                 <?php endif; ?>
               <?php endif; ?>
               <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
                 <?php if(!empty($item->venueimage)) : ?>
-                  <a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                  <a href="<?php echo $item->venueimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal;?>" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                     <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
                 <?php endif; ?>
               <?php endif; ?>
