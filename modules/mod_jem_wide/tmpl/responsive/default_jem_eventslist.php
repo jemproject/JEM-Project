@@ -165,12 +165,9 @@ $jemsettings = JemHelper::config();
                   $image = '';
                 } 
 				echo JemOutput::lightbox();
-				
-				// create a random number as id to connect the event image and the venue image of one event into a lightbox gallery
-				$datalightbox = mt_rand(100000, 999999); 
 				?>
 				
-              <a href="<?php echo $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="<?php echo $datalightbox ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
+              <a href="<?php echo $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>"  data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
               <?php endif; ?>
                 <img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->fulltitle; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
               <?php if ($params->get('use_modal')) : ?>
@@ -182,7 +179,7 @@ $jemsettings = JemHelper::config();
           <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.png') === false)) : ?>
             <div class="jem-list-img" >
               <?php if ($params->get('use_modal')) : ?>
-                <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="<?php echo $datalightbox ?>"  title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
+                <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                 <?php endif; ?>
                   <img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
                 <?php if ($item->venuelink) : ?>
