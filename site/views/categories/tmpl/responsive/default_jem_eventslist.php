@@ -246,3 +246,4 @@ if (empty($this->catrow->events)) { return; }
 			<?php endforeach; ?>
   <?php endif; ?>
 </ul>
+<?php echo JemOutput::lightbox(); ?>
