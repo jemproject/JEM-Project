@@ -1197,7 +1197,7 @@ static public function lightbox()
 				$imagefile = $data->datimage;
 				$info = $data->title;
 				$precaption = Text::_('COM_JEM_EVENT');
-                $id = $data->id;
+                $id = 'eventid-'. $data->id;
 				break;
 
 			case 'category':
@@ -1205,7 +1205,7 @@ static public function lightbox()
 				$imagefile = $data->image;
 				$info = $data->catname;
 				$precaption = Text::_('COM_JEM_CATEGORY');
-				$id = $data->id;
+				$id = 'catid-'. $data->id;
 				break;
 
 			case 'venue':
@@ -1213,7 +1213,7 @@ static public function lightbox()
 				$imagefile = $data->locimage;
 				$info = $data->venue;
 				$precaption = Text::_('COM_JEM_VENUE');
-				$id = $data->locid;
+				$id = 'venueid-'. $data->id;
 				break;
 		}
 
