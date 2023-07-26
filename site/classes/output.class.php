@@ -1213,7 +1213,11 @@ static public function lightbox()
 				$imagefile = $data->locimage;
 				$info = $data->venue;
 				$precaption = Text::_('COM_JEM_VENUE');
-				$id = 'venueid-'. $data->id;
+				if (property_exists($data, 'locid')) {
+					$id = $data->locid;
+				} else {
+					$id = $data->id;
+				}
 				break;
 		}
 
