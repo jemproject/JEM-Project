@@ -65,7 +65,7 @@
 		/>
 		<field name="cats" type="catoptions"
 			multiple="true"
-			class="inputbox required"
+			class="inputbox required form-control"
 			size="4"
 			label="COM_JEM_EDITEVENT_FIELD_CATEGORIES"
 			labelclass=""
