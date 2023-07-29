@@ -126,8 +126,8 @@ Joomla.submitbutton = function(task)
                     </label>
                 </td>
                 <td>
-                    <input type="number" name="places" id="places" class="form-control inputbox" min="1" max="<?php echo $this->row->maxbookeduser;?>"
-                           value="<?php echo !empty($this->row->places) ? $this->row->places : '1'; ?>"
+                    <input type="number" name="places" id="places" min="0" max="<?php echo $this->row->maxbookeduser;?>"
+                           value="<?php echo !empty($this->row->places) ? $this->row->places : '0'; ?>"
                     />
                 </td>
             </tr>
