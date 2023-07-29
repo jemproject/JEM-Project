@@ -36,7 +36,7 @@ echo JHtml::_(
 		'title'  => Text::_('COM_JEM_SELECT'),
 		'width'  => '800px',
 		'height' => '450px',
-		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo Text::_('COM_JEM_CLOSE'); ?></button>'
+		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 	)
 );
 ?>
