@@ -28,7 +28,6 @@ body.com_jem.body-overlayed {
     overflow: auto;
 }
 
-
 /* ----- */
 
 #jem h1.componentheading i.fa,
@@ -274,6 +273,9 @@ body.com_jem.body-overlayed {
 #jem form input::-webkit-inner-spin-button {
     opacity: 1;
 }
+
+#jem .choose-status  {padding-right: 30px;}
+#jem .choose-status select#status {display: inline;}
 
 #jem .jem-sort-parts div::after {
     content: "";

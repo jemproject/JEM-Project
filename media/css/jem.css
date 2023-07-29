@@ -241,6 +241,9 @@ div#jem .venue_map {
     width: 100%;
 }
 
+#jem .choose-status  {padding-right: 30px;}
+#jem .choose-status select#status {display: inline;}
+
 /**
  * @section headers
  */

@@ -146,23 +146,11 @@ if (empty($form)) {
 		?>
 
         <div class="jem-row jem-justify-start valign-baseline">
-            <div style="padding-right:5px;">
-				<?php echo Text::_('COM_JEM_SELECT');?>
+            <div class="choose-status">
+				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo $form->getLabel('status'); ?> <?php echo $form->getInput('status'); ?>
             </div>
-            <div style="padding-right:10px;">
-				<?php echo $form->getLabel('status'); ?>
-            </div>
-            <div style="padding-right:10px;">
-				<?php echo $form->getInput('status'); ?>
-            </div>
-            <div style="padding-right:5px;">
-				<?php echo Text::_('COM_JEM_SELECT');?>
-            </div>
-            <div style="padding-right:10px;">
-				<?php echo Text::_('COM_JEM_PLACES'); ?>
-            </div>
-            <div style="padding-right:10px;">
-                <input id="places" name="places" type="number" style="text-align: center; width:auto;"  value="0" max="<?php echo ($placesavailableuser>0? $placesavailableuser:($placesavailableus?? '')); ?>" min="0">
+            <div class="choose-places">
+				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?> <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="1" max="<?php echo ($placesavailableuser>0? $placesavailableuser:($placesavailableus?? '')); ?>" min="1">
             </div>
         </div>
 
