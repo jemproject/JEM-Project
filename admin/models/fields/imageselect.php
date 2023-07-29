@@ -91,7 +91,7 @@ class JFormFieldImageselect extends JFormFieldList
 					'title'  => Text::_('COM_JEM_UPLOAD'),
 					'width'  => '650px',
 					'height' => '500px',
-					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 				)
 			);
 			$html[] ='<button type="button" class="btn btn-primary btn-margin" data-bs-toggle="modal"  data-bs-target="#imageupload-modal">'.Text::_('COM_JEM_UPLOAD').'
@@ -108,7 +108,7 @@ class JFormFieldImageselect extends JFormFieldList
 				'title'  => Text::_('COM_JEM_SELECTIMAGE'),
 				'width'  => '650px',
 				'height' => '500px',
-				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 			)
 		);
 		$html[] = "<button type=\"button\" class=\"btn btn-primary btn-margin\" data-bs-toggle=\"modal\" data-bs-target=\"#imageselect-modal\">".Text::_('COM_JEM_SELECTIMAGE')."
