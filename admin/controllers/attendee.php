@@ -128,12 +128,12 @@ class JemControllerAttendee extends BaseController
 			{
 			case 'apply':
 				// Redirect back to the edit screen.
-				$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&event='.$row->event;
+				$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&eventid='.$row->event;
 				break;
 
 			case 'save2new':
 				// Redirect back to the edit screen for new record.
-				$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&event='.$row->event;
+				$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&eventid='.$row->event;
 				break;
 
 			default:
