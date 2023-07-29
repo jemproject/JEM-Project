@@ -254,7 +254,7 @@ div#page-parameters fieldset.adminform .el-spacer {
 }
 
 /* align radio buttons horizontally */
-.inputbox {
+.inputbox, .pointer {
     cursor: pointer;
 }
 
