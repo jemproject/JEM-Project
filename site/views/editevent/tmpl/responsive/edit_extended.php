@@ -184,7 +184,7 @@ use Joomla\CMS\Language\Text;
             <dd><?php echo $this->form->getInput('minbookeduser'); ?></dd>
             <dt><?php echo $this->form->getLabel('maxbookeduser'); ?></dt>
             <dd><?php echo $this->form->getInput('maxbookeduser'); ?></dd>
-            <dt><?php echo $this->form->getLabel('reservedplaces'); ?></dt>
+            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br></dt>
             <dd><?php echo $this->form->getInput('reservedplaces'); ?></dd>
             <dt><?php echo $this->form->getLabel('waitinglist'); ?></dt>
             <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
@@ -194,7 +194,7 @@ use Joomla\CMS\Language\Text;
                 <dt><?php echo $this->form->getLabel('invited'); ?></dt>
                 <dd><?php echo $this->form->getInput('invited'); ?></dd>
 			<?php endif; ?>
-            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><br></dt>
+            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br></dt>
             <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
 			<?php if ($this->item->maxplaces) : ?>
                 <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>
