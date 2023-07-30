@@ -175,7 +175,7 @@ if ($this->showRegForm && empty($this->print)) :
             <?php if ($this->item->requestanswer || $placesRegisteredUser) {?>
                 <p>
                     <?php if ($this->allowAnnulation || ($this->isregistered != 1)) : ?>
-                        <input type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
+                        <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
                             <?php if ($this->isregistered !== false && $statusRegistrationUser>0  && $placesavailableuser==0) { echo 'checked="checked"'; } ?>
                         />
                         <?php echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
