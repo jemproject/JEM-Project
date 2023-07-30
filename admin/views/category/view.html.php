@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -123,6 +123,6 @@ class JemViewCategory extends JemAdminView
 
 		ToolbarHelper::divider();
 		ToolbarHelper::inlinehelp();
-		ToolBarHelper::help('editcategories', true, 'https://www.joomlaeventmanager.net/');
+		ToolBarHelper::help('editcategories', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/categories/add-category');
 	}
 }

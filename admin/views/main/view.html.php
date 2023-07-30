@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -64,10 +64,10 @@ class JemViewMain extends JemAdminView
 
 		if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 			ToolbarHelper::preferences('com_jem');
-			ToolbarHelper::divider();
 		}
 
-		ToolbarHelper::help('home', true);
+        ToolBarHelper::divider();
+        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
 	}
 
 	/**

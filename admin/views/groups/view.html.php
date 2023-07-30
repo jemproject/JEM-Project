@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -88,7 +88,7 @@ class JemViewGroups extends JemAdminView
 		ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
 
 		ToolbarHelper::divider();
-		ToolbarHelper::help('listgroups', true);
+		ToolBarHelper::help('listgroups', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/groups');
 	}
 }
 ?>
