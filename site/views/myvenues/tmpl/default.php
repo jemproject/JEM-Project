@@ -8,27 +8,39 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 ?>
 
 <div id="jem" class="jem_myvenues<?php echo $this->pageclass_sfx;?>">
-	<div class="buttons">
-		<?php
-		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
-		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
-		?>
-	</div>
+    <?php if ($this->needLoginFirst) {
+        $uri = Uri::getInstance();
+        $returnUrl = $uri->toString();
+        $urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl); ?>
+        <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+                type="button"><?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?></button>
 
-	<?php if ($this->params->get('show_page_heading', 1)) : ?>
-		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_heading')); ?>
-		</h1>
-	<?php endif; ?>
+    <?php } else { ?>
+        <div class="buttons">
+            <?php
+            $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+            echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+            ?>
+        </div>
 
-	<!--table-->
-	<?php echo $this->loadTemplate('venues');?>
+        <?php if ($this->params->get('show_page_heading', 1)) : ?>
+            <h1 class="componentheading">
+                <?php echo $this->escape($this->params->get('page_heading')); ?>
+            </h1>
+        <?php endif; ?>
 
-	<!--footer-->
-	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
-	</div>
+        <!--table-->
+        <?php echo $this->loadTemplate('venues');?>
+
+        <!--footer-->
+        <div class="copyright">
+            <?php echo JEMOutput::footer( ); ?>
+        </div>
+    <?php } ?>
 </div>
