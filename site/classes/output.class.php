@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,7 +39,7 @@ class JemOutput
 		if ($app->input->get('print','','int')) {
 			return;
 		} else {
-			echo '<font color="grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+			echo '<span style="color: grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></span>';
 		}
 	}
 
@@ -267,7 +267,7 @@ class JemOutput
 					'title'  => Text::_('COM_JEM_SELECT'),
 					'width'  => '800px',
 					'height' => '450px',
-					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 				)
 			);
 			$output.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#adduser-modal" ' .  self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom'). '>' . $image . '</a>';
@@ -666,7 +666,7 @@ class JemOutput
 					'title'  => Text::_('COM_JEM_SELECT'),
 					'width'  => '800px',
 					'height' => '550px',
-					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 				)
 			);
 			$new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';

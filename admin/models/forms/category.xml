@@ -20,11 +20,13 @@
 			class="inputbox"
 			size="20"
 			label="COM_JEM_CATEGORY"
+			description="COM_JEM_CATEGORY"
 			required="true"
 		/>
 		<field name="alias" type="text"
 			class="inputbox" size="20"
 			label="COM_JEM_ALIAS"
+			description="COM_JEM_ALIAS"
 			required="false"
 			hint="JFIELD_ALIAS_PLACEHOLDER"
 		/>
@@ -33,6 +35,7 @@
 			default=""
 			size="8"
         	label="COM_JEM_CATEGORY_COLOR"
+        	description="COM_JEM_CATEGORY_COLOR"
 		/>
 		<field name="description" type="editor"
 			hide="pagebreak,readmore"
@@ -110,11 +113,13 @@
 	>
 		<field name="locid" type="modal_venue"
 			label="COM_JEM_VENUE"
+			description="COM_JEM_VENUE"
 			size="40"
 			required="false"
 		/>
 		<field name="contactid"  type="modal_contact"
 			label="COM_JEM_CONTACT"
+			description="COM_JEM_CONTACT"
 			size="40"
 			required="false"
 		/>
@@ -144,6 +149,7 @@
 			size="40"
 			label="COM_JEM_IMAGESELECT"
 			imagetype="categories"
+			description="COM_JEM_IMAGESELECT"
 		/>
 	</fieldset>
 

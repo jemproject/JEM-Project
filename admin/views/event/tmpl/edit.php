@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -319,11 +319,12 @@ Joomla.submitbutton = function(task)
                             <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
 							<?php if ($this->item->maxplaces): ?>
-                                <li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
-                                    <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
-                                </li>
+							<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
+                                <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
+							</li>
 							<?php endif; ?>
-                            <li></li>
+							<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
+							</li>
 						</ul>
 					</div>
 				</div>

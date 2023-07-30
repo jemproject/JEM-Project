@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -94,7 +94,7 @@ class JFormFieldVenue extends JFormFieldList
 				'title'  => Text::_('COM_JEM_SELECT_VENUE'),
 				'width'  => '800px',
 				'height' => '450px',
-				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 			)
 		);
 		$html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT_VENUE').'

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -723,7 +723,6 @@ class JemModelEvent extends ItemModel
 				}
 			}else{
 				$places = 0;
-				$errMsg = Text::_('COM_JEM_ERROR_REGISTRATION');
 			}
 		}
 
@@ -743,12 +742,9 @@ class JemModelEvent extends ItemModel
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-
-		if(empty($errMsg)){
-			$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
-		}
-		if (!$result && !empty($errMsg)) {
-			$this->setError($errMsg);
+		$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
+		if (!$result) {
+			$this->setError( Text::_('COM_JEM_ERROR_REGISTRATION'));
 		}
 
 		return $result;

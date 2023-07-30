@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,7 +36,7 @@ echo JHtml::_(
 		'title'  => Text::_('COM_JEM_SELECT'),
 		'width'  => '800px',
 		'height' => '450px',
-		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+		'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 	)
 );
 ?>
@@ -66,7 +66,8 @@ Joomla.submitbutton = function(task)
 
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=attendee'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
-	<fieldset><legend><?php echo Text::_('COM_JEM_DETAILS'); ?></legend>
+	<fieldset>
+		<h3><?php echo Text::_('COM_JEM_DETAILS'); ?></h3>
 		<?php if (!empty($this->row->id)) : ?>
 		<p>
 			<?php echo Text::_('COM_JEM_EDITATTENDEE_NOTICE'); ?>
@@ -75,36 +76,33 @@ Joomla.submitbutton = function(task)
 
 		<table  class="admintable">
 			<tr>
-				<td class="key" style="width:150px;">
+				<td class="key">
 					<label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EVENT'), Text::_('COM_JEM_EVENT_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_EVENT').':'; ?>
 					</label>
 				</td>
 				<td>
-					<input type="text" name="eventtitle" id="eventtitle" readonly="readonly"
+					<input type="text" name="eventtitle" id="eventtitle" class="form-control inputbox required valid form-control-success" readonly="readonly"
 					       value="<?php echo !empty($this->row->eventtitle) ? $this->row->eventtitle : '?'; ?>"
 					/>
 				</td>
 			</tr>
 			<tr>
-				<td class="key" style="width:150px;">
+				<td class="key">
 					<label for="username" <?php echo JemOutput::tooltip(Text::_('COM_JEM_USER'), Text::_('COM_JEM_USER_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_USER').':'; ?>
 					</label>
 				</td>
 				<td>
-					<input type="text" name="username" id="username" readonly="readonly" value="<?php echo $this->row->username; ?>" />
+					<input type="text" name="username" id="username" class="form-control inputbox required valid form-control-success" readonly="readonly" value="<?php echo $this->row->username; ?>" />
 					<input type="hidden" name="uid" id="uid" value="<?php echo $this->row->uid; ?>" />
-					<!-- <a class="usermodal" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-						<span><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
-					</a> -->
 					<a class="usermodal" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#user-modal">
-						<span><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
+						<span class="btn btn-primary"><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
 					</a>
 				</td>
 			</tr>
 			<tr>
-				<td class="key" style="width:150px;">
+				<td class="key">
 					<label for="status" <?php echo JemOutput::tooltip(Text::_('COM_JEM_STATUS'), Text::_('COM_JEM_STATUS_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_STATUS').':'; ?>
 					</label>
@@ -115,25 +113,27 @@ Joomla.submitbutton = function(task)
 					                 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATTENDEES_NOT_ATTENDING')),
 					                 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATTENDEES_ATTENDING')),
 						             HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
-					echo HTMLHelper::_('select.genericlist', $options, 'status', array('id' => 'reg_status', 'list.select' => $this->row->status));
+
+					$selectOptions = array('id' => 'reg_status', 'class' => 'form-select');
+					echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions);
 					?>
 				</td>
 			</tr>
             <tr>
-                <td class="key" style="width:150px;">
+                <td class="key">
                     <label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_ATTENDEES_PLACES').':'; ?>
                     </label>
                 </td>
                 <td>
-                    <input type="number" name="places" id="places" min="0" max="<?php echo $this->row->maxbookeduser;?>"
-                           value="<?php echo !empty($this->row->places) ? $this->row->places : '0'; ?>"
+                    <input type="number" name="places" id="places" class="form-control inputbox" min="<?php echo $this->row->minbookeduser;?>" max="<?php echo $this->row->maxbookeduser;?>"
+                           value="<?php echo !empty($this->row->places) ? $this->row->places : '1'; ?>"
                     />
                 </td>
             </tr>
 			<?php if (!empty($this->jemsettings->regallowcomments)): ?>
 			<tr>
-				<td class="key"  style="width:150px; vertical-align: baseline;">
+				<td class="key" vertical-align: baseline;">
 					<label for="comment" <?php echo JemOutput::tooltip(Text::_('COM_JEM_COMMENT'), Text::_('COM_JEM_COMMENT_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_COMMENT').':'; ?>
 					</label>
@@ -148,7 +148,7 @@ Joomla.submitbutton = function(task)
 			<?php endif; ?>
 			<?php if (1/*!$this->row->id*/): ?>
 			<tr>
-				<td class="key" style="width:150px;">
+				<td class="key">
 					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL').':'; ?>
 					</label>

@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `locimage` varchar(100) NOT NULL DEFAULT '',
   `map` tinyint(4) NOT NULL DEFAULT '0',
   `created_by` int(11) unsigned NOT NULL DEFAULT '0',
-  `author_ip` varchar(15) NOT NULL DEFAULT '',
+  `author_ip` varchar(39) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` datetime NULL DEFAULT NULL,
   `modified_by` int(11) unsigned NOT NULL DEFAULT '0',

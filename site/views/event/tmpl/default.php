@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -61,13 +61,13 @@ if ($jemsettings->oldevent > 0) {
 
 	<!-- Event -->
 	<h2 class="jem">
-        <div style="white-space: nowrap;">
+        <span style="white-space: nowrap;">
             <?php
             echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
             echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
             echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
             ?>
-        </div>
+        </span>
 	</h2>
 
 	<?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>

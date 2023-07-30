@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -74,12 +74,12 @@ if ($jemsettings->oldevent > 0) {
         ?>
         <dt class="jem-when hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHEN'); ?>"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
         <dd class="jem-when">
-            <div style="white-space: nowrap;">
+            <span style="white-space: nowrap;">
               <?php
               echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
               echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
               ?>
-            </div>
+            </span>
         </dd>
         <?php if ($this->item->locid != 0) : ?>
         <dt class="jem-where hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHERE'); ?>"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>

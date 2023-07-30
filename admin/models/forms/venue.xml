@@ -17,6 +17,7 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_VENUE"
+			description="COM_JEM_VENUE"
 			required="true"
 		/>
 		<field name="alias" type="text"
@@ -37,6 +38,7 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_STREET"
+			description="COM_JEM_STREET"
 		/>
 		<field name="locdescription" type="editor"
 			filter="safehtml"
@@ -51,33 +53,37 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_LATITUDE"
-			description="COM_JEM_LATITUDE_DESC"
+			description="COM_JEM_LATITUDE"
 		/>
 		<field name="longitude" type="text"
 			class="inputbox"
 			size="40"
 			label="COM_JEM_LONGITUDE"
-			description="COM_JEM_LONGITUDE_DESC"
+			description="COM_JEM_LONGITUDE"
 		/>
 		<field name="postalCode" type="text"
 			class="inputbox"
 			size="40"
 			label="COM_JEM_ZIP"
+			description="COM_JEM_ZIP"
 		/>
 		<field name="city" type="text"
 			class="inputbox"
 			size="40"
 			label="COM_JEM_CITY"
+			description="COM_JEM_CITY"
 		/>
 		<field name="state" type="text"
 			class="inputbox"
 			size="40"
 			label="COM_JEM_STATE"
+			description="COM_JEM_STATE"
 		/>
 		<field name="map" type="checkbox"
 			class="inputbox"
 			size="40"
 			label="COM_JEM_ENABLE_MAP"
+			description="COM_JEM_ENABLE_MAP"
 			value="1"
 			default="0"
 		/>

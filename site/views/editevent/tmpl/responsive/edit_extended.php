@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -194,7 +194,7 @@ use Joomla\CMS\Language\Text;
                 <dt><?php echo $this->form->getLabel('invited'); ?></dt>
                 <dd><?php echo $this->form->getInput('invited'); ?></dd>
 			<?php endif; ?>
-            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES') . ':';?></label><br></dt>
+            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><br></dt>
             <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
 			<?php if ($this->item->maxplaces) : ?>
                 <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>

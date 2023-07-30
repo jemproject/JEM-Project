@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version 4.0.1-dev1
  * @package JEM
  * @copyright (C) 2013-2023 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,7 +24,11 @@ $gdv = JEMImage::gdVersion();
 
 			<li><div class="label-form"><?php echo $this->form->renderfield('imagehight'); ?></div></li>
 
-			<li><div class="label-form"><?php echo $this->form->renderfield('imagewidth'); ?></div></li>
+			<li><?php echo $this->form->getLabel('imagewidth'); ?><span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_WARNING'), Text::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
+					<?php echo $this->WarningIcon(); ?>
+					<?php echo $this->form->getInput('imagewidth'); ?>
+				</span>
+			</li>
 
 			<?php if ($gdv && $gdv >= 2) : //is the gd library installed on the server and its version > 2? ?>
 				<li><div class="label-form"><?php echo $this->form->renderfield('gddisabled'); ?></div></li>
