@@ -195,7 +195,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
 		// Store it in the db
 		if (!$row->store()) {
-			Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+			\Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
 			return false;
 		}
 

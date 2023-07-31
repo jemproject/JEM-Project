@@ -63,12 +63,6 @@ class JFormFieldModal_Contact extends FormField
 		$query->where(array('id='.(int)$this->value));
 		$db->setQuery($query);
 
-		// $contact = $db->loadResult();
-
-		// if ($error = $db->getErrorMsg()) {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
-		// }
-
 		try
 		{
 			$contact = $db->loadResult();
@@ -84,12 +78,9 @@ class JFormFieldModal_Contact extends FormField
 		$contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
 
 		// The current contact input field
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" />';
+		$html[] = '  <input type="text" id="'.$this->id.'_name" class="form-control readonly inputbox valid form-control-success" value="'.$contact.'" style="display:inline-block;" disabled="disabled" size="35" />';
 
 		// The contact select button
-		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-		// 			Text::_('COM_JEM_SELECT').'</a>';
-
 		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'contact-modal',
@@ -101,9 +92,7 @@ class JFormFieldModal_Contact extends FormField
 				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 			)
 		);
-		$html[] ='<button type="button" class="btn btn-link"  data-bs-toggle="modal" data-bs-target="#contact-modal">'.Text::_('COM_JEM_SELECT').'
-		</button>';
-
+		$html[] ='<button type="button" class="btn btn-success button-select" data-bs-toggle="modal" data-bs-target="#contact-modal">'.Text::_('COM_JEM_SELECT').'</button>';
 
 		// The active contact id field
 		if (0 == (int)$this->value) {

@@ -14,11 +14,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
-// HTMLHelper::_('behavior.keepalive');
-// HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.calendar');
-// HTMLHelper::_('behavior.formvalidation');
-
 $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
@@ -29,17 +24,11 @@ $wa = $document->getWebAssetManager();
 // Create shortcut to parameters.
 $params		= $this->params;
 // $settings	= json_decode($this->item->attribs);
-
 ?>
 
 <script type="text/javascript">
 	jQuery(document).ready(function($){
 		
-		// window.onload = (event) => {
-		// // window.addEvent('domready', function(){
-		// 	checkmaxplaces();
-		// }
-
 		function checkmaxplaces(){
 			var maxplaces = $('jform_maxplaces');
 
@@ -64,6 +53,58 @@ $params		= $this->params;
 		checkmaxplaces();
 	});
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var $registraCheckbox = $('input[name="jform[registra]"]');
+        var $restOfContent = $(".jem-dl-rest").children("dd, dt");
+
+        $registraCheckbox.on("change", function () {
+            if ($(this).is(":checked")) {
+                $restOfContent.show();
+            } else {
+                $restOfContent.hide();
+            }
+        });
+
+        var $minBookedUserInput = $("#jform_minbookeduser");
+        var $maxBookedUserInput = $("#jform_maxbookeduser");
+        var $maxPlacesInput = $("#jform_maxplaces");
+        var $reservedPlacesInput = $("#jform_reservedplaces");
+
+        $minBookedUserInput
+            .add($maxBookedUserInput)
+            .add($maxPlacesInput)
+            .add($reservedPlacesInput)
+            .on("change", function () {
+                var minBookedUserValue = parseInt($minBookedUserInput.val());
+                var maxBookedUserValue = parseInt($maxBookedUserInput.val());
+                var maxPlacesValue = parseInt($maxPlacesInput.val());
+                var reservedPlacesValue = parseInt($reservedPlacesInput.val());
+
+                if (minBookedUserValue > maxPlacesValue) {
+                    $minBookedUserInput.val(maxPlacesValue);
+                }
+                if (maxBookedUserValue > maxPlacesValue) {
+                    $maxBookedUserInput.val(maxPlacesValue);
+                }
+                if (minBookedUserValue > maxBookedUserValue) {
+                    $minBookedUserInput.val(maxBookedUserValue);
+                }
+                if (maxBookedUserValue < minBookedUserValue) {
+                    $maxBookedUserInput.val(minBookedUserValue);
+                }
+                if (reservedPlacesValue > maxPlacesValue) {
+                    $reservedPlacesInput.val(maxPlacesValue);
+                }
+            });
+
+        // Trigger the change event on page load to initialize the state
+        $registraCheckbox.change();
+        $minBookedUserInput.change();
+    });
+</script>;
+
 <script type="text/javascript">
 	Joomla.submitbutton = function(task) {
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
@@ -91,15 +132,9 @@ $params		= $this->params;
 				document.getElementById('jform_unregistra_until2').style.display = 'none';
 			}
 		}
-
 		$("#jform_unregistra").on('change', showUnregistraUntil);
 		showUnregistraUntil();
-	})
-
-	
-// }
-
-
+	});
 </script>
 
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">

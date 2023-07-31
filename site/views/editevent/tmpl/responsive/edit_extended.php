@@ -171,6 +171,8 @@ use Joomla\CMS\Language\Text;
                 <dt><?php echo $this->form->getLabel('registra'); ?></dt>
                 <dd><?php echo $this->form->getInput('registra'); ?></dd>
 			<?php endif; ?>
+			</dl>
+			<dl class="adminformlist jem-dl jem-dl-rest">
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
                 <dt><?php echo $this->form->getLabel('reginvitedonly'); ?></dt>
                 <dd><?php echo $this->form->getInput('reginvitedonly'); ?></dd>

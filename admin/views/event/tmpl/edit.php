@@ -172,6 +172,7 @@ Joomla.submitbutton = function(task)
 
 </script>
 <script>
+    jQuery(document).ready(function($) {
     $(document).ready(function() {
         var $registraSelect = $('#jform_registra');
         var $restOfList = $registraSelect.closest('.adminformlist').find('li:not(:first-child)');
@@ -215,7 +216,8 @@ Joomla.submitbutton = function(task)
         // Trigger the change event on page load to initialize the state
         $registraSelect.change();
         $minBookedUserInput.change();
-    });
+    })}
+    ;
 </script>
 <form
 	action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"

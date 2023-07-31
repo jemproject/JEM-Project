@@ -350,9 +350,6 @@ class JemViewEditevent extends JemView
 		$limitstart       = $jinput->get('limitstart', '0', 'int');
 		$limit            = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
 
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-
 		// Load css
 		JemHelper::loadCss('jem');
 
