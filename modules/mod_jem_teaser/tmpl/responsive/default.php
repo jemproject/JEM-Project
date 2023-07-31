@@ -15,8 +15,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 if ($params->get('use_modal', 0)) {
-	// JHtml::_('behavior.modal', 'a.flyermodal');
-	$modal = 'flyermodal';
+	echo JemOutput::lightbox();
+	$modal = 'lightbox';
 } else {
 	$modal = 'notmodal';
 }
@@ -180,7 +180,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
                       <div class="jem-eventimg-teaser">
-                      <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                      <a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                         <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
                       </a>
                       </div>
@@ -194,7 +194,7 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
                           <div class="jem-eventimg-teaser">
-                          <a href="<?php echo $item->venueimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                          <a href="<?php echo $item->venueimageorig; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                             <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" />
                           </a>
                           </div>

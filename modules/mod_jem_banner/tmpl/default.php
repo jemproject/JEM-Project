@@ -19,8 +19,8 @@ $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 $imagewidthmax   = (int)$params->get('imagewidthmax', 0);
 
 if ($flyer_link_type == 1) {
-	// JHtml::_('behavior.modal', 'a.flyermodal');
-	$modal = 'flyermodal';
+	echo JemOutput::lightbox();
+	$modal = 'lightbox';
 } elseif ($flyer_link_type == 0) {
 	$modal = 'notmodal';
 } else {
@@ -79,9 +79,8 @@ if ($flyer_link_type == 1) {
 					<div class="banner-jem">
 						<div>
 							<?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
-							<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="<?php echo $modal;?>"
-							   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('MOD_JEM_BANNER_CLICK_TO_ENLARGE'); ?> ">
-								<img class="float_right <?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+							<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="jubilee-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>">
+								<img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
 							</a>
 						</div>
 					</div>

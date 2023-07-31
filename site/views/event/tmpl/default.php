@@ -252,7 +252,7 @@ if ($jemsettings->oldevent > 0) {
 	<!--  	Venue  -->
 	<?php if (($this->item->locid != 0) && !empty($this->item->venue)) : ?>
 	<p></p>
-	<hr>
+	<hr />
 
 	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
@@ -390,14 +390,14 @@ if ($jemsettings->oldevent > 0) {
 	<!-- Registration -->
 	<?php if ($this->showAttendees) : ?>
 		<p></p>
-		<hr>
+		<hr />
 		<h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?>:</h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
 
 	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
 		<p></p>
-		<hr>
+		<hr />
 		<?php echo $this->item->pluginevent->onEventEnd; ?>
 	<?php endif; ?>
 
@@ -407,4 +407,7 @@ if ($jemsettings->oldevent > 0) {
 </div>
 
 <?php }
+
+echo JemOutput::lightbox();
 ?>
+

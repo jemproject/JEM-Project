@@ -123,7 +123,7 @@ use Joomla\CMS\Language\Text;
 
 			if (!empty($recurr_type)) {
 		 ?>
-				<hr>
+				<hr />
 				<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
 				<ul class="adminformlist">
 					<li>

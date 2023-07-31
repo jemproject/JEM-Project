@@ -145,7 +145,7 @@ use Joomla\CMS\Language\Text;
 	} ?>
 </fieldset>
 <!-- RECURRENCE END -->
-<hr>
+<hr />
 <!-- CONTACT START -->
 <fieldset class="panelform"  style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_CONTACT'); ?></legend>
@@ -155,7 +155,7 @@ use Joomla\CMS\Language\Text;
     </dl>
 </fieldset>
 <!-- CONTACT END -->
-<hr>
+<hr />
 <!-- REGISTRATION START -->
 <fieldset class="" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>

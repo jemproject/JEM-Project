@@ -108,6 +108,8 @@ use Joomla\CMS\Language\Text;
 
 	<!-- copyright -->
 	<div class="copyright">
-		<?php echo JemOutput::footer( ); ?>
+		<?php echo JemOutput::footer(); ?>
 	</div>
 </div>
+
+<?php echo JemOutput::lightbox(); ?>

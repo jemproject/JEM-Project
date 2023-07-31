@@ -1,5 +1,5 @@
-# JEM 4.0.1-dev1
-released 2023-07-10
+# JEM 4.0.1-dev1 – LIGHTBOX 2
+released 2023-07-24
 
 Based on
 - jemproject/JEM-Project

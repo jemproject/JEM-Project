@@ -198,3 +198,5 @@ use Joomla\CMS\Language\Text;
 		<?php echo JemOutput::footer(); ?>
 	</div>
 </div>
+
+<?php echo JemOutput::lightbox(); ?>

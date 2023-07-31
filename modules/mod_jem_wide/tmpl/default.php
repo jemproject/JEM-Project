@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 
 use Joomla\CMS\Language\Text;
-// JHtml::_('behavior.modal', 'a.flyermodal');
+
 ?>
 
 <div class="jemmodulewide<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulewide">
@@ -71,20 +71,23 @@ use Joomla\CMS\Language\Text;
 						$image = $item->eventimageorig;
 					} else {
 						$image = '';
-					} ?>
-				<a href="<?php echo $image; ?>" class="flyermodal" title="<?php echo $item->title; ?>">
+					}
+				echo JemOutput::lightbox();
+				?>
+				
+				<a href="<?php echo $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>"  data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
 				<?php endif; ?>
-					<img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" class="image-preview" />
-				<?php if ($item->eventlink) : ?>
+                <img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
+              <?php if ($params->get('use_modal')) : ?>
 				</a>
 				<?php endif; ?>
 			</td>
 
 			<td align="center" class="event-image-cell">
 				<?php if ($params->get('use_modal')) : ?>
-				<a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" title="<?php echo $item->venue; ?>">
+				 <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
 				<?php endif; ?>
-					<img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" />
+                  <img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
 				<?php if ($item->venuelink) : ?>
 				</a>
 				<?php endif; ?>

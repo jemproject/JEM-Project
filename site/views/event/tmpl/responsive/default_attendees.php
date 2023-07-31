@@ -48,7 +48,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
         <dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
 		<?php endif; ?>
-        <hr>
+        <hr />
 		<?php
 		$this->registereduser = null;
 		// only set style info if users already have registered for event and user is allowed to see it
@@ -166,7 +166,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<?php endif; ?>
     </dl>
 
-	<hr>
+	<hr />
 
 	<?php if ($this->print == 0) : ?>
 	<dl class="jem-dl floattext">

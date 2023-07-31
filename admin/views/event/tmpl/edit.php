@@ -516,7 +516,7 @@ Joomla.submitbutton = function(task)
 
 								if (!empty($recurr_type)) {
 									?>
-									<hr>
+									<hr />
 									<fieldset class="panelform">
 									<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
 									<ul class="adminformlist">

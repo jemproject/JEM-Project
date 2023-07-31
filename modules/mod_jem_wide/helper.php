@@ -140,6 +140,7 @@ abstract class ModJemWideHelper
 				$title = $fulltitle;
 			}
 
+			$lists[$i]->eventid     = $row->id;
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = $row->venue ? htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8') : $row->venue;
