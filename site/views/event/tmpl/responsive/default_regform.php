@@ -146,10 +146,10 @@ if ($this->showRegForm && empty($this->print)) :
                         echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER');
                     }else{
                         echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-                        echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
-                            . 'value="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->minbookeduser-$placesBookedUser:1):($placesavailableuser?? 1))
+                        echo ' <input id="addplaces" style="text-align: center; width:auto;max-width: 100px;" type="number" name="addplaces" '
+                            . 'value="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->minbookeduser-$placesBookedUser : $this->item->minbookeduser) : ($placesavailableuser ?? $this->item->minbookeduser))
                             . '" max="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->maxbookeduser-$placesBookedUser:$placesavailableuser):($placesavailableuser?? ''))
-                            . '" min="' . ($placesavailableuser>0? ($placesBookedUser-$this->item->minbookeduser >= 0? 1: $this->item->minbookeduser-$placesBookedUser):0) .'">';
+                            . '" min="' . ($placesavailableuser>0? ($placesBookedUser-$this->item->minbookeduser >= 0 ? $this->item->minbookeduser : $this->item->minbookeduser-$placesBookedUser) : 0) .'">';
                         if($this->registereduser!=null) {
                             if($placesBookedUser  && $statusRegistrationUser==1)
                             {

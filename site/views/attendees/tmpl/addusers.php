@@ -112,7 +112,7 @@ if (empty($form)) {
 		</table>
 
 		<?php
-		if($this->event->maxbookeduser!=0)
+		if($this->event->maxbookeduser != 0)
 		{
 			$placesavailableuser = $this->event->maxbookeduser;
 		}else{
@@ -128,7 +128,7 @@ if (empty($form)) {
 				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?>
             </div>
             <div style="padding-right:10px;">
-                <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="1" max="<?php echo ($placesavailableuser>0? $placesavailableuser:($placesavailableus?? '')); ?>" min="1">
+                <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ?  $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
             </div>
         </div>
 

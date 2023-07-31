@@ -150,7 +150,7 @@ if (empty($form)) {
 				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo $form->getLabel('status'); ?> <?php echo $form->getInput('status'); ?>
             </div>
             <div class="choose-places">
-				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?> <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="1" max="<?php echo ($placesavailableuser>0? $placesavailableuser:($placesavailableus?? '')); ?>" min="1">
+				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?> <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ? $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
             </div>
         </div>
 
