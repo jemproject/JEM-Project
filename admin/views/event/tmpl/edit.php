@@ -368,7 +368,7 @@ Joomla.submitbutton = function(task)
                                             <input type="text" name="availableplaces" id="availableplaces" value=<?php echo  ($this->item->maxplaces? ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces):'---'); ?> class="form-control inputbox" size="4" aria-describedby="jform_reservedplaces-desc" readonly>
                                             <div id="availableplaces-desc" class="hide-aware-inline-help d-none">
                                                 <small class="form-text">
-                                                    <?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES_DESC') . ':';?></small>
+                                                    <?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES_DESC') ;?></small>
                                             </div>
                                         </div>
                                     </div>
