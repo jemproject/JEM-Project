@@ -350,7 +350,7 @@ Joomla.submitbutton = function(task)
 				</h2>
 				<div id="registra" class="accordion-collapse collapse" aria-labelledby="registra-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
-						<ul class="adminformlist">
+						<ul class="adminformlist" style="margin-bottom: 60px;">
 							<li><div class="label-form"><?php echo $this->form->renderfield('registra'); ?></div></li>
 							<li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
 							<li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
@@ -359,12 +359,20 @@ Joomla.submitbutton = function(task)
                             <li><div class="label-form"><?php echo $this->form->renderfield('reservedplaces'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
-							<?php if ($this->item->maxplaces): ?>
-							<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
-                                <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
-							</li>
-							<?php endif; ?>
-							<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
+							<li>
+                                <div class="label-form"><div class="control-group">
+                                        <div class="control-label">
+                                            <label id="availableplaces-lbl"><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label>
+                                        </div>
+                                        <div class="controls">
+                                            <input type="text" name="availableplaces" id="availableplaces" value=<?php echo  ($this->item->maxplaces? ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces):'---'); ?> class="form-control inputbox" size="4" aria-describedby="jform_reservedplaces-desc" readonly>
+                                            <div id="availableplaces-desc" class="hide-aware-inline-help d-none">
+                                                <small class="form-text">
+                                                    <?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES_DESC') . ':';?></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 							</li>
 						</ul>
 					</div>
@@ -380,7 +388,7 @@ Joomla.submitbutton = function(task)
 				
 				<div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
-						<ul class="adminformlist">
+                        <ul class="adminformlist" style="margin-bottom: 130px;">
 							<li><div class="label-form"><?php echo $this->form->renderfield('datimage'); ?></div></li>
 						</ul>
 					</div>

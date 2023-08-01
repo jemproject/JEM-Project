@@ -159,48 +159,12 @@ if ($this->showRegForm && empty($this->print)) :
                             } else {
                                 echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
                             }
-						}else{
-							if($placesavailableevent===0) {
-								echo Text::_('COM_JEM_NOT_AVAILABLE_PLACES_EVENT');
-								$placesavailableuser = 0;
-							}
-						}
-					} else {
-						if ($this->registereduser !== null)
-						{
-							if (!$placesBookedUser)
-							{
-								echo  Text::_('COM_JEM_I_WILL_GO');
-							}
-						}
-						else
-						{
-							echo Text::_('COM_JEM_I_WILL_GO');
-						}
-					}
-
-					if($placesavailableuser===0) {
-						echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER');
-					}else{
-						echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-						echo ' <input id="addplaces" style="text-align: center; width:auto;max-width:100px;" type="number" name="addplaces" '
-							. 'value="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->minbookeduser-$placesBookedUser:1):($placesavailableuser?? 1))
-							. '" max="' . ($placesavailableuser>0? ($this->item->maxbookeduser-$placesBookedUser < $placesavailableuser? $this->item->maxbookeduser-$placesBookedUser:$placesavailableuser):($placesavailableuser?? ''))
-							. '" min="' . ($placesavailableuser>0? ($placesBookedUser-$this->item->minbookeduser >= 0? 1: $this->item->minbookeduser-$placesBookedUser):0) .'">';
-						if($this->registereduser!=null) {
-							if($placesBookedUser  && $statusRegistrationUser==1)
-							{
-								echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
-							}else{
-                            echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
-							}
-						}else{
-                            if($this->item->maxbookeduser == $placesavailableuser){
-                            echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
-                            }else
-                            {
-	                            echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
-                            }
+                            } else {
+                                if ($this->item->maxbookeduser == $placesavailableuser) {
+                                    echo ' ' . Text::_('COM_JEM_PLACES_REG') . '.';
+                                } else {
+                                    echo ' ' . Text::_('COM_JEM_I_WILL_GO_3');
+                                }
                         }
                     }else{
                         echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
