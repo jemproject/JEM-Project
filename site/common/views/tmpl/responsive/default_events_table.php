@@ -14,4 +14,6 @@ if (empty($this->jemsettings->tablewidth)) :
 else :
   echo $this->loadTemplate('jem_eventslist_small'); // Similar to the old table-layout
 endif;
+
+echo JemOutput::lightbox();
 ?>

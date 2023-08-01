@@ -196,3 +196,4 @@ use Joomla\CMS\Language\Text;
 		</tbody>
 	</table>
 </div>
+<?php echo JemOutput::lightbox(); ?>

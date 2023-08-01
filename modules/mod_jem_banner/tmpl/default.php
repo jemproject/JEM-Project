@@ -79,9 +79,10 @@ if ($flyer_link_type == 1) {
 					<div class="banner-jem">
 						<div>
 							<?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
-							<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="jubilee-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>">
+							<?php if ($flyer_link_type != 3) : ?>
+							<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="jubilee-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
 								<img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
-							</a>
+							<?php if ($flyer_link_type != 3) { echo '</a>'; } ?>
 						</div>
 					</div>
 				</div>

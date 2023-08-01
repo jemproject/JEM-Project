@@ -145,6 +145,7 @@
 					<option value="0">MOD_JEM_JUBILEE_FLYER_LINK_IMAGE_PAGE</option>
 					<option value="1">MOD_JEM_JUBILEE_FLYER_LINK_IMAGE_MODAL</option>
 					<option value="2">MOD_JEM_JUBILEE_FLYER_LINK_EVENT_DETAILS</option>
+					<option value="3">COM_JEM_NO_LINK</option>
 				</field>
 
 				<field name="showdesc" type="radio"

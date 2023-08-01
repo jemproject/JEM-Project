@@ -43,19 +43,17 @@ class JemOutput
 		}
 	}
 	
-	
 /**
  * Load stylesheet and JS for lightbox.
  */
-static public function lightbox()
-{	$settings = JemHelper::config();
+static public function lightbox() {
+	$settings = JemHelper::config();
 	$app = Factory::getApplication();
-	if (($settings->gddisabled == 1) && ($settings->lightbox == 1))
-	{
+	if ($settings->lightbox == 1) {
 		$document = Factory::getDocument();
-		$document->addStyleSheet(Uri::base() .'/media/com_jem/css/lightbox.min.css');
-		echo '<script src="' . Uri::base(true) . '/media/com_jem/js/lightbox.min.js"></script>
-			 <script>lightbox.option({
+		$document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+		$document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
+		echo '<script>lightbox.option({
    				   \'showImageNumberLabel\': false,
    			 })
 		</script>';
@@ -1224,21 +1222,24 @@ static public function lightbox()
 		// Do we have an image?
 		if (empty($imagefile) || empty($image)) {
 			return;
+		} else {
+		list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
+		list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];
 		}
 
 		// Does a thumbnail exist?
 		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			
 			// if "Enable Pop Up Thumbnail" is disabled
-			if ($settings->gddisabled == 0)	{
-				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.$info.'" />';
+			if (($settings->gddisabled == 0) && ($settings->lightbox == 0))	{
+				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			}
 			
 			// if "Enable Pop Up Thumbnail" is enabled and lightbox disabled
 			elseif (($settings->gddisabled == 1) && ($settings->lightbox == 0)) {
 				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='. $imagewidth.',height='.$imageheight.',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
-				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			}
 
@@ -1250,7 +1251,7 @@ static public function lightbox()
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>'; 
 				
 			}
-		// Otherwise take the values for the original image specified in the settings
+			// If there is no thumbnail, then take the values for the original image specified in the settings
 		} else {
 			$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}

@@ -33,7 +33,6 @@ $wa = $this->document->getWebAssetManager();
 ?>
 
 <script>
-// window.bind('domready', function(){
 jQuery(document).ready(function($){
 	$('#jform_showcity0').bind('click', cityon);
 	$('#jform_showcity1').bind('click', cityoff);
@@ -391,6 +390,23 @@ function registraoff()
 	document.getElementById('froreg1').style.display = 'none';
 	document.getElementById('froreg2').style.display = 'none';
 }
+
+    $(document).ready(function() {
+        function updateLightboxVisibility() {
+            if ($('input[name="jform[gddisabled]"]:checked').val() === '0') {
+                $('input[name="jform[lightbox]"]').val(['0']);
+                $('#jform_lightbox, #jform_lightbox-lbl').css('display', 'none');
+            } else {
+                $('#jform_lightbox, #jform_lightbox-lbl').css('display', '');
+            }
+        }
+
+        updateLightboxVisibility();
+
+        $('input[name="jform[gddisabled]"]').on('change', function() {
+            updateLightboxVisibility();
+        });
+    });
 </script>
 
 <script type="text/javascript">

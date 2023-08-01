@@ -149,7 +149,6 @@ Joomla.submitbutton = function(task)
 }
 </script>
 <script type="text/javascript">
-// window.addEvent('domready', function(){
 	function showUnregistraUntil()
 	{
 		var unregistra = $("#jform_unregistra");
