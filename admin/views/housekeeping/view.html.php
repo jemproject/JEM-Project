@@ -57,7 +57,7 @@ class JemViewHousekeeping extends JemAdminView
 
 		ToolbarHelper::back();
 		ToolbarHelper::divider();
-		ToolbarHelper::help('housekeeping', true);
+		ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/housekeeping');
 	}
 }
 ?>

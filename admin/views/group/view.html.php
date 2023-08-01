@@ -114,7 +114,8 @@ class JemViewGroup extends JemAdminView
 		}
 
 		ToolbarHelper::divider();
-		ToolbarHelper::help('editgroup', true);
+		ToolbarHelper::inlinehelp();
+		ToolBarHelper::help('editgroup', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/groups/add-group');
 	}
 }
 ?>

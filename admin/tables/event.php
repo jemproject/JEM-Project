@@ -44,6 +44,10 @@ class JemTableEvent extends Table
 			$array['waitinglist'] = 0 ;
 		}
 
+		if (!isset($array['requestanswer'])) {
+			$array['requestanswer'] = 0 ;
+		}
+
 		// Search for the {readmore} tag and split the text up accordingly.
 		if (isset($array['articletext'])) {
 			$pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';

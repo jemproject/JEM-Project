@@ -123,6 +123,7 @@ class JemViewVenue extends JemAdminView
 		}
 
 		ToolbarHelper::divider();
-		ToolbarHelper::help('editvenues', true);
+		ToolbarHelper::inlinehelp();
+        ToolBarHelper::help('editvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues/add-venue');
 	}
 }

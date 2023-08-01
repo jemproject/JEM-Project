@@ -55,6 +55,6 @@ class JemViewUpdatecheck extends JemAdminView
 
 		ToolbarHelper::back();
 		ToolbarHelper::divider();
-		ToolbarHelper::help('update', true);
+        ToolBarHelper::help('update', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/check-update');
 	}
 }

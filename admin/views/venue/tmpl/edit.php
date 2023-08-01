@@ -22,6 +22,7 @@ $wa = $this->document->getWebAssetManager();
 			->useScript('keepalive')
 			->useScript('form.validate')
 			->useScript('jem.attachments')
+			->useScript('inlinehelp')
 			->useScript('jem.geocomplete');
 
 // Create shortcut to parameters.
@@ -232,36 +233,18 @@ $location = JemHelper::defineCenterMap($this->form);
 						</legend>
 
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('venue');?>
-								<?php echo $this->form->getInput('venue'); ?></li>
-
-							<li><?php echo $this->form->getLabel('alias'); ?>
-								<?php echo $this->form->getInput('alias'); ?></li>
-
-							<li><?php echo $this->form->getLabel('street'); ?>
-								<?php echo $this->form->getInput('street'); ?></li>
-
-							<li><?php echo $this->form->getLabel('postalCode'); ?>
-								<?php echo $this->form->getInput('postalCode'); ?></li>
-
-							<li><?php echo $this->form->getLabel('city'); ?>
-								<?php echo $this->form->getInput('city'); ?></li>
-
-							<li><?php echo $this->form->getLabel('state'); ?>
-								<?php echo $this->form->getInput('state'); ?></li>
-
-							<li><?php echo $this->form->getLabel('country'); ?>
-								<?php echo $this->form->getInput('country'); ?></li>
-
-							<li><?php echo $this->form->getLabel('latitude'); ?>
-								<?php echo $this->form->getInput('latitude'); ?></li>
-
-							<li><?php echo $this->form->getLabel('longitude'); ?>
-								<?php echo $this->form->getInput('longitude'); ?></li>
-
-							<li><?php echo $this->form->getLabel('url'); ?>
-								<?php echo $this->form->getInput('url'); ?></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
 						</ul>
+						<div class="clr"></div>
 						<div>
 							<?php echo $this->form->getLabel('locdescription'); ?>
 							<div class="clr"></div>

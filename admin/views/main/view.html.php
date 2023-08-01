@@ -64,10 +64,10 @@ class JemViewMain extends JemAdminView
 
 		if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 			ToolbarHelper::preferences('com_jem');
-			ToolbarHelper::divider();
 		}
 
-		ToolbarHelper::help('home', true);
+        ToolBarHelper::divider();
+        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
 	}
 
 	/**

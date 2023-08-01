@@ -190,10 +190,8 @@ img.venue-image {
 }
 
 div.controls {
-    text-align: center;
-    height: 20px;
-    line-height: 20px;
-    border-top: 1px solid #ddd;
+     text-align:left;
+     line-height:20px;
 }
 
 div.controls img {

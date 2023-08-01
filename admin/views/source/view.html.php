@@ -71,6 +71,6 @@ class JemViewSource extends JemAdminView
 
 		ToolbarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
 		ToolbarHelper::divider();
-		ToolbarHelper::help('editcss', true);
+		ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/css-manager/edit-file');
 	}
 }

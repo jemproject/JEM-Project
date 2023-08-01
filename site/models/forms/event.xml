@@ -1,380 +1,388 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset name="details">
-		<field name="articletext" type="editor" class="inputbox"
-			label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION" description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
-			filter="JComponentHelper::filterText" hide="pagebreak" />
+    <fieldset name="details">
+        <field name="articletext" type="editor" class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION" description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
+               filter="JComponentHelper::filterText" hide="pagebreak"/>
 
-		<field name="featured" class="inputbox" type="list"
-			label="JFEATURED"
-			description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
-			default="0"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
+        <field name="featured" class="inputbox" type="list"
+               label="JFEATURED"
+               description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
+               default="0"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
 
-		<field name="title" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_EDITEVENT_FIELD_EVENT_TITLE"
-			description="COM_JEM_EDITEVENT_FIELD_EVENT_TITLE_DESC"
-			required="true"
-		/>
-		<field name="alias" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_EDITEVENT_FIELD_ALIAS"
-			description="COM_JEM_EDITEVENT_FIELD_ALIAS"
-		        hint="JFIELD_ALIAS_PLACEHOLDER"
-			required="false"
-		/>
-		<field name="dates" type="calendarjem"
-			label="COM_JEM_EDITEVENT_FIELD_DATE"
-			description="COM_JEM_EDITEVENT_FIELD_DATE_DESC"
-			class="inputbox"
-			size="22"
-			format="Y-m-d"
-			translateformat="true"
-			filter="string"
-			showtime="false"
-		/>
-		<field name="enddates" type="calendarjem"
-			label="COM_JEM_EDITEVENT_FIELD_ENDDATE"
-			description="COM_JEM_EDITEVENT_FIELD_ENDDATE_DESC"
-			class="inputbox"
-			size="22"
-			format="Y-m-d"
-			translateformat="true"
-			filter="string"
-			showtime="false"
-		/>
-		<field name="times" type="starttime"
-			class="inputbox"
-			size="10"
-			label="COM_JEM_EDITEVENT_FIELD_EVENT_TIME"
-			description="COM_JEM_EDITEVENT_FIELD_EVENT_TIME_DESC"
-			required="false"
-		/>
-		<field name="endtimes" type="endtime"
-			class="inputbox"
-			size="10"
-			label="COM_JEM_EDITEVENT_FIELD_END_TIME"
-			description="COM_JEM_EDITEVENT_FIELD_END_TIME_DESC"
-			required="false"
-		/>
-		<field name="cats" type="catoptions"
-			multiple="true"
-			class="inputbox required form-control"
-			size="4"
-			label="COM_JEM_EDITEVENT_FIELD_CATEGORIES"
-			labelclass=""
-			description="COM_JEM_EDITEVENT_FIELD_CATEGORIES_DESC"
-			required="true"
-		/>
-	</fieldset>
+        <field name="title" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_EDITEVENT_FIELD_EVENT_TITLE"
+               description="COM_JEM_EDITEVENT_FIELD_EVENT_TITLE_DESC"
+               required="true"
+        />
+        <field name="alias" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_EDITEVENT_FIELD_ALIAS"
+               description="COM_JEM_EDITEVENT_FIELD_ALIAS"
+               hint="JFIELD_ALIAS_PLACEHOLDER"
+               required="false"
+        />
+        <field name="dates" type="calendarjem"
+               label="COM_JEM_EDITEVENT_FIELD_DATE"
+               description="COM_JEM_EDITEVENT_FIELD_DATE_DESC"
+               class="inputbox"
+               size="22"
+               format="Y-m-d"
+               translateformat="true"
+               filter="string"
+               showtime="false"
+        />
+        <field name="enddates" type="calendarjem"
+               label="COM_JEM_EDITEVENT_FIELD_ENDDATE"
+               description="COM_JEM_EDITEVENT_FIELD_ENDDATE_DESC"
+               class="inputbox"
+               size="22"
+               format="Y-m-d"
+               translateformat="true"
+               filter="string"
+               showtime="false"
+        />
+        <field name="times" type="starttime"
+               class="inputbox"
+               size="10"
+               label="COM_JEM_EDITEVENT_FIELD_EVENT_TIME"
+               description="COM_JEM_EDITEVENT_FIELD_EVENT_TIME_DESC"
+               required="false"
+        />
+        <field name="endtimes" type="endtime"
+               class="inputbox"
+               size="10"
+               label="COM_JEM_EDITEVENT_FIELD_END_TIME"
+               description="COM_JEM_EDITEVENT_FIELD_END_TIME_DESC"
+               required="false"
+        />
+        <field name="cats" type="catoptions"
+               multiple="true"
+               class="inputbox required form-control"
+               size="4"
+               label="COM_JEM_EDITEVENT_FIELD_CATEGORIES"
+               labelclass=""
+               description="COM_JEM_EDITEVENT_FIELD_CATEGORIES_DESC"
+               required="true"
+        />
+    </fieldset>
 
-	<fieldset name="publish">
-		<field name="id" type="text"
-			default="0"
-			readonly="true"
-			class="readonly"
-			label="JGLOBAL_FIELD_ID_LABEL"
-			description="JGLOBAL_FIELD_ID_DESC"
-		/>
-		<field name="created" type="calendar"
-			class="readonly"
-			label="JGLOBAL_FIELD_CREATED_LABEL"
-			description="JGLOBAL_FIELD_CREATED_DESC"
-			size="22"
-			default="now"
-			readonly="true"
-			format="Y-m-d H:i:s"
-			translateformat="true"
-			filter="user_utc"
-		/>
-		<field name="modified" type="calendar"
-			class="readonly"
-			label="JGLOBAL_FIELD_MODIFIED_LABEL"
-			description="COM_JEM_EDITEVENT_FIELD_EDITED_AT"
-			size="22"
-			readonly="true"
-			format="Y-m-d H:i:s"
-			translateformat="true"
-			filter="user_utc"
-		/>
-		<field name="version" type="text"
-			default="0"
-			readonly="true"
-			class="readonly"
-			label="COM_JEM_EDITEVENT_FIELD_REVISED"
-			description="COM_JEM_EDITEVENT_FIELD_REVISED"
-		/>
-		<field name="created_by" type="user"
-			label="JGLOBAL_FIELD_CREATED_BY_LABEL"
-			description="JGLOBAL_FIELD_CREATED_BY_Desc"
-		/>
-		<field name="published" type="list"
-			label="JSTATUS"
-			description="COM_JEM_EDITEVENT_FIELD_PUBLISHED_DESC"
-			class="inputbox"
-			size="1"
-			default="1"
-		>
-			<option value="1">JPUBLISHED</option>
-			<option value="0">JUNPUBLISHED</option>
-			<option value="2">JARCHIVED</option>
-			<option value="-2">JTRASHED</option>
-		</field>
-		<field
-			id="access"
-			name="access"
-			type="list"
-			label="JFIELD_ACCESS_LABEL"
-			description="JFIELD_ACCESS_DESC"
-			class="inputbox"
-			size="1" />
-	</fieldset>
+    <fieldset name="publish">
+        <field name="id" type="text"
+               default="0"
+               readonly="true"
+               class="readonly"
+               label="JGLOBAL_FIELD_ID_LABEL"
+               description="JGLOBAL_FIELD_ID_DESC"
+        />
+        <field name="created" type="calendar"
+               class="readonly"
+               label="JGLOBAL_FIELD_CREATED_LABEL"
+               description="JGLOBAL_FIELD_CREATED_DESC"
+               size="22"
+               default="now"
+               readonly="true"
+               format="Y-m-d H:i:s"
+               translateformat="true"
+               filter="user_utc"
+        />
+        <field name="modified" type="calendar"
+               class="readonly"
+               label="JGLOBAL_FIELD_MODIFIED_LABEL"
+               description="COM_JEM_EDITEVENT_FIELD_EDITED_AT"
+               size="22"
+               readonly="true"
+               format="Y-m-d H:i:s"
+               translateformat="true"
+               filter="user_utc"
+        />
+        <field name="version" type="text"
+               default="0"
+               readonly="true"
+               class="readonly"
+               label="COM_JEM_EDITEVENT_FIELD_REVISED"
+               description="COM_JEM_EDITEVENT_FIELD_REVISED"
+        />
+        <field name="created_by" type="user"
+               label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+               description="JGLOBAL_FIELD_CREATED_BY_Desc"
+        />
+        <field name="published" type="list"
+               label="JSTATUS"
+               description="COM_JEM_EDITEVENT_FIELD_PUBLISHED_DESC"
+               class="inputbox"
+               size="1"
+               default="1"
+        >
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
+        <field
+                id="access"
+                name="access"
+                type="list"
+                label="JFIELD_ACCESS_LABEL"
+                description="JFIELD_ACCESS_DESC"
+                class="inputbox"
+                size="1"/>
+    </fieldset>
 
-	<fieldset name="request">
-		<field name="locid" type="modal_venue"
-			label="COM_JEM_EDITEVENT_FIELD_VENUE"
-			description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
-			size="40"
-			required="false"
-		    default="0"
-		/>
-		<field name="contactid" type="modal_contact"
-			label="COM_JEM_EDITEVENT_FIELD_CONTACT"
-			description="COM_JEM_EDITEVENT_FIELD_CONTACT_DESC"
-			size="40"
-			required="false"
-		/>
-	</fieldset>
+    <fieldset name="request">
+        <field name="locid" type="modal_venue"
+               label="COM_JEM_EDITEVENT_FIELD_VENUE"
+               description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
+               size="40"
+               required="false"
+               default="0"
+        />
+        <field name="contactid" type="modal_contact"
+               label="COM_JEM_EDITEVENT_FIELD_CONTACT"
+               description="COM_JEM_EDITEVENT_FIELD_CONTACT_DESC"
+               size="40"
+               required="false"
+        />
+    </fieldset>
 
-	<fieldset name="image"
-		label="COM_JEM_IMAGE"
-	>
-		<field name="datimage" type="imageselectevent"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_EDITEVENT_FIELD_IMAGESELECT"
-			description="COM_JEM_EDITEVENT_FIELD_IMAGESELECT_DESC"
-		/>
-		<field name="userfile" type="file"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_IMAGE"
-			description="COM_JEM_UPLOAD_IMAGE"
-		/>
-	</fieldset>
+    <fieldset name="image"
+              label="COM_JEM_IMAGE"
+    >
+        <field name="datimage" type="imageselectevent"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_EDITEVENT_FIELD_IMAGESELECT"
+               description="COM_JEM_EDITEVENT_FIELD_IMAGESELECT_DESC"
+        />
+        <field name="userfile" type="file"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_IMAGE"
+               description="COM_JEM_UPLOAD_IMAGE"
+        />
+    </fieldset>
 
-	<fieldset name="custom">
-		<field name="custom1" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD1"
-			description="COM_JEM_EVENT_CUSTOM_FIELD1_DESC"
-		/>
-		<field name="custom2" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD2"
-			description="COM_JEM_EVENT_CUSTOM_FIELD2_DESC"
-		/>
-		<field name="custom3" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD3"
-			description="COM_JEM_EVENT_CUSTOM_FIELD3_DESC"
-		/>
-		<field name="custom4" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD4"
-			description="COM_JEM_EVENT_CUSTOM_FIELD4_DESC"
-		/>
-		<field name="custom5" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD5"
-			description="COM_JEM_EVENT_CUSTOM_FIELD5_DESC"
-		/>
-		<field name="custom6" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD6"
-			description="COM_JEM_EVENT_CUSTOM_FIELD6_DESC"
-		/>
-		<field name="custom7" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD7"
-			description="COM_JEM_EVENT_CUSTOM_FIELD7_DESC"
-		/>
-		<field name="custom8" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD8"
-			description="COM_JEM_EVENT_CUSTOM_FIELD8_DESC"
-		/>
-		<field name="custom9" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD9"
-			description="COM_JEM_EVENT_CUSTOM_FIELD9_DESC"
-		/>
-		<field name="custom10" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_EVENT_CUSTOM_FIELD10"
-			description="COM_JEM_EVENT_CUSTOM_FIELD10_DESC"
-		/>
-	</fieldset>
+    <fieldset name="custom">
+        <field name="custom1" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD1"
+               description="COM_JEM_EVENT_CUSTOM_FIELD1_DESC"
+        />
+        <field name="custom2" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD2"
+               description="COM_JEM_EVENT_CUSTOM_FIELD2_DESC"
+        />
+        <field name="custom3" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD3"
+               description="COM_JEM_EVENT_CUSTOM_FIELD3_DESC"
+        />
+        <field name="custom4" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD4"
+               description="COM_JEM_EVENT_CUSTOM_FIELD4_DESC"
+        />
+        <field name="custom5" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD5"
+               description="COM_JEM_EVENT_CUSTOM_FIELD5_DESC"
+        />
+        <field name="custom6" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD6"
+               description="COM_JEM_EVENT_CUSTOM_FIELD6_DESC"
+        />
+        <field name="custom7" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD7"
+               description="COM_JEM_EVENT_CUSTOM_FIELD7_DESC"
+        />
+        <field name="custom8" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD8"
+               description="COM_JEM_EVENT_CUSTOM_FIELD8_DESC"
+        />
+        <field name="custom9" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD9"
+               description="COM_JEM_EVENT_CUSTOM_FIELD9_DESC"
+        />
+        <field name="custom10" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_EVENT_CUSTOM_FIELD10"
+               description="COM_JEM_EVENT_CUSTOM_FIELD10_DESC"
+        />
+    </fieldset>
 
-	<fieldset name="registration">
-		<!--field name="registra" type="list"
-			label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
-			description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-			<option value="2">COM_JEM_INVITED_USERS_ONLY</option>
-		</field-->
-		<field name="registra" type="checkbox"
-			size="20"
-			class="inputbox"
-			label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
-			description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
-			value="1"
-			default="0"
-		/>
-		<field name="reginvitedonly" type="checkbox"
-			size="20"
-			class="inputbox"
-			label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
-			description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
-			value="1"
-			default="0"
-		/>
-		<field name="unregistra" type="list"
-			label="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION"
-			description="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-			<option value="2">COM_JEM_UNTIL</option>
-		</field>
-		<field name="unregistra_until" type="number"
-			size="4"
-			class="inputbox"
-			label="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL"
-			description="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_DESC"
-			filter="integer"
-			min="0"
-			max="999"
-		/>
-		<field name="maxplaces" type="number"
-			size="4"
-			class="inputbox"
-			label="COM_JEM_EDITEVENT_FIELD_MAX_PLACES"
-			description="COM_JEM_EDITEVENT_FIELD_MAX_PLACES_DESC"
-			filter="integer"
-			default="0"
-			min="0"
-		/>
-		<field name="minbookeduser" type="number"
-			   size="4"
-			   class="inputbox"
-			   label="COM_JEM_MINIMUM_BOOKED_PLACES_PER_USER"
-			   description="COM_JEM_MINIMUM_BOOKED_PLACES_PER_USER_DESC"
-			   filter="integer"
-			   default="1"
-			   min="1"
-		/>
-		<field name="maxbookeduser" type="number"
-			   size="4"
-			   class="inputbox"
-			   label="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER"
-			   description="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER_DESC"
-			   filter="integer"
-			   default="1"
-			   min="0"
-		/>
-		<field name="reservedplaces" type="number"
-			   size="4"
-			   class="inputbox"
-			   label="COM_JEM_RESERVED_PLACES"
-			   description="COM_JEM_RESERVED_PLACES_DESC"
-			   filter="integer"
-			   default="0"
-			   min="0"
-		/>
-		<field name="invited" type="modal_users"
-			label="COM_JEM_EDITEVENT_FIELD_INVITED_USERS"
-			description="COM_JEM_EDITEVENT_FIELD_INVITED_USERS_DESC"
-			size="4"
-			required="false"
-		/>	
-		<field name="avplaces" type="text"
-			size="4"
-			class="readonly"
-			readonly="readonly"
-			disabled="disabled"
-			label="COM_JEM_AVAILABLE_PLACES"
-			description="COM_JEM_AVAILABLE_PLACES_DESC"
-		/>
-		<field name="waitinglist" type="checkbox"
-			size="20"
-			class="inputbox"
-			label="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST"
-			description="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST_DESC"
-			value="0"
-			default="0"
-		/>
-	</fieldset>
+    <fieldset name="registration">
+        <!--field name="registra" type="list"
+            label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
+            description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
+            class="inputbox"
+            default="0"
+            required="false"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+            <option value="2">COM_JEM_INVITED_USERS_ONLY</option>
+        </field-->
+        <field name="registra" type="checkbox"
+               size="20"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
+               description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
+               value="1"
+               default="0"
+        />
+        <field name="reginvitedonly" type="checkbox"
+               size="20"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
+               description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
+               value="1"
+               default="0"
+        />
+        <field name="unregistra" type="list"
+               label="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION"
+               description="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION_DESC"
+               class="inputbox"
+               default="0"
+               required="false"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+            <option value="2">COM_JEM_UNTIL</option>
+        </field>
+        <field name="unregistra_until" type="number"
+               size="4"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL"
+               description="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_DESC"
+               filter="integer"
+               min="0"
+               max="999"
+        />
+        <field name="maxplaces" type="number"
+               size="4"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_MAX_PLACES"
+               description="COM_JEM_EDITEVENT_FIELD_MAX_PLACES_DESC"
+               filter="integer"
+               default="0"
+               min="0"
+        />
+        <field name="minbookeduser" type="number"
+               size="4"
+               class="inputbox"
+               label="COM_JEM_MINIMUM_BOOKED_PLACES_PER_USER"
+               description="COM_JEM_MINIMUM_BOOKED_PLACES_PER_USER_DESC"
+               filter="integer"
+               default="1"
+               min="1"
+        />
+        <field name="maxbookeduser" type="number"
+               size="4"
+               class="inputbox"
+               label="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER"
+               description="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER_DESC"
+               filter="integer"
+               default="1"
+               min="0"
+        />
+        <field name="reservedplaces" type="number"
+               size="4"
+               class="inputbox"
+               label="COM_JEM_RESERVED_PLACES"
+               description="COM_JEM_RESERVED_PLACES_DESC"
+               filter="integer"
+               default="0"
+               min="0"
+        />
+        <field name="invited" type="modal_users"
+               label="COM_JEM_EDITEVENT_FIELD_INVITED_USERS"
+               description="COM_JEM_EDITEVENT_FIELD_INVITED_USERS_DESC"
+               size="4"
+               required="false"
+        />
+        <field name="avplaces" type="text"
+               size="4"
+               class="readonly"
+               readonly="readonly"
+               disabled="disabled"
+               label="COM_JEM_AVAILABLE_PLACES"
+               description="COM_JEM_AVAILABLE_PLACES_DESC"
+        />
+        <field name="waitinglist" type="checkbox"
+               size="20"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST"
+               description="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST_DESC"
+               value="0"
+               default="0"
+        />
+        <field name="requestanswer" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_REQUEST_ANSWER_ASSISTENCE"
+               description="COM_JEM_EDITEVENT_FIELD_REQUEST_ANSWER_ASSISTENCE_DESC"
+               value="0"
+               default="0"
+        />
+    </fieldset>
 
-	<fieldset name="recurrence"
-		label="COM_JEM_EDITEVENT_FIELD_RECURRING_EVENTS"
-	>
-		<field name="recurrence_type" type="list"
-			default="0"
-			label="COM_JEM_EDITEVENT_FIELD_RECURRENCE"
-			description="COM_JEM_EDITEVENT_FIELD_RECURRENCE"
-		>
-			<option value="0">COM_JEM_NOTHING</option>
-			<option value="1">COM_JEM_DAILY</option>
-			<option value="2">COM_JEM_WEEKLY</option>
-			<option value="3">COM_JEM_MONTHLY</option>
-			<option value="4">COM_JEM_WEEKDAY</option>
-		</field>
-		<field name="recurrence_limit_date" type="calendarjem"
-			default="now"
-			label="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
-			description="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
-			class="inputbox"
-			size="22"
-			format="%Y-%m-%d"
-			translateformat="true"
-			filter="string"
-			showtime="false"
-		/>
-	</fieldset>
+    <fieldset name="recurrence"
+              label="COM_JEM_EDITEVENT_FIELD_RECURRING_EVENTS"
+    >
+        <field name="recurrence_type" type="list"
+               default="0"
+               label="COM_JEM_EDITEVENT_FIELD_RECURRENCE"
+               description="COM_JEM_EDITEVENT_FIELD_RECURRENCE"
+        >
+            <option value="0">COM_JEM_NOTHING</option>
+            <option value="1">COM_JEM_DAILY</option>
+            <option value="2">COM_JEM_WEEKLY</option>
+            <option value="3">COM_JEM_MONTHLY</option>
+            <option value="4">COM_JEM_WEEKDAY</option>
+        </field>
+        <field name="recurrence_limit_date" type="calendarjem"
+               default="now"
+               label="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
+               description="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
+               class="inputbox"
+               size="22"
+               format="%Y-%m-%d"
+               translateformat="true"
+               filter="string"
+               showtime="false"
+        />
+    </fieldset>
 
 </form>

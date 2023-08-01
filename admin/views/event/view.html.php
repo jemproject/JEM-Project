@@ -120,7 +120,8 @@ class JemViewEvent extends JemAdminView
 		}
 
 		ToolBarHelper::divider();
-		ToolBarHelper::help('editevents', true);
+		ToolbarHelper::inlinehelp();
+		ToolBarHelper::help('editevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/events/add-event');
 	}
 }
 ?>

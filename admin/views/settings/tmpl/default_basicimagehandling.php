@@ -18,23 +18,19 @@ $gdv = JEMImage::gdVersion();
     <fieldset class="options-form">
 		<legend><?php echo Text::_( 'COM_JEM_IMAGE_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('image_filetypes'); ?> <?php echo $this->form->getInput('image_filetypes'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('image_filetypes'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('sizelimit'); ?> <?php echo $this->form->getInput('sizelimit'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('sizelimit'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('imagehight'); ?> <?php echo $this->form->getInput('imagehight'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('imagehight'); ?></div></li>
 
-			<li><?php echo $this->form->getLabel('imagewidth'); ?><span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_WARNING'), Text::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'), 'error'); ?>>
-					<?php echo $this->WarningIcon(); ?>
-					<?php echo $this->form->getInput('imagewidth'); ?>
-				</span>
-			</li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('imagewidth'); ?></div></li>
 
 			<?php if ($gdv && $gdv >= 2) : //is the gd library installed on the server and its version > 2? ?>
-				<li><?php echo $this->form->getLabel('gddisabled'); ?> <?php echo $this->form->getInput('gddisabled'); ?></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('gddisabled'); ?></div></li>
 			<?php endif; ?>
 
-			<li id="lb1" style="display:none"><?php echo $this->form->getLabel('lightbox'); ?> <?php echo $this->form->getInput('lightbox'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('lightbox'); ?></div></li>
 		</ul>
 	</fieldset>
 </div>

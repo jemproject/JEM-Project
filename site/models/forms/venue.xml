@@ -1,252 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset name="details">
-		<field name="id" type="text"
-			default="0"
-			readonly="true"
-			class="readonly"
-			label="JGLOBAL_FIELD_ID_LABEL"
-			description ="JGLOBAL_FIELD_ID_DESC"
-		/>
-		<field name="venue" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_VENUE"
-			description="COM_JEM_VENUE"
-			required="true"
-		/>
-		<field name="alias" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_EDITVENUE_FIELD_ALIAS"
-		        hint="JFIELD_ALIAS_PLACEHOLDER"
-			description="COM_JEM_EDITVENUE_FIELD_ALIAS_DESC"
-		/>
-		<field name="url" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_WEBSITE"
-			description="COM_JEM_WEBSITE_DESC"
-		/>
-		<field name="street" type="text"
-			id="street"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_STREET"
-			description="COM_JEM_STREET"
-		/>
-		<field name="locdescription" type="editor"
-			filter="safehtml"
-			hide="pagebreak"
-			class="inputbox"
-			rows="3" cols="20"
-			width="100%"
-			label="COM_JEM_VENUE_DESCRIPTION"
-			description="COM_JEM_VENUE_DESCRIPTION_DESC"
-		/>
-		<field name="latitude" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_LATITUDE"
-			description="COM_JEM_LATITUDE"
-		/>
-		<field name="longitude" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_LONGITUDE"
-			description="COM_JEM_LONGITUDE"
-		/>
-		<field name="postalCode" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_ZIP"
-			description="COM_JEM_ZIP"
-		/>
-		<field name="city" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_CITY"
-			description="COM_JEM_CITY"
-		/>
-		<field name="state" type="text"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_STATE"
-			description="COM_JEM_STATE"
-		/>
-		<field name="map" type="checkbox"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_ENABLE_MAP"
-			description="COM_JEM_ENABLE_MAP"
-			value="1"
-			default="0"
-		/>
-		<field name="published" type="list"
-			label="JSTATUS"
-			description="COM_JEM_PUBLISHED"
-			class="inputbox"
-			filter="intval"
-			size="1"
-			default="1"
-		>
-			<option value="1">JPUBLISHED</option>
-			<option value="0">JUNPUBLISHED</option>
-		</field>
-		<field name="country" type="countryoptions"
-			label="COM_JEM_COUNTRY"
-			description="COM_JEM_COUNTRY_DESC"
-			class="select_country"
-		/>
-	</fieldset>
+    <fieldset name="details">
+        <field name="id" type="text"
+               default="0"
+               readonly="true"
+               class="readonly"
+               label="JGLOBAL_FIELD_ID_LABEL"
+               description="JGLOBAL_FIELD_ID_DESC"
+        />
+        <field name="venue" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_VENUE"
+               description="COM_JEM_VENUE"
+               required="true"
+        />
+        <field name="alias" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_EDITVENUE_FIELD_ALIAS"
+               hint="JFIELD_ALIAS_PLACEHOLDER"
+               description="COM_JEM_EDITVENUE_FIELD_ALIAS_DESC"
+        />
+        <field name="url" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_WEBSITE"
+               description="COM_JEM_WEBSITE_DESC"
+        />
+        <field name="street" type="text"
+               id="street"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_STREET"
+               description="COM_JEM_STREET"
+        />
+        <field name="locdescription" type="editor"
+               filter="safehtml"
+               hide="pagebreak"
+               class="inputbox"
+               rows="3" cols="20"
+               width="100%"
+               label="COM_JEM_VENUE_DESCRIPTION"
+               description="COM_JEM_VENUE_DESCRIPTION_DESC"
+        />
+        <field name="latitude" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_LATITUDE"
+               description="COM_JEM_LATITUDE"
+        />
+        <field name="longitude" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_LONGITUDE"
+               description="COM_JEM_LONGITUDE"
+        />
+        <field name="postalCode" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_ZIP"
+               description="COM_JEM_ZIP"
+        />
+        <field name="city" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_CITY"
+               description="COM_JEM_CITY"
+        />
+        <field name="state" type="text"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_STATE"
+               description="COM_JEM_STATE"
+        />
+        <field name="map" type="checkbox"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_ENABLE_MAP"
+               description="COM_JEM_ENABLE_MAP"
+               value="1"
+               default="0"
+        />
+        <field name="published" type="list"
+               label="JSTATUS"
+               description="COM_JEM_PUBLISHED"
+               class="inputbox"
+               filter="intval"
+               size="1"
+               default="1"
+        >
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+        </field>
+        <field name="country" type="countryoptions"
+               label="COM_JEM_COUNTRY"
+               description="COM_JEM_COUNTRY_DESC"
+               class="select_country"
+        />
+    </fieldset>
 
-	<fieldset name="custom">
-		<field name="custom1" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD1"
-			description="COM_JEM_VENUE_CUSTOM_FIELD1_DESC"
-		/>
-		<field name="custom2" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD2"
-			description="COM_JEM_VENUE_CUSTOM_FIELD2_DESC"
-		/>
-		<field name="custom3" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD3"
-			description="COM_JEM_VENUE_CUSTOM_FIELD3_DESC"
-		/>
-		<field name="custom4" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD4"
-			description="COM_JEM_VENUE_CUSTOM_FIELD4_DESC"
-		/>
-		<field name="custom5" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD5"
-			description="COM_JEM_VENUE_CUSTOM_FIELD5_DESC"
-		/>
-		<field name="custom6" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD6"
-			description="COM_JEM_VENUE_CUSTOM_FIELD6_DESC"
-		/>
-		<field name="custom7" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD7"
-			description="COM_JEM_VENUE_CUSTOM_FIELD7_DESC"
-		/>
-		<field name="custom8" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD8"
-			description="COM_JEM_VENUE_CUSTOM_FIELD8_DESC"
-		/>
-		<field name="custom9" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD9"
-			description="COM_JEM_VENUE_CUSTOM_FIELD9_DESC"
-		/>
-		<field name="custom10" type="text"
-			size="20"
-			readonly="false"
-			class="inputbox"
-			label="COM_JEM_VENUE_CUSTOM_FIELD10"
-			description="COM_JEM_VENUE_CUSTOM_FIELD10_DESC"
-		/>
-	</fieldset>
+    <fieldset name="custom">
+        <field name="custom1" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD1"
+               description="COM_JEM_VENUE_CUSTOM_FIELD1_DESC"
+        />
+        <field name="custom2" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD2"
+               description="COM_JEM_VENUE_CUSTOM_FIELD2_DESC"
+        />
+        <field name="custom3" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD3"
+               description="COM_JEM_VENUE_CUSTOM_FIELD3_DESC"
+        />
+        <field name="custom4" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD4"
+               description="COM_JEM_VENUE_CUSTOM_FIELD4_DESC"
+        />
+        <field name="custom5" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD5"
+               description="COM_JEM_VENUE_CUSTOM_FIELD5_DESC"
+        />
+        <field name="custom6" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD6"
+               description="COM_JEM_VENUE_CUSTOM_FIELD6_DESC"
+        />
+        <field name="custom7" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD7"
+               description="COM_JEM_VENUE_CUSTOM_FIELD7_DESC"
+        />
+        <field name="custom8" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD8"
+               description="COM_JEM_VENUE_CUSTOM_FIELD8_DESC"
+        />
+        <field name="custom9" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD9"
+               description="COM_JEM_VENUE_CUSTOM_FIELD9_DESC"
+        />
+        <field name="custom10" type="text"
+               size="20"
+               readonly="false"
+               class="inputbox"
+               label="COM_JEM_VENUE_CUSTOM_FIELD10"
+               description="COM_JEM_VENUE_CUSTOM_FIELD10_DESC"
+        />
+    </fieldset>
 
-	<fieldset name="image" label="COM_JEM_IMAGE">
-		<field name="locimage" type="imageselectevent"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_EDITVENUE_FIELD_IMAGESELECT"
-			description="COM_JEM_EDITVENUE_FIELD_IMAGESELECT_DESC"
-		/>
-		<field name="userfile" type="file"
-			class="inputbox"
-			size="40"
-			label="COM_JEM_IMAGE"
-			description="COM_JEM_UPLOAD_IMAGE"
-		/>
-	</fieldset>
+    <fieldset name="image" label="COM_JEM_IMAGE">
+        <field name="locimage" type="imageselectevent"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_EDITVENUE_FIELD_IMAGESELECT"
+               description="COM_JEM_EDITVENUE_FIELD_IMAGESELECT_DESC"
+        />
+        <field name="userfile" type="file"
+               class="inputbox"
+               size="40"
+               label="COM_JEM_IMAGE"
+               description="COM_JEM_UPLOAD_IMAGE"
+        />
+    </fieldset>
 
-	<fieldset name="publish"
-		label="COM_JEM_FIELDSET_PUBLISHING"
-	>
-		<field name="created_by" type="user"
-			label="COM_JEM_FIELD_CREATED_BY_LABEL"
-			description="COM_JEM_FIELD_CREATED_BY_DESC"
-		/>
-		<field name="created" type="calendar"
-			class="readonly"
-			label="JGLOBAL_FIELD_CREATED_LABEL"
-			description="JGLOBAL_FIELD_CREATED_DESC"
-			size="22"
-			default="now"
-			readonly="true"
-			format="Y-m-d H:i:s"
-			translateformat="true"
-			filter="user_utc"
-		/>
-		<field name="version" type="text"
-			class="readonly"
-			label="COM_JEM_FIELD_VERSION_LABEL"
-			description="COM_JEM_FIELD_VERSION_DESC"
-			size="6"
-			readonly="true"
-			filter="unset"
-		/>
-		<field name="modified" type="calendar"
-			class="readonly"
-			label="JGLOBAL_FIELD_MODIFIED_LABEL"
-			description="COM_JEM_FIELD_MODIFIED_DESC"
-			size="22"
-			readonly="true"
-			format="Y-m-d H:i:s"
-			translateformat="true"
-			filter="user_utc"
-		/>
-		<field name="modified_by" type="user"
-			label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
-			description="JGLOBAL_FIELD_MODIFIED_BY_LABEL_DESC"
-			class="readonly"
-			readonly="true"
-			filter="unset"
-		 />
-	</fieldset>
+    <fieldset name="publish"
+              label="COM_JEM_FIELDSET_PUBLISHING"
+    >
+        <field name="created_by" type="user"
+               label="COM_JEM_FIELD_CREATED_BY_LABEL"
+               description="COM_JEM_FIELD_CREATED_BY_DESC"
+        />
+        <field name="created" type="calendar"
+               class="readonly"
+               label="JGLOBAL_FIELD_CREATED_LABEL"
+               description="JGLOBAL_FIELD_CREATED_DESC"
+               size="22"
+               default="now"
+               readonly="true"
+               format="Y-m-d H:i:s"
+               translateformat="true"
+               filter="user_utc"
+        />
+        <field name="version" type="text"
+               class="readonly"
+               label="COM_JEM_FIELD_VERSION_LABEL"
+               description="COM_JEM_FIELD_VERSION_DESC"
+               size="6"
+               readonly="true"
+               filter="unset"
+        />
+        <field name="modified" type="calendar"
+               class="readonly"
+               label="JGLOBAL_FIELD_MODIFIED_LABEL"
+               description="COM_JEM_FIELD_MODIFIED_DESC"
+               size="22"
+               readonly="true"
+               format="Y-m-d H:i:s"
+               translateformat="true"
+               filter="user_utc"
+        />
+        <field name="modified_by" type="user"
+               label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+               description="JGLOBAL_FIELD_MODIFIED_BY_LABEL_DESC"
+               class="readonly"
+               readonly="true"
+               filter="unset"
+        />
+    </fieldset>
 
-	<fieldset name="meta"
-		label="JGLOBAL_FIELDSET_METADATA_OPTIONS"
-	>
-		<field name="meta_keywords" type="textarea"
-			class="inputbox"
-			rows="3" cols="30"
-			label="JFIELD_META_KEYWORDS_LABEL"
-			description="COM_JEM_FIELD_METAKEYWORDS_DESC"
-		/>
-		<field name="meta_description" type="textarea"
-			class="inputbox"
-			rows="3" cols="30"
-			label="JFIELD_META_DESCRIPTION_LABEL"
-			description="COM_JEM_FIELD_METADESCRIPTION_DESC"
-		/>
-	</fieldset>
+    <fieldset name="meta"
+              label="JGLOBAL_FIELDSET_METADATA_OPTIONS"
+    >
+        <field name="meta_keywords" type="textarea"
+               class="inputbox"
+               rows="3" cols="30"
+               label="JFIELD_META_KEYWORDS_LABEL"
+               description="COM_JEM_FIELD_METAKEYWORDS_DESC"
+        />
+        <field name="meta_description" type="textarea"
+               class="inputbox"
+               rows="3" cols="30"
+               label="JFIELD_META_DESCRIPTION_LABEL"
+               description="COM_JEM_FIELD_METADESCRIPTION_DESC"
+        />
+    </fieldset>
 </form>

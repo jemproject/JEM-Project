@@ -17,20 +17,15 @@ use Joomla\CMS\Language\Text;
 	<fieldset class="panelform">
 		<ul class="adminformlist">
 
-			<li><?php echo $this->form->getLabel('created_user_id'); ?>
-			<?php echo $this->form->getInput('created_user_id'); ?></li>
+			<li><div class="label-form"><?php echo $this->form->renderfield('created_user_id'); ?></div></li>
 
 			<?php if (intval($this->item->created_time)) : ?>
-				<li><?php echo $this->form->getLabel('created_time'); ?>
-				<?php echo $this->form->getInput('created_time'); ?></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('created_time'); ?></div></li>
 			<?php endif; ?>
 
 			<?php if ($this->item->modified_user_id) : ?>
-				<li><?php echo $this->form->getLabel('modified_user_id'); ?>
-				<?php echo $this->form->getInput('modified_user_id'); ?></li>
-
-				<li><?php echo $this->form->getLabel('modified_time'); ?>
-				<?php echo $this->form->getInput('modified_time'); ?></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('modified_user_id'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('modified_time'); ?></div></li>
 			<?php endif; ?>
 
 		</ul>

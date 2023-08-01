@@ -44,7 +44,6 @@ class JemViewExport extends JemAdminView
 
 		$this->categories		= $categories;
 
-
 		// add toolbar
 		$this->addToolbar();
 
@@ -60,7 +59,8 @@ class JemViewExport extends JemAdminView
 
 		ToolbarHelper::back();
 		ToolbarHelper::divider();
-		ToolbarHelper::help('export', true);
+		ToolbarHelper::inlinehelp();
+		ToolBarHelper::help('export', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/export-data');
 	}
 }
 ?>

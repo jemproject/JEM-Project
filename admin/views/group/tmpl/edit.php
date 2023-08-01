@@ -20,6 +20,7 @@ use Joomla\CMS\Language\Text;
 
 $wa = $this->document->getWebAssetManager();
 		$wa->useScript('keepalive')
+			->useScript('inlinehelp')
 			->useScript('form.validate');
 
 // Create shortcut to parameters.
@@ -89,11 +90,11 @@ $params = $params->toArray();
 							<?php echo empty($this->item->id) ? Text::_('COM_JEM_NEW_GROUP') : Text::sprintf('COM_JEM_GROUP_DETAILS', $this->item->id); ?>
 						</legend>
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('name');?> <?php echo $this->form->getInput('name'); ?>
+							<li><div class="label-form"><?php echo $this->form->renderfield('name'); ?></div>
 							</li>
-							<li><?php echo $this->form->getLabel('id');?> <?php echo $this->form->getInput('id'); ?>
+							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div>
 							</li>
-							<li><?php echo $this->form->getLabel('maintainers2');?> <?php echo $this->form->getInput('maintainers2'); ?>
+							<li><div class="label-form"><?php echo $this->form->renderfield('maintainers2'); ?></div>
 							</li>
 						</ul>
 					</fieldset>
@@ -138,18 +139,12 @@ $params = $params->toArray();
 									<div class="accordion-body">
 										<fieldset class="panelform">
 											<ul class="adminformlist">
-											<li><?php echo $this->form->getLabel('addvenue'); ?>
-											<?php echo $this->form->getInput('addvenue'); ?></li>
-											<li><?php echo $this->form->getLabel('publishvenue'); ?>
-											<?php echo $this->form->getInput('publishvenue'); ?></li>
-											<li><?php echo $this->form->getLabel('editvenue'); ?>
-											<?php echo $this->form->getInput('editvenue'); ?></li>
-											<li><?php echo $this->form->getLabel('addevent'); ?>
-											<?php echo $this->form->getInput('addevent'); ?></li>
-											<li><?php echo $this->form->getLabel('publishevent'); ?>
-											<?php echo $this->form->getInput('publishevent'); ?></li>
-											<li><?php echo $this->form->getLabel('editevent'); ?>
-											<?php echo $this->form->getInput('editevent'); ?></li>
+											<li><div class="label-form"><?php echo $this->form->renderfield('addvenue'); ?></div></li>
+											<li><div class="label-form"><?php echo $this->form->renderfield('publishvenue'); ?></div></li>
+											<li><div class="label-form"><?php echo $this->form->renderfield('editvenue'); ?></div></li>
+											<li><div class="label-form"><?php echo $this->form->renderfield('addevent'); ?></div></li>
+											<li><div class="label-form"><?php echo $this->form->renderfield('publishevent'); ?></div></li>
+											<li><div class="label-form"><?php echo $this->form->renderfield('editevent'); ?></div></li>
 											</ul>
 										</fieldset>
 									</div>

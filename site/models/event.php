@@ -86,7 +86,7 @@ class JemModelEvent extends ItemModel
 						                'a.created, a.created_by, a.published, a.registra, a.unregistra, a.unregistra_until, ' .
 						                'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
 						                'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
-						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, ' .
+						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
 						                'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
 				$query->from('#__jem_events AS a');
 
@@ -723,7 +723,6 @@ class JemModelEvent extends ItemModel
 				}
 			}else{
 				$places = 0;
-				$errMsg = Text::_('COM_JEM_ERROR_REGISTRATION');
 			}
 		}
 
@@ -743,11 +742,9 @@ class JemModelEvent extends ItemModel
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		if(empty($errMsg)){
 		$result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
-		}
-		if (!$result && !empty($errMsg)) {
-			$this->setError($errMsg);
+		if (!$result) {
+			$this->setError( Text::_('COM_JEM_ERROR_REGISTRATION'));
 		}
 
 		return $result;

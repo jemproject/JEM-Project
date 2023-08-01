@@ -25,6 +25,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $wa = $this->document->getWebAssetManager();
 		$wa->useStyle('jem.colorpicker')
 			->useScript('keepalive')
+			->useScript('inlinehelp')
 			->useScript('form.validate');
 ?>
 
@@ -48,29 +49,14 @@ $wa = $this->document->getWebAssetManager();
 			<fieldset class="adminform">
 				<legend><?php echo Text::_('COM_JEM_CATEGORY_FIELDSET_DETAILS');?></legend>
 				<ul class="adminformlist">
-					<li><?php echo $this->form->getLabel('catname'); ?>
-					<?php echo $this->form->getInput('catname'); ?></li>
-
-					<li><?php echo $this->form->getLabel('alias'); ?>
-					<?php echo $this->form->getInput('alias'); ?></li>
-
-					<li><?php echo $this->form->getLabel('extension'); ?>
-					<?php echo $this->form->getInput('extension'); ?></li>
-
-					<li><?php echo $this->form->getLabel('parent_id'); ?>
-					<?php echo $this->form->getInput('parent_id'); ?></li>
-
-					<li><?php echo $this->form->getLabel('published'); ?>
-					<?php echo $this->form->getInput('published'); ?></li>
-
-					<li><?php echo $this->form->getLabel('access'); ?>
-					<?php echo $this->form->getInput('access'); ?></li>
-					
-					<li><?php echo $this->form->getLabel('color'); ?>
-					<?php echo $this->form->getInput('color'); ?></li>
-					
-					<li><?php echo $this->form->getLabel('id'); ?>
-					<?php echo $this->form->getInput('id'); ?></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('catname'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('extension'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('parent_id'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
+					<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
 				</ul>
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('description'); ?>
@@ -105,8 +91,7 @@ $wa = $this->document->getWebAssetManager();
 							<fieldset class="panelform">
 								<ul class="adminformlist">
 									<li>
-										<?php echo $this->form->getLabel('email'); ?>
-										<?php echo $this->form->getInput('email'); ?>
+										<div class="label-form"><?php echo $this->form->renderfield('email'); ?></div>
 									</li>
 								</ul>
 							</fieldset>
@@ -116,8 +101,7 @@ $wa = $this->document->getWebAssetManager();
                             <fieldset class="panelform">
                                 <ul class="adminformlist">
                                     <li>
-                                        <?php echo $this->form->getLabel('emailacljl'); ?>
-                                        <?php echo $this->form->getInput('emailacljl'); ?>
+                                       <div class="label-form"><?php echo $this->form->renderfield('emailacljl'); ?></div>
                                     </li>
                                 </ul>
                             </fieldset>
@@ -150,7 +134,7 @@ $wa = $this->document->getWebAssetManager();
 						<div class="accordion-body">
 							<fieldset class="panelform">
 								<ul class="adminformlist">
-									<li><?php echo $this->form->getLabel('image'); ?> <?php echo $this->form->getInput('image'); ?>
+									<li><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
 									</li>
 								</ul>
 							</fieldset>

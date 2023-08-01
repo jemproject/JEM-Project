@@ -88,7 +88,8 @@ class JemViewImport extends JemAdminView
 
 		ToolbarHelper::back();
 		ToolbarHelper::divider();
-		ToolbarHelper::help('import', true);
+		ToolbarHelper::inlinehelp();
+		ToolBarHelper::help('import', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/import-data');
 	}
 }
 ?>
