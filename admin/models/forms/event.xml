@@ -323,7 +323,7 @@
 			   default="1"
 			   min="1"
 		/>
-		<field name="reservedplaces" type="text"
+		<field name="reservedplaces" type="number"
 			   size="4"
 			   class="inputbox"
 			   label="COM_JEM_RESERVED_PLACES"
