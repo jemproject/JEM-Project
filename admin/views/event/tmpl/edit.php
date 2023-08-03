@@ -43,33 +43,6 @@ $params = $params->toArray();
 ?>
 
 <script type="text/javascript">
-// window.addEvent('domready', function(){
-	window.onload = function() {
-	checkmaxplaces();
-
-	$("#jform_attribs_event_show_mapserv").on('change', testmap);
-
-	var mapserv = $("#jform_attribs_event_show_mapserv");
-	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
-
-	if (nrmapserv == 1 || nrmapserv == 2) {
-		eventmapon();
-	} else {
-		eventmapoff();
-	}
-
-	$('#jform_attribs_event_comunsolution').addEvent('change', testcomm);
-
-	var commhandler = $("#jform_attribs_event_comunsolution");
-	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
-
-	if (nrcommhandler == 1) {
-		common();
-	} else {
-		commoff();
-	}
-}
-
 	function checkmaxplaces()
 	{
 		$('#jform_maxplaces').on('change', function(){
@@ -147,26 +120,6 @@ Joomla.submitbutton = function(task)
 			document.getElementById("meta_description").value = $description;
 		}
 }
-</script>
-<script type="text/javascript">
-	function showUnregistraUntil()
-	{
-		var unregistra = $("#jform_unregistra");
-		// var unregistramode = unregistra.options[unregistra.selectedIndex].value;
-		var unregistramode = unregistra.val();
-
-		if (unregistramode == 2) {
-			document.getElementById('jform_unregistra_until_span').style.display = '';
-		} else {
-			document.getElementById('jform_unregistra_until_span').style.display = 'none';
-		}
-	}
-	window.onload = function() {
-		// $("#jform_unregistra").addEvent('change', showUnregistraUntil);
-		document.getElementById('jform_unregistra').addEventListener('change', showUnregistraUntil)
-		showUnregistraUntil();
-	}
-
 </script>
 <script>
     $(document).ready(function() {
