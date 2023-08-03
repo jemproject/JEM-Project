@@ -151,7 +151,7 @@ Joomla.submitbutton = function(task)
             if (minBookedUserValue > maxBookedUserValue) {
                 $minBookedUserInput.val(maxBookedUserValue);
             }
-            if (reservedPlacesValue > maxPlacesValue && maxPlacesValue != 0)) {
+            if (reservedPlacesValue > maxPlacesValue && maxPlacesValue != 0) {
                 $reservedPlacesInput.val(maxPlacesValue);
             }
         });
