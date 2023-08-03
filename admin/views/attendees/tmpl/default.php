@@ -49,15 +49,12 @@ $document->addScriptDeclaration('
 	</div> -->
 	<div id="j-main-container" class="span10 j-main-container">
 	<?php endif; ?>
-		<table class="adminlist" style="width:100%;">
-			<tr>
-				<td style="width:100%;padding:10px">
-					<b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
-					<b><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></b>&nbsp;<?php echo $this->escape($this->event->title); ?>
-				</td>
-			</tr>
-		</table>
-		<br />
+		<div class="row title-alias form-vertical mb-3">
+   			<div class="col-12 col-md-12">
+   				<strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br />
+				<strong><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></strong>&nbsp;<?php echo $this->escape($this->event->title); ?>
+			</div>
+		</div>
 		<table class="adminform">
 			<tr>
 				<td width="100%">
