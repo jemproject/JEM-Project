@@ -228,6 +228,7 @@ class JemModelAttendees extends ListModel
 				Text::_('COM_JEM_USERNAME'),
 				Text::_('COM_JEM_EMAIL'),
 				Text::_('COM_JEM_REGDATE'),
+				Text::_('COM_JEM_RESERVED_PLACES'),
 				Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
 			);
 		if ($comments) {
@@ -252,6 +253,7 @@ class JemModelAttendees extends ListModel
 					$item->username,
 					$item->email,
 					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
+					$item->places,
 					Text::_($txt_stat)
 				);
 			if ($comments) {
