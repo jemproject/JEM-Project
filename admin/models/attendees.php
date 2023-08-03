@@ -228,7 +228,7 @@ class JemModelAttendees extends ListModel
 				Text::_('COM_JEM_USERNAME'),
 				Text::_('COM_JEM_EMAIL'),
 				Text::_('COM_JEM_REGDATE'),
-				Text::_('COM_JEM_RESERVED_PLACES'),
+				Text::_('COM_JEM_ATTENDEES_PLACES'),
 				Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
 			);
 		if ($comments) {
