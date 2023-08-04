@@ -302,6 +302,7 @@ Joomla.submitbutton = function(task)
 						<ul class="adminformlist" style="margin-bottom: 60px;">
 							<li><div class="label-form"><?php echo $this->form->renderfield('registra'); ?></div></li>
 							<li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('unregistra_until'); ?></div></li>
 							<li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('minbookeduser'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('maxbookeduser'); ?></div></li>
