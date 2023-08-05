@@ -841,7 +841,7 @@ class JemCategoryNode extends JObject
 	/**
 	 * The time at which the category was checked out
 	 */
-	public $checked_out_time = 0;
+	public $checked_out_time = null;
 
 	/**
 	 * Access level for the category
