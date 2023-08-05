@@ -382,7 +382,7 @@ class JemTableEvent extends Table
 		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time')) {
 			$checkin = '';
 		} else {
-			$checkin = ' AND (checked_out = 0 OR checked_out = ' . (int) $userId . ')';
+			$checkin = ' AND (checked_out = null OR checked_out = ' . (int) $userId . ')';
 		}
 
 		// Update the publishing state for rows with the given primary keys.

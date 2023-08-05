@@ -30,9 +30,9 @@ class jem_groups extends Table
 	/** @var string */
 	public $description = '';
 	/** @var int */
-	public $checked_out = 0;
+	public $checked_out = null;
 	/** @var date */
-	public $checked_out_time = 0;
+	public $checked_out_time = null;
 
 
 	public function __construct(& $db)

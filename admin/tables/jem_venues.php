@@ -70,9 +70,9 @@ class jem_venues extends Table
 	/** @var int */
 	public $published = null;
 	/** @var int */
-	public $checked_out = 0;
+	public $checked_out = null;
 	/** @var date */
-	public $checked_out_time = 0;
+	public $checked_out_time = null;
 	/** @var int */
 	public $ordering = null;
 
