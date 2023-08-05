@@ -122,43 +122,47 @@ Joomla.submitbutton = function(task)
 }
 </script>
 <script>
-    $(document).ready(function() {
-        var $registraSelect = $('#jform_registra');
-        var $restOfList = $registraSelect.closest('.adminformlist').find('li:not(:first-child)');
-        $registraSelect.on('change', function() {
-            var selectedValue = parseInt($(this).val());
-            if (selectedValue === 0) {
-                $restOfList.hide();
-            } else {
-                $restOfList.show();
-            }
-        });
-        var $minBookedUserInput = $('#jform_minbookeduser');
-        var $maxBookedUserInput = $('#jform_maxbookeduser');
-        var $maxPlacesInput = $('#jform_maxplaces');
-        var $reservedPlacesInput = $('#jform_reservedplaces');
-        $minBookedUserInput.add($maxBookedUserInput).add($maxPlacesInput).add($reservedPlacesInput).on('change', function() {
-            var minBookedUserValue = parseInt($minBookedUserInput.val());
-            var maxBookedUserValue = parseInt($maxBookedUserInput.val());
-            var maxPlacesValue = parseInt($maxPlacesInput.val());
-            var reservedPlacesValue = parseInt($reservedPlacesInput.val());
-            if (minBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
-                $minBookedUserInput.val(maxPlacesValue);
-            }
-            if (maxBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
-                $maxBookedUserInput.val(maxPlacesValue);
-            }
-            if (minBookedUserValue > maxBookedUserValue) {
-                $minBookedUserInput.val(maxBookedUserValue);
-            }
-            if (reservedPlacesValue > maxPlacesValue && maxPlacesValue != 0) {
-                $reservedPlacesInput.val(maxPlacesValue);
-            }
-        });
-        // Trigger the change event on page load to initialize the state
-        $registraSelect.change();
-        $minBookedUserInput.change();
-    });
+   $(document).ready(function () {
+    	var $registraSelect = $("#jform_registra");
+    	var $restOfList = $registraSelect.closest(".adminformlist").find("li:not(:first-child)");
+    	$registraSelect.on("change", function () {
+    	    var selectedValue = parseInt($(this).val());
+    	    if (selectedValue === 0) {
+    	        $restOfList.hide();
+    	    } else {
+    	        $restOfList.show();
+    	    }
+    	});
+    	var $minBookedUserInput = $("#jform_minbookeduser");
+    	var $maxBookedUserInput = $("#jform_maxbookeduser");
+    	var $maxPlacesInput = $("#jform_maxplaces");
+    	var $reservedPlacesInput = $("#jform_reservedplaces");
+    	$minBookedUserInput
+    	    .add($maxBookedUserInput)
+    	    .add($maxPlacesInput)
+    	    .add($reservedPlacesInput)
+    	    .on("change", function () {
+    	        var minBookedUserValue = parseInt($minBookedUserInput.val());
+    	        var maxBookedUserValue = parseInt($maxBookedUserInput.val());
+    	        var maxPlacesValue = parseInt($maxPlacesInput.val());
+    	        var reservedPlacesValue = parseInt($reservedPlacesInput.val());
+    	        if (minBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
+    	            $minBookedUserInput.val(maxPlacesValue);
+    	        }
+    	        if (maxBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
+    	            $maxBookedUserInput.val(maxPlacesValue);
+    	        }
+    	        if (minBookedUserValue > maxBookedUserValue) {
+    	            $minBookedUserInput.val(maxBookedUserValue);
+    	        }
+    	        if (reservedPlacesValue > maxPlacesValue && maxPlacesValue != 0) {
+    	            $reservedPlacesInput.val(maxPlacesValue);
+    	        }
+    	    });
+    	// Trigger the change event on page load to initialize the state
+    	$registraSelect.change();
+    	$minBookedUserInput.change();
+	});
 </script>
 <form
 	action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"

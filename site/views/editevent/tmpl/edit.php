@@ -55,54 +55,50 @@ $params		= $this->params;
 </script>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        var $registraCheckbox = $('input[name="jform[registra]"]');
-        var $restOfContent = $(".jem-dl-rest").children("dd, dt");
+	$(document).ready(function () {
+    	var $registraCheckbox = $('input[name="jform[registra]"]');
+   		var $restOfContent = $(".jem-dl-rest").children("dd, dt");
 
-        $registraCheckbox.on("change", function () {
-            if ($(this).is(":checked")) {
-                $restOfContent.show();
-            } else {
-                $restOfContent.hide();
-            }
-        });
+    	$registraCheckbox.on("change", function () {
+        	if ($(this).is(":checked")) {
+            	$restOfContent.show();
+        	} else {
+            	$restOfContent.hide();
+        	}
+    	});
 
-        var $minBookedUserInput = $("#jform_minbookeduser");
-        var $maxBookedUserInput = $("#jform_maxbookeduser");
-        var $maxPlacesInput = $("#jform_maxplaces");
-        var $reservedPlacesInput = $("#jform_reservedplaces");
+    	var $minBookedUserInput = $("#jform_minbookeduser");
+    	var $maxBookedUserInput = $("#jform_maxbookeduser");
+    	var $maxPlacesInput = $("#jform_maxplaces");
+    	var $reservedPlacesInput = $("#jform_reservedplaces");
 
-        $minBookedUserInput
-            .add($maxBookedUserInput)
-            .add($maxPlacesInput)
-            .add($reservedPlacesInput)
-            .on("change", function () {
-                var minBookedUserValue = parseInt($minBookedUserInput.val());
-                var maxBookedUserValue = parseInt($maxBookedUserInput.val());
-                var maxPlacesValue = parseInt($maxPlacesInput.val());
-                var reservedPlacesValue = parseInt($reservedPlacesInput.val());
+    	$minBookedUserInput
+        	.add($maxBookedUserInput)
+        	.add($maxPlacesInput)
+        	.add($reservedPlacesInput)
+        	.on("change", function () {
+        	    var minBookedUserValue = parseInt($minBookedUserInput.val());
+        	    var maxBookedUserValue = parseInt($maxBookedUserInput.val());
+        	    var maxPlacesValue = parseInt($maxPlacesInput.val());
+        	    var reservedPlacesValue = parseInt($reservedPlacesInput.val());
+        	    if (minBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
+        	        $minBookedUserInput.val(maxPlacesValue);
+        	    }
+        	    if (maxBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
+        	        $maxBookedUserInput.val(maxPlacesValue);
+        	    }
+        	    if (minBookedUserValue > maxBookedUserValue) {
+        	        $minBookedUserInput.val(maxBookedUserValue);
+        	    }
+        	    if (reservedPlacesValue > maxPlacesValue && maxPlacesValue != 0) {
+        	        $reservedPlacesInput.val(maxPlacesValue);
+        	    }
+        	});
 
-                if (minBookedUserValue > maxPlacesValue) {
-                    $minBookedUserInput.val(maxPlacesValue);
-                }
-                if (maxBookedUserValue > maxPlacesValue) {
-                    $maxBookedUserInput.val(maxPlacesValue);
-                }
-                if (minBookedUserValue > maxBookedUserValue) {
-                    $minBookedUserInput.val(maxBookedUserValue);
-                }
-                if (maxBookedUserValue < minBookedUserValue) {
-                    $maxBookedUserInput.val(minBookedUserValue);
-                }
-                if (reservedPlacesValue > maxPlacesValue) {
-                    $reservedPlacesInput.val(maxPlacesValue);
-                }
-            });
-
-        // Trigger the change event on page load to initialize the state
-        $registraCheckbox.change();
-        $minBookedUserInput.change();
-    });
+    	// Trigger the change event on page load to initialize the state
+    	$registraCheckbox.change();
+    	$minBookedUserInput.change();
+	});
 </script>;
 
 <script type="text/javascript">
