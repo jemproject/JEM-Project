@@ -1257,6 +1257,65 @@ static public function lightbox() {
 		}
 		return $output;
 	}
+	
+	/**
+	 * Creates the flyer2
+	 *
+	 * @param obj $data
+	 * @param array $image
+	 * @param string $type
+	 */
+
+	static public function flyer2($data, $image, $type, $id = null)
+	{
+		$uri = Uri::getInstance();
+		$id_attr = $id ? 'id="'.$id.'"' : '';
+		$settings = JemHelper::config();
+		switch($type) {
+			case 'event':
+				$folder = 'events';
+				$imagefile = $data->datimage;
+				$info = $data->title;
+				break;
+			case 'category':
+				$folder = 'categories';
+				$imagefile = $data->image;
+				$info = $data->catname;
+				break;
+			case 'venue':
+				$folder = 'venues';
+				$imagefile = $data->locimage;
+				$info = $data->venue;
+				break;
+		}
+
+		// Do we have an image?
+		if (empty($imagefile) || empty($image)) {
+			return;
+		}
+				
+		// Does a thumbnail exist?
+/*		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+			if ($settings->lightbox == 0) {
+				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+
+				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage">'.$icon.'</div>';
+			} else {
+				HTMLHelper::_('behavior.modal', 'a.flyermodal');
+				$url = $uri->base().$image['original'];
+				$attributes = $id_attr.' class="flyermodal flyerimage2" title="'.$info.'"';
+
+				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
+			}
+		// Otherwise take the values for the original image specified in the settings
+		} else {*/
+		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+//		}
+		return $output;
+	}
 
 	/**
 	 * Formats date
