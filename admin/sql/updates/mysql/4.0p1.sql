@@ -22,3 +22,5 @@ UPDATE `#__jem_venues` SET `checked_out_time` = null WHERE `checked_out_time` LI
 UPDATE `#__jem_venues` SET `publish_up` = null WHERE `publish_up` LIKE '%0000-00-00%';
 UPDATE `#__jem_venues` SET `publish_down` = null WHERE `publish_down` LIKE '%0000-00-00%';
 UPDATE `#__jem_attachments` SET `added` = null WHERE `added` LIKE '%0000-00-00%';
+
+INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('flyer', '0', '0');

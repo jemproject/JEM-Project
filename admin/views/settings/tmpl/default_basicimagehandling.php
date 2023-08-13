@@ -31,6 +31,8 @@ $gdv = JEMImage::gdVersion();
 			<?php endif; ?>
 
 			<li><div class="label-form"><?php echo $this->form->renderfield('lightbox'); ?></div></li>
+
+            <li><div class="label-form"><?php echo $this->form->renderfield('flyer'); ?></div></li>
 		</ul>
 	</fieldset>
 </div>
