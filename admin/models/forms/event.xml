@@ -292,6 +292,7 @@
 			filter="integer"
 			min="0"
 			max="999"
+			showon="unregistra:2"
 		/>
 		<field name="maxplaces" type="number"
 			   size="4"
