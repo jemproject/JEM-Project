@@ -1,6 +1,6 @@
 <?php
 
-defined('CBLIB') or die();
+defined('CBLIB') or die;
 
 return array (
   'JEMMYEVENTS_TITLE' => 'TITLE',

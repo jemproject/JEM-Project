@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 4.0.1
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.0.1
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -18,7 +18,7 @@ require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
 /**
  * JEM Factory class
  *
- * @package  JEM
+ * @package JEM
  * @since    2.1.5
  */
 abstract class JemFactory extends Factory

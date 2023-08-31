@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 4.0.1
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.0.1
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -14,8 +14,8 @@ defined('_JEXEC') or die;
 /**
  * JEM Content Plugin
  *
- * @package        JEM.Plugin
- * @subpackage     Content.jem
+ * @package    JEM.Plugin
+ * @subpackage Content.jem
  * @since          1.9.6
  */
 class plgContentJem extends JPlugin

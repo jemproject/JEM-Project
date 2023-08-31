@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.1
+ * @version    4.0.1
  * @JEM Tag Plugin for AcyMailing 5.x
- * @copyright Copyright (C) 2014 Thamesmog.
- * @copyright Copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  Copyright (C) 2014 Thamesmog.
+ * @copyright  Copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;

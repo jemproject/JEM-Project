@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.1
- * @package JEM
+ * @version    4.0.1
+ * @package    JEM
  * @subpackage JEM Finder Plugin
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -19,8 +19,8 @@ require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapt
 /**
  * Finder adapter for com_jem.
  *
- * @package     Joomla
- * @subpackage  Finder.jem
+ * @package    Joomla
+ * @subpackage Finder.jem
  *
  */
 
