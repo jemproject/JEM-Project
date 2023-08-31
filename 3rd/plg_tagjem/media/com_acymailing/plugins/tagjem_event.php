@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.1-dev1
+ * @version 4.0.1
  * @JEM Tag Plugin for AcyMailing 5.x
  * @copyright Copyright (C) 2014 Thamesmog.
  * @copyright Copyright (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
