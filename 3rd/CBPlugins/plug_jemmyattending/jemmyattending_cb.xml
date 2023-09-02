@@ -8,7 +8,7 @@
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
 	<version>4.0</version>
-	<release>4.0.1</release>
+	<release>4.1.0</release>
 	<description>This plugin will show events where the user is attending.</description>
 	<files>
 		<filename plugin="jemmyattending_cb">jemmyattending_cb.php</filename>

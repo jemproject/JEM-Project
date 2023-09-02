@@ -1,12 +1,12 @@
-# JEM 4.0.1-dev2
-released 2023-08-01
+# JEM 4.1.0
+released 2023-09-02
 
 Based on
 - jemproject/JEM-Project
 - Egnarts94/JEM-Project Responsive JEM
 
 ## To install
-Download the installation package here from the repo and install it :-)  
+Download the installation package from https://www.joomlaeventmanager.net/download or install it in Joomla 4 via the web installer.
 
 ## Documentation
 https://www.joomlaeventmanager.net/documentation/basics
