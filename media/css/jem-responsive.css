@@ -117,6 +117,7 @@ body.com_jem.body-overlayed {
     margin-left: 170px;
     padding-top: 5px;
     padding-bottom: 5px;
+    display: flow-root;
 }
 
 #jem .jem-dl-long dd {
