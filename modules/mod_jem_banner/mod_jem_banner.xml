@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>July 2023</creationDate>
+	<creationDate>September 2023</creationDate>
 	<copyright>copyright (C) 2014-2023 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -142,6 +142,7 @@
 					<option value="0">MOD_JEM_BANNER_FLYER_LINK_IMAGE_PAGE</option>
 					<option value="1">MOD_JEM_BANNER_FLYER_LINK_IMAGE_MODAL</option>
 					<option value="2">MOD_JEM_BANNER_FLYER_LINK_EVENT_DETAILS</option>
+					<option value="3">COM_JEM_NO_LINK</option>
 				</field>
 
 				<field name="showdesc" type="radio"

@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -94,7 +94,7 @@ class JFormFieldModal_Venue extends JFormField
 				'title'  => Text::_('COM_JEM_SELECT'),
 				'width'  => '800px',
 				'height' => '450px',
-				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 			)
 		);
 		$html[] ='<button type="button" class="btn btn-link btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal-1">'.Text::_('COM_JEM_SELECT').'

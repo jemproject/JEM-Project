@@ -1,11 +1,11 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
+ * @version    4.1.0
+ * @package    JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;

@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @todo add check if CB does exists and if so perform action
  */
@@ -48,7 +48,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
         <dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
 		<?php endif; ?>
-        <hr>
+        <hr />
 		<?php
 		$this->registereduser = null;
 		// only set style info if users already have registered for event and user is allowed to see it
@@ -166,7 +166,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<?php endif; ?>
     </dl>
 
-	<hr>
+	<hr />
 
 	<?php if ($this->print == 0) : ?>
 	<dl class="jem-dl floattext">

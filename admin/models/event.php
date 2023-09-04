@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -276,12 +276,11 @@ class JemModelEvent extends JemModelAdmin
 
 		// convert international date formats...
         $db = Factory::getContainer()->get('DatabaseDriver');
-		$nullDate = $db->getNullDate();
-		if (!empty($data['dates']) && ($data['dates'] != $nullDate)) {
+		if (!empty($data['dates']) && ($data['dates'] != null)) {
 			$d = Factory::getDate($data['dates'], 'UTC');
 			$data['dates'] = $d->format('Y-m-d', true, false);
 		}
-		if (!empty($data['enddates']) && ($data['enddates'] != $nullDate)) {
+		if (!empty($data['enddates']) && ($data['enddates'] != null)) {
 			$d = Factory::getDate($data['enddates'], 'UTC');
 			$data['enddates'] = $d->format('Y-m-d', true, false);
 		}
@@ -306,7 +305,7 @@ class JemModelEvent extends JemModelAdmin
 			$data['recurrence_number'] = $recurrencenumber;
 			$data['recurrence_byday']  = $recurrencebyday;
 
-			if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != $nullDate)) {
+			if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
 				$d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
 				$data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
 			}

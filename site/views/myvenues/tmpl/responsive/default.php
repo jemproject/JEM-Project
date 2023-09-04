@@ -1,17 +1,27 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 ?>
 
 <div id="jem" class="jem_myvenues<?php echo $this->pageclass_sfx;?>">
+    <?php if ($this->needLoginFirst) {
+        $uri = Uri::getInstance();
+        $returnUrl = $uri->toString();
+        $urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl); ?>
+        <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+                type="button"><?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?></button>
+
+    <?php } else { ?>
 	<div class="buttons">
 		<?php
 		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
@@ -32,4 +42,5 @@ defined('_JEXEC') or die;
 	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
 	</div>
+    <?php } ?>
 </div>

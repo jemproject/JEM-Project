@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -61,6 +61,7 @@ class JemViewCssmanager extends JemAdminView
 		// ToolbarHelper::back();
 		ToolbarHelper::custom('cssmanager.back', 'back', 'back', Text::_('COM_JEM_ATT_BACK'), false);
 		ToolbarHelper::divider();
-		ToolbarHelper::help('editcss', true);
+        ToolbarHelper::inlinehelp();
+        ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/css-manager');
 	}
 }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
+	<config>
+		<inlinehelp button="show"/>
+	</config>
 	<fieldset name="globalparam2"
 		label="COM_JEM_GLOBAL_PARAMETERS"
 	>
@@ -268,7 +271,7 @@
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="2">COM_JEM_OPTIONAL</option>
+			<option value="2">COM_JEM_USE_EVENT_SETTING</option>
 		</field>
 		<!--field name="showfrounregistra" type="list"
 			label="COM_JEM_SUBMIT_UNREGISTER"
@@ -362,6 +365,16 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="flyer" type="radio"
+			   label="COM_JEM_IMAGE_FLYER"
+			   description="COM_JEM_IMAGE_FLYER_DESC"
+			   class="inputbox btn-group btn-group-yesno"
+			   default="0"
+			   required="false"
 		>
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>

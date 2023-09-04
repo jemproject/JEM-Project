@@ -1,11 +1,11 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
+ * @version    4.1.0
+ * @package    JEM
  * @subpackage JEM Wide Module
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -140,6 +140,7 @@ abstract class ModJemWideHelper
 				$title = $fulltitle;
 			}
 
+			$lists[$i]->eventid     = $row->id;
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = $row->venue ? htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8') : $row->venue;

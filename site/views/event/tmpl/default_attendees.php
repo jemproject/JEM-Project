@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @todo add check if CB does exists and if so perform action
  */
@@ -48,7 +48,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
 		<dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
 	<?php endif; ?>
-        <hr>
+        <hr />
 	<?php
 		$this->registereduser = null;
 		// only set style info if users already have registered for event and user is allowed to see it
@@ -151,7 +151,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					// no communitycomponent is set so only show the username
 					echo '<span class="username">' . $register->name . '</span>' . $registedplaces;
 				endif;
-        
+
         echo '</li>';
 			// end loop through attendees
 			endforeach;
@@ -164,7 +164,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
 	<?php endif; ?>
 	</dl>
-	<hr>
+	<hr />
 
 	<?php if ($this->print == 0) : ?>
 	<dl class="jem-dl floattext">
@@ -185,11 +185,12 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 2:
 					//echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
-                    <?php $returnUrl  = JURI::getInstance()->toString();
-                    $urlLogin   = 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl); ?>
-                    <button class="btn btn-warning"  onclick="location.href='<?php echo $urlLogin;?>'" type="button">
-                        <?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
-						
+                    <?php $uri = Uri::getInstance();
+                    $returnUrl = $uri->toString();
+                    $urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl); ?>
+                    <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+                            type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+
 					<?php //insert Breezing Form hack here
 					/*<input class="btn btn-secondary" type="button" value="<?php echo Text::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
 					*/?>

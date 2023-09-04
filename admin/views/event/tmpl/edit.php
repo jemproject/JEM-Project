@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @todo: move js to a file
  */
@@ -30,12 +30,10 @@ $options = array(
 		'useCookie' => true, // this must not be a string. Don't use quotes.
 );
 
-// HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.formvalidation');
-// HTMLHelper::_('behavior.keepalive');
 $wa = $this->document->getWebAssetManager();
 		$wa->useScript('keepalive')
 			->useScript('form.validate')
+			->useScript('inlinehelp')
 			->useScript('multiselect');
 
 // Create shortcut to parameters.
@@ -45,33 +43,6 @@ $params = $params->toArray();
 ?>
 
 <script type="text/javascript">
-// window.addEvent('domready', function(){
-	window.onload = function() {
-	checkmaxplaces();
-
-	$("#jform_attribs_event_show_mapserv").on('change', testmap);
-
-	var mapserv = $("#jform_attribs_event_show_mapserv");
-	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
-
-	if (nrmapserv == 1 || nrmapserv == 2) {
-		eventmapon();
-	} else {
-		eventmapoff();
-	}
-
-	$('#jform_attribs_event_comunsolution').addEvent('change', testcomm);
-
-	var commhandler = $("#jform_attribs_event_comunsolution");
-	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
-
-	if (nrcommhandler == 1) {
-		common();
-	} else {
-		commoff();
-	}
-}
-
 	function checkmaxplaces()
 	{
 		$('#jform_maxplaces').on('change', function(){
@@ -150,27 +121,48 @@ Joomla.submitbutton = function(task)
 		}
 }
 </script>
-<script type="text/javascript">
-// window.addEvent('domready', function(){
-	function showUnregistraUntil()
-	{
-		var unregistra = $("#jform_unregistra");
-		// var unregistramode = unregistra.options[unregistra.selectedIndex].value;
-		var unregistramode = unregistra.val();
-
-		if (unregistramode == 2) {
-			document.getElementById('jform_unregistra_until_span').style.display = '';
-		} else {
-			document.getElementById('jform_unregistra_until_span').style.display = 'none';
-		}
-	}
-	window.onload = function() {
-		// $("#jform_unregistra").addEvent('change', showUnregistraUntil);
-		document.getElementById('jform_unregistra').addEventListener('change', showUnregistraUntil)
-		showUnregistraUntil();
-	}
-
-
+<script>
+   $(document).ready(function () {
+    	var $registraSelect = $("#jform_registra");
+    	var $restOfList = $registraSelect.closest(".adminformlist").find("li:not(:first-child)");
+    	$registraSelect.on("change", function () {
+    	    var selectedValue = parseInt($(this).val());
+    	    if (selectedValue === 0) {
+    	        $restOfList.hide();
+    	    } else {
+    	        $restOfList.show();
+    	    }
+    	});
+    	var $minBookedUserInput = $("#jform_minbookeduser");
+    	var $maxBookedUserInput = $("#jform_maxbookeduser");
+    	var $maxPlacesInput = $("#jform_maxplaces");
+    	var $reservedPlacesInput = $("#jform_reservedplaces");
+    	$minBookedUserInput
+    	    .add($maxBookedUserInput)
+    	    .add($maxPlacesInput)
+    	    .add($reservedPlacesInput)
+    	    .on("change", function () {
+    	        var minBookedUserValue = parseInt($minBookedUserInput.val());
+    	        var maxBookedUserValue = parseInt($maxBookedUserInput.val());
+    	        var maxPlacesValue = parseInt($maxPlacesInput.val());
+    	        var reservedPlacesValue = parseInt($reservedPlacesInput.val());
+    	        if (minBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
+    	            $minBookedUserInput.val(maxPlacesValue);
+    	        }
+    	        if (maxBookedUserValue > maxPlacesValue && maxPlacesValue != 0) {
+    	            $maxBookedUserInput.val(maxPlacesValue);
+    	        }
+    	        if (minBookedUserValue > maxBookedUserValue) {
+    	            $minBookedUserInput.val(maxBookedUserValue);
+    	        }
+    	        if (reservedPlacesValue > maxPlacesValue && maxPlacesValue != 0) {
+    	            $reservedPlacesInput.val(maxPlacesValue);
+    	        }
+    	    });
+    	// Trigger the change event on page load to initialize the state
+    	$registraSelect.change();
+    	$minBookedUserInput.change();
+	});
 </script>
 <form
 	action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
@@ -214,36 +206,23 @@ Joomla.submitbutton = function(task)
 			</legend>
 			
 			<ul class="adminformlist">
-			
-				<li><?php echo $this->form->getLabel('title');?> <?php echo $this->form->getInput('title'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('alias'); ?> <?php echo $this->form->getInput('alias'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('dates'); ?> <?php echo $this->form->getInput('dates'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('enddates'); ?> <?php echo $this->form->getInput('enddates'); ?>
-				</li>
-                <li><div class="label-form"><?php echo $this->form->getLabel('times'); ?></div> <?php echo $this->form->getInput('times'); ?>
-				</li>
-                <li><div class="label-form"><?php echo $this->form->getLabel('endtimes'); ?></div> <?php echo $this->form->getInput('endtimes'); ?>
-				</li>
-                <li><div class="label-form"><?php echo $this->form->getLabel('cats'); ?></div> <?php echo $this->form->getInput('cats'); ?>
-				</li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('title'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('dates'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('enddates'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('times'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('cats'); ?></div></li>
 			</ul>
 		</fieldset>
 
 		<fieldset class="adminform">
 			<ul class="adminformlist">
-				<li><div class="label-form"><?php echo $this->form->getLabel('locid'); ?></div><?php echo $this->form->getInput('locid'); ?>
-				</li>
-				<li><div class="label-form"><?php echo $this->form->getLabel('contactid'); ?></div><?php echo $this->form->getInput('contactid'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('featured'); ?> <?php echo $this->form->getInput('featured'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('access'); ?> <?php echo $this->form->getInput('access'); ?>
-				</li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
 			</ul>
 		</fieldset>
 
@@ -289,18 +268,12 @@ Joomla.submitbutton = function(task)
 				<div id="publishing-details" class="accordion-collapse collapse show" aria-labelledby="publishing-details-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('created_by'); ?> <?php echo $this->form->getInput('created_by'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('hits'); ?> <?php echo $this->form->getInput('hits'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('created'); ?> <?php echo $this->form->getInput('created'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('modified'); ?> <?php echo $this->form->getInput('modified'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('version'); ?> <?php echo $this->form->getInput('version'); ?>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('created_by'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('hits'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('created'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('modified'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('version'); ?></div></li>
 						</ul>
 					</div>
 				</div>
@@ -330,24 +303,30 @@ Joomla.submitbutton = function(task)
 				</h2>
 				<div id="registra" class="accordion-collapse collapse" aria-labelledby="registra-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
-						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
-							</li>
-							<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
-							<!--/li>
-							<li--><span id="jform_unregistra_until_span"><?php echo $this->form->getInput('unregistra_until'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
-							</li>
-							<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
-                            <li><?php echo $this->form->getLabel('minbookeduser'); ?> <?php echo $this->form->getInput('minbookeduser'); ?></li>
-                            <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
-                            <li><?php echo $this->form->getLabel('reservedplaces'); ?> <?php echo $this->form->getInput('reservedplaces'); ?></li>
-
-							<?php if ($this->item->maxplaces): ?>
-							<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><br>
-                                <input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces); ?>" />
-							</li>
-							<?php endif; ?>
-							<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
+						<ul class="adminformlist" style="margin-bottom: 60px;">
+							<li><div class="label-form"><?php echo $this->form->renderfield('registra'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('unregistra_until'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('minbookeduser'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('maxbookeduser'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('reservedplaces'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
+							<li>
+                                <div class="label-form"><div class="control-group">
+                                        <div class="control-label">
+                                            <label id="availableplaces-lbl"><?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label>
+                                        </div>
+                                        <div class="controls">
+                                            <input type="number" name="availableplaces" id="availableplaces" value=<?php echo  ($this->item->maxplaces? ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces):'0'); ?> class="form-control inputbox" size="4" aria-describedby="jform_reservedplaces-desc" readonly>
+                                            <div id="availableplaces-desc" class="hide-aware-inline-help d-none">
+                                                <small class="form-text">
+                                                    <?php echo Text::_ ('COM_JEM_AVAILABLE_PLACES_DESC') ;?></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 							</li>
 						</ul>
 					</div>
@@ -363,9 +342,8 @@ Joomla.submitbutton = function(task)
 				
 				<div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
-						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('datimage'); ?> <?php echo $this->form->getInput('datimage'); ?>
-							</li>
+                        <ul class="adminformlist" style="margin-bottom: 130px;">
+							<li><div class="label-form"><?php echo $this->form->renderfield('datimage'); ?></div></li>
 						</ul>
 					</div>
 				</div>
@@ -380,13 +358,12 @@ Joomla.submitbutton = function(task)
 				<div id="recurrence" class="accordion-collapse collapse" aria-labelledby="recurrence-header" data-bs-parent="#accordionEventForm">
 					<div class="accordion-body">
 						<ul class="adminformlist">
-							<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type'); ?></div></li>
 							<li id="recurrence_output" class="m-3">
 							<label></label>
 							</li>
 							<li id="counter_row" style="display: none;">
-								<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
+                                <div class="label-form"><?php echo $this->form->renderfield('recurrence_limit_date'); ?></div>
 								<br><div><small>
 								<?php
 								$anticipation	= $this->jemsettings->recurrence_anticipation;
@@ -475,7 +452,7 @@ Joomla.submitbutton = function(task)
 
 								if (!empty($recurr_type)) {
 									?>
-									<hr>
+									<hr />
 									<fieldset class="panelform">
 									<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
 									<ul class="adminformlist">

@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -145,7 +145,7 @@ use Joomla\CMS\Language\Text;
 	} ?>
 </fieldset>
 <!-- RECURRENCE END -->
-<hr>
+<hr />
 <!-- CONTACT START -->
 <fieldset class="panelform"  style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_CONTACT'); ?></legend>
@@ -155,7 +155,7 @@ use Joomla\CMS\Language\Text;
     </dl>
 </fieldset>
 <!-- CONTACT END -->
-<hr>
+<hr />
 <!-- REGISTRATION START -->
 <fieldset class="" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
@@ -171,6 +171,8 @@ use Joomla\CMS\Language\Text;
                 <dt><?php echo $this->form->getLabel('registra'); ?></dt>
                 <dd><?php echo $this->form->getInput('registra'); ?></dd>
 			<?php endif; ?>
+			</dl>
+			<dl class="adminformlist jem-dl jem-dl-rest">
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
                 <dt><?php echo $this->form->getLabel('reginvitedonly'); ?></dt>
                 <dd><?php echo $this->form->getInput('reginvitedonly'); ?></dd>
@@ -184,15 +186,17 @@ use Joomla\CMS\Language\Text;
             <dd><?php echo $this->form->getInput('minbookeduser'); ?></dd>
             <dt><?php echo $this->form->getLabel('maxbookeduser'); ?></dt>
             <dd><?php echo $this->form->getInput('maxbookeduser'); ?></dd>
-            <dt><?php echo $this->form->getLabel('reservedplaces'); ?></dt>
+            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br></dt>
             <dd><?php echo $this->form->getInput('reservedplaces'); ?></dd>
             <dt><?php echo $this->form->getLabel('waitinglist'); ?></dt>
             <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
+            <dt><?php echo $this->form->getLabel('requestanswer'); ?></dt>
+            <dd><?php echo $this->form->getInput('requestanswer'); ?></dd>
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
                 <dt><?php echo $this->form->getLabel('invited'); ?></dt>
                 <dd><?php echo $this->form->getInput('invited'); ?></dd>
 			<?php endif; ?>
-            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><br></dt>
+            <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br></dt>
             <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
 			<?php if ($this->item->maxplaces) : ?>
                 <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>

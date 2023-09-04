@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -123,7 +123,7 @@ use Joomla\CMS\Language\Text;
 
 			if (!empty($recurr_type)) {
 		 ?>
-				<hr>
+				<hr />
 				<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
 				<ul class="adminformlist">
 					<li>
@@ -183,15 +183,17 @@ use Joomla\CMS\Language\Text;
             <br/><br/>
             <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
             <br/><br/>
-			<li><?php echo $this->form->getLabel('reservedplaces'); ?> <?php echo $this->form->getInput('reservedplaces'); ?></li>
+			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label> <?php echo $this->form->getInput('reservedplaces'); ?></li>
             <br/><br/>
 			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
+			<br/><br/>
+			<li><?php echo $this->form->getLabel('requestanswer'); ?> <?php echo $this->form->getInput('requestanswer'); ?></li>
 			<br/><br/>
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
 			<br/><br/>
 			<?php endif; ?>
-			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label> <?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></li>
+			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label> <?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></li>
 			<br/><br/>
 			<?php if ($this->item->maxplaces): ?>
 			<li><?php echo $this->form->getLabel('avplaces'); ?> <?php echo '<input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="' . ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces) . '" />'; ?></li>

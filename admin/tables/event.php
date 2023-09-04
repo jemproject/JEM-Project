@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -42,6 +42,10 @@ class JemTableEvent extends Table
 
 		if (!isset($array['waitinglist'])) {
 			$array['waitinglist'] = 0 ;
+		}
+
+		if (!isset($array['requestanswer'])) {
+			$array['requestanswer'] = 0 ;
 		}
 
 		// Search for the {readmore} tag and split the text up accordingly.
@@ -378,7 +382,7 @@ class JemTableEvent extends Table
 		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time')) {
 			$checkin = '';
 		} else {
-			$checkin = ' AND (checked_out = 0 OR checked_out = ' . (int) $userId . ')';
+			$checkin = ' AND (checked_out IS null OR checked_out = 0 OR checked_out = ' . (int) $userId . ')';
 		}
 
 		// Update the publishing state for rows with the given primary keys.

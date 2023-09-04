@@ -1,10 +1,10 @@
 <?php
 /**
- * @package My Events
- * @version 4.0.0 (for JEM 4.0 & CB v2.8)
- * @author JEM Community
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @package    My Events
+ * @version    2.8.0 (for JEM 4 & CB v2.8)
+ * @author     JEM Community
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Just a note:
  * Keep the query code inline with my-events view
@@ -12,7 +12,6 @@
  */
 
 defined('_JEXEC') or die;
-
 
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');

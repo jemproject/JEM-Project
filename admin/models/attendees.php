@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -228,6 +228,7 @@ class JemModelAttendees extends ListModel
 				Text::_('COM_JEM_USERNAME'),
 				Text::_('COM_JEM_EMAIL'),
 				Text::_('COM_JEM_REGDATE'),
+				Text::_('COM_JEM_ATTENDEES_PLACES'),
 				Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
 			);
 		if ($comments) {
@@ -252,6 +253,7 @@ class JemModelAttendees extends ListModel
 					$item->username,
 					$item->email,
 					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
+					$item->places,
 					Text::_($txt_stat)
 				);
 			if ($comments) {

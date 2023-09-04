@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 4.0.0
+ * @version    4.1.0
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2014-2023 joomlaeventmanager.net
@@ -240,10 +240,10 @@ abstract class ModJemBannerHelper
 
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
-			$lists[$i]->venue       = htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
 

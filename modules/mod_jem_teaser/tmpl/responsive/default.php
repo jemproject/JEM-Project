@@ -1,11 +1,11 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
+ * @version    4.1.0
+ * @package    JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -15,27 +15,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 if ($params->get('use_modal', 0)) {
-	// JHtml::_('behavior.modal', 'a.flyermodal');
-	$modal = 'flyermodal';
+	echo JemOutput::lightbox();
+	$modal = 'lightbox';
 } else {
 	$modal = 'notmodal';
 }
-/*
-if (Factory::getApplication()->input->getInt('jem-rss','0') == 1) {
-  ob_get_clean();
-  createRSSfeed($list);
-  jexit(); 
-}
-*/
-
-/*
-$uri = Uri::getInstance();
-$module_name = 'mod_jem_teaser';
-$css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
-if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css']);
-  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-}*/
 ?>
 
 <style>
@@ -180,9 +164,26 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
                       <div class="jem-eventimg-teaser">
-                      <a href="<?php echo $item->eventimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
+                       <?php if ($params->get('use_modal')) : ?>
+                       	<?php if ($item->eventimageorig) {
+						$image = $item->eventimageorig;
+						$document = Factory::getDocument();
+						$document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+						$document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
+						echo '<script>lightbox.option({
+							\'showImageNumberLabel\': false,
+							})
+							</script>';
+					} else {
+						$image = '';
+					} ?>
+					
+					<a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
+					<?php endif; ?>
                         <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
+                    <?php if ($params->get('use_modal')) : ?>
                       </a>
+                    <?php endif; ?>
                       </div>
                     <?php endif; ?>
                   <?php endif; ?>
@@ -194,9 +195,17 @@ if(file_exists($css_path.'/'.$module_name.'.css')) {
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
                           <div class="jem-eventimg-teaser">
-                          <a href="<?php echo $item->venueimageorig; ?>" class="jem-eventimg-teaser <?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
+                    
+                     <?php if ($params->get('use_modal')) : ?>
+					<?php if ($item->venueimageorig) {
+						$image = $item->venueimageorig;
+					} ?>
+					<a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
+					<?php endif; ?>
                             <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" />
+						<?php if ($params->get('use_modal')) : ?>
                           </a>
+                        <?php endif; ?>
                           </div>
                       <?php endif; ?>
                   <?php endif; ?>

@@ -3,12 +3,12 @@
  * JemListEvent is a Plugin to display events in articles.
  * For more information visit joomlaeventmanager.net
  *
- * @version 4.0.0
- * @package JEM
+ * @version    4.1.0
+ * @package    JEM
  * @subpackage JEM_Listevents_Plugin
- * @author JEM Team <info@joomlaeventmanager.net>, Luis Raposo
- * @copyright (c) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @author     JEM Team <info@joomlaeventmanager.net>, Luis Raposo
+ * @copyright  (c) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -233,7 +233,7 @@ class PlgContentJemlistevents extends JPlugin
 		$offset_hourss = 0;
 
 		switch ($type) {
-		case 'today': // events of today.
+		case 'today': // All events starting today.
 			//$offset_minutes = ($offset_hourss * 60);
 			$timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 			$to_date = date('Y-m-d', $timestamp);
@@ -252,7 +252,7 @@ class PlgContentJemlistevents extends JPlugin
 			$model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
 			$timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 			$to_date = date('Y-m-d', $timestamp);
-			$where = ' DATEDIFF (a.dates, "'. $to_date .'") >= 0';
+            $where = ' (DATEDIFF (a.dates, "'. $to_date .'") = 0 AND a.enddates IS null) OR (DATEDIFF (a.dates, "'. $to_date .'") <= 0 AND DATEDIFF (a.enddates, "'. $to_date .'") >= 0)';
 			$model->setState('filter.calendar_to', $where);
 			break;
 		case 'upcoming': // All upcoming events, excl. today.

@@ -1,17 +1,17 @@
 <?php
 /**
  * JEM Package
- * @package JEM.Package
+ * @package    JEM.Package
  *
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
- * @copyright (C) 2008 - 2013 Kunena Team. All rights reserved.
- * @license https://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * @copyright  (C) 2008 - 2013 Kunena Team. All rights reserved.
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link https://www.kunena.org
  **/
  
-defined ( '_JEXEC' ) or die ();
+defined ('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;

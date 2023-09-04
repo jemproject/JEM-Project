@@ -1,9 +1,9 @@
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /** header icons **/
@@ -190,10 +190,8 @@ img.venue-image {
 }
 
 div.controls {
-    text-align: center;
-    height: 20px;
-    line-height: 20px;
-    border-top: 1px solid #ddd;
+     text-align:left;
+     line-height:20px;
 }
 
 div.controls img {
@@ -269,7 +267,7 @@ div#page-parameters fieldset.adminform .el-spacer {
 }
 
 /* align radio buttons horizontally */
-.inputbox {
+.inputbox, .pointer {
     cursor: pointer;
 }
 

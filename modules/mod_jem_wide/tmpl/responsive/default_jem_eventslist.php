@@ -1,15 +1,17 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 $jemsettings = JemHelper::config();
 
@@ -85,9 +87,9 @@ $jemsettings = JemHelper::config();
         <?php if (!empty($item->featured)) :   ?>
           <li class="jem-event jem-row jem-justify-start jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php else : ?>
-          <li class="jem-event jem-row jem-justify-start" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li class="jem-event jem-row jem-justify-start">
 				<?php endif; ?>       
-          <div class="jem-event-details">
+          <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?>>
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
@@ -161,12 +163,20 @@ $jemsettings = JemHelper::config();
               <?php if ($params->get('use_modal')) : ?>
                 <?php if ($item->eventimageorig) {
                   $image = $item->eventimageorig;
+						$document = Factory::getDocument();
+						$document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+						$document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
+						echo '<script>lightbox.option({
+							\'showImageNumberLabel\': false,
+							})
+							</script>';
                 } else {
                   $image = '';
-                } ?>
-              <a href="<?php echo $image; ?>" class="flyermodal" title="<?php echo $item->fulltitle; ?>">
+					} ?>
+				
+              <a href="<?php echo $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>"  data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
               <?php endif; ?>
-                <img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->fulltitle; ?>" class="image-preview" />
+                <img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->fulltitle; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
               <?php if ($params->get('use_modal')) : ?>
               </a>
               <?php endif; ?>
@@ -176,9 +186,9 @@ $jemsettings = JemHelper::config();
           <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.png') === false)) : ?>
             <div class="jem-list-img" >
               <?php if ($params->get('use_modal')) : ?>
-                <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" title="<?php echo $item->venue; ?>">
+                <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                 <?php endif; ?>
-                  <img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" />
+                  <img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
                 <?php if ($item->venuelink) : ?>
                 </a>
               <?php endif; ?>

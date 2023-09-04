@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -39,10 +39,30 @@ class JemOutput
 		if ($app->input->get('print','','int')) {
 			return;
 		} else {
-			echo '<font color="grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+			echo '<span style="color: grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></span>';
 		}
 	}
-
+	
+/**
+ * Load stylesheet and JS for lightbox.
+ */
+static public function lightbox() {
+	$settings = JemHelper::config();
+	$app = Factory::getApplication();
+	if ($settings->lightbox == 1) {
+		$document = Factory::getDocument();
+		$document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+		$document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
+		echo '<script>lightbox.option({
+   				   \'showImageNumberLabel\': false,
+   			 })
+		</script>';
+		}
+	else {
+  		return;
+	}
+}
+	
 	/**
 	 * Creates the button bar shown on frontend view's top right corner.
 	 *
@@ -267,7 +287,7 @@ class JemOutput
 					'title'  => Text::_('COM_JEM_SELECT'),
 					'width'  => '800px',
 					'height' => '450px',
-					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 				)
 			);
 			$output.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#adduser-modal" ' .  self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom'). '>' . $image . '</a>';
@@ -666,7 +686,7 @@ class JemOutput
 					'title'  => Text::_('COM_JEM_SELECT'),
 					'width'  => '800px',
 					'height' => '550px',
-					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 				)
 			);
 			$new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';
@@ -1162,73 +1182,9 @@ class JemOutput
 	 * @param array $image
 	 * @param string $type
 	 */
+
 	static public function flyer($data, $image, $type, $id = null)
 	{
-		$id_attr = $id ? 'id="'.$id.'"' : '';
-
-		$settings = JemHelper::config();
-		$uri = Uri::getInstance();
-
-		switch($type) {
-			case 'event':
-				$folder = 'events';
-				$imagefile = $data->datimage;
-				$info = $data->title;
-				break;
-
-			case 'category':
-				$folder = 'categories';
-				$imagefile = $data->image;
-				$info = $data->catname;
-				break;
-
-			case 'venue':
-				$folder = 'venues';
-				$imagefile = $data->locimage;
-				$info = $data->venue;
-				break;
-		}
-
-		// Do we have an image?
-		if (empty($imagefile) || empty($image)) {
-			return;
-		}
-
-		// Does a thumbnail exist?
-		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-			if ($settings->lightbox == 0) {
-				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
-
-				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-				$output = '<div class="flyerimage">'.$icon.'</div>';
-			} else {
-				// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-				$url = $uri->base().$image['original'];
-				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
-
-				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
-			}
-		// Otherwise take the values for the original image specified in the settings
-		} else {
-			$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
-		}
-
-		return $output;
-	}
-
-	/**
-	/**
-	 * Creates the flyer2
-	 *
-	 * @param obj $data
-	 * @param array $image
-	 * @param string $type
-	 */
-
-	static public function flyer2($data, $image, $type, $id = null)
-	{
 		$uri = Uri::getInstance();
 		$id_attr = $id ? 'id="'.$id.'"' : '';
 		$settings = JemHelper::config();
@@ -1237,47 +1193,81 @@ class JemOutput
 				$folder = 'events';
 				$imagefile = $data->datimage;
 				$info = $data->title;
+				if(!$settings->flyer){
+					$precaption = Text::_('COM_JEM_EVENT');
+    	            $id = 'eventid-'. $data->id;
+				}
 				break;
+
 			case 'category':
 				$folder = 'categories';
 				$imagefile = $data->image;
 				$info = $data->catname;
+				if(!$settings->flyer){
+					$precaption = Text::_('COM_JEM_CATEGORY');
+					$id = 'catid-'. $data->id;
+				}
 				break;
+
 			case 'venue':
 				$folder = 'venues';
 				$imagefile = $data->locimage;
 				$info = $data->venue;
+				if(!$settings->flyer){
+					$precaption = Text::_('COM_JEM_VENUE');
+					if (property_exists($data, 'locid')) {
+						$id = $data->locid;
+					} else {
+						$id = $data->id;
+					}
+				}
 				break;
 		}
 
 		// Do we have an image?
 		if (empty($imagefile) || empty($image)) {
 			return;
+		} else if(!$settings->flyer){
+			list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
+			list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];		
 		}
 				
 		// Does a thumbnail exist?
-/*		if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-			if ($settings->lightbox == 0) {
-				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+		if (!$settings->flyer){
+			if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+			
+				// if "Enable Pop Up Thumbnail" is disabled
+				if (($settings->gddisabled == 0) && ($settings->lightbox == 0))	{
+					$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
+					$output = '<div class="flyerimage">'.$icon.'</div>';
+				}
+			
+				// if "Enable Pop Up Thumbnail" is enabled and lightbox disabled
+				elseif (($settings->gddisabled == 1) && ($settings->lightbox == 0)) {
+					$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='. $imagewidth.',height='.$imageheight.',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+					$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+					$output = '<div class="flyerimage">'.$icon.'</div>';
+				}
 
-				$icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-				$output = '<div class="flyerimage">'.$icon.'</div>';
-			} else {
-				HTMLHelper::_('behavior.modal', 'a.flyermodal');
-				$url = $uri->base().$image['original'];
-				$attributes = $id_attr.' class="flyermodal flyerimage2" title="'.$info.'"';
-
-				$icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
-			}
-		// Otherwise take the values for the original image specified in the settings
-		} else {*/
-		$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
-//		}
+				// if "Enable Pop Up Thumbnail" and lightbox are enabled
+				elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
+					$url = $uri->base().$image['original'];
+					$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
+					$icon = '<img class="example-thumbnail" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+					$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>'; 
+				
+				}
+				// If there is no thumbnail, then take the values for the original image specified in the settings
+			} else {				
+				$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';				
+			}			
+		}else{
+			$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+		}
 		return $output;
 	}
-	/**		
+
+	/**
 	 * Formats date
 	 *
 	 * @param string $date

@@ -1,11 +1,11 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
+ * @version    4.1.0
+ * @package    JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -200,13 +200,14 @@ abstract class ModJemTeaserHelper
 				$title = $fulltitle;
 			}
 
+			$lists[$i]->eventid     = $row->id;
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
-			$lists[$i]->venue       = htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
-            $lists[$i]->country     = htmlspecialchars($row->country, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->showimageevent   = $params->get('showimageevent', 1);

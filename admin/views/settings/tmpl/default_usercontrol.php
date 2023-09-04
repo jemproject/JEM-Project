@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -39,8 +39,8 @@ use Joomla\CMS\Language\Text;
 		<legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('showfroregistra'); ?> <?php echo $this->form->getInput('showfroregistra'); ?> </li>
-			<li id="froreg1"><?php echo $this->form->getLabel('regallowinvitation'); ?> <?php echo $this->form->getInput('regallowinvitation'); ?> </li>
-			<li id="froreg2"><?php echo $this->form->getLabel('regallowcomments'); ?> <?php echo $this->form->getInput('regallowcomments'); ?> </li>
+			<li id="froreg1"><div class="label-form"><?php echo $this->form->renderfield('regallowinvitation'); ?></div></li>
+			<li id="froreg2"><div class="label-form"><?php echo $this->form->renderfield('regallowcomments'); ?></div></li>
 		</ul>
 	</fieldset>
 </div>

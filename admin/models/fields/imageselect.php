@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -91,7 +91,7 @@ class JFormFieldImageselect extends JFormFieldList
 					'title'  => Text::_('COM_JEM_UPLOAD'),
 					'width'  => '650px',
 					'height' => '500px',
-					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+					'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 				)
 			);
 			$html[] ='<button type="button" class="btn btn-primary btn-margin" data-bs-toggle="modal"  data-bs-target="#imageupload-modal">'.Text::_('COM_JEM_UPLOAD').'
@@ -108,7 +108,7 @@ class JFormFieldImageselect extends JFormFieldList
 				'title'  => Text::_('COM_JEM_SELECTIMAGE'),
 				'width'  => '650px',
 				'height' => '500px',
-				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>'
+				'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
 			)
 		);
 		$html[] = "<button type=\"button\" class=\"btn btn-primary btn-margin\" data-bs-toggle=\"modal\" data-bs-target=\"#imageselect-modal\">".Text::_('COM_JEM_SELECTIMAGE')."

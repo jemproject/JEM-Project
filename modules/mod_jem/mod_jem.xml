@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>July 2023</creationDate>
+	<creationDate>September 2023</creationDate>
 	<copyright>copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<description>MOD_JEM_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -122,7 +122,7 @@
 					description="MOD_JEM_DATE_FORMAT_DESC"
 				/>
 				<field name="formattime" type="text"
-					default="H:i"
+					default=""
 					label="MOD_JEM_TIME_FORMAT"
 					description="MOD_JEM_TIME_FORMAT_DESC"
 				/>

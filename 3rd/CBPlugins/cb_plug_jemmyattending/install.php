@@ -1,24 +1,24 @@
 <?php
 /**
- * @package JEM My Events for CB
- * @version 4.0.0 (for JEM 4.0 & CB v2.8)
- * @author JEM Community
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @package    JEM My Attending for CB
+ * @version    2.8.0 (for JEM 4 & CB v2.8)
+ * @author     JEM Community
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  */
 
 defined('_JEXEC') or die;
 
-function plug_jemmyevents_cb_install()
+function plug_jemmyattending_cb_install()
 {
 	# There maybe an older version with different name installed which will conflict.
 	# So search and eliminate it.
 	global $_CB_framework, $_CB_database;
 
-	$element = 'jemmyevents_cb';
-	$old_folder_name = 'plug_cbjemmyevents';
-	$new_folder_name = 'plug_jemmyevents';
+	$element = 'jemmyattending_cb';
+	$old_folder_name = 'plug_cbjemmyattending';
+	$new_folder_name = 'plug_jemmyattending';
 
 	# Check to see if plugin already exists in db
 	$_CB_database->setQuery( 'SELECT id FROM #__comprofiler_plugin WHERE type = "user" AND element = "'.$element.'" AND folder = "'.$old_folder_name.'"' );

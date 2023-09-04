@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
+	<config>
+		<inlinehelp button="show"/>
+	</config>
 	<fieldset name="details"
 			  addfieldpath="/administrator/components/com_jem/models/fields"
 	>
@@ -292,6 +295,7 @@
 			filter="integer"
 			min="0"
 			max="999"
+			showon="unregistra:2"
 		/>
 		<field name="maxplaces" type="number"
 			   size="4"
@@ -320,7 +324,7 @@
 			   default="1"
 			   min="1"
 		/>
-		<field name="reservedplaces" type="text"
+		<field name="reservedplaces" type="number"
 			   size="4"
 			   class="inputbox"
 			   label="COM_JEM_RESERVED_PLACES"
@@ -346,6 +350,15 @@
 			   class="inputbox btn-group btn-group-yesno"
 			   label="COM_JEM_ENABLE_WAITINGLIST"
 			   description="COM_JEM_ENABLE_WAITINGLIST_DESC"
+			   default="0"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="requestanswer" type="checkbox"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_REQUEST_ANSWER_ASSISTENCE"
+			   description="COM_JEM_REQUEST_ANSWER_ASSISTENCE_DESC"
 			   default="0"
 		>
 			<option value="1">JYES</option>

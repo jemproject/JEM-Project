@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -61,13 +61,13 @@ if ($jemsettings->oldevent > 0) {
 
 	<!-- Event -->
 	<h2 class="jem">
-        <div style="white-space: nowrap;">
+        <span style="white-space: nowrap;">
             <?php
             echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
             echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
             echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
             ?>
-        </div>
+        </span>
 	</h2>
 
 	<?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
@@ -252,7 +252,7 @@ if ($jemsettings->oldevent > 0) {
 	<!--  	Venue  -->
 	<?php if (($this->item->locid != 0) && !empty($this->item->venue)) : ?>
 	<p></p>
-	<hr>
+	<hr />
 
 	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
@@ -390,14 +390,14 @@ if ($jemsettings->oldevent > 0) {
 	<!-- Registration -->
 	<?php if ($this->showAttendees) : ?>
 		<p></p>
-		<hr>
+		<hr />
 		<h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?>:</h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
 
 	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
 		<p></p>
-		<hr>
+		<hr />
 		<?php echo $this->item->pluginevent->onEventEnd; ?>
 	<?php endif; ?>
 
@@ -407,4 +407,7 @@ if ($jemsettings->oldevent > 0) {
 </div>
 
 <?php }
+
+echo JemOutput::lightbox();
 ?>
+

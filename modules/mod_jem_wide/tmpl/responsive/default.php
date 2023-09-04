@@ -1,29 +1,17 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
+ * @version    4.1.0
+ * @package    JEM
  * @subpackage JEM Wide Module
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
-
-// JHtml::_('behavior.modal', 'a.flyermodal');
-
-/*
-$uri = Uri::getInstance();
-$module_name = 'mod_jem_wide';
-$css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
-if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css']);
-  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-}
-*/
 
 $jemsettings = JemHelper::config();
 

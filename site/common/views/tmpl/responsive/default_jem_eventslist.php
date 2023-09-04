@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 4.0.0
- * @package JEM
- * @copyright (C) 2013-2023 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @version    4.1.0
+ * @package    JEM
+ * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -155,9 +155,9 @@ function jem_common_show_filter(&$obj) {
 			<?php $this->rows = $this->getRows(); ?>
 			<?php foreach ($this->rows as $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-row jem-justify-start jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
+          <li class="jem-event jem-row jem-justify-start jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if (($this->jemsettings->showdetails == 1) && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?>>
 				<?php else : ?>
-          <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
+          <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if (($this->jemsettings->showdetails == 1) && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?>>
 				<?php endif; ?>
         
           <?php if ($this->jemsettings->showeventimage == 1) : ?>
@@ -172,7 +172,7 @@ function jem_common_show_filter(&$obj) {
             </div>
           <?php endif; ?>
           
-          <div class="jem-event-details">
+          <div class="jem-event-details" <?php if (($this->jemsettings->showdetails == 1) && (!$isSafari) && ($this->jemsettings->gddisabled == 1)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?>>
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
             <h3	title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
 		    
