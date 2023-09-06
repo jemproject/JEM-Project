@@ -274,12 +274,12 @@ class JemAttachment extends JObject
 			$created_by = $db->loadResult();
 
 			if (!$user->can('edit', $type, $itemid, $created_by)) {
-				JemHelper::addLogEntry("User ${userid} is not permritted to remove attachment " . $res->object, __METHOD__);
+				JemHelper::addLogEntry("User {$userid} is not permritted to remove attachment " . $res->object, __METHOD__);
 				return false;
 			}
 		}
 
-		JemHelper::addLogEntry("User ${userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
+		JemHelper::addLogEntry("User {$userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
 		if (file_exists($path)) {
 			File::delete($path);
