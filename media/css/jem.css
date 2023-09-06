@@ -771,6 +771,12 @@ div.jem_editevent form div.jem_register {
     text-align: right;
 }
 
+#jem #addplaces, #jem #cancelplaces {
+	text-align: center;
+	display: inline;
+	max-width: 100px;
+}
+
 #jem form input::-webkit-outer-spin-button,
 #jem form input::-webkit-inner-spin-button {
     opacity: 1;

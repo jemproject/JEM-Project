@@ -149,7 +149,7 @@ if ($this->showRegForm && empty($this->print)) :
                 }else{
                     if( $this->item->maxbookeduser > 1) {
                         echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-                        echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
+                        echo ' <input id="addplaces" type="number" name="addplaces" '
                             . 'value="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->minbookeduser - $placesBookedUser : 1) : ($placesavailableuser ?? 1))
                             . '" max="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->maxbookeduser - $placesBookedUser : $placesavailableuser) : ($placesavailableuser ?? ''))
                             . '" min="' . ($placesavailableuser > 0 ? ($placesBookedUser - $this->item->minbookeduser >= 0 ? 1 : $this->item->minbookeduser - $placesBookedUser) : 0) . '">';
@@ -167,7 +167,7 @@ if ($this->showRegForm && empty($this->print)) :
                                 }
                         }
                     }else{
-                        echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
+                        echo ' <input id="addplaces" type="hidden" name="addplaces" value="1">';
                     }
                 }
                 ?>
@@ -193,7 +193,7 @@ if ($this->showRegForm && empty($this->print)) :
                                 }
 
                                 echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
-                                echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $placesRegisteredUser . '" max="' . $placesRegisteredUser . '" min="1">' . ' ' . $cancelplaces;
+                                echo ' <input id="cancelplaces" type="number" name="cancelplaces" value="' . $placesRegisteredUser . '" max="' . $placesRegisteredUser . '" min="1">' . ' ' . $cancelplaces;
                             }
                         }else{
                             $cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');

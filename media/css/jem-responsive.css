@@ -435,6 +435,12 @@ body.com_jem.body-overlayed {
     text-align: center;
 }
 
+#jem #addplaces, #jem #cancelplaces {
+	text-align: center;
+	display:inline;
+	max-width: 100px;
+}
+
 #jem div.jem-map {
     padding-top: 15px;
     padding-bottom: 5px;
