@@ -76,6 +76,7 @@ if ($this->showRegForm && empty($this->print)) :
                 <?php
                 if ($this->isregistered === false)
                 {
+					if ($this->item->requestanswer) { echo Text::_('COM_JEM_SEND_UNREGISTRATION');}													  
                     echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');
                 } else {
                     switch ($this->isregistered) :
@@ -112,6 +113,7 @@ if ($this->showRegForm && empty($this->print)) :
                         echo 'checked="checked"';
                     } ?>
                 />
+                <i class="fa fa-check-circle-o fa-lg jem-registerbutton" aria-hidden="true"></i>
                 <?php
 
                 //FULL AND WAITLIST
@@ -149,7 +151,7 @@ if ($this->showRegForm && empty($this->print)) :
                 }else{
                     if( $this->item->maxbookeduser > 1) {
                         echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
-                        echo ' <input id="addplaces" type="number" name="addplaces" '
+                        echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
                             . 'value="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->minbookeduser - $placesBookedUser : 1) : ($placesavailableuser ?? 1))
                             . '" max="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->maxbookeduser - $placesBookedUser : $placesavailableuser) : ($placesavailableuser ?? ''))
                             . '" min="' . ($placesavailableuser > 0 ? ($placesBookedUser - $this->item->minbookeduser >= 0 ? 1 : $this->item->minbookeduser - $placesBookedUser) : 0) . '">';
@@ -167,17 +169,19 @@ if ($this->showRegForm && empty($this->print)) :
                                 }
                         }
                     }else{
-                        echo ' <input id="addplaces" type="hidden" name="addplaces" value="1">';
+                        echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
                     }
                 }
                 ?>
             </p>
             <?php if ($this->item->requestanswer || $placesRegisteredUser) {?>
                 <p>
+
                     <?php if ($this->allowAnnulation || ($this->isregistered != 1)) : ?>
                         <input id="jem_unregister_event" type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
                             <?php if ($this->isregistered !== false && $statusRegistrationUser>0  && $placesavailableuser==0) { echo 'checked="checked"'; } ?>
                         />
+                        <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
                         <?php echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO');
                         if($this->registereduser !== null)
                         {
@@ -193,7 +197,7 @@ if ($this->showRegForm && empty($this->print)) :
                                 }
 
                                 echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
-                                echo ' <input id="cancelplaces" type="number" name="cancelplaces" value="' . $placesRegisteredUser . '" max="' . $placesRegisteredUser . '" min="1">' . ' ' . $cancelplaces;
+                                echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . $placesRegisteredUser . '" max="' . $placesRegisteredUser . '" min="1">' . ' ' . $cancelplaces;
                             }
                         }else{
                             $cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');
