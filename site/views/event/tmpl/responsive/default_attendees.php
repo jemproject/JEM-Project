@@ -187,6 +187,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 2:
 					//echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
+					<?php if ($this->item->requestanswer) { echo Text::_('COM_JEM_SEND_UNREGISTRATION');}?>
+					
                     <?php $returnUrl  = JURI::getInstance()->toString();
                     $urlLogin   = 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl); ?>
                     <button class="btn btn-warning"  onclick="location.href='<?php echo $urlLogin;?>'" type="button">
