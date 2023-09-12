@@ -299,6 +299,16 @@ input#replace_catevents1.inputbox {
     display: inline-block;
 }
 
+a.import-fieldinfo {
+	cursor: pointer;
+	color: blue;
+	text-decoration: underline;
+}
+
+a.import-fieldinfo:hover {
+	text-decoration: none;
+}
+
 table#el-attachments td {
     padding: 4px 5px;
     vertical-align: top;

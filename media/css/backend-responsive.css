@@ -274,6 +274,16 @@ label#replace_catevents1-lbl {
     text-align: left;
 }
 
+a.import-fieldinfo {
+	cursor: pointer;
+	color:blue;
+	text-decoration: underline;
+}
+
+a.import-fieldinfo:hover {
+	text-decoration: none;
+}
+
 input#replace_events0.inputbox,
 input#replace_events1.inputbox,
 input#replace_venues0.inputbox,
