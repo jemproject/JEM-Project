@@ -168,11 +168,11 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 								<?php endif; ?></p>
 						</td>
 						<td class="center">
-							<div class="colorpreview" style="width: 20px; cursor:default;background-color: <?php echo ( $item->color == '' )?"transparent":$item->color; ?>;" title="<?php echo $item->color; ?>">
-								&nbsp;
+							<div class="colorpreview<?php echo ( $item->color == '' )? ' transparent-color" title="transparent"' : '" style="background-color:' . $item->color .'"'?> aria-labelledby="color-desc-<?php echo $item->id; ?>">
 							</div>
+							<div role="tooltip" id="color-desc-<?php echo $item->id; ?>"><?php echo ($item->color == '' )? 'transparent' : $item->color ?></div>
 						</td>
-						<td class="center">
+						<td>
 							<?php if ($item->catgroup) : ?>
 								<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_GROUP_EDIT'), $item->catgroup, 'editlinktip'); ?>>
 								<a href="<?php echo $grouplink; ?>">
