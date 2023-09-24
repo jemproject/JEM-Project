@@ -22,7 +22,7 @@ use Joomla\CMS\Language\Text;
 				<td>
 					<div>
 						<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
-						<input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>"/>
+						<input class="form-control readonly valid form-control-success w-75" type="text" readonly="readonly" value="<?php echo $file->file; ?>"/>
 						<input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/>
 					</div>
 					<div>
@@ -65,9 +65,7 @@ use Joomla\CMS\Language\Text;
 				<td width="100%">
 					<div>
 						<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
-						<input type="file" name="attach[]" class="attach-field" />
-						<?php /* see attachments.js for button's onclick function */ ?>
-						<button type="button" class="clear-attach-field button3 formelm-buttons"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button>
+						<input type="file" name="attach[]" class="attach-field" /> <input type="reset" value="<?php echo Text::_('JSEARCH_FILTER_CLEAR') ?>" class="btn btn-primary">
 					</div>
 					<div>
 						<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
@@ -81,7 +79,7 @@ use Joomla\CMS\Language\Text;
 				<td>
 					<div>
 						<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox', 'size'=>'7'), 'value', 'text', 0); ?>
+						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox', 'size'=>'7'), 'value', 'text', 1); ?>
 					</div>
 				</td>
 				<td>&nbsp;</td>
