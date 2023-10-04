@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
 
 /**
  * Raw: Venue
