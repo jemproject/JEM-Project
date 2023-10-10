@@ -222,7 +222,7 @@ class JemHtml
 		$backend = (bool)Factory::getApplication()->isClient('administrator');
 		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
 		HTMLHelper::_('bootstrap.tooltip');
-        $attr = 'class="hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), Text::_($state[$canChange ? 4 : 3]), 0).'"';
+        $attr = 'class="hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), $canChange ? Text::_($state[4]) : str_replace(" ", "&nbsp",Text::_($state[3])), 0).'"';
 
 		if ($print) {
 			$html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], 'class="icon-inline-left"', $backend);
