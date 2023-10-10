@@ -140,8 +140,12 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
-							if ($status === 1 && $row->waiting == 1) { $status = 2; }
-							echo jemhtml::toggleAttendanceStatus( $row->id, $status, true);
+                            if($this->event->waitinglist) {
+                                if ($status === 1 && $row->waiting == 1) { $status = 2; }
+                                echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
+                            }else{
+                                echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
+                            }
 							?>
 						</td>
 						<td class="center"><?php echo $row->places; ?></td>
