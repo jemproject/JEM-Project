@@ -13,9 +13,14 @@
 }
 
 table.month, table.week {
-    background-color: #FFF;
-    border: 2px solid #000;
+    background-color: #fff;
     width: 100%;
+}
+
+@media screen and (min-width: 801px)  {
+table.month, table.week {
+    border: 1px solid #000;
+    }
 }
 
 table.month {
@@ -314,6 +319,8 @@ div#jem .monthnavigation { /* delete complete construct */
     padding-bottom: 10px;
     vertical-align: middle;
 }
+
+div#jem .monthnavigation a {text-decoration: none;}
 
 div#jem .monthname { /*delete complete construct */
     border: 0px;

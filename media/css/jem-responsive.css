@@ -43,6 +43,8 @@ body.com_jem.body-overlayed {
     clear: both;
 }
 
+#jem .jem-removebutton {cursor: pointer; color: red;}
+
 #jem .jem-row {
     display: flex;
     flex-direction: row;

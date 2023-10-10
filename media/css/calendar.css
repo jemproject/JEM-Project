@@ -13,8 +13,13 @@
 
 table.month, table.week {
     background-color: #FFFFFF;
-    border: 2px solid #000000;
     width: 100%;
+}
+
+@media screen and (min-width: 801px)  {
+table.month, table.week {
+    border: 1px solid #000;
+    }
 }
 
 table.month {
@@ -75,6 +80,8 @@ table.month {
     background-color: #EEEEEE;
     height: 88px;
 }
+
+div#jem .monthnavigation a {text-decoration: none;}
 
 .eventcontent,
 div[id^=catz],
