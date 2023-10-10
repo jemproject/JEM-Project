@@ -127,10 +127,14 @@ $document->addScriptDeclaration('
 					<td class="center">
 						<?php
 						$status = (int)$row->status;
-						if ($status === 1 && $row->waiting == 1) {
-                            $status = 2;
+                        if($this->event->waitinglist) {
+                            if ($status === 1 && $row->waiting == 1) {
+                                $status = 2;
+                            }
+                            echo jemhtml::toggleAttendanceStatus($i, $status, $canChange);
+                        } else {
+                            echo jemhtml::toggleAttendanceStatus($i, $status, false);
                         }
-						echo jemhtml::toggleAttendanceStatus( $i, $status, $canChange);
 						?>
 					</td>
                     <td class="center">
