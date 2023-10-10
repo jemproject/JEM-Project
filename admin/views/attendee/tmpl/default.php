@@ -154,7 +154,7 @@ Joomla.submitbutton = function(task)
 					</label>
 				</td>
 				<td>
-					<input type="checkbox" name="sendemail" value="1" checked="checked"/>
+					<input type="checkbox" id="sendemail" name="sendemail" value="1" checked="checked"/>
 				</td>
 			</tr>
 			<?php endif; ?>
