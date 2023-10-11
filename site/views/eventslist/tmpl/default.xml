@@ -20,6 +20,7 @@
       <field type="spacer" name="spacer1" hr="true" />
       <field name="introtext" type="editor"
 				filter="safehtml"
+				hide="readmore,pagebreak,module,menu,fields,contact,article"
 				default=""
 				rows="8"
 				cols="30"
@@ -72,6 +73,7 @@
 			<field type="spacer" name="spacer3" hr="true" />
 			<field name="footertext" type="editor"
 				filter="safehtml"
+				hide="readmore,pagebreak,module,menu,fields,contact,article"
 				default=""
 				rows="8"
 				cols="30"
