@@ -701,7 +701,7 @@ class JemModelEvent extends ItemModel
 				}
 				//Detect if the reserve go to waiting list
 				$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;
-				if ($reg->status != 0)
+				if ($reg->status != 0 || $reg == null)
 				{
 					if($event->maxplaces){
 						$placesavailableevent = $event->maxplaces - $event->reservedplaces - $event->booked;

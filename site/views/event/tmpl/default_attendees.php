@@ -20,11 +20,12 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
 <div class="register">
 	<dl class="jem-dl floattext">
-    <?php $maxplaces     = (int)$this->item->maxplaces; ?>
-    <?php $reservedplaces  = (int)$this->item->reservedplaces; ?>
-    <?php $minbookeduser = (int)$this->item->minbookeduser; ?>
-    <?php $maxbookeduser = (int)$this->item->maxbookeduser; ?>
-    <?php $booked     = (int)$this->item->booked; ?>
+    <?php $maxplaces      = (int)$this->item->maxplaces; ?>
+    <?php $reservedplaces = (int)$this->item->reservedplaces; ?>
+    <?php $minbookeduser  = (int)$this->item->minbookeduser; ?>
+    <?php $maxbookeduser  = (int)$this->item->maxbookeduser; ?>
+    <?php $booked         = (int)$this->item->booked; ?>
+    <?php $waitinglist    = (int)$this->item->waitinglist; ?>
 
 	<?php if ($maxplaces > 0) : ?>
 		<dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
@@ -39,8 +40,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
     <?php if ($maxplaces > 0) : ?>
         <dt class="register booked-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?>"><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
         <dd class="register booked-places"><?php echo $booked; ?></dd>
-		<?php endif; ?>
-		<?php if ($this->item->maxbookeduser > 0) : ?>
+    <?php endif; ?>
+    <?php if ($this->item->maxbookeduser > 0) : ?>
             <dt><?php echo Text::_('COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER') ?>:</dt>
             <dd><?php echo $this->item->maxbookeduser?></dd>
     <?php endif; ?>
@@ -48,6 +49,10 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
 		<dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
 	<?php endif; ?>
+    <?php if ($waitinglist > 0) : ?>
+        <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITINGLIST_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITINGLIST_PLACES'); ?>:</dt>
+        <dd class="register waitinglist-places"><?php echo ($waitinglit); ?></dd>
+    <?php endif; ?>
         <hr />
 	<?php
 		$this->registereduser = null;
