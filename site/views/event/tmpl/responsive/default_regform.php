@@ -34,7 +34,7 @@ if ($this->showRegForm && empty($this->print)) :
             {
                 $placesavailableuser = $this->item->maxbookeduser - ($this->registers[$this->registereduser]->status>0? $this->registers[$this->registereduser]->places:0);
             }
-            else if($this->item->waitinglist)
+            else if($this->item->waitinglist && $this->registration != null)
             {
                 if($this->registration->status==2) {
                     $placesavailableuser = $this->item->maxbookeduser - $this->registration->places;
