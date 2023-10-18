@@ -1122,7 +1122,7 @@ class plgJemMailer extends JPlugin
 		$result = false;
 
 		try {
-			$mail = JFactory::getMailer();
+			$mail = Factory::getMailer();
 			//	$mail->set('exceptions', false);
 			$mail->setSender(array($this->_MailFrom, $this->_FromName));
 			$mail->setSubject($subject);
