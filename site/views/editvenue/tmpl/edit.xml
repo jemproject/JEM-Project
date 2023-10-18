@@ -7,7 +7,7 @@
 	</layout>
 	<fields name="params">
 		<fieldset name="basic">
-			<field  name="introtext"
+			<field name="introtext"
 				type="textarea"
 				filter="safehtml"
 				default=""
@@ -16,7 +16,7 @@
 				label="COM_JEM_INTROTEXT_FIELD"
 				description="COM_JEM_INTROTEXT_FIELD_DESC"
 			/>
-			<field  name="showintrotext"
+			<field name="showintrotext"
 				type="radio"
 				default="0"
 				label="COM_JEM_DISPLAY_INTROTEXT"
