@@ -45,7 +45,7 @@ use Joomla\CMS\Language\Text;
 					<div>
 						<div><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
 						<?php
-							$attribs = array('class' => 'inputbox', 'size' => '7');
+							$attribs = array('class' => 'inputbox form-control', 'size' => '7');
 							/* if attachment upload is not allowed changing access level should also not possible */
 							if ($this->jemsettings->attachmentenabled == 0) :
 								$attribs['disabled'] = 'disabled';
