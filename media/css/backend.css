@@ -462,7 +462,7 @@ img#imagelib {
 
 .table-striped tbody tr.row0:hover td,
 .table-striped tbody tr.row1:hover td {
-    background-color: #e8f6fe;
+    background-color: var(--table-bg);
 }
 
 /* ---------- TABLE, J3 Isis template -------------------------- */
@@ -595,7 +595,7 @@ table {
 
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
-    background-color: #f9f9f9;
+background-color: var(--table-bg);
 }
 
 .table-hover tbody tr:hover td,
