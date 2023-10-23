@@ -195,8 +195,8 @@ class JemViewEvent extends JemView
 		
 		//use temporary class var to triggerEvent content prepare plugin for venue description
 		$tempVenue = new stdClass();
-		$tempVenue->text = $item->locdescription;
-		$tempVenue->title = $item->venue;
+		$tempVenue->text = $item->locdescription ?? '';
+		$tempVenue->title = $item->venue ?? '';
 		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
 		$item->locdescription = $tempVenue->text;
 		$item->venue = $tempVenue->title;
