@@ -25,6 +25,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
     <?php $minbookeduser  = (int)$this->item->minbookeduser; ?>
     <?php $maxbookeduser  = (int)$this->item->maxbookeduser; ?>
     <?php $booked         = (int)$this->item->booked; ?>
+    <?php $waitinglist    = (int)$this->item->waitinglist; ?>
 
 	<?php if ($maxplaces > 0) : ?>
 		<dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
@@ -47,6 +48,10 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<?php if ($maxplaces > 0) : ?>
             <dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
         <dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
+		<?php endif; ?>
+	    <?php if ($waitinglist > 0) : ?>
+	        <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
+	        <dd class="register waitinglist-places"><?php echo ($waitinglist); ?></dd>
 		<?php endif; ?>
         <hr />
 		<?php
@@ -159,13 +164,11 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 			</ul>
 		</dd>
 		<?php endif; ?>
-
 		<?php if ($this->permissions->canEditAttendees) : ?>
             <dt style="padding: 0px;"></dt>
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
 		<?php endif; ?>
     </dl>
-
 	<hr />
 
 	<?php if ($this->print == 0) : ?>
@@ -188,11 +191,11 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 				case 2:
 					//echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
 					<?php if ($this->item->requestanswer) { echo Text::_('COM_JEM_SEND_UNREGISTRATION');}?>
-					
-                    <?php $returnUrl  = JURI::getInstance()->toString();
+                    <?php $uri = Uri::getInstance();
+                    $returnUrl = $uri->toString();
                     $urlLogin   = 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl); ?>
-                    <button class="btn btn-warning"  onclick="location.href='<?php echo $urlLogin;?>'" type="button">
-                        <?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+                    <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+                            type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
 			
 					<?php //insert Breezing Form hack here
 					/*<input class="btn btn-secondary" type="button" value="<?php echo Text::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>

@@ -72,6 +72,14 @@ class JemViewEvent extends JemView
 		$this->regs['waiting']       = $model->getRegisters($this->state->get('event.id'),  2);
 		$this->regs['all']           = $model->getRegisters($this->state->get('event.id'), 'all');
 
+		// get number waiting places
+		$this->numWaitingPlaces=0;
+		if($this->regs['waiting']!= false){
+			foreach ($this->regs['waiting'] as $regwaitinguser){
+				$this->numWaitingPlaces = $this->numWaitingPlaces + $regwaitinguser->places;
+			}
+		}
+
 		// loop through attendees
 		$registers_array = array();
 		if($this->regs['all'])
