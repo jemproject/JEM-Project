@@ -50,8 +50,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 		<dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
 	<?php endif; ?>
     <?php if ($waitinglist > 0) : ?>
-        <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITINGLIST_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITINGLIST_PLACES'); ?>:</dt>
-        <dd class="register waitinglist-places"><?php echo ($waitinglit); ?></dd>
+        <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
+        <dd class="register waitinglist-places"><?php echo ($waitinglist); ?></dd>
     <?php endif; ?>
         <hr />
 	<?php
