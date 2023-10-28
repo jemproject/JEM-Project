@@ -1118,6 +1118,16 @@
 		<fieldset name="evvenues"
 			label="COM_JEM_VENUES"
 		>
+			<field name="event_show_venue" type="radio"
+				   label="COM_JEM_EVENT_DISPLAY_VENUE"
+				   description="COM_JEM_EVENT_DISPLAY_VENUE_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
+			</field>
 			<field name="event_show_locdescription" type="radio"
 				label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
@@ -1184,6 +1194,26 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
+			<field name="event_show_registration" type="radio"
+				   label="COM_JEM_EVENT_DISPLAY_REGISTRATION"
+				   description="COM_JEM_EVENT_DISPLAY_REGISTRATION_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
+			</field>
+			<field name="event_show_registration_counters" type="radio"
+				   label="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS"
+				   description="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
+			</field>
 			<field name="event_show_more_attendeedetails" type="radio"
 				label="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS"
 				description="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS_DESC"

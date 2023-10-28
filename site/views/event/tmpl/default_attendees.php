@@ -27,33 +27,36 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
     <?php $booked         = (int)$this->item->booked; ?>
     <?php $waitinglist    = (int)$this->item->waitinglist; ?>
 
-	<?php if ($maxplaces > 0) : ?>
-		<dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
-		<dd class="register max-places"><?php echo $maxplaces; ?></dd>
-	<?php endif; ?>
-	<?php if (($maxplaces > 0) || ($reservedplaces > 0)) : ?>
-		<dt class="register booked-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_RESERVED_PLACES'); ?>"><?php echo Text::_('COM_JEM_RESERVED_PLACES'); ?>:</dt>
-		<dd class="register booked-places">
-			<?php echo $reservedplaces; ?>
-		</dd>
-	<?php endif; ?>
-    <?php if ($maxplaces > 0) : ?>
-        <dt class="register booked-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?>"><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
-        <dd class="register booked-places"><?php echo $booked; ?></dd>
-    <?php endif; ?>
-    <?php if ($this->item->maxbookeduser > 0) : ?>
-            <dt><?php echo Text::_('COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER') ?>:</dt>
-            <dd><?php echo $this->item->maxbookeduser?></dd>
-    <?php endif; ?>
-	<?php if ($maxplaces > 0) : ?>
-		<dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
-		<dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
-	<?php endif; ?>
-    <?php if ($waitinglist > 0) : ?>
-        <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
-        <dd class="register waitinglist-places"><?php echo $this->numWaitingPlaces; ?></dd>
-    <?php endif; ?>
-        <hr />
+    <?php if($this->jemsettings->globalattribs->event_show_registration_counters) : ?>
+        <?php if ($maxplaces > 0) : ?>
+            <dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
+            <dd class="register max-places"><?php echo $maxplaces; ?></dd>
+        <?php endif; ?>
+        <?php if (($maxplaces > 0) || ($reservedplaces > 0)) : ?>
+            <dt class="register booked-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_RESERVED_PLACES'); ?>"><?php echo Text::_('COM_JEM_RESERVED_PLACES'); ?>:</dt>
+            <dd class="register booked-places">
+                <?php echo $reservedplaces; ?>
+            </dd>
+        <?php endif; ?>
+        <?php if ($maxplaces > 0) : ?>
+            <dt class="register booked-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?>"><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
+            <dd class="register booked-places"><?php echo $booked; ?></dd>
+        <?php endif; ?>
+        <?php if ($this->item->maxbookeduser > 0) : ?>
+                <dt><?php echo Text::_('COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER') ?>:</dt>
+                <dd><?php echo $this->item->maxbookeduser?></dd>
+        <?php endif; ?>
+        <?php if ($maxplaces > 0) : ?>
+            <dt class="register available-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>"><?php echo Text::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
+            <dd class="register available-places"><?php echo ($maxplaces - $booked - $reservedplaces); ?></dd>
+        <?php endif; ?>
+        <?php if ($waitinglist > 0) : ?>
+            <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
+            <dd class="register waitinglist-places"><?php echo $this->numWaitingPlaces; ?></dd>
+        <?php endif; ?>
+            <hr />
+    <?php endif; /* Not show counters registration */ ?>
+
 	<?php
 		$this->registereduser = null;
 		// only set style info if users already have registered for event and user is allowed to see it
