@@ -11,8 +11,8 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
@@ -54,15 +54,36 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
             <dd class="register waitinglist-places"><?php echo $this->numWaitingPlaces; ?></dd>
         <?php endif; ?>
-            <hr />
     <?php endif; /* Not show counters registration */ ?>
 
 	<?php
 		$this->registereduser = null;
-		// only set style info if users already have registered for event and user is allowed to see it
-		if ($this->registers) :
-	?>
-		<dt class="register registered-users hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
+        // only set style info if users already have registered for event and user is allowed to see it
+        if ($this->registers) :
+            $showAttendenenames = $this->settings->get('event_show_attendeenames', 2);
+            switch ($showAttendenenames) {
+                case 1: // show to admins
+                    if (!$this->user->authorise('core.manage', 'com_jem')) {
+                        $showAttendenenames = 0;
+                    }
+                    break;
+                case 2: // show to registered
+                    if ($this->user->get('guest')) {
+                        $showAttendenenames = 0;
+                    }
+                    break;
+                case 3: // show to all
+                    break;
+                case 4: // show only to user
+                    break;
+                case 0: // show to none
+                default:
+                    $showAttendenenames = 0;
+            }
+            if ($showAttendenenames) : ?>
+                <hr/>
+
+                <dt class="register registered-users hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
 		<dd class="register registered-users">
 			<ul class="fa-ul jem-registered-list">
 			<?php
@@ -109,6 +130,15 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
       }
 
 			foreach ($this->registers as $k => $register) :
+                            if($showAttendenenames==4){
+                                if($this->user->id != $register->uid){
+                                    continue;
+                                }
+                            } else if ($showAttendenenames==2) {
+                                if($register->status==2){
+                                    continue;
+                                }
+                            }
 				echo '<li class="' . ($this->user->id==$register->uid? 'jem-registered-user-owner':'jem-registered-user') . '">' . jem_getStatusIcon($register->status);
 				$text = '';
 				$registedplaces = '';
@@ -167,8 +197,9 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 			</ul>
 		</dd>
 		<?php endif; ?>
+        <?php endif; ?>
 		<?php if ($this->permissions->canEditAttendees) : ?>
-            <dt style="padding: 0px;"></dt>
+            <dt style="padding: 0;"></dt>
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
 	<?php endif; ?>
 	</dl>
@@ -190,15 +221,19 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 1:
 					echo Text::_('COM_JEM_TOO_LATE_REGISTER');
-					break;
-				case 2:
-					//echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?>
-					<?php if ($this->item->requestanswer) { echo Text::_('COM_JEM_SEND_UNREGISTRATION');}?>
-                    <?php $uri = Uri::getInstance();
-                    $returnUrl = $uri->toString();
-                    $urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl); ?>
-                    <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
-                            type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+                            break;
+                        case 2:
+			                if ($this->item->requestanswer) { ?>
+			                <span class="badge bg-warning text-dark">
+									<?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
+									</span>
+			                <?php
+			                }
+			                $uri = Uri::getInstance();
+			                $returnUrl = $uri->toString();
+			                $urlLogin   = 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl); ?>
+                            <button class="btn btn-sm btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+                                    type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
 
 					<?php //insert Breezing Form hack here
 					/*<input class="btn btn-secondary" type="button" value="<?php echo Text::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
