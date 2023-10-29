@@ -39,7 +39,7 @@ class JemController extends BaseController
 		$user       = JemFactory::getUser();
 
 		// Set the default view name and format from the Request.
-		$jinput     = Factory::getApplication()->input;
+		$jinput     = $app->input;
 		$id         = $jinput->getInt('a_id', 0);
 		$viewName   = $jinput->getCmd('view', 'eventslist');
 		$viewFormat = $document->getType();
