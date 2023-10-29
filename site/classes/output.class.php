@@ -136,7 +136,7 @@ static public function lightbox() {
 		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
 			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
 		}
-		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist')))) {
+		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar')))) {
 			$buttons[$idx][] = JemOutput::icalbutton($slug, $view); // slug: for '&id='
 		}
 		if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
