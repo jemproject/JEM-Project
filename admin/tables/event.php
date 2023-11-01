@@ -23,6 +23,8 @@ class JemTableEvent extends Table
 		parent::__construct('#__jem_events', 'id', $db);
 	}
 
+	protected $_supportNullValue = true;
+
 	/**
 	 * Overloaded bind method for the Event table.
 	 */
