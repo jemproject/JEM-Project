@@ -6,6 +6,11 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
+#jem .jem-removebutton {
+	cursor: pointer;
+	color: red;
+}
+
 #jem .jem-row {
     display: flex;
     flex-direction: row;
