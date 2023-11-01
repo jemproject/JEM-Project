@@ -36,7 +36,7 @@ class JemViewVenue extends HtmlView
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
-			$vcal->setConfig("filename", "venue".$venueid.".ics");
+			$vcal->setConfig("filename", "events_venue_".$venueid.".ics");
 
 			if (!empty($rows)) {
 				foreach ($rows as $row) {
