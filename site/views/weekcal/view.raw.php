@@ -13,12 +13,12 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
- * Raw: Category
+ * Raw: weekcal
  */
-class JemViewCategory extends HtmlView
+class JemViewWeekcal extends HtmlView
 {
 	/**
-	 * Creates the output for the Category view
+	 * Creates the output for the Weekcal view
 	 */
 	public function display($tpl = null)
 	{
@@ -27,22 +27,20 @@ class JemViewCategory extends HtmlView
 		$app       = Factory::getApplication();
 		$jinput    = $app->input;
 
-        $year  = (int)$jinput->getInt('yearID', date("Y"));
-        $month = (int)$jinput->getInt('monthID', date("m"));
-		$catid = (int)$jinput->getInt('id', 0);
+        $year = (int)$jinput->getInt('yearID', date("Y"));
+        $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
 
-		if ($settings2->get('global_show_ical_icon','0')==1) {
-			// Get data from the model
-			$model = $this->getModel('CategoryCal');
-			$model->setState('list.start',0);
-			$model->setState('list.limit',$settings->ical_max_items);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
-
-            $rows = $model->getItems();
+        if ($settings2->get('global_show_ical_icon','0')==1) {
+            // Get data from the model
+            $model = $this->getModel();
+            $model->setState('list.start',0);
+            $model->setState('list.limit',$settings->ical_max_items);
+            $rows = $this->get('Items');
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
-			$vcal->setConfig("filename", "events_category_" . $catid . "_". $year . $month . ".ics");
+
+            $vcal->setConfig("filename", "events_week_" . $year . $week . ".ics");
 
 			if (!empty($rows)) {
 				foreach ($rows as $row) {

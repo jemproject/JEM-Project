@@ -257,7 +257,7 @@ if ($jemsettings->oldevent > 0) {
 	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--  	Venue  -->
-	<?php if (($this->item->locid != 0) && !empty($this->item->venue)) : ?>
+	<?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
 	<p></p>
 	<hr class="jem-hr">
 
@@ -419,7 +419,7 @@ if ($jemsettings->oldevent > 0) {
 	<?php endif; ?>
 
 	<!-- Registration -->
-	<?php if ($this->showAttendees) : ?>
+	<?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
 		<hr class="jem-hr">
 		<h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
 		<?php echo $this->loadTemplate('attendees'); ?>

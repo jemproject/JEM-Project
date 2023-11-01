@@ -481,27 +481,6 @@ class JemModelEvent extends ItemModel
 		$user     = JemFactory::getUser();
 		$db       = Factory::getContainer()->get('DatabaseDriver');
 
-		switch ($settings->get('event_show_attendeenames', 2)) {
-			case 0: // show to none
-			default:
-				return false;
-			case 1: // show to admins
-				if (!$user->authorise('core.manage', 'com_jem')) {
-					return false;
-				}
-				break;
-			case 2: // show to registered
-				if ($user->get('guest')) {
-					return false;
-				}
-				break;
-			case 3: // show to all
-				break;
-			case 4: // show only to user
-				$where[] = 'u.id = ' . $user->id;
-				break;
-		}
-
 		$avatar = '';
 		$join = '';
 
@@ -510,7 +489,7 @@ class JemModelEvent extends ItemModel
 			$join = ' LEFT JOIN #__comprofiler as c ON c.user_id = r.uid';
 		}
 
-		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
+		$name = ', ' . ($settings->get('global_regname','1') ? 'u.name' : 'u.username') . ' as name';
 
 		$where[] = 'event = '. $db->quote($event);
 		if (is_numeric($status)) {
@@ -528,8 +507,8 @@ class JemModelEvent extends ItemModel
 
     // Get registered users
     $query = $db->getQuery(true);
-    $query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-           . $name . ' AS name, r.uid' . $avatar . ', r.comment, r.places'
+		$query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, r.uid, r.comment, r.places'
+			. $name . $avatar
            . ' FROM #__jem_register AS r'
            . ' LEFT JOIN #__users AS u ON u.id = r.uid'
            . $join

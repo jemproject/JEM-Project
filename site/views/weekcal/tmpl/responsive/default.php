@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		$btn_params = array('print_link' => $this->print_link);
+        $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link);
 		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>

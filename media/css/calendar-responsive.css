@@ -358,7 +358,7 @@ div#jem .monthname { /*delete complete construct */
 
 
 @media not print {
-    @media only all and (max-width: 50rem), screen and (max-device-width: 50rem) and (orientation: landscape) {
+    @media only all and (max-width: 30rem), screen and (max-device-width: 30rem) and (orientation: landscape) {
         /* Force table to not be like tables anymore */
         div#jem table, div#jem thead, div#jem tbody, div#jem th, div#jem td, div#jem tr {
             display: inline;

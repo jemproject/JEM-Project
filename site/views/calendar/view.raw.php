@@ -9,34 +9,39 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
- * Raw: Venue
+ * Raw: Calendar
  */
-class JemViewVenue extends HtmlView
+class JemViewCalendar extends HtmlView
 {
 	/**
-	 * Creates the output for the Venue view
+	 * Creates the output for the Calendar view
 	 */
 	public function display($tpl = null)
 	{
 		$settings  = JemHelper::config();
 		$settings2 = JemHelper::globalattribs();
-		$jinput    = Factory::getApplication()->input;
+		$app       = Factory::getApplication();
+		$jinput    = $app->input;
+
+        $year  = (int)$jinput->getInt('yearID', date("Y"));
+        $month = (int)$jinput->getInt('monthID', date("m"));
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
 			// Get data from the model
 			$model = $this->getModel();
 			$model->setState('list.start',0);
 			$model->setState('list.limit',$settings->ical_max_items);
-			$rows = $model->getItems();
-			$venueid = $jinput->getInt('id');
+            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+
+            $rows = $model->getItems();
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
-			$vcal->setConfig("filename", "events_venue_".$venueid.".ics");
+			$vcal->setConfig("filename", "events_month_". $year . $month . ".ics");
 
 			if (!empty($rows)) {
 				foreach ($rows as $row) {

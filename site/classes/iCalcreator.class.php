@@ -218,7 +218,7 @@ class vcalendar {
  * @return void
  */
   function _makeProdid() {
-    $this->prodid  = '-//'.$this->unique_id.'//NONSGML kigkonsult.se '.ICALCREATOR_VERSION.'//'.strtoupper( $this->language );
+    $this->prodid  = '-//'.$this->unique_id.'//NONSGML kigkonsult.se '.ICALCREATOR_VERSION.'//'.strtoupper( $this->language ?? '');
   }
 /**
  * Conformance: The property MUST be specified once in an iCalendar object.
