@@ -119,9 +119,11 @@ class JemViewCalendar extends JemView
 
 		$partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
 		$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
-		$url_base = 'index.php?option=com_jem&view=calendar' . $partItemid;
+		$url_base = 'index.php?option=com_jem&view=calendar';
 
-		$print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
+		$print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
+		$ical_link = $partDate;
+		http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
 
 		// init calendar
 		$cal = new JemCalendar($year, $month, 0);
@@ -139,6 +141,7 @@ class JemViewCalendar extends JemView
 		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->print_link    = $print_link;
 		$this->print         = $print;
+		$this->ical_link    = $ical_link;
 
 		parent::display($tpl);
 	}
