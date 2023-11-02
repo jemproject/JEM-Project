@@ -1,4 +1,4 @@
-# JEM 4.1.1 – main feature: compatibility with Joomla 5
+# JEM 4.2 – main feature: compatibility with Joomla 5
 released 2023-11-02
 
 Based on
