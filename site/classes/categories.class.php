@@ -1160,7 +1160,7 @@ class JemCategoryNode extends JObject
 		if (!($this->params instanceof JRegistry))
 		{
 			$temp = new JRegistry;
-			$temp->loadString($this->params);
+			$temp->loadString($this->params ?? '');
 			$this->params = $temp;
 		}
 

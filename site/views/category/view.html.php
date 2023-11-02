@@ -148,6 +148,7 @@ class JemViewCategory extends JemView
 
 			$this->print_link    = $print_link;
 			$this->print         = $print;
+			$this->ical_link     = $partDate;
 
 		}
 		else
