@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.1.0
+ * @version    4.2.0
  * @JEM Tag Plugin for AcyMailing 5.x
  * @copyright  (C) 2014 Ghost Art digital media.
  * @copyright  (C) 2013 - 2023 joomlaeventmanager.net. All rights reserved.
