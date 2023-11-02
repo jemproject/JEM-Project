@@ -12,8 +12,8 @@ div#jemmodulewide .time:before,
 div#jemmodulewide div.date:before,
 div#jemmodulewide .category:before,
 div#jemmodulewide .venue-title:before {
-	/* font:normal normal normal 1.2em/1 FontAwesome;	 */
-	font-family:"Font Awesome 5 Free";
+	font-family:var(--fa-style-family,"Font Awesome 6 Free");
+	font-weight:var(--fa-style,900)
 	padding-right: 4px;
 	font-weight: 600;
 }
