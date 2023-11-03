@@ -1,5 +1,5 @@
 # JEM 4.2 – main feature: compatibility with Joomla 5
-released 2023-11-02
+released 2023-11-03
 
 Based on
 - jemproject/JEM-Project
