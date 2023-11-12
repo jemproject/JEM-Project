@@ -176,7 +176,7 @@ class JemModelSource extends AdminModel
         $ftp = ClientHelper::getCredentials('ftp');
 
         // Trigger the onExtensionBeforeSave event.
-        $result = $dispatcher->triggerEvent('onExtensionBeforeSave', array('com_jem.source', $data, false));
+        $result = $dispatcher->triggerEvent('onExtensionBeforeSave', array('com_jem.source', (object)$data, false));
         if (in_array(false, $result, true)) {
             $this->setError(Text::sprintf('COM_JEM_CSSMANAGER_ERROR_FAILED_TO_SAVE_FILENAME', $file));
             return false;

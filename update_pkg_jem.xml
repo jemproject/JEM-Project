@@ -76,6 +76,9 @@
         <maintainerurl>http://www.joomlaeventmanager.net</maintainerurl>
 	<targetplatform name="joomla" version="(4\.[01234]|5\.[012])"/>
         <php_minimum>8.0</php_minimum>
+	<sha256>9D9BFC3EF5EC410E67AE430E3E2BBB7B6FE07EAFA12DE4A30969F7E69ABB8CA1</sha256>
+	<sha384>54494A8937014FECD3C74AE10AFD13D6458B692E7B4D5489FB1730E64CA34842C29F19372B71CD0A16AC9891E16293B1</sha384>
+	<sha512>7969824F23968316CB8E11C4CD0C3AA75B10C3CCC4A06E361BA702D03C4DD72C0E25E0B50403B3CC0E1ABD2605A1D444F08215081B50BB33687CD8731F4E9C49</sha512>
         <!--  additional tags interpreted by JEM Update check (rfu)  -->
         <date>2023-09-04</date>
         <notes>JEM 4.2.0 for Joomla! 4.0, 4.1, 4.2, 4.3, 4.4 and Joomla! 5.x</notes>
