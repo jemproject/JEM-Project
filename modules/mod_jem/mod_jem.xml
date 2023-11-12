@@ -21,7 +21,7 @@
 		<folder>tmpl</folder>
 		<folder>language</folder>
 	</files>
-
+	<help key="Modules" />
 	<config>
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
