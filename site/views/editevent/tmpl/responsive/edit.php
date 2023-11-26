@@ -99,7 +99,7 @@ $params		= $this->params;
         $registraCheckbox.change();
         $minBookedUserInput.change();
     });
-</script>;
+</script>
 
 <script type="text/javascript">
     Joomla.submitbutton = function(task) {
