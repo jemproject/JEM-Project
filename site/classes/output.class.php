@@ -112,10 +112,10 @@ static public function lightbox() {
 		# Left block ------------------
 
 		if (!$archive) {
-			if (in_array('addEvent', $btns_show) || (!in_array('addEvent', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
+			if (in_array('addEvent', $btns_show) || (!in_array('addEvent', $btns_hide) && in_array($view, array('calendar', 'categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
 				$buttons[$idx][] = JemOutput::submitbutton(!empty($canAddEvent), null);
 			}
-			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues', 'venueslist')))) {
+			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('calendar', 'categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues', 'venueslist')))) {
 				$buttons[$idx][] = JemOutput::addvenuebutton(!empty($canAddVenue), null, null);
 			}
 			if (in_array('addUsers', $btns_show) || (!in_array('addUsers', $btns_hide) && in_array($view, array('attendees')))) {
