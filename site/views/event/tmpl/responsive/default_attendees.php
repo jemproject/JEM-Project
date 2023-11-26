@@ -27,7 +27,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
     <?php $booked         = (int)$this->item->booked; ?>
     <?php $waitinglist    = (int)$this->item->waitinglist; ?>
 
-    <?php if($this->jemsettings->globalattribs->event_show_registration_counters) : ?>
+    <?php if($this->jemsettings->event_show_registration_counters) : ?>
         <?php if ($maxplaces > 0) : ?>
             <dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
             <dd class="register max-places"><?php echo $maxplaces; ?></dd>
