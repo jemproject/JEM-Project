@@ -157,7 +157,7 @@ function jem_common_show_filter(&$obj) {
                 <?php endif; ?> 			  
 				 
 
-              <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
+              <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
               <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
               <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
               <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
