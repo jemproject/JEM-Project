@@ -310,10 +310,12 @@ class JemModelCategory extends JemModelEventslist
 		}
 
 		// Order subcategories
-		if (sizeof($this->_children)) {
-			$params = $this->getState()->get('params');
-			if ($params->get('orderby_pri') == 'alpha' || $params->get('orderby_pri') == 'ralpha') {
-				ArrayHelper::sortObjects($this->_children, 'title', ($params->get('orderby_pri') == 'alpha') ? 1 : -1);
+		if ($this->_children) {
+			if (sizeof($this->_children)) {
+				$params = $this->getState()->get('params');
+				if ($params->get('orderby_pri') == 'alpha' || $params->get('orderby_pri') == 'ralpha') {
+					ArrayHelper::sortObjects($this->_children, 'title', ($params->get('orderby_pri') == 'alpha') ? 1 : -1);
+				}
 			}
 		}
 
