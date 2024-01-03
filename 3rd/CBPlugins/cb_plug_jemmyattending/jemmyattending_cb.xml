@@ -29,6 +29,7 @@
 			<param name="event_datecombi" type="yesno" default="0" label="Combine Date Columns" description="Use two columns or combine start and end date/time in a single column" yes="Enable" no="Disable"/>
 			<param name="event_description" type="yesno" default="0" label="Event description" description="Show/Hide the description" yes="Enable" no="Disable"/>
 			<param name="event_venue" type="yesno" default="0" label="Venue" description="Show/Hide venue" yes="Enable" no="Disable"/>
+			<param name="reg_places" type="yesno" default="0" label="Places" description="Show/Hide places" yes="Enable" no="Disable"/>
 			<param name="reg_comment" type="yesno" default="0" label="Comment" description="Show/Hide comments" yes="Enable" no="Disable"/>
 		</params>
 			<fields>
