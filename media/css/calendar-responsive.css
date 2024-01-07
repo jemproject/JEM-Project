@@ -73,7 +73,6 @@ td.today div.daynum::after {
 }
 
 .daynum a::after {
-    content:"\f08e";*/
     font-size: 10px;
     padding-left: 5px;
     font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
