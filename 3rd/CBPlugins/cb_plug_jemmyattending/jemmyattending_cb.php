@@ -116,8 +116,11 @@ class jemmyattendingTab extends cbTabHandler {
 			        . ' l.venue, l.city, l.state, l.url, '
 			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
 			        . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
-			        . ' r.waiting, ' . ($this->_found_state_field ? 'r.status' : '1') . ' AS reg_state '
+					. ' r.waiting, r.places, ' 
+					. ($this->_found_state_field ? 'r.status' : '1') . ' AS reg_state '
+					. ($this->_found_state_field ? ', r.places AS reg_places' : '')
 			        . ($this->_found_state_field ? ', r.comment AS reg_comment' : '')
+																	
 			        ;
 		}
 		$query     .= ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
@@ -189,6 +192,7 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_startdate = $params->get('event_startdate');
 		$event_datecombi = $params->get('event_datecombi');
 		$event_venue = $params->get('event_venue');
+		$reg_places = $params->get('reg_places') && $this->_found_state_field;																		
 		$reg_comment = $params->get('reg_comment') && $this->_found_state_field;
 
 		/* access rights check */
@@ -298,7 +302,13 @@ class jemmyattendingTab extends cbTabHandler {
 
 		/* Status header */
 		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStatus'>";
-		$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_SSTATUS', 'StatusAttending' );
+		$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_STATUS', 'StatusAttending' );
+		$return .= "\n\t\t\t</th>";
+		++$span;
+
+		/* Places header */
+		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTablePlaces'>";
+		$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYATTENDING_PLACES', 'Places' );
 		$return .= "\n\t\t\t</th>";
 		++$span;
 
@@ -425,6 +435,17 @@ class jemmyattendingTab extends cbTabHandler {
 				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
 				$return .= "\n\t\t\t\t<img src='$img' alt='$tip' title='$tip'>";
 				$return .= "\n\t\t\t</td>";
+	
+				/* Places field */
+				if ($reg_places) {
+					$places = strip_tags($result->reg_places);
+					if (strlen($places) > 10) {
+						$places = substr($places, 0, 10) . '...';
+					}				
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTablePlaces'>";
+					$return .= "\n\t\t\t\t{$places}";
+					$return .= "\n\t\t\t</td>";			
+				}
 
 				/* Comment field */
 				if ($reg_comment) {
