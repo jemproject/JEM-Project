@@ -69,7 +69,7 @@ class JemTableVenue extends Table
 		}
 
 		if (trim($this->url)) {
-			$this->url = mb_strtolower(strip_tags($this->url));
+			$this->url = strip_tags($this->url);
 
 			if (strlen($this->url) > 199) {
 				$this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
