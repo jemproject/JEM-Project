@@ -1508,7 +1508,7 @@ static public function lightbox() {
 		$params = is_array($dateStart) ? $dateStart : array('dateStart' => $dateStart, 'timeStart' => $timeStart, 'dateEnd' => $dateEnd, 'timeEnd' => $timeEnd, 'showTime' => $showTime);
 		$params['addSuffix'] = true;
 		// Use format saved in settings if specified or format in language file otherwise
-		$params['dateFormat'] = (isset($settings->formatShortDate) && $settings->formatShortDate) ? $settings->formatShortDate : Text::_('COM_JEM_FORMAT_SHORT_DATE');
+		$params['dateFormat'] = (isset($settings->formatShortDate) && $settings->formatShortDate) ? $settings->formatShortDate : Text::_('COM_JEM_EVENTS_FORMAT_SHORT_DATE');
 
 		if (isset($settings->datemode) && ($settings->datemode == 2)) {
 			return self::formatDateTime2Lines($params);

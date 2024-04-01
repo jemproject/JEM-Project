@@ -153,9 +153,9 @@ $(document).ready(function() {
 
 				<tbody id="search_in_here">
 					<?php
-					foreach ($this->items as $i => $row) :
+                    foreach ($this->items as $i => $row) :
 						//Prepare date
-						$displaydate = JemOutput::formatDateTime($row->dates, null, $row->enddates, null,'d.m.Y');
+						$displaydate = JemOutput::formatShortDateTime($row->dates, null, $row->enddates, null, $this->jemsettings->showtime);
 						// Insert a break between date and enddate if possible
 						$displaydate = str_replace(" - ", " -<br />", $displaydate);
 
