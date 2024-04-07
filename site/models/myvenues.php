@@ -164,7 +164,7 @@ class JemModelMyvenues extends BaseDatabaseModel
 			$query = 'UPDATE #__jem_venues'
 			       . ' SET published = ' . (int)$publish
 			       . ' WHERE id IN (' . $cids . ')'
-			       . ' AND (checked_out = 0 OR (checked_out = ' . $userid . '))'
+			       . ' AND (checked_out = 0 OR checked_out IS null OR (checked_out = ' . $userid . '))'
 			      ;
 
 			$this->_db->setQuery($query);
