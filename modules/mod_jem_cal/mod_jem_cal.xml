@@ -44,12 +44,12 @@
 					<option value="0">JNO</option>
 				</field>
 				<field name="cal15q_tooltips_title" type="text"
-					default="MOD_JEM_CAL_EVENT"
+					default="Event"
 					label="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR"
 					description="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR_DESC"
 				/>
 				<field name="cal15q_tooltipspl_title" type="text"
-					default="MOD_JEM_CAL_EVENTS"
+					default="Events"
 					label="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL"
 					description="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL_DESC"
 				/>
