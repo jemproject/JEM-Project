@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\User\User;
 
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
@@ -41,7 +42,7 @@ abstract class JemFactory extends Factory
 		if (is_null($id))
 		{
 			$instance = $app->getSession()->get('user');
-			$id = ($instance instanceof JUser) ? $instance->id : 0;
+			$id = ($instance instanceof User) ? $instance->id : 0;
 		}
 
 		return JemUser::getInstance($id);

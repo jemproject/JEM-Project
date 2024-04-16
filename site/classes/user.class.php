@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\User\User;
 
 /**
  * JEM user class with additional functions.
@@ -18,7 +19,7 @@ use Joomla\CMS\Factory;
  *
  * @package JEM
  */
-abstract class JemUserAbstract extends JUser
+abstract class JemUserAbstract extends User
 {
 	/**
 	 * @var    array  JemUser instances container.

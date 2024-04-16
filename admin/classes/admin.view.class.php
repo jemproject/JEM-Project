@@ -8,12 +8,14 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\View\HtmlView;
+
 /**
  * JemView class with JEM specific extensions
  *
  * @package JEM
  */
-class JemAdminView extends JViewLegacy
+class JemAdminView extends HtmlView
 {
 	/**
 	 * Display the view

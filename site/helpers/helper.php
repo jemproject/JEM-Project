@@ -18,6 +18,7 @@ use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -55,7 +56,7 @@ class JemHelper
 	{
 		static $globalregistry;
 		if (!is_object($globalregistry)) {
-			$globalregistry = new JRegistry(self::config()->globalattribs);
+			$globalregistry = new Registry(self::config()->globalattribs);
 		}
 
 		return $globalregistry;
@@ -68,7 +69,7 @@ class JemHelper
 	{
 		static $registryCSS;
 		if (!is_object($registryCSS)) {
-			$registryCSS = new JRegistry(self::config()->css);
+			$registryCSS = new Registry(self::config()->css);
 		}
 
 		return $registryCSS;

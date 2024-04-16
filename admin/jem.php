@@ -19,32 +19,32 @@ use Joomla\CMS\Table\Table;
 require_once (JPATH_COMPONENT_SITE.'/factory.php');
 
 
-if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
 	Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 }
 
 // Require classes
-require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
-require_once (JPATH_COMPONENT_SITE.'/helpers/countries.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/config.class.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/image.class.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/output.class.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/user.class.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
-require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.class.php');
-require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.view.class.php');
-require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
-require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html/jemhtml.php');
+require_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
+require_once (JPATH_SITE.'/components/com_jem/helpers/countries.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/attachment.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/categories.class.php');
+require_once (JPATH_ADMINISTRATOR.'/components/com_jem/classes/admin.class.php');
+require_once (JPATH_ADMINISTRATOR.'/components/com_jem/classes/admin.view.class.php');
+require_once (JPATH_ADMINISTRATOR.'/components/com_jem/helpers/helper.php');
+require_once (JPATH_ADMINISTRATOR.'/components/com_jem/helpers/html/jemhtml.php');
 
 // Set the table directory
-Table::addIncludePath(JPATH_COMPONENT.'/tables');
+Table::addIncludePath(JPATH_BASE.'/components/com_jem/tables');
 
 // create JEM's file logger
 JemHelper::addFileLogger();
 
 // Require the frontend base controller
-require_once (JPATH_COMPONENT.'/controller.php');
+require_once (JPATH_BASE.'/components/com_jem/controller.php');
 
 // Get an instance of the controller
 $controller = BaseController::getInstance('Jem');

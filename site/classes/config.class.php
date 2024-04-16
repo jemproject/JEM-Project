@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 /**
  * JemConfig class to handle JEM configuration
@@ -64,7 +65,7 @@ class JemConfig
 	protected function __construct()
 	{
 		// Instantiate the internal data object.
-		$this->_data = new JRegistry($this->loadData());
+		$this->_data = new Registry($this->loadData());
 
 		// Load data from database
 		;
@@ -127,14 +128,14 @@ class JemConfig
 
 		// Convert the params field to an array.
 		if (!empty($data->globalattribs)) {
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadString($data->globalattribs);
 			$data->globalattribs = $registry->toObject();
 		}
 
 		// Convert Css settings to an array
 		if (!empty($data->css)) {
-			$registryCss = new JRegistry;
+			$registryCss = new Registry;
 			$registryCss->loadString($data->css);
 			$data->css = $registryCss->toObject();
 		}
@@ -148,7 +149,7 @@ class JemConfig
 	 */
 	public function bind($data)
 	{
-		$reg = new JRegistry($data);
+		$reg = new Registry($data);
 		$this->_data->loadObject($reg->toObject());
 
 		return true;
@@ -184,13 +185,13 @@ class JemConfig
 
 		// Convert the params field to an array.
 		if (isset($data['globalattribs'])) {
-			$registry = new JRegistry($data['globalattribs']);
+			$registry = new Registry($data['globalattribs']);
 			$data['globalattribs'] = $registry->toString();
 		}
 
 		// Convert Css settings to an array
 		if (isset($data['css'])) {
-			$registryCss = new JRegistry($data['css']);
+			$registryCss = new Registry($data['css']);
 			$data['css'] = $registryCss->toString();
 		}
 

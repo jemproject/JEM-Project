@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 
 $user		= JemFactory::getUser();
 $userId		= $user->get('id');
@@ -20,7 +21,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 $canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder	= $listOrder=='ordering';
 
-$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
+$params		= (isset($this->state->params)) ? $this->state->params : new CMSObject();
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=groups'); ?>" method="post" name="adminForm" id="adminForm">

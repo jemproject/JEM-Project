@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * JEM Component Imagehandler Model
@@ -144,7 +145,7 @@ class JemModelImagehandler extends JModelLegacy
 				foreach ($fileList as $file) {
 					if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
 						if (empty($search) || stristr($file, $search)) {
-							$tmp = new JObject();
+							$tmp = new CMSObject();
 							$tmp->name = $file;
 							$tmp->path = JPath::clean($basePath.'/'.$file);
 

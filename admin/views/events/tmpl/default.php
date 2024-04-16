@@ -13,6 +13,7 @@ use Joomla\CMS\Button\FeaturedButton;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $user		= JemFactory::getUser();
@@ -22,7 +23,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 $canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder	= $listOrder=='a.ordering';
 
-$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
+$params		= (isset($this->state->params)) ? $this->state->params : new CMSObject();
 $settings	= $this->settings;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns');
