@@ -11,9 +11,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
 
-jimport('joomla.form.formfield');
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Category select
@@ -21,7 +22,7 @@ JFormHelper::loadFieldClass('list');
  * @package JEM
  *
  */
-class JFormFieldCategories extends JFormFieldList
+class JFormFieldCategories extends ListField
 {
 	protected $type = 'Categories';
 

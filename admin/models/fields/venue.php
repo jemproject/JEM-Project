@@ -11,11 +11,13 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
-jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+
+FormHelper::loadFieldClass('list');
 
 /**
  * Renders an venue element
@@ -23,7 +25,7 @@ JFormHelper::loadFieldClass('list');
  * @package JEM
  *
  */
-class JFormFieldVenue extends JFormFieldList
+class JFormFieldVenue extends ListField
 {
 	protected $type = 'Venue';
 

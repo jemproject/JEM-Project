@@ -9,10 +9,10 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\MVC\Model\AdminModel;
 
 
-abstract class JemModelAdmin extends JModelAdmin
+abstract class JemModelAdmin extends AdminModel
 {
     protected function _prepareTable($table)
     {

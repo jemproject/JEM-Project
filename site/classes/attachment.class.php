@@ -14,6 +14,7 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -23,7 +24,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  *
  * @package JEM
  */
-class JemAttachment extends JObject
+class JemAttachment extends CMSObject
 {
 	/**
 	 * upload files for the specified object

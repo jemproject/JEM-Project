@@ -16,6 +16,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * View class for the JEM imageselect screen
@@ -99,7 +100,7 @@ class JemViewImagehandler extends HtmlView
 		if (isset($this->images[$index])) {
 			$this->_tmp_img = $this->images[$index];
 		} else {
-			$this->_tmp_img = new JObject;
+			$this->_tmp_img = new CMSObject;
 		}
 	}
 

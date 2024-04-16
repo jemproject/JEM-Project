@@ -12,13 +12,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\MVC\Model\AdminModel;
 
 /**
  * Category Model
  */
-class JemModelCategory extends JModelAdmin
+class JemModelCategory extends AdminModel
 {
 	/**
 	 * The prefix to use with controller messages.

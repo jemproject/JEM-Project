@@ -14,7 +14,7 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-
+use Joomla\Registry\Registry;
 /**
  * Event-Model
  */
@@ -166,12 +166,12 @@ class JemModelEvent extends ItemModel
 				}
 
 				# Convert parameter fields to objects.
-				$registry = new JRegistry;
+				$registry = new Registry;
 				$registry->loadString($data->attribs);
-				$data->params = JemHelper::globalattribs(); // returns JRegistry object
+				$data->params = JemHelper::globalattribs(); // returns Registry object
 				$data->params->merge($registry);
 
-				$registry = new JRegistry;
+				$registry = new Registry;
 				$registry->loadString($data->metadata);
 				$data->metadata = $registry;
 

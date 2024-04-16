@@ -98,7 +98,7 @@ class JemModelEditvenue extends JemModelVenue
 		}
 
 		// Convert attrib field to Registry.
-		//$registry = new JRegistry();
+		//$registry = new Registry();
 		//$registry->loadString($value->attribs);
 
 		$globalregistry = JemHelper::globalattribs();

@@ -11,17 +11,19 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
 
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Category formfield.
  *
  */
-class JFormFieldCategoryParent extends JFormFieldList
+class JFormFieldCategoryParent extends ListField
 {
 	/**
 	 * The form field type.

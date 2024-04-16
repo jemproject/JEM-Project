@@ -10,13 +10,15 @@
 defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
 
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Field: Venueoptions
  */
-class JFormFieldVenueoptions extends JFormFieldList
+class JFormFieldVenueoptions extends ListField
 {
 	/**
 	 * A venue list

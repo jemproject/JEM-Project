@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\Registry\Registry;
 
 jimport('joomla.application.component.modellist');
 // ensure JemFactory is loaded (because model is used by modules too)
@@ -553,11 +554,11 @@ class JemModelEventslist extends JModelList
 		# Convert the parameter fields into objects.
 		foreach ($items as $index => $item)
 		{
-			$eventParams = new JRegistry;
+			$eventParams = new Registry;
 			$eventParams->loadString($item->attribs);
 
 			if (empty($stateParams)) {
-				$item->params = new JRegistry;
+				$item->params = new Registry;
 				$item->params->merge($eventParams);
 			} else {
 				$item->params = clone $stateParams;

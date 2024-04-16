@@ -10,13 +10,15 @@
 defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
 
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * CatOptions Field class.
  */
-class JFormFieldCatOptions extends JFormFieldList
+class JFormFieldCatOptions extends ListField
 {
 	/**
 	 * The category options field type.
@@ -26,7 +28,7 @@ class JFormFieldCatOptions extends JFormFieldList
 
 	/**
 	 * Create Input
-	 * @see JFormFieldList::getInput()
+	 * @see ListField::getInput()
 	 */
 	public function getInput()
 	{

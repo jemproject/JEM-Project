@@ -11,18 +11,19 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Form\Field\ListField;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
-jimport('joomla.form.helper');
 
-JFormHelper::loadFieldClass('list');
+FormHelper::loadFieldClass('list');
 
 /**
  * Imageselect Field
  *
  */
-class JFormFieldImageselect extends JFormFieldList
+class JFormFieldImageselect extends ListField
 {
 	protected $type = 'Imageselect';
 

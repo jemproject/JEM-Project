@@ -12,12 +12,14 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\HTML\Helpers\Sidebar;
 
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 
 // class JemSidebarHelper extends HTMLHelperSidebar
-class JemSidebarHelper extends JHtmlSidebar
+class JemSidebarHelper extends Sidebar
 
 {
     public static function render()
@@ -130,12 +132,12 @@ class JemHelperBackend
 	 *
 	 * @param	int		The category ID.
 	 *
-	 * @return	JObject
+	 * @return	CMSObject
 	 */
 	public static function getActions($categoryId = 0)
 	{
 		$user	= JemFactory::getUser();
-		$result	= new JObject;
+		$result	= new CMSObject;;
 
 		if (empty($categoryId)) {
 			$assetName = 'com_jem';

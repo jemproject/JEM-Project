@@ -12,13 +12,14 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Nested;
 
 jimport('joomla.database.tablenested');
 
 /**
  * Category Table
  */
-class JemTableCategory extends JTableNested
+class JemTableCategory extends Nested
 {
 	public function __construct(&$db)
 	{

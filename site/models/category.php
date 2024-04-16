@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 Use Joomla\Utilities\ArrayHelper;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/eventslist.php';
 
@@ -107,7 +108,7 @@ class JemModelCategory extends JemModelEventslist
 
 		// Load the parameters. Merge Global and Menu Item params into new object
 		$params = $app->getParams();
-		$menuParams = new JRegistry;
+		$menuParams = new Registry;
 
 		if ($menu = $app->getMenu()->getActive()) {
 			// $menu_params = $menu->getParams();

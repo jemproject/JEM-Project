@@ -10,8 +10,9 @@
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
 
-JFormHelper::loadFieldClass('calendar');
+FormHelper::loadFieldClass('calendar');
 
 /**
  * Form Field class for JEM needs.

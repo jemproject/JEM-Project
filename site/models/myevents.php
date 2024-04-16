@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Registry\Registry;
 
 jimport('joomla.application.component.model');
 
@@ -112,7 +113,7 @@ class JemModelMyevents extends BaseDatabaseModel
 				} else {
 					if (empty($item->params)) {
 						// Set event params.
-						$registry = new JRegistry();
+						$registry = new Registry();
 						$registry->loadString($item->attribs ??'{}');
 						$item->params = clone JemHelper::globalattribs();
 						$item->params->merge($registry);
