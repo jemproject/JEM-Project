@@ -80,7 +80,7 @@ class JFormFieldCatOptions extends ListField
 
 	/**
 	 * Retrieve Options
-	 * @see JFormFieldList::getOptions()
+	 * @see ListField::getOptions()
 	 */
 	protected function getOptions()
 	{
