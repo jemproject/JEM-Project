@@ -802,8 +802,7 @@ table.table .pagination {
 }
 
 .table td.order span {
-    float: left;
-    width: 26px;
+    float: right;
     text-align: center;
     background-repeat: no-repeat;
     height: 26px;
