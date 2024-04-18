@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
@@ -30,7 +31,7 @@ use Joomla\CMS\Language\Text;
 
 	<?php foreach ($this->rows as $row) : ?>
 		<h2 class="jem cat<?php echo $row->id; ?>">
-			<?php echo JHtml::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
+			<?php echo HTMLHelper::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
 
 		<div class="floattext">
@@ -42,7 +43,7 @@ use Joomla\CMS\Language\Text;
 							$imgattribs['width'] = $jemsettings->imagewidth;
 							$imgattribs['height'] = $jemsettings->imagehight;
 
-							echo JHtml::_('image', 'com_jem/noimage.png', $row->catname, $imgattribs, true);
+							echo HTMLHelper::_('image', 'com_jem/noimage.png', $row->catname, $imgattribs, true);
 						} else {
 							$cimage = JemImage::flyercreator($row->image, 'category');
 							echo JemOutput::flyer($row, $cimage, 'category');
@@ -53,7 +54,7 @@ use Joomla\CMS\Language\Text;
 			<div class="description cat<?php echo $row->id; ?>">
 				<?php echo $row->description; ?>
 				<p>
-					<?php echo JHtml::_('link', JRoute::_($row->linktarget), $row->linktext); ?>
+					<?php echo HTMLHelper::_('link', JRoute::_($row->linktarget), $row->linktext); ?>
 					(<?php echo $row->assignedevents ? $row->assignedevents : '0'; ?>)
 				</p>
 			</div>

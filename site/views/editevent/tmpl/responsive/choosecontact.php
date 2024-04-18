@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
 ?>
@@ -67,9 +68,9 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
     <div class="jem-sort jem-sort-small">
       <div class="jem-list-row jem-small-list">
         <div class="sectiontableheader jem-contact-number"><?php echo Text::_('COM_JEM_NUM'); ?></div>
-        <div class="sectiontableheader jem-contact-name"><?php echo JHtml::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
-        <div class="sectiontableheader jem-contact-city"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
-        <div class="sectiontableheader jem-contact-state"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+        <div class="sectiontableheader jem-contact-name"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+        <div class="sectiontableheader jem-contact-city"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+        <div class="sectiontableheader jem-contact-state"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
       </div>
     </div>
     

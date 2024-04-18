@@ -26,9 +26,6 @@ class JemViewCalendar extends JemView
 	 */
 	public function display($tpl = null)
 	{
-		// Load tooltips behavior
-		// JHtml::_('behavior.tooltip');
-		// JHtml::_('behavior.framework');
 
 		// initialize variables
 		$app          = Factory::getApplication();
@@ -79,9 +76,6 @@ class JemViewCalendar extends JemView
 		}';
 
 		$document->addStyleDeclaration($style);
-
-		// add javascript (using full path - see issue #590)
-		// JHtml::_('script', 'media/com_jem/js/calendar.js');
 		$document->addScript($url.'media/com_jem/js/calendar.js');
 
 		$year  = (int)$jinput->getInt('yearID', date("Y"));
@@ -123,7 +117,7 @@ class JemViewCalendar extends JemView
 
 		$print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
 		$ical_link = $partDate;
-		http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
+		//http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
 
 		// init calendar
 		$cal = new JemCalendar($year, $month, 0);

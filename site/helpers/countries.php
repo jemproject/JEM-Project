@@ -19,6 +19,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class JemHelperCountries
 {
@@ -539,7 +540,7 @@ class JemHelperCountries
 		$options = array();
 		foreach ($countries as $country) {
 			$name = explode(',', $country['name']);
-			$options[] = JHtml::_('select.option', $country['iso2'], Text::_($name[0]), $value_tag, $text_tag);
+			$options[] = HTMLHelper::_('select.option', $country['iso2'], Text::_($name[0]), $value_tag, $text_tag);
 		}
 		return $options;
 	}

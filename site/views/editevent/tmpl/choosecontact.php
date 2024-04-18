@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
 ?>
@@ -57,12 +58,12 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 			<thead>
 				<tr>
 					<th width="7" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
-						<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php endif; ?>
-					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
 						<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
 						<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_TELEPHONE'); ?></th>

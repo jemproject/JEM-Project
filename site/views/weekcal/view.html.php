@@ -13,6 +13,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Weekcal-View
@@ -25,7 +26,7 @@ class JemViewWeekcal extends JemView
 	public function display($tpl = null)
 	{
 		// Load tooltips behavior
-		// JHtml::_('behavior.tooltip');
+		// HTMLHelper::_('behavior.tooltip');
 
 		// initialize variables
 		$app          = Factory::getApplication();
@@ -78,7 +79,7 @@ class JemViewWeekcal extends JemView
 		$document->addStyleDeclaration($style);
 
 		// add javascript (using full path - see issue #590)
-		// JHtml::_('script', 'media/com_jem/js/calendar.js');
+		// HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
 		$document->addScript($url.'media/com_jem/js/calendar.js');
 
 		$year  = (int)$jinput->getInt('yearID', date("Y"));

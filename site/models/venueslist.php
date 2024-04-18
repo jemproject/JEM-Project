@@ -11,11 +11,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Model-Venueslist
  */
-class JemModelVenueslist extends JModelList
+class JemModelVenueslist extends ListModel
 {
 	var $_venues = null;
 	var $_total_venues = null;

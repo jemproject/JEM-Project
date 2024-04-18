@@ -19,6 +19,7 @@ use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Component\ComponentHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -41,7 +42,7 @@ class JemHelper
 			$jemConfig = JemConfig::getInstance();
 			$config = clone $jemConfig->toObject(); // We need a copy to ensure not to store 'params' we add below!
 
-			$config->params = JComponentHelper::getParams('com_jem');
+			$config->params = ComponentHelper::getParams('com_jem');
 		}
 
 		return $config;

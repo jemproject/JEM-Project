@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Holds the logic for attachments manipulation
@@ -76,7 +77,7 @@ public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', 
  */
 protected function _getCommand($name, $task, $list)
 {
-	JHtml::_('behavior.framework');
+	HTMLHelper::_('behavior.framework');
 	$message = Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
 	$message = addslashes($message);
 

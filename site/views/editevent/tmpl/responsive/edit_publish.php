@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <fieldset class="adminform">
@@ -21,7 +22,7 @@ use Joomla\CMS\Language\Text;
 		<dd><?php echo $this->form->getInput('published'); ?></dd>
 		<dt><?php echo $this->form->getLabel('access'); ?></dt>
 		<dd><?php
-			echo JHtml::_(
+			echo HTMLHelper::_(
 				'select.genericlist',
 				$this->access,
 				'jform[access]',

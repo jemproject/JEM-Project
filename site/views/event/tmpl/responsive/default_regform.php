@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 // The user is not already attending -> display registration form.
 
@@ -243,7 +244,7 @@ if ($this->showRegForm && empty($this->print)) :
             <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
             <input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />
             <input type="hidden" name="task" value="event.userregister"/>
-            <?php echo JHtml::_('form.token'); ?>
+            <?php echo HTMLHelper::_('form.token'); ?>
         </form>
     <?php
     endif; // full?

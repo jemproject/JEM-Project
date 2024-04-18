@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 
@@ -33,7 +34,7 @@ use Joomla\CMS\Language\Text;
 		<?php if ($this->item->locimage) : ?>
 		<dt><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
 		<dd><?php
-            echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' =>'btn')); ?>
+            echo HTMLHelper::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' =>'btn')); ?>
 		</dd>
 		<?php endif; ?>
 	</dl>

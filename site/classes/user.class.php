@@ -14,7 +14,7 @@ use Joomla\CMS\User\User;
 
 /**
  * JEM user class with additional functions.
- * Because JUser::getInstance has different paramters on different versions
+ * Because User::getInstance has different paramters on different versions
  *  we must split out class.
  *
  * @package JEM

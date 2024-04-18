@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
@@ -107,13 +108,13 @@ use Joomla\CMS\Language\Text;
         </div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showlocate == 1) : ?>
-        <div id="jem_location" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_location" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcity == 1) : ?>
-        <div id="jem_city" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_city" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
-        <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?> 
       <div class="jem-myvenues-status" ><?php echo Text::_('JSTATUS'); ?></div>
     </div>    
@@ -134,7 +135,7 @@ use Joomla\CMS\Language\Text;
             <div class="jem-event-info-small jem-myevents-check" >
               <?php
               if (!empty($row->params) && $row->params->get('access-change', false)) :
-                echo JHtml::_('grid.id', $i, $row->id) . '&nbsp;';
+                echo HTMLHelper::_('grid.id', $i, $row->id) . '&nbsp;';
               endif;
               ?>
             </div>
@@ -176,7 +177,7 @@ use Joomla\CMS\Language\Text;
 					<div class="jem-event-info-small jem-myvenues-status">
 						<?php // Ensure icon is not clickable if user isn't allowed to change state!
 						$enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
-						echo JHtml::_('jgrid.published', $row->published, $i, 'myvenues.', $enabled);
+						echo HTMLHelper::_('jgrid.published', $row->published, $i, 'myvenues.', $enabled);
 						?>
 					</div>
             </li>
@@ -193,7 +194,7 @@ use Joomla\CMS\Language\Text;
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 	<input type="hidden" name="option" value="com_jem" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelpèr::_('form.token'); ?>
 </form>
 
 

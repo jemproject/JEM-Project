@@ -10,10 +10,11 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
-// JHtml::_('behavior.tooltip');
+// HTMLHelper::_('behavior.tooltip');
 
-JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
@@ -114,13 +115,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 					<tr>
 						<th width="1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 						<!--th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
-						<th class="title"><?php echo JHtml::_('grid.sort', $namelabel, 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th class="title"><?php echo HTMLHelper::_('grid.sort', $namelabel, 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if ($this->enableemailaddress == 1) : ?>
 						<th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
 						<?php endif; ?>
-						<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-						<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-						<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 						<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 						<?php endif;?>
@@ -131,12 +132,12 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 				<?php foreach ($this->rows as $i => $row) : ?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
-						<!--td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td-->
+						<!--td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td-->
 						<td><?php echo $row->$namefield; ?></td>
 						<?php if ($this->enableemailaddress == 1) : ?>
 						<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 						<?php endif; ?>
-						<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
+						<td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
@@ -151,7 +152,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<td class="center"><?php echo $row->places; ?></td>
 						<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 						<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
-						<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
+						<td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
                         <td class="center">
                             <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
@@ -166,7 +167,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
 		<?php endif; /* empty($this->rows) */ ?>
 
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="task" value="" />

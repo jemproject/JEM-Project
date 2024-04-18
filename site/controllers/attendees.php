@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * JEM Component Attendees Controller
@@ -295,7 +296,7 @@ class JemControllerAttendees extends BaseController
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC5'));
+			$cols[] = empty($data->uregdate) ? '' : HTMLHelper::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC5'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {

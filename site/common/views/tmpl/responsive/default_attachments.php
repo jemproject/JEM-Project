@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
   <hr class="jem-hr" style="display: none;" />
@@ -37,7 +38,7 @@ if (isset($this->attachments) && is_array($this->attachments) && (count($this->a
 						$filename	= $this->escape($file->name ? $file->name : $file->file);
 						$image		= $filename.'&nbsp;<i class="fa fa-download"></i>';
 						$attribs	= array('class'=>'jem-files');
-						echo JHtml::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.JSession::getFormToken().'=1',$image, $attribs);
+						echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.JSession::getFormToken().'=1',$image, $attribs);
 					?>
 					</span>
 				</dd>

@@ -10,10 +10,11 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
-// JHtml::_('behavior.tooltip');
+// HTMLHelper::_('behavior.tooltip');
 
-JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
@@ -138,13 +139,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
       <div class="jem-sort jem-sort-small" id="articleList">
         <div class="jem-list-row jem-small-list">
           <div class="sectiontableheader jem-attendee-number"><?php echo Text::_('COM_JEM_NUM'); ?></div>
-          <div class="sectiontableheader jem-attendee-name"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+          <div class="sectiontableheader jem-attendee-name"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USERNAME', 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if ($this->enableemailaddress == 1) :?>
             <div class="sectiontableheader jem-attendee-email"><?php echo Text::_('COM_JEM_EMAIL'); ?></div>
           <?php endif; ?>
-          <div class="sectiontableheader jem-attendee-regdate"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
-          <div class="sectiontableheader jem-attendee-status"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
-          <div class="sectiontableheader jem-attendee-places"><?php echo JHtml::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+          <div class="sectiontableheader jem-attendee-regdate"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+          <div class="sectiontableheader jem-attendee-status"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
+          <div class="sectiontableheader jem-attendee-places"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
           <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
             <div class="sectiontableheader jem-attendee-comment"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
           <?php endif; ?>
@@ -172,7 +173,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php endif; ?>
 
             <div class="jem-event-info-small jem-attendee-regdate">
-              <?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?>
+              <?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?>
             </div>
 
             <div class="jem-event-info-small jem-attendee-status">
@@ -193,7 +194,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
               <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
               <div class="jem-event-info-small jem-attendee-comment">
-                <?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
+                <?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
               </div>
             <?php endif;?>
 
@@ -210,7 +211,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
     <?php endif; /* empty($this->rows) */ ?>
 
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="task" value="" />

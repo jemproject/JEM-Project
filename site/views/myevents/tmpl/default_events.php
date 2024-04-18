@@ -10,8 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
-// JHtml::_('behavior.tooltip');
+// HTMLHelper::_('behavior.tooltip');
 ?>
 
 <script type="text/javascript">
@@ -84,21 +85,21 @@ use Joomla\CMS\Language\Text;
 					<?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
 					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<?php endif; ?>
-					<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_date" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php if ($this->jemsettings->showtitle == 1) : ?>
-					<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_title" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showlocate == 1) : ?>
-					<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_location" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showcity == 1) : ?>
-					<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_city" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showstate == 1) : ?>
-					<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_state" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showcat == 1) : ?>
-					<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_category" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
 					<th id="jem_atte" class="sectiontableheader" align="center"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
@@ -118,7 +119,7 @@ use Joomla\CMS\Language\Text;
 							<td class="center">
 								<?php
 								if (!empty($row->params) && $row->params->get('access-change', false)) :
-									echo JHtml::_('grid.id', $i, $row->eventid);
+									echo HTMLHelper::_('grid.id', $i, $row->eventid);
 								endif;
 								?>
 							</td>
@@ -206,7 +207,7 @@ use Joomla\CMS\Language\Text;
 										echo $count;
 									}
 								} else {
-									echo JHtml::_('image', 'com_jem/publish_r.png',NULL,NULL,true);
+									echo HTMLHelper::_('image', 'com_jem/publish_r.png',NULL,NULL,true);
 								}
 								?>
 							</td>
@@ -215,7 +216,7 @@ use Joomla\CMS\Language\Text;
 							<td class="center">
 								<?php // Ensure icon is not clickable if user isn't allowed to change state!
 								$enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
-								echo JHtml::_('jgrid.published', $row->published, $i, 'myevents.', $enabled);
+								echo HTMLHelper::_('jgrid.published', $row->published, $i, 'myevents.', $enabled);
 								?>
 							</td>
 						</tr>
@@ -231,7 +232,7 @@ use Joomla\CMS\Language\Text;
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 	<input type="hidden" name="option" value="com_jem" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 <div class="pagination">

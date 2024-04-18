@@ -12,15 +12,15 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Registry\Registry;
+use Joomla\CMS\MVC\Model\ListModel;
 
-jimport('joomla.application.component.modellist');
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 /**
  * Model-Eventslist
  **/
-class JemModelEventslist extends JModelList
+class JemModelEventslist extends ListModel
 {
 	/**
 	 * Constructor.

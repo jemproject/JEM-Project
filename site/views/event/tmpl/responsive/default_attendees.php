@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
 ?>
@@ -167,17 +168,17 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 						// User has avatar
 						if (!empty($register->avatar)) :
 							if (File::exists(JPATH_ROOT . '/' . $imgpath . '/comprofiler/tn' . $register->avatar)) {
-								$useravatar = JHtml::image($imgpath . '/comprofiler/tn' . $register->avatar, $register->name);
+								$useravatar = HTMLHelper::image($imgpath . '/comprofiler/tn' . $register->avatar, $register->name);
 							} elseif (File::exists(JPATH_ROOT . '/' . $imgpath . '/comprofiler/' . $register->avatar)) {
-								$useravatar = JHtml::image($imgpath . '/comprofiler/' . $register->avatar, $register->name);
+								$useravatar = HTMLHelper::image($imgpath . '/comprofiler/' . $register->avatar, $register->name);
 							} else {
-								$useravatar = empty($noimg) ? '' : JHtml::image($noimg, $register->name);
+								$useravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
 							}
 							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
 
 						// User has no avatar
 						else :
-							$nouseravatar = empty($noimg) ? '' : JHtml::image($noimg, $register->name);
+							$nouseravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
 							echo '<a href="' . JRoute::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>'. $registedplaces;
 						endif;
 					else :

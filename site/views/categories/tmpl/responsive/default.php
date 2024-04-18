@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -27,7 +28,7 @@ use Joomla\CMS\Language\Text;
 
 	<?php foreach ($this->rows as $row) : ?>
 		<h2 class="jem cat<?php echo $row->id; ?>">
-			<?php echo JHtml::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
+			<?php echo HTMLHelper::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
     
     <?php if (($this->jemsettings->discatheader) && (!empty($row->image))) : ?>

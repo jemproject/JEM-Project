@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
 ?>
@@ -20,7 +21,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 					<li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
 					<li><?php echo $this->form->getLabel('access'); ?><?php
-					          echo JHtml::_('select.genericlist', $this->access, 'jform[access]',
+					          echo HTMLHelper::_('select.genericlist', $this->access, 'jform[access]',
 					                        array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
 						 ?>
 					</li>

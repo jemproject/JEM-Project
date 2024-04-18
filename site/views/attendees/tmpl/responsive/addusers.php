@@ -11,11 +11,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
 $checked = 0;
 
-JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 // Get the form.
 JForm::addFormPath(JPATH_COMPONENT . '/models/forms');
@@ -115,7 +116,7 @@ if (empty($form)) {
             </div>
 
             <div class="jem-event-info-small jem-users-checkall">
-              <?php echo JHtml::_('grid.id', $i, $row->id); ?>
+              <?php echo HTMLHelper::_('grid.id', $i, $row->id); ?>
             </div>
 
             <div class="jem-event-info-small jem-users-name">
