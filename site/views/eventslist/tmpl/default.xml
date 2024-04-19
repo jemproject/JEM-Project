@@ -17,6 +17,28 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
+			<field name="tableorderby" type="radio"
+				   default="0"
+				   label="COM_JEM_TABLE_ORDER_BY"
+				   description="COM_JEM_TABLE_ORDER_BY_DESC"
+				   class="btn-group"
+			>
+				<option value="0">COM_JEM_DATE</option>
+				<option value="1">COM_JEM_TITLE</option>
+				<option value="2">COM_JEM_VENUE</option>
+				<option value="3">COM_JEM_CITY</option>
+				<option value="4">COM_JEM_STATE</option>
+				<option value="5">COM_JEM_CATEGORY</option>
+			</field>
+			<field name="tabledirectionorder" type="radio"
+				   default="ASC"
+				   label="COM_JEM_TABLE_DIRECTION_ORDER"
+				   description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
+				   class="btn-group "
+			>
+				<option value="ASC">COM_JEM_ORDER_ASCENDING</option>
+				<option value="DESC">COM_JEM_ORDER_DESCENDING</option>
+			</field>
       <field type="spacer" name="spacer1" hr="true" />
       <field name="introtext" type="editor"
 				filter="safehtml"

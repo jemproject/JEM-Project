@@ -63,24 +63,59 @@ class JemViewEventslist extends JemView
 		}
 
 		// get variables
-		$filter_order = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
 		if ($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_type      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
-		$search           = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+
+		//Text filter
+		$filter_type = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_type', 'filter_type', 0, 'int');
+		$search = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_search', 'filter_search', '', 'string');
+
+
+		//Filter only featured:
+		if ($params->get('onlyfeatured')) {
+		  	$this->getModel()->setState('filter.featured',1);
+		}
+		
+		//Get initial order by menu item
+		$tableInitialorderby = $params->get('tableorderby','0');
+		if ($tableInitialorderby) {
+			switch ($tableInitialorderby){
+				case 0:
+					$tableInitialorderby = 'a.dates';
+					break;
+				case 1:
+					$tableInitialorderby = 'a.title';
+					break;
+				case 2:
+					$tableInitialorderby = 'l.venue';
+					break;
+				case 3:
+					$tableInitialorderby = 'l.city';
+					break;
+				case 4:
+					$tableInitialorderby = 'l.state';
+					break;
+				case 5:
+					$tableInitialorderby = 'c.catname';
+					break;
+			}
+			$filter_order = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', $tableInitialorderby, 'cmd');
+		}else{
+			$filter_order = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		}
+		$tableInitialDirectionOrder = $params->get('tabledirectionorder','ASC');
+		if ($tableInitialDirectionOrder) {
+			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $tableInitialDirectionOrder, 'word');
+		}else{
+			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+		}
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order']     = $filter_order;
-
-    // TODO: Filter only featured:
-    if ($params->get('onlyfeatured')) {
-      $this->getModel()->setState('filter.featured',1);
-    }
 
 		// Get data from model
 		$rows = $this->get('Items');
@@ -95,10 +130,10 @@ class JemViewEventslist extends JemView
 
 		// pathway
 		if ($menuitem) {
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			//$pathway->setItemName(1, $menuitem->title);
 		}
 
 		if ($task == 'archive') {

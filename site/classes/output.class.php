@@ -17,6 +17,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -1282,7 +1283,7 @@ static public function lightbox() {
 		$timezone = null;
 
 		if ($check) {
-			$jdate = new JDate($date, $timezone);
+			$jdate = new Date($date, $timezone);
 			if (!$format) {
 				// If no format set, use long format as standard
 				$format = $settings->formatdate;

@@ -66,6 +66,7 @@ class JemModelEventslist extends ListModel
 		$task        = $app->input->getCmd('task','');
 		$format      = $app->input->getCmd('format',false);
 		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+		$params      = $app->getParams();
 
 		# limit/start
 		if (empty($format) || ($format == 'html')) {
@@ -120,12 +121,39 @@ class JemModelEventslist extends ListModel
 		$filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
-		if ($filter_order == 'a.dates') {
-			$orderby = array('a.dates ' . $filter_order_Dir, 'a.times ' . $filter_order_Dir, 'a.created ' . $filter_order_Dir);
-		} else {
-			$orderby = array($filter_order . ' ' . $filter_order_Dir,
-			                 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
+
+		if(!isset($_REQUEST["filter_type"])) {
+			$tableInitialorderby = $params->get('tableorderby', '0');
+			if ($tableInitialorderby) {
+				switch ($tableInitialorderby) {
+					case 0:
+						$tableInitialorderby = 'a.dates';
+						break;
+					case 1:
+						$tableInitialorderby = 'a.title';
+						break;
+					case 2:
+						$tableInitialorderby = 'l.venue';
+						break;
+					case 3:
+						$tableInitialorderby = 'l.city';
+						break;
+					case 4:
+						$tableInitialorderby = 'l.state';
+						break;
+					case 5:
+						$tableInitialorderby = 'c.catname';
+						break;
+				}
+				$filter_order = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order', 'filter_order', $tableInitialorderby, 'cmd');
+			}
+			$tableInitialDirectionOrder = $params->get('tabledirectionorder', 'ASC');
+			if ($tableInitialDirectionOrder) {
+				$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', $tableInitialDirectionOrder, 'word');
+			}
 		}
+
+		$orderby = array($filter_order . ' ' . $filter_order_Dir, 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
 
 		$this->setState('filter.orderby',$orderby);
 
