@@ -28,7 +28,7 @@ $wa = $document->getWebAssetManager();
 			->useScript('form.validate');
 
 $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
-echo JHtml::_(
+echo HTMLHelper::_(
 	'bootstrap.renderModal',
 	'user-modal',
 	array(		

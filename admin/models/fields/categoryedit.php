@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -226,7 +227,7 @@ class JFormFieldCategoryEdit extends ListField
 				$parent->text = Text::_('JGLOBAL_ROOT_PARENT');
 				array_unshift($options, $parent);
 			}
-			array_unshift($options, JHtml::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
+			array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('JGLOBAL_ROOT')));
 		}
 
 		// Merge any additional options in the XML definition.

@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Model: Attendees
@@ -252,7 +253,7 @@ class JemModelAttendees extends ListModel
 					$item->name,
 					$item->username,
 					$item->email,
-					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
+					empty($item->uregdate) ? '' : HTMLHelper::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
 					$item->places,
 					Text::_($txt_stat)
 				);

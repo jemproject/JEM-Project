@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
@@ -26,11 +27,11 @@ use Joomla\CMS\Language\Text;
 				<td>
 				<?php
 					if ($this->updatedata->current == 0 ) {
-						echo JHtml::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
 					} elseif( $this->updatedata->current == -1 ) {
-						echo JHtml::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
 					} else {
-						echo JHtml::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
 					}
 				?>
 				</td>
@@ -101,7 +102,7 @@ use Joomla\CMS\Language\Text;
 			<tr>
 		  		<td>
 		  		<?php
-		  			echo JHtml::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+		  			echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
 		  		?>
 		  		</td>
 		  		<td>
@@ -126,5 +127,5 @@ use Joomla\CMS\Language\Text;
 	<?php endif; ?>
 
 	<input type="hidden" name="task" value="" />
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

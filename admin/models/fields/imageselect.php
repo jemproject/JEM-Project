@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
@@ -40,7 +41,7 @@ class JFormFieldImageselect extends ListField
 	public function getInput()
 	{
 		// Load the modal behavior script.
-		// JHtml::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
 
 		// ImageType
 		$imagetype = $this->element['imagetype'];
@@ -84,7 +85,7 @@ class JFormFieldImageselect extends ListField
 		$html[] = "<input class=\"form-control\" style=\"background: #fff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/com_jem/images/blank.png'}\"; />";
 		$html[] = "</div>";
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\">";
-			$html[] = JHtml::_(
+			$html[] = HTMLHelper::_(
 				'bootstrap.renderModal',
 				'imageupload-modal',
 				array(		
@@ -101,7 +102,7 @@ class JFormFieldImageselect extends ListField
 		$html[] ='</div></div>';
 		// $html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".Text::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".Text::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\">";
-		$html[] = JHtml::_(
+		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'imageselect-modal',
 			array(		

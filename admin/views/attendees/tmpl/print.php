@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 	<table style="width:100%" class="adminlist">
 		<tr>
@@ -51,7 +52,7 @@ use Joomla\CMS\Language\Text;
 				<td><?php echo $row->name; ?></td>
 				<td><?php echo $row->username; ?></td>
 				<td><?php echo $row->email; ?></td>
-				<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
+				<td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
 				<?php
 				switch ($row->status) {
 				case -1: // explicitely unregistered

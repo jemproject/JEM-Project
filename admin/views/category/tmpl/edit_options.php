@@ -10,9 +10,10 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
-<?php //echo JHtml::_('sliders.panel', Text::_('JGLOBAL_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
+<?php //echo HTMLHelper::_('sliders.panel', Text::_('JGLOBAL_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 
 	<fieldset class="panelform">
 		<ul class="adminformlist">
@@ -35,7 +36,7 @@ use Joomla\CMS\Language\Text;
 
 foreach ($fieldSets as $name => $fieldSet) :
 	$label = !empty($fieldSet->label) ? $fieldSet->label : 'COM_CATEGORIES_'.$name.'_FIELDSET_LABEL';
-	echo JHtml::_('sliders.panel', Text::_($label), $name.'-options');
+	echo HTMLHelper::_('sliders.panel', Text::_($label), $name.'-options');
 	if (isset($fieldSet->description) && trim($fieldSet->description)) :
 		echo '<p class="tip">'.$this->escape(Text::_($fieldSet->description)).'</p>';
 	endif;

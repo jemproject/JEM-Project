@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <form method="post" action="<?php echo htmlspecialchars($this->request_url); ?>" enctype="multipart/form-data" name="adminForm" id="adminForm">
@@ -148,7 +149,7 @@ use Joomla\CMS\Language\Text;
 
 <?php } ?>
 
-<?php echo JHtml::_('form.token'); ?>
+<?php echo HTMLHelper::_('form.token'); ?>
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="task" value="<?php echo $this->task;?>" />
 </form>

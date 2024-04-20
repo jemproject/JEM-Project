@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
@@ -38,7 +39,7 @@ class JFormFieldVenue extends ListField
 	protected function getInput()
 	{
 		// Load the modal behavior script.
-		// JHtml::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
 
 		// Build the script.
 		$script = array();
@@ -88,7 +89,7 @@ class JFormFieldVenue extends ListField
 		$html[] = '  <div class="blank">';
 		// $html[] = '	<a class="modal" title="'.Text::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.Text::_('COM_JEM_SELECT_VENUE').'</a>';
 
-		$html[] = JHtml::_(
+		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'venue-modal',
 			array(		

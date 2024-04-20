@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
 ?>
@@ -33,9 +34,9 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
 	<thead>
 		<tr>
 			<th class="center" width="7"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
-			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
-			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+			<th align="left" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<th align="left" class="title center"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
 		</tr>
 	</thead>

@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
@@ -38,7 +39,7 @@ class JFormFieldEvent extends ListField
 	protected function getInput()
 	{
 		// Load the modal behavior script.
-		// JHtml::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
 
 		// Build the script.
 		$script = array();
@@ -85,7 +86,7 @@ class JFormFieldEvent extends ListField
 		// The user select button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = JHtml::_(
+		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'event-modal',
 			array(		

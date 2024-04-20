@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.form.formfield');
 
@@ -31,7 +32,7 @@ class JFormFieldModal_Contact extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		// JHtml::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
 
 		// Build the script
 		$script = array();
@@ -85,7 +86,7 @@ class JFormFieldModal_Contact extends JFormField
 		$html[] = '  <div class="blank">';
 		// $html[] = '    <a class="modal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
 		// 			Text::_('COM_JEM_SELECT').'</a>';
-		$html[] = JHtml::_(
+		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'contact-modal',
 			array(		

@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <table class="adminform" id="el-attachments">
@@ -35,13 +36,13 @@ use Joomla\CMS\Language\Text;
 			<td>
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-					<?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', $file->access); ?>
+					<?php echo HTMLHelper::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', $file->access); ?>
 				</div>
 			</td>
 			<td class="center">
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
-					<?php echo JHtml::_('image','com_jem/publish_r.png', Text::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(), 'class' => 'attach-remove', 'title'=>Text::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
+					<?php echo HTMLHelper::_('image','com_jem/publish_r.png', Text::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(), 'class' => 'attach-remove', 'title'=>Text::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
 				</div>
 			</td>
 		</tr>
@@ -65,7 +66,7 @@ use Joomla\CMS\Language\Text;
 			<td>
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-					<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', 1); ?>
+					<?php echo HTMLHelper::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox form-control','size'=>'7'), 'value', 'text', 1); ?>
 				</div>
 			</td>
 			<td>&nbsp;</td>

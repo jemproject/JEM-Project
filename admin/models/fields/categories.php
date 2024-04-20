@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 FormHelper::loadFieldClass('list');
 
@@ -35,7 +36,7 @@ class JFormFieldCategories extends ListField
 	protected function getInput()
 	{
 		// Load the modal behavior script.
-		// JHtml::_('behavior.modal', 'a.modal');
+		// HTMLHelper::_('behavior.modal', 'a.modal');
 		$app      = Factory::getApplication();
 		$document = $app->getDocument();
 
@@ -89,7 +90,7 @@ class JFormFieldCategories extends ListField
 		// The user select button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = JHtml::_(
+		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'categories-modal',
 			array(		

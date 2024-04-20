@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 <form action="index.php" method="post" name="adminForm" id="adminForm">
 	<div class="imghead">
@@ -35,7 +36,7 @@ use Joomla\CMS\Language\Text;
 		<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
 	</div>
 
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="imagehandler" />
 	<input type="hidden" name="tmpl" value="component" />

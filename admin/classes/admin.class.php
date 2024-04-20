@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
  * Holds helpfull administration related stuff
  *
@@ -38,16 +40,16 @@ class JemAdmin
 	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
 		$timelist = array();
-		$timelist[0] = JHtml::_('select.option', '', '');
+		$timelist[0] = HTMLHelper::_('select.option', '', '');
 
 		foreach(range(0, $max) as $value) {
 			if($value >= 10) {
-				$timelist[] = JHtml::_('select.option', $value, $value);
+				$timelist[] = HTMLHelper::_('select.option', $value, $value);
 			} else {
-				$timelist[] = JHtml::_('select.option', '0'.$value, '0'.$value);
+				$timelist[] = HTMLHelper::_('select.option', '0'.$value, '0'.$value);
 			}
 		}
-		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+		return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 }
 

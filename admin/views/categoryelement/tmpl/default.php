@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategory');
 ?>
@@ -28,7 +29,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 		<td nowrap="nowrap">
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 			<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
-			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
+			<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
 			</select>
 		</td>
 	</tr>
@@ -38,7 +39,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 	<thead>
 		<tr>
 			<th width="7" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-			<th align="left" class="title"><?php echo JHtml::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
+			<th align="left" class="title"><?php echo HTMLHelper::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo Text::_('COM_JEM_ACCESS'); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 		</tr>
@@ -64,7 +65,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 			</td>
 			<td class="center"><?php echo $access; ?></td>
 			<td class="center">
-				<?php echo JHtml::_('jgrid.published', $row->published, $i,'',false); ?>
+				<?php echo HTMLHelper::_('jgrid.published', $row->published, $i,'',false); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>

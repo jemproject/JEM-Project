@@ -10,8 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
-// JHtml::_('behavior.tooltip');
+// HTMLHelper::_('behavior.tooltip');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=userelement&tmpl=component" method="post" id="adminForm" name="adminForm">
@@ -30,9 +31,9 @@ use Joomla\CMS\Language\Text;
 		<thead>
 			<tr>
 				<th class="center" width="5"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-				<th class="title"><?php echo JHtml::_('grid.sort', 'Name', 'u.name', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
-				<th class="title"><?php echo JHtml::_('grid.sort', 'Username', 'u.username', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
-				<th class="title"><?php echo JHtml::_('grid.sort', 'Email', 'u.email', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
+				<th class="title"><?php echo HTMLHelper::_('grid.sort', 'Name', 'u.name', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
+				<th class="title"><?php echo HTMLHelper::_('grid.sort', 'Username', 'u.username', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
+				<th class="title"><?php echo HTMLHelper::_('grid.sort', 'Email', 'u.email', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 			</tr>
 		</thead>
 

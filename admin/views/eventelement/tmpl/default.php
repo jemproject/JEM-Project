@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <form action="index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -25,7 +26,7 @@ use Joomla\CMS\Language\Text;
 		<td nowrap="nowrap">
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 			<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
-			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
+			<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
 			</select>
 		</td>
 	</tr>
@@ -35,11 +36,11 @@ use Joomla\CMS\Language\Text;
 	<thead>
 		<tr>
 			<th class="center" width="5"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo Text::_('COM_JEM_CATEGORY'); ?></th>
 			<th class="center" width="1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 		</tr>
@@ -90,7 +91,7 @@ use Joomla\CMS\Language\Text;
 			?>
 			</td>
 			<td class="center">
-				<?php echo JHtml::_('jgrid.published', $row->published, $i,'',false); ?>
+				<?php echo HTMLHelper::_('jgrid.published', $row->published, $i,'',false); ?>
 			</td>
 		</tr>
 			<?php endforeach; ?>
