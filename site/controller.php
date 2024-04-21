@@ -117,6 +117,8 @@ class JemController extends BaseController
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
+		ob_clean();
+
 		$id = Factory::getApplication()->input->getInt('file', 0);
 		$path = JemAttachment::getAttachmentPath($id);
 
@@ -126,7 +128,7 @@ class JemController extends BaseController
 		//$doc->setMimeEncoding($mime);
 
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');
-		if ($fd = fopen ($path, "r"))
+		if ($fd = fopen ($path, "rb"))
 		{
 			$fsize = filesize($path);
 			header("Content-length: $fsize");
