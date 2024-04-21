@@ -3,7 +3,7 @@
  * @package    JEM My Attending for CB
  * @version    2.8.0 (for JEM 4 & CB v2.8)
  * @author     JEM Community
- * @copyright  (C) 2013-2023 joomlaeventmanager.net
+ * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Just a note:

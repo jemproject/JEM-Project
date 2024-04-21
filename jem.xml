@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
 	<name>com_jem</name>
-	<creationDate>September 2023</creationDate>
+	<creationDate>April 2024</creationDate>
 	<author>JEM Community</author>
-	<copyright>Copyright (C) 2013-2023 joomlaeventmanager.net</copyright>
+	<copyright>Copyright (C) 2013-2024 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<version>4.2.0</version>
+	<version>4.2.1</version>
 	<description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
