@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 echo $this->pageclass_sfx; ?>">
     <div class="buttons">
         <?php
-        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>

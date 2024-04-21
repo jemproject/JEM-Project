@@ -91,11 +91,11 @@ static public function lightbox() {
 			${$key} = isset($permissions->$key) ? $permissions->$key: null;
 		}
 		if (is_object($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
 				${$key} = isset($params->$key) ? $params->$key : null;
 			}
 		} elseif (is_array($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
 				${$key} = key_exists($key, $params) ? $params[$key] : null;
 			}
 		} else {
@@ -129,7 +129,7 @@ static public function lightbox() {
 		# Middle block ----------------
 
 		if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
-			$buttons[$idx][] = JemOutput::archivebutton(null, $task, $id); // task: archive, id: for '&id='
+			$buttons[$idx][] = JemOutput::archivebutton($archive_link, $task , $id); // task: archive, id: for '&id='
 		}
 		if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
 			$buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
@@ -138,7 +138,7 @@ static public function lightbox() {
 			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
 		}
 		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'venue', 'weekcal', 'category')))) {
-			$buttons[$idx][] = JemOutput::icalbutton(($ical_link? $ical_link: $slug), $view); // slug: for '&id='
+			$buttons[$idx][] = JemOutput::icalbutton(($ical_link? $ical_link: $slug), $view, $task); // slug: for '&id='
 		}
 		if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
 			$buttons[$idx][] = JemOutput::exportbutton($id); // id: for '&id='
@@ -342,14 +342,14 @@ static public function lightbox() {
 	/**
 	 * Writes Archivebutton
 	 *
-	 * @param array $params needed params
+	 * @param string $archive_link The link archive button
 	 * @param string $task The current task (optional)
 	 * @param int $id id of category/event/venue if useful (optional)
 	 *
 	 * Views:
 	 * Categories, Categoriesdetailed, Category, Eventslist, Search, Venue, Venues
 	 */
-	static public function archivebutton($params, $task = NULL, $id = NULL)
+	static public function archivebutton($archive_link, $task = NULL, $id = NULL)
 	{
 		$settings  = JemHelper::globalattribs();
 		$settings2 = JemHelper::config();
@@ -382,9 +382,9 @@ static public function lightbox() {
 				$title = Text::_('COM_JEM_SHOW_EVENTS');
 
 				if ($id) {
-					$url = $jemPath . '?id='.$id.'&filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'id=' . $id . '&filter_reset=1';
 				} else {
-					$url = $jemPath . '?filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'filter_reset=1';
 				}
 			} else {
 				if ($settings->get('global_show_icons',1)) {
@@ -397,9 +397,9 @@ static public function lightbox() {
 				$title = Text::_('COM_JEM_SHOW_ARCHIVE');
 
 				if ($id) {
-					$url = $jemPath . '?id='.$id.'&task=archive'.'&filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'id=' . $id . '&task=archive&filter_reset=1';
 				} else {
-					$url = $jemPath . '?task=archive'.'&filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'task=archive&filter_reset=1';
 				}
 			}
 
@@ -699,9 +699,10 @@ static public function lightbox() {
 	 * Creates the ical button
 	 *
 	 * @param object $slug
-	 * @param array $params
+     * @view string view name
+     * @task string task name
 	 */
-	static public function icalbutton($slug, $view)
+	static public function icalbutton($slug, $view, $task = null)
 	{
 		$app = Factory::getApplication();
 		$settings = JemHelper::globalattribs();
@@ -722,7 +723,7 @@ static public function lightbox() {
 			$overlib = Text::_('COM_JEM_ICAL_DESC');
 			$text = Text::_('COM_JEM_ICAL');
 
-			$url = 'index.php?option=com_jem&view='.$view.'&id='.$slug.'&format=raw&layout=ics';
+			$url = 'index.php?option=com_jem&view=' . $view . '&id=' . ($slug??0) . ($task? '&task=' . $task : '') . '&format=raw&layout=ics';
 			$output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
 
 			return $output;
