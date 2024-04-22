@@ -11,12 +11,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-jimport('joomla.application.component.model');
 /**
  * Categoryelement-Model
  */
-class JemModelCategoryelement extends JModelLegacy
+class JemModelCategoryelement extends BaseDatabaseModel
 {
 	/**
 	 * Pagination object

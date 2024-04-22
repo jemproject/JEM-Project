@@ -11,15 +11,15 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
 /**
  * Housekeeping-Model
  */
-class JemModelHousekeeping extends JModelLegacy
+class JemModelHousekeeping extends BaseDatabaseModel
 {
 	const EVENTS = 1;
 	const VENUES = 2;

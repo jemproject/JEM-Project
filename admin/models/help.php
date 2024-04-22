@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component Help Model
@@ -17,7 +17,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JemModelHelp extends JModelLegacy
+class JemModelHelp extends BaseDatabaseModel
 {
 	/**
 	 * Constructor

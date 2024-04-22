@@ -14,8 +14,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 /**
  * Module-Wide
@@ -37,7 +38,7 @@ abstract class ModJemWideHelper
 		$levels = $user->getAuthorisedViewLevels();
 
 		# Retrieve Eventslist model for the data
-		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+		$model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
 		# Set params for the model
 		# has to go before the getItems function

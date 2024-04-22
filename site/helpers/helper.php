@@ -173,7 +173,7 @@ class JemHelper
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 				// Ignore published field to prevent duplicate events.
-				$nulldate = '0000-00-00';
+				$nulldate = null;
 				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
 				       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
 				       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '

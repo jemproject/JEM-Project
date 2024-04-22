@@ -13,11 +13,12 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Model-CSSManager
  */
-class JemModelCssmanager extends JModelLegacy
+class JemModelCssmanager extends BaseDatabaseModel
 {
 	/**
 	 * Internal method to get file properties.

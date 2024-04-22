@@ -19,8 +19,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 abstract class ModJemCalHelper extends JModuleHelper
 {
@@ -83,7 +84,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 	public static function getDays($greq_year, $greq_month, &$params)
 	{
 		# Retrieve Eventslist model for the data
-		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+		$model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
 		# Set params for the model
 		$model->setState('params', $params);

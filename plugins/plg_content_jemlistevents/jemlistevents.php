@@ -13,12 +13,12 @@
 
 defined('_JEXEC') or die;
 
-JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
+BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
-
-// Import library dependencies
-jimport('joomla.plugin.plugin');
 
 
 /**
@@ -26,7 +26,7 @@ jimport('joomla.plugin.plugin');
  *
  * @since  2.2.2
  */
-class PlgContentJemlistevents extends JPlugin
+class PlgContentJemlistevents extends CMSPlugin
 {
 	/** all options with their default values
 	 */
@@ -189,7 +189,7 @@ class PlgContentJemlistevents extends JPlugin
 	protected function _load($parameters)
 	{
 		// Retrieve Eventslist model for the data
-		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+		$model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
 		if (isset($parameters['max_events'])) {
 			$max = $parameters['max_events'];

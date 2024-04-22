@@ -14,13 +14,14 @@ use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * JEM Component Imagehandler Model
  *
  * @package JEM
  */
-class JemModelImagehandler extends JModelLegacy
+class JemModelImagehandler extends BaseDatabaseModel
 {
 	/**
 	 * Array to cache list of images
