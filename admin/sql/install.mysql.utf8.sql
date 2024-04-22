@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   KEY `idx_pubstate` (`published`),
   KEY `idx_createdby` (`created_by`),
   KEY `idx_language` (`language`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `id` int(11) unsigned NOT NULL auto_increment,
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   KEY `idx_pubstate` (`published`),
   KEY `idx_createdby` (`created_by`),
   KEY `idx_language` (`language`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_categories` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
   `email` varchar(200) DEFAULT NULL,
   `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
   UNIQUE KEY `category event relation` (`catid`,`itemid`),
   KEY `catid` (`catid`),
   KEY `itemid` (`itemid`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_register` (
   `id` int(11) unsigned NOT NULL auto_increment,
@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_register` (
   KEY `idx_event` (`event`),
   KEY `idx_event_status` (`event`,`status`),
   KEY `idx_user` (`uid`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groups` (
   `id` int(11) unsigned NOT NULL auto_increment,
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
   `publishevent` int(11) NOT NULL,
   `editevent` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
   PRIMARY KEY (`id`),
   KEY `idx_group` (`group_id`),
   KEY `idx_user` (`member`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_config` (
   `keyname` varchar(100) NOT NULL,
@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_config` (
   `access` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rfu',
   PRIMARY KEY (`keyname`),
   KEY `idx_access` (`access`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
   `added` datetime NULL DEFAULT NULL,
   `added_by` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   `id` int(11) unsigned NOT NULL auto_increment,
@@ -231,7 +231,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `iso2` (`iso2`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('oldevent', '2'),
