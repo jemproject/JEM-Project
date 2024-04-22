@@ -17,7 +17,7 @@ use Joomla\CMS\Plugin\CMSPlugin;
  * @subpackage Content.jem
  * @since          1.9.6
  */
-class plgContentJem extends CSMPlugin
+class plgContentJem extends CMSMPlugin
 {
     /**
      * Dissolve recurrence sets where deleted event is referred to as first.
