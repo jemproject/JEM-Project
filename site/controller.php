@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Controller
@@ -115,31 +116,17 @@ class JemController extends BaseController
 	public function getfile()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
-
-		ob_clean();
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$id = Factory::getApplication()->input->getInt('file', 0);
 		$path = JemAttachment::getAttachmentPath($id);
 
-		//$mime = JemHelper::getMimeType($path);
-		//$app = Factory::getApplication();
-		//$document = $app->getDocument();
-		//$doc->setMimeEncoding($mime);
+		header("Content-Type: application/application/octet-stream\n");
+		header('Content-Disposition: attachment; filename="' . basename($path) . '"');
 
-		header('Content-Disposition: attachment; filename="'.basename($path).'"');
-		if ($fd = fopen ($path, "rb"))
-		{
-			$fsize = filesize($path);
-			header("Content-length: $fsize");
-			header("Cache-control: private"); //use this to open files directly
-			while(!feof($fd)) {
-				$buffer = fread($fd, 2048);
-				echo $buffer;
-			}
-		}
-		fclose ($fd);
-		return;
+		ob_clean();
+		ob_end_flush();
+		readfile($path);
 	}
 
 	/**
