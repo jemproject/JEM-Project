@@ -127,8 +127,10 @@ class JemViewMyevents extends JemView
 				$print_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive&print=1&tmpl=component');
 				$pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+			    $archive_link = Route::_('index.php?option=com_jem&view=myevents');
 			} else {
 				$print_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&print=1&tmpl=component');
+			    $archive_link = $uri->toString();
 			}
 
 			$params->set('page_heading', $pageheading);
@@ -177,6 +179,7 @@ class JemViewMyevents extends JemView
 			$this->lists = $lists;
 			$this->noevents = $noevents;
 			$this->print_link = $print_link;
+			$this->archive_link = $archive_link;
 			$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 			$this->itemid = $menuitem->id;
 		}

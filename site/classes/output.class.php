@@ -382,9 +382,9 @@ static public function lightbox() {
 				$title = Text::_('COM_JEM_SHOW_EVENTS');
 
 				if ($id) {
-					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'id=' . $id . '&filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link ?? '','?')?'&':'?') . 'id=' . $id . '&filter_reset=1';
 				} else {
-					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link ?? '','?')?'&':'?') . 'filter_reset=1';
 				}
 			} else {
 				if ($settings->get('global_show_icons',1)) {
@@ -397,9 +397,9 @@ static public function lightbox() {
 				$title = Text::_('COM_JEM_SHOW_ARCHIVE');
 
 				if ($id) {
-					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'id=' . $id . '&task=archive&filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link ?? '','?')?'&':'?') . 'id=' . $id . '&task=archive&filter_reset=1';
 				} else {
-					$url = $archive_link . (str_contains($archive_link,'?')?'&':'?') . 'task=archive&filter_reset=1';
+					$url = $archive_link . (str_contains($archive_link ?? '','?')?'&':'?') . 'task=archive&filter_reset=1';
 				}
 			}
 

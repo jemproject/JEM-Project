@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -38,9 +39,6 @@ class JemViewVenue extends JemView
 		{
 			### Venue Calendar view ###
 
-			// Load tooltips behavior
-			// HTMLHelper::_('behavior.tooltip');
-
 			// initialize variables
 			$app         = Factory::getApplication();
 			$document    = $app->getDocument();
@@ -49,12 +47,15 @@ class JemViewVenue extends JemView
 			$jemsettings = JemHelper::config();
 			$settings    = JemHelper::globalattribs();
 			$params      = $app->getParams();
-			$uri          = Uri::getInstance();
+			$uri         = Uri::getInstance();
 			$pathway     = $app->getPathWay();
 			$jinput      = $app->input;
 			$print       = $jinput->getBool('print', false);
 			$user        = JemFactory::getUser();
-			$url 			= Uri::root();
+			$url 		 = Uri::root();
+			$task        = $jinput->getCmd('task', '');
+			$idVenue     = $jinput->getCmd('id', '');
+
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCss('calendar');
@@ -112,6 +113,15 @@ class JemViewVenue extends JemView
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 
+			// create the pathway
+			if ($task == 'archive') {
+				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
+				$archive_link = Route::_('index.php?option=com_jem&view=venue&layout=calendar&id=' . $idVenue);
+			} else {
+				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+				$archive_link = $uri->toString() . (str_contains($uri->toString() ?? '','?')?'&':'?') . 'id=' . $venue->id;
+			}
+
 			// Check if the user has permission to add things
 			$permissions = new stdClass();
 			$permissions->canAddEvent = $user->can('add', 'event');
@@ -144,8 +154,10 @@ class JemViewVenue extends JemView
 			$this->cal           = $cal;
 			$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 			$this->print_link    = $print_link;
+			$this->archive_link  = $archive_link;
 			$this->print         = $print;
 			$this->ical_link     = $partDate;
+			$this->task          = $task;
 
 		}
 		else
@@ -228,10 +240,10 @@ class JemViewVenue extends JemView
 			if ($useMenuItemParams) {
 				$pagetitle   = $params->get('page_title', $menuitem->title ? $menuitem->title : $venue->venue);
 				$pageheading = $params->get('page_heading', $pagetitle);
-        $pathwayKeys = array_keys($pathway->getPathway());
-        $lastPathwayEntryIndex = end($pathwayKeys);
-        $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-        //$pathway->setItemName(1, $menuitem->title);
+				$pathwayKeys = array_keys($pathway->getPathway());
+				$lastPathwayEntryIndex = end($pathwayKeys);
+				$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+				//$pathway->setItemName(1, $menuitem->title);
 			} else {
 				$pagetitle   = $venue->venue;
 				$pageheading = $pagetitle;
@@ -246,9 +258,11 @@ class JemViewVenue extends JemView
 				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+				$archive_link = Route::_('index.php?option=com_jem&view=venue-calendar');
 			} else {
 				//$pathway->addItem($venue->venue, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
 				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+				$archive_link = Route::_('index.php?option=com_jem&view=venue-calendar');
 			}
 
 			$params->set('page_heading', $pageheading);
@@ -340,6 +354,7 @@ class JemViewVenue extends JemView
 			$this->noevents         = $noevents;
 			$this->venue            = $venue;
 			$this->print_link       = $print_link;
+			$this->archive_link 	= $archive_link;
 			$this->print            = $print;
 			$this->params           = $params;
 			$this->limage           = $limage;

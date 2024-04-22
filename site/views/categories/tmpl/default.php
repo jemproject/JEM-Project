@@ -17,7 +17,7 @@ use Joomla\CMS\Router\Route;
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		$btn_params = array('id' => $this->id, 'task' => $this->task, 'print_link' => $this->print_link);
+		$btn_params = array('id' => $this->id, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
 		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>

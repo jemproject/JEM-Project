@@ -31,6 +31,7 @@ class JemViewMyattendances extends JemView
 		$settings    = JemHelper::globalattribs();
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
+		$uri         = Uri::getInstance();
 		$params      = $app->getParams();
 		$uri         = Uri::getInstance();
 		$user        = JemFactory::getUser();
@@ -124,9 +125,11 @@ class JemViewMyattendances extends JemView
 				$print_link = Route::_(JemHelperRoute::getMyAttendancesRoute() . '&task=archive&print=1&tmpl=component');
 				$pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+			    $archive_link = Route::_('index.php?option=com_jem&view=myattendances');
 				$params->set('page_heading', $pageheading);
 			} else {
 				$print_link = Route::_(JemHelperRoute::getMyAttendancesRoute() . '&print=1&tmpl=component');
+			    $archive_link = $uri->toString();
 			}
 
 			$params->set('page_heading', $pageheading);
@@ -134,10 +137,12 @@ class JemViewMyattendances extends JemView
 			// Add site name to title if param is set
 			if ($app->get('sitename_pagetitles', 0) == 1) {
 				$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
-			} elseif ($app->get('sitename_pagetitles', 0) == 2) {
+			} 
+			elseif ($app->get('sitename_pagetitles', 0) == 2) {
 				$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 			}
 
+			// Set Page title
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 
@@ -154,6 +159,7 @@ class JemViewMyattendances extends JemView
 			$this->permissions = $permissions;
 			$this->pagetitle = $pagetitle;
 			$this->print_link = $print_link;
+			$this->archive_link = $archive_link;
 			$this->print = $print;
 			$this->lists = $lists;
 			$this->noattending = $noattending;

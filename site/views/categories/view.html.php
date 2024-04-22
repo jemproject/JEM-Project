@@ -33,7 +33,7 @@ class JemViewCategories extends JemView
 		$task        = $app->input->getCmd('task', '');
 		$id          = $app->input->getInt('id', 1);
 		$model       = $this->getModel();
-
+		$uri         = Uri::getInstance();
 		$rows        = $this->get('Data');
 		$pagination  = $this->get('Pagination');
 
@@ -59,10 +59,10 @@ class JemViewCategories extends JemView
 		// pathway
 		$pathway = $app->getPathWay();
 		if ($menuitem) {
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			//$pathway->setItemName(1, $menuitem->title);
 		}
 
 		if ($task == 'archive') {
@@ -70,9 +70,11 @@ class JemViewCategories extends JemView
 			$print_link = Route::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
 			$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+			$archive_link = Route::_('index.php?option=com_jem&view=categories');
 			$params->set('page_heading', $pageheading);
 		} else {
 			$print_link = Route::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
+			$archive_link = $uri->toString();
 		}
 
 		// Add site name to title if param is set
@@ -108,6 +110,7 @@ class JemViewCategories extends JemView
 		$this->jemsettings   = $jemsettings;
 		$this->pagetitle     = $pagetitle;
 		$this->print_link    = $print_link;
+		$this->archive_link  = $archive_link;
 		$this->model         = $model;
 		$this->id            = $id;
 		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
