@@ -10,8 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.helper');
+use Joomla\CMS\Component\ComponentHelper;
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
@@ -232,7 +231,7 @@ abstract class JEMHelperRoute
 		if (self::$lookup === null) {
 			self::$lookup = array();
 
-			$component = JComponentHelper::getComponent('com_jem');
+			$component = ComponentHelper::getComponent('com_jem');
 			$items = $menus->getItems('component_id', $component->id);
 
 			if ($items) {

@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Router\Route;
 
 /**
  * Venue-Feed
@@ -62,7 +63,7 @@ class JemViewVenue extends HtmlView
 				$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes, $jemsettings->showtime);
 
 				// url link to event
-				$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));
+				$link = Route::_(JemHelperRoute::getEventRoute($row->id));
 
 				// feed item description text
 				$description  = Text::_('COM_JEM_TITLE').': '.$title.'<br />';

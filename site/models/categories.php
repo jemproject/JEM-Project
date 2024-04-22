@@ -13,6 +13,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 /**
  * JEM Component Categories Model
@@ -153,7 +155,7 @@ class JemModelCategories extends BaseDatabaseModel
 					//execute plugins
 					$category->text = $category->description;
 					$category->title = $category->catname;
-					JPluginHelper::importPlugin('content');
+					PluginHelper::importPlugin('content');
 					$app->triggerEvent('onContentPrepare', array('com_jem.categories', &$category, &$params, 0));
 					$category->description = $category->text;
 				}
@@ -163,10 +165,10 @@ class JemModelCategories extends BaseDatabaseModel
 				$task = $app->input->getCmd('task', '');
 				if ($task == 'archive') {
 					$category->linktext   = Text::_('COM_JEM_SHOW_ARCHIVE');
-					$category->linktarget = JRoute::_(JemHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
+					$category->linktarget = Route::_(JemHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
 				} else {
 					$category->linktext   = Text::_('COM_JEM_SHOW_EVENTS');
-					$category->linktarget = JRoute::_(JemHelperRoute::getCategoryRoute($category->slug));
+					$category->linktarget = Route::_(JemHelperRoute::getCategoryRoute($category->slug));
 				}
 			}
 		}

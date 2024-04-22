@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Plugin\PluginHelper;
+
 /**
  * Category-View
  */
@@ -319,7 +321,7 @@ class JemViewCategory extends JemView
 				// execute plugins
 				$category->text  = $category->description;
 				$category->title = $category->catname;
-				JPluginHelper::importPlugin('content');
+				PluginHelper::importPlugin('content');
 				$app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
 				$description = $category->text;
 			}

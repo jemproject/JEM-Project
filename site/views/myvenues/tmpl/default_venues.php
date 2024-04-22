@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
-// HTMLHelper::_('behavior.tooltip');
 ?>
 
 <script type="text/javascript">
@@ -110,7 +110,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 								<?php
 								if (!empty($row->venue)) :
 									if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
-										echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+										echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
 									else :
 										echo $this->escape($row->venue);
 									endif;

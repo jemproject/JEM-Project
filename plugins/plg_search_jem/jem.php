@@ -12,12 +12,13 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Plugin\CMSPlugin;
 
-jimport('joomla.plugin.plugin');
 jimport('joomla.html.parameter');
 
 
-class plgSearchJEM extends JPlugin
+class plgSearchJEM extends CMSPlugin
 {
     protected static $_areas = array(
         'jemevents'     => 'PLG_JEM_SEARCH_EVENTS',
@@ -28,7 +29,7 @@ class plgSearchJEM extends JPlugin
     public function __construct(&$subject, $config)
     {
         parent::__construct($subject, $config);
-        JPlugin::loadLanguage('plg_search_jem', JPATH_ADMINISTRATOR);
+        Plugin::loadLanguage('plg_search_jem', JPATH_ADMINISTRATOR);
     }
 
 
@@ -81,7 +82,7 @@ class plgSearchJEM extends JPlugin
         }
 
         // load plugin params info
-        $plugin       = JPluginHelper::getPlugin('search', 'jem');
+        $plugin       = PluginHelper::getPlugin('search', 'jem');
         $pluginParams = new JRegistry($plugin->params);
 
         $limit = $pluginParams->def('search_limit', 50);

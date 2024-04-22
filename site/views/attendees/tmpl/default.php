@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 // HTMLHelper::_('behavior.tooltip');
 
@@ -18,7 +19,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
-$detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this->event->alias));
+$detaillink = Route::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this->event->alias));
 
 $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
@@ -155,7 +156,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
                         <td class="center">
-                            <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
+                            <a href="<?php echo Route::_($del_link.'&cid[]='.$row->id); ?>">
                                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
                             </a>
 						</td>

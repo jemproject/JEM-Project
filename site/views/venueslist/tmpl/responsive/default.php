@@ -10,13 +10,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 ?>
 
 <div id="jem" class="jem_venueslist<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
 		//$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
-		$btn_params = array('task' => $this->task, 'print_link' => JRoute::_('index.php?option=com_jem&view=venueslist&layout=print&task=print&tmpl=component&print=1'));
+		$btn_params = array('task' => $this->task, 'print_link' => Route::_('index.php?option=com_jem&view=venueslist&layout=print&task=print&tmpl=component&print=1'));
 		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>

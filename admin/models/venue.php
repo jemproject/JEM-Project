@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 require_once __DIR__ . '/admin.php';
 
@@ -33,7 +34,7 @@ class JemModelVenue extends JemModelAdmin
 	public function publish(&$pks, $value = 1)
 	{
 		// Additionally include the JEM plugins for the onContentChangeState event.
-		JPluginHelper::importPlugin('jem');
+		PluginHelper::importPlugin('jem');
 
 		return parent::publish($pks, $value);
 	}

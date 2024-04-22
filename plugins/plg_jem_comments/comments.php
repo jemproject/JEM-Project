@@ -10,12 +10,11 @@
 
 defined('_JEXEC') or die;
 
-// Import library dependencies
-jimport('joomla.plugin.plugin');
+use Joomla\CMS\Plugin\CMSPlugin;
 
 include_once(JPATH_SITE . '/components/com_jem/helpers/route.php');
 
-class plgJEMComments extends JPlugin
+class plgJEMComments extends CMSPlugin
 {
 
     /**

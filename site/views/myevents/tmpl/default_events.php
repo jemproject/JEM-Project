@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
-// HTMLHelper::_('behavior.tooltip');
 ?>
 
 <script type="text/javascript">
@@ -131,7 +131,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 							<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 							<td headers="jem_title" align="left" valign="top">
-								<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
+								<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
 									<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 								</a>
 							</td>
@@ -148,7 +148,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 								<?php
 								if (!empty($row->venue)) :
 									if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
-										echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+										echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
 									else :
 										echo $this->escape($row->venue);
 									endif;

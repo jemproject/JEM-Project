@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -38,8 +39,8 @@ if ($jemsettings->oldevent > 0) {
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="https://schema.org/Event">
   
-  <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-  <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+  <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+  <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   
 	<div class="buttons">
 		<?php
@@ -87,7 +88,7 @@ if ($jemsettings->oldevent > 0) {
           if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
             ?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
           elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
-            ?><a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
+            ?><a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
           else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
             echo $this->escape($this->item->venue);
           endif;
@@ -111,7 +112,7 @@ if ($jemsettings->oldevent > 0) {
         <?php
         $i = 0;
         foreach ((array)$this->categories as $category) :
-          ?><a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php
+          ?><a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php
           $i++;
           if ($i != $n) :
             echo ', ';
@@ -151,7 +152,7 @@ if ($jemsettings->oldevent > 0) {
             $menu = Factory::getApplication()->getMenu();
             $item = $menu->getItems('link', $needle, true);
             $cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-            echo Text::sprintf('COM_JEM_EVENT_CREATED_BY', HTMLHelper::_('link', JRoute::_($cntlink), $author));
+            echo Text::sprintf('COM_JEM_EVENT_CREATED_BY', HTMLHelper::_('link', Route::_($cntlink), $author));
           else :
             echo Text::sprintf('COM_JEM_EVENT_CREATED_BY', $author);
           endif;
@@ -197,7 +198,7 @@ if ($jemsettings->oldevent > 0) {
 			echo $this->item->introtext;
 			// Optional link to let them register to see the whole event.
 			if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
-				$link1 = JRoute::_('index.php?option=com_users&view=login');
+				$link1 = Route::_('index.php?option=com_users&view=login');
 				$link = new JUri($link1);
 				echo '<p class="readmore">';
 					echo '<a href="'.$link.'">';
@@ -237,7 +238,7 @@ if ($jemsettings->oldevent > 0) {
 			$menu = Factory::getApplication()->getMenu();
 			$item = $menu->getItems('link', $needle, true);
 			$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-			echo Text::sprintf('COM_JEM_EVENT_CONTACT', HTMLHelper::_('link', JRoute::_($cntlink2), $contact));
+			echo Text::sprintf('COM_JEM_EVENT_CONTACT', HTMLHelper::_('link', Route::_($cntlink2), $contact));
 		else :
 			echo Text::sprintf('COM_JEM_EVENT_CONTACT', $contact);
 		endif;
@@ -281,7 +282,7 @@ if ($jemsettings->oldevent > 0) {
               if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
                 echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
               elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : 
-                echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+                echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
               else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
                 echo $this->escape($this->item->venue);
               endif; 
@@ -369,7 +370,7 @@ if ($jemsettings->oldevent > 0) {
               if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
                 echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
               elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : 
-                echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+                echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
               else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
                 echo $this->escape($this->item->venue);
               endif; 

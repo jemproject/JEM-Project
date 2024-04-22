@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
+
 $uri = Uri::getInstance();
 ?>
 
@@ -140,7 +142,7 @@ function jem_common_show_filter(&$obj) {
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
   						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->id ? $this->escape($row->venue) : '-';
 						 endif; ?> 
@@ -150,7 +152,7 @@ function jem_common_show_filter(&$obj) {
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
 					  	<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->id ? $this->escape($row->venue) : '-';
 						 endif; ?> 										 
@@ -159,8 +161,8 @@ function jem_common_show_filter(&$obj) {
 				 
 
               <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-              <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-              <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+              <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+              <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
               <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
                 <?php if (!empty($row->locid)) : ?>
                   <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />

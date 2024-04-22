@@ -8,8 +8,7 @@
 
 defined('_JEXEC') or die;
 
-// Required? Normally events are triggered from somewhere within com_jem so helper is already loaded.
-//require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
+use Joomla\CMS\Plugin\CMSPlugin;
 
 /**
  * JEM Content Plugin
@@ -18,7 +17,7 @@ defined('_JEXEC') or die;
  * @subpackage Content.jem
  * @since          1.9.6
  */
-class plgContentJem extends JPlugin
+class plgContentJem extends CSMPlugin
 {
     /**
      * Dissolve recurrence sets where deleted event is referred to as first.

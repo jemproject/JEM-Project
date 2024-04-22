@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 // The user is not already attending -> display registration form.
 
@@ -70,7 +71,7 @@ if ($this->showRegForm && empty($this->print)) :
         }
         ?>
 
-        <form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id=' . (int)$this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
+        <form id="JEM" action="<?php echo Route::_('index.php?option=com_jem&view=event&id=' . (int)$this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
             <p>
                 <?php
                 if ($this->isregistered === false) {

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
@@ -31,7 +32,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 	<?php foreach ($this->rows as $row) : ?>
 		<h2 class="jem cat<?php echo $row->id; ?>">
-			<?php echo HTMLHelper::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
+			<?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
 
 		<div class="floattext">
@@ -54,7 +55,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 			<div class="description cat<?php echo $row->id; ?>">
 				<?php echo $row->description; ?>
 				<p>
-					<?php echo HTMLHelper::_('link', JRoute::_($row->linktarget), $row->linktext); ?>
+					<?php echo HTMLHelper::_('link', Route::_($row->linktarget), $row->linktext); ?>
 					(<?php echo $row->assignedevents ? $row->assignedevents : '0'; ?>)
 				</p>
 			</div>
@@ -67,7 +68,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 			<div class="subcategorieslist">
 				<?php foreach ($row->subcats as $sub) : ?>
 					<strong>
-						<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
+						<a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
 							<?php echo $this->escape($sub->catname); ?></a>
 					</strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
 				<?php endforeach; ?>

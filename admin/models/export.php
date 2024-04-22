@@ -12,13 +12,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 jimport('joomla.application.component.modellist');
 
 /**
  * JEM Component Export Model
  */
-class JemModelExport extends JModelList
+class JemModelExport extends ListModel
 {
 	/**
 	 * Constructor.

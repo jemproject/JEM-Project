@@ -23,9 +23,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Plugin\CMSPlugin;
 
 // Import library dependencies
-jimport('joomla.event.plugin');
 jimport('joomla.utilities.mail');
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
@@ -33,7 +33,7 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 
-class plgJemMailer extends JPlugin
+class plgJemMailer extends CMSPlugin
 {
 	private $_SiteName = '';
 	private $_MailFrom = '';

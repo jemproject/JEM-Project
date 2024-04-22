@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 ?>
 
 <div class="table-responsive">
@@ -75,7 +76,7 @@ use Joomla\CMS\Language\Text;
 
 						<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 						<td headers="jem_title_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
-							<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+							<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
 								<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
 							</a><?php echo JemOutput::publishstateicon($row); ?>
 						</td>
@@ -92,7 +93,7 @@ use Joomla\CMS\Language\Text;
 							<?php
 							if (!empty($row->venue)) :
 								if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
-									echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+									echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
 								else :
 									echo $this->escape($row->venue);
 								endif;

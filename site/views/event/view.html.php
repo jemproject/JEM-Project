@@ -15,6 +15,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Plugin\PluginHelper;
 
 /**
  * Event-View
@@ -188,7 +189,7 @@ class JemViewEvent extends JemView
 		}
 
 		// Process the content plugins //
-		JPluginHelper::importPlugin('content');
+		PluginHelper::importPlugin('content');
 		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$item, &$this->params, $offset));
 
 		$item->event = new stdClass();
@@ -346,7 +347,7 @@ class JemViewEvent extends JemView
 		if ($this->print) {
 			$item->pluginevent->onEventEnd = false;
 		} else {
-			JPluginHelper::importPlugin('jem', 'comments');
+			PluginHelper::importPlugin('jem', 'comments');
 			$results = $dispatcher->triggerEvent('onEventEnd', array($item->did, $this->escape($item->title)));
 			$item->pluginevent->onEventEnd = trim(implode("\n", $results));
 		}

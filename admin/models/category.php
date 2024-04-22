@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Plugin\PluginHelper;
 
 /**
  * Category Model
@@ -229,7 +230,7 @@ class JemModelCategory extends AdminModel
 		$isNew = true;
 
 		// Include the content plugins for the on save events.
-		JPluginHelper::importPlugin('content');
+		PluginHelper::importPlugin('content');
 
 		// Load the row if saving an existing category.
 		if ($pk > 0) {
@@ -344,7 +345,7 @@ class JemModelCategory extends AdminModel
 
 			// Include the content plugins for the change of category state
 			// event.
-			JPluginHelper::importPlugin('content');
+			PluginHelper::importPlugin('content');
 
 			// Trigger the onCategoryChangeState event.
 			$dispatcher->triggerEvent('onCategoryChangeState', array($extension, $pks, $value));

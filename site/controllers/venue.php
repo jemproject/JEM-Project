@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -238,12 +239,12 @@ class JemControllerVenue extends JemControllerForm
 			$id    = $model->getState('editvenue.id');
 
 			// trigger all jem plugins
-			JPluginHelper::importPlugin('jem');
+			PluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
 			$dispatcher->triggerEvent('onVenueEdited', array($id, $isNew));
 
 			// but show warning if mailer is disabled
-			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
+			if (!PluginHelper::isEnabled('jem', 'mailer')) {
 				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 			}
 		}

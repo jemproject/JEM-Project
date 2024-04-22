@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -234,7 +236,7 @@ class JemControllerEvent extends JemControllerForm
 
 		if (empty($return) || !Uri::isInternal(base64_decode($return))) {
 			if (!empty($this->_id)) {
-				return JRoute::_(JemHelperRoute::getEventRoute($this->_id));
+				return Route::_(JemHelperRoute::getEventRoute($this->_id));
 			}
 			return $uri->base();
 		}
@@ -261,12 +263,12 @@ class JemControllerEvent extends JemControllerForm
 			$this->_id = $model->getState('editevent.id');
 
 			// trigger all jem plugins
-			JPluginHelper::importPlugin('jem');
+			PluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
 			$dispatcher->triggerEvent('onEventEdited', array($this->_id, $isNew));
 
 			// but show warning if mailer is disabled
-			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
+			if (!PluginHelper::isEnabled('jem', 'mailer')) {
 				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
 			}
 		}
@@ -313,7 +315,7 @@ class JemControllerEvent extends JemControllerForm
 		$reg = $model->getUserRegistration($id);
 		if ($reg !== false && $reg->id != $rid) {
 			$msg = Text::_('COM_JEM_ALLREADY_REGISTERED');
-			$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
+			$this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;
 		}
@@ -324,14 +326,14 @@ class JemControllerEvent extends JemControllerForm
 		if (!$register_id)
 		{
 			$msg = $model->getError();
-			$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
+			$this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;
 		}
 
 		JemHelper::updateWaitingList($id);
 
-		JPluginHelper::importPlugin('jem');
+		PluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->triggerEvent('onEventUserRegistered', array($register_id, $reg->places));
 
@@ -340,7 +342,7 @@ class JemControllerEvent extends JemControllerForm
 
 		$msg = Text::_('COM_JEM_REGISTRATION_THANKS_FOR_RESPONSE');
 
-		$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg);
+		$this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg);
 	}
 
 	/**
@@ -361,7 +363,7 @@ class JemControllerEvent extends JemControllerForm
 
 		JemHelper::updateWaitingList($id);
 
-		JPluginHelper::importPlugin('jem');
+		PluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->triggerEvent('onEventUserUnregistered', array($id));
 
@@ -369,6 +371,6 @@ class JemControllerEvent extends JemControllerForm
 		$cache->clean();
 
 		$msg = Text::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
-		$this->setRedirect(JRoute::_(JemHelperRoute::getEventRoute($id), false), $msg);
+		$this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg);
 	}
 }

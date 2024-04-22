@@ -23,6 +23,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 #[AllowDynamicProperties]
 class JemCalendar
@@ -649,7 +650,7 @@ class JemCalendar
 				if ($this->javaScriptDay) {
 					$linktext="<a href=\"javascript:".$this->javaScriptDay."(".$this->actyear.",".$this->actmonth.",".$var.")\">".$var."</a>";
 				} elseif (!empty($this->url)) {
-					$dayurl= JRoute::_($this->url.(strpos($this->url,"?") === false ? '?' : '&').'id='.sprintf('%04d%02d%02d',$this->actyear,$this->actmonth,$var));
+					$dayurl= Route::_($this->url.(strpos($this->url,"?") === false ? '?' : '&').'id='.sprintf('%04d%02d%02d',$this->actyear,$this->actmonth,$var));
 					$linktext="<a href=\"".$dayurl."\">".$var."</a>";
 				}
 			}
@@ -711,9 +712,9 @@ class JemCalendar
 		} else {
 			$glueNav="&amp;";
 		}
-		$yearNavLink  = empty($this->urlNav) ? '' : "<a href=\"".JROUTE::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
-		$monthNavLink = empty($this->urlNav) ? '' : "<a href=\"".JROUTE::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
-		$dayLink      = empty($this->url)  ? $day : "<a href=\"".JROUTE::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
+		$yearNavLink  = empty($this->urlNav) ? '' : "<a href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
+		$monthNavLink = empty($this->urlNav) ? '' : "<a href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
+		$dayLink      = empty($this->url)  ? $day : "<a href=\"".Route::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
 		if ($year &&  $month &&  $day) return $dayLink;
 		if ($year && !$month && !$day) return $yearNavLink;
 		if ($year &&  $month && !$day) return $monthNavLink;

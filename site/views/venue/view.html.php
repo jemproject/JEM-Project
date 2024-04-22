@@ -13,6 +13,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Plugin\PluginHelper;
+
 /**
  * Venue-View
  */
@@ -279,7 +281,7 @@ class JemViewVenue extends JemView
 				// execute plugins
 				$venue->text = $venue->locdescription;
 				$venue->title = $venue->venue;
-				JPluginHelper::importPlugin ('content');
+				PluginHelper::importPlugin ('content');
 				$app->triggerEvent ('onContentPrepare', array ('com_jem.venue', &$venue, &$params, 0));
 				$venuedescription = $venue->text;
 			}

@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Router\Route;
 
 /**
  * JEM Component Settings Controller
@@ -117,7 +118,7 @@ class JemControllerSettings extends BaseController
 			$app->setUserState($context . '.data', $data);
 
 			// Redirect back to the edit screen.
-			$this->setRedirect(JRoute::_('index.php?option=com_jem&view=settings', false));
+			$this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
 			return false;
 		}
 
@@ -128,7 +129,7 @@ class JemControllerSettings extends BaseController
 
 			// Redirect back to the edit screen.
 			$this->setMessage(Text::sprintf('JERROR_SAVE_FAILED', $model->getError()), 'warning');
-			$this->setRedirect(JRoute::_('index.php?option=com_jem&view=settings', false));
+			$this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
 			return false;
 		}
 
@@ -142,7 +143,7 @@ class JemControllerSettings extends BaseController
 				$app->setUserState($context . '.data', null);
 
 				// Redirect back to the edit screen.
-				$this->setRedirect(JRoute::_('index.php?option=com_jem&view=settings', false));
+				$this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
 				break;
 
 			default:
@@ -151,7 +152,7 @@ class JemControllerSettings extends BaseController
 				$app->setUserState($context . '.data', null);
 
 				// Redirect to the list screen.
-				$this->setRedirect(JRoute::_('index.php?option=com_jem&view=main', false));
+				$this->setRedirect(Route::_('index.php?option=com_jem&view=main', false));
 				break;
 		}
 	}

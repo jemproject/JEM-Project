@@ -13,6 +13,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 /**
  * JEM Component Attendees Controller
@@ -35,7 +37,7 @@ class JemControllerAttendees extends BaseController
 	 */
 	public function back()
 	{
-		$this->setRedirect(JRoute::_(JemHelperRoute::getMyEventsRoute(), false));
+		$this->setRedirect(Route::_(JemHelperRoute::getMyEventsRoute(), false));
 		$this->redirect();
 	}
 
@@ -77,7 +79,7 @@ class JemControllerAttendees extends BaseController
 		if ($total < 1) {
 			$msg = '0 ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED');
 		} else {
-			JPluginHelper::importPlugin('jem');
+			PluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
 
 			// We have to check all users first if there are already records for given event.
@@ -139,7 +141,7 @@ class JemControllerAttendees extends BaseController
 			}
 		}
 
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$eventid.'&Itemid='.$fid, false), $msg);
+		$this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&id='.$eventid.'&Itemid='.$fid, false), $msg);
 	}
 
 	/**
@@ -162,7 +164,7 @@ class JemControllerAttendees extends BaseController
 
 		$modelAttendeeList = $this->getModel('attendees');
 
-		JPluginHelper::importPlugin('jem');
+		PluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
 
 		$modelAttendeeItem = $this->getModel('attendee');
@@ -187,7 +189,7 @@ class JemControllerAttendees extends BaseController
 
 		$msg = $total.' '.Text::_('COM_JEM_REGISTERED_USERS_DELETED');
 
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, false), $msg);
+		$this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, false), $msg);
 	}
 
 	///@todo Add function to change registration status.
@@ -214,7 +216,7 @@ class JemControllerAttendees extends BaseController
 
 		if ($res)
 		{
-			JPluginHelper::importPlugin('jem');
+			PluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
 			$res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($id));
 
@@ -230,7 +232,7 @@ class JemControllerAttendees extends BaseController
 			$type = 'error';
 		}
 
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid, false), $msg, $type);
+		$this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid, false), $msg, $type);
 		$this->redirect();
 	}
 

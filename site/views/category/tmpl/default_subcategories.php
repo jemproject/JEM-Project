@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 $class = ' class="first"';
 ?>
@@ -48,7 +49,7 @@ $class = ' class="first"';
 		<li<?php echo $class; ?>>
 			<?php $class = ''; ?>
 			<span class="item-title">
-				<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($child->id, $this->task)); ?>">
+				<a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($child->id, $this->task)); ?>">
 					<?php echo $this->escape($child->catname); ?>
 				</a>
 			</span>

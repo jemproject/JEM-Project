@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 /**
  * Source controller class
@@ -78,7 +79,7 @@ class JemControllerSource extends BaseController
 	 */
 	public function display($cachable = false, $urlparams = array())
 	{
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=cssmanager', false));
+		$this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
 	}
 
 	/**
@@ -126,7 +127,7 @@ class JemControllerSource extends BaseController
 		// Clean the session data and redirect.
 		$app->setUserState($context.'.id', null);
 		$app->setUserState($context.'.data', null);
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=cssmanager', false));
+		$this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
 	}
 
 	/**
@@ -195,7 +196,7 @@ class JemControllerSource extends BaseController
 			$app->setUserState($context.'.data', $data);
 
 			// Redirect back to the edit screen.
-			$this->setRedirect(JRoute::_('index.php?option=com_jem&view=source&layout=edit', false));
+			$this->setRedirect(Route::_('index.php?option=com_jem&view=source&layout=edit', false));
 			return false;
 		}
 
@@ -207,7 +208,7 @@ class JemControllerSource extends BaseController
 
 			// Redirect back to the edit screen.
 			$this->setMessage(Text::sprintf('JERROR_SAVE_FAILED', $model->getError()), 'warning');
-			$this->setRedirect(JRoute::_('index.php?option=com_jem&view=source&layout=edit', false));
+			$this->setRedirect(Route::_('index.php?option=com_jem&view=source&layout=edit', false));
 			return false;
 		}
 
@@ -221,7 +222,7 @@ class JemControllerSource extends BaseController
 				$app->setUserState($context.'.data',	null);
 
 				// Redirect back to the edit screen.
-				$this->setRedirect(JRoute::_('index.php?option=com_jem&view=source&layout=edit', false));
+				$this->setRedirect(Route::_('index.php?option=com_jem&view=source&layout=edit', false));
 				break;
 
 			default:
@@ -230,7 +231,7 @@ class JemControllerSource extends BaseController
 				$app->setUserState($context.'.data', null);
 
 				// Redirect to the list screen.
-				$this->setRedirect(JRoute::_('index.php?option=com_jem&view=cssmanager', false));
+				$this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
 				break;
 		}
 	}

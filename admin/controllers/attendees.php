@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 /**
  * Controller: Attendees
@@ -58,7 +60,7 @@ class JemControllerAttendees extends BaseController
 
 		$total = count($cid);
 
-		JPluginHelper::importPlugin('jem');
+		PluginHelper::importPlugin('jem');
 		$dispatcher = JemFactory::getDispatcher();
 
 		$modelAttendeeList = $this->getModel('attendees');
@@ -130,7 +132,7 @@ class JemControllerAttendees extends BaseController
 			\Joomla\Utilities\ArrayHelper::toInteger($pks);
 			$model = $this->getModel('attendee');
 
-			JPluginHelper::importPlugin('jem');
+			PluginHelper::importPlugin('jem');
 			$dispatcher = JemFactory::getDispatcher();
 
 			foreach ($pks AS $pk) {
@@ -229,7 +231,7 @@ class JemControllerAttendees extends BaseController
 			}
 			else
 			{
-				JPluginHelper::importPlugin('jem');
+				PluginHelper::importPlugin('jem');
 				$dispatcher = JemFactory::getDispatcher();
 
 				switch ($value) {
@@ -267,6 +269,6 @@ class JemControllerAttendees extends BaseController
 			}
 		}
 
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message);
+		$this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message);
 	}
 }

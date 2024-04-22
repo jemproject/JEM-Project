@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 jimport('joomla.application.component.modellist');
 
@@ -17,7 +18,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Model: Venues
  **/
-class JemModelVenues extends JModelList
+class JemModelVenues extends ListModel
 {
 	/**
 	 * Constructor.
