@@ -195,7 +195,7 @@ use Joomla\CMS\Router\Route;
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 	<input type="hidden" name="option" value="com_jem" />
-	<?php echo HTMLHelpèr::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 
