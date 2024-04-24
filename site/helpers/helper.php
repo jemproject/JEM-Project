@@ -173,13 +173,12 @@ class JemHelper
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 				// Ignore published field to prevent duplicate events.
-				$nulldate = null;
 				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
 				       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
 				       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
 				       . ' FROM #__jem_events '
 				       . ' WHERE recurrence_type <> "0" '
-				       . ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
+				       . ' AND CASE  WHEN recurrence_limit_date IS null THEN 1 ELSE NOW() < recurrence_limit_date END '
 				       . ' AND recurrence_number <> "0" '
 				       . ' GROUP BY first_id'
 				       . ' ORDER BY dates DESC';
@@ -215,7 +214,7 @@ class JemHelper
 					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
 
 					// add events as long as we are under the interval and under the limit, if specified.
-					while (($recurrence_row['recurrence_limit_date'] == $nulldate
+					while (($recurrence_row['recurrence_limit_date'] == null
 							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
 							&& strtotime($recurrence_row['dates']) <= time() + 86400 * $anticipation)
 					{
@@ -426,11 +425,10 @@ class JemHelper
 
 		try {
             $db = Factory::getContainer()->get('DatabaseDriver');
-			$nulldate = explode(' ', $db->getNullDate());
 			$db->setQuery('UPDATE #__jem_events'
 			            . ' SET recurrence_first_id = 0, recurrence_type = 0'
 			            . '   , recurrence_counter = 0, recurrence_number = 0'
-			            . '   , recurrence_limit = 0, recurrence_limit_date = ' . $db->quote($nulldate[0])
+			            . '   , recurrence_limit = 0, recurrence_limit_date = null'
 			            . '   , recurrence_byday = ' . $db->quote('')
 			            . ' WHERE recurrence_first_id = ' . $first_id
 			             );
