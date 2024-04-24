@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -33,7 +34,7 @@ class JemControllerMailto extends JemControllerForm
 	}
 	
 	public function save($key = NULL, $urlVar = NULL){
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$app     = Factory::getApplication();
 		$model   = $this->getModel('mailto');

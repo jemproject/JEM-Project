@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 
 jimport('joomla.form.formfield');
 
@@ -81,14 +82,14 @@ class JFormFieldModal_Venue extends JFormField
 		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
 
 		// The venue select button
-		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
 		// 			Text::_('COM_JEM_SELECT').'</a>';
 
 		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'venue-modal',
 			array(		
-				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'url'    => $link.'&amp;'.Session::getFormToken().'=1',
 				'title'  => Text::_('COM_JEM_SELECT'),
 				'width'  => '800px',
 				'height' => '450px',

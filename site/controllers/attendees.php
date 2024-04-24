@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Attendees Controller
@@ -47,7 +48,7 @@ class JemControllerAttendees extends BaseController
 	public function attendeeadd()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$jinput  = Factory::getApplication()->input;
 		$eventid = $jinput->getInt('id', 0);
@@ -150,7 +151,7 @@ class JemControllerAttendees extends BaseController
 	public function attendeeremove()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$jinput = Factory::getApplication()->input;
 		$cid    = $jinput->get('cid', array(), 'array');
@@ -200,7 +201,7 @@ class JemControllerAttendees extends BaseController
 	public function attendeetoggle()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$jinput = Factory::getApplication()->input;
 		$id     = $jinput->getInt('id', 0);
@@ -243,7 +244,7 @@ class JemControllerAttendees extends BaseController
 	public function export()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$app       = Factory::getApplication();
 		$params    = $app->getParams();

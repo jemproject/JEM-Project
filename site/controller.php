@@ -138,7 +138,7 @@ class JemController extends BaseController
 	public function ajaxattachremove()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$jemsettings = JemHelper::config();
 		$res = 0;

@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 
 // HTMLHelper::_('behavior.modal', 'a.usermodal');
 // HTMLHelper::_('behavior.tooltip');
@@ -32,7 +33,7 @@ echo HTMLHelper::_(
 	'bootstrap.renderModal',
 	'user-modal',
 	array(		
-		'url'    => $selectuser_link.'&amp;'.JSession::getFormToken().'=1',
+		'url'    => $selectuser_link.'&amp;'.Session::getFormToken().'=1',
 		'title'  => Text::_('COM_JEM_SELECT'),
 		'width'  => '800px',
 		'height' => '450px',

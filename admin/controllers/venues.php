@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 /**
  * Controller: Venues
@@ -42,7 +43,7 @@ class JemControllerVenues extends AdminController
 	public function remove()
 	{
 		// Check for token
-		JSession::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 		
 		$app = Factory::getApplication();
 		$user = Factory::getApplication()->getIdentity();

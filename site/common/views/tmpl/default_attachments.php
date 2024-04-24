@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 ?>
 
 <?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
@@ -35,7 +36,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 						$filename	= $this->escape($file->name ? $file->name : $file->file);
 						$image		= HTMLHelper::_('image','com_jem/download_16.png', Text::_('COM_JEM_DOWNLOAD'),NULL,true)." "."<span class=file-name>".$filename."</span>";
 						$attribs	= array('class'=>'file-name');
-						echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.JSession::getFormToken().'=1',$image,$attribs);
+						echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.Session::getFormToken().'=1',$image,$attribs);
 					?>
 				</span>
 			</td>

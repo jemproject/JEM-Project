@@ -14,6 +14,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Session\Session;
 
 /**
  * Controller: Attendee
@@ -51,7 +52,7 @@ class JemControllerAttendee extends BaseController
 	public function cancel()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$attendee = Table::getInstance('jem_register', '');
 		$attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
@@ -69,7 +70,7 @@ class JemControllerAttendee extends BaseController
 	public function save()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Defining JInput
 		$jinput = Factory::getApplication()->input;

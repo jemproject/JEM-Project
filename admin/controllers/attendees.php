@@ -14,6 +14,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
  * Controller: Attendees
@@ -48,7 +49,7 @@ class JemControllerAttendees extends BaseController
 	public function remove()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$jinput = Factory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
@@ -95,7 +96,7 @@ class JemControllerAttendees extends BaseController
 	public function export()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
@@ -120,7 +121,7 @@ class JemControllerAttendees extends BaseController
 	public function toggleStatus()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$app  = Factory::getApplication();
 		$pks  = $app->input->get('cid', array(), 'array');
@@ -181,7 +182,7 @@ class JemControllerAttendees extends BaseController
 	public function edit()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$jinput = Factory::getApplication()->input;
 		$jinput->set('view', 'attendee');
@@ -201,7 +202,7 @@ class JemControllerAttendees extends BaseController
 	public function setStatus()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$app = Factory::getApplication();
         $user = $app->getIdentity();

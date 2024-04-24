@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
@@ -87,13 +88,13 @@ class JFormFieldVenue extends ListField
 		//
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		// $html[] = '	<a class="modal" title="'.Text::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.Text::_('COM_JEM_SELECT_VENUE').'</a>';
+		// $html[] = '	<a class="modal" title="'.Text::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.Text::_('COM_JEM_SELECT_VENUE').'</a>';
 
 		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'venue-modal',
 			array(		
-				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'url'    => $link.'&amp;'.Session::getFormToken().'=1',
 				'title'  => Text::_('COM_JEM_SELECT_VENUE'),
 				'width'  => '800px',
 				'height' => '450px',

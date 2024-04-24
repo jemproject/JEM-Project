@@ -15,6 +15,7 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Session\Session;
 
 
 /**
@@ -47,7 +48,7 @@ class JemControllerImagehandler extends BaseController
 	public function uploadimage()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid token');
+		Session::checkToken() or jexit('Invalid token');
 
 		$app = Factory::getApplication();
 		$jemsettings = JemAdmin::config();
@@ -104,7 +105,7 @@ class JemControllerImagehandler extends BaseController
 	public function delete()
 	{
 		// Check for request forgeries
-		JSession::checkToken('get') or jexit('Invalid Token');
+		Session::checkToken('get') or jexit('Invalid Token');
 
 		$app = Factory::getApplication();
 

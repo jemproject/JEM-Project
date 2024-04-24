@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Myvenues Controller
@@ -70,7 +71,7 @@ class JemControllerMyvenues extends BaseController
 	protected function setStatus($status, $message)
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$app = Factory::getApplication();
 		$input = $app->input;

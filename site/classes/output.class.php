@@ -836,7 +836,7 @@ static public function lightbox() {
 			$overlib = Text::_('COM_JEM_EXPORT_DESC');
 			$text = Text::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . JSession::getFormToken() . '=1';
+			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . Session::getFormToken() . '=1';
 			$output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 

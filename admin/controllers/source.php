@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
  * Source controller class
@@ -117,7 +118,7 @@ class JemControllerSource extends BaseController
 	public function cancel()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
 		$app     = Factory::getApplication();
@@ -138,7 +139,7 @@ class JemControllerSource extends BaseController
 	public function save()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
 		$app     = Factory::getApplication();

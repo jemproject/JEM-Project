@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Session\Session;
 
 /**
  * Contact select
@@ -92,13 +93,13 @@ class JFormFieldModal_Users extends FormField
 		$html[] = '  <input type="text" id="'.$this->id.'_count" value="'.$count.'" disabled="disabled" size="4" />';
 
 		// The contact select button
-		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
+		// $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
 		// 			Text::_('COM_JEM_SELECT').'</a>';
 		$html[] = HTMLHelper::_(
 			'bootstrap.renderModal',
 			'user-modal',
 			array(		
-				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'url'    => $link.'&amp;'.Session::getFormToken().'=1',
 				'title'  => Text::_('COM_JEM_SELECT'),
 				'width'  => '800px',
 				'height' => '450px',

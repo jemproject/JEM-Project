@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Myevents Controller
@@ -38,7 +39,7 @@ class JemControllerMyevents extends BaseController
 	public function publish()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$app = Factory::getApplication();
 		$input = $app->input;
@@ -68,7 +69,7 @@ class JemControllerMyevents extends BaseController
 	public function unpublish()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$app = Factory::getApplication();
 		$input = $app->input;
@@ -101,7 +102,7 @@ class JemControllerMyevents extends BaseController
 	public function trash()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$app = Factory::getApplication();
 		$input = $app->input;

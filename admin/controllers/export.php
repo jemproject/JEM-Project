@@ -12,6 +12,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Export Controller
@@ -31,7 +32,7 @@ class JemControllerExport extends AdminController
 	public function export()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$this->sendHeaders("jem_export-" . date('Ymd-His') . ".csv", "text/csv");
 		$this->getModel()->getCsv();
@@ -41,7 +42,7 @@ class JemControllerExport extends AdminController
 	public function exportcats()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$this->sendHeaders("categories.csv", "text/csv");
 		$this->getModel()->getCsvcats();
@@ -51,7 +52,7 @@ class JemControllerExport extends AdminController
 	public function exportvenues()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$this->sendHeaders("venues.csv", "text/csv");
 		$this->getModel()->getCsvvenues();
@@ -61,7 +62,7 @@ class JemControllerExport extends AdminController
 	public function exportcatevents()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$this->sendHeaders("catevents.csv", "text/csv");
 		$this->getModel()->getCsvcatsevents();

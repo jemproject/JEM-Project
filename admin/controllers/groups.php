@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Groups Controller
@@ -46,7 +47,7 @@ class JemControllerGroups extends AdminController
 	public function remove()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$jinput = Factory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');

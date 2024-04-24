@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
  * Categories Controller
@@ -44,7 +45,7 @@ class JemControllerCategories extends AdminController
 	 */
 	public function rebuild()
 	{
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		$this->setRedirect(Route::_('index.php?option=com_jem&view=categories', false));
 
@@ -69,7 +70,7 @@ class JemControllerCategories extends AdminController
 	 */
 	public function saveorderDisabled()
 	{
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Get the arrays from the Request
 		$order = Factory::getApplication()->input->post->get('order', array(), 'array');
@@ -91,7 +92,7 @@ class JemControllerCategories extends AdminController
  	 */
  	public function deleteDisabled()
  	{
- 		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+ 		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
  		// Get items to remove from the request.
  		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
@@ -134,7 +135,7 @@ class JemControllerCategories extends AdminController
  	public function remove()
  	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
  		$cid= Factory::getApplication()->input->post->get('cid', array(), 'array');
 

@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
 $checked = 0;
@@ -62,7 +63,7 @@ if (empty($form)) {
 
 	<div class="clr"></div>
 
-	<form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+	<form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
 
 		<?php if(1) : ?>
     <div class="jem-row valign-baseline">
@@ -169,7 +170,7 @@ if (empty($form)) {
 	</div>
 
     <div class="jem-row jem-justify-end">
-        <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm),document.adminForm.boxchecked.value,document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
+        <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm),document.adminForm.boxchecked.value,document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, '<?php echo Session::getFormToken(); ?>');">
       <?php echo Text::_('COM_JEM_SAVE'); ?>
     </button>
     </div>

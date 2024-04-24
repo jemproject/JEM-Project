@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 
 FormHelper::loadFieldClass('list');
 
@@ -94,7 +95,7 @@ class JFormFieldCategories extends ListField
 			'bootstrap.renderModal',
 			'categories-modal',
 			array(		
-				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'url'    => $link.'&amp;'.Session::getFormToken().'=1',
 				'title'  => Text::_('COM_JEM_SELECT_CATEGORY'),
 				'width'  => '800px',
 				'height' => '450px',

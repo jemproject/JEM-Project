@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Session\Session;
 
 // helper callback function to convert all elements of an array
 function jem_convert_ansi2utf8(&$value, $key)
@@ -59,7 +60,7 @@ class JemControllerImport extends BaseController
 	private function CsvImport($type, $dbname)
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
 		$object = Table::getInstance('jem_'.$dbname, '');
@@ -231,7 +232,7 @@ class JemControllerImport extends BaseController
 	public function eventlistImport()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$model = $this->getModel('import');
 		$size = 5000;

@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -110,7 +111,7 @@ class JemControllerEvent extends JemControllerForm
 	public function cancel($key = 'a_id')
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		parent::cancel($key);
 
@@ -286,7 +287,7 @@ class JemControllerEvent extends JemControllerForm
 	{
 	// echo "<pre/>";print_R($_POST);die;
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 		
 		$result = parent::save($key, $urlVar);
 
@@ -304,7 +305,7 @@ class JemControllerEvent extends JemControllerForm
 	public function userregister()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$id  = Factory::getApplication()->input->getInt('rdid', 0);
 		$rid = Factory::getApplication()->input->getInt('regid', 0);
@@ -351,7 +352,7 @@ class JemControllerEvent extends JemControllerForm
 	public function delreguser()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit('Invalid Token');
+		Session::checkToken() or jexit('Invalid Token');
 
 		$id = Factory::getApplication()->input->getInt('rdid', 0);
 

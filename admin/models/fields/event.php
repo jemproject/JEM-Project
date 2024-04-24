@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
@@ -90,7 +91,7 @@ class JFormFieldEvent extends ListField
 			'bootstrap.renderModal',
 			'event-modal',
 			array(		
-				'url'    => $link.'&amp;'.JSession::getFormToken().'=1',
+				'url'    => $link.'&amp;'.Session::getFormToken().'=1',
 				'title'  => Text::_('COM_JEM_SELECT_EVENT'),
 				'width'  => '800px',
 				'height' => '450px',

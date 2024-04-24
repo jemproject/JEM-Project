@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 ?>
 <div class="item-image">
 	<div class="imgBorder center">
@@ -22,7 +23,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 	</div>
 	<div class="controls">
 		<?php echo $this->_tmp_img->size; ?> -
-		<a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $this->folder; ?>&amp;rm[]=<?php echo $this->_tmp_img->name; ?>&amp;<?php echo JSession::getFormToken(); ?>=1">
+		<a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $this->folder; ?>&amp;rm[]=<?php echo $this->_tmp_img->name; ?>&amp;<?php echo Session::getFormToken(); ?>=1">
 			<?php echo HTMLHelper::_('image','/media/com_jem/images/publish_r.png',Text::_('COM_JEM_DELETE_IMAGE'),array('title' => Text::_('COM_JEM_DELETE_IMAGE')),true); ?>
 		</a>
 	</div>

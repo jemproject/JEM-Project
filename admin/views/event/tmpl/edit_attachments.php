@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
 ?>
 
 <table class="adminform" id="el-attachments">
@@ -42,7 +43,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 			<td class="center">
 				<div>
 					<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
-					<?php echo HTMLHelper::_('image','com_jem/publish_r.png', Text::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(), 'class' => 'attach-remove', 'title'=>Text::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
+					<?php echo HTMLHelper::_('image','com_jem/publish_r.png', Text::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.Session::getFormToken(), 'class' => 'attach-remove', 'title'=>Text::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
 				</div>
 			</td>
 		</tr>

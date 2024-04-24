@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Controller
@@ -63,7 +64,7 @@ class JemController extends BaseController
 	public function ajaxattachremove()
 	{
 		// Check for request forgeries
-		JSession::checkToken('request') or jexit('Invalid Token');
+		Session::checkToken('request') or jexit('Invalid Token');
 
 		$id = Factory::getApplication()->input->request->getInt('id', 0);
 
