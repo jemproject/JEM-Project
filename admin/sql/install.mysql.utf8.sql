@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `modified` datetime NULL DEFAULT NULL,
   `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
   `version` int(11) unsigned NOT NULL DEFAULT '0',
-  `author_ip` varchar(15) NOT NULL DEFAULT '',
+  `author_ip` varchar(39) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `introtext` mediumtext NOT NULL,
   `meta_keywords` varchar(200) DEFAULT NULL,
