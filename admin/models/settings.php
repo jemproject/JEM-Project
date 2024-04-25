@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * JEM Component Settings Model
@@ -162,7 +163,7 @@ class JemModelSettings extends AdminModel
 		$app = Factory::getApplication();
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jem');
+		$params = ComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 	}
 

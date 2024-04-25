@@ -11,8 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * JEM Component Groups Model
@@ -54,7 +53,7 @@ class JemModelGroups extends ListModel
 	//	$this->setState('filter_type', $filterfield);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jem');
+		$params = ComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 
 		// List state information.

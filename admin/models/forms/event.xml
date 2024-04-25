@@ -10,7 +10,7 @@
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"
 			   description="COM_JEM_EVENT_FIELD_ARTICLETEXT_DESC"
-			   filter="JComponentHelper::filterText"
+			   filter="ComponentHelper::filterText"
 			   hide="pagebreak"
 		/>
 		<field name="featured" type="radio"

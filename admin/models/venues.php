@@ -11,9 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
-
-jimport('joomla.application.component.modellist');
-
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Model: Venues
@@ -64,7 +62,7 @@ class JemModelVenues extends ListModel
 		$filter_type = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter_type', $filter_type);
 
-		$params = JComponentHelper::getParams('com_jem');
+		$params = ComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 
 		parent::populateState('a.venue', 'asc');

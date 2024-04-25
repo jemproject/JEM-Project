@@ -14,6 +14,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Category Model
@@ -90,7 +91,7 @@ class JemModelCategory extends AdminModel
 		$this->setState($this->getName() . '.id', $pk);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jem');
+		$params = ComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 	}
 

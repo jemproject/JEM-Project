@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.modellist');
 
@@ -57,7 +58,7 @@ class JemModelExport extends ListModel
 		$this->setState('filter.end_date', $filter_end_date);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jem');
+		$params = ComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 
 		// List state information.

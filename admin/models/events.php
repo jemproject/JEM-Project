@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Model-Events
@@ -68,7 +69,7 @@ class JemModelEvents extends ListModel
 		$this->setState('filter.access', $access);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jem');
+		$params = ComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 
 		// List state information.
