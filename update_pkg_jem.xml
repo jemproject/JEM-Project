@@ -53,8 +53,8 @@
         <changes>JEM 2.3.6 released on May 11 2023. First JEM version offering PHP8 compatibility. Please refer to the
             change log for details.; If you use template overrides please note that all views have been changed and
             there is a good chance that your overrides won't work as expected. So please check the changes and adapt
-            your files. Versions previous to 2.3.2 will not install correctly on Joomla 3.10.1!; This version of JEM is
-            not yet compatible with Joomla!4. You will have to upgrade to JEM 4.x for that!
+            your files. Versions previous to 2.3.2 will not install correctly on Joomla 3.10.1!; This versi            not yet compatible with Joomla!4. You will have to upgrade to JEM 4.x for that!;
+            Please update to Joomla 4/5 and JEM 4.x!
         </changes>
     </update>
     <!--  JEM Package for Joomla! 4.x/5.x - latest stable version  -->
@@ -64,7 +64,7 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>4.2.0</version>
+        <version>4.2.1</version>
         <infourl title="JEM Package">http://www.joomlaeventmanager.net/project/changelog-jem-4</infourl>
         <downloads>
             <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=124:jem-4-2-0-stable</downloadurl>
@@ -76,19 +76,18 @@
         <maintainerurl>http://www.joomlaeventmanager.net</maintainerurl>
 	<targetplatform name="joomla" version="(4\.[01234]|5\.[012])"/>
         <php_minimum>8.0</php_minimum>
-	<sha256>9D9BFC3EF5EC410E67AE430E3E2BBB7B6FE07EAFA12DE4A30969F7E69ABB8CA1</sha256>
-	<sha384>54494A8937014FECD3C74AE10AFD13D6458B692E7B4D5489FB1730E64CA34842C29F19372B71CD0A16AC9891E16293B1</sha384>
-	<sha512>7969824F23968316CB8E11C4CD0C3AA75B10C3CCC4A06E361BA702D03C4DD72C0E25E0B50403B3CC0E1ABD2605A1D444F08215081B50BB33687CD8731F4E9C49</sha512>
+	<sha256>5e517b50d461ae06c8c507d9f0a1327b0d047382af803f40bc275db6bbf2c814</sha256>
+	<sha384>232ab6f4acd7409540154e48830b3a8d971a169c1218aac6a9f9db8c28a115f82d9e255049f25ba95488a788d138841f</sha384>
+	<sha512>6c88b9c25d4a0e2b7048eaf93fab051e41668c1b566835ad9825708645c2aa8cc59b65fe2195913a946adab3c51f6576c92085e0b161efc5b9c6b82fd8b59339</sha512>
         <!--  additional tags interpreted by JEM Update check (rfu)  -->
-        <date>2023-09-04</date>
-        <notes>JEM 4.2.0 for Joomla! 4.0, 4.1, 4.2, 4.3, 4.4 and Joomla! 5.x</notes>
-        <changes>JEM 4.2.0 released on November 3rd, 2023. Update release of JEM 4.0.0 offering essential bugfixes and
-            some added functionality. Please refer to the change log for details.; If you use template overrides please
-            note that all views have been changed and there is a good chance that your overrides won't work as
-            expected.; So please check the changes and adapt your files. Versions previous to 2.3.2 will not install
-            correctly on Joomla 3.10.1!; For migration from JEM on Joomla 3.10.11, don't uninstall, only disable plugin
-            and modules. Versions previous to 2.3.5 will not migrate correctly'; Version 4.2.0 of JEM is the first JEM
-            release that is compatible with Joomla! 5.
+        <date>2024-04-25</date>
+        <notes>JEM 4.2.1 for Joomla! 4.4.x and Joomla! 5.x</notes>
+        <changes>JEM 4.2.1 released on April, 25th, 2024. Update release of JEM 4.2.1 offering bugfixes and
+            some new functionality. Please refer to the change log for details.; If you are upgrading from JEM 2.x and Joomla 3 
+            and use template overrides please note that all views have been changed and there is a good chance that your overrides
+            won't work as expected.; So please check the changes and adapt your files.; For migration from JEM on Joomla 3.10.x, 
+            don't uninstall, only disable plugin and modules. Versions previous to 2.3.5 will not migrate correctly';
+            Since version 4.2.0, JEM is compatible with Joomla! 5.
         </changes>
     </update>
 </updates>
