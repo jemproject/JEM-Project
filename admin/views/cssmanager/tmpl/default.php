@@ -13,9 +13,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-// HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.modal');
-
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive');
 
@@ -82,8 +79,3 @@ $canDo = JEMHelperBackend::getActions();
 	<?php //endif; ?>
 	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
-
-<?php
-//keep session alive while editing
-// HTMLHelper::_('behavior.keepalive');
-?>

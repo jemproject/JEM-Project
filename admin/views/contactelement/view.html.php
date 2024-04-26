@@ -27,9 +27,6 @@ class JEMViewContactelement extends JViewLegacy {
 		$db			= Factory::getContainer()->get('DatabaseDriver');
 		$document   = $app->getDocument();
 
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal');
-
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
