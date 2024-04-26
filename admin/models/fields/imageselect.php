@@ -40,9 +40,6 @@ class JFormFieldImageselect extends ListField
 	 */
 	public function getInput()
 	{
-		// Load the modal behavior script.
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-
 		// ImageType
 		$imagetype = $this->element['imagetype'];
 		

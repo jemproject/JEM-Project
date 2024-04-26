@@ -32,8 +32,6 @@ class JFormFieldModal_Contact extends FormField
 	 */
 	protected function getInput()
 	{
-		// Load modal behavior
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 		$app      = Factory::getApplication();
 		$document = $app->getDocument();
 

@@ -179,10 +179,6 @@ class JemViewEditevent extends JemView
 		$access2      = JemHelper::getAccesslevelOptions(true, $access);
 		$this->access = $access2;
 
-		// HTMLHelper::_('behavior.formvalidation');
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
@@ -304,8 +300,6 @@ class JemViewEditevent extends JemView
 		$rows       = $this->get('Venues');
 		$pagination = $this->get('VenuesPagination');
 
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-
 		// filter state
 		$lists['state'] = HTMLHelper::_('grid.state', $filter_state);
 
@@ -404,9 +398,6 @@ class JemViewEditevent extends JemView
 		$limitstart       = 0;
 		$limit            = 0;
 		$eventId          = $jinput->getInt('a_id', 0);
-
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');

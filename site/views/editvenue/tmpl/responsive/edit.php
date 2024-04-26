@@ -14,11 +14,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-//HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.formvalidation');
-// HTMLHelper::_('behavior.keepalive');
-
-
 $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();

@@ -32,8 +32,6 @@ class JemViewImport extends JemAdminView
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		// Load script
-		// HTMLHelper::_('behavior.framework');
 
 		// Get data from the model
 		$eventfields = $this->get('EventFields');

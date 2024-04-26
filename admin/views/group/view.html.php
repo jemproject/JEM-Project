@@ -44,10 +44,6 @@ class JemViewGroup extends JemAdminView
 			return false;
 		}
 
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.formvalidation');
-
 		//initialise variables
 		$jemsettings = JemHelper::config();
 		$this->settings	= JemAdmin::config();

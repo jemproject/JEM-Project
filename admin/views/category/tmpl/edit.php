@@ -18,10 +18,6 @@ use Joomla\CMS\Language\Text;
 // Include the component HTML helpers.
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
-// Load the tooltip behavior.
-// HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.formvalidation');
-// HTMLHelper::_('behavior.keepalive');
 $wa = $this->document->getWebAssetManager();
 		$wa->useStyle('jem.colorpicker')
 			->useScript('keepalive')

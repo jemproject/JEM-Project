@@ -192,8 +192,6 @@ static public function lightbox() {
 				return;
 			}
 
-			//HTMLHelper::_('behavior.tooltip');
-
 			if ($settings->get('global_show_icons',1)) {
 				$image = jemhtml::icon( 'com_jem/submitevent.png', 'fa fa-fw fa-lg fa-calendar-plus jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
 			} else {
@@ -228,8 +226,6 @@ static public function lightbox() {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
-
-			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
 				$image = jemhtml::icon( 'com_jem/addvenue.png', 'fa fa-fw fa-lg fa-plus-square jem-addvenuebutton', Text::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isClient('site'));
@@ -266,8 +262,6 @@ static public function lightbox() {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
-
-			//HTMLHelper::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons',1)) {
 				$image = jemhtml::icon( 'com_jem/icon-16-new.png', 'fa fa-fw fa-lg fa-user-plus jem-addusersbutton', Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, !$app->isClient('site'));
@@ -362,8 +356,6 @@ static public function lightbox() {
 				return;
 			}
 
-			//HTMLHelper::_('behavior.tooltip');
-
 			$view = $app->input->getWord('view');
 
 			if (empty($view)) {
@@ -440,8 +432,6 @@ static public function lightbox() {
 			$userId = $user->get('id');
 			$uri       = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
-
-			//HTMLHelper::_('behavior.tooltip');
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = 1; //$settings->get('global_show_icons', 1);
@@ -542,8 +532,6 @@ static public function lightbox() {
 			$uri       = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
-			//HTMLHelper::_('behavior.tooltip');
-
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = $settings->get('global_show_icons', 1);
 
@@ -608,7 +596,6 @@ static public function lightbox() {
 		$settings = JemHelper::globalattribs();
 
 		if ($settings->get('global_show_print_icon',0)) {
-			//HTMLHelper::_('behavior.tooltip');
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
@@ -657,9 +644,6 @@ static public function lightbox() {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
-
-			//HTMLHelper::_('behavior.tooltip');
-			// require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
 
 			$uri = Uri::getInstance();
 			$base = $uri->toString(array('scheme', 'host', 'port'));
@@ -712,8 +696,6 @@ static public function lightbox() {
 				return;
 			}
 
-			//HTMLHelper::_('behavior.tooltip');
-
 			if ($settings->get('global_show_icons','0')==1) {
 				$image = jemhtml::icon( 'com_jem/iCal2.0.png', 'fa fa-fw fa-lg fa-calendar-check jem-icalbutton', Text::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isClient('site'));
 			} else {
@@ -745,8 +727,6 @@ static public function lightbox() {
 			$output = '';
 		} else {
 			// button in view
-			//HTMLHelper::_('behavior.tooltip');
-
 			$image = jemhtml::icon( 'com_jem/publish.png', 'fa fa-fw fa-lg fa-check-circle jem-publishbutton', Text::_('COM_JEM_PUBLISH'), NULL, !$app->isClient('site'));
 			$overlib = Text::_('COM_JEM_PUBLISH_DESC');
 			$text = Text::_('COM_JEM_PUBLISH');
@@ -773,8 +753,6 @@ static public function lightbox() {
 			$output = '';
 		} else {
 			// button in view
-			//HTMLHelper::_('behavior.tooltip');
-
 			$image = jemhtml::icon( 'com_jem/trash.png', 'fa fa-fw fa-lg fa-trash jem-trashbutton', Text::_('COM_JEM_TRASH'), NULL, !$app->isClient('site'));
 			$overlib = Text::_('COM_JEM_TRASH_DESC');
 			$text = Text::_('COM_JEM_TRASH');
@@ -801,8 +779,6 @@ static public function lightbox() {
 			$output = '';
 		} else {
 			// button in view
-			//HTMLHelper::_('behavior.tooltip');
-
 			$image = jemhtml::icon( 'com_jem/unpublish.png', 'fa fa-fw fa-lg fa-eye-slash jem-unpublishbutton', Text::_('COM_JEM_UNPUBLISH'), NULL, !$app->isClient('site'));
 			$overlib = Text::_('COM_JEM_UNPUBLISH_DESC');
 			$text = Text::_('COM_JEM_UNPUBLISH');
@@ -823,8 +799,6 @@ static public function lightbox() {
 	static public function exportbutton($eventid)
 	{
 		$app = Factory::getApplication();
-
-		//HTMLHelper::_('behavior.tooltip');
 
 		$image = jemhtml::icon( 'com_jem/export_excel.png', 'fa fa-fw fa-lg fa-download jem-exportbutton', Text::_('COM_JEM_EXPORT'), NULL, !$app->isClient('site'));
 
@@ -854,8 +828,6 @@ static public function lightbox() {
 		$app = Factory::getApplication();
 		$id  = $app->input->getInt('id');
 		$fid = $app->input->getInt('Itemid');
-
-		//HTMLHelper::_('behavior.tooltip');
 
 		$image = jemhtml::icon( 'com_jem/icon-16-back.png', 'fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton', Text::_('COM_JEM_BACK'), NULL, !$app->isClient('site'));
 

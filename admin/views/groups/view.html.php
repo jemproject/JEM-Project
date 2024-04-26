@@ -38,16 +38,11 @@ class JemViewGroups extends JemAdminView
 		$this->pagination = $this->get('Pagination');
 		$this->state      = $this->get('State');
 
-		// loading Mootools
-		// HTMLHelper::_('behavior.framework');
-
 		// Load css
 		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		// add style to description of the tooltip (hastip)
-		// HTMLHelper::_('behavior.tooltip');
 
 		// assign data to template
 		$this->user			= $user;

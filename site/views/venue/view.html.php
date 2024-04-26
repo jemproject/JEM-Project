@@ -180,8 +180,6 @@ class JemViewVenue extends JemView
 			$user        = JemFactory::getUser();
 			$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-			// HTMLHelper::_('behavior.tooltip');
-
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCustomCss();

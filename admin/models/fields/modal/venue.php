@@ -33,9 +33,6 @@ class JFormFieldModal_Venue extends JFormField
 	 */
 	protected function getInput()
 	{
-		// Load modal behavior
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';

@@ -30,12 +30,6 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 # Create JEM's file logger (for debug)
 JemHelper::addFileLogger();
 
-# Include mootools or bootstrap tooltip
-// JHtml::_('behavior.tooltip');
-// if (version_compare(JVERSION, '3.3', 'ge')) {
-	HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
-// }
-
 # Parameters
 $app                 = Factory::getApplication();
 $day_name_length     = $params->get('day_name_length', '2');

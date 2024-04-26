@@ -14,8 +14,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-// HTMLHelper::_('behavior.tooltip');
-
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 $colspan = ($this->event->waitinglist ? 10 : 9);

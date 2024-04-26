@@ -25,9 +25,6 @@ class JemViewWeekcal extends JemView
 	 */
 	public function display($tpl = null)
 	{
-		// Load tooltips behavior
-		// HTMLHelper::_('behavior.tooltip');
-
 		// initialize variables
 		$app          = Factory::getApplication();
 		$document     = $app->getDocument();

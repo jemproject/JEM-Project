@@ -39,9 +39,6 @@ class JFormFieldVenue extends ListField
 	 */
 	protected function getInput()
 	{
-		// Load the modal behavior script.
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-
 		// Build the script.
 		$script = array();
 		$script[] = '	function elSelectVenue(id, venue, object) {';

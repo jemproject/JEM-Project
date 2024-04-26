@@ -29,9 +29,6 @@ class JemViewEventelement extends JViewLegacy {
 		$document    = $app->getDocument();
 		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal');
-
 		//get var
 		$filter_order     = $app->getUserStateFromRequest('com_jem.eventelement.filter_order',     'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word');

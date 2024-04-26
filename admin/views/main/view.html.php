@@ -86,7 +86,6 @@ class JemViewMain extends JemAdminView
 		<div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
 			<div class="icon">
 				<?php if ($modal == 1) : ?>
-					<?php //HTMLHelper::_('behavior.modal'); ?>
 					<a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
 							rel="{handler: 'iframe', size: {x: 650, y: 400}}">
 						<?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>

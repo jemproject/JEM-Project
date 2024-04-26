@@ -36,8 +36,6 @@ class JFormFieldCategories extends ListField
 	 */
 	protected function getInput()
 	{
-		// Load the modal behavior script.
-		// HTMLHelper::_('behavior.modal', 'a.modal');
 		$app      = Factory::getApplication();
 		$document = $app->getDocument();
 

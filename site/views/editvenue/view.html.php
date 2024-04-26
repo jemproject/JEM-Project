@@ -146,10 +146,6 @@ class JemViewEditvenue extends JemView
 			return false;
 		}
 
-		// HTMLHelper::_('behavior.framework');
-		// HTMLHelper::_('behavior.formvalidation');
-		// HTMLHelper::_('behavior.tooltip');
-
 		$access2      = JemHelper::getAccesslevelOptions(true);
 		$this->access = $access2;
 

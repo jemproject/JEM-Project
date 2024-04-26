@@ -181,10 +181,6 @@ abstract class ModJemJubileeHelper
 			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
 		}
 
-		// if ($params->get('flyer_link_type', 0) == 1) {
-		// 	JHtml::_('behavior.modal', 'a.flyermodal');
-		// }
-
 		####
 		# Retrieve the available Events
 		####

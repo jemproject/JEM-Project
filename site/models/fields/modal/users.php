@@ -32,9 +32,6 @@ class JFormFieldModal_Users extends FormField
 	 */
 	protected function getInput()
 	{
-		// Load modal behavior
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectUsers_'.$this->id.'(ids, count, object) {';

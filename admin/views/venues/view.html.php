@@ -67,9 +67,6 @@ use Joomla\CMS\Uri\Uri;
 			$document->addStyleDeclaration($style);
 		}
 
-		//add style to description of the tooltip (hastip)
-		// HTMLHelper::_('behavior.tooltip');
-
 		// add filter selection for the search
 		$filters = array();
 		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));

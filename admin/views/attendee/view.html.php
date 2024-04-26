@@ -31,9 +31,6 @@ class JemViewAttendee extends HtmlView {
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		// Load the form validation behavior
-		// HTMLHelper::_('behavior.formvalidation');
-
 		//get id register user for event
 		$id = $jinput->getInt('id', 0);
 		$this->event = $jinput->getInt('eventid', 0);

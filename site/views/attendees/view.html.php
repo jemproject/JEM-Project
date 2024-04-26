@@ -55,9 +55,6 @@ class JemViewAttendees extends JemView
 		$menuitem	= $menu->getActive();
 		$uri        = Uri::getInstance();
 
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
-
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
@@ -206,9 +203,6 @@ class JemViewAttendees extends JemView
 	//	$limitstart       = $jinput->get('limitstart', '0', 'int');
 	//	$limit            = $app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $this->jemsettings->display_num, 'int');
 	//	$eventId          = !empty($event->id) ? $event->id : 0;
-
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');

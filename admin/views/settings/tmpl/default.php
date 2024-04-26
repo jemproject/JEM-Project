@@ -16,20 +16,12 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
-// Load tooltips behavior
-// HTMLHelper::_('behavior.formvalidation');
-// HTMLHelper::_('behavior.switcher');
-// HTMLHelper::_('behavior.tooltip');
-
-
 $wa = $this->document->getWebAssetManager();
 		$wa
 			->useScript('keepalive')
 			->useStyle('jem.colorpicker')
 			->useScript('inlinehelp')
 			->useScript('form.validate');
-
-
 ?>
 
 <script>

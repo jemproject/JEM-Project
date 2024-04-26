@@ -36,8 +36,6 @@ class JemViewImagehandler extends HtmlView
 		$app    = Factory::getApplication();
 		$option = $app->input->getString('option', 'com_jem');
 
-		// HTMLHelper::_('behavior.framework');
-
 		if ($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
 			return;

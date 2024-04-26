@@ -45,9 +45,6 @@ class JemViewCategory extends JemView
 		{
 			### Category Calendar view ###
 
-			// Load tooltips behavior
-			// HTMLHelper::_('behavior.tooltip');
-
 			//initialize variables
 			$app         = Factory::getApplication();
 			$document    = $app->getDocument();
@@ -164,8 +161,6 @@ class JemViewCategory extends JemView
 			$settings    = JemHelper::globalattribs();
 			$user        = JemFactory::getUser();
 			$print       = $app->input->getBool('print', false);
-
-			// HTMLHelper::_('behavior.tooltip');
 
 			// get menu information
 			$uri      = Uri::getInstance();

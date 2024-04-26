@@ -19,7 +19,6 @@ $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
-//->useScript('behavior.calendar');
 
 // Create shortcut to parameters.
 $params		= $this->params;

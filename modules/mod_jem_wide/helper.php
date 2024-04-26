@@ -105,10 +105,6 @@ abstract class ModJemWideHelper
 		$count = $params->get('count', '2');
 		$model->setState('list.limit', $count);
 
-		// if ($params->get('use_modal', 0)) {
-		// 	JHtml::_('behavior.modal', 'a.flyermodal');
-		// }
-
 		# date/time
 		$dateFormat = $params->get('formatdate', '');
 		$timeFormat = $params->get('formattime', '');
