@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 
 /**
  * JEM Settings Table
@@ -48,14 +49,14 @@ class JemTableSettings extends Table
 	{
 		if (isset($array['globalattribs']) && is_array($array['globalattribs']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['globalattribs']);
 			$array['globalattribs'] = (string) $registry;
 		}
 
 		if (isset($array['css']) && is_array($array['css']))
 		{
-			$registrycss = new JRegistry;
+			$registrycss = new Registry;
 			$registrycss->loadArray($array['css']);
 			$array['css'] = (string) $registrycss;
 		}

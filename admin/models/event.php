@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/admin.php';
 
@@ -120,12 +121,12 @@ class JemModelEvent extends JemModelAdmin
 		if ($item = parent::getItem($pk)){
 			// Convert the params field to an array.
 			// (this may throw an exception - but there is nothings we can do)
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadString($item->attribs ?? '{}');
 			$item->attribs = $registry->toArray();
 
 			// Convert the metadata field to an array.
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadString($item->metadata ?? '{}');
 			$item->metadata = $registry->toArray();
 

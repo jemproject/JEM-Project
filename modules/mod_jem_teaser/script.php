@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
+
 /**
  * Script file of JEM component
 */
@@ -96,7 +98,7 @@ class mod_jem_teaserInstallerScript
 
 		foreach ($items as $item) {
 			// Decode the item params
-			$reg = new JRegistry;
+			$reg = new Registry;
 			$reg->loadString($item->params);
 
 			$modified = false;

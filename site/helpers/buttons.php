@@ -11,13 +11,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Toolbar\ToolbarButton;
 
 /**
  * Holds the logic for attachments manipulation
  *
  * @package JEM
  */
-class JButtonFrontend extends JButton {
+class JButtonFrontend extends ToolbarButton {
 
 
 	/**

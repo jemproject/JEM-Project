@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
+use Joomla\Registry\Registry;
 
 /**
  * Script file of JEM component
@@ -103,7 +103,7 @@ class mod_jem_calInstallerScript
 
 		foreach ($items as $item) {
 			// Decode the item params
-			$reg = new JRegistry;
+			$reg = new Registry;
 			$reg->loadString($item->params);
 
 			$modified = false;
@@ -157,7 +157,7 @@ class mod_jem_calInstallerScript
 
 		foreach ($items as $item) {
 			// Decode the item params
-			$reg = new JRegistry;
+			$reg = new Registry;
 			$reg->loadString($item->params);
 
 			$mod_params = false;

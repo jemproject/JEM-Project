@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Registry\Registry;
 
 /**
  * Category Model
@@ -127,7 +128,7 @@ class JemModelCategory extends AdminModel
 			}
 
 			// Convert the metadata field to an array.
-			$registry = new JRegistry();
+			$registry = new Registry();
 			$registry->loadString($result->metadata ?? '{}');
 			$result->metadata = $registry->toArray();
 
