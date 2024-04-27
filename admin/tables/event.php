@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Filesystem\File;
 
 /**
  * JEM Event Table
@@ -244,7 +245,7 @@ class JemTableEvent extends Table
 							$filename = JemImage::sanitize($image_dir, $file['name']);
 							$filepath = $image_dir . $filename;
 
-							if (JFile::upload($file['tmp_name'], $filepath)) {
+							if (File::upload($file['tmp_name'], $filepath)) {
 								$image_to_delete = $this->datimage; // delete previous image
 								$this->datimage = $filename;
 							}
@@ -257,7 +258,7 @@ class JemTableEvent extends Table
 					$this->datimage = '';
 				} elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
 					// event is a copy so copy datimage too
-					if (JFile::exists($image_dir . $datimage)) {
+					if (File::exists($image_dir . $datimage)) {
 						// if it's already within image folder it's safe
 						$this->datimage = $datimage;
 					}
@@ -265,7 +266,7 @@ class JemTableEvent extends Table
 			} // end image if
 		} // if (!backend)
 
-		$format = JFile::getExt($image_dir . $this->datimage);
+		$format = File::getExt($image_dir . $this->datimage);
 		if (!in_array($format, $allowable))
 		{
 			$this->datimage = '';

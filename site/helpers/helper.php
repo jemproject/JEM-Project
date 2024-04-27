@@ -22,6 +22,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Application\ApplicationHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -1738,12 +1739,12 @@ class JemHelper
 	 *
 	 * @return string  Processed string
 	 *
-	 * @see    JApplication, JApplicationHelper
+	 * @see    ApplicationHelper
 	 * @since  2.1.7
 	 */
 	static public function stringURLSafe($string)
 	{
-		return JApplicationHelper::stringURLSafe($string);
+		return ApplicationHelper::stringURLSafe($string);
 	}
 
 	/**

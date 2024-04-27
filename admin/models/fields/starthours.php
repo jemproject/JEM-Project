@@ -9,19 +9,18 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Form\FormField;
+
 //JFormHelper::loadFieldClass('list');
 
 jimport('joomla.html.html');
-jimport('joomla.form.formfield');
-
-
 
 /**
  * StartHours Field class.
  *
  * 
  */
-class JFormFieldStarthours extends JFormField
+class JFormFieldStarthours extends FormField
 {
 	/**
 	 * The form field type.

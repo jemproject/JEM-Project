@@ -12,8 +12,10 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Filesystem\Folder;
 
-jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
 /**
@@ -76,9 +78,9 @@ class JemModelHousekeeping extends BaseDatabaseModel
 			$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 
 			if (is_file($fullPath)) {
-				JFile::delete($fullPath);
-				if (JFile::exists($fullPaththumb)) {
-					JFile::delete($fullPaththumb);
+				File::delete($fullPath);
+				if (File::exists($fullPaththumb)) {
+					File::delete($fullPaththumb);
 				}
 			}
 		}
@@ -123,7 +125,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
 			if ($db->execute() === false) {
 				// report but continue
-				JemHelper::addLogEntry('Error truncating #__jem_'.$table, __METHOD__, JLog::ERROR);
+				JemHelper::addLogEntry('Error truncating #__jem_'.$table, __METHOD__, Log::ERROR);
 				$result = false;
 			}
 		}
@@ -197,7 +199,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
 		$images = array ();
 
 		// Get the list of files and folders from the given folder
-		$fileList = JFolder::files($basePath);
+		$fileList = Folder::files($basePath);
 
 		// Iterate over the files if they exist
 		if ($fileList !== false) {

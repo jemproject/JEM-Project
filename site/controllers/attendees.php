@@ -16,6 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Log\Log;
 
 /**
  * JEM Component Attendees Controller
@@ -75,7 +76,7 @@ class JemControllerAttendees extends BaseController
 			}
 		}
 
-		JemHelper::addLogEntry("Got attendee add - event: {$eventid}, status: {$status}, users: " . implode(',', $uids), __METHOD__, JLog::DEBUG);
+		JemHelper::addLogEntry("Got attendee add - event: {$eventid}, status: {$status}, users: " . implode(',', $uids), __METHOD__, Log::DEBUG);
 
 		if ($total < 1) {
 			$msg = '0 ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED');
@@ -99,20 +100,20 @@ class JemControllerAttendees extends BaseController
 					$reg = $regs[$uid];
 					$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
 					if (!empty($reg->id) && ($old_status != $status)) {
-						JemHelper::addLogEntry("Change user {$uid} already registered for event {$eventid}.", __METHOD__, JLog::DEBUG);
+						JemHelper::addLogEntry("Change user {$uid} already registered for event {$eventid}.", __METHOD__, Log::DEBUG);
 						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg, $reg->id);
 						if ($reg_id) {
 							$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 							++$changed;
 						} else {
-							JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user {$uid}", $errMsg)), __METHOD__, JLog::DEBUG);
+							JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
 							if (!empty($errMsg)) {
 								$errMsgs[] = $errMsg;
 							}
 							++$error;
 						}
 					} else {
-						JemHelper::addLogEntry("Skip user {$uid} already registered for event {$eventid}.", __METHOD__, JLog::DEBUG);
+						JemHelper::addLogEntry("Skip user {$uid} already registered for event {$eventid}.", __METHOD__, Log::DEBUG);
 						++$skip;
 					}
 				} else {
@@ -120,7 +121,7 @@ class JemControllerAttendees extends BaseController
 					if ($reg_id) {
 						$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
 					} else {
-						JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user {$uid}", $errMsg)), __METHOD__, JLog::DEBUG);
+						JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
 						if (!empty($errMsg)) {
 							$errMsgs[] = $errMsg;
 						}

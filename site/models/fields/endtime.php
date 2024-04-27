@@ -11,9 +11,6 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Form\FormField;
 
-//JFormHelper::loadFieldClass('list');
-
-jimport('joomla.html.html');
 
 /**
  * Endtime Field class.

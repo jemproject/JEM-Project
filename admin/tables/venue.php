@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filesystem\File;
 
 /**
  * JEM Venue Table
@@ -181,7 +182,7 @@ class JemTableVenue extends Table
 						$filename = JemImage::sanitize($image_dir, $file['name']);
 						$filepath = $image_dir . $filename;
 
-						if (JFile::upload($file['tmp_name'], $filepath)) {
+						if (File::upload($file['tmp_name'], $filepath)) {
 							$image_to_delete = $this->locimage; // delete previous image
 							$this->locimage = $filename;
 						}
@@ -193,7 +194,7 @@ class JemTableVenue extends Table
 					$this->locimage = '';
 				} elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
 					// venue is a copy so copy locimage too
-					if (JFile::exists($image_dir . $locimage)) {
+					if (File::exists($image_dir . $locimage)) {
 						// if it's already within image folder it's safe
 						$this->locimage = $locimage;
 					}
@@ -201,7 +202,7 @@ class JemTableVenue extends Table
 			} // end image if
 		} // if (!backend)
 
-		$format = JFile::getExt($image_dir . $this->locimage);
+		$format = File::getExt($image_dir . $this->locimage);
 		if (!in_array($format, $allowable))
 		{
 			$this->locimage = '';

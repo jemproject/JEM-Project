@@ -9,9 +9,11 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+
 /**
  */
-class JFormFieldFootertext extends JFormField
+class JFormFieldFootertext extends FormField
 {
 	/**
 	 * The form field type.

@@ -12,11 +12,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Eventelement-View
  */
-class JemViewEventelement extends JViewLegacy {
+class JemViewEventelement extends Htmlview {
 
 	public function display($tpl = null)
 	{

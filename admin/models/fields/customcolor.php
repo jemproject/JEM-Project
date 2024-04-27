@@ -11,11 +11,12 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
 
 /**
  * Color Form Field
  */
-class JFormFieldCustomColor extends JFormField
+class JFormFieldCustomColor extends FormField
 {
 	/**
 	 * The form field type.

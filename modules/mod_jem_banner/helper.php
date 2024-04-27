@@ -14,6 +14,7 @@ use \Joomla\CMS\Language\Text;
 use \Joomla\CMS\Router\Route;
 use \Joomla\CMS\Uri\Uri;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Date\Date;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
@@ -551,7 +552,7 @@ abstract class ModJemBannerHelper
 	 *
 	 * @access public
 	 *
-	 * @param  mixed  date in form 'yyyy-mm-dd' or as JDate object
+	 * @param  mixed  date in form 'yyyy-mm-dd' or as Date object
 	 * @param  array  formats to get as assotiative array (e.g. 'day' => 'j'; see {@link PHP_MANUAL#date})
 	 *
 	 * @return mixed  array of formatted date parts or false
@@ -563,7 +564,7 @@ abstract class ModJemBannerHelper
 		}
 
 		$result = array();
-		$jdate = ($date instanceof JDate) ? $date : new JDate($date);
+		$jdate = ($date instanceof Date) ? $date : new Date($date);
 
 		foreach ($formats as $k => $v) {
 			$result[$k] = $jdate->format($v, false, true);

@@ -16,6 +16,7 @@ use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filesystem\File;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Log\Log;
 
 jimport('joomla.application.component.model');
 
@@ -508,7 +509,7 @@ class JemModelImport extends BaseDatabaseModel
 			return $params->get('version', false);
 		}
 		catch(Exception $e) {
-			JemHelper::addLogEntry($e->getMessage(), __METHOD__, JLog::ERROR);
+			JemHelper::addLogEntry($e->getMessage(), __METHOD__, Log::ERROR);
 			return false;
 		}
 	}

@@ -13,6 +13,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Log\Log;
 
 /**
  * Model: Attendee
@@ -328,12 +330,12 @@ class JemModelAttendee extends BaseDatabaseModel
 			}
 
 		} catch (Exception $e) {
-			JemHelper::addLogEntry($e->getMessage(), __METHOD__, JLog::ERROR);
+			JemHelper::addLogEntry($e->getMessage(), __METHOD__, Log::ERROR);
 			$this->setError($e->getMessage());
 			return false;
 		}
 
-	//	JemHelper::addLogEntry("Registration status of record(s) ".implode(', ', $pks)." set to $value", __METHOD__, JLog::DEBUG);
+	//	JemHelper::addLogEntry("Registration status of record(s) ".implode(', ', $pks)." set to $value", __METHOD__, Log::DEBUG);
 		return true;
 	}
 }

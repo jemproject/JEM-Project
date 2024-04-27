@@ -10,11 +10,11 @@
 defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
 
 //JFormHelper::loadFieldClass('list');
 
 jimport('joomla.html.html');
-jimport('joomla.form.formfield');
 
 
 /**
@@ -22,7 +22,7 @@ jimport('joomla.form.formfield');
  *
  *
  */
-class JFormFieldCatOptions2 extends JFormField
+class JFormFieldCatOptions2 extends FormField
 {
 	/**
 	 * The form field type.

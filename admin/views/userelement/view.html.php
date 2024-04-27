@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * View class for the JEM userelement screen
@@ -20,7 +21,7 @@ use Joomla\CMS\Factory;
  * @package JEM
  *
  */
-class JEMViewUserElement extends JViewLegacy {
+class JEMViewUserElement extends HtmlView {
 
 	public function display($tpl = null)
 	{

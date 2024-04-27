@@ -13,13 +13,12 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
-
-jimport('joomla.form.formfield');
+use Joomla\CMS\Form\FormField;
 
 /**
  * Venue Select
  */
-class JFormFieldModal_Venue extends JFormField
+class JFormFieldModal_Venue extends FormField
 {
 	/**
 	 * field type

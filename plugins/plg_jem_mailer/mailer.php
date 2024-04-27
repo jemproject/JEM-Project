@@ -24,6 +24,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Log\Log;
 
 // Import library dependencies
 jimport('joomla.utilities.mail');
@@ -496,7 +497,7 @@ class plgJemMailer extends CMSPlugin
 	 */
 	public function onContentChangeState($context, $ids, $value)
 	{
-		JemHelper::addLogEntry('context: ' . $context . ', ids: (' . implode(',', $ids) . '), value: ' . $value, __METHOD__, JLog::DEBUG);
+		JemHelper::addLogEntry('context: ' . $context . ', ids: (' . implode(',', $ids) . '), value: ' . $value, __METHOD__, Log::DEBUG);
 
 		$ids = (array) $ids;
 		list($component, $item) = explode('.', $context);
@@ -1140,17 +1141,17 @@ class plgJemMailer extends CMSPlugin
 			$ret = $mail->send();
 			// Check for an error
 			if ($ret instanceof Exception) {
-				JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $ret->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+				JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $ret->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
 			}
 			elseif (empty($ret)) {
-				JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+				JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient), __METHOD__ . '#' . __LINE__, Log::WARNING);
 			}
 			else {
 				$result = true;
 			}
 		}
 		catch (Exception $e) {
-			JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $e->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+			JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $e->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
 		}
 
 		return $result;

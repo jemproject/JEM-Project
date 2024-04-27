@@ -15,6 +15,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Date\Date;
 
 $options = array(
 		'onActive' => 'function(title, description){
@@ -367,7 +368,7 @@ Joomla.submitbutton = function(task)
 								<br><div><small>
 								<?php
 								$anticipation	= $this->jemsettings->recurrence_anticipation;
-								$limitdate = new JDate('now +'.$anticipation.'days');
+								$limitdate = new Date('now +'.$anticipation.'days');
 								$limitdate = $limitdate->format('d-m-Y');
 								echo Text::sprintf(Text::_('COM_JEM_EVENT_NOTICE_GENSHIELD'),$limitdate);
 								?></small></div>

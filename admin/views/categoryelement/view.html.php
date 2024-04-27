@@ -13,11 +13,12 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\MVC\View\HtmlView;
 
 /**
  * Categoryelement-View
  */
-class JemViewCategoryelement extends JViewLegacy {
+class JemViewCategoryelement extends HtmlView {
 
 	public function display($tpl = null)
 	{

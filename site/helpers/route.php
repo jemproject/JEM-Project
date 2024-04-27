@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Log\Log;
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
@@ -42,7 +43,7 @@ abstract class JEMHelperRoute
 	{
 		
 		// Deprecation warning.
-		JLog::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', JLog::WARNING, 'deprecated');
+		Log::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', Log::WARNING, 'deprecated');
 
 		$needles = array(
 			$view => array((int) $id)
