@@ -76,9 +76,9 @@
         <maintainerurl>http://www.joomlaeventmanager.net</maintainerurl>
 	<targetplatform name="joomla" version="(4\.[01234]|5\.[012])"/>
         <php_minimum>8.0</php_minimum>
-	<sha256>1d14095bb35afca1fe1c170a064df79117cb491d8a051175159f8f22965bd340</sha256>
-	<sha384>47aad6a6cfe5f95885d198311bc7b707946e9adf15a508cfef531ed9830768c489615e284546dae59bcee599b414b61d</sha384>
-	<sha512>0b48743b308237a6226cd7cbc4f864e6453be6c978f399c11608c3e93ddf0744a13965c75f3620a7602de9b3ac4f5e7ba536e2851783d40ec91b7de6cfc1e449</sha512>
+	<sha256>2464c0da7073c4165b3edae2dfb85a5f940771c9313f53eee4fc93699af7e7ba</sha256>
+	<sha384>94c64866918e9a47ac26db3e5e7e8604c115928d9b6ec88c478953acf0c4c3aaffc0f859beef6dc11a66f40abb6fa0a4</sha384>
+	<sha512>79c1c876f1860fc8e3d2fe568a50b55b6f33cc88622a0ffca57ce893df4446bc3d8374ba67a014aaadef27456310b0f9daf543de697c63d9e1edb73688791884</sha512>
         <!--  additional tags interpreted by JEM Update check (rfu)  -->
         <date>2024-04-25</date>
         <notes>JEM 4.2.1 for Joomla! 4.4.x and Joomla! 5.x</notes>
