@@ -25,6 +25,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Filter\OutputFilter;	
 
 // Import library dependencies
 jimport('joomla.utilities.mail');
@@ -133,11 +135,11 @@ class plgJemMailer extends CMSPlugin
 		}
 
 		//create link to event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description and comment
-		$text_description = JFilterOutput::cleanText($event->text);
-		$comment = empty($event->comment) ? false : JFilterOutput::cleanText($event->comment);
+		$text_description = OutputFilter::cleanText($event->text);
+		$comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
 
@@ -307,10 +309,10 @@ class plgJemMailer extends CMSPlugin
 		$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
 		// create link to event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
-		$text_description = JFilterOutput::cleanText($event->text);
+		$text_description = OutputFilter::cleanText($event->text);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendee->get('id'));
 
@@ -427,10 +429,10 @@ class plgJemMailer extends CMSPlugin
 		}
 
 		// create link to event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
-		$text_description = JFilterOutput::cleanText($event->text);
+		$text_description = OutputFilter::cleanText($event->text);
 		$comment = empty($event->comment) ? false : JFilterOutput::cleanText($event->comment);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
@@ -576,10 +578,10 @@ class plgJemMailer extends CMSPlugin
 		}
 
 		// Link for event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
-		$text_description = JFilterOutput::cleanText($event->text);
+		$text_description = OutputFilter::cleanText($event->text);
 
 		// Define published-state message
 		switch ($event->published) {
@@ -712,14 +714,14 @@ class plgJemMailer extends CMSPlugin
 		# at this point we do have a result
 
 		// Define link for venue
-		$link = JRoute::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
+		$link = Route::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
 		// Define published-state message
 		$adminstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
 		$userstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
 
 		// Strip tags/scripts,etc from description
-		$text_description = JFilterOutput::cleanText($venue->locdescription);
+		$text_description = OutputFilter::cleanText($venue->locdescription);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), 0, ($venue->created_by != $userid) ? $venue->created_by : 0, $userid, $venue_id);
 		if ($venue->modified == 0) {  //when state switches modified date is not updated
