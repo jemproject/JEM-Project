@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filter\InputFilter;
 
 /**
  * Categoryelement-Model
@@ -78,8 +79,8 @@ class JemModelCategoryelement extends BaseDatabaseModel
 		$search           = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search           = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
-		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
 		$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 
