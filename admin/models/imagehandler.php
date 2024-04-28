@@ -15,6 +15,7 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filesystem\Path;
 
 /**
  * JEM Component Imagehandler Model
@@ -148,7 +149,7 @@ class JemModelImagehandler extends BaseDatabaseModel
 						if (empty($search) || stristr($file, $search)) {
 							$tmp = new CMSObject();
 							$tmp->name = $file;
-							$tmp->path = JPath::clean($basePath.'/'.$file);
+							$tmp->path = Path::clean($basePath.'/'.$file);
 
 							$this->_list[] = $tmp;
 						}
