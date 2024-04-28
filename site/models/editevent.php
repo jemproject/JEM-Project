@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
@@ -90,7 +91,7 @@ class JemModelEditevent extends JemModelEvent
 		}
 
 		$properties = $table->getProperties(1);
-		$value = \Joomla\Utilities\ArrayHelper::toObject($properties, 'JObject');
+		$value = ArrayHelper::toObject($properties, 'stdClass');
 
 		if ($doCopy) {
 			$value->id = 0;
