@@ -12,13 +12,14 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 /**
  * View class for the JEM Contactelement screen
  *
  * @package JEM
  *
  */
-class JEMViewContactelement extends JViewLegacy {
+class JEMViewContactelement extends HtmlView {
 
 	public function display($tpl = null)
 	{

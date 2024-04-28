@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Client\ClientHelper;
 
 /**
  * Source view
@@ -34,7 +35,7 @@ class JemViewSource extends JemAdminView
 	{
 		// Initialise variables.
 		$this->form     = $this->get('Form');
-		$this->ftp      = JClientHelper::setCredentialsFromRequest('ftp');
+		$this->ftp      = ClientHelper::setCredentialsFromRequest('ftp');
 		$this->source   = $this->get('Source');
 		$this->state    = $this->get('State');
 		$this->template = $this->get('Template');

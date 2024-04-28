@@ -11,13 +11,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\FormModel;
 
 /**
  * Mailto model class.
  *
  * @since  3.8.9
  */
-class JemModelMailto extends JModelForm
+class JemModelMailto extends FormModel
 {
 	/**
 	 * Method to get the mailto form.
