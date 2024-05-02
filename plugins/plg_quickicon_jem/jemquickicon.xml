@@ -11,7 +11,7 @@
     <description>JEM Quick Icon</description>
 
     <files>
-        <filename plugin="jemquickicon">jemquickicon.php</filename>
+        <filename plugin="jem">jemquickicon.php</filename>
         <filename>index.html</filename>
     </files>
 
