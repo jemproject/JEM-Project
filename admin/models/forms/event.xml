@@ -10,7 +10,7 @@
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"
 			   description="COM_JEM_EVENT_FIELD_ARTICLETEXT_DESC"
-			   filter="ComponentHelper::filterText"
+			   filter="\Joomla\CMS\Component\ComponentHelper::filterText"
 			   hide="pagebreak"
 		/>
 		<field name="featured" type="radio"
@@ -49,7 +49,7 @@
 			   rows="3" cols="40"
 			   label="COM_JEM_EVENT_DESCRIPTION"
 			   description="COM_JEM_EVENT_DESCRIPTION_DESC"
-			   filter="safehtml"
+			   filter="\Joomla\CMS\Component\ComponentHelper::filterText"
 		/>
 		<field name="dates" type="calendarjem"
 			   label="COM_JEM_STARTDATE"

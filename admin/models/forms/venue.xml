@@ -41,7 +41,7 @@
 			description="COM_JEM_STREET"
 		/>
 		<field name="locdescription" type="editor"
-			filter="safehtml"
+			filter="\Joomla\CMS\Component\ComponentHelper::filterText"
 			hide="pagebreak,readmore,image"
 			class="inputbox"
 			rows="3" cols="20"
