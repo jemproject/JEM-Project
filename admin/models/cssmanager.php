@@ -15,7 +15,7 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Component\ComponentHelper;
-
+use Joomla\CMS\Filesystem\Path;
 
 /**
  * Model-CSSManager
@@ -89,7 +89,7 @@ class JemModelCssmanager extends BaseDatabaseModel
 		// Initialise variables.
 		$result = array();
 
-		$path = JPath::clean(JPATH_ROOT.'/media/com_jem/');
+		$path = Path::clean(JPATH_ROOT.'/media/com_jem/');
 
 		// Check if the template path exists.
 		if (is_dir($path)) {
