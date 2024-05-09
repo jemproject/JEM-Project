@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Mailer Plugin
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -25,7 +25,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
-
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Filter\OutputFilter;	
+use Joomla\CMS\HTML\HTMLHelper;	
 // Import library dependencies
 jimport('joomla.utilities.mail');
 
@@ -133,11 +135,11 @@ class plgJemMailer extends CMSPlugin
 		}
 
 		//create link to event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description and comment
-		$text_description = JFilterOutput::cleanText($event->text);
-		$comment = empty($event->comment) ? false : JFilterOutput::cleanText($event->comment);
+		$text_description = OutputFilter::cleanText($event->text);
+		$comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
 
@@ -307,10 +309,10 @@ class plgJemMailer extends CMSPlugin
 		$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
 		// create link to event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
-		$text_description = JFilterOutput::cleanText($event->text);
+		$text_description = OutputFilter::cleanText($event->text);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendee->get('id'));
 
@@ -427,11 +429,11 @@ class plgJemMailer extends CMSPlugin
 		}
 
 		// create link to event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
-		$text_description = JFilterOutput::cleanText($event->text);
-		$comment = empty($event->comment) ? false : JFilterOutput::cleanText($event->comment);
+		$text_description = OutputFilter::cleanText($event->text);
+		$comment = empty($event->comment) ? false : OutputFilter::cleanText($event->comment);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
 
@@ -576,10 +578,10 @@ class plgJemMailer extends CMSPlugin
 		}
 
 		// Link for event
-		$link = JRoute::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
-		$text_description = JFilterOutput::cleanText($event->text);
+		$text_description = OutputFilter::cleanText($event->text);
 
 		// Define published-state message
 		switch ($event->published) {
@@ -618,11 +620,11 @@ class plgJemMailer extends CMSPlugin
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+				$created = HtmlHelper::Date($event->created, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName, $event->title);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
 			} else {
-				$modified = JHtml::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+				$modified = HtmlHelper::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName, $event->title);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
 			}
@@ -639,11 +641,11 @@ class plgJemMailer extends CMSPlugin
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+				$created = HtmlHelper::Date($event->created, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
-				$modified = JHtml::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+				$modified = HtmlHelper::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
@@ -712,14 +714,14 @@ class plgJemMailer extends CMSPlugin
 		# at this point we do have a result
 
 		// Define link for venue
-		$link = JRoute::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
+		$link = Route::_($uri->root().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
 		// Define published-state message
 		$adminstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
 		$userstate = $venue->published ? Text::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : Text::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
 
 		// Strip tags/scripts,etc from description
-		$text_description = JFilterOutput::cleanText($venue->locdescription);
+		$text_description = OutputFilter::cleanText($venue->locdescription);
 
 		$recipients = $this->_getRecipients($send_to, array('user'), 0, ($venue->created_by != $userid) ? $venue->created_by : 0, $userid, $venue_id);
 		if ($venue->modified == 0) {  //when state switches modified date is not updated
@@ -736,11 +738,11 @@ class plgJemMailer extends CMSPlugin
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+				$created = HtmlHelper::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
 			} else {
-				$modified = JHtml::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+				$modified = HtmlHelper::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
 			}
@@ -759,12 +761,12 @@ class plgJemMailer extends CMSPlugin
 			# is the venue new or edited?
 			if ($is_new) {
 				# the venue is new and we send a mail to adminDBList
-				$created = JHtml::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+				$created = HtmlHelper::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 			} else {
 				# the venue is edited and we send a mail to adminDBList
-				$modified = JHtml::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+				$modified = HtmlHelper::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
 				$data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
 				$data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 			}

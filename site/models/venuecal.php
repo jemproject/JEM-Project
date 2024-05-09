@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -77,6 +77,7 @@ class JemModelVenueCal extends JemModelEventslist
 		$itemid       = $app->input->getInt('Itemid', 0);
 		$task         = $app->input->getCmd('task', '');
 		$startdayonly = $params->get('show_only_start', false);
+		$show_archived_events = $params->get('show_archived_events', 0);
 
 		# params
 		$this->setState('params', $params);
@@ -106,6 +107,7 @@ class JemModelVenueCal extends JemModelEventslist
 		$this->setState('filter.calendar_multiday', true);
 		$this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
 		$this->setState('filter.filter_locid', $this->_id);
+		$this->setState('filter.show_archived_events',(bool)$show_archived_events);
 
 		$app->setUserState('com_jem.venuecal.locid'.$itemid, $this->_id);
 

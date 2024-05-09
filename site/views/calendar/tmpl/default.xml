@@ -28,6 +28,15 @@
 				<option value="0">COM_JEM_HIDE</option>
 			</field>
 			<field type="spacer" name="myspacer2" hr="true" />
+			<field name="show_archived_events" type="radio"
+				   default="0"
+				   label="COM_JEM_SHOW_ARCHIVED_EVENTS"
+				   description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
+				   class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="top_category" type="categories"
 				default="0"
 				label="COM_JEM_SELECT_TOP_CATEGORY"

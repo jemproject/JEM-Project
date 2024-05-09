@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -15,6 +15,9 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Client\ClientHelper;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Filter\InputFilter;
 
 jimport('joomla.filesystem.file');
 
@@ -57,7 +60,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
 	{
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
-		JClientHelper::setCredentialsFromRequest('ftp');
+		ClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
 		$images	= $this->getImages($type);
@@ -68,14 +71,14 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
 		foreach ($images as $image)
 		{
-			if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
+			if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
 				Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
 				$fail++;
 				continue;
 			}
 
-			$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-			$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+			$fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+			$fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 
 			if (is_file($fullPath)) {
 				File::delete($fullPath);

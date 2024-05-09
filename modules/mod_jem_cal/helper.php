@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Calendar Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -20,10 +20,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Helper\ModuleHelper;	
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
-abstract class ModJemCalHelper extends JModuleHelper
+abstract class ModJemCalHelper extends ModuleHelper
 {
 	/**
 	 * Get module by id

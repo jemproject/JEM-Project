@@ -3,7 +3,7 @@
  * JemListEvent is a Plugin to display events in articles.
  * For more information visit joomlaeventmanager.net
  *
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @subpackage JEM_Listevents_Plugin
  * @author     JEM Team <info@joomlaeventmanager.net>, Luis Raposo
@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Router\Route;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
@@ -300,9 +301,9 @@ class PlgContentJemlistevents extends CMSPlugin
 		$n_event = 0;
 		foreach ($rows as $event)
 		{
-			$linkdetails = JRoute::_(JemHelperRoute::getEventRoute($event->slug));
-			$linkdate    = JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $event->dates), 'day'));
-			$linkvenue   = JRoute::_(JemHelperRoute::getVenueRoute($event->venueslug));
+			$linkdetails = Route::_(JemHelperRoute::getEventRoute($event->slug));
+			$linkdate    = Route::_(JemHelperRoute::getRoute(str_replace('-', '', $event->dates), 'day'));
+			$linkvenue   = Route::_(JemHelperRoute::getVenueRoute($event->venueslug));
 
 			$html_list .= '<tr class="listevent event'.($n_event + 1).'">';
 

@@ -2,7 +2,7 @@
 <extension version="4.0" type="plugin" group="acymailing" method="upgrade">
 	<name>AcyMailing 5.x Tag: insert events from JEM 4</name>
 	<creationDate>April 2024</creationDate>
-	<version>4.2.1</version>
+	<version>4.2.2</version>
 	<author>Acyba, JEM Community</author>
 	<authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.acymailing.com, https://www.joomlaeventmanager.net</authorUrl>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -14,7 +14,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\Log\Log;
+
 
 /**
  * Model: Attendee

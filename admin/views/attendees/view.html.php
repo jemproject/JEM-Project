@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\Toolbar;
 
 /**
  * View class: Attendees
@@ -138,7 +139,7 @@ class JemViewAttendees extends JemAdminView
 		$eventid 	= $this->event->id;
 		$link_print = 'index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;eventid='.$eventid;
 
-		$bar = JToolBar::getInstance('toolbar');
+		$bar = ToolBar::getInstance('toolbar');
 		$bar->appendButton('Popup', 'print', 'COM_JEM_PRINT', $link_print, 600, 300);
 
 		ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');

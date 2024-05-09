@@ -7,11 +7,11 @@
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
     <copyright>copyright (C) 2013-2024 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.2.1</version>
+    <version>4.2.2</version>
     <description>JEM Quick Icon</description>
 
     <files>
-        <filename plugin="jemquickicon">jemquickicon.php</filename>
+        <filename plugin="jem">jemquickicon.php</filename>
         <filename>index.html</filename>
     </files>
 

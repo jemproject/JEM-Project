@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filter\InputFilter;
 
 jimport('joomla.application.component.model');
 
@@ -89,8 +90,8 @@ class JemModelContactelement extends BaseDatabaseModel
 		$filter_order     = $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order','filter_order','con.ordering','cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order_Dir','filter_order_Dir','','word' );
 
-		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
 		$filter_type      = $app->getUserStateFromRequest('com_jem.contactelement.filter_type','filter_type',0,'int');
 		$search           = $app->getUserStateFromRequest('com_jem.contactelement.filter_search','filter_search','','string');

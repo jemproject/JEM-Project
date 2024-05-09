@@ -10,7 +10,7 @@
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"
 			   description="COM_JEM_EVENT_FIELD_ARTICLETEXT_DESC"
-			   filter="ComponentHelper::filterText"
+			   filter="\Joomla\CMS\Component\ComponentHelper::filterText"
 			   hide="pagebreak"
 		/>
 		<field name="featured" type="radio"
@@ -49,7 +49,7 @@
 			   rows="3" cols="40"
 			   label="COM_JEM_EVENT_DESCRIPTION"
 			   description="COM_JEM_EVENT_DESCRIPTION_DESC"
-			   filter="safehtml"
+			   filter="\Joomla\CMS\Component\ComponentHelper::filterText"
 		/>
 		<field name="dates" type="calendarjem"
 			   label="COM_JEM_STARTDATE"
@@ -116,9 +116,11 @@
 			   size="22"
 			   default="now"
 			   readonly="true"
-			   format="Y-m-d H:i:s"
+			   format="%Y-%m-%d %H:%M:%S"
 			   translateformat="true"
 			   filter="user_utc"
+			showtime="true"
+         		filterformat="%Y-%m-%d %H:%M:%S"
 		/>
 		<field name="modified" type="calendar"
 			   class="readonly"
@@ -126,9 +128,11 @@
 			   description="COM_JEM_EDITED_AT"
 			   size="22"
 			   readonly="true"
-			   format="Y-m-d H:i:s"
+			   format="%Y-%m-%d %H:%M:%S"
 			   translateformat="true"
 			   filter="user_utc"
+			showtime="true"
+			filterformat="%Y-%m-%d %H:%M:%S"
 		/>
 		<field name="version" type="text"
 			   default="0"

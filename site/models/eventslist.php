@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -287,6 +287,7 @@ class JemModelEventslist extends ListModel
 		$id .= ':' . $this->getState('filter.category_top');
 		$id .= ':' . $this->getState('filter.calendar_multiday');
 		$id .= ':' . $this->getState('filter.calendar_startdayonly');
+		$id .= ':' . $this->getState('filter.show_archived_events');
 		$id .= ':' . $this->getState('filter.req_venid');
 		$id .= ':' . $this->getState('filter.req_catid');
 		$id .= ':' . $this->getState('filter.unpublished');
@@ -889,9 +890,10 @@ class JemModelEventslist extends ListModel
 
 		# Filter by published state.
 		$published = $this->getState('filter.published');
+		$show_archived_events = $this->getState('filter.show_archived_events');
 
 		if (is_numeric($published)) {
-			$where_pub[] = '(' . $tbl . 'published = ' . (int)$published . ')';
+			$where_pub[] = '(' . $tbl . 'published ' . ($show_archived_events? '>=':'=') . (int)$published . ')';
 		}
 		elseif (is_array($published) && !empty($published)) {
 			\Joomla\Utilities\ArrayHelper::toInteger($published);

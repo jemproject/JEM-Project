@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Utilities\ArrayHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
@@ -85,7 +86,7 @@ class JemModelEditvenue extends JemModelVenue
 		}
 
 		$properties = $table->getProperties(1);
-		$value = \Joomla\Utilities\ArrayHelper::toObject($properties, 'JObject');
+		$value = ArrayHelper::toObject($properties, 'stdClass');
 
 		if ($doCopy) {
 			$value->id = 0;

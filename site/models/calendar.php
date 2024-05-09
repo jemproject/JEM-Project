@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.2.1
+ * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -45,6 +45,7 @@ class JemModelCalendar extends JemModelEventslist
 		$params       = $app->getParams();
 		$task         = $app->input->getCmd('task','','cmd');
 		$top_category = $params->get('top_category', 0);
+		$show_archived_events = $params->get('show_archived_events', 0);
 		$startdayonly = $params->get('show_only_start', false);
 
 		# params
@@ -86,6 +87,7 @@ class JemModelCalendar extends JemModelEventslist
 		$this->setState('filter.calendar_multiday',true);
 		$this->setState('filter.calendar_startdayonly',(bool)$startdayonly);
 		$this->setState('filter.groupby',array('a.id'));
+		$this->setState('filter.show_archived_events',(bool)$show_archived_events);
 	}
 
 	/**
