@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\FormModel;
+use Joomla\CMS\String\PunycodeHelper;
 
 /**
  * Mailto model class.
@@ -84,8 +85,8 @@ class JemModelMailto extends FormModel
 		// Load with previous data, if it exists
 		$data['sender']    = $app->input->post->getString('sender', '');
 		$data['subject']   = $app->input->post->getString('subject', '');
-		$data['emailfrom'] = JStringPunycode::emailToPunycode($app->input->post->getString('emailfrom', ''));
-		$data['emailto']   = JStringPunycode::emailToPunycode($app->input->post->getString('emailto', ''));
+		$data['emailfrom'] = PunycodeHelper::emailToPunycode($app->input->post->getString('emailfrom', ''));
+		$data['emailto']   = PunycodeHelper::emailToPunycode($app->input->post->getString('emailto', ''));
 
 		if (!$user->guest)
 		{
