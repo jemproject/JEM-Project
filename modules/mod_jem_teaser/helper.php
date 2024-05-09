@@ -325,14 +325,14 @@ abstract class ModJemTeaserHelper
 
 				//Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
 				if (($dates_stamp > $tomorrow_stamp) && $enddates_stamp) {
-					$startdate = date('l', strtotime($row->dates));
+					$startdate = date('l', strtotime($row->dates ?? ''));
 					$result = Text::sprintf('MOD_JEM_TEASER_FROM', $startdate);
 				}
 
 				//current multidayevent (Until 18.08.2008)
 				if ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp <= $today_stamp)) {
 					//format date
-					$enddate = date('l', strtotime($row->enddates));
+					$enddate = date('l', strtotime($row->enddates ?? ''));
 					$result = Text::sprintf('MOD_JEM_TEASER_UNTIL', $enddate);
 				}
 			} else { // show day difference
