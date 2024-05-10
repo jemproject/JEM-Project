@@ -16,7 +16,7 @@ defined ('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Router\Route
+use Joomla\CMS\Router\Route;
 /**
  * JEM package installer script.
  */
