@@ -393,6 +393,11 @@ div.pagination ul li {
     -moz-transition-duration: 0.8s;
 }
 
+[data-bs-theme="dark"] .cpanel div.icon a,
+[data-bs-theme="dark"] #cpanel div.icon a {
+    background-color: transparent;
+    color: #fff; }
+
 #cpanel div.icon a:hover,
 #cpanel div.icon a:focus,
 #cpanel div.icon a:active,
@@ -408,6 +413,17 @@ div.pagination ul li {
     box-shadow: -5px 10px 15px rgba(0, 0, 0, 0.25);
     position: relative;
     z-index: 10;
+}
+
+[data-bs-theme="dark"] #cpanel div.icon a:hover,
+[data-bs-theme="dark"] #cpanel div.icon a:focus,
+[data-bs-theme="dark"] #cpanel div.icon a:active,
+[data-bs-theme="dark"] .cpanel div.icon a:hover,
+[data-bs-theme="dark"] .cpanel div.icon a:focus,
+[data-bs-theme="dark"] .cpanel div.icon a:active {
+    box-shadow: none;
+    background-color: #ffffff11;
+    border-color: #fcf8e3;
 }
 
 #cpanel img,
