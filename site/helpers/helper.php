@@ -15,6 +15,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
@@ -475,8 +476,8 @@ class JemHelper
 			return false;
 		}
 
-		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
-		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
+		$fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
+		$fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
 		if (is_file($fullPath)) {
 			// Count usage and don't delete if used elsewhere.
 			$db = Factory::getContainer()->get('DatabaseDriver');
