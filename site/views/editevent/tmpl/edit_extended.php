@@ -25,11 +25,31 @@ use Joomla\CMS\Date\Date;
 				<?php echo $this->form->getLabel('recurrence_limit_date'); ?>
 				<?php echo $this->form->getInput('recurrence_limit_date'); ?>
 				<br><div class="recurrence_notice"><small>
-				<?php
-				$anticipation = $this->jemsettings->recurrence_anticipation;
-				$limitdate = new Date('now +' . $anticipation . 'days');
-				$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
-				echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
+					<?php
+	                switch ($recurr->recurrence_type) {
+		                case 1:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+		                    break;
+		                case 2:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+		                    break;
+		                case 3:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_month;
+		                    break;
+		                case 4:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+		                    break;
+		                case 5:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_year;
+		                    break;
+		                default:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+		                    break;
+		            }
+					
+					$limitdate = new Date('now +' . $anticipation . 'month');
+					$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+					echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
 				?></small></div>
 			</li>
 		</ul>
@@ -51,6 +71,9 @@ use Joomla\CMS\Date\Date;
 			$select_output[4] = "<?php
 			echo Text::_('COM_JEM_OUTPUT_WEEKDAY');
 			?>";
+            $select_output[5] = "<?php
+            echo Text::_('COM_JEM_OUTPUT_YEAR');
+            ?>";
 
 		var $weekday = new Array();
 			$weekday[0] = new Array("MO", "<?php echo Text::_('COM_JEM_MONDAY'); ?>");
@@ -117,6 +140,12 @@ use Joomla\CMS\Date\Date;
 				                            array($recurr_num, $recurr_days),
 				                            Text::_('COM_JEM_OUTPUT_WEEKDAY'));
 				break;
+            case 5:
+                $recurr_type = Text::_('COM_JEM_YEARLY');
+                $recurr_info = str_ireplace('[placeholder]',
+                    $this->item->recurr_bak->recurrence_number,
+                    Text::_('COM_JEM_OUTPUT_YEAR'));
+                break;
 			default:
 				break;
 			}

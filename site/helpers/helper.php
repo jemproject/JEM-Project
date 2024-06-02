@@ -24,6 +24,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -141,7 +142,6 @@ class JemHelper
 	{
 		$jemsettings  = JemHelper::config();
 		$weekstart    = $jemsettings->weekdaystart;
-		$anticipation = $jemsettings->recurrence_anticipation;
 
 		$now = time(); // UTC
 		$offset = idate('Z'); // timezone offset for "new day" test
@@ -215,10 +215,33 @@ class JemHelper
 					// calculate next occurence date
 					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
 
+                    switch ($recurrence_row["recurrence_type"]) {
+                        case 1:
+                            $anticipation	= $jemsettings->recurrence_anticipation_day;
+                            break;
+                        case 2:
+                            $anticipation	= $jemsettings->recurrence_anticipation_week;
+                            break;
+                        case 3:
+                            $anticipation	= $jemsettings->recurrence_anticipation_month;
+                            break;
+                        case 4:
+                            $anticipation	= $jemsettings->recurrence_anticipation_week;
+                            break;
+                        case 5:
+                            $anticipation	= $jemsettings->recurrence_anticipation_year;
+                            break;
+                        default:
+                            $anticipation	= $jemsettings->recurrence_anticipation_day;
+                            break;
+
+                    }
+
 					// add events as long as we are under the interval and under the limit, if specified.
+					$shieldDate = new Date('now + ' . $anticipation . ' month');
 					while (($recurrence_row['recurrence_limit_date'] == null
 							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
-							&& strtotime($recurrence_row['dates']) <= time() + 86400 * $anticipation)
+							&& strtotime($recurrence_row['dates']) <= strtotime($shieldDate))
 					{
 						$new_event = Table::getInstance('Event', 'JemTable');
 						$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
@@ -345,7 +368,7 @@ class JemHelper
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
 					$current_weekday = (int) $date_array["weekday"];
 					$selected = array($current_weekday);
 				}
@@ -391,6 +414,9 @@ class JemHelper
 					}
 				}
 				break;
+            case "5": // year recurrence
+                $start_day = mktime(1,0,0,($date_array["month"]),$date_array["day"],$date_array["year"]+ $recurrence_number);
+                break;
 		}
 
 		if (!$start_day) {
@@ -583,22 +609,28 @@ class JemHelper
 	 */
 	static public function generate_date($startdate, $enddate)
 	{
-		$validEnddate = JemHelper::isValidDate($enddate);
+		$validStardate = JemHelper::isValidDate($startdate);
+        $validEnddate = JemHelper::isValidDate($enddate);
 
-		$startdate = explode("-",$startdate);
+        if($validStardate) {
+            $startdate = explode("-", $startdate);
 		$date_array = array("year" => $startdate[0],
 							"month" => $startdate[1],
 							"day" => $startdate[2],
 							"weekday" => date("w",mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0])),
 							"unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
 
-		if ($validEnddate) {
-			$enddate = explode("-", $enddate);
-			$day_diff = (mktime(1,0,0,$enddate[1],$enddate[2],$enddate[0]) - mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
-			$date_array["day_diff"] = $day_diff;
-		}
+            if ($validEnddate) {
+                $enddate = explode("-", $enddate);
+                $day_diff = (mktime(1, 0, 0, $enddate[1], $enddate[2], $enddate[0]) - mktime(1, 0, 0, $startdate[1], $startdate[2], $startdate[0]));
+                $date_array["day_diff"] = $day_diff;
+            }
 
-		return $date_array;
+
+            return $date_array;
+        }else{
+            return false;
+        }
 	}
 
 	/**

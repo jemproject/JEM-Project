@@ -1226,6 +1226,10 @@ a.label:focus {
     min-width: 100px;
 }
 
+.label-form .control-group{
+    align-items: center;
+}
+
 .select-time {
     padding: 5px;
     margin-top: 10px;

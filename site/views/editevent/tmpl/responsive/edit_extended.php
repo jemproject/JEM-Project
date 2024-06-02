@@ -20,22 +20,48 @@ use Joomla\CMS\Date\Date;
     <legend><?php echo Text::_('COM_JEM_RECURRENCE'); ?></legend>
     <dl class="adminformlist jem-dl">
         <dt><?php echo $this->form->getLabel('recurrence_type'); ?></dt>
-        <dd><?php echo $this->form->getInput('recurrence_type'); ?></dd>
+        <dd><?php echo $this->form->getInput('recurrence_type', null, $this->item->recurrence_type); ?></dd>
         <dt> </dt>
-        <dd id="recurrence_output"><label></label></dd>
+        <dd id="recurrence_output">
+        <?php if ($this->item->recurrence_number){ ?>
+            <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>"></input>
+        <?php } ?>
+        <label></label>
+        </dd>
         <dt> </dt>
         <dd>
             <div id="counter_row" style="display: none;">
 				<?php echo $this->form->getLabel('recurrence_limit_date'); ?>
-				<?php echo $this->form->getInput('recurrence_limit_date'); ?>
+				<?php echo $this->form->getInput('recurrence_limit_date', null, $this->item->recurrence_limit_date); ?>
                 <br>
                 <div class="recurrence_notice"><small>
-						<?php
-						$anticipation = $this->jemsettings->recurrence_anticipation;
-						$limitdate = new Date('now +' . $anticipation . 'days');
-						$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
-						echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
-						?></small></div>
+				<?php
+	                switch ($this->item->recurrence_type) {
+		                case 1:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+		                    break;
+		                case 2:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+		                    break;
+		                case 3:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_month;
+		                    break;
+		                case 4:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+		                    break;
+		                case 5:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_year;
+		                    break;
+		                default:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+		                    break;
+
+		            }
+
+					$limitdate = new Date('now +' . $anticipation . 'month');
+					$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+					echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
+				?></small></div>
             </div>
         </dd>
     </dl>
@@ -58,6 +84,9 @@ use Joomla\CMS\Date\Date;
         $select_output[4] = "<?php
 			echo Text::_('COM_JEM_OUTPUT_WEEKDAY');
 			?>";
+        $select_output[5] = "<?php
+            echo Text::_('COM_JEM_OUTPUT_YEAR');
+            ?>";
 
         var $weekday = new Array();
         $weekday[0] = new Array("MO", "<?php echo Text::_('COM_JEM_MONDAY'); ?>");
@@ -81,9 +110,8 @@ use Joomla\CMS\Date\Date;
 	<?php /* show "old" recurrence settings for information */
 	if (!empty($this->item->recurr_bak->recurrence_type)) {
 		$recurr_type = '';
-        $nullDate = Factory::getContainer()->get('DatabaseDriver')->getNullDate();
 		$rlDate = $this->item->recurr_bak->recurrence_limit_date;
-		if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
+		if (!empty($rlDate)) {
 			$recurr_limit_date = JemOutput::formatdate($rlDate);
 		} else {
 			$recurr_limit_date = Text::_('COM_JEM_UNLIMITED');
@@ -123,6 +151,12 @@ use Joomla\CMS\Date\Date;
 				$recurr_info = str_ireplace(array('[placeholder]', '[placeholder_weekday]'),
 					array($recurr_num, $recurr_days),
 					Text::_('COM_JEM_OUTPUT_WEEKDAY'));
+				break;
+            case 5:
+                $recurr_type = Text::_('COM_JEM_YEARLY');
+                $recurr_info = str_ireplace('[placeholder]',
+                    $this->item->recurr_bak->recurrence_number,
+                    Text::_('COM_JEM_OUTPUT_YEAR'));
 				break;
 			default:
 				break;

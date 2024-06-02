@@ -99,21 +99,28 @@ function generate_selectlist($select_value) {
     $selectlist.onchange = set_parameter;
     switch ($select_value) {
         case "1":
-            $limit = 14;	// days
+            $limit = 30;	// days (1 month)
             break;
         case "2":
-            $limit = 8;		// weeks
+            $limit = 13;	// weeks (1/4 year)
             break;
         case "3":
-            $limit = 12;	// months
+            $limit = 18;	// months (1'5 years)
+            break;
+        case "4":
+            $limit = 6;	    // weekdays (6 cases for 7 days)
+            break;
+        case "5":
+            $limit = 12;	// years ( 1 dozen years)
             break;
         default:
-            $limit = 6;		// weekdays
+            $limit =24;		// orders (future, hours?)
             break;
     }
     for ($j = 0; $j < $limit; $j++) {
         var $option = document.createElement("option");	// create option element
-        if ($j == (parseInt(document.getElementById("recurrence_number").value) - 1)) {	// the selected - attribute
+        var $valueSelected = parseInt(document.getElementById("recurrence_number").value);
+        if ($j == $valueSelected - 1) {	// the selected - attribute
             $option.selected = true;
         }
         if (($j >= 4) && ($select_value == 4)) {	// get the word for "last" and "before last" in the weekday section

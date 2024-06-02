@@ -369,6 +369,12 @@ class JemViewEvent extends JemView
 		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->itemid        = $menuitem ? $menuitem->id : false;
 
+		//Get itemRoot if item is a recurrence event
+		$this->item_root = 0;
+		if($this->item->recurrence_type){
+			$this->item_root = $model->getItem($this->item->recurrence_first_id );
+		}
+
 		$this->_prepareDocument();
 		
 		parent::display($tpl);
