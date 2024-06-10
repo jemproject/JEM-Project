@@ -27,6 +27,8 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
+HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
+
 # Create JEM's file logger (for debug)
 JemHelper::addFileLogger();
 
