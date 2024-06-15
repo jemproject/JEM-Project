@@ -356,6 +356,14 @@
                value="0"
                default="0"
         />
+        <field name="bookedrootevent" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_BOOKED_ROOT_EVENT"
+               description="COM_JEM_EDITEVENT_FIELD_BOOKED_ROOT_EVENT_DESC"
+               value="0"
+               default="0"
+        />
     </fieldset>
 
     <fieldset name="recurrence"

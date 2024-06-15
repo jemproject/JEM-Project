@@ -26,7 +26,7 @@ use Joomla\CMS\Date\Date;
 				<?php echo $this->form->getInput('recurrence_limit_date'); ?>
 				<br><div class="recurrence_notice"><small>
 					<?php
-	                switch ($recurr->recurrence_type) {
+	                switch ($this->item->recurrence_type) {
 		                case 1:
 		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
 		                    break;
@@ -218,7 +218,9 @@ use Joomla\CMS\Date\Date;
 			<br/><br/>
 			<li><?php echo $this->form->getLabel('requestanswer'); ?> <?php echo $this->form->getInput('requestanswer'); ?></li>
 			<br/><br/>
-			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+            <li><?php echo $this->form->getLabel('bookedrootevent'); ?> <?php echo $this->form->getInput('bookedrootevent'); ?></li>
+            <br/><br/>
+            <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
 			<br/><br/>
 			<?php endif; ?>

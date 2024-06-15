@@ -141,6 +141,7 @@ Joomla.submitbutton = function(task)
     	var $maxBookedUserInput = $("#jform_maxbookeduser");
     	var $maxPlacesInput = $("#jform_maxplaces");
     	var $reservedPlacesInput = $("#jform_reservedplaces");
+
     	$minBookedUserInput
     	    .add($maxBookedUserInput)
     	    .add($maxPlacesInput)
@@ -317,6 +318,7 @@ Joomla.submitbutton = function(task)
                             <li><div class="label-form"><?php echo $this->form->renderfield('reservedplaces'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('bookedrootevent'); ?></div></li>
 							<li>
                                 <div class="label-form"><div class="control-group">
                                         <div class="control-label">

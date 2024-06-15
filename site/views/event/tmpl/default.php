@@ -67,7 +67,9 @@ if ($jemsettings->oldevent > 0) {
 	            echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
 	            echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
 	        }
-            echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+            if($this->item->recurrence_first_id || !$this->item->recurrence_type) {
+                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+            }
             echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
             ?>
         </span>
