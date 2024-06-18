@@ -60,7 +60,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
         <?php endif; ?>
         <?php if ($bookedrootevent > 0) : ?>
             <dt class="register bookedrootevent-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_$bookedrootevent'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
-            <dd class="register bookedrootevent-places"><?php echo $this->$bookedrootevent; ?></dd>
+            <dd class="register bookedrootevent-places"><?php echo $this->item->bookedrootevent; ?></dd>
         <?php endif; ?>
     <?php endif; /* Not show counters registration */ ?>
 
