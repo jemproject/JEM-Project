@@ -224,7 +224,7 @@ class JemModelSettings extends AdminModel
 		                          'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide',
 		                          'plg_content_jem', 'plg_content_jemlistevents',
 		                          'plg_finder_jem', 'plg_search_jem',
-		                          'plg_quickicon_jem', 'Quick Icon - JEM',
+		                          'plg_quickicon_jemquickicon',
 		                          'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
 		                          'AcyMailing Tag : insert events from JEM 2.1+');
 

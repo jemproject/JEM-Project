@@ -35,8 +35,7 @@ use Joomla\CMS\Language\Text;
 				                         ,'plg_jem_comments'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS'
 				                         ,'plg_jem_mailer'    => 'COM_JEM_MAIN_CONFIG_VS_PLG_MAILER'
 				                         ,'plg_jem_demo'      => 'COM_JEM_MAIN_CONFIG_VS_PLG_DEMO'
-				                         ,'plg_quickicon_jem' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
-				                         ,'Quick Icon - JEM'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
+				                         ,'plg_quickicon_jemquickicon' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
 				                         ,'AcyMailing Tag : insert events from JEM 2.1+'
 				                                              => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
 				                         );
