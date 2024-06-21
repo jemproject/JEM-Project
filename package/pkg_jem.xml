@@ -34,7 +34,7 @@
 		<file type="plugin" id="jem" group="finder">plg_finder_jem.zip</file>
 		<file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>
 		<file type="plugin" id="mailer" group="jem">plg_jem_mailer.zip</file>
-		<file type="plugin" id="jem" group="quickicon">plg_quickicon_jem.zip</file>
+		<file type="plugin" id="jemquickicon" group="quickicon">plg_quickicon_jem.zip</file>
 	</files>
 
 	<languages folder="language">
