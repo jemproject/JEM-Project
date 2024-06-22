@@ -57,11 +57,11 @@ if ($jemsettings->oldevent > 0) {
 	<!-- Event -->
 	<h2 class="jem">
 		<?php
+        echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) . ' ';
         if($this->item_root) {
-            echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) . ' ';
             echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
         }
-        if($this->item->recurrence_first_id) {
+        if(!$this->item_root || ($this->item_root && $this->item->recurrence_first_id)) {
         	echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
         }
         echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
