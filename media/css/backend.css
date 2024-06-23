@@ -301,7 +301,6 @@ input#replace_catevents1.inputbox {
 
 a.import-fieldinfo {
 	cursor: pointer;
-	color: blue;
 	text-decoration: underline;
 }
 
@@ -1331,7 +1330,6 @@ a.label:focus {
     font-size: 1.4rem;
     line-height: 2rem;
     font-weight: bold;
-    color: #333;
     border: 0;
 }
 
