@@ -242,6 +242,10 @@ input#jform_title {
     font-size: 0.909em !important;
 }
 
+#jem select.form-control {
+  background-color: var(--form-control-bg);
+}
+
 div.clear {
     border: 0;
     clear: both;
