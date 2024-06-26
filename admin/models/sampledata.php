@@ -15,6 +15,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
 
 // TODO: Improve error handling
 
@@ -112,8 +113,8 @@ class JemModelSampledata extends BaseDatabaseModel
 		$tmpdir = uniqid('sample_');
 
 		// Clean the paths to use for archive extraction
-		$extractdir = JPath::clean(JPATH_ROOT . '/tmp/' . $tmpdir);
-		$archive = JPath::clean($archive);
+		$extractdir = Path::clean(JPATH_ROOT . '/tmp/' . $tmpdir);
+		$archive = Path::clean($archive);
 
 		// extract archive
 	
