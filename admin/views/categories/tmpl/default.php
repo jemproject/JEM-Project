@@ -56,12 +56,6 @@ $wa->useScript('table.columns');
                         <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true); ?>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <select name="filter_state" class="inputbox form-select" onchange="this.form.submit()">
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true); ?>
-                    </select>
-                </div>
             </div>
 
         </fieldset>
