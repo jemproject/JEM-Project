@@ -105,17 +105,14 @@ $(document).ready(function() {
 				<thead>
 					<tr>
 						<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-            <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTDATE', 'a.dates', $listDirn, $listOrder ); ?></th>
+            <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTTIME_SHORT', 'a.times', $listDirn, $listOrder ); ?></th>
 						<th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
 						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
-						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
-						<th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
-            <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'loc.country', $listDirn, $listOrder ); ?></th>
 						<th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
-						<th width="1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 						<th width="1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
-						<th class="nowrap"><?php echo Text::_('COM_JEM_CREATION'); ?></th>
+						<th width="1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
+						<th class="nowrap"><?php echo Text::_('COM_JEM_AUTHOR'); ?></th>
 						<th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
 						<th width="1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
 						<th width="9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
@@ -221,13 +218,9 @@ $(document).ready(function() {
 								<?php echo '-'; ?>
 							<?php endif; ?>
 						</td>
-						<td class="city"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-						<td class="state"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
-                        <td class="country"><?php echo $row->country ? $this->escape($row->country) : '-'; ?></td>
 						<td class="category">
 							<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist,true)); ?>
 						</td>
-						<td class="center"><?php echo $published; ?></td>
 						<td class="center">
 							<?php //echo HTMLHelper::_('jemhtml.featured', $i, $row->featured, $canChange);
 							$options = [
@@ -239,6 +232,7 @@ $(document).ready(function() {
 							->render((int) $row->featured, $i, $options);
 							?>
 						</td>
+						<td class="center"><?php echo $published; ?></td>
 						<td>
 							<?php
 							$created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));
