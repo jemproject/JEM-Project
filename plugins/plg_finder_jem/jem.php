@@ -264,7 +264,7 @@ class plgFinderJEM extends Adapter
         $item->setLanguage();
 
         // Initialize the item parameters.
-        $registry = new JRegistry;
+        $registry = new Registry;
         $registry->loadString($item->params);
         $item->params = ComponentHelper::getParams('com_jem', true);
         $item->params->merge($registry);
