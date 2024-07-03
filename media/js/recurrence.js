@@ -108,7 +108,7 @@ function generate_selectlist($select_value) {
             $limit = 18;	// months (1'5 years)
             break;
         case "4":
-            $limit = 6;	    // weekdays (6 cases for 7 days)
+            $limit = 7;	    // weekdays (7 cases)
             break;
         case "5":
             $limit = 12;	// years ( 1 dozen years)
@@ -120,16 +120,17 @@ function generate_selectlist($select_value) {
     for ($j = 0; $j < $limit; $j++) {
         var $option = document.createElement("option");	// create option element
         var $valueSelected = parseInt(document.getElementById("recurrence_number").value);
-        if ($j == $valueSelected - 1) {	// the selected - attribute
+        var $valueSelected_saved = parseInt(document.getElementById("recurrence_number_saved").value);
+        if ($j == $valueSelected_saved - 1) {	// the selected - attribute
             $option.selected = true;
         }
-        if (($j >= 4) && ($select_value == 4)) {	// get the word for "last" and "before last" in the weekday section
+        if (($j >= 5) && ($select_value ==4)) {	// get the word for "last" and "before last" in the weekday section
             var $name_value = "";
             switch ($j) {
-                case 4:
+                case 5:
                     $name_value = $last;
                     break;
-                case 5:
+                case 6:
                     $name_value = $before_last;
                     break;
             }

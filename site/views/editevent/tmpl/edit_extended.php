@@ -54,6 +54,7 @@ use Joomla\CMS\Date\Date;
 			</li>
 		</ul>
 		<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
+        <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number;?>"></input>
 		<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
 		<script type="text/javascript">
@@ -133,7 +134,7 @@ use Joomla\CMS\Date\Date;
 				                                  Text::_('COM_JEM_FRIDAY'), Text::_('COM_JEM_SATURDAY'),
 				                                  Text::_('COM_JEM_SUNDAY')),
 				                            $recurr_byday);
-				$recurr_num  = str_ireplace(array('5', '6'),
+				$recurr_num  = str_ireplace(array('6', '7'),
 				                            array(Text::_('COM_JEM_LAST'), Text::_('COM_JEM_BEFORE_LAST')),
 				                            $this->item->recurr_bak->recurrence_number);
 				$recurr_info = str_ireplace(array('[placeholder]', '[placeholder_weekday]'),

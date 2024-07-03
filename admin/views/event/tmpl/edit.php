@@ -365,11 +365,6 @@ Joomla.submitbutton = function(task)
 					<div class="accordion-body">
 						<ul class="adminformlist">
 							<li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type', null, $recurr->recurrence_type); ?></div></li>
-							<li id="recurrence_output" class="m-3">
-                                <?php if ($recurr->recurrence_number){ ?>
-                                    <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $recurr->recurrence_number;?>"></input>
-                                <?php } ?>
-							<label></label>
 							</li>
                             <?php
                                 switch ($recurr->recurrence_type) {
@@ -406,6 +401,7 @@ Joomla.submitbutton = function(task)
 						</ul>
 
 						<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
+                        <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number;?>" />
 						<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
 						<script

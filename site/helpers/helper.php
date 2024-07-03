@@ -364,7 +364,7 @@ class JemHelper
 				// the selected weekdays
 				$selected = JemHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);
 				$days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-				$litterals = array('first', 'second', 'third', 'fourth');
+				$litterals = array('first', 'second', 'third', 'fourth', 'fifth');
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
@@ -377,18 +377,29 @@ class JemHelper
 				foreach ($selected as $s)
 				{
 					$next = null;
+                    $nextmonth = null;
+
 					switch ($recurrence_number) {
-						case 6: // before last 'x' of the month
+						case 7: // before last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s].' - 1 week ',
 							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ',
 							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
-						case 5: // last 'x' of the month
+						case 6: // last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s],
 							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s],
 							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							break;
+						case 5: // 5th of the month
+                            $currentMonth = $date_array["month"];
+                            do {
+                                $timeFisrtDayMonth = mktime(1,0,0, $currentMonth ,1,$date_array["year"]);
+                                $timeLastDayNextMonth = mktime(23, 59, 59, $currentMonth+1, 0, $date_array["year"]);
+                                $next = strtotime($litterals[$recurrence_number - 1] . " " . $days_names[$s] . ' of this month',$timeFisrtDayMonth);
+                                $currentMonth++;
+                            } while ($next > $timeLastDayNextMonth || $next < $date_array['unixtime']);
 							break;
 						case 4: // xth 'x' of the month
 						case 3:
