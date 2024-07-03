@@ -44,22 +44,16 @@ $wa->useScript('table.columns');
                                 onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <select name="filter_level" class="inputbox form-select m-0" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_MAX_LEVELS'); ?></option>
                         <?php echo HTMLHelper::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level')); ?>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <select name="filter_published" class="inputbox form-select m-0" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
                         <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true); ?>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="filter_state" class="inputbox form-select" onchange="this.form.submit()">
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true); ?>
                     </select>
                 </div>
             </div>
