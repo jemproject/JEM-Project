@@ -276,6 +276,15 @@ body.com_jem.body-overlayed {
     width: auto;
 }
 
+#jem #starthours,
+#jem #startminutes,
+#jem #endhours,
+#jem #endminutes,
+#jem #jform_locid_name {
+    padding: .6rem 1rem;
+    border-color: #ced4da;
+}
+
 #jem form input::-webkit-outer-spin-button,
 #jem form input::-webkit-inner-spin-button {
     opacity: 1;

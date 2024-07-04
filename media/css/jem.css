@@ -61,7 +61,7 @@ div#jem .formelm-buttons {
 
 ul.adminformlist,
 ul.adminformlist li {
-    margin: 0;
+    margin: 5px;
     padding: 0;
     list-style: none;
 }
@@ -699,7 +699,6 @@ div.jem_editvenue form input,
 div.jem_editvenue form textarea,
 div.jem_select_users ul.adminformlist select,
 div.jem_select_users ul.adminformlist input {
-    margin: 0 0 0.5em 0;
     padding: 0.2em;
     border: 1px solid #808080;
     cursor: pointer;

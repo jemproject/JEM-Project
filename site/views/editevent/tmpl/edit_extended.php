@@ -206,27 +206,27 @@ use Joomla\CMS\Date\Date;
 				<?php echo $this->form->getInput('unregistra_until'); ?>
 				<span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
 			</li>
-			<br/><br/>			
+			<br/>
 			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
-            <br/><br/>
+            <br/>
             <li><?php echo $this->form->getLabel('minbookeduser'); ?> <?php echo $this->form->getInput('minbookeduser'); ?></li>
-            <br/><br/>
+            <br/>
             <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
-            <br/><br/>
+            <br/>
 			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label> <?php echo $this->form->getInput('reservedplaces'); ?></li>
-            <br/><br/>
+            <br/>
 			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
-			<br/><br/>
+			<br/>
 			<li><?php echo $this->form->getLabel('requestanswer'); ?> <?php echo $this->form->getInput('requestanswer'); ?></li>
-			<br/><br/>
-            <li><?php echo $this->form->getLabel('bookedrootevent'); ?> <?php echo $this->form->getInput('bookedrootevent'); ?></li>
-            <br/><br/>
+			<br/>
+            <li><?php echo $this->form->getLabel('seriesbooking'); ?> <?php echo $this->form->getInput('seriesbooking'); ?></li>
+            <br/>
             <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
-			<br/><br/>
+			<br/>
 			<?php endif; ?>
 			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label> <?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></li>
-			<br/><br/>
+			<br/>
 			<?php if ($this->item->maxplaces): ?>
 			<li><?php echo $this->form->getLabel('avplaces'); ?> <?php echo '<input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="' . ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces) . '" />'; ?></li>
 			<?php endif; ?>

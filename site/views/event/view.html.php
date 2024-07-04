@@ -48,11 +48,12 @@ class JemViewEvent extends JemView
 		$userId            = $user->get('id');
 		$dispatcher        = JemFactory::getDispatcher();
 		$document 		   = $app->getDocument();
+		$wa 	  		   = $document->getWebAssetManager();
 		$model             = $this->getModel();
 		$menu              = $app->getMenu();
 		$menuitem          = $menu->getActive();
 		$pathway           = $app->getPathway();
-		$edit_att 	   = new \stdClass();
+		$edit_att 	       = new \stdClass();
 		$this->params      = $app->getParams('com_jem');
 		$this->item        = $this->get('Item');
 		$this->print       = $app->input->getBool('print', false);
@@ -299,7 +300,7 @@ class JemViewEvent extends JemView
 				} else {
 					send.disabled = true;
 				}}";
-			$document->addScriptDeclaration($js);
+			$wa->addInlineScript($js);
 		}
 
 		$this->formhandler = $formhandler;

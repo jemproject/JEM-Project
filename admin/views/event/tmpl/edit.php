@@ -198,9 +198,6 @@ Joomla.submitbutton = function(task)
 	<div class="row">
 	<div class="col-md-7">
 
-		<?php //echo HTMLHelper::_('tabs.start', 'det-pane'); ?>
-		<?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_INFO_TAB'), 'info' ); ?>
-
 		<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => true, 'breakpoint' => 768]); ?>
 		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_EVENT_INFO_TAB')); ?>
 
@@ -318,7 +315,7 @@ Joomla.submitbutton = function(task)
                             <li><div class="label-form"><?php echo $this->form->renderfield('reservedplaces'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('bookedrootevent'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('seriesbooking'); ?></div></li>
 							<li>
                                 <div class="label-form"><div class="control-group">
                                         <div class="control-label">
@@ -365,6 +362,11 @@ Joomla.submitbutton = function(task)
 					<div class="accordion-body">
 						<ul class="adminformlist">
 							<li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type', null, $recurr->recurrence_type); ?></div></li>
+							<li id="recurrence_output" class="m-3">
+                                <?php if ($recurr->recurrence_number){ ?>
+                                    <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $recurr->recurrence_number;?>"></input>
+                                <?php } ?>
+							<label></label>
 							</li>
                             <?php
                                 switch ($recurr->recurrence_type) {

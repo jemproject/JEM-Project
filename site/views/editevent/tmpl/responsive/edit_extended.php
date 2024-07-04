@@ -223,8 +223,8 @@ use Joomla\CMS\Date\Date;
             <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
             <dt><?php echo $this->form->getLabel('requestanswer'); ?></dt>
             <dd><?php echo $this->form->getInput('requestanswer'); ?></dd>
-            <dt><?php echo $this->form->getLabel('bookedrootevent'); ?></dt>
-            <dd><?php echo $this->form->getInput('bookedrootevent'); ?></dd>
+            <dt><?php echo $this->form->getLabel('seriesbooking'); ?></dt>
+            <dd><?php echo $this->form->getInput('seriesbooking'); ?></dd>
 
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
                 <dt><?php echo $this->form->getLabel('invited'); ?></dt>

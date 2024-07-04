@@ -15,14 +15,15 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+
 $user		= JemFactory::getUser();
 $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $document   = Factory::getApplication()->getDocument();
-$wa = $document->getWebAssetManager();
-// $wa->useScript('table.columns');
-$document->addScriptDeclaration('
+$wa         = $document->getWebAssetManager();
+
+$wa->addInlineScript('
 	Joomla.submitbutton = function(task)
 	{
 		document.adminForm.task.value=task;
@@ -34,7 +35,7 @@ $document->addScriptDeclaration('
 		}
 	};
 ');
-$document->addScriptDeclaration('
+$wa->addInlineScript('
     function submitName(node) {
       node.parentNode.previousElementSibling.childNodes[0].checked = true;
       Joomla.submitbutton("attendees.edit");

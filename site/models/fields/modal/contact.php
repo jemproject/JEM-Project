@@ -34,7 +34,7 @@ class JFormFieldModal_Contact extends FormField
 	{
 		$app      = Factory::getApplication();
 		$document = $app->getDocument();
-
+		$wa 	  = $document->getWebAssetManager();
 
 		// Build the script
 		$script = array();
@@ -45,10 +45,8 @@ class JFormFieldModal_Contact extends FormField
 		$script[] = '        $("#contact-modal").modal("hide");';
 		$script[] = '    }';
 
-		
-
 		// Add to document head
-		$document->addScriptDeclaration(implode("\n", $script));
+		$wa->addInlineScript(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
