@@ -51,7 +51,7 @@ class JFormFieldModal_Venue extends FormField
 
 		// Setup variables for display
 		$html = array();
-		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
+		$link = Uri::base() . 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
 
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
