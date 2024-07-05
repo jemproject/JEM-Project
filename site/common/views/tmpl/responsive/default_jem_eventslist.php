@@ -187,7 +187,7 @@ function jem_common_show_filter(&$obj) {
 
                 //Publish month row
                 if($showMonthRow){ ?>
-                     <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><?php echo $showMonthRow;?></li>
+                     <li class="jem-event jem-row jem-justify-center bg-body-secondary month-title" itemscope="itemscope"><?php echo $showMonthRow;?></li>
                 <?php }
             }?>
             <?php if (!empty($row->featured)) :   ?>
