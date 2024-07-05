@@ -42,7 +42,7 @@ class JFormFieldModal_Venue extends FormField
 		$script[] = '    }';
 
 		// Add to document head
-		Factory::getApplication()->getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();

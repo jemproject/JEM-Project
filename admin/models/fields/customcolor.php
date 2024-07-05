@@ -47,8 +47,8 @@ class JFormFieldCustomColor extends FormField
 		$script[] = '	}';
 			
 		// Add the script to the document head.
-		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
-		
+        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
+
 		// Initialize JavaScript field attributes.
 		$onclick = ' onclick="openPicker(\''.$this->id.'\', -200, 20)"';
 		$class = $classes ? ' class="' . trim($classes) . '"' : '';

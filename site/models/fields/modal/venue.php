@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Venue Select
@@ -32,6 +33,10 @@ class JFormFieldModal_Venue extends FormField
 	 */
 	protected function getInput()
 	{
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+		$wa 	  = $document->getWebAssetManager();
+
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';
@@ -42,7 +47,7 @@ class JFormFieldModal_Venue extends FormField
 		$script[] = '    }';
 
 		// Add to document head
-		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$wa->addInlineScript(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();
