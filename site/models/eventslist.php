@@ -93,6 +93,21 @@ class JemModelEventslist extends ListModel
 		$filtermonth  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_month', 'filter_month', 0, 'string');
 		$this->setState('filter.filter_month', $filtermonth);
 
+		# Search - Filter by setting menu
+		$today = new DateTime();
+		$filterDaysBefore = $params->get('tablefiltereventfrom','');
+		if ($filterDaysBefore){
+			$dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
+			$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $dateFrom .'") >= 0';
+			$this->setState('filter.calendar_from',$where);
+		}
+		$filterDaysAfter  = $params->get('tablefiltereventuntil','');
+		if ($filterDaysAfter){
+			$dateTo = (clone $today)->modify( $filterDaysAfter . ' days')->format('Y-m-d');
+			$where = ' DATEDIFF(a.dates, "'. $dateTo . '") <= 0';
+			$this->setState('filter.calendar_to',$where);
+		}
+
 		# publish state
 		$this->_populatePublishState($task);
 
@@ -429,8 +444,8 @@ class JemModelEventslist extends ListModel
 		#############################
 		## FILTER - CALENDAR_DATES ##
 		#############################
-		$cal_from = $this->getState('filter.calendar_from');
-		$cal_to   = $this->getState('filter.calendar_to');
+		$cal_from    = $this->getState('filter.calendar_from');
+		$cal_to      = $this->getState('filter.calendar_to');
 		$cal_month   = $this->getState('filter.filter_month');
 		if ($cal_month) {
 			$cal_month = DateTime::createFromFormat('Y-m', $cal_month);
