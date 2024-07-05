@@ -90,6 +90,9 @@ class JemModelEventslist extends ListModel
 		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
+		$filtermonth  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_month', 'filter_month', 0, 'string');
+		$this->setState('filter.filter_month', $filtermonth);
+
 		# publish state
 		$this->_populatePublishState($task);
 
@@ -428,6 +431,21 @@ class JemModelEventslist extends ListModel
 		#############################
 		$cal_from = $this->getState('filter.calendar_from');
 		$cal_to   = $this->getState('filter.calendar_to');
+		$cal_month   = $this->getState('filter.filter_month');
+		if ($cal_month) {
+			$cal_month = DateTime::createFromFormat('Y-m', $cal_month);
+			$filter_date_from = $cal_month->format('Y-m-01');
+			$filter_date_to = $cal_month->modify('last day of this month')->format('Y-m-d');
+
+			$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $filter_date_from .'") >= 0';
+			$this->setState('filter.calendar_from',$where);
+
+			$where = ' DATEDIFF(a.dates, "'. $filter_date_to . '") <= 0';
+			$this->setState('filter.calendar_to',$where);
+
+			$cal_from = $this->getState('filter.calendar_from');
+			$cal_to   = $this->getState('filter.calendar_to');
+		}
 
 		if ($cal_from) {
 			$query->where($cal_from);
