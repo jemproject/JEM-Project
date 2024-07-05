@@ -66,6 +66,10 @@ body.com_jem.body-overlayed {
     justify-content: flex-start;
 }
 
+#jem .jem-justify-center {
+    justify-content: space-around;
+}
+
 #jem .jem-justify-end {
     justify-content: flex-end;
 }
