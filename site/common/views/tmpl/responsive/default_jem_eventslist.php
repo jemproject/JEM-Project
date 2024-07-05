@@ -102,9 +102,20 @@ function jem_common_show_filter(&$obj) {
       <?php echo $this->lists['filter']; ?>
       <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
+    <div>
+        <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
+    </div>
+      <?php
+      // Get min and max for 2 years
+      $monthNow = (new DateTime())->format('Y-m');
+      $monthEnd = (new DateTime('first day of +2 year'))->format('Y-m');
+      ?>
+    <div class="jem-row jem-justify-start jem-nowrap">
+        <input type="month" name="filter_month" id="filter_month" value="<?php echo $this->lists['month'];?>" min="<?php echo $monthNow; ?>" max="<?php echo $monthEnd; ?>">
+    </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
 	  	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem-limit-smallist">
@@ -143,22 +154,45 @@ function jem_common_show_filter(&$obj) {
 </div>
 
 <ul class="eventlist">
-  <?php if ($this->noevents == 1) : ?>
-    <li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
-  <?php else : ?>
-      <?php
-      // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
-      // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
-      $isSafari = false;
-      if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-        $isSafari = true;
-      }
-      ?>
-			<?php $this->rows = $this->getRows(); ?>
-			<?php foreach ($this->rows as $row) : ?>
-        <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-row jem-justify-start jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if (($this->jemsettings->showdetails == 1) && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?>>
-				<?php else : ?>
+    <?php if ($this->noevents == 1) : ?>
+        <li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
+    <?php else : ?>
+        <?php
+        // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
+        // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
+        $isSafari = false;
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
+            $isSafari = true;
+        }
+        ?>
+        <?php
+        $this->rows = $this->getRows();
+        $showMonthRow = false;
+        $previousYearMonth='';
+        $paramShowMonthRow = $this->params->get('showmonthrow','');
+        ?>
+
+        <?php foreach ($this->rows as $row) : ?>
+            <?php
+            if($paramShowMonthRow){
+                //get event date
+                $year = date('Y', strtotime($row->dates));
+                $month = date('m', strtotime($row->dates));
+                $day = date('d', strtotime($row->dates));
+                $YearMonth = date('F Y', strtotime($row->dates));
+
+                if(!$previousYearMonth || $previousYearMonth != $YearMonth) {
+                    $showMonthRow = $YearMonth;
+                }
+
+                //Publish month row
+                if($showMonthRow){ ?>
+                     <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><?php echo $showMonthRow;?></li>
+                <?php }
+            }?>
+            <?php if (!empty($row->featured)) :   ?>
+                <li class="jem-event jem-row jem-justify-start jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if (($this->jemsettings->showdetails == 1) && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?>>
+            <?php else : ?>
           <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if (($this->jemsettings->showdetails == 1) && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?>>
 				<?php endif; ?>
         
@@ -303,6 +337,13 @@ function jem_common_show_filter(&$obj) {
             </div>            
           </div>
        
+            <?php
+            if ($paramShowMonthRow) {
+                $previousYearMonth = $YearMonth;
+                $showMonthRow = false;
+            }
+            ?>
+
           <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
           <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
           <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -345,7 +386,7 @@ function jem_common_show_filter(&$obj) {
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
   </div>
 <?php endif; ?>

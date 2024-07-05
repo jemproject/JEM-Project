@@ -54,7 +54,7 @@
                class="inputbox"
                size="40"
                label="COM_JEM_LONGITUDE"
-               description="COM_JEM_LONGITUDE"
+               description="COM_JEM_LONGITUDE_DESC"
         />
         <field name="postalCode" type="text"
                class="inputbox"
