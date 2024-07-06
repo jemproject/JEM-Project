@@ -66,6 +66,10 @@ body.com_jem.body-overlayed {
     justify-content: flex-start;
 }
 
+#jem .jem-justify-center {
+    justify-content: space-around;
+}
+
 #jem .jem-justify-end {
     justify-content: flex-end;
 }
@@ -109,6 +113,12 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dt label span,
 #jem .jem-dl-long dt label span {
     font-weight: normal;
+}
+
+#jem .row-month {
+    font-weight: bold;
+    padding: 5px;
+    font-size: 1.332rem;
 }
 
 /*Special for the description lable in editevent and editvenue*/
