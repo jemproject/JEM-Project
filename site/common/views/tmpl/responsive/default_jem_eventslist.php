@@ -179,10 +179,10 @@ function jem_common_show_filter(&$obj)
             <?php
             if ($paramShowMonthRow) {
                 //get event date
-                $year = date('Y', strtotime($row->dates));
-                $month = date('m', strtotime($row->dates));
-                $day = date('d', strtotime($row->dates));
-                $YearMonth = date('F Y', strtotime($row->dates));
+                $year = date('Y', strtotime($row->dates ?? ''));
+                $month = date('m', strtotime($row->dates ?? ''));
+                $day = date('d', strtotime($row->dates ?? ''));
+                $YearMonth = date('F Y', strtotime($row->dates ?? ''));
 
                 if (!$previousYearMonth || $previousYearMonth != $YearMonth) {
                     $showMonthRow = $YearMonth;
