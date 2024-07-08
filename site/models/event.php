@@ -311,7 +311,7 @@ class JemModelEvent extends ItemModel
 
 			$dateFrom = date('Y-m-d', $datetimeFrom);
 			$timeFrom = date('H:i', $datetimeFrom);
-			$query->where('(a.recurrence_first_id = ' . (int) ($pk? $pk : $id) . ' OR a.id = ' . (int) $id . ")");
+			$query->where('(a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id));
 			$query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
 
 			try
@@ -827,8 +827,6 @@ class JemModelEvent extends ItemModel
 			}
 		}
 
-		// TODO: Register user in all $events
-
 		if (!count ($events)){
 			$events [] = clone $event;
 		}
@@ -891,7 +889,7 @@ class JemModelEvent extends ItemModel
 			// IP
 			$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-			$result = $this->_doRegister($e->id, $uid, $uip, $status, $places, $comment, $errMsg, $regid);
+			$result = $this->_doRegister($e->id, $uid, $uip, $status, $places, $comment, $errMsg, $reg->id);
 			if (!$result) {
 				$this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
 			}
