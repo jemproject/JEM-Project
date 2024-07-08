@@ -191,12 +191,11 @@ function jem_common_show_filter(&$obj) {
 
         <?php foreach ($this->rows as $row) : ?>
             <?php
-            if ($paramShowMonthRow) {
+            if ($paramShowMonthRow && $row->dates) {
                 //get event date
-                $year = date('Y', strtotime($row->dates ?? ''));
-                $month = date('m', strtotime($row->dates ?? ''));
-                $day = date('d', strtotime($row->dates ?? ''));
-                $YearMonth = date('F Y', strtotime($row->dates  ?? ''));
+                $year = date('Y', strtotime($row->dates));
+                $month = date('F', strtotime($row->dates));
+                $YearMonth = Text::_('COM_JEM_'.strtoupper ($month)) . ' ' . $year;
 
                 if (!$previousYearMonth || $previousYearMonth != $YearMonth) {
                     $showMonthRow = $YearMonth;
@@ -204,7 +203,7 @@ function jem_common_show_filter(&$obj) {
 
                 //Publish month row
                 if ($showMonthRow) { ?>
-                    <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><?php echo $showMonthRow;?></li>
+                    <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><span class="row-month"><?php echo $showMonthRow;?></span></li>
                 <?php }
             } ?>
         <?php if (!empty($row->featured)) :   ?>
@@ -305,7 +304,7 @@ function jem_common_show_filter(&$obj) {
               <?php endif; ?> 
             <?php
             if ($paramShowMonthRow) {
-                $previousYearMonth = $YearMonth;
+                $previousYearMonth = $YearMonth ?? '';
                 $showMonthRow = false;
             }
             ?>

@@ -115,6 +115,12 @@ body.com_jem.body-overlayed {
     font-weight: normal;
 }
 
+#jem .row-month {
+    font-weight: bold;
+    padding: 5px;
+    font-size: 1.332rem;
+}
+
 /*Special for the description lable in editevent and editvenue*/
 
 #jem #jform_articletext-lbl,
