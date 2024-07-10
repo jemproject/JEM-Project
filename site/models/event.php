@@ -86,7 +86,7 @@ class JemModelEvent extends ItemModel
 						                'a.created, a.created_by, a.published, a.registra, a.unregistra, a.unregistra_until, ' .
 						                'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
 						                'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
-						                'a.seriesbooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
+						                'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
 						                'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
 				$query->from('#__jem_events AS a');
 
@@ -243,7 +243,7 @@ class JemModelEvent extends ItemModel
  	 * @param  int  The id of the parent event.
 	 * @return mixed  item data object on success, false on failure.
 	 */
-	public function getListRecurrenceEventsbyId ($id, $pk, $datetimeFrom)
+	public function getListRecurrenceEventsbyId ($id, $pk, $datetimeFrom, $iduser=null, $status=null)
 	{
 		// Initialise variables.
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
@@ -251,7 +251,6 @@ class JemModelEvent extends ItemModel
 		if ($this->_item === null) {
 			$this->_item = array();
 		}
-
 
 		try
 		{
@@ -270,8 +269,8 @@ class JemModelEvent extends ItemModel
 					'a.created, a.created_by, a.published, a.registra, a.unregistra, a.unregistra_until, ' .
 					'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
 					'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
-					'a.seriesbooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-					'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
+					'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
+					'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting' . ($status? ', r.status':''):'')));
 			$query->from('#__jem_events AS a');
 
 			# Author
@@ -307,12 +306,23 @@ class JemModelEvent extends ItemModel
 				$subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
 			}
 
+			# If $iduser is defined, then the events list is filtered by registration of this user
+			if($iduser) {
+				$query->join('LEFT', '#__jem_register AS r ON r.event = a.id');
+				$query->where("r.uid = " . $iduser );
+				$query->where("a.id != " . $id );
+				if(!$status){
+					$query->where("r.status = 1");
+				}
+			}
+
 			$query->select('(' . $subQuery . ') as contactid2');
 
 			$dateFrom = date('Y-m-d', $datetimeFrom);
-			$timeFrom = date('H:i', $datetimeFrom);
-			$query->where('(a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id));
+			$timeFrom = date('H:i:s', $datetimeFrom);
+			$query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
 			$query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+			$query->order('a.dates ASC');
 
 			try
 			{
@@ -326,7 +336,11 @@ class JemModelEvent extends ItemModel
 			}
 
 			if (empty($data)) {
-				throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+				if(!$iduser) {
+					throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+				}else{
+					return false;
+				}
 			}
 
 			# Convert parameter fields to objects.
@@ -808,6 +822,8 @@ class JemModelEvent extends ItemModel
 		$regid   = $app->input->getInt('regid', 0);
 		$addplaces = $app->input->getInt('addplaces', 0);
 		$cancelplaces = $app->input->getInt('cancelplaces', 0);
+		$checkseries = $app->input->getString('reg_check_series', '0');
+		$checkseries = ($checkseries === 'true' || $checkseries === 'on' || $checkseries === '1');
 		$uid = (int) $user->get('id');
 		$eventId = (int) $this->_registerid;
 		$events = array();
@@ -818,13 +834,12 @@ class JemModelEvent extends ItemModel
 			$event = false;
 		}
 
-		// If recurrence event
+		// If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
 		if($event->recurrence_type){
-			// If event has 'seriesbooking' active
-			if($event->seriesbooking){
-				// Get the all recurrence events of serie from now
-				$events = $this->getListRecurrenceEventsbyId($event->id, $event->recurrence_first_id, time());
-			}
+
+			if(($event->seriesbooking && !$event->singlebooking) || ($event->singlebooking && $checkseries)) {
+                $events = $this->getListRecurrenceEventsbyId($event->id, $event->recurrence_first_id, time());
+            }
 		}
 
 		if (!count ($events)){

@@ -316,6 +316,7 @@ Joomla.submitbutton = function(task)
                             <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('requestanswer'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('seriesbooking'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('singlebooking'); ?></div></li>
 							<li>
                                 <div class="label-form"><div class="control-group">
                                         <div class="control-label">

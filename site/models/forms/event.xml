@@ -364,6 +364,14 @@
                value="0"
                default="0"
         />
+        <field name="singlebooking" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
+               description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
+               value="0"
+               default="0"
+        />
     </fieldset>
 
     <fieldset name="recurrence"

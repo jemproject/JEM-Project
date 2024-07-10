@@ -221,6 +221,8 @@ use Joomla\CMS\Date\Date;
 			<br/>
             <li><?php echo $this->form->getLabel('seriesbooking'); ?> <?php echo $this->form->getInput('seriesbooking'); ?></li>
             <br/>
+            <li><?php echo $this->form->getLabel('singlebooking'); ?> <?php echo $this->form->getInput('singlebooking'); ?></li>
+            <br/>
             <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
 			<br/>
