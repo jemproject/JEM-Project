@@ -249,155 +249,251 @@ class JemModelEvent extends JemModelAdmin
         $new     = (bool)empty($data['id']);
 
         // Variables
-        $cats             = $data['cats'];
-        $invitedusers     = isset($data['invited']) ? $data['invited'] : '';
-        $recurrencenumber = $jinput->get('recurrence_number', '', 'int');
-        $recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
-        $metakeywords     = $jinput->get('meta_keywords', '', '');
-        $metadescription  = $jinput->get('meta_description', '', '');
-        $task             = $jinput->get('task', '', 'cmd');
-        $data['metadata']  = isset($data['metadata']) ? $data['metadata'] : '';
-        $data['attribs']  = isset($data['attribs']) ? $data['attribs'] : '';
-        $data['ordering']  = isset($data['ordering']) ? $data['ordering'] : '';
-
-        // event maybe first of recurrence set -> dissolve complete set
-        if (JemHelper::dissolve_recurrence($data['id'])) {
-            $this->cleanCache();
+        $cats                 = $data['cats'];
+        $invitedusers         = isset($data['invited']) ? $data['invited'] : '';
+        $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
+        $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
+        $metakeywords         = $jinput->get('meta_keywords', '', '');
+        $metadescription      = $jinput->get('meta_description', '', '');
+        $task                 = $jinput->get('task', '', 'cmd');
+        $data['metadata']     = isset($data['metadata']) ? $data['metadata'] : '';
+        $data['attribs']      = isset($data['attribs']) ? $data['attribs'] : '';
+        $data['ordering']     = isset($data['ordering']) ? $data['ordering'] : '';
+        // Categories
+        if(isset($data['cats'][0])){
+            if (count ($data['cats'])==1) {
+                $data['locid'] = $data['cats'][0];
+            }else{
+                $data['locid'] = implode(',', $data['cats']);
+            }
+        }else{
+            $data['locid'] = '0'; // This should be an error, all events must have at less one category
+            Factory::getApplication()->enqueueMessage(Text::_('ERROR_SAVE_NOT_PERMITTED') . ' [JEM error 510]', 'warning');
+            return false;
         }
-
-        // on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
-        if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
-            $data['registra'] = ($data['registra'] == 1) ? 3 : 2;
-        }
-
-        // convert international date formats...
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        if (!empty($data['dates']) && ($data['dates'] != null)) {
-            $d = Factory::getDate($data['dates'], 'UTC');
-            $data['dates'] = $d->format('Y-m-d', true, false);
-        }
-        if (!empty($data['enddates']) && ($data['enddates'] != null)) {
-            $d = Factory::getDate($data['enddates'], 'UTC');
-            $data['enddates'] = $d->format('Y-m-d', true, false);
-        }
-
-        if ($data['dates'] == null || $data['recurrence_type'] == '0' )
-        {
-            $data['recurrence_number']     = '0';
-            $data['recurrence_byday']      = '0';
-            $data['recurrence_counter']    = '0';
-            $data['recurrence_type']       = '0';
-            $data['recurrence_limit']      = '0';
-            $data['recurrence_limit_date'] = null;
-            $data['recurrence_first_id']   = '0';
+        // Times
+        $starthours    = $jinput->get('starthours', '', 'int');
+        $startminutes = $jinput->get('startminutes', '', 'int');
+        if ($starthours){
+            if ($startminutes){
+                $data['times'] = $starthours . ':' . $startminutes . ':00';
+            } else {
+                $data['times'] = $starthours . ':00:00';
+            }
         } else {
-            if (!$new) {
-                // edited event maybe part of a recurrence set
-                // -> drop event from set
-                $data['recurrence_first_id'] = '0';
-                $data['recurrence_counter']  = '0';
-            }
-
-            $data['recurrence_number'] = $recurrencenumber;
-            $data['recurrence_byday']  = $recurrencebyday;
-
-            if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
-                $d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
-                $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
-            }
+            $data['times'] = null;
         }
-
-        $data['meta_keywords']    = $metakeywords;
-        $data['meta_description'] = $metadescription;
-
-        // Store IP of author only.
-        if ($new) {
-            $author_ip = $jinput->get('author_ip', '', 'string');
-            $data['author_ip'] = $author_ip;
-        }
-
-        // Store as copy - reset creation date, modification fields, hit counter, version
-        if ($task == 'save2copy') {
-            unset($data['created']);
-            unset($data['modified']);
-            unset($data['modified_by']);
-            unset($data['version']);
-            unset($data['hits']);
-        }
-
-        // Save the event
-        $saved = parent::save($data);
-
-        if ($saved) {
-            // At this point we do have an id.
-            $pk = $this->getState($this->getName() . '.id');
-
-            if (isset($data['featured'])) {
-                $this->featured($pk, $data['featured']);
+        //Endtimes
+        $endhours   = $jinput->get('endhours', '', 'int');
+        $endminutes = $jinput->get('endminutes', '', 'int');
+        if ($endhours){
+            if ($endminutes){
+                $data['endtimes'] = $endhours . ':' . $endminutes . ':00';
+            } else {
+                $data['endtimes'] = $endhours . ':00:00';
             }
+        }else{
+            $data['endtimes'] = null;
+        }
+        // Introtext
+        $data['introtext'] = $data['articletext'];
 
-            // on frontend attachment uploads maybe forbidden
-            // so allow changing name or description only
-            $allowed = $backend || ($jemsettings->attachmentenabled > 0);
+        // Load the event from db, detect if the event is recurring and if the event just needs to be updated
+        $save = false;
+        if (isset($data["id"])) {
+            if($data["id"] && $data["recurrence_type"]) {
+                // This is event exist in event table and it's recurrence
+                $this->eventid = $data["id"];
+                $eventdb = $this->getEventAllData();
+                $event = (array)$eventdb;
+                $data['dates'] = substr($data['dates'], 0, 10);
+                $data['recurrence_limit_date'] = substr($data['recurrence_limit_date'], 0, 10);
+                $diff = array_diff_assoc($data, $event);
 
-            if ($allowed) {
-                // attachments, new ones first
-                $attachments   = $jinput->files->get('attach', array(), 'array');
-                $attach_name   = $jinput->post->get('attach-name', array(), 'array');
-                $attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
-                $attach_access = $jinput->post->get('attach-access', array(), 'array');
-                foreach($attachments as $n => &$a) {
-                    $a['customname']  = array_key_exists($n, $attach_access) ? $attach_name[$n]   : '';
-                    $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n]  : '';
-                    $a['access']      = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
+                //If not, update de field of this event (save=false).
+                $fieldNotAllow = ['recurrence_first_id', 'recurrence_number', 'recurrence_type', 'recurrence_counter', 'recurrence_limit', 'recurrence_limit_date', 'recurrence_byday'];
+                foreach ($diff as $d => $value) {
+                    if (in_array($d, $fieldNotAllow)) {
+                        // This event must be updated its fields
+                        $save = true;
+                        break;
+                    }
                 }
-                JemAttachment::postUpload($attachments, 'event' . $pk);
+            }
+        }
+
+        if($save) {
+
+            // event maybe first of recurrence set -> dissolve complete set
+            if (JemHelper::dissolve_recurrence($data['id'])) {
+                $this->cleanCache();
             }
 
-            // and update old ones
-            $old = array();
-            $old['id']          = $jinput->post->get('attached-id', array(), 'array');
-            $old['name']        = $jinput->post->get('attached-name', array(), 'array');
-            $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
-            $old['access']      = $jinput->post->get('attached-access', array(), 'array');
+            // on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
+            if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
+                $data['registra'] = ($data['registra'] == 1) ? 3 : 2;
+            }
 
-            foreach ($old['id'] as $k => $id) {
-                $attach = array();
-                $attach['id']          = $id;
-                $attach['name']        = $old['name'][$k];
-                $attach['description'] = $old['description'][$k];
+            // convert international date formats...
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            if (!empty($data['dates']) && ($data['dates'] != null)) {
+                $d = Factory::getDate($data['dates'], 'UTC');
+                $data['dates'] = $d->format('Y-m-d', true, false);
+            }
+            if (!empty($data['enddates']) && ($data['enddates'] != null)) {
+                $d = Factory::getDate($data['enddates'], 'UTC');
+                $data['enddates'] = $d->format('Y-m-d', true, false);
+            }
+
+            if ($data['dates'] == null || $data['recurrence_type'] == '0') {
+                $data['recurrence_number'] = '0';
+                $data['recurrence_byday'] = '0';
+                $data['recurrence_counter'] = '0';
+                $data['recurrence_type'] = '0';
+                $data['recurrence_limit'] = '0';
+                $data['recurrence_limit_date'] = null;
+                $data['recurrence_first_id'] = '0';
+            } else {
+                if (!$new) {
+                    // edited event maybe part of a recurrence set
+                    // -> drop event from set
+                    $data['recurrence_first_id'] = '0';
+                    $data['recurrence_counter'] = '0';
+                }
+
+                $data['recurrence_number'] = $recurrencenumber;
+                $data['recurrence_byday'] = $recurrencebyday;
+
+                if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
+                    $d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
+                    $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
+                }
+            }
+
+            $data['meta_keywords'] = $metakeywords;
+            $data['meta_description'] = $metadescription;
+
+            // Store IP of author only.
+            if ($new) {
+                $author_ip = $jinput->get('author_ip', '', 'string');
+                $data['author_ip'] = $author_ip;
+            }
+
+            // Store as copy - reset creation date, modification fields, hit counter, version
+            if ($task == 'save2copy') {
+                unset($data['created']);
+                unset($data['modified']);
+                unset($data['modified_by']);
+                unset($data['version']);
+                unset($data['hits']);
+            }
+
+            // Save the event
+            $saved = parent::save($data);
+
+            if ($saved) {
+                // At this point we do have an id.
+                $pk = $this->getState($this->getName() . '.id');
+
+                if (isset($data['featured'])) {
+                    $this->featured($pk, $data['featured']);
+                }
+
+                // on frontend attachment uploads maybe forbidden
+                // so allow changing name or description only
+                $allowed = $backend || ($jemsettings->attachmentenabled > 0);
+
                 if ($allowed) {
-                    $attach['access']  = $old['access'][$k];
-                } // else don't touch this field
-                JemAttachment::update($attach);
-            }
+                    // attachments, new ones first
+                    $attachments = $jinput->files->get('attach', array(), 'array');
+                    $attach_name = $jinput->post->get('attach-name', array(), 'array');
+                    $attach_descr = $jinput->post->get('attach-desc', array(), 'array');
+                    $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                    foreach ($attachments as $n => &$a) {
+                        $a['customname'] = array_key_exists($n, $attach_access) ? $attach_name[$n] : '';
+                        $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n] : '';
+                        $a['access'] = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                    }
+                    JemAttachment::postUpload($attachments, 'event' . $pk);
+                }
 
-            // Store cats
-            if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
-                //	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, Log::ERROR);
-                $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
-                $saved = false;
-            }
+                // and update old ones
+                $old = array();
+                $old['id'] = $jinput->post->get('attached-id', array(), 'array');
+                $old['name'] = $jinput->post->get('attached-name', array(), 'array');
+                $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
+                $old['access'] = $jinput->post->get('attached-access', array(), 'array');
 
-            // Store invited users (frontend only, on backend no attendees on editevent view)
-            if (!$backend && ($jemsettings->regallowinvitation == 1)) {
-                if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
-                    //	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, Log::ERROR);
-                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+                foreach ($old['id'] as $k => $id) {
+                    $attach = array();
+                    $attach['id'] = $id;
+                    $attach['name'] = $old['name'][$k];
+                    $attach['description'] = $old['description'][$k];
+                    if ($allowed) {
+                        $attach['access'] = $old['access'][$k];
+                    } // else don't touch this field
+                    JemAttachment::update($attach);
+                }
+
+                // Store cats
+                if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
+                    //	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, Log::ERROR);
+                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
                     $saved = false;
                 }
-            }
 
-            // check for recurrence
-            // when filled it will perform the cleanup function
-            $table->load($pk);
-            if (($table->recurrence_number > 0) && ($table->dates != null)) {
-                JemHelper::cleanup(2); // 2 = force on save, needs special attention
+                // Store invited users (frontend only, on backend no attendees on editevent view)
+                if (!$backend && ($jemsettings->regallowinvitation == 1)) {
+                    if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
+                        //	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, Log::ERROR);
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+                        $saved = false;
+                    }
+                }
+
+                // check for recurrence
+                // when filled it will perform the cleanup function
+                $table->load($pk);
+                if (($table->recurrence_number > 0) && ($table->dates != null)) {
+                    JemHelper::cleanup(2); // 2 = force on save, needs special attention
+                }
+            }
+        }else{
+            // Update field of this event
+            $fieldAllow=['title', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'hits', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'metadata', 'featured', 'attribs', 'language'];
+            $saved = false;
+            foreach ($diff as $d => $value){
+                if(in_array($d, $fieldAllow)) {
+                    $this->updateField($data['id'], $d, $value);
+                    $saved = true;
+                }
             }
         }
 
         return $saved;
     }
+
+
+    /**
+     * Get event all data
+     *
+     * @access public
+     * @return object
+     */
+    public function getEventAllData()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('*');
+        $query->from('#__jem_events');
+        $query->where('id = '.$db->Quote($this->eventid));
+        $db->setQuery( $query );
+        $event = $db->loadObject();
+
+        return $event;
+    }
+
 
     /**
      * Method to update cats_event_selections table.
@@ -600,6 +696,59 @@ class JemModelEvent extends JemModelAdmin
 
         $this->cleanCache();
 
+        return true;
+    }
+
+    /**
+     * Method to update the field in the events table.
+     *
+     * @param  int     The id of event.
+     * @param  string  The field of event table.
+     * @param  string  The value of field (to update).
+     *
+     * @return boolean True on success.
+     */
+    public function updateField($eventid, $field, $value)
+    {
+        // Sanitize the ids.
+        $eventid = (int)$eventid;
+
+        if (empty($eventid)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            if($field == 'locid'){
+                $locid = explode (',', $value);
+
+                // Delete all old categories for id event
+                $db->setQuery('DELETE FROM #__jem_cats_event_relations WHERE itemid = ' . $db->quote($eventid) );
+                $db->execute();
+
+                // Insert new categories for id event
+                foreach($locid as $l){
+                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . $l . ',' . $db->quote($eventid) . ',0)');
+                    $db->execute();
+                }
+
+                // If there is more than 1 category
+                if(count($locid) > 1){
+                    $value = 0;
+                }
+            }
+
+            // Update the value of field into events table
+            $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . $db->quote($value) . ' WHERE id = ' . $db->quote($eventid));
+            $db->execute();
+
+        } catch (Exception $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        $this->cleanCache();
         return true;
     }
 }

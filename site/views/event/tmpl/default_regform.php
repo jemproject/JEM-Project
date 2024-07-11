@@ -183,7 +183,7 @@ if ($this->showRegForm && empty($this->print)) :
                         echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
                     }
                         if ($this->item->recurrence_type){
-                            echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_1') . '</div>';
+                            echo '<div class="px-3 pb-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_1') . '</div>';
                             if ($this->item->seriesbooking) {
                                 // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
                                 if (!$this->registereduser){
@@ -221,7 +221,7 @@ if ($this->showRegForm && empty($this->print)) :
                                     echo '</tbody></table></div>';
 
                                     if ($this->item->singlebooking) {
-                                        echo '<div style="padding-left: 20px;"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</input ></div>';
+                                        echo '<div class="px-3 pt-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</input ></div>';
                                     } else {
                                         echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_3') . '</div>';
                                     }
@@ -261,7 +261,7 @@ if ($this->showRegForm && empty($this->print)) :
                                 echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . ($placesRegisteredUser ? $placesRegisteredUser : $waitingPlacesUser) . '" max="' . ($placesRegisteredUser ? $placesRegisteredUser : $waitingPlacesUser) . '" min="1">' . ' ' . $cancelplaces;
                             }
                                 if ($this->item->recurrence_type) {
-                                    echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_1') . '</div>';
+                                    echo '<div class="px-3 pb-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_1') . '</div>';
                                     if ($this->item->seriesbooking) {
                                         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
                                         $events = $model->getListRecurrenceEventsbyId($this->item->id, $this->item->recurrence_first_id, time(), $this->user->id);
@@ -281,7 +281,7 @@ if ($this->showRegForm && empty($this->print)) :
                                             echo '</tbody></table></div>';
 
                                             if ($this->item->singlebooking) {
-                                                echo '<div class="px-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_2') . '</input ></div>';
+                                                echo '<div class="px-3 pt-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_2') . '</input ></div>';
                                             } else {
                                                 echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_3') . '</div>';
                                             }

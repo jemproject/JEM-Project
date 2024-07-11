@@ -313,8 +313,13 @@ class JemModelEvent extends ItemModel
 				$query->where("a.id != " . $id );
 				if(!$status){
 					$query->where("r.status = 1");
+				}else{
+					$query->where("r.status != -2");
 				}
 			}
+
+			// Not include the delete event
+			$query->where("a.published != -2");
 
 			$query->select('(' . $subQuery . ') as contactid2');
 

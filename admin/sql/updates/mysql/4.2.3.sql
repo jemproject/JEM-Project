@@ -9,7 +9,7 @@ INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('recurrence_a
 
 -- change values
 ALTER TABLE `#__jem_events` ADD `seriesbooking` INT(1) NOT NULL DEFAULT '0' AFTER `requestanswer`;
-ALTER TABLE `#__jem_events` ADD `singlebooking` INT(1) NOT NULL DEFAULT '0' AFTER `requestanswer`;
+ALTER TABLE `#__jem_events` ADD `singlebooking` INT(1) NOT NULL DEFAULT '0' AFTER `seriesbooking`;
 
 -- update values
 UPDATE `#__jem_events` SET `recurrence_number` = 7 WHERE `recurrence_number` = 6 AND `recurrence_type` = 4;

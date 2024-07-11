@@ -233,7 +233,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
 			// Get event
 			$query = $db->getQuery(true);
-			$query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','seriesbooking'));
+			$query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','seriesbooking','singlebooking'));
 			$query->from('#__jem_events');
 			$query->where('id= '.$db->quote($eventid));
 
@@ -245,15 +245,17 @@ class JemModelAttendee extends BaseDatabaseModel
             if($event->recurrence_type){
                 // Retrieving seriesbooking
                 $seriesbooking = $data["seriesbooking"];
+                $singlebooking = $data["singlebooking"];
+
                 // If event has 'seriesbooking' active
-                if($event->seriesbooking && $seriesbooking){
+                if($event->seriesbooking && $seriesbooking && !$singlebooking){
                     //GEt date and time now
                     $dateFrom = date('Y-m-d', time());
                     $timeFrom = date('H:i', time());
 
                     // Get the all recurrence events of serie from now
                     $query = $db->getQuery(true);
-                    $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking'));
+                    $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
                     $query->from('#__jem_events as a');
                     $query->where('(a.recurrence_first_id = ' . (int) ($event->recurrence_first_id ?? $event->id) . ' OR a.id = ' . $db->quote($eventid) . ")");
                     $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
