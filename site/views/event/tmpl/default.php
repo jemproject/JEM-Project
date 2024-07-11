@@ -64,7 +64,12 @@ if ($jemsettings->oldevent > 0) {
         <span style="white-space: nowrap;">
             <?php
             echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
-            echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+	        if($this->item_root) {
+	            echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+	        }
+            if(!$this->item_root || ($this->item_root && $this->item->recurrence_first_id)) {
+                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+            }
             echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
             ?>
         </span>

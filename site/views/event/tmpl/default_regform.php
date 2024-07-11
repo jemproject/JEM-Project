@@ -28,6 +28,7 @@ if ($this->showRegForm && empty($this->print)) :
         $placesBookedUser = 0;
         $placesRegisteredUser = 0;
         $statusRegistrationUser = -1;
+        $model = $this->getModel('event');
 
         if ($this->item->maxbookeduser != 0) {
             $placesavailableuser = $this->item->maxbookeduser;
@@ -149,7 +150,7 @@ if ($this->showRegForm && empty($this->print)) :
                 }
 				// for this user no additional places
                 if ($placesavailableuser === 0) { ?>
-					<span class="badge bg-warning text-dark" role="alert">
+                        <span class="badge bg-warning text-light" role="alert">
                     <?php echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER'); ?>
 					</span>
 				<?php
@@ -181,7 +182,53 @@ if ($this->showRegForm && empty($this->print)) :
                     } else {
                         echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
                     }
-                }
+                        if ($this->item->recurrence_type){
+                            echo '<div class="px-3 pb-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_1') . '</div>';
+                            if ($this->item->seriesbooking) {
+                                // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
+                                if (!$this->registereduser){
+                                    $events = $model->getListRecurrenceEventsbyId($this->item->id, $this->item->recurrence_first_id, time());
+                                }else{
+                                    $events = $model->getListRecurrenceEventsbyId($this->item->id, $this->item->recurrence_first_id, time(), $this->user->id, 1);
+                                }
+                                if($events) {
+                                    // Shown the active series event list
+                                    echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_4') . '</div>';
+                                    echo '<div class="px-3"><table id="table-series"><thead><tr><th>' . Text::_('COM_JEM_DATE') . '</th><th>' . Text::_('COM_JEM_TITLE') . '</th>' . ($this->registereduser? '<th>' . Text::_('COM_JEM_STATUS') . '</th>':'') . '<th>ID</th></tr></thead><tbody>';
+                                    foreach ($events as $e) {
+                                        if ($this->registereduser) {
+                                            switch ($e->status) {
+                                                case -1:
+                                                    $status = Text::_('COM_JEM_ATTENDEES_NOT_ATTENDING');
+                                                    break;
+                                                case 0:
+                                                    $status = Text::_('COM_JEM_ATTENDEES_INVITED');
+                                                    break;
+                                                case 1:
+                                                    if ($e->waiting) {
+                                                        $status = Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST');
+                                                    } else {
+                                                        $status = Text::_('COM_JEM_ATTENDEES_ATTENDING');
+                                                    }
+                                                    break;
+                                                default:
+                                                    $status = Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN');
+                                                    break;
+                                            }
+                                        }
+                                        echo '<tr><td nowrap>' . $e->dates . ' [' . ($e->times ? substr($e->times, 0, 5) : '') . ($e->endtimes ? '-' . substr($e->endtimes, 0, 5) : '') . ']</td><td>' . $e->title . '</td>' . ($this->registereduser? '<td>' . $status . '</td>':'') . '<td>' . $e->id . '</td></tr>';
+                                    }
+                                    echo '</tbody></table></div>';
+
+                                    if ($this->item->singlebooking) {
+                                        echo '<div class="px-3 pt-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_GO_SERIES_2') . '</input ></div>';
+                                    } else {
+                                        echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_3') . '</div>';
+                                    }
+                                }
+                            }
+                        }
+                    }
                 ?>
             </p>
             <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser) {?>
@@ -213,6 +260,38 @@ if ($this->showRegForm && empty($this->print)) :
                                 echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
                                 echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . ($placesRegisteredUser ? $placesRegisteredUser : $waitingPlacesUser) . '" max="' . ($placesRegisteredUser ? $placesRegisteredUser : $waitingPlacesUser) . '" min="1">' . ' ' . $cancelplaces;
                             }
+                                if ($this->item->recurrence_type) {
+                                    echo '<div class="px-3 pb-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_1') . '</div>';
+                                    if ($this->item->seriesbooking) {
+                                        // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
+                                        $events = $model->getListRecurrenceEventsbyId($this->item->id, $this->item->recurrence_first_id, time(), $this->user->id);
+                                        if($events) {
+                                            // Shown the active series event list
+                                            echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_4') . '</div>';
+                                            echo '<div class="px-3"><table id="table-series"><thead><tr><th>' . Text::_('COM_JEM_DATE') . '</th><th>' .Text::_('COM_JEM_TITLE') . '</th><th>' . Text::_('COM_JEM_STATUS') . '</th><th>ID</th></tr></thead><tbody>';
+                                            foreach ($events as $e) {
+
+                                                if($e->waiting){
+                                                    $status = Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST');
+                                                }else{
+                                                    $status = Text::_('COM_JEM_ATTENDEES_ATTENDING');
+                                                }
+                                                echo '<tr><td nowrap>' . $e->dates . ' [' . ($e->times ? substr($e->times, 0, 5) : '') . ($e->endtimes ? '-' . substr($e->endtimes, 0, 5) : '') . ']</td><td>' . $e->title . '</td><td>' . $status . '</td><td>' . $e->id . '</td></tr>';
+                                            }
+                                            echo '</tbody></table></div>';
+
+                                            if ($this->item->singlebooking) {
+                                                echo '<div class="px-3 pt-3"> <input id = "jem_unregister_event_series" type = "checkbox"  name = "reg_check_series"> ' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_2') . '</input ></div>';
+                                            } else {
+                                                echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_3') . '</div>';
+                                            }
+                                        }else{
+                                            echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_5') . '</div>';
+                                        }
+                                    }
+                                } else {
+                                    echo '<div>' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_3') . '</div>';
+                                }
                         } else {
 								//...booked places
                             $cancelplaces = Text::_('COM_JEM_I_WILL_NOT_GO_3');

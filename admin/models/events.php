@@ -47,7 +47,7 @@ class JemModelEvents extends ListModel
 	 * Method to auto-populate the model state.
 	 *
 	 * @Note  Calling getState in this method will result in recursion.
-	 */
+     */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
@@ -83,8 +83,8 @@ class JemModelEvents extends ListModel
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param  string $id A prefix for the store id.
-	 * @return string A store id.
+     * @param string $id A prefix for the store id.
+     * @return string A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -100,7 +100,7 @@ class JemModelEvents extends ListModel
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return JDatabaseQuery
-	 */
+     */
 	protected function getListQuery()
 	{
 		// Create a new query object.
@@ -231,7 +231,7 @@ class JemModelEvents extends ListModel
 	 * Method to get the userinformation of edited/submitted events
 	 *
 	 * @return object
-	 */
+     */
 	public function getItems()
 	{
 		$items  = parent::getItems();

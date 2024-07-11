@@ -144,6 +144,16 @@ Joomla.submitbutton = function(task)
 			</tr>
 			<?php endif; ?>
 			<?php if (1/*!$this->row->id*/): ?>
+            <tr>
+                <td class="key">
+                    <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>
+                        <?php echo Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES').':'; ?>
+                    </label>
+                </td>
+                <td>
+                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1""/>
+                </td>
+            </tr>
 			<tr>
 				<td class="key">
 					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>

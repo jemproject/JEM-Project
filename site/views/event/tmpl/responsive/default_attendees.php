@@ -23,12 +23,14 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
 <div class="register">
 	<dl class="jem-dl floattext">
-    <?php $maxplaces      = (int)$this->item->maxplaces; ?>
-    <?php $reservedplaces = (int)$this->item->reservedplaces; ?>
-    <?php $minbookeduser  = (int)$this->item->minbookeduser; ?>
-    <?php $maxbookeduser  = (int)$this->item->maxbookeduser; ?>
-    <?php $booked         = (int)$this->item->booked; ?>
-    <?php $waitinglist    = (int)$this->item->waitinglist; ?>
+    <?php $maxplaces        = (int)$this->item->maxplaces; ?>
+    <?php $reservedplaces   = (int)$this->item->reservedplaces; ?>
+    <?php $minbookeduser    = (int)$this->item->minbookeduser; ?>
+    <?php $maxbookeduser    = (int)$this->item->maxbookeduser; ?>
+    <?php $booked           = (int)$this->item->booked; ?>
+    <?php $waitinglist      = (int)$this->item->waitinglist; ?>
+    <?php $seriesbooking    = (int)$this->item->seriesbooking; ?>
+    <?php $seriesbooking    = (int)$this->item->singlebooking; ?>
 
     <?php if($this->settings->get('event_show_registration_counters','1')) : ?>
         <?php if ($maxplaces > 0) : ?>
@@ -57,6 +59,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
             <dd class="register waitinglist-places"><?php echo $this->numWaitingPlaces; ?></dd>
         <?php endif; ?>
+
     <?php endif; /* Not show counters registration */ ?>
 
 		<?php
@@ -227,7 +230,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 					break;
 				case 2:
                 if ($this->item->requestanswer) { ?>
-                <span class="badge bg-warning text-dark">
+                                <span class="badge rounded-pill text-light bg-secondary">
 									<?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
 						</span>
                 <?php

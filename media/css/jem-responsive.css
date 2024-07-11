@@ -286,6 +286,15 @@ body.com_jem.body-overlayed {
     width: auto;
 }
 
+#jem #starthours,
+#jem #startminutes,
+#jem #endhours,
+#jem #endminutes,
+#jem #jform_locid_name {
+    padding: .6rem 1rem;
+    border-color: #ced4da;
+}
+
 #jem form input::-webkit-outer-spin-button,
 #jem form input::-webkit-inner-spin-button {
     opacity: 1;
@@ -642,3 +651,23 @@ body.com_jem.body-overlayed {
 .jem-registered-user-owner {
     font-weight: bold;
 }
+
+#table-series {
+    border-collapse: collapse;
+    width: auto;
+    max-width: 100%;
+}
+#table-series th {
+    padding: 12px;
+    text-align: center;
+    background-color: #04AA6D;
+    color: white;
+    border: 1px solid #ddd;
+}
+#table-series td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+#table-series tr:nth-child(even){background-color: #f2f2f2;}
+#table-series tr:nth-child(odd){background-color: #ffffff;}

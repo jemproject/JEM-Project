@@ -29,6 +29,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
     <?php $maxbookeduser  = (int)$this->item->maxbookeduser; ?>
     <?php $booked         = (int)$this->item->booked; ?>
     <?php $waitinglist    = (int)$this->item->waitinglist; ?>
+    <?php $seriesbooking    = (int)$this->item->seriesbooking; ?>
+    <?php $seriesbooking    = (int)$this->item->singlebooking; ?>
 
         <?php if ($this->settings->get('event_show_registration_counters','1')) : ?>
         <?php if ($maxplaces > 0) : ?>
@@ -227,7 +229,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             break;
                         case 2:
 			                if ($this->item->requestanswer) { ?>
-			                <span class="badge bg-warning text-dark">
+                                <span class="badge rounded-pill text-light bg-secondary">
 									<?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
 									</span>
 			                <?php

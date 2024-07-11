@@ -434,7 +434,7 @@ static public function lightbox() {
 			$settings = JemHelper::globalattribs();
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
-			$showIcon = 1; //$settings->get('global_show_icons', 1);
+			$showIcon = $settings->get('global_show_icons', 1);
 
 			switch ($view)
 			{
@@ -447,13 +447,21 @@ static public function lightbox() {
 					}
 
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+                        if($item->recurrence_type && !$item->recurrence_first_id){
+                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', 'fa-sharp fa-solid fa-pen-to-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
+                            $overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
+                            $text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
+                        }else {
+                            $image = jemhtml::icon('com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+                            $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+                            $text = Text::_('COM_JEM_EDIT_EVENT');
+                        }
 					} else {
 						$image = Text::_('COM_JEM_EDIT_EVENT');
+                        $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+                        $text = Text::_('COM_JEM_EDIT_EVENT');
 					}
 					$id = isset($item->did) ? $item->did : $item->id;
-					$overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
-					$text = Text::_('COM_JEM_EDIT_EVENT');
 					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 

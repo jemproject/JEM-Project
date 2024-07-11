@@ -25,15 +25,36 @@ use Joomla\CMS\Date\Date;
 				<?php echo $this->form->getLabel('recurrence_limit_date'); ?>
 				<?php echo $this->form->getInput('recurrence_limit_date'); ?>
 				<br><div class="recurrence_notice"><small>
-				<?php
-				$anticipation = $this->jemsettings->recurrence_anticipation;
-				$limitdate = new Date('now +' . $anticipation . 'days');
-				$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
-				echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
+					<?php
+	                switch ($this->item->recurrence_type) {
+		                case 1:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+		                    break;
+		                case 2:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+		                    break;
+		                case 3:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_month;
+		                    break;
+		                case 4:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+		                    break;
+		                case 5:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_year;
+		                    break;
+		                default:
+		                    $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+		                    break;
+		            }
+					
+					$limitdate = new Date('now +' . $anticipation . 'month');
+					$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+					echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
 				?></small></div>
 			</li>
 		</ul>
 		<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
+        <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number;?>"></input>
 		<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
 		<script type="text/javascript">
@@ -51,6 +72,9 @@ use Joomla\CMS\Date\Date;
 			$select_output[4] = "<?php
 			echo Text::_('COM_JEM_OUTPUT_WEEKDAY');
 			?>";
+            $select_output[5] = "<?php
+            echo Text::_('COM_JEM_OUTPUT_YEAR');
+            ?>";
 
 		var $weekday = new Array();
 			$weekday[0] = new Array("MO", "<?php echo Text::_('COM_JEM_MONDAY'); ?>");
@@ -110,13 +134,19 @@ use Joomla\CMS\Date\Date;
 				                                  Text::_('COM_JEM_FRIDAY'), Text::_('COM_JEM_SATURDAY'),
 				                                  Text::_('COM_JEM_SUNDAY')),
 				                            $recurr_byday);
-				$recurr_num  = str_ireplace(array('5', '6'),
+				$recurr_num  = str_ireplace(array('6', '7'),
 				                            array(Text::_('COM_JEM_LAST'), Text::_('COM_JEM_BEFORE_LAST')),
 				                            $this->item->recurr_bak->recurrence_number);
 				$recurr_info = str_ireplace(array('[placeholder]', '[placeholder_weekday]'),
 				                            array($recurr_num, $recurr_days),
 				                            Text::_('COM_JEM_OUTPUT_WEEKDAY'));
 				break;
+            case 5:
+                $recurr_type = Text::_('COM_JEM_YEARLY');
+                $recurr_info = str_ireplace('[placeholder]',
+                    $this->item->recurr_bak->recurrence_number,
+                    Text::_('COM_JEM_OUTPUT_YEAR'));
+                break;
 			default:
 				break;
 			}
@@ -176,25 +206,29 @@ use Joomla\CMS\Date\Date;
 				<?php echo $this->form->getInput('unregistra_until'); ?>
 				<span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
 			</li>
-			<br/><br/>			
+			<br/>
 			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
-            <br/><br/>
+            <br/>
             <li><?php echo $this->form->getLabel('minbookeduser'); ?> <?php echo $this->form->getInput('minbookeduser'); ?></li>
-            <br/><br/>
+            <br/>
             <li><?php echo $this->form->getLabel('maxbookeduser'); ?> <?php echo $this->form->getInput('maxbookeduser'); ?></li>
-            <br/><br/>
+            <br/>
 			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label> <?php echo $this->form->getInput('reservedplaces'); ?></li>
-            <br/><br/>
+            <br/>
 			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
-			<br/><br/>
+			<br/>
 			<li><?php echo $this->form->getLabel('requestanswer'); ?> <?php echo $this->form->getInput('requestanswer'); ?></li>
-			<br/><br/>
-			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+			<br/>
+            <li><?php echo $this->form->getLabel('seriesbooking'); ?> <?php echo $this->form->getInput('seriesbooking'); ?></li>
+            <br/>
+            <li><?php echo $this->form->getLabel('singlebooking'); ?> <?php echo $this->form->getInput('singlebooking'); ?></li>
+            <br/>
+            <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
-			<br/><br/>
+			<br/>
 			<?php endif; ?>
 			<li><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label> <?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></li>
-			<br/><br/>
+			<br/>
 			<?php if ($this->item->maxplaces): ?>
 			<li><?php echo $this->form->getLabel('avplaces'); ?> <?php echo '<input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="' . ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces) . '" />'; ?></li>
 			<?php endif; ?>
