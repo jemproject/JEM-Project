@@ -95,8 +95,35 @@ function jem_common_show_filter(&$obj) {
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-    <div>
-      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
+      <div>
+          <?php echo '<label for="filter">' . Text::_('COM_JEM_FILTER') . '</label>'; ?>
+      </div>
+      <div class="jem-row jem-justify-start jem-nowrap">
+          <?php echo $this->lists['filter']; ?>
+    		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+      </div>
+      <div>
+          <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
+      </div>
+      <?php
+      // Get min and max for 2 years
+      $monthNow = (new DateTime())->format('Y-m');
+      $monthEnd = (new DateTime('first day of +2 year'))->format('Y-m');
+      ?>
+      <div class="jem-row jem-justify-start jem-nowrap">
+      	<input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo ($this->lists['month']) ?? '';?>" min="<?php echo $monthNow; ?>" max="<?php echo $monthEnd; ?>">
+      </div>
+      <div class="jem-row jem-justify-start jem-nowrap">
+          <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+    		<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+      </div>
+      <?php if ($this->settings->get('global_display', 1)) : ?>
+          <div class="jem-limit-smallist">
+              <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
+              <?php echo $this->pagination->getLimitBox(); ?>
+
+          </div>
+      <?php endif; ?>
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <?php echo $this->lists['filter']; ?>

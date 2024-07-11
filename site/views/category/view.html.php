@@ -210,6 +210,7 @@ class JemViewCategory extends JemView
 			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 			$filter_type      = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', 0, 'int');
 			$search           = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+			$search_month     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
 			$task             = $app->input->get('task', '');
 
 			// table ordering
