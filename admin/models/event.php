@@ -299,10 +299,11 @@ class JemModelEvent extends JemModelAdmin
         $data['introtext'] = $data['articletext'];
 
         // Load the event from db, detect if the event is recurring and if the event just needs to be updated
-        $save = false;
+        $save = true;
         if (isset($data["id"])) {
             if($data["id"] && $data["recurrence_type"]) {
                 // This is event exist in event table and it's recurrence
+                $save = false;
                 $this->eventid = $data["id"];
                 $eventdb = $this->getEventAllData();
                 $event = (array)$eventdb;
