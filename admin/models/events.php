@@ -154,13 +154,13 @@ class JemModelEvents extends ListModel
 		$endDate   = $this->getState('filter_end');
 		if (!empty($startDate) && !empty($endDate)) {
 			$query->where('(a.dates >= '.$db->Quote($startDate).')');
-			$query->where('(a.enddates <= '.$db->Quote($endDate).')');
+            $query->where('(a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' . $db->Quote($endDate) . '))');
 		} else {
 			if (!empty($startDate)) {
 				$query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
 			}
 			if (!empty($endDate)) {
-				$query->where('(a.enddates IS NULL OR a.enddates <= '.$db->Quote($endDate).')');
+                $query->where('(a.enddates IS NULL OR a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' .  $db->Quote($endDate) . '))');
 			}
 		}
 
