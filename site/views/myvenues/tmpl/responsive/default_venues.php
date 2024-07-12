@@ -93,7 +93,7 @@ use Joomla\CMS\Router\Route;
 		<?php
 		echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>';
 		//echo '<span class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
-		echo $this->venues_pagination->getLimitBox();
+		echo $this->pagination->getLimitBox();
 		?>
 		</div>
 		<?php endif; ?>		
