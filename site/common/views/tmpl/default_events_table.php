@@ -39,7 +39,7 @@ use Joomla\CMS\Router\Route;
 		$monthNow = (new DateTime())->format('Y-m');
 		$monthEnd = (new DateTime('first day of +2 year'))->format('Y-m');
 		?>
-        <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'];?>" min="<?php echo $monthNow; ?>" max="<?php echo $monthEnd; ?>">
+	        <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'] ?? '';?>" min="<?php echo $monthNow; ?>" max="<?php echo $monthEnd; ?>">
 		<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
       <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>

@@ -128,7 +128,7 @@ function jem_common_show_filter(&$obj) {
         $monthEnd = (new DateTime('first day of +2 year'))->format('Y-m');
         ?>
         <div class="jem-row jem-justify-start jem-nowrap">
-            <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'];?>" min="<?php echo $monthNow; ?>" max="<?php echo $monthEnd; ?>">
+            <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'] ?? '';?>" min="<?php echo $monthNow; ?>" max="<?php echo $monthEnd; ?>">
         </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
