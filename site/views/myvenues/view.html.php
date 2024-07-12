@@ -16,7 +16,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
 /**
- * MyVenues-View
+ * View: MyVenues
  */
 class JemViewMyvenues extends JemView
 {
@@ -25,6 +25,10 @@ class JemViewMyvenues extends JemView
 	 */
 	public function display($tpl = null)
 	{
+        // Get data from model
+		$venues 	  = $this->get('Venues');
+		$pagination   = $this->get('VenuesPagination');
+
 		// initialize variables
 		$app          = Factory::getApplication();
 		$document     = $app->getDocument();
@@ -61,18 +65,15 @@ class JemViewMyvenues extends JemView
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
-			$venues = $this->get('Venues');
-			$venues_pagination = $this->get('VenuesPagination');
-
 			// are no venues available?
 			$novenues = (!$venues) ? 1 : 0;
 
 			// get variables
-			$filter_order = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
+			$filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
 			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
-			// $filter_state     = $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', 	'*', 'word');
-			$filter = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
-			$search = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
+			// $filter_state  = $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', 	'*', 'word');
+			$filter 		  = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
+			$search 		  = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
 
 			// search filter
 			$filters = array();
@@ -148,24 +149,24 @@ class JemViewMyvenues extends JemView
 				if ($canPublishVenue) break;
 			}
 
-			// Set the user permissions
+        	//Check if the user has permission to add things
 			$permissions = new stdClass();
 			$permissions->canAddEvent = $user->can('add', 'event');
 			$permissions->canAddVenue = $user->can('add', 'venue');
 			$permissions->canPublishVenue = $canPublishVenue;
 
 			$this->action = $uri->toString();
-			$this->venues = $venues;
-			$this->task = $task;
-			$this->print = $print;
-			$this->params = $params;
-			$this->venues_pagination = $venues_pagination;
-			$this->jemsettings = $jemsettings;
-			$this->settings = $settings;
-			$this->permissions = $permissions;
-			$this->pagetitle = $pagetitle;
-			$this->lists = $lists;
-			$this->novenues = $novenues;
+			$this->venues 		= $venues;
+			$this->task 		= $task;
+			$this->print 		= $print;
+			$this->params 		= $params;
+			$this->pagination 	= $pagination;
+			$this->jemsettings 	= $jemsettings;
+			$this->settings 	= $settings;
+			$this->pagetitle 	= $pagetitle;
+			$this->lists 		= $lists;
+			$this->novenues 	= $novenues;
+			$this->permissions 	= $permissions;
 			$this->print_link = $print_link;
 			$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		}

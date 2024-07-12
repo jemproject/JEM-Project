@@ -10,8 +10,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<div id="jem" class="jem_eventslist<?php
-echo $this->pageclass_sfx; ?>">
+<div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx; ?>">
     <div class="buttons">
         <?php
         $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);

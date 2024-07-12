@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 ?>
-	<?php /*?>	
+
 <style>
 div#jem_filter select {
     width: auto;
@@ -23,7 +23,6 @@ div#jem_filter select {
 	cursor: pointer;
 }
 </style>
-	<?php */?>	
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
@@ -39,30 +38,24 @@ function jem_common_show_filter(&$obj) {
 }
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-  <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-   <?php if ($this->settings->get('global_show_filter',1)) : ?>
-	    <div>
-	      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-	    </div>
-	    <div class="jem-row jem-justify-start jem-nowrap">
-	      <?php echo $this->lists['filter']; ?>
-	      <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-	    </div>
-	    <div class="jem-row jem-justify-start jem-nowrap">
-	      <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-	      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button> 
-	    </div>
+	<div id="jem_filter" class="floattext">
+   	<?php if ($this->settings->get('global_show_filter',1)) : ?>
+		<div class="jem_fleft">
+			<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
+			<?php echo $this->lists['filter'].'&nbsp;'; ?>
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+			<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+		    <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+		</div>
 	<?php endif; ?>
-	  	<?php if ($this->settings->get('global_display',1)) : ?>
+
+	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
-		   
 		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
 		<?php echo $this->pagination->getLimitBox(); ?>
-		
 	</div>
 	<?php endif; ?>
-  </div>
-
+</div>
 <?php endif; ?>
 
 	<div class="table table-responsive table-striped table-hover table-sm">
