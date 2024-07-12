@@ -1362,3 +1362,8 @@ input#places::-webkit-inner-spin-button {
 #eventtitle {
     width: 100%;
 }
+
+.wauto-minwmax {
+    width: auto;
+    min-width: max-content;
+}

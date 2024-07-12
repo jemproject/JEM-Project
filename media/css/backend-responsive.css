@@ -1319,3 +1319,8 @@ a.label:focus {
     color: #333;
     border: 0;
 }
+
+.wauto-minwmax {
+    width: auto;
+    min-width: max-content;
+}

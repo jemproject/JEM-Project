@@ -54,14 +54,14 @@ $(document).ready(function() {
 	<div id="j-main-container" class="j-main-container">
 		<fieldset id="filter-bar" class=" mb-3">
 			<div class="row">
-				<div class="col-md-8">				
-					<div class="row mb-3">
-						<div class="col-md-3">
+				<div class="col-md-11">		
+					<div class="row mb-11">
+						<div class="col-md-1 wauto-minwmax">
 							<div class="input-group">
 								<?php echo $this->lists['filter']; ?>
 							</div>
 						</div>
-						<div class="col-md-6">					
+						<div class="col-md-2">					
 							<div class="input-group">  
 								<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >											
 								
@@ -70,31 +70,36 @@ $(document).ready(function() {
 								</button>
 								<button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 							</div>
-						</div>			
-					</div>
-				</div>
-				<div class="col-md-4">				
-					<div class="row">	
-						<div class="col-md-12">
-							<label class="filter-hide-lbl" for="filter_begin"><?php echo Text::_('COM_JEM_EVENTS_FILTER_STARTDATE'); ?></label>
+						</div>		
+						<div class="col-md-2">
+
 							<?php echo HTMLHelper::_('calendar', $this->state->get('filter_begin'), 'filter_begin', 'filter_begin', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_STARTDATE')));?>
 						</div>
-						<div class="col-md-12">
-							<label class="filter-hide-lbl" for="filter_end"><?php echo Text::_('COM_JEM_EVENTS_FILTER_ENDDATE'); ?></label>
+						<div class="col-md-2">
+
 							<?php echo HTMLHelper::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_ENDDATE') ));?>
 						</div>
-						<div class="col-md-6">
-							<select name="filter_state" class="inputbox form-select" onchange="this.form.submit()">
+						<div class="col-md-2">
+							<select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
 								<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
 								<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
 							</select>
 						</div>
-						<div class="col-md-6">
-							<select name="filter_access" class="inputbox form-select" onchange="this.form.submit()">
+						<div class="col-md-2">
+							<select name="filter_access" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
 								<option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
 								<?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
 							</select>
-						</div>
+						</div>						
+					</div>
+				</div>
+				<div class="col-md-1">				
+					<div class="row">	
+                        <div class="col-md-12">
+                            <div class=" float-end">
+                                <?php echo $this->pagination->getLimitBox(); ?>
+                            </div>
+                        </div>
 					</div>
 				</div>
 			</div>
@@ -119,35 +124,6 @@ $(document).ready(function() {
 						<th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 					</tr>
 				</thead>
-
-				<tfoot>
-					<tr>
-						<td colspan="20">
-							<div class="row align-items-center">
-                                <div class="col-md-9">
-                                    <?php
-                                    echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter());
-                                    ?>
-                                </div>
-								<div class="col-md-3">
-									<div class="limit float-end">
-										<?php 
-											echo $this->pagination->getLimitBox();	
-										?>
-									</div>
-								</div>
-
-							</div>
-							
-							<?php 
-							// echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter());
-
-							
-							 ?>
-							 
-						</td>
-					</tr>
-				</tfoot>
 
 				<tbody id="search_in_here">
 					<?php
