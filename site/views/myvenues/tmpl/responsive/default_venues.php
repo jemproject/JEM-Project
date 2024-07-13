@@ -201,5 +201,5 @@ use Joomla\CMS\Router\Route;
 
 
 <div class="pagination">
-	<?php echo $this->venues_pagination->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
