@@ -259,64 +259,80 @@ class JemModelEvent extends JemModelAdmin
         $data['metadata']     = isset($data['metadata']) ? $data['metadata'] : '';
         $data['attribs']      = isset($data['attribs']) ? $data['attribs'] : '';
         $data['ordering']     = isset($data['ordering']) ? $data['ordering'] : '';
-        // Categories
-        if(isset($data['cats'][0])){
-            if (count ($data['cats'])==1) {
-                $data['locid'] = $data['cats'][0];
-            }else{
-                $data['locid'] = implode(',', $data['cats']);
-            }
-        }else{
-            $data['locid'] = '0'; // This should be an error, all events must have at less one category
-            Factory::getApplication()->enqueueMessage(Text::_('ERROR_SAVE_NOT_PERMITTED') . ' [JEM error 510]', 'warning');
-            return false;
-        }
-        // Times
-        $starthours    = $jinput->get('starthours', '', 'int');
-        $startminutes = $jinput->get('startminutes', '', 'int');
-        if ($starthours){
-            if ($startminutes){
-                $data['times'] = $starthours . ':' . $startminutes . ':00';
-            } else {
-                $data['times'] = $starthours . ':00:00';
-            }
-        } else {
-            $data['times'] = null;
-        }
-        //Endtimes
-        $endhours   = $jinput->get('endhours', '', 'int');
-        $endminutes = $jinput->get('endminutes', '', 'int');
-        if ($endhours){
-            if ($endminutes){
-                $data['endtimes'] = $endhours . ':' . $endminutes . ':00';
-            } else {
-                $data['endtimes'] = $endhours . ':00:00';
-            }
-        }else{
-            $data['endtimes'] = null;
-        }
-        // Alias
-        if(!$data['alias']){
-            $alias = strtolower($data['title']);
-            $alias = preg_replace('/[^a-z0-9]+/i', '-', $alias);
-            $alias = preg_replace('/-+/', '-', $alias);
-            $data['alias'] = trim($alias, '-');
-        }
-        // Introtext
-        $data['introtext'] = $data['articletext'];
 
-        // Load the event from db, detect if the event is recurring and if the event just needs to be updated
+        // Load the event from db, detect if the event isn't new and is recurrence type.
+        // In this case, the event just needs to be updated if the recurrence setting hasn't changed.
         $save = true;
         if (isset($data["id"])) {
             if($data["id"] && $data["recurrence_type"]) {
+
                 // This is event exist in event table and it's recurrence
                 $save = false;
                 $this->eventid = $data["id"];
-                $eventdb = $this->getEventAllData();
-                $event = (array)$eventdb;
+                $eventdb = (array)$this->getEventAllData();
+
+                // Categories
+                if(isset($data['cats'][0])){
+                    if (count ($data['cats'])==1) {
+                        $data['locid'] = $data['cats'][0];
+                    }else{
+                        $data['locid'] = implode(',', $data['cats']);
+                    }
+                }else{
+                    $data['locid'] = '0'; // This should be an error, all events must have at less one category
+                    Factory::getApplication()->enqueueMessage(Text::_('ERROR_SAVE_NOT_PERMITTED') . ' [JEM error 510]', 'warning');
+                    return false;
+                }
+
+                // Times
+                $starthours    = $jinput->get('starthours', '', 'int');
+                $startminutes = $jinput->get('startminutes', '', 'int');
+                if ($starthours){
+                    if ($startminutes){
+                        $data['times'] = $starthours . ':' . $startminutes . ':00';
+                    } else {
+                        $data['times'] = $starthours . ':00:00';
+                    }
+                } else {
+                    $data['times'] = null;
+                }
+
+                //Endtimes
+                $endhours   = $jinput->get('endhours', '', 'int');
+                $endminutes = $jinput->get('endminutes', '', 'int');
+                if ($endhours){
+                    if ($endminutes){
+                        $data['endtimes'] = $endhours . ':' . $endminutes . ':00';
+                    } else {
+                        $data['endtimes'] = $endhours . ':00:00';
+                    }
+                }else{
+                    $data['endtimes'] = null;
+                }
+
+                // Alias
+                if(isset($data['alias'])) {
+                    if (!$data['alias']) {
+                        $alias = strtolower($data['title']);
+                        $alias = preg_replace('/[^a-z0-9]+/i', '-', $alias);
+                        $alias = preg_replace('/-+/', '-', $alias);
+                        $data['alias'] = trim($alias, '-');
+                    }
+                }else{
+                    $data['alias'] = $eventdb['alias'];
+                }
+
+                // Introtext
+                $data['introtext'] = $data['articletext'];
+
+                // Dates
                 $data['dates'] = substr($data['dates'], 0, 10);
+
+                // Recurrence limit date
                 $data['recurrence_limit_date'] = substr($data['recurrence_limit_date'], 0, 10);
-                $diff = array_diff_assoc($data, $event);
+
+                // Get the fields changed
+                $diff = array_diff_assoc($data, $eventdb);
 
                 //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
                 //If not, update de field of this event (save=false).
