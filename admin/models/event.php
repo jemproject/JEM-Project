@@ -295,6 +295,13 @@ class JemModelEvent extends JemModelAdmin
         }else{
             $data['endtimes'] = null;
         }
+        // Alias
+        if(!$data['alias']){
+            $alias = strtolower($data['title']);
+            $alias = preg_replace('/[^a-z0-9]+/i', '-', $alias);
+            $alias = preg_replace('/-+/', '-', $alias);
+            $data['alias'] = trim($alias, '-');
+        }
         // Introtext
         $data['introtext'] = $data['articletext'];
 
