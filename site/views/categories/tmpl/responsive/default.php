@@ -28,7 +28,8 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 	<?php foreach ($this->rows as $row) : ?>
-		<h2 class="jem cat<?php echo $row->id; ?>">
+	<div class="jem catid<?php echo $row->id; ?>">
+		<h2>
 			<?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
     
@@ -85,14 +86,15 @@ use Joomla\CMS\Router\Route;
           ?>
         </button>
       </a>
+    </div>
     </div>    
     
     <?php 
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;
-    ?>
-	<?php endforeach; ?>
+   
+   endforeach; ?>
 
 	<!--pagination-->
 	<div class="pagination">
