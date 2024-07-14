@@ -90,11 +90,11 @@ static public function lightbox() {
 			${$key} = isset($permissions->$key) ? $permissions->$key: null;
 		}
 		if (is_object($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide') as $key) {
 				${$key} = isset($params->$key) ? $params->$key : null;
 			}
 		} elseif (is_array($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide') as $key) {
 				${$key} = key_exists($key, $params) ? $params[$key] : null;
 			}
 		} else {
@@ -136,8 +136,8 @@ static public function lightbox() {
 		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
 			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
 		}
-		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'venue', 'weekcal', 'category')))) {
-			$buttons[$idx][] = JemOutput::icalbutton(($ical_link? $ical_link: $slug), $view); // slug: for '&id='
+		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist')))) {
+			$buttons[$idx][] = JemOutput::icalbutton($slug, $view); // slug: for '&id='
 		}
 		if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
 			$buttons[$idx][] = JemOutput::exportbutton($id); // id: for '&id='
@@ -468,7 +468,7 @@ static public function lightbox() {
 
 				case 'editvenue':
 					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
-						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
+						$checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
 						$button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = HTMLHelper::_('date', $item->vChecked_out_time);
 						return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';

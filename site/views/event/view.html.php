@@ -72,14 +72,6 @@ class JemViewEvent extends JemView
 		$this->regs['waiting']       = $model->getRegisters($this->state->get('event.id'),  2);
 		$this->regs['all']           = $model->getRegisters($this->state->get('event.id'), 'all');
 
-		// get number waiting places
-		$this->numWaitingPlaces=0;
-		if($this->regs['waiting']!= false){
-			foreach ($this->regs['waiting'] as $regwaitinguser){
-				$this->numWaitingPlaces = $this->numWaitingPlaces + $regwaitinguser->places;
-			}
-		}
-
 		// loop through attendees
 		$registers_array = array();
 		if($this->regs['all'])
@@ -203,8 +195,8 @@ class JemViewEvent extends JemView
 		
 		//use temporary class var to triggerEvent content prepare plugin for venue description
 		$tempVenue = new stdClass();
-		$tempVenue->text = $item->locdescription ?? '';
-		$tempVenue->title = $item->venue ?? '';
+		$tempVenue->text = $item->locdescription;
+		$tempVenue->title = $item->venue;
 		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
 		$item->locdescription = $tempVenue->text;
 		$item->venue = $tempVenue->title;

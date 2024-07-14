@@ -809,7 +809,7 @@ class JemModelEventslist extends JModelList
 		$app         = Factory::getApplication();
 		$jemsettings = JemHelper::config();
 		$user        = JemFactory::getUser();
-		$userId      = $user->id ?? null;
+		$userId      = $user->get('id');
 
 		# publish state
 		$format = $app->input->getCmd('format', '');

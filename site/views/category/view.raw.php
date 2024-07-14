@@ -27,22 +27,18 @@ class JemViewCategory extends HtmlView
 		$app       = Factory::getApplication();
 		$jinput    = $app->input;
 
-        $year  = (int)$jinput->getInt('yearID', date("Y"));
-        $month = (int)$jinput->getInt('monthID', date("m"));
-		$catid = (int)$jinput->getInt('id', 0);
-
 		if ($settings2->get('global_show_ical_icon','0')==1) {
 			// Get data from the model
-			$model = $this->getModel('CategoryCal');
-			$model->setState('list.start',0);
+			$model = $this->getModel();
 			$model->setState('list.limit',$settings->ical_max_items);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+			$model->setState('list.start',0);
+			$rows = $model->getItems();
 
-            $rows = $model->getItems();
+			$catid = $jinput->getInt('id');
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
-			$vcal->setConfig("filename", "events_category_" . $catid . "_". $year . $month . ".ics");
+			$vcal->setConfig("filename", "category" . $catid . ".ics");
 
 			if (!empty($rows)) {
 				foreach ($rows as $row) {

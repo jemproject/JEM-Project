@@ -45,7 +45,7 @@ use Joomla\CMS\Language\Text;
 					<div>
 						<div><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
 						<?php
-							$attribs = array('class' => 'inputbox form-control', 'size' => '7');
+							$attribs = array('class' => 'inputbox', 'size' => '7');
 							/* if attachment upload is not allowed changing access level should also not possible */
 							if ($this->jemsettings->attachmentenabled == 0) :
 								$attribs['disabled'] = 'disabled';
@@ -69,7 +69,10 @@ use Joomla\CMS\Language\Text;
 				<td style="width: 100%;">
 					<dl class="jem-dl">
 						<dt><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></dt>
-						<dd><input type="file" name="attach[]" class="attach-field" /><input type="reset" value="<?php echo Text::_('JSEARCH_FILTER_CLEAR') ?>" class="btn btn-primary"></dd>
+						<dd><input type="file" name="attach[]" class="attach-field" /></dd>
+						<?php /* see attachments.js for button's onclick function */ ?>
+						<dt> </dt>
+						<dd><button type="button" class="clear-attach-field button3 formelm-buttons btn"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
 						<dt><?php echo Text::_('COM_JEM_ATTACHMENT_NAME'); ?></dt>
 						<dd><input type="text" name="attach-name[]" class="attach-name" value="" /></dd>
 						<dt><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></dt>
@@ -79,7 +82,7 @@ use Joomla\CMS\Language\Text;
 				<td>
 					<div>
 						<div><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class' => 'inputbox form-control', 'size' => '7'), 'value', 'text', 1); ?>
+						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class' => 'inputbox', 'size' => '7'), 'value', 'text', 0); ?>
 					</div>
 				</td>
 			</tr>

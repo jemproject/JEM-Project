@@ -6,11 +6,6 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-#jem .jem-removebutton {
-	cursor: pointer;
-	color: red;
-}
-
 #jem .jem-row {
     display: flex;
     flex-direction: row;
@@ -774,12 +769,6 @@ div.jem_editevent form div.jem_register {
 #jem input[id$="unregistra_until"] {
     width: 40px;
     text-align: right;
-}
-
-#jem #addplaces, #jem #cancelplaces {
-	text-align: center;
-	display: inline;
-	max-width: 100px;
 }
 
 #jem form input::-webkit-outer-spin-button,

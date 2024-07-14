@@ -13,6 +13,7 @@
 
 defined('_JEXEC') or die;
 
+
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');

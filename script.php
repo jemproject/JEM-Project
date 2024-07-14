@@ -1,6 +1,7 @@
 <?php
 /**
  * @version    4.2.0
+ * @package    JEM
  * @copyright  (C) 2013-2023 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
@@ -226,7 +227,7 @@ class com_jemInstallerScript
         $devLevel = Version::PATCH_VERSION;
         $this->newRelease = (string) $parent->manifest->version;
 
-        if (version_compare(JVERSION, '6.0.0', 'ge') || // J! 6.x NOT supported, but allow alpha/beta
+        if (version_compare(JVERSION, '5.0.0', 'ge') || // J! 5.x NOT supported, but allow alpha/beta
             !(($current_version >= '4.3' && $devLevel >= '0') ||
                 ($current_version >= '4.2' && $devLevel >= '9') ||
                 ($current_version == '4.1' && $devLevel >= '5') ||
@@ -301,7 +302,7 @@ class com_jemInstallerScript
      */
     public function getParam($name)
     {
-        $db = Factory::getDbo();
+        $db = JFactory::getDbo();
         $query = $db->getQuery(true);
         $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
         $db->setQuery($query);
@@ -607,7 +608,7 @@ class com_jemInstallerScript
     private function updateJem2315()
     {
         // write changed datetime entry '0000-00-00 ...' to null into DB
-        $db = Factory::getDbo();
+        $db = JFactory::getDbo();
         $query = $db->getQuery(true);
 		
         //Categories table

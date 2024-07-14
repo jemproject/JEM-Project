@@ -13,14 +13,9 @@
 }
 
 table.month, table.week {
-    background-color: #fff;
+    background-color: #FFF;
+    border: 2px solid #000;
     width: 100%;
-}
-
-@media screen and (min-width: 801px)  {
-table.month, table.week {
-    border: 1px solid #000;
-    }
 }
 
 table.month {
@@ -73,12 +68,14 @@ td.today div.daynum::after {
 }
 
 .daynum a::after {
+    /* font-family: FontAwesome;
     content:"\f08e";*/
     font-size: 10px;
     padding-left: 5px;
-    font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
-    font-weight:var(--fa-style,900);
-    content: "\f35d";
+
+    font-family: Font Awesome\ 5 Free;
+    font-weight: 900;
+    content: "\f35d"
 }
 
 
@@ -318,8 +315,6 @@ div#jem .monthnavigation { /* delete complete construct */
     vertical-align: middle;
 }
 
-div#jem .monthnavigation a {text-decoration: none;}
-
 div#jem .monthname { /*delete complete construct */
     border: 0px;
     font-size: 16pt;
@@ -356,7 +351,7 @@ div#jem .monthname { /*delete complete construct */
 
 
 @media not print {
-    @media only all and (max-width: 30rem), screen and (max-device-width: 30rem) and (orientation: landscape) {
+    @media only all and (max-width: 50rem), screen and (max-device-width: 50rem) and (orientation: landscape) {
         /* Force table to not be like tables anymore */
         div#jem table, div#jem thead, div#jem tbody, div#jem th, div#jem td, div#jem tr {
             display: inline;

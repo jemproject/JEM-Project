@@ -178,12 +178,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <div class="jem-event-info-small jem-attendee-status">
               <?php
               $status = (int)$row->status;
-              if($this->event->waitinglist) {
-                  if ($status === 1 && $row->waiting == 1) { $status = 2; }
-                  echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
-              }else{
-                  echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
-              }
+              if ($status === 1 && $row->waiting == 1) { $status = 2; }
+              echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
               ?>
             </div>
             <div class="jem-event-info-small jem-attendee-places">

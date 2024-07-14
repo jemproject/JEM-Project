@@ -43,8 +43,6 @@ body.com_jem.body-overlayed {
     clear: both;
 }
 
-#jem .jem-removebutton {cursor: pointer; color: red;}
-
 #jem .jem-row {
     display: flex;
     flex-direction: row;
@@ -86,7 +84,7 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dt,
 #jem .jem-dl-long dt {
     float: left;
-    width: 275px;
+    width: 175px;
     overflow: hidden;
     clear: left;
     text-align: left;
@@ -106,10 +104,6 @@ body.com_jem.body-overlayed {
     font-weight: bold;
 }
 
-#jem .jem-dl dt label span,
-#jem .jem-dl-long dt label span {
-    font-weight: normal;
-}
 
 /*Special for the description lable in editevent and editvenue*/
 
@@ -120,10 +114,9 @@ body.com_jem.body-overlayed {
 
 #jem .jem-dl dd,
 #jem .jem-dl-long dd {
-    margin-left: 240px;
+    margin-left: 170px;
     padding-top: 5px;
     padding-bottom: 5px;
-    display: flow-root;
 }
 
 #jem .jem-dl-long dd {
@@ -439,12 +432,6 @@ body.com_jem.body-overlayed {
 #jem.jem_attendees .jem-attendee-remove {
     flex: 1 4%;
     text-align: center;
-}
-
-#jem #addplaces, #jem #cancelplaces {
-	text-align: center;
-	display:inline;
-	max-width: 100px;
 }
 
 #jem div.jem-map {

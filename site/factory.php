@@ -37,10 +37,9 @@ abstract class JemFactory extends Factory
 	 */
 	public static function getUser($id = null)
 	{
-        $app = Factory::getApplication();
 		if (is_null($id))
 		{
-			$instance = $app->getSession()->get('user');
+			$instance = self::getSession()->get('user');
 			$id = ($instance instanceof JUser) ? $instance->id : 0;
 		}
 

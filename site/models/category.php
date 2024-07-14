@@ -222,12 +222,9 @@ class JemModelCategory extends JemModelEventslist
 			// Compute selected asset permissions.
 			if (is_object($this->_item)) { // a JemCategoryNode object
 				$user = JemFactory::getUser();
-				$asset	= 'com_jem.category.'.$this->_item->id;
 
-				// Check general create permission.
-				if ($user->authorise('core.create', $asset)) {
-					$this->_item->getParams()->set('access-create', true);
-				}
+				// Check general or category specific create permission.
+				$this->_item->getParams()->set('access-create', $user->can('add', 'event', false, false, $this->_item->id));
 
 				$this->_children = $this->_item->getChildren();
 

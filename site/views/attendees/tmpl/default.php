@@ -140,12 +140,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
-                            if($this->event->waitinglist) {
-                                if ($status === 1 && $row->waiting == 1) { $status = 2; }
-                                echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
-                            }else{
-                                echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
-                            }
+							if ($status === 1 && $row->waiting == 1) { $status = 2; }
+							echo jemhtml::toggleAttendanceStatus( $row->id, $status, true);
 							?>
 						</td>
 						<td class="center"><?php echo $row->places; ?></td>
@@ -153,10 +149,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 						<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
-                        <td class="center">
-                            <a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>">
-                                <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
-                            </a>
+						<td class="center"><a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>"><?php echo
+							JHtml::_('image','/media/com_jem/images/publish_r.png', Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip', true)); ?></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>
