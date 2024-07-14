@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
 ?>
-<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
 		<?php
 		$btn_params = array('id' => $this->venue->slug, 'slug' => $this->venue->slug, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
