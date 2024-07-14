@@ -207,10 +207,8 @@ function jem_common_show_filter(&$obj) {
                 <?php }
             } ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
-				<?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
-				<?php endif; ?>              
+          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >				<?php else : ?>
+          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.JRoute::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >				<?php endif; ?>              
               <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                 <i class="far fa-clock" aria-hidden="true"></i>
                 <?php
