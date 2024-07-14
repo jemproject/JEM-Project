@@ -191,15 +191,15 @@ use Joomla\CMS\Router\Route;
     </div>    
   </div>
   
-	<ul class="eventlist">
+	<ul class="eventlist jem-myevents">
 		<?php if (count((array)$this->events) == 0) : ?>
 			<li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
 		<?php else : ?>
 			<?php foreach ($this->events as $i => $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 				<?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 				<?php endif; ?>  
             <?php /*<div><?php echo $this->events_pagination->getRowOffset( $i ); ?></div>*/ ?>
 

@@ -62,7 +62,7 @@ div#jem_filter select {
 	<?php endif; ?>
 
 	<div class="table-responsive">
-		<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
+		<table class="eventtable jem-myvenues" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 			<colgroup>
 				<?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
 				<col width="1%" class="jem_col_checkall" />
@@ -102,7 +102,7 @@ div#jem_filter select {
 					<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></td></tr>
 				<?php else : ?>
 					<?php foreach ($this->venues as $i => $row) : ?>
-						<tr class="row<?php echo $i % 2; ?>">
+						<tr class="row<?php echo $i % 2 . ' venue_id' . $this->escape($row->id); ?>">
 
 							<?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
 							<td class="center">

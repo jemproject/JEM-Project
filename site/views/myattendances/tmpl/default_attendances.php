@@ -53,7 +53,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<?php endif; ?>
 
 	<div class="table-responsive">
-		<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
+		<table class="eventtable table jem-myattendees table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
 			<colgroup>
 				<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -107,9 +107,9 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 				<?php foreach ($this->attending as $row) : ?>
 					<?php $odd = 1 - $odd; ?>
 					<?php if (!empty($row->featured)) : ?>
-					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php else : ?>
-					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php endif; ?>
 
 						<td headers="jem_date" align="left">

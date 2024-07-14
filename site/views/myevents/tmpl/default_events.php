@@ -53,7 +53,7 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 	<div class="table-responsive">
-		<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+		<table class="eventtable table jem-myevents table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 			<colgroup>
 				<?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
 				<col width="1%" class="jem_col_checkall" />
@@ -113,7 +113,7 @@ use Joomla\CMS\Router\Route;
 					<tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 				<?php else : ?>
 					<?php foreach ($this->events as $i => $row) : ?>
-						<tr class="row<?php echo $i % 2; ?>">
+						<tr class="row<?php echo $i % 2 . ' event_id' . $this->escape($row->id); ?>">
 
 							<?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
 							<td class="center">
