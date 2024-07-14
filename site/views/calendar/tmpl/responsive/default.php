@@ -90,6 +90,7 @@ td.today div.daynum::after {
 
 		$eventname  = '<div class="eventName">'.Text::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
 		$detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
+		$eventid = $this->escape($row->id);
 
 		//initialize variables
 		$multicatname = '';
@@ -279,7 +280,7 @@ td.today div.daynum::after {
 
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner ' . $featuredclass . '" style="' . $featuredstyle;
+        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle;
         if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
             $content .= '; background-color:'.array_pop($catcolor);
             $content .= '" onclick=location.href="'.$detaillink.'">';
