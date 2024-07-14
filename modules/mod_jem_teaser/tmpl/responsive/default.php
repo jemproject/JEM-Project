@@ -91,7 +91,7 @@ if ($params->get('use_modal', 0)) {
       } 
     ?>
     <?php foreach ($list as $item) : ?>
-      
+    <div class="event_id<?php echo $item->eventid; ?>">
       <?php echo $titletag; ?>
         <?php if ($item->eventlink) : ?>
           <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
@@ -232,6 +232,7 @@ if ($params->get('use_modal', 0)) {
             <?php endif; ?> 
           </div>
         </div>
+      </div>
       </div>
       <?php 
       if ($item !== end($list)) :

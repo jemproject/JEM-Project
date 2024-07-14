@@ -128,6 +128,7 @@ abstract class ModJemHelper
 
 			$lists[++$i] = new stdClass;
 
+			$lists[$i]->eventid  = $row->id;
 			$lists[$i]->link     = Route::_(JemHelperRoute::getEventRoute($row->slug));
 			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
 			                                                 $dateFormat, $timeFormat, $addSuffix);

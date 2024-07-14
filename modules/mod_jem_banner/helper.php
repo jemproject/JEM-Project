@@ -235,7 +235,8 @@ abstract class ModJemBannerHelper
 			} else {
 				$title = $fulltitle;
 			}
-
+			
+			$lists[$i]->eventid     = $row->id;
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');

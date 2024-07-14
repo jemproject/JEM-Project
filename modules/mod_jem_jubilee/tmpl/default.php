@@ -72,7 +72,7 @@ if ($flyer_link_type == 1) {
 		<?php foreach ($list as $item) : ?>
 			<div class="clr"></div>
 			<div class="hr"><hr /></div>
-
+			<div class="event_id<?php echo $item->eventid; ?>">
 			<h2 class="event-title">
 				<?php echo $item->startdate['year'] . ': '; ?>
 			<?php if ($item->eventlink) : ?>
@@ -174,6 +174,7 @@ if ($flyer_link_type == 1) {
 					<?php echo $item->catname; ?>
 				</div>
 			<?php endif; ?>
+			</div>
 		<?php endforeach; ?>
 
 		<div class="clr"></div>

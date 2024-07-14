@@ -31,7 +31,7 @@ use Joomla\CMS\Uri\Uri;
 		</colgroup>
 
 		<?php foreach ($list as $item) : ?>
-		<tr>
+		<tr class="event_id<?php echo $item->eventid; ?>">
 			<td valign="top">
 				<?php if ($item->eventlink) : ?>
 				<span class="event-title">

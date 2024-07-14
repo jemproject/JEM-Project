@@ -41,7 +41,7 @@ $settings = JemHelper::config();
 <?php if (count($list)): ?>
   <ul>
     <?php foreach ($list as $item) : ?>
-      <li>
+    <li class="event_id<?php echo $item->eventid; ?>">
         <i class="far fa-calendar-alt"></i>
           <?php if($highlight_featured && $item->featured): ?>
             <span class="event-title highlight_featured">

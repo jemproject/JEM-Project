@@ -45,9 +45,9 @@ use Joomla\CMS\Language\Text;
       ?>
 			<?php foreach ($list as $item) : ?>
         <?php if (!empty($item->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li class="jem-event jem-list-row jem-small-list <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php endif; ?>              
               <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
                 <i class="fa fa-clock" aria-hidden="true"></i>

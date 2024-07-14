@@ -107,7 +107,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 	<?php $i = count($list); ?>
 	<?php if ($i > 0) : ?>
 		<?php foreach ($list as $item) : ?>
-
+		<div class="event_id<?php echo $item->eventid; ?>">
 			<h2 class="event-title">
 			<?php if ($item->eventlink) : ?>
 				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
@@ -232,6 +232,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
         <?php endif; ?>
         </div>
       </div>
+    </div>
 
 			<?php if (--$i > 0) : /* no hr after last entry */ ?>
         <hr class="jem-hr">

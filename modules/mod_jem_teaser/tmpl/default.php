@@ -25,7 +25,7 @@ if ($params->get('use_modal', 0)) {
 	<div class="eventset" summary="mod_jem_teaser">
 	<?php if (count($list)) : ?>
 		<?php foreach ($list as $item) : ?>
-
+		<div class="event_id<?php echo $item->eventid; ?>">
 			<h2 class="event-title">
 				<?php if ($item->eventlink) : ?>
 					<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
@@ -118,6 +118,7 @@ if ($params->get('use_modal', 0)) {
 					</td>
 				</tr>
 			</table>
+		</div>
 		<?php endforeach; ?>
 	<?php else : ?>
 		<?php echo Text::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
