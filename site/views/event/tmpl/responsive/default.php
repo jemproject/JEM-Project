@@ -34,9 +34,15 @@ if ($jemsettings->oldevent > 0) {
 	$document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
 
+$catclasses = '';
+foreach ((array)$this->categories as $category) {
+    $catclasses .= ' cat_id' . $this->escape($category->id);
+}
+$catclasses = trim($catclasses); // Entfernt das letzte Leerzeichen
+
 if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
-<div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
-	itemscope="itemscope" itemtype="https://schema.org/Event">
+
+<div id="jem" class="event_id<?php echo $this->item->did; if (!empty($catclasses)) { echo ' ' . $catclasses . ' ';}; if (!empty($this->escape($item->locid))) { echo ' venue_id' . $this->escape($item->locid) . ' ';}; ?>jem_event<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Event">
   
   <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
@@ -68,7 +74,6 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 		?>
 	</h2>
   <div class="jem-row">
-  
     <div class="jem-info">
       <dl class="jem-dl">
         <?php if ($params->get('event_show_detailstitle',1)) : ?>
