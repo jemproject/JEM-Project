@@ -259,7 +259,7 @@ if ($jemsettings->oldevent > 0) {
 	<p></p>
 	<hr />
 
-	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+	<div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
 		<?php $itemid = $this->item ? $this->item->id : 0 ; ?>
 		<h2 class="location">

@@ -38,12 +38,20 @@ $catclasses = '';
 foreach ((array)$this->categories as $category) {
     $catclasses .= ' cat_id' . $this->escape($category->id);
 }
-$catclasses = trim($catclasses); // Entfernt das letzte Leerzeichen
 
 if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 
-<div id="jem" class="event_id<?php echo $this->item->did; if (!empty($catclasses)) { echo ' ' . $catclasses . ' ';}; if (!empty($this->escape($item->locid))) { echo ' venue_id' . $this->escape($item->locid) . ' ';}; ?>jem_event<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Event">
-  
+<div id="jem" class="event_id<?php 
+    echo $this->escape($this->item->did); 
+    if (!empty($this->item->locid)) { 
+        echo ' venue_id' . $this->escape($this->item->locid);
+    } 
+    if (!empty($catclasses)) { 
+        echo $this->escape($catclasses); 
+    }
+?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>" 
+    itemscope="itemscope" itemtype="https://schema.org/Event">    
+    
   <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   
@@ -271,7 +279,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 	<p></p>
 	<hr class="jem-hr">
 
-	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+	<div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
 		<?php $itemid = $this->item ? $this->item->id : 0 ; ?>
 		<h2 class="jem-location">
