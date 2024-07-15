@@ -28,7 +28,7 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 	<?php foreach ($this->rows as $row) : ?>
-	<div class="jem catid<?php echo $row->id; ?>">
+	<div class="jem cat_id<?php echo $row->id; ?>">
 		<h2>
 			<?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>

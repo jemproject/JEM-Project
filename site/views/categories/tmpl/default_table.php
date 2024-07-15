@@ -64,7 +64,7 @@ use Joomla\CMS\Router\Route;
 					<?php if (!empty($row->featured)) : ?>
 					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php else : ?>
-					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $row->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php endif; ?>
 
 						<td headers="jem_date_cat<?php echo $this->catrow->id; ?>" align="left">
