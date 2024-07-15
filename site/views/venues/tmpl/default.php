@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 ?>
-<div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
+<div id="jem" class="jem_venues<?php echo $this->pageclass_sfx . ' venue_id' . $this->venue->id; ?>">
 	<div class="buttons">
 		<?php
 		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
@@ -31,7 +31,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 	<!--Venue-->
 
 	<?php foreach($this->rows as $row) : ?>
-		<div itemscope itemtype="https://schema.org/Place">
+		<div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
 			<h2 class="jem">
 				<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
 			</h2>
