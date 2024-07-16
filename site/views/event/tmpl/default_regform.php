@@ -289,8 +289,6 @@ if ($this->showRegForm && empty($this->print)) :
                                             echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_5') . '</div>';
                                         }
                                     }
-                                } else {
-                                    echo '<div>' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_3') . '</div>';
                                 }
                         } else {
 								//...booked places
