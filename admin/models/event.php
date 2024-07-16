@@ -260,89 +260,99 @@ class JemModelEvent extends JemModelAdmin
         $data['attribs']      = isset($data['attribs']) ? $data['attribs'] : '';
         $data['ordering']     = isset($data['ordering']) ? $data['ordering'] : '';
 
+        // convert international date formats...
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        if (!empty($data['dates']) && ($data['dates'] != null)) {
+            $d = Factory::getDate($data['dates'], 'UTC');
+            $data['dates'] = $d->format('Y-m-d', true, false);
+        }
+        if (!empty($data['enddates']) && ($data['enddates'] != null)) {
+            $d = Factory::getDate($data['enddates'], 'UTC');
+            $data['enddates'] = $d->format('Y-m-d', true, false);
+        }
+
         // Load the event from db, detect if the event isn't new and is recurrence type.
         // In this case, the event just needs to be updated if the recurrence setting hasn't changed.
         $save = true;
-        if (isset($data["id"])) {
-            if($data["id"] && $data["recurrence_type"]) {
 
-                // This is event exist in event table and it's recurrence
-                $save = false;
-                $this->eventid = $data["id"];
-                $eventdb = (array)$this->getEventAllData();
+        if(!$new && $data["recurrence_type"]) {
 
-                // Categories
-                if(isset($data['cats'][0])){
-                    if (count ($data['cats'])==1) {
-                        $data['locid'] = $data['cats'][0];
-                    }else{
-                        $data['locid'] = implode(',', $data['cats']);
-                    }
+            // This is event exist in event table and it's recurrence
+            $save = false;
+            $this->eventid = $data["id"];
+            $eventdb = (array)$this->getEventAllData();
+
+            // Categories
+            if(isset($data['cats'][0])){
+                if (count ($data['cats'])==1) {
+                    $data['locid'] = $data['cats'][0];
                 }else{
-                    $data['locid'] = '0'; // This should be an error, all events must have at less one category
-                    Factory::getApplication()->enqueueMessage(Text::_('ERROR_SAVE_NOT_PERMITTED') . ' [JEM error 510]', 'warning');
-                    return false;
+                    $data['locid'] = implode(',', $data['cats']);
                 }
+            }else{
+                $data['locid'] = '0'; // This should be an error, all events must have at less one category
+                Factory::getApplication()->enqueueMessage(Text::_('ERROR_SAVE_NOT_PERMITTED') . ' [JEM error 510]', 'warning');
+                return false;
+            }
 
-                // Times
-                $starthours    = $jinput->get('starthours', '', 'int');
-                $startminutes = $jinput->get('startminutes', '', 'int');
-                if ($starthours){
-                    if ($startminutes){
-                        $data['times'] = $starthours . ':' . $startminutes . ':00';
-                    } else {
-                        $data['times'] = $starthours . ':00:00';
-                    }
+            // Times
+            $starthours    = $jinput->get('starthours', '', 'int');
+            $startminutes = $jinput->get('startminutes', '', 'int');
+            if ($starthours){
+                if ($startminutes){
+                    $data['times'] = $starthours . ':' . $startminutes . ':00';
                 } else {
-                    $data['times'] = null;
+                    $data['times'] = $starthours . ':00:00';
                 }
+            } else {
+                $data['times'] = null;
+            }
 
-                //Endtimes
-                $endhours   = $jinput->get('endhours', '', 'int');
-                $endminutes = $jinput->get('endminutes', '', 'int');
-                if ($endhours){
-                    if ($endminutes){
-                        $data['endtimes'] = $endhours . ':' . $endminutes . ':00';
-                    } else {
-                        $data['endtimes'] = $endhours . ':00:00';
-                    }
-                }else{
-                    $data['endtimes'] = null;
+            //Endtimes
+            $endhours   = $jinput->get('endhours', '', 'int');
+            $endminutes = $jinput->get('endminutes', '', 'int');
+            if ($endhours){
+                if ($endminutes){
+                    $data['endtimes'] = $endhours . ':' . $endminutes . ':00';
+                } else {
+                    $data['endtimes'] = $endhours . ':00:00';
                 }
+            }else{
+                $data['endtimes'] = null;
+            }
 
-                // Alias
-                if(isset($data['alias'])) {
-                    if (!$data['alias']) {
-                        $alias = strtolower($data['title']);
-                        $alias = preg_replace('/[^a-z0-9]+/i', '-', $alias);
-                        $alias = preg_replace('/-+/', '-', $alias);
-                        $data['alias'] = trim($alias, '-');
-                    }
-                }else{
-                    $data['alias'] = $eventdb['alias'];
+            // Alias
+            if(isset($data['alias'])) {
+                if (!$data['alias']) {
+                    $alias = strtolower($data['title']);
+                    $alias = preg_replace('/[^a-z0-9]+/i', '-', $alias);
+                    $alias = preg_replace('/-+/', '-', $alias);
+                    $data['alias'] = trim($alias, '-');
                 }
+            }else{
+                $data['alias'] = $eventdb['alias'];
+            }
 
-                // Introtext
-                $data['introtext'] = $data['articletext'];
+            // Introtext
+            $data['introtext'] = $data['articletext'];
 
-                // Dates
-                $data['dates'] = substr($data['dates'], 0, 10);
+            // Dates
+            $data['dates'] = substr($data['dates'], 0, 10);
 
-                // Recurrence limit date
-                $data['recurrence_limit_date'] = substr($data['recurrence_limit_date'], 0, 10);
+            // Recurrence limit date
+            $data['recurrence_limit_date'] = substr($data['recurrence_limit_date'], 0, 10);
 
-                // Get the fields changed
-                $diff = array_diff_assoc($data, $eventdb);
+            // Get the fields changed
+            $diff = array_diff_assoc($data, $eventdb);
 
-                //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
-                //If not, update de field of this event (save=false).
-                $fieldNotAllow = ['recurrence_first_id', 'recurrence_number', 'recurrence_type', 'recurrence_counter', 'recurrence_limit', 'recurrence_limit_date', 'recurrence_byday'];
-                foreach ($diff as $d => $value) {
-                    if (in_array($d, $fieldNotAllow)) {
-                        // This event must be updated its fields
-                        $save = true;
-                        break;
-                    }
+            //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
+            //If not, update de field of this event (save=false).
+            $fieldNotAllow = ['recurrence_first_id', 'recurrence_number', 'recurrence_type', 'recurrence_counter', 'recurrence_limit', 'recurrence_limit_date', 'recurrence_byday'];
+            foreach ($diff as $d => $value) {
+                if (in_array($d, $fieldNotAllow)) {
+                    // This event must be updated its fields
+                    $save = true;
+                    break;
                 }
             }
         }
@@ -357,17 +367,6 @@ class JemModelEvent extends JemModelAdmin
             // on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
             if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
                 $data['registra'] = ($data['registra'] == 1) ? 3 : 2;
-            }
-
-            // convert international date formats...
-            $db = Factory::getContainer()->get('DatabaseDriver');
-            if (!empty($data['dates']) && ($data['dates'] != null)) {
-                $d = Factory::getDate($data['dates'], 'UTC');
-                $data['dates'] = $d->format('Y-m-d', true, false);
-            }
-            if (!empty($data['enddates']) && ($data['enddates'] != null)) {
-                $d = Factory::getDate($data['enddates'], 'UTC');
-                $data['enddates'] = $d->format('Y-m-d', true, false);
             }
 
             if ($data['dates'] == null || $data['recurrence_type'] == '0') {
@@ -485,13 +484,21 @@ class JemModelEvent extends JemModelAdmin
             }
         }else{
             // Update field of this event
-            $fieldAllow=['title', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'hits', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'metadata', 'featured', 'attribs', 'language'];
-            $saved = false;
+            $fieldAllow=['title', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $saved = true;
+            $fieldsupdated="";
             foreach ($diff as $d => $value){
                 if(in_array($d, $fieldAllow)) {
                     $this->updateField($data['id'], $d, $value);
-                    $saved = true;
+                    $fieldsupdated = $fieldsupdated . ($fieldsupdated!=''? ', ':'') . $d;
                 }
+            }
+            if($fieldsupdated!='') {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_FIELDS_EVENT_UPDATED') . ' ' . $fieldsupdated . ' [ID:' . $data['id'] . ']', 'info');
+            }
+            $table->load($data['id']);
+            if (isset($table->id)) {
+                $this->setState($this->getName() . '.id', $table->id);
             }
         }
 
