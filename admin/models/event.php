@@ -362,8 +362,37 @@ class JemModelEvent extends JemModelAdmin
             foreach ($diff as $d => $value) {
                 if (in_array($d, $fieldNotAllow)) {
                     // This event must be updated its fields
+                    $data[$d] =  $value;
                     $save = true;
-                    break;
+                }
+            }
+
+            // If $save is true and recurrence_first_id != 0 then this event must be the first event of a new recurrence (series)
+            if($save){
+                if($eventdb['recurrence_first_id'] != 0) {
+				
+					// Convert to root event
+                    $data['recurrence_first_id'] = 0;
+
+                    // Copy the recurrence data if it doesn't exist
+                    if (!isset($data['recurrence_number'])) {
+                        $data['recurrence_number'] = $eventdb['recurrence_number'];
+                    }
+                    if (!isset($data['recurrence_type'])) {
+                        $data['recurrence_type'] = $eventdb['recurrence_type'];
+                    }
+                    if (!isset($data['recurrence_counter'])) {
+                        $data['recurrence_counter'] = $eventdb['recurrence_counter'];
+                    }
+                    if (!isset($data['recurrence_limit'])) {
+                        $data['recurrence_limit'] = $eventdb['recurrence_limit'];
+                    }
+                    if (!isset($data['recurrence_limit_date'])) {
+                        $data['recurrence_limit_date'] = $eventdb['recurrence_limit_date'];
+                    }
+                    if (!isset($data['recurrence_byday'])) {
+                        $data['recurrence_byday'] = $eventdb['recurrence_byday'];
+                    }
                 }
             }
         }
