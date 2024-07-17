@@ -165,7 +165,7 @@ class JemTableEvent extends Table
 		}
 
 		if ($date1 > $date2) {
-			$this->setError(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
+			$this->setError(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START_DATES'));
 			return false;
 		}
 

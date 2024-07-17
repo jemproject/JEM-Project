@@ -434,6 +434,7 @@ Joomla.submitbutton = function(task)
 						<?php /* show "old" recurrence settings for information */
 							if (!empty($this->item->recurr_bak->recurrence_type)) {
 								$recurr_type = '';
+                                $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
 								$rlDate = $this->item->recurr_bak->recurrence_limit_date;
 								if (!empty($rlDate)) {
 									$recurr_limit_date = JemOutput::formatdate($rlDate);
@@ -488,19 +489,22 @@ Joomla.submitbutton = function(task)
 
 								if (!empty($recurr_type)) {
 									?>
-									<hr />
-									<fieldset class="panelform">
-									<p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
-									<ul class="adminformlist">
-									<li class="has-success"><label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
-										<input type="text" value="<?php echo $recurr_type; ?>, <?php echo $recurr_info; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
-									</li>
-									<li><label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
-										<input type="text" value="<?php echo $recurr_limit_date; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
-									</li>
-										</ul>
-									</fieldset>
-									<?php
+                                    <hr />
+                                    <fieldset class="panelform">
+                                        <p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
+                                        <ul class="adminformlist">
+                                            <li class="has-success"><label><?php echo Text::_('COM_JEM_RECURRING_FIRST_EVENT_ID'); ?></label>
+                                                <input type="text" value="<?php echo $recurrence_first_id; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
+                                            </li>
+                                            <li class="has-success"><label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label>
+                                                <input type="text" value="<?php echo $recurr_type; ?>, <?php echo $recurr_info; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
+                                            </li>
+                                            <li><label><?php echo Text::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
+                                                <input type="text" value="<?php echo $recurr_limit_date; ?>" class="form-control readonly inputbox valid form-control-success" readonly="">
+                                            </li>
+                                        </ul>
+                                    </fieldset>
+                                    <?php
 								}
 							}
 						?>
