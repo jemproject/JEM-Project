@@ -270,6 +270,10 @@ class JemModelEvent extends JemModelAdmin
             $d = Factory::getDate($data['enddates'], 'UTC');
             $data['enddates'] = $d->format('Y-m-d', true, false);
         }
+        if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
+            $d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
+            $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
+        }
 
         // Load the event from db, detect if the event isn't new and is recurrence type.
         // In this case, the event just needs to be updated if the recurrence setting hasn't changed.
@@ -332,11 +336,22 @@ class JemModelEvent extends JemModelAdmin
             // Introtext
             $data['introtext'] = $data['articletext'];
 
-            // Dates
-            $data['dates'] = substr($data['dates'], 0, 10);
-
-            // Recurrence limit date
-            $data['recurrence_limit_date'] = substr($data['recurrence_limit_date'], 0, 10);
+            // Times <= Endtimes
+            if($data['enddates']!== null && $data['enddates'] != ''){
+                if($data['dates'] > $data['enddates']){
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START_DATES') . ' [ID:' . $data['id'] . ']', 'error');
+                    return false;
+                } else {
+                    if($data['dates'] == $data['enddates']){
+                        if($data['endtimes'] !== null && $data['endtimes'] != '') {
+                            if ($data['times'] > $data['endtimes']) {
+                                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START_TIMES') . ' [ID:' . $data['id'] . ']', 'error');
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
 
             // Get the fields changed
             $diff = array_diff_assoc($data, $eventdb);
@@ -347,8 +362,37 @@ class JemModelEvent extends JemModelAdmin
             foreach ($diff as $d => $value) {
                 if (in_array($d, $fieldNotAllow)) {
                     // This event must be updated its fields
+                    $data[$d] =  $value;
                     $save = true;
-                    break;
+                }
+            }
+
+            // If $save is true and recurrence_first_id != 0 then this event must be the first event of a new recurrence (series)
+            if($save){
+                if($eventdb['recurrence_first_id'] != 0) {
+				
+					// Convert to root event
+                    $data['recurrence_first_id'] = 0;
+
+                    // Copy the recurrence data if it doesn't exist
+                    if (!isset($data['recurrence_number'])) {
+                        $data['recurrence_number'] = $eventdb['recurrence_number'];
+                    }
+                    if (!isset($data['recurrence_type'])) {
+                        $data['recurrence_type'] = $eventdb['recurrence_type'];
+                    }
+                    if (!isset($data['recurrence_counter'])) {
+                        $data['recurrence_counter'] = $eventdb['recurrence_counter'];
+                    }
+                    if (!isset($data['recurrence_limit'])) {
+                        $data['recurrence_limit'] = $eventdb['recurrence_limit'];
+                    }
+                    if (!isset($data['recurrence_limit_date'])) {
+                        $data['recurrence_limit_date'] = $eventdb['recurrence_limit_date'];
+                    }
+                    if (!isset($data['recurrence_byday'])) {
+                        $data['recurrence_byday'] = $eventdb['recurrence_byday'];
+                    }
                 }
             }
         }
@@ -521,6 +565,13 @@ class JemModelEvent extends JemModelAdmin
         return $event;
     }
 
+
+    /**
+     * Get categories of event
+     *
+     * @access public
+     * @return string
+     */
     public function getEventCats()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -776,7 +827,7 @@ class JemModelEvent extends JemModelAdmin
             } else {
 
                 // Update the value of field into events table
-                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . $db->quote($value) . ' WHERE id = ' . $db->quote($eventid));
+                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . (($value!==null AND $value!='')? $db->quote($value) : 'null') . ' WHERE id = ' . $db->quote($eventid));
                 $db->execute();
             }
 
