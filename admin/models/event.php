@@ -280,44 +280,40 @@ class JemModelEvent extends JemModelAdmin
             // This is event exist in event table and it's recurrence
             $save = false;
             $this->eventid = $data["id"];
+
+            // Get data event in DB
             $eventdb = (array)$this->getEventAllData();
 
             // Categories
+            $eventdb ['cats'] = $this->getEventCats();
             if(isset($data['cats'][0])){
-                if (count ($data['cats'])==1) {
-                    $data['locid'] = $data['cats'][0];
-                }else{
-                    $data['locid'] = implode(',', $data['cats']);
-                }
-            }else{
-                $data['locid'] = '0'; // This should be an error, all events must have at less one category
-                Factory::getApplication()->enqueueMessage(Text::_('ERROR_SAVE_NOT_PERMITTED') . ' [JEM error 510]', 'warning');
-                return false;
+                $data['cats'] = implode(',', $data['cats']);
             }
 
             // Times
-            $starthours    = $jinput->get('starthours', '', 'int');
-            $startminutes = $jinput->get('startminutes', '', 'int');
-            if ($starthours){
+            if ($_REQUEST['starthours']){
+                $starthours    = $jinput->get('starthours', '', 'int');
+                $startminutes = $jinput->get('startminutes', '', 'int');
                 if ($startminutes){
-                    $data['times'] = $starthours . ':' . $startminutes . ':00';
+                    $data['times'] = str_pad($starthours,2,'0', STR_PAD_LEFT) . ':' . str_pad($startminutes,2,'0', STR_PAD_LEFT) . ':00';
                 } else {
-                    $data['times'] = $starthours . ':00:00';
+                    $data['times'] = str_pad($starthours,2,'0', STR_PAD_LEFT) . ':00:00';
                 }
             } else {
                 $data['times'] = null;
             }
 
             //Endtimes
-            $endhours   = $jinput->get('endhours', '', 'int');
-            $endminutes = $jinput->get('endminutes', '', 'int');
-            if ($endhours){
+            if ($_REQUEST['endhours']){
+                $endhours   = $jinput->get('endhours', '', 'int');
+                $endminutes = $jinput->get('endminutes', '', 'int');
+
                 if ($endminutes){
-                    $data['endtimes'] = $endhours . ':' . $endminutes . ':00';
+                    $data['endtimes'] = str_pad($endhours,2,'0', STR_PAD_LEFT) . ':' . str_pad($endminutes,2,'0', STR_PAD_LEFT) . ':00';
                 } else {
-                    $data['endtimes'] = $endhours . ':00:00';
+                    $data['endtimes'] = str_pad($endhours,2,'0', STR_PAD_LEFT) . ':00:00';
                 }
-            }else{
+            } else {
                 $data['endtimes'] = null;
             }
 
@@ -484,7 +480,7 @@ class JemModelEvent extends JemModelAdmin
             }
         }else{
             // Update field of this event
-            $fieldAllow=['title', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow=['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = true;
             $fieldsupdated="";
             foreach ($diff as $d => $value){
@@ -524,6 +520,20 @@ class JemModelEvent extends JemModelAdmin
 
         return $event;
     }
+
+    public function getEventCats()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('GROUP_CONCAT(catid) as cats');
+        $query->from('#__jem_cats_event_relations');
+        $query->where('itemid = '.$db->Quote($this->eventid));
+        $db->setQuery( $query );
+        $cats = $db->loadResult();
+
+        return $cats;
+    }
+
 
 
     /**
@@ -751,28 +761,24 @@ class JemModelEvent extends JemModelAdmin
 
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
-            if($field == 'locid'){
-                $locid = explode (',', $value);
+            if($field == 'cats'){
+                $cats = explode (',', $value);
 
                 // Delete all old categories for id event
                 $db->setQuery('DELETE FROM #__jem_cats_event_relations WHERE itemid = ' . $db->quote($eventid) );
                 $db->execute();
 
                 // Insert new categories for id event
-                foreach($locid as $l){
-                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . $l . ',' . $db->quote($eventid) . ',0)');
+                foreach($cats as $c){
+                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . $c . ',' . $db->quote($eventid) . ',0)');
                     $db->execute();
                 }
+            } else {
 
-                // If there is more than 1 category
-                if(count($locid) > 1){
-                    $value = 0;
-                }
+                // Update the value of field into events table
+                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . $db->quote($value) . ' WHERE id = ' . $db->quote($eventid));
+                $db->execute();
             }
-
-            // Update the value of field into events table
-            $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . $db->quote($value) . ' WHERE id = ' . $db->quote($eventid));
-            $db->execute();
 
         } catch (Exception $e) {
             $this->setError($e->getMessage());
