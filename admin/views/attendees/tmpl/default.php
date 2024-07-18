@@ -9,9 +9,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
@@ -43,18 +43,30 @@ $wa->addInlineScript('
 ');
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&eventid='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
-	<?php if (isset($this->sidebar)) : ?>
-	<!-- <div id="j-sidebar-container" class="span2">
-		<?php //echo $this->sidebar; ?>
-	</div> -->
-	<div id="j-main-container" class="span10 j-main-container">
-	<?php endif; ?>
-		<div class="row title-alias form-vertical mb-3">
-   			<div class="col-12 col-md-12">
-   				<strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br />
-				<strong><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></strong>&nbsp;<?php echo $this->escape($this->event->title); ?>
+    <div id="j-main-container" class="j-main-container">
+        <fieldset id="filter-bar" class="mb-3">
+            <div class="row">
+                <div class="col-md-11">
+					 <div class="row mb-12">
+	                        <div class="col-md-2">
+				   				<strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br />
+							</div>
+			                <div class="col-md-2">
+								<strong><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></strong>&nbsp;<?php echo $this->escape($this->event->title); ?>
+							</div>
+					 </div>
+				</div>
+                <div class="col-md-1">
+                    <div class="row">
+                        <div class="wauto-minwmax">
+                            <div class="float-end">
+                                <?php echo $this->pagination->getLimitBox(); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 			</div>
-		</div>
+		</fieldset>
 		<table class="adminform">
 			<tr>
 				<td width="100%">
@@ -87,27 +99,7 @@ $wa->addInlineScript('
 					<th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
-					<td colspan="20">
-						<?php //echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter()); ?>
-						<div class="row align-items-center">
-                            <div class="col-md-9">
-                                <?php
-                                echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter());
-                                ?>
-                            </div>
-							<div class="col-md-3">
-								<div class="limit float-end">
-									<?php 
-										echo $this->pagination->getLimitBox();	
-									?>
-								</div>
-							</div>
-						</div>
-					</td>
-				</tr>
-			</tfoot>
+
 			<tbody>
 				<?php
 				$canChange = $user->authorise('core.edit.state');
@@ -156,14 +148,18 @@ $wa->addInlineScript('
 				<?php endforeach; ?>
 			</tbody>
 		</table>
-	<?php if (isset($this->sidebar)) : ?>
-	</div>
-	<?php endif; ?>
 
-	<?php echo HTMLHelper::_( 'form.token' ); ?>
-	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="task" value="" />
-	<input type="hidden" name="eventid" value="<?php echo $this->event->id; ?>" />
-	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+	    <div class="ms-auto mb-4 me-0">
+	        <?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
+	    </div>
+    </div>
+
+    <div>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="boxchecked" value="0"/>
+        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>"/>
+        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>"/>
+
+        <?php echo HTMLHelper::_('form.token'); ?>
+    </div>
 </form>
