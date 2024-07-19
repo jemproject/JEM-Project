@@ -26,7 +26,7 @@ $wa->useScript('table.columns');
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
-        <fieldset id="filter-bar" class=" mb-3">
+        <fieldset id="filter-bar" class="mb-3">
             <div class="row">
                 <div class="col-md-11">
                     <div class="row mb-12">
