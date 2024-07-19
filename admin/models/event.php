@@ -336,6 +336,11 @@ class JemModelEvent extends JemModelAdmin
             // Introtext
             $data['introtext'] = $data['articletext'];
 
+            // Contact
+            if($data['contactid'] == ''){
+                $data['contactid'] = 0;
+            }
+
             // Times <= Endtimes
             if($data['enddates']!== null && $data['enddates'] != ''){
                 if($data['dates'] > $data['enddates']){
