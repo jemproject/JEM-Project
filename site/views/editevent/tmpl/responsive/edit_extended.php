@@ -108,6 +108,7 @@ use Joomla\CMS\Date\Date;
 	if (!empty($this->item->recurr_bak->recurrence_type)) {
 		$recurr_type = '';
 		$rlDate = $this->item->recurr_bak->recurrence_limit_date;
+        $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
 		if (!empty($rlDate)) {
 			$recurr_limit_date = JemOutput::formatdate($rlDate);
 		} else {
@@ -164,6 +165,8 @@ use Joomla\CMS\Date\Date;
             <hr class="jem-hr" />
             <p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
             <dl class="adminformlist jem-dl">
+                <dt><label><?php echo Text::_('COM_JEM_RECURRING_FIRST_EVENT_ID'); ?></label></dt>
+                <dd><input type="text" class="readonly" readonly="readonly" value="<?php echo $recurrence_first_id; ?>"></dd>
                 <dt><label><?php echo Text::_('COM_JEM_RECURRENCE'); ?></label></dt>
                 <dd><input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_type; ?>"></dd>
                 <dt><label> </label></dt>
