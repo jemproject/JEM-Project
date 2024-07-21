@@ -794,8 +794,7 @@ class JemModelEvent extends ItemModel
 		}
 		catch (Exception $e) {
 			// we have a unique user-event key so registering twice will fail
-			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
-				                                       : 'COM_JEM_ERROR_REGISTRATION');
+			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION');
 			return false;
 		}
 

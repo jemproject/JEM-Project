@@ -315,7 +315,7 @@ class JemControllerEvent extends JemControllerForm
 
 		$reg = $model->getUserRegistration($id);
 		if ($reg !== false && $reg->id != $rid) {
-			$msg = Text::_('COM_JEM_ALLREADY_REGISTERED');
+			$msg = Text::_('COM_JEM_ALREADY_REGISTERED') . ' [id: ' . $reg->id . ']';
 			$this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;
