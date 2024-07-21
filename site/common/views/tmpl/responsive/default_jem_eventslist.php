@@ -109,7 +109,7 @@ function jem_common_show_filter(&$obj)
             <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-            <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'] ?? '';?>" ?>">
+            <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'] ?? '';?>">
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
