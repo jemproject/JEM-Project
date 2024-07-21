@@ -270,7 +270,7 @@ class JemModelEvent extends ItemModel
 					'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
 					'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
 					'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-					'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places' . ($status? ', r.status':''):'')));
+					'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))	;
 			$query->from('#__jem_events AS a');
 
 			# Author
@@ -310,12 +310,6 @@ class JemModelEvent extends ItemModel
 			if($iduser) {
 				$query->join('LEFT', '#__jem_register AS r ON r.event = a.id');
 				$query->where("r.uid = " . $iduser );
-				$query->where("a.id != " . $id );
-				if(!$status){
-					$query->where("r.status = 1");
-				}else{
-					$query->where("r.status != -2");
-				}
 			}
 
 			// Not include the delete event
@@ -800,8 +794,7 @@ class JemModelEvent extends ItemModel
 		}
 		catch (Exception $e) {
 			// we have a unique user-event key so registering twice will fail
-			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
-				                                       : 'COM_JEM_ERROR_REGISTRATION');
+			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION');
 			return false;
 		}
 
@@ -912,6 +905,8 @@ class JemModelEvent extends ItemModel
 			$result = $this->_doRegister($e->id, $uid, $uip, $status, $places, $comment, $errMsg, $reg->id);
 			if (!$result) {
 				$this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
+			} else {
+				Factory::getApplication()->enqueueMessage(($status==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
 			}
 		}
 		return $result;

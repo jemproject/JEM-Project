@@ -133,6 +133,14 @@ if (empty($form)) {
             <div style="padding-right:10px;">
                 <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ?  $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
             </div>
+            <?php if ($this->event->recurrence_type && $this->event->seriesbooking): ?>
+                <div class="choose-places">
+                    <?php echo Text::_('COM_JEM_SERIES_BOOKED').':'; ?>
+                    <input type="checkbox" id="seriesbooking" name="seriesbooking" />
+                </div>
+            <?php else : ?>
+                <input type="hidden" name="seriesbooking" value=-1 />
+            <?php endif; ?>
         </div>
 
 		<input type="hidden" name="task" value="selectusers" />
@@ -144,7 +152,7 @@ if (empty($form)) {
 		<input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
 	</form>
 	<div class="jem_fright">
-		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, '<?php echo Session::getFormToken(); ?>');">
+		<button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, document.adminForm.seriesbooking.value, '<?php echo Session::getFormToken(); ?>');">
 			<?php echo Text::_('COM_JEM_SAVE'); ?>
 		</button>
 	</div>

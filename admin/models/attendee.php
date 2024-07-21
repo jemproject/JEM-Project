@@ -94,7 +94,7 @@ class JemModelAttendee extends BaseDatabaseModel
             $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
-			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser'));
+			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.seriesbooking'));
 			$query->from('#__jem_register as r');
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 			$query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -136,6 +136,8 @@ class JemModelAttendee extends BaseDatabaseModel
 					$data->event = $table->id;
 					$data->maxbookeduser = $table->maxbookeduser;
 					$data->minbookeduser = $table->minbookeduser;
+                    $data->recurrence_type = $table->recurrence_type;
+                    $data->seriesbooking = $table->seriesbooking;
 				}
 				$data->waitinglist = isset($table->waitinglist) ? $table->waitinglist : 0;
 			}

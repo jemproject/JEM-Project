@@ -116,12 +116,18 @@ if ($this->showRegForm && empty($this->print)) :
                         // Shown the active series event list
                         echo '<div class="pt-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_4') . '</div>';
                         echo '<div><table id="table-series"><thead><tr><th>' . Text::_('COM_JEM_DATE') . '</th><th>' . Text::_('COM_JEM_TITLE') . '</th><th>' . Text::_('COM_JEM_STATUS') . '</th><th>' . Text::_('COM_JEM_PLACES') . '</th><th>ID</th></tr></thead><tbody>';
-                        foreach ($events as $e) {
 
-                            if ($e->waiting) {
-                                $status = Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST');
-                            } else {
+                        foreach ($events as $e) {
+                            if (!$e->waiting && $e->status == 1) {
                                 $status = Text::_('COM_JEM_ATTENDEES_ATTENDING');
+                            } else if ($e->waiting == 1 && $e->status == 1) {
+                                $status = Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST');
+                            } else if (!$e->status){
+                                $status = Text::_('COM_JEM_ATTENDEES_INVITED');
+                            } else if ($e->status == -1) {
+                                $status = Text::_('COM_JEM_ATTENDEES_NOT_ATTENDING');
+                            } else {
+                                $status = Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN');
                             }
                             echo '<tr><td nowrap>' . $e->dates . ' [' . ($e->times ? substr($e->times, 0, 5) : '') . ($e->endtimes ? '-' . substr($e->endtimes, 0, 5) : '') . ']</td><td>' . $e->title . '</td><td>' . $status . '</td><td>' . $e->places . '</td><td>' . $e->id . '</td></tr>';
                         }
@@ -217,6 +223,7 @@ if ($this->showRegForm && empty($this->print)) :
                                 // Shown the active series event list
                                 echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_4') . '</div>';
                                 echo '<div class="px-3"><table id="table-series"><thead><tr><th>' . Text::_('COM_JEM_DATE') . '</th><th>' . Text::_('COM_JEM_TITLE') . '</th>' . ($this->registereduser? '<th>' . Text::_('COM_JEM_STATUS') . '</th><th>' . Text::_('COM_JEM_PLACES') . '</th>':'') . '<th>ID</th></tr></thead><tbody>';
+                                    
                                 foreach ($events as $e) {
                                     if ($this->registereduser) {
                                         switch ($e->status) {

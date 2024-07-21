@@ -143,7 +143,7 @@ Joomla.submitbutton = function(task)
 				</td>
 			</tr>
 			<?php endif; ?>
-			<?php if (1/*!$this->row->id*/): ?>
+			<?php if ($this->row->recurrence_type && $this->row->seriesbooking): ?>
             <tr>
                 <td class="key">
                     <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>
@@ -154,6 +154,7 @@ Joomla.submitbutton = function(task)
                     <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1""/>
                 </td>
             </tr>
+            <?php endif; ?>
 			<tr>
 				<td class="key">
 					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>
@@ -164,7 +165,7 @@ Joomla.submitbutton = function(task)
 					<input type="checkbox" id="sendemail" name="sendemail" value="1" checked="checked"/>
 				</td>
 			</tr>
-			<?php endif; ?>
+
 		</table>
 	</fieldset>
 

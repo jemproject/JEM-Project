@@ -214,21 +214,26 @@ body.com_jem.body-overlayed {
 }
 
 #jem_filter {
-    padding: 10px 5px 5px 10px;
+    padding: 10px 5px 0px 10px;
     align-items: baseline;
     background-color: #ffa500;
 }
 
 #jem_filter div {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
 }
 
 #jem_filter label,
 #jem_filter select,
 #jem_filter input,
-#jem_filter button,
 #status-lbl {
     margin-right: 5px;
+}
+
+#jem_filter button {
+    margin-right: 5px;
+    --btn-padding-x: 0.8rem;
+    --btn-padding-y: 0.4rem;
 }
 
 #jem .jem-misc {
