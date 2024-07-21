@@ -307,6 +307,7 @@ body.com_jem.body-overlayed {
 
 #jem .choose-status  {padding-right: 30px;}
 #jem .choose-status select#status {display: inline;}
+#jem .choose-places  {padding-right: 30px;}
 
 #jem .jem-sort-parts div::after {
     content: "";
