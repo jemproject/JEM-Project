@@ -310,7 +310,6 @@ class JemModelEvent extends ItemModel
 			if($iduser) {
 				$query->join('LEFT', '#__jem_register AS r ON r.event = a.id');
 				$query->where("r.uid = " . $iduser );
-				$query->where("a.id != " . $id );
 				if(!$status){
 					$query->where("r.status = 1");
 				}else{
