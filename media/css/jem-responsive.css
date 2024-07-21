@@ -214,13 +214,13 @@ body.com_jem.body-overlayed {
 }
 
 #jem_filter {
-    padding: 10px 5px 5px 10px;
+    padding: 10px 5px 0px 10px;
     align-items: baseline;
     background-color: #ffa500;
 }
 
 #jem_filter div {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
 }
 
 #jem_filter label,
