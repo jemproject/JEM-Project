@@ -192,12 +192,6 @@ body.com_jem.body-overlayed {
     gap: 5px;
 }
 
-#jem #limit {
-    padding: 0 10px;
-    margin: 0;
-    width: 80px;
-}
-
 #jem .jem_limit {
     justify-content: flex-end;
     flex-wrap: nowrap;
@@ -214,7 +208,7 @@ body.com_jem.body-overlayed {
 }
 
 #jem_filter {
-    padding: 10px 5px 0px 10px;
+    padding: 10px 5px 5px 10px;
     align-items: baseline;
     background-color: #ffa500;
 }
@@ -228,6 +222,10 @@ body.com_jem.body-overlayed {
 #jem_filter input,
 #status-lbl {
     margin-right: 5px;
+}
+
+.jem_search .jem-row {
+    display: flex !important;
 }
 
 #jem_filter button {

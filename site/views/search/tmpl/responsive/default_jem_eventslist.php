@@ -77,9 +77,9 @@ $uri = Uri::getInstance();
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
   </dt>
-  <dd class="jem-row jem-justify-start">
+  <dd class="jem-row jem-justify-start search-row">
     <?php echo  $this->lists['filter_types'].'&nbsp;'; ?>
-    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
+    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox form-control" onchange="document.getElementById('adminForm').submit();" />
   </dd>
   <dt>
     <?php echo '<label for="category">'.Text::_('COM_JEM_CATEGORY').'</label>'; ?>
@@ -91,8 +91,8 @@ $uri = Uri::getInstance();
     <?php echo '<label for="date">'.Text::_('COM_JEM_SEARCH_DATE').'</label>'; ?>
   </dt>
   <dd>
-    <div class="jem-row jem-nowrap jem-justify-start jem-date"><?php echo Text::_('COM_JEM_SEARCH_FROM'); ?>&nbsp;<?php echo $this->lists['date_from'];?></div>
-    <div class="jem-row jem-nowrap jem-justify-start jem-date"><?php echo text::_('COM_JEM_SEARCH_TO'); ?>&nbsp;<?php echo $this->lists['date_to'];?></div>
+    <div class="jem-row jem-nowrap jem-justify-start jem-date"><?php echo $this->lists['date_from'];?></div>
+    <div class="jem-row jem-nowrap jem-justify-start jem-date"><?php echo $this->lists['date_to'];?></div>
   </dd>
   <dt>
     <?php echo '<label for="continent">'.Text::_('COM_JEM_CONTINENT').'</label>'; ?>
