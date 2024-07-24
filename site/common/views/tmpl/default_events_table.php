@@ -30,11 +30,10 @@ use Joomla\CMS\Router\Route;
 <div id="jem_filter" class="floattext">
 	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
-		<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
-		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+		<input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
         <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
-        <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'] ?? '';?>">
+        <input type="month" name="filter_month" id="filter_month" class="inputbox form-control" placeholder="YYYY-MM" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
 		<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
       <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>

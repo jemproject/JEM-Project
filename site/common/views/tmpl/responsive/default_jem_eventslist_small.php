@@ -112,18 +112,15 @@ function jem_common_show_filter(&$obj) {
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-    <div>
-      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-    </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <?php echo $this->lists['filter']; ?>
-      <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+    <?php echo $this->lists['filter']; ?>
+     <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
         <div>
             <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
-            <input type="month" name="filter_month" id="filter_month" placeholder="YYYY-MM" value="<?php echo $this->lists['month'] ?? '';?>">
+            <input type="month" name="filter_month" id="filter_month" class="inputbox form-control" placeholder="YYYY-MM" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
         </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -339,9 +336,6 @@ function jem_common_show_filter(&$obj) {
   <div style="margin:0; padding: 0;">
     <?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
       <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-        <div>
-          <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-        </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->lists['filter']; ?>
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
