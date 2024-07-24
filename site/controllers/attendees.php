@@ -163,7 +163,6 @@ class JemControllerAttendees extends BaseController
 				$cache = Factory::getCache('com_jem');
 				$cache->clean();
 
-
 				$msg = ($total - $skip - $error - $changed) . ' ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED') . ' [ID: ' . $row->id . ']';
 				if ($changed > 0) {
 					$msg .= ', ' . $changed . ' ' . Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
@@ -175,7 +174,6 @@ class JemControllerAttendees extends BaseController
 				}
 			}
 		}
-
 		$this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&id='.$eventid.'&Itemid='.$fid, false), $msg);
 	}
 
