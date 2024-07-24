@@ -885,7 +885,8 @@ class JemModelEventslist extends ListModel
 			$show_unpublished = $user->can(array('edit', 'publish'), 'event', false, false, 1);
 			if ($show_unpublished) {
 				// global editor or publisher permission
-				$this->setState('filter.published', array(0, 1));
+				$publishedStates = $this->show_archived_events ? array(0, 1, 2) : array(0, 1);
+				$this->setState('filter.published', $publishedStates);
 			} else {
 				// no global permission but maybe on event level
 				$this->setState('filter.published', 1);

@@ -259,7 +259,7 @@ class JemModelAttendee extends BaseDatabaseModel
                     $query = $db->getQuery(true);
                     $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
                     $query->from('#__jem_events as a');
-                    $query->where('(a.recurrence_first_id = ' . (int) ($event->recurrence_first_id ?? $event->id) . ' OR a.id = ' . $db->quote($eventid) . ")");
+                    $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
                     $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
                     $db->setQuery($query);
                     $events = $db->loadObjectList();

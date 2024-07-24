@@ -127,14 +127,14 @@ class JemViewSearch extends JemView
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
 
 		// build selectlists
-		$lists['categories'] = HTMLHelper::_('select.genericlist', $catoptions, 'filter_category', array('size'=>'1', 'class'=>'inputbox'), 'value', 'text', $selectedcats);
+		$lists['categories'] = HTMLHelper::_('select.genericlist', $catoptions, 'filter_category', array('size'=>'1', 'class'=>'form-select'), 'value', 'text', $selectedcats);
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
 		// date filter
-		$lists['date_from'] = HTMLHelper::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
-		$lists['date_to']   = HTMLHelper::_('calendar', $filter_date_to, 'filter_date_to', 'filter_date_to', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
+		$lists['date_from'] = HTMLHelper::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', array('class'=>"inputbox", 'placeholder' => Text::_('COM_JEM_SEARCH_FROM'), 'showTime' => false));
+		$lists['date_to']   = HTMLHelper::_('calendar', $filter_date_to, 'filter_date_to', 'filter_date_to', '%Y-%m-%d', array('class'=>"inputbox", 'placeholder' => Text::_('COM_JEM_SEARCH_TO'), 'showTime' => false));
 
 		// country filter
 		$continents = array();
@@ -146,7 +146,7 @@ class JemViewSearch extends JemView
 		$continents[] = HTMLHelper::_('select.option', 'SA', Text::_('COM_JEM_SOUTH_AMERICA'));
 		$continents[] = HTMLHelper::_('select.option', 'OC', Text::_('COM_JEM_OCEANIA'));
 		$continents[] = HTMLHelper::_('select.option', 'AN', Text::_('COM_JEM_ANTARCTICA'));
-		$lists['continents'] = HTMLHelper::_('select.genericlist', $continents, 'filter_continent', array('class'=>'inputbox'), 'value', 'text', $filter_continent);
+		$lists['continents'] = HTMLHelper::_('select.genericlist', $continents, 'filter_continent', array('class'=>'form-select'), 'value', 'text', $filter_continent);
 		unset($continents);
 
 		// country filter
@@ -209,7 +209,7 @@ class JemViewSearch extends JemView
 		$sortselects = array();
 		$sortselects[] = HTMLHelper::_('select.option', 'title', Text::_('COM_JEM_TABLE_TITLE'));
 		$sortselects[] = HTMLHelper::_('select.option', 'venue', Text::_('COM_JEM_TABLE_LOCATION'));
-		$sortselect    = HTMLHelper::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$sortselect    = HTMLHelper::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter_type);
 
 		$lists['order_Dir']    = $filter_order_Dir;
 		$lists['order']        = $filter_order;
