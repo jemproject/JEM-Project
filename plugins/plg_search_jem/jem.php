@@ -30,7 +30,7 @@ class plgSearchJEM extends CMSPlugin
     public function __construct(&$subject, $config)
     {
         parent::__construct($subject, $config);
-        Plugin::loadLanguage('plg_search_jem', JPATH_ADMINISTRATOR);
+        CMSPlugin::loadLanguage('plg_search_jem', JPATH_ADMINISTRATOR);
     }
 
 
