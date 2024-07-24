@@ -177,6 +177,10 @@ body.com_jem.body-overlayed {
     clear: both;
 }
 
+#jem .clr {
+    clear: both;
+}
+
 #jem .jem-date .input-append {
     display: flex;
     flex-direction: row;
