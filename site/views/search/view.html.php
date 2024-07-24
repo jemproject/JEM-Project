@@ -153,7 +153,7 @@ class JemViewSearch extends JemView
 		$countries = array();
 		$countries[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_COUNTRY'));
 		$countries = array_merge($countries, $this->get('CountryOptions'));
-		$lists['countries'] = HTMLHelper::_('select.genericlist', $countries, 'filter_country', array('class'=>'inputbox'), 'value', 'text', $filter_country);
+		$lists['countries'] = HTMLHelper::_('select.genericlist', $countries, 'filter_country', array('class'=>'form-select'), 'value', 'text', $filter_country);
 		unset($countries);
 
 		// city filter
@@ -161,7 +161,7 @@ class JemViewSearch extends JemView
 			$cities = array();
 			$cities[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_SELECT_CITY'));
 			$cities = array_merge($cities, $this->get('CityOptions'));
-			$lists['cities'] = HTMLHelper::_('select.genericlist', $cities, 'filter_city', array('class'=>'inputbox'), 'value', 'text', $filter_city);
+			$lists['cities'] = HTMLHelper::_('select.genericlist', $cities, 'filter_city', array('class'=>'form-select'), 'value', 'text', $filter_city);
 			unset($cities);
 		}
 
