@@ -156,7 +156,7 @@ class JemViewDay extends JemView
 		if ($jemsettings->showstate == 1 && !($requestVenueId)) {
 			$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter_type);
 		$lists['search'] = $search;
 
 		// Create the pagination object

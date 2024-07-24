@@ -95,7 +95,7 @@ class JemViewVenueslist extends JemView
 		}
 		$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));			
 		$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
-		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'input-medium'), 'value', 'text', $filter);
+		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter);
 
 		// search filter
 		$lists['search'] = $search;
