@@ -216,7 +216,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 			// Optional link to let them register to see the whole event.
 			if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
 				$link1 = Route::_('index.php?option=com_users&view=login');
-				$link = new JUri($link1);
+				$link = new Uri($link1);
 				echo '<p class="readmore">';
 					echo '<a href="'.$link.'">';
 					if ($params->get('event_alternative_readmore') == false) {
