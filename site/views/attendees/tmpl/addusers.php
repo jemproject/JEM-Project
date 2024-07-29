@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Form\Form;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
 $checked = 0;
@@ -21,8 +22,8 @@ $checked = 0;
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 // Get the form.
-JForm::addFormPath(JPATH_COMPONENT . '/models/forms');
-$form = JForm::getInstance('com_jem.addusers', 'addusers');
+Form::addFormPath(JPATH_COMPONENT . '/models/forms');
+$form = Form::getInstance('com_jem.addusers', 'addusers');
 
 if (empty($form)) {
 	return false;
