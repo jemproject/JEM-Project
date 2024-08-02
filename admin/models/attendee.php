@@ -266,7 +266,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 }
             }
 
-            if (!count ($events)){
+            if (!isset($events) || !count ($events)){
                 $events [] = clone $event;
             }
 

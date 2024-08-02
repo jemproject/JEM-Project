@@ -117,7 +117,7 @@ class JemControllerAttendees extends BaseController
 				}
 			}
 
-			if (!count ($events)){
+			if (!isset($events) || !count ($events)){
 				$events [] = clone $event;
 			}
 
