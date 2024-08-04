@@ -1,7 +1,7 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
+ * @subpackage JEM Content Plugin
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
