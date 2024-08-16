@@ -23,6 +23,6 @@
          loaded from this location when accessing the finder component at the
          frontend. This is a limitation in J2.5 -->
     <languages>
-        <language tag="en-GB">language/en-GB/en-GB.plg_finder_jem.ini</language>
+        <language tag="en-GB">language/en-GB/plg_finder_jem.ini</language>
     </languages>
 </extension>

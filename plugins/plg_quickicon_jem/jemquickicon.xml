@@ -18,8 +18,8 @@
         <folder>src</folder>
         <folder>language</folder>
     </files>
-    <languages folder="language">
-        <language tag="en-GB">en-GB/plg_quickicon_jemquickicon.ini</language>
-        <language tag="en-GB">en-GB/plg_quickicon_jemquickicon.sys.ini</language>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_quickicon_jemquickicon.ini</language>
+        <language tag="en-GB">language/en-GB/plg_quickicon_jemquickicon.sys.ini</language>
     </languages>
 </extension>

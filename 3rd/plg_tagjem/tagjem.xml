@@ -15,6 +15,9 @@
 		<filename>index.html</filename>
 		<folder>language</folder>
 	</files>
+	<languages>
+        <language tag="en-GB">language/en-GB/plg_acymailing_tagjem.ini</language>
+    </languages>
 
 	<media folder="media/com_acymailing/plugins" destination="com_acymailing/plugins">
 		<filename>index.html</filename>

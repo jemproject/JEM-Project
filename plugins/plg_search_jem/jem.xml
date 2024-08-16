@@ -16,6 +16,10 @@
 
         <folder>language</folder>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_search_jem.ini</language>
+        <language tag="en-GB">language/en-GB/plg_search_jem.sys.ini</language>
+    </languages>
 
     <config>
         <fields name="params">

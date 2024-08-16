@@ -15,6 +15,10 @@
         <filename>index.html</filename>
         <folder>language</folder>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_jem_mailer.ini</language>
+        <language tag="en-GB">language/en-GB/plg_jem_mailer.sys.ini</language>
+    </languages>
 
     <config>
         <fields name="params">

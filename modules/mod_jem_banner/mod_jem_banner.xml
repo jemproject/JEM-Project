@@ -17,10 +17,13 @@
 		<filename>helper.php</filename>
 		<filename>script.php</filename>
 		<filename>index.html</filename>
-
 		<folder>tmpl</folder>
 		<folder>language</folder>
 	</files>
+	<languages>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.sys.ini</language>
+    </languages>
 	<help key="Modules" />
 	<config>
 		<fields name="params">

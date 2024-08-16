@@ -13,10 +13,12 @@
     <files>
         <filename plugin="comments">comments.php</filename>
         <filename>index.html</filename>
-
         <folder>language</folder>
     </files>
-
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_jem_comments.ini</language>
+        <language tag="en-GB">language/en-GB/plg_jem_comments.sys.ini</language>
+    </languages>
     <config>
         <fields name="params">
             <fieldset name="basic">
