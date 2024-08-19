@@ -164,7 +164,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <dd class="createdby">
           <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
           <?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
-            $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2;
+            $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2 . '&catid=' . $this->item->concatid;
             $menu = Factory::getApplication()->getMenu();
             $item = $menu->getItems('link', $needle, true);
             $cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
@@ -250,7 +250,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 		<?php
 		$contact = $this->item->conname;
 		if ($params->get('event_link_contact') == true) :
-			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid;
+			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid . '&catid=' . $this->item->concatid;
 			$menu = Factory::getApplication()->getMenu();
 			$item = $menu->getItems('link', $needle, true);
 			$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;

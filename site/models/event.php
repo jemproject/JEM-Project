@@ -95,7 +95,7 @@ class JemModelEvent extends ItemModel
 				$query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
 				# Contact
-				$query->select('con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail');
+				$query->select('con.id AS conid, con.name AS conname, con.catid AS concatid, con.telephone AS contelephone, con.email_to AS conemail');
 				$query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
 
 				# Venue

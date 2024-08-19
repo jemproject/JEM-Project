@@ -27,4 +27,7 @@ UPDATE `#__jem_categories` SET `checked_out` = null WHERE `checked_out` = 0;
 UPDATE `#__jem_venues` SET `checked_out` = null WHERE `checked_out` = 0;
 UPDATE `#__jem_groups` SET `checked_out` = null WHERE `checked_out` = 0;
 
+UPDATE `#__jem_config` SET `value` = 'H:i' WHERE `keyname` = 'formattime';
+UPDATE `#__jem_config` SET `value` = 'H'   WHERE `keyname` = 'formathour';
 INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('flyer', '0', '0');
+
