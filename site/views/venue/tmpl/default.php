@@ -172,25 +172,27 @@ use Joomla\CMS\Language\Text;
 	<?php $this->attachments = $this->venue->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
 
-	<!--table-->
-	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
-		<?php echo $this->loadTemplate('events_table'); ?>
+    <?php if ($this->settings->get('global_show_listevents', 1)) : ?>
+        <!--table-->
+        <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
+            <?php echo $this->loadTemplate('events_table'); ?>
 
-		<p>
-		<input type="hidden" name="option" value="com_jem" />
-		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-		<input type="hidden" name="view" value="venue" />
-		<input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
-		</p>
-	</form>
+            <p>
+            <input type="hidden" name="option" value="com_jem" />
+            <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+            <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+            <input type="hidden" name="view" value="venue" />
+            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
+            </p>
+        </form>
 
-	<!--pagination-->
-	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
+        <!--pagination-->
+        <div class="pagination">
+            <?php echo $this->pagination->getPagesLinks(); ?>
+        </div>
 
-	<?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+        <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+    <?php endif; ?>
 
 	<!--copyright-->
 	<div class="copyright">
