@@ -193,6 +193,7 @@ body.com_jem.body-overlayed {
     flex-wrap: nowrap;
     justify-content: flex-end;
     gap: 5px;
+    align-items: center;
 }
 
 #jem .jem_limit {

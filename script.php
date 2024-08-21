@@ -160,6 +160,7 @@ class com_jemInstallerScript
             "global_show_timedetails"=>"1",
             "global_show_detailsadress"=>"1",
             "global_show_detlinkvenue"=>"1",
+            "global_show_listevents"=>"1",
             "global_show_mapserv"=>"0",
             "global_tld"=>"",
             "global_lg"=>"",

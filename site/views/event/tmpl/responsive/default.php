@@ -40,20 +40,20 @@ foreach ((array)$this->categories as $category) {
 
 if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 
-<div id="jem" class="event_id<?php 
-    echo $this->escape($this->item->did); 
-    if (!empty($this->item->locid)) { 
+<div id="jem" class="event_id<?php
+    echo $this->escape($this->item->did);
+    if (!empty($this->item->locid)) {
         echo ' venue_id' . $this->escape($this->item->locid);
-    } 
-    if (!empty($catclasses)) { 
-        echo $this->escape($catclasses); 
     }
-?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>" 
-    itemscope="itemscope" itemtype="https://schema.org/Event">    
-    
+    if (!empty($catclasses)) {
+        echo $this->escape($catclasses);
+    }
+?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>"
+    itemscope="itemscope" itemtype="https://schema.org/Event">
+
   <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-  
+
 	<div class="buttons">
 		<?php
 		$btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
@@ -120,7 +120,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         endif;
         $n = is_array($this->categories) ? count($this->categories) : 0;
         ?>
-    
+
         <dt class="jem-category hasTooltip" data-original-title="<?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>">
           <?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:
         </dt>
@@ -136,7 +136,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         endforeach;
         ?>
         </dd>
-    
+
         <?php
         for ($cr = 1; $cr <= 10; $cr++) {
           $currentRow = $this->item->{'custom'.$cr};
@@ -151,13 +151,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
           }
         }
         ?>
-    
+
         <?php if ($params->get('event_show_hits')) : ?>
         <dt class="jem-hits hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
         <dd class="jem-hits"><?php echo Text::sprintf('COM_JEM_EVENT_HITS', $this->item->hits); ?></dd>
         <?php endif; ?>
-    
-    
+
+
       <!-- AUTHOR -->
         <?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
         <dt class="createdby hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
@@ -175,7 +175,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
           ?>
         </dd>
         <?php endif; ?>
-    
+
       <!-- PUBLISHING STATE -->
         <?php if (!empty($this->showeventstate) && isset($this->item->published)) : ?>
         <dt class="jem-published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>

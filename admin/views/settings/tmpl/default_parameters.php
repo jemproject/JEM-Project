@@ -62,6 +62,7 @@ $group = 'globalattribs';
 				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_locdescription',$group); ?></div></li>
 				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_detailsadress',$group); ?></div></li>
 				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_detlinkvenue',$group); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('global_show_listevents',$group); ?></div></li>
 				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_mapserv',$group); ?></div></li>
 				<li><div class="label-form"><?php echo $this->form->renderfield('global_tld',$group); ?></div></li>
 				<li><div class="label-form"><?php echo $this->form->renderfield('global_lg',$group); ?></div></li>
