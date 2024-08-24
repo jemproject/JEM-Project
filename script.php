@@ -562,6 +562,7 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
 			'/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
 			'/administrator/components/com_jem/sql/updates/2.3.1.sql',
+			// remove old langage files
 			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
 			'/components/com_jem/language/en-GB/en-GB.com_jem.ini',
 			'/Users/m/Documents/GitHub/JEM-Project/admin/language/en-GB/en-GB.com_jem.sys.ini',
@@ -588,6 +589,9 @@ class com_jemInstallerScript
 			'/plugins/plg_jem_mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
 			'/plugins/plg_search_jem/language/en-GB/en-GB.plg_search_jem.ini',
 			'/plugins/plg_search_jem/language/en-GB/en-GB.plg_search_jem.sys.ini',	
+			'/administrator/language/en-GB/en-GB.plg_content_jem.ini',
+			'/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
+			'/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
