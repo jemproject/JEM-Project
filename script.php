@@ -562,7 +562,7 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
 			'/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
 			'/administrator/components/com_jem/sql/updates/2.3.1.sql',
-			// remove old langage files with lang prefix
+            // remove old langage files with lang prefix
 			'/language/en-GB/en-GB.pkg_jem.sys.ini',
 			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
 			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.sys.ini',
