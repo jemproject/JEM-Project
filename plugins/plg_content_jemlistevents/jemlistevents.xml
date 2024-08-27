@@ -7,7 +7,7 @@
 	<authorUrl>www.joomlaeventmanager.net</authorUrl>
 	<copyright>copyright (C) 2013-2024 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.2.3</version>
+	<version>4.2.3-beta1</version>
 	<description>PLG_CONTENT_JEMLISTEVENTS_XML_DESCRIPTION</description>
 
 	<files>
@@ -15,6 +15,10 @@
 		<filename>index.html</filename>
 		<folder>language</folder>
 	</files>
+	<languages>
+        <language tag="en-GB">language/en-GB/plg_content_jemlistevents.ini</language>
+        <language tag="en-GB">language/en-GB/plg_content_jemlistevents.sys.ini</language>
+    </languages>
 
 	<config>
 		<fields name="params">

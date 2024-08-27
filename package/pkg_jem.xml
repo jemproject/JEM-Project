@@ -9,7 +9,7 @@
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
 
-	<version>4.2.3</version>
+	<version>4.2.3-beta1</version>
 	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
 	<url>https://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
@@ -38,7 +38,7 @@
 	</files>
 
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.pkg_jem.sys.ini</language>
+		<language tag="en-GB">en-GB/pkg_jem.sys.ini</language>
 	</languages>
 
 	<updateservers>

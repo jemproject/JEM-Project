@@ -7,7 +7,7 @@
 	<creationDate>April 2024</creationDate>
 	<copyright>copyright (C) 2013-2024 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.2.3</version>
+	<version>4.2.3-beta1</version>
 	<description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -17,10 +17,13 @@
 		<filename>helper.php</filename>
 		<filename>script.php</filename>
 		<filename>index.html</filename>
-
 		<folder>tmpl</folder>
 		<folder>language</folder>
 	</files>
+	<languages>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.sys.ini</language>
+    </languages>
 	<help key="Modules" />
 	<config>
 		<fields name="params">
