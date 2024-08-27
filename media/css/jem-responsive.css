@@ -38,6 +38,10 @@ body.com_jem.body-overlayed {
     float: right;
 }
 
+#jem .buttons a{
+    margin-left: 5px;
+}
+
 #jem .buttons::after {
     clear: both;
 }
