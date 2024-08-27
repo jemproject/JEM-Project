@@ -196,7 +196,7 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    gap: 5px;
+    margin-left: 20px;
     align-items: center;
 }
 
