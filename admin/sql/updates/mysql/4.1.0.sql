@@ -1,7 +1,7 @@
 -- insert new config values
 ALTER TABLE `#__jem_events` MODIFY `author_ip` varchar(39);
 ALTER TABLE `#__jem_venues` MODIFY `author_ip` varchar(39);
-ALTER TABLE `#__jem_events` ADD `requestanswer` TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`;
+ALTER TABLE `#__jem_events` ADD COLUMN `requestanswer` TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`;
 ALTER TABLE `#__jem_events` MODIFY `recurrence_limit_date` date NULL DEFAULT null;
 ALTER TABLE `#__jem_events` MODIFY `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL; 
 ALTER TABLE `#__jem_venues` MODIFY `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL; 
