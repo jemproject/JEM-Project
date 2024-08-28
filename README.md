@@ -8,19 +8,19 @@ Based on
 From JEM 4.2 on JEM is compatible with Joomla 5
 
 ## To install
-Download the installation package from https://www.joomlaeventmanager.net/download or install it in Joomla 4 or 5 via the web installer.
+Download the installation package from [https://www.joomlaeventmanager.net/download](https://www.joomlaeventmanager.net/download) or install it in Joomla 4 or 5 via the web installer.
 
 ## Documentation
-https://www.joomlaeventmanager.net/documentation/basics
+[https://www.joomlaeventmanager.net/documentation/basics](https://www.joomlaeventmanager.net/documentation/basics)
 
 ## Community Support
-https://www.joomlaeventmanager.net/forum
+[https://www.joomlaeventmanager.net/forum](https://www.joomlaeventmanager.net/forum)
 
 ## Translation:
-see https://app.transifex.com/jemproject/
+[https://app.transifex.com/jemproject/](https://app.transifex.com/jemproject/)
 
 ## Changelog
-see https://www.joomlaeventmanager.net/project/changelog-jem-4
+[https://www.joomlaeventmanager.net/project/changelog-jem-4](https://www.joomlaeventmanager.net/project/changelog-jem-4)
 
 ## Errors
 Please report errors here: [https://github.com/jemproject/JEM-Project/issues](https://github.com/jemproject/JEM-Project/issues).
