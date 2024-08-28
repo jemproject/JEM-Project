@@ -14,3 +14,4 @@ ALTER TABLE `#__jem_events` ADD COLUMN `singlebooking` INT(1) NOT NULL DEFAULT '
 -- update values
 UPDATE `#__jem_events` SET `recurrence_number` = 7 WHERE `recurrence_number` = 6 AND `recurrence_type` = 4;
 UPDATE `#__jem_events` SET `recurrence_number` = 6 WHERE `recurrence_number` = 5 AND `recurrence_type` = 4;
+UPDATE `#__jem_config` SET `value` = '15%' WHERE keyname = 'catfrowidth' AND value='';
