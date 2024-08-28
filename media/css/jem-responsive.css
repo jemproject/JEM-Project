@@ -389,6 +389,10 @@ body.com_jem.body-overlayed {
     word-break: keep-all;
 }
 
+#jem .jem-event-info-small h4 {
+    margin: 0px;
+}
+
 #jem .jem-event-info-small:last-child {
     margin-right: 0;
 }
