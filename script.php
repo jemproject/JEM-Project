@@ -260,6 +260,9 @@ class com_jemInstallerScript
             // Remove obsolete files and folder
             $this->deleteObsoleteFiles();
 
+			// Check columns in database
+			$this->checkColumnsIntoDatabase();
+
             // Ensure css files are (over)writable
             $this->makeFilesWritable();
 
@@ -303,7 +306,7 @@ class com_jemInstallerScript
      */
     public function getParam($name)
     {
-        $db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
         $db->setQuery($query);
@@ -615,6 +618,39 @@ class com_jemInstallerScript
     }
 
     /**
+	 * Ensure some columns exist into JEM tables (database)
+	 *
+	 * @return void
+	 */
+	private function checkColumnsIntoDatabase()
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+
+        // Array the columns to check
+		$columnsToCheck = [
+			['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
+			['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
+			['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"],
+			['table' => '#__jem_events',     'column' => 'seriesbooking', 'definition' => "INT(1) NOT NULL DEFAULT '0' AFTER `requestanswer`"],
+			['table' => '#__jem_events',     'column' => 'singlebooking', 'definition' => "INT(1) NOT NULL DEFAULT '0' AFTER `seriesbooking`"]
+		];
+
+		// check if the each column exists
+		foreach ($columnsToCheck as $data) {
+			$query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field =' " . $data['column'] . "'";
+			$db->setQuery($query);
+			$result = $db->loadResult();
+			if (!$result) {
+				// The column does not exist, so add it
+				$alterQuery = "ALTER TABLE " . $data['table'] . " ADD COLUMN " . $data['column'] . " " . $data['definition'];
+				$db->setQuery($alterQuery);
+				$db->execute();
+			}
+		}
+	}
+
+	/**
      * Ensure css files are writable.
      * (they maybe read-only caused by CSS Manager)
      *
@@ -631,7 +667,6 @@ class com_jemInstallerScript
         }
     }
 
-
     /**
      * Update data items related to datetime format into JEM.
      * (required when updating/migrating from 2.3.3/5/6 to new version 4.0.0 with support Joomla 4.x or newer)
@@ -641,7 +676,7 @@ class com_jemInstallerScript
     private function updateJem2315()
     {
         // write changed datetime entry '0000-00-00 ...' to null into DB
-        $db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 		
         //Categories table
@@ -741,7 +776,6 @@ class com_jemInstallerScript
         $db->execute();
     }
 
-
     /**
      * Delete JEM update server entry from #__update_sites table.
      *
@@ -774,9 +808,6 @@ class com_jemInstallerScript
             $db->execute();
         }
     }
-
-
-
 
     /**
      * Deletes all JEM tables on database if option says so.
