@@ -638,7 +638,7 @@ class com_jemInstallerScript
 
 		// check if the each column exists
 		foreach ($columnsToCheck as $data) {
-			$query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field =' " . $data['column'] . "'";
+			$query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field ='" . $data['column'] . "'";
 			$db->setQuery($query);
 			$result = $db->loadResult();
 			if (!$result) {
