@@ -91,7 +91,7 @@ class Pkg_JemInstallerScript
 		if ($type == 'uninstall') return true;
 
 		$this->enablePlugin('content', 'jem');
-	//	$this->enablePlugin('search', 'jem');
+		$this->enablePlugin('jem', 'jemlistevents');
 	//	$this->enablePlugin('jem', 'mailer');
 
 		# ajax calendar module doesn't fully work on Joomla! 2.5
