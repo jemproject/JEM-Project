@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.1.1
+ * @version    4.2.3
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -631,9 +631,7 @@ class com_jemInstallerScript
 		$columnsToCheck = [
 			['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
 			['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
-			['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"],
-			['table' => '#__jem_events',     'column' => 'seriesbooking', 'definition' => "INT(1) NOT NULL DEFAULT '0' AFTER `requestanswer`"],
-			['table' => '#__jem_events',     'column' => 'singlebooking', 'definition' => "INT(1) NOT NULL DEFAULT '0' AFTER `seriesbooking`"]
+			['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"]
 		];
 
 		// check if the each column exists
