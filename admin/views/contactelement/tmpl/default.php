@@ -54,7 +54,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 		 <tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
-				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>">
+				<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
 				<a style="cursor:pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
 				</span>
 			</td>
