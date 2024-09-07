@@ -7,7 +7,7 @@ use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die;
 
-class JemQuickIcon extends CMSPlugin
+class Jem extends CMSPlugin
 {
     protected $autoloadLanguage = true;
 
@@ -23,7 +23,7 @@ class JemQuickIcon extends CMSPlugin
                 'linkadd' => 'index.php?option=com_jem&task=event.add',
                 'image'   => 'icon-calendar',
                 'icon'    => 'icon-calendar',
-                'text'    => Text::_('PLG_QUICKICON_JEMQUICKICON_JEM'),
+                'text'    => Text::_('PLG_QUICKICON_JEM_JEM'),
                 'id'      => 'plg_quickicon_jem'
             ]
         ];

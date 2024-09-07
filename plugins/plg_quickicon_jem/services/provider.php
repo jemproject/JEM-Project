@@ -6,7 +6,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Plugin\Quickicon\Jem\Extension\JemQuickIcon;
+use Joomla\Plugin\Quickicon\Jem\Extension\Jem;
 
 return new class implements ServiceProviderInterface
 {
@@ -15,9 +15,9 @@ return new class implements ServiceProviderInterface
         $container->set(
             PluginInterface::class,
             function (Container $container) {
-                $plugin = new JemQuickIcon(
+                $plugin = new Jem(
                     $container->get(DispatcherInterface::class),
-                    (array) PluginHelper::getPlugin('quickicon', 'jemquickicon')
+                    (array) PluginHelper::getPlugin('quickicon', 'jem')
                 );
                 $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
 
