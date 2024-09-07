@@ -129,7 +129,7 @@ Joomla.submitbutton = function(task)
             </tr>
 			<?php if (!empty($this->jemsettings->regallowcomments)): ?>
 			<tr>
-				<td class="key" vertical-align: baseline;">
+				<td class="key" style="vertical-align: baseline;">
 					<label for="comment" <?php echo JemOutput::tooltip(Text::_('COM_JEM_COMMENT'), Text::_('COM_JEM_COMMENT_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_COMMENT').':'; ?>
 					</label>
