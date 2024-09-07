@@ -362,6 +362,16 @@ class JemModelSearch extends BaseDatabaseModel
 		return $this->_db->loadObjectList();
 	}
 
+	public function getContinentFromCountry($country)
+	{
+		$app = Factory::getApplication();
+
+		$query = ' SELECT c.continent as value FROM #__jem_countries as c WHERE c.iso2 = ' . $this->_db->Quote($country);
+		$this->_db->setQuery($query);
+
+		return $this->_db->loadResult();
+	}
+
 	public function getCityOptions()
 	{
 		if (!$country = Factory::getApplication()->input->getString('filter_country', '')) {

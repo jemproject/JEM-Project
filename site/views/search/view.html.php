@@ -34,6 +34,7 @@ class JemViewSearch extends JemView
 		$uri          = Uri::getInstance();
 		$pathway      = $app->getPathWay();
 		$url 			= Uri::root();
+		$model        = $this->getModel('search');
 	//	$user         = JemFactory::getUser();
 
 		// Decide which parameters should take priority
@@ -56,6 +57,11 @@ class JemViewSearch extends JemView
 		$filter_date_to   = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
 		$filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
 		$task             = $app->input->getCmd('task', '');
+
+		if(empty($filter_continent) && empty($filter_country)){
+			$filter_country = $jemsettings->defaultCountry;
+			$filter_continent = $model->getContinentFromCountry($filter_country);
+		}
 
 		// get data from model
 		$rows = $this->get('Data');
