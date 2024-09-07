@@ -33,13 +33,13 @@ class JemViewSearch extends JemView
 		$params       = $app->getParams();
 		$uri          = Uri::getInstance();
 		$pathway      = $app->getPathWay();
-		$url 			= Uri::root();
+		$url 		  = Uri::root();
 		$model        = $this->getModel('search');
-	//	$user         = JemFactory::getUser();
+		//	$user     = JemFactory::getUser();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view'] == 'search');
+			&& $menuitem->query['view'] == 'search');
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -74,10 +74,10 @@ class JemViewSearch extends JemView
 			// Menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_SEARCH'));
 			$pageheading = $params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+			$pathwayKeys = array_keys($pathway->getPathway());
+			$lastPathwayEntryIndex = end($pathwayKeys);
+			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+			//$pathway->setItemName(1, $menuitem->title);
 		} else {
 			$pagetitle = Text::_('COM_JEM_SEARCH');
 			$pageheading = $pagetitle;

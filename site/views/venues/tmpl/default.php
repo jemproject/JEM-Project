@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 ?>
-<div id="jem" class="jem_venues<?php echo $this->pageclass_sfx . ' venue_id' . $this->venue->id; ?>">
+<div id="jem" class="jem_venues<?php echo $this->pageclass_sfx . ' venues_id' . $this->item->id; ?>">
 	<div class="buttons">
 		<?php
 		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);

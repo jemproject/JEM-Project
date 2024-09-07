@@ -35,7 +35,7 @@ h2 {
 }
 
 h3 {
-	margin: 20px 0px 10px;
+	margin: 20px 0 10px;
 	font-size: 1.1em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
@@ -79,7 +79,7 @@ img.left {
 	border-top: 1px solid #ffa909;
 	padding: 3px 3px 3px 54px;
 	font-weight: bold;
-	margin: 8px auto 0px;
+	margin: 8px auto 0;
 	color: #000;
 	background-color: #ffa909;
 }
@@ -89,7 +89,7 @@ img.left {
 	border-right: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
 	padding: 12px 12px 20px 54px;
-	margin: 0px auto 8px;
+	margin: 0 auto 8px;
 	color: #465584;
 	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 15px;
 }
@@ -100,7 +100,7 @@ img.left {
 	border-top: 1px solid #FE8282;
 	padding: 3px 3px 3px 54px;
 	font-weight: bold;
-	margin: 8px auto 0px;
+	margin: 8px auto 0;
 	color: #000;
 	background-color: #FE8C8C;
 }
@@ -110,7 +110,7 @@ img.left {
 	border-right: 2px solid #FE8282;
 	border-bottom: 2px solid #FE8282;
 	padding: 6px 6px 20px 54px;
-	margin: 0px auto 8px;
+	margin: 0 auto 8px;
 	color: #465584;
 	background: #fff url(../images/icon-32-attention.png) no-repeat 6px 6px;
 }

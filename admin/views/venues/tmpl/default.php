@@ -172,11 +172,8 @@ $wa->useScript('table.columns');
                             $overlib 	.= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
                         }
                         ?>
-                        <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>
-
+                        <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
                         <a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$item->created_by; ?>"><?php echo $item->author; ?></a></span>
-
-
                     </td>
                     <td class="center"><?php echo $item->assignedevents; ?></td>
                     <td class="order">
