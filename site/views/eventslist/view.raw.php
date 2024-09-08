@@ -42,8 +42,6 @@ class JemViewEventslist extends HtmlView
 
 			// generate and redirect output to user browser
 			$vcal->returnCalendar();
-		} else {
-			return;
 		}
 	}
 }

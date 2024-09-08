@@ -52,7 +52,7 @@ class JemNomenuRules implements RulesInterface
     public function preprocess(&$query)
     {
         $itmid = is_array($query['Itemid']) ? array_values($query['Itemid']) : $query['Itemid'] ;
-               
+
         $query['Itemid']= is_array($itmid) ?  $itmid[0] : $itmid;
         // echo "preprocess <pre/>";print_R($query);die;
         $test = 'Test';
@@ -70,10 +70,10 @@ class JemNomenuRules implements RulesInterface
      */
     public function parse(&$segments, &$vars)
     {
-       
-      	// Count segments
-	    $count = count($segments);
-  
+
+        // Count segments
+        $count = count($segments);
+
 
         // echo "<pre/>";print_r($segments);die;
         //with this url: https://localhost/j4x/my-walks/mywalk-n/walk-title.html
@@ -83,7 +83,7 @@ class JemNomenuRules implements RulesInterface
         // $vars['view'] = 'mywalk';
         // $vars['id'] = substr($segments[0], strpos($segments[0], '-') + 1);
         // array_shift($segments);
-        
+
         // array_shift($segments);
         // $vars['option']='com_jem';
         switch ($segments[0])
@@ -102,7 +102,7 @@ class JemNomenuRules implements RulesInterface
 
             case 'event':
                 {
-                  
+
                     if ($count == 2) {
                         $id = explode(':', $segments[1]);
                         $vars['id'] = $id[0];
@@ -110,7 +110,7 @@ class JemNomenuRules implements RulesInterface
                     } else {
                         $vars['view'] = 'event';
                     }
-                   
+
                 }
                 break;
 
@@ -176,13 +176,13 @@ class JemNomenuRules implements RulesInterface
                     $vars['view'] = 'venues';
                 }
                 break;
-                
+
             case 'venueslist':
                 {
                     $vars['view'] = 'venueslist';
                 }
                 break;
-                        case 'day':
+            case 'day':
                 {
                     $vars['view'] = 'day';
                     if ($count == 2) {
@@ -225,10 +225,9 @@ class JemNomenuRules implements RulesInterface
                 }
                 break;
         }
-       array_shift($segments);
-        
         array_shift($segments);
-        return;
+
+        array_shift($segments);
     }
 
     /**
@@ -244,23 +243,21 @@ class JemNomenuRules implements RulesInterface
     public function build(&$query, &$segments)
     {
         // $itmid = is_array($query['Itemid']) ? array_values($query['Itemid']) : $query['Itemid'] ;
-               
+
         // $query['Itemid']= is_array($itmid) ?  $itmid[0] : $itmid;
-        if(isset($query['view'],$query['id'])){           
+        if(isset($query['view'],$query['id'])){
             $segments[] =$query['view'];
             $segments[] =$query['id'];
             unset($query['view'],$query['tmpl'],$query['id'],$query['Itemid']);
         }else
-        if (isset($query['view'])) {
-            $segments[] = $query['view'];
-            unset($query['view']);
-        }else
-    
-        if (isset($query['id'])) {
-            $segments[] = $query['id'];
-            unset($query['id']);
-        };
+            if (isset($query['view'])) {
+                $segments[] = $query['view'];
+                unset($query['view']);
+            }else
 
-
+                if (isset($query['id'])) {
+                    $segments[] = $query['id'];
+                    unset($query['id']);
+                };
     }
 }

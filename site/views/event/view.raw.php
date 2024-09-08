@@ -44,11 +44,7 @@ class JemViewEvent extends HtmlView
 				JemHelper::icalAddEvent($vcal, $row);
 				// generate and redirect output to user browser
 				$vcal->returnCalendar();
-			} else {
-				return;
 			}
-		} else {
-			return;
 		}
 	}
 }
