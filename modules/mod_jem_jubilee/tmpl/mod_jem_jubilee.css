@@ -70,13 +70,13 @@ div#jemmodulejubilee .eventset {
 }
 
 div#jemmodulejubilee .event-title {
-	padding-left: 0px;
+	padding-left: 0;
 	font-size: x-large;
 	margin: 0 0 5px;
 }
 
 div#jemmodulejubilee .desc {
-	padding-left: 0px;
+	padding-left: 0;
 	padding-top: 2px;
 	font-size: small;
 }
@@ -117,7 +117,7 @@ div#jemmodulejubilee .venue-image-cell {
 
 div#jemmodulejubilee .image-preview {
 	max-width: 110px;
-	border: 0px solid #CCCCCC;
+	border: 0 solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
 	margin: 2px;
@@ -125,7 +125,7 @@ div#jemmodulejubilee .image-preview {
 
 div#jemmodulejubilee .image-preview2 {
 	max-width: 200px;
-	border: 0px solid #CCCCCC;
+	border: 0 solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
 	margin: 2px;

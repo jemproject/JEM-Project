@@ -21,7 +21,7 @@ if ($params->get('use_modal', 0)) {
 
 <div class="jemmoduleteaser<?php echo $params->get('moduleclass_sfx')?>" id="jemmoduleteaser">
 <?php ?>
-	<div class="eventset" summary="mod_jem_teaser">
+	<div class="eventset" >
 	<?php if (count($list)) : ?>
 		<?php foreach ($list as $item) : ?>
 		<div class="event_id<?php echo $item->eventid; ?>">

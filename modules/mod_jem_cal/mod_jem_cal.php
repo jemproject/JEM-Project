@@ -58,11 +58,6 @@ if($Itemid ==0){
 # AJAX requires at least J! 3.2.7 (because we use com_ajax)
 $use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');
 
-# NEVER use setlocale() - see php manual why
-//if (!empty($LocaleOverride)) {
-//	setlocale(LC_ALL, $LocaleOverride);
-//}
-
 # Get switch trigger
 $req_modid = $app->input->getInt('modjemcal_id');
 if ((int)$module->id === $req_modid) {

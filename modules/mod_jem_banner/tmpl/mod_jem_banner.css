@@ -70,7 +70,7 @@ div#jemmodulebanner .eventset {
 }
 
 div#jemmodulebanner .event-title {
-	padding-left: 0px;
+	padding-left: 0;
 	font-size: x-large;
 	margin: 0 0 5px;
 }
@@ -80,7 +80,7 @@ div#jemmodulebanner .event-title {
 }
 
 div#jemmodulebanner .desc {
-	padding-left: 0px;
+	padding-left: 0;
 	padding-top: 2px;
 	font-size: small;
 }
@@ -120,14 +120,14 @@ div#jemmodulebanner .venue-image-cell {
 }
 
 div#jemmodulebanner .image-preview {
-	border: 0px solid #CCCCCC;
+	border: 0 solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
 	margin: 2px;
 }
 
 div#jemmodulebanner .image-preview2 {
-	border: 0px solid #CCCCCC;
+	border: 0 solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
 	margin: 2px;

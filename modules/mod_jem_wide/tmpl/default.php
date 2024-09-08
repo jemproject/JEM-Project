@@ -19,7 +19,7 @@ use Joomla\CMS\Uri\Uri;
 <div class="jemmodulewide<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulewide">
 
 <?php if (count($list)) : ?>
-	<table class="eventset" summary="mod_jem_wide">
+	<table class="eventset">
 
 		<colgroup>
 			<col width="30%" class="jemmodw_col_title" />

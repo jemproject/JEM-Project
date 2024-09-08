@@ -15,18 +15,6 @@ use Joomla\CMS\Uri\Uri;
 
 $app = Factory::getApplication();
 $document = $app->getDocument();
-$module_name = 'mod_jem';
-
-/*
-$uri = Uri::getInstance();
-$css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
-if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_/tmpl/mod_jem.css']);
-  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-} else {
-  $document->addStyleSheet($uri->base(true).'/modules/mod_jem/tmpl/mod_jem_responsive.css');
-}
-*/
 
 $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');

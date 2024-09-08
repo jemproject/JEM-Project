@@ -102,7 +102,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 
 <div class="jemmodulebanner<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebanner">
 <?php ?>
-	<div class="eventset" summary="mod_jem_banner">
+	<div class="eventset">
 	<?php $i = count($list); ?>
 	<?php if ($i > 0) : ?>
 		<?php foreach ($list as $item) : ?>

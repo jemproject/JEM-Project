@@ -35,7 +35,7 @@ if ($flyer_link_type == 1) {
 
 <div class="jemmodulejubilee<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulejubilee">
 <?php ?>
-	<div class="eventset" summary="mod_jem_jubilee">
+	<div class="eventset">
 		<?php if ($showcalendar == 1) :?>
 		<div>
 			<div class="calendar<?php echo '-'.$colorclass; ?>"
