@@ -85,8 +85,8 @@
 					label="MOD_JEM_JUBILEE_ORDER"
 					description="MOD_JEM_JUBILEE_ORDER_DESC"
 				>
-					<option value="0">MOD_JEM_JUBILEE_ORDER_DESC</option>
-					<option value="1">MOD_JEM_JUBILEE_ORDER_ASC</option>
+					<option value="0">MOD_JEM_JUBILEE_ORDER_DESCENDING</option>
+					<option value="1">MOD_JEM_JUBILEE_ORDER_ASCENDING</option>
 				</field>
 
 				<field name="cuttitle" type="text"
