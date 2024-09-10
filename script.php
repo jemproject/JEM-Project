@@ -596,12 +596,13 @@ class com_jemInstallerScript
 			'/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',	
 			'/administrator/language/en-GB/en-GB.plg_content_jem.ini',
 			'/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
-			'/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
+			'/administrator/language/en-GB/en-GB.plg_finder_jem.ini',		
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
         $folders = array(            
             '/media/com_jem/FontAwesome',
+            '/plugins/quickicon/jemquickicon',
         );
 
         foreach ($files as $file) {
@@ -616,7 +617,7 @@ class com_jemInstallerScript
             }
         }
     }
-
+    
     /**
 	 * Ensure some columns exist into JEM tables (database)
 	 *
