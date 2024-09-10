@@ -57,7 +57,7 @@ $wa->useScript('table.columns');
                 </div>
 				<div class="col-md-10">		
                     <div class="row mb-12">    
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="input-group">
                                 <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
 
@@ -80,7 +80,7 @@ $wa->useScript('table.columns');
                                 <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
                             </select>
                         </div>
-                        <div class="col-md-1 wauto-minwmax">
+                        <div class="col-md-2 wauto-minwmax">
                             <select name="filter_access" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                                 <option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
                                 <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
