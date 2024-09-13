@@ -79,6 +79,7 @@ body.body-overlayed {
 	padding: 5px 1px 0 0;
 	margin-right:10px;
 	line-height: 24px;
+	background-image: url(../img/calendar_alpha.png);}
 }
 
 #jemmoduleteaser [class|="calendar"] .yearteaser {
