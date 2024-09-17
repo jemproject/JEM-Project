@@ -78,8 +78,7 @@ body.body-overlayed {
 	text-align: center;
 	padding: 5px 1px 0 0;
 	margin-right:10px;
-	line-height: 24px;
-	background-image: url(../img/calendar_default.png);}
+	line-height: 24px;}
 }
 
 #jemmoduleteaser [class|="calendar"] .yearteaser {
