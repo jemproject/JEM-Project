@@ -35,7 +35,7 @@ class JemView extends HtmlView
 		if (!empty($suffix)) {
 			$this->_layoutStyleSuffix = $suffix;
 			if (is_dir($this->_basePath . '/view')) {
-				$this->addTempltePath($this->_basePath . '/view/' . $this->getName() . '/tmpl/' . $suffix);
+				$this->addTemplatePath($this->_basePath . '/view/' . $this->getName() . '/tmpl/' . $suffix);
 			}
 			else {
 				$this->addTemplatePath($this->_basePath . '/views/' . $this->getName() . '/tmpl/' . $suffix);
