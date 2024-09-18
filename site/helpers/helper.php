@@ -1275,14 +1275,8 @@ class JemHelper
 		$jemsettings = self::config();
 		$layoutstyle = isset($jemsettings->layoutstyle) ? (int)$jemsettings->layoutstyle : 0;
 
-		switch ($layoutstyle) {
-		case 1:
-			return 'responsive';
-		case 2:
-			return 'alternative';
-		default:
-			return '';
-		}
+		return $layoutstyle === 1 ? 'responsive' : '';
+
 	}
 
 	/**
