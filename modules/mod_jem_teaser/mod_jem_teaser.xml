@@ -104,7 +104,7 @@
 					<option value="green">MOD_JEM_TEASER_GREEN</option>
 					<option value="orange">MOD_JEM_TEASER_ORANGE</option>
 					<option value="category">MOD_JEM_TEASER_CATEGORY</option>
-					<option value="alpha">MOD_JEM_TEASER_USER</option>
+					<option value="alpha">MOD_JEM_TEASER_FALLBACK_COLOR</option>
 				</field>
 				<field name="fallbackcolor" type="text"
 					class="inputbox"
