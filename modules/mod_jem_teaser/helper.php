@@ -270,7 +270,6 @@ abstract class ModJemTeaserHelper
 
 			$lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
-
 			$lists[$i]->colorclass = $color;
 			if (($color == 'alpha') || (($color == 'category') && empty($row->categories))) {
 				$lists[$i]->color = $fallback_color;
