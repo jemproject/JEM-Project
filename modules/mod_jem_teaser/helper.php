@@ -162,7 +162,7 @@ abstract class ModJemTeaserHelper
 
 		$color = $params->get('color');
 		$fallback_color = $params->get('fallbackcolor', '#EEEEEE');
-
+		$fallback_color_is_dark = self::_is_dark($fallback_color);	
 		# Loop through the result rows and prepare data
 		$lists = array();
 		$i     = -1; // it's easier to increment first
@@ -270,15 +270,27 @@ abstract class ModJemTeaserHelper
 
 			$lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
+
 			$lists[$i]->colorclass = $color;
-			if (($color == 'category') && !empty($row->categories)) {
+			if (($color == 'alpha') || (($color == 'category') && empty($row->categories))) {
+				$lists[$i]->color = $fallback_color;
+				$lists[$i]->color_is_dark = $fallback_color_is_dark;
+			}
+			elseif (($color == 'category') && !empty($row->categories)) {
 				$colors = array();
 				foreach ($row->categories as $category) {
 					if (!empty($category->color)) {
 						$colors[$category->color] = $category->color;
 					}
 				}
-				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+
+				if (count($colors) == 1) {
+					$lists[$i]->color =  array_pop($colors);
+					$lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
+				} else {
+					$lists[$i]->color =  $fallback_color;
+					$lists[$i]->color_is_dark = $fallback_color_is_dark;
+				}
 			}
 
 			# provide custom fields
@@ -291,6 +303,41 @@ abstract class ModJemTeaserHelper
 		return $lists;
 	}
 
+	/**
+	 * Method to decide if given color is dark.
+	 *
+	 * @access protected
+	 *
+	 * @param  string  $color  color value in form '#rgb' or '#rrggbb'
+	 *
+	 * @return bool  given color is dark (true) or not (false)
+	 *
+	 * @since  2.2.1
+	 */
+	protected static function _is_dark($color)
+	{
+		$gray = false;
+
+		# we understand '#rgb' or '#rrggbb' colors only
+		# r:77, g:150, b:28
+		if (strlen($color) < 5) {
+			$scan = sscanf($color, '#%1x%1x%1x');
+			if (is_array($scan) && count($scan) == 3) {
+				$gray = (17 * $scan[0] *  77) / 255
+				      + (17 * $scan[1] * 150) / 255
+				      + (17 * $scan[2] *  28) / 255;
+			}
+		} else {
+			$scan = sscanf($color, '#%2x%2x%2x');
+			if (is_array($scan) && count($scan) == 3) {
+				$gray = ($scan[0] *  77) / 255
+				      + ($scan[1] * 150) / 255
+				      + ($scan[2] *  28) / 255;
+			}
+		}
+
+		return (!empty($gray) && ($gray <= 160));
+	}
 	/**
 	 *format days
 	 */

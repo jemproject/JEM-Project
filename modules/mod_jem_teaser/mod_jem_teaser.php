@@ -29,6 +29,7 @@ switch($params->get('color')) {
 	case 'green':
 	case 'orange':
 	case 'category':
+	case 'alpha':			  
 		$color = $params->get('color');
 		break;
 	default:
