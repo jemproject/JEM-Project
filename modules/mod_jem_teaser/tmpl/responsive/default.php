@@ -255,28 +255,32 @@ if ($params->get('use_modal', 0)) {
     return o;
   }
   
-  var calendars = document.getElementsByClassName('calendar-category');
-  if (calendars != undefined) {
+  var calendars = document.querySelectorAll('.calendar-category, .calendar-alpha');
+console.log('Gefundene Kalender:', calendars.length);
+
+if (calendars.length > 0) {
     var o = 0;
-    var monthteaser = null;
-    for (var i = 0; i < calendars.length; i++) {
-      o = calculateBrightness(parseColor(calendars[i].style.backgroundColor));
-      monthteaser = null;
-      for (var j = 0; j < calendars[i].childNodes.length; j++) {
-          if (calendars[i].childNodes[j].className == "monthteaser") {
-            monthteaser = calendars[i].childNodes[j];
-            break;
-          }        
-      }
-      if (monthteaser != null) {
-        if (o > 125) {
-            monthteaser.style.color = 'rgb(0, 0, 0)';
-        } else { 
-            monthteaser.style.color = 'rgb(255, 255, 255)';
-        }        
-      }
-    }
-  }
+    calendars.forEach(function(calendar, index) {
+        o = calculateBrightness(parseColor(calendar.style.backgroundColor));
+        console.log('Kalender ' + index + ' Helligkeit:', o);
+
+        var elements = calendar.querySelectorAll('.monthteaser, .dayteaser, .daynumteaser');
+        console.log('Gefundene Elemente in Kalender ' + index + ':', elements.length);
+
+        elements.forEach(function(element) {
+            if (o > 125) {
+                element.style.color = 'rgb(0, 0, 0)';
+                element.style.textShadow = '1px 1px 2px rgba(255, 255, 255, 0.7)';
+            } else { 
+                element.style.color = 'rgb(255, 255, 255)';
+                element.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.7)';
+            }
+            console.log('Stil angewendet auf:', element.className);
+        });
+    });
+} else {
+    console.log('Keine Kalender gefunden');
+}
 </script>
 <?php /*
 function createRSSfeed($list) {
