@@ -5,7 +5,6 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-
 /* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
 
 body.com_jem #sbox-overlay {
@@ -173,7 +172,9 @@ body.com_jem.body-overlayed {
 }
 
 #jem .copyright {
+    font-size: 0.9em;
     text-align: right;
+    color: #808080;
 }
 
 #jem .jem-hr {

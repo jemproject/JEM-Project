@@ -39,7 +39,7 @@ class JemOutput
 		if ($app->input->get('print','','int')) {
 			return;
 		} else {
-			echo '<span style="color: grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></span>';
+			echo '<span class="grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank" title="Joomla Event Manager">JEM</a></span>';
 		}
 	}
 	
