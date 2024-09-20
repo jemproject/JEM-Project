@@ -1411,8 +1411,6 @@ class JemHelper
 			$css = $module;
 		}
 
-
-
         $app = Factory::getApplication();
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
