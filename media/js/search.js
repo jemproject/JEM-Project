@@ -15,13 +15,13 @@ jQuery(document).ready(function ($) {
     });
     */
 
-    if ($('filter_continent')) {
-        $('filter_continent').on('change', function () {
-            if (country = $('filter_country')) {
-                country.selectedIndex = 0;
+    if ($('#filter_continent').length) {
+        $('#filter_continent').on('change', function () {
+            if ($('#filter_country').length) {
+                $('#filter_country').val('');
             }
-            if (city = $('filter_city')) {
-                city.selectedIndex = 0;
+            if ($('#filter_city').length) {
+                $('#filter_city').val('');
             }
             this.form.submit();
         });
