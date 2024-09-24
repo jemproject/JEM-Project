@@ -616,10 +616,7 @@ static public function lightbox() {
 				//button in popup
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
 				$text = Text::_('COM_JEM_PRINT');
-				// $title = 'title='.Text::_('JGLOBAL_PRINT');
-				// $pimage = HTMLHelper::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), $title, true);
-				// $output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
-				$output = '<a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>';
+				$output = '<a href="#" onclick="window.print();return false;" title="' . 'Text::_('COM_JEM_PRINT'); . "><span class="icon icon-print"></span></a>';
 			} else {
 				//button in view
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
