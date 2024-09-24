@@ -49,7 +49,6 @@ class JemViewEventslist extends JemView
 		$pathway     = $app->getPathWay();
 		$user        = JemFactory::getUser();
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-		$uri         = Uri::getInstance();
 
 		// Load css
 		JemHelper::loadCss('jem');
