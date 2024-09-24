@@ -210,7 +210,7 @@ class JemControllerVenue extends JemControllerForm
 	 */
 	protected function getReturnPage()
 	{
-        $uri = Uri::getInstance();
+        $uri    = Uri::getInstance();
 		$return = Factory::getApplication()->input->get('return', null, 'base64');
 
 		if (empty($return) || !Uri::isInternal(base64_decode($return))) {

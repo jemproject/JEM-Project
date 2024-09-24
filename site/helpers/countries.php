@@ -1079,7 +1079,7 @@ class JemHelperCountries
 	 */
 	static public function getIsoFlag($iso_code)
 	{
-		$uri = Uri::getInstance();
+		$uri      = Uri::getInstance();
 		$settings = JemHelper::config();
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);
