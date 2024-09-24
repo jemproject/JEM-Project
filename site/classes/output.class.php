@@ -184,7 +184,6 @@ static public function lightbox() {
 		{
 			$settings  = JemHelper::globalattribs();
 			$settings2 = JemHelper::config();
-
 			$uri       = Uri::getInstance();
 			$app = Factory::getApplication();
 
@@ -221,7 +220,7 @@ static public function lightbox() {
 		if ($addvenuelink) {
 			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			$uri       = Uri::getInstance();
+			$uri      = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -257,7 +256,7 @@ static public function lightbox() {
 		if ($adduserslink) {
 			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			$uri       = Uri::getInstance();
+			$uri      = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -320,7 +319,7 @@ static public function lightbox() {
 	 **/
 	static public function prepareAddEventButton($urlparams = '')
 	{
-		$uri       = Uri::getInstance();
+		$uri   = Uri::getInstance();
 		$image = HTMLHelper::_('image', 'com_jem/icon-16-new.png', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
 		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
 		if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
@@ -428,9 +427,9 @@ static public function lightbox() {
 			}
 
 			// Initialise variables.
-			$user   = JemFactory::getUser();
-			$userId = $user->get('id');
-			$uri       = Uri::getInstance();
+			$user     = JemFactory::getUser();
+			$userId   = $user->get('id');
+			$uri      = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
@@ -535,9 +534,9 @@ static public function lightbox() {
 			}
 
 			// Initialise variables.
-			$user   = JemFactory::getUser();
-			$userId = $user->get('id');
-			$uri       = Uri::getInstance();
+			$user     = JemFactory::getUser();
+			$userId   = $user->get('id');
+			$uri      = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
@@ -653,10 +652,10 @@ static public function lightbox() {
 				return;
 			}
 
-			$uri = Uri::getInstance();
-			$base = $uri->toString(array('scheme', 'host', 'port'));
+			$uri      = Uri::getInstance();
+			$base     = $uri->toString(array('scheme', 'host', 'port'));
 			$template = Factory::getApplication()->getTemplate();
-			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
+			$link     = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
 			$url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
@@ -1167,8 +1166,8 @@ static public function lightbox() {
 
 	static public function flyer($data, $image, $type, $id = null)
 	{
-		$uri = Uri::getInstance();
-		$id_attr = $id ? 'id="'.$id.'"' : '';
+		$uri      = Uri::getInstance();
+		$id_attr  = $id ? 'id="'.$id.'"' : '';
 		$settings = JemHelper::config();
 		switch($type) {
 			case 'event':
