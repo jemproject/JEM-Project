@@ -138,13 +138,13 @@ class JemViewEventslist extends JemView
 
 		if ($task == 'archive') {
 			$pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=eventslist&task=archive'));
-			$print_link = $uri->toString() . "&amp;task=archive&print=1";
+			$print_link = $uri->toString() . "?task=archive&print=1";
 			$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 			$archive_link = Route::_('index.php?option=com_jem&view=eventslist');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = $uri->toString() . "?view=eventslist&print=1&amp;tmpl=component";
+			$print_link = Route::_('index.php?option=com_jem&view=eventslist&tmpl=component&print=1');
 			$archive_link = $uri->toString();
 		}
 
