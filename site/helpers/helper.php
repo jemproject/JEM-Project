@@ -1410,41 +1410,21 @@ class JemHelper
 			$css = $module;
 		}
 
+        $app = Factory::getApplication();
+        $wa = $app->getDocument()->getWebAssetManager();
+        $templateName = $app->getTemplate();
         $suffix = self::getLayoutStyleSuffix();
-
-		if (!empty($suffix)) {
-			# search for template overrides
-			$path = $module . '/' . $suffix . '/' . $css . '.css';
-			$files = HTMLHelper::_('stylesheet', $path, array(), true, true);
-			if (!empty($files)) {
-				# we have to call this stupid function twice; no other way to know if something was loaded
-				HTMLHelper::_('stylesheet', $path, array(), true);
-				return;
+        $filestyle = ($suffix? $suffix . '/':'') . $module . '.css';
+        //Search for template overrides
+        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+            $wa->registerAndUseStyle($module, 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
         } else {
-				# search within module because JEM modules doesn't use media folder
-				$path = 'modules/' . $module . '/tmpl/' . $suffix . '/' . $css . '.css';
-				$files = HTMLHelper::_('stylesheet', $path, array());
-				if (!empty($files)) {
-					# we have to call this stupid function twice; no other way to know if something was loaded
-					HTMLHelper::_('stylesheet', $path, array());
-					return;
-				}
-			}
-		}
-
-		$path = $module . '/' . $suffix . '/' . $css . '.css';
-		$files = HTMLHelper::_('stylesheet', $path, array(), true, true);
-		if (!empty($files)) {
-			# we have to call this stupid function twice; no other way to know if something was loaded
-			HTMLHelper::_('stylesheet', $path, array(), true);
-			return;
+            //Search in media folder
+            if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
+                $wa->registerAndUseStyle($module, 'media/'. $module . '/css/' . $filestyle);
             }else{
-			$path = 'modules/' . $module . '/tmpl/' . $css . '.css';
-			$files = HTMLHelper::_('stylesheet', $path, array());
-			if (!empty($files)) {
-				# no css for layout style configured, so use the default css
-				HTMLHelper::_('stylesheet', $path, array());
-				return;
+                //Search in the module
+                $wa->registerAndUseStyle($module, 'modules/'. $module . '/tmpl/' . $filestyle);
             }
 		}
 	}
