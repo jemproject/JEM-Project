@@ -72,37 +72,47 @@ body.body-overlayed {
 }
  
 #jemmoduleteaser [class|="calendar"] {
-	background-repeat: no-repeat;
-	width: 81px;
-	height: 85px;
-	text-align: center;
-	padding: 5px 1px 0 0;
-	margin-right:10px;
-	line-height: 24px;}
+    background-repeat: no-repeat;
+    width: 81px;
+    height: 85px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin-right:10px;
+    line-height: 24px;}
+}
+
+#jemmoduleteaser .calendar-blue {background-image: url(../img/calendar_blue.png);}
+#jemmoduleteaser .calendar-green {background-image: url(../img/calendar_green.png);}
+#jemmoduleteaser .calendar-orange {background-image: url(../img/calendar_orange.png);}
+#jemmoduleteaser .calendar-red {background-image: url(../img/calendar_red.png);}
+#jemmoduleteaser .calendar-category {background-image: url(../img/calendar_alpha.png);}
+#jemmoduleteaser .calendar-category .dayteaser, #jemmoduleteaser .calendar-category .daynumteaser {
+	color: black !important;
+	text-shadow: #FFF 1px 1px 1px !important;
 }
 
 #jemmoduleteaser [class|="calendar"] .yearteaser {
-	font-size: 80%;
-	height:5px;
+    font-size: 80%;
+    height:5px;
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser {
-	font-size: 85%;
-	font-weight:bold;
-	height:20px;
-	color: white;
-	text-shadow: #666 1px 1px 1px;
+    font-size: 80%;
+    font-weight:bold;
+    height:20px;
+    color: white;
+    text-shadow: #666 1px 1px 1px;
 }
 
 #jemmoduleteaser [class|="calendar"] .dayteaser {
-  font-size: 90%;
-	font-weight:bold;
-	padding-top:3px;
+    font-size: 80%;
+    font-weight:bold;
+    padding-top:3px;
 }
 
 #jemmoduleteaser [class|="calendar"] .daynumteaser {
-	font-size: 150%;
-	font-weight:bold;
+    font-size: 150%;
+    font-weight:bold;
 }
 
 #jemmoduleteaser .time, #jemmoduleteaser .date {
