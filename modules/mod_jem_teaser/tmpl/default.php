@@ -141,7 +141,7 @@ if ($params->get('use_modal', 0)) {
     var o = 0;
     calendars.forEach(function(calendar, index) {
         o = calculateBrightness(parseColor(calendar.style.backgroundColor));
-        var elements = calendar.querySelectorAll('.monthteaser, .dayteaser, .daynumteaser');
+        var elements = calendar.querySelectorAll('.monthteaser');
         elements.forEach(function(element) {
             if (o > 125) {
                 element.style.color = 'rgb(0, 0, 0)';

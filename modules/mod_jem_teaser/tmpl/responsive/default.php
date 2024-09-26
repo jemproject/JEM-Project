@@ -289,7 +289,7 @@ if ($params->get('use_modal', 0)) {
     // Calculate the brightness
     o = calculateBrightness(parseColor(bgColor));
     // Select all relevant elements within the calendar
-    var elements = calendar.querySelectorAll('.monthteaser, .dayteaser, .daynumteaser');
+    var elements = calendar.querySelectorAll('.monthteaser');
     // Set text color and shadow based on brightness
     elements.forEach(function(element) {
       if (o > 125) {
