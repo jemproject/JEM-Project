@@ -144,7 +144,7 @@ class JemViewEventslist extends JemView
 			$archive_link = Route::_('index.php?option=com_jem&view=eventslist');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = Route::_('index.php?option=com_jem&view=eventslist&tmpl=component&print=1');
+			$print_link = $uri->toString() . "?tmpl=component&print=1";
 			$archive_link = $uri->toString();
 		}
 
