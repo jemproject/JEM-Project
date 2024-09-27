@@ -360,7 +360,7 @@ abstract class ModJemBannerHelper
 			}
 		}
 
-		return (!empty($gray) && ($gray <= 160));
+		eturn ($gray <= 160);
 	}
 
 	/**

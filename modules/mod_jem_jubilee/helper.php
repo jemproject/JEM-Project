@@ -185,7 +185,6 @@ abstract class ModJemJubileeHelper
 		# Retrieve the available Events
 		####
 		$events = $model->getItems();
-
 		$color = $params->get('color');
 		$user_color = $params->get('usercolor', '#EEEEEE');
 		$user_color_is_dark = self::_is_dark($user_color);
@@ -347,7 +346,7 @@ abstract class ModJemJubileeHelper
 			}
 		}
 
-		return (!empty($gray) && ($gray <= 127));
+		return ($gray <= 160);
 	}
 
 	/**
