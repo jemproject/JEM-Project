@@ -10,6 +10,12 @@ div#jemmoduleteaser {
 	width: 100%;
 }
 
+div#jemmoduleteaser [class^="event_id"]:not(:last-of-type) {
+	padding-bottom:0.5em;
+	margin-bottom: 0.5em;
+	border-bottom: 1px silver solid;
+}
+
 div#jemmoduleteaser .teaser-jem a,
 div#jemmoduleteaser .venue-title a {
 	background-color: transparent;
@@ -77,9 +83,7 @@ div#jemmoduleteaser .venue-title a {
 
 div#jemmoduleteaser .eventset {
 	width: 100%;
-	margin-bottom: 10px;
 	padding: 5px;
-	border-bottom: 1px dotted silver;
 	text-align: left;
 }
 
