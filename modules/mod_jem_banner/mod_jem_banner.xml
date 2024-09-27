@@ -114,7 +114,7 @@
 					<option value="category">MOD_JEM_BANNER_CATEGORY</option>
 					<option value="alpha">MOD_JEM_BANNER_USER</option>
 				</field>
-				<field name="fallbackcolor" type="text"
+				<field name="fallbackcolor" type="color"
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"

@@ -124,7 +124,7 @@
 					<option value="orange">MOD_JEM_JUBILEE_ORANGE</option>
 					<option value="alpha">MOD_JEM_JUBILEE_USER</option>
 				</field>
-				<field name="usercolor" type="text"
+				<field name="usercolor" type="color"
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"
