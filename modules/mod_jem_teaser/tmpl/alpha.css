@@ -1,1 +1,5 @@
 #jemmoduleteaser .calendar-alpha {background-image: url(img/calendar_alpha.png);}
+
+#jemmoduleteaser .calendar-alpha .monthteaser {
+	color: black;
+}

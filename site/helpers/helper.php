@@ -1400,33 +1400,40 @@ class JemHelper
 	 * Get the url to a css file for a module respecting layout style configured in JEM Settings.
 	 *
 	 * @param   string  $module  The name of the module
-	 * @param   string  $css     The name of the css file. If null name of module is used.
+	 * @param   string  $css     The name of the css file (in the root path). If null, the name of module is used (in the suffix directory).
 	 *
 	 * @since   2.3
 	 */
 	public static function loadModuleStyleSheet($module, $css = null)
 	{
-		if (empty($css)) {
-			$css = $module;
-		}
-
         $app = Factory::getApplication();
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
         $suffix = self::getLayoutStyleSuffix();
-        $filestyle = ($suffix? $suffix . '/':'') . $module . '.css';
+
+        if (empty($css)) {
+			$css = $module;
+            $filestyle = ($suffix? $suffix . '/':'') . $css . '.css';
+		}else{
+            $filestyle = $css . '.css';
+        }
+
         //Search for template overrides
         if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
-            $wa->registerAndUseStyle($module, 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
-        } else {
-            //Search in media folder
-            if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
-                $wa->registerAndUseStyle($module, 'media/'. $module . '/css/' . $filestyle);
-            }else{
-                //Search in the module
-                $wa->registerAndUseStyle($module, 'modules/'. $module . '/tmpl/' . $filestyle);
-            }
-		}
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
+        }
+        //Search in media folder
+        else if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'media/' . $module . '/css/' . $filestyle);
+        }
+        //Search in the module
+        else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
+        }
+        //Error the css file doesn't found
+        else {
+            JemHelper::addLogEntry("Warning: The " . $filestyle . " file doesn't found.", __METHOD__);
+        }
 	}
 
 	static public function loadIconFont()
