@@ -106,8 +106,12 @@ if ($params->get('use_modal', 0)) {
              style="background-color: <?php echo $item->color; ?>"
           <?php endif; ?>
         >
-          <div class="monthteaser">
-            <?php echo $item->month; ?>
+          <?php if (isset($item->color_is_dark)) : ?>
+          	<div class="monthteaser monthteaser-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+          	<?php else : ?>
+          		<div class="monthteaser">
+          	<?php endif;
+          		echo $item->month; ?>
           </div>
           <div class="dayteaser">
             <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
@@ -244,65 +248,3 @@ if ($params->get('use_modal', 0)) {
 	<?php endif; ?>
 	</div>
 </div>
-
-<script>
-  function parseColor(input) {
-    return input.split("(")[1].split(")")[0].split(",");
-  }
-  
-  function calculateBrightness(rgb) {
-    var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) /1000);    
-    return o;
-  }
-  
-  // Select all calendar elements
-  var calendars = document.querySelectorAll('.calendar-category, .calendar-alpha');
-
-  var o = 0;
-  calendars.forEach(function(calendar, index) {
-    var bgColor = window.getComputedStyle(calendar).backgroundColor;
-    o = calculateBrightness(parseColor(bgColor));
-    var element = calendar.querySelector('.monthteaser');
-    if (element) {
-      if (o > 125) {
-        element.style.color = 'rgb(0, 0, 0)';
-        element.style.textShadow = '1px 1px 2px rgba(255, 255, 255)';
-      } else { 
-        element.style.color = 'rgb(255, 255, 255)';
-        element.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.7)';
-      }
-    }
-  });
-</script>
-<?php /*
-function createRSSfeed($list) {
-header("Content-Type: application/rss+xml; charset=UTF-8");
-$baseurl = JURI::base();
-if(substr($baseurl, -1) == '/') {
-    $baseurl = substr($baseurl, 0, -1);
-}
-echo '<?xml version="1.0" encoding="UTF-8" ?>';
-echo '<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">';
-echo '<channel>';
-  $doc = Factory::getDocument(); 
-  $page_title = $doc->getTitle();
-  echo '<title>'.$page_title.'</title>';
-  echo '<link>'.JURI::current().'</link>';
-  echo '<atom:link href="'.JURI::getInstance()->toString().'" rel="self" type="application/rss+xml" />';
-  echo '<description>JEM teasered Events</description>';
-  foreach ($list as $item) :
-    echo '<item>';
-      echo '<title>'.$item->fulltitle.'</title>';
-      echo '<link>'.$baseurl.$item->eventlink.'</link>';
-      echo '<guid>'.$baseurl.$item->eventlink.'</guid>';
-      echo '<description><![CDATA[';
-      echo '<div id="date">'.strip_tags($item->dateinfo).'</div>';
-      echo '<div id="image">'.$baseurl.$item->eventimage.'</div>';
-      echo '<div id="desc">'.$item->eventdescription.'</div>';
-      echo ']]></description>';
-    echo '</item>';
-  endforeach;
-echo '</channel>';
-echo '</rss>';
-}
-*/ ?>

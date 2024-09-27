@@ -101,7 +101,6 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 </style>
 
 <div class="jemmodulebanner<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebanner">
-<?php ?>
 	<div class="eventset">
 	<?php $i = count($list); ?>
 	<?php if ($i > 0) : ?>
@@ -123,8 +122,12 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                style="background-color: <?php echo $item->color; ?>"
             <?php endif; ?>
           >
-            <div class="monthbanner">
-              <?php echo $item->startdate['month']; ?>
+          <?php if (isset($item->color_is_dark)) : ?>
+          	<div class="monthbanner monthbanner-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+          	<?php else : ?>
+				<div class="monthbanner">
+			<?php endif;
+				echo $item->startdate['month']; ?>
             </div>
             <div class="daybanner">
               <?php echo $item->startdate['weekday']; ?>
@@ -242,39 +245,3 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 	<?php endif; ?>
 	</div>
 </div>
-
-<?php if ($showcalendar == 1) :?>
-  <script>
-    function parseColor(input) {
-      return input.split("(")[1].split(")")[0].split(",");
-    }
-    
-    function calculateBrightness(rgb) {
-      var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) /1000);    
-      return o;
-    }
-    
-    var calendars = document.getElementsByClassName('calendar-category');
-    if (calendars != undefined) {
-      var o = 0;
-      var monthbanner = null;
-      for (var i = 0; i < calendars.length; i++) {
-        o = calculateBrightness(parseColor(calendars[i].style.backgroundColor));
-        monthbanner = null;
-        for (var j = 0; j < calendars[i].childNodes.length; j++) {
-            if (calendars[i].childNodes[j].className == "monthbanner") {
-              monthbanner = calendars[i].childNodes[j];
-              break;
-            }        
-        }
-        if (monthbanner != null) {
-          if (o > 125) {
-              monthbanner.style.color = 'rgb(0, 0, 0)';
-          } else { 
-              monthbanner.style.color = 'rgb(255, 255, 255)';
-          }        
-        }
-      }
-    }
-  </script>
-<?php endif; ?>

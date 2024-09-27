@@ -42,8 +42,12 @@ if ($params->get('use_modal', 0)) {
                              style="background-color: <?php echo $item->color; ?>"
                             <?php endif; ?>
                         >
-                            <div class="monthteaser">
-                                <?php echo $item->month; ?>
+                        	<?php if (isset($item->color_is_dark)) : ?>
+							<div class="monthteaser monthteaser-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+							<?php else : ?>
+							<div class="monthteaser">
+							<?php endif;
+								echo $item->month; ?>
                             </div>
                             <div class="dayteaser">
                                 <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
@@ -126,28 +130,3 @@ if ($params->get('use_modal', 0)) {
     <?php endif; ?>
     </div>
 </div>
-
-<script>
-  function parseColor(input) {
-    return input.split("(")[1].split(")")[0].split(",");
-  }
-  
-  function calculateBrightness(rgb) {
-    var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) /1000);    
-    return o;
-  }
-  
- var calendars = document.querySelectorAll('.calendar-category, .calendar-alpha');
-    var o = 0;
-    calendars.forEach(function(calendar, index) {
-        o = calculateBrightness(parseColor(calendar.style.backgroundColor));
-        var element = calendar.querySelector('.monthteaser');
-        if (o > 125) {
-            element.style.color = 'rgb(0, 0, 0)';
-            element.style.textShadow = '1px 1px 2px rgba(255, 255, 255)';
-        } else { 
-            element.style.color = 'rgb(255, 255, 255)';
-            element.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.7)';
-        }
-    });
-</script>

@@ -45,7 +45,7 @@ if ($flyer_link_type == 1) {
 					<?php echo $item->title; ?>
 				<?php endif; ?>
 				</h2>
-				<div>
+				<div class="jem-row-banner">
 					<?php if ($showcalendar == 1) :?>
 					<div>
 						<div class="calendar<?php echo '-'.$item->colorclass; ?>"
@@ -58,8 +58,8 @@ if ($flyer_link_type == 1) {
 							<div class="monthbanner monthbanner-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
 							<?php else : ?>
 							<div class="monthbanner">
-							<?php endif; ?>
-								<?php echo $item->startdate['month']; ?>
+							<?php endif;
+								echo $item->startdate['month']; ?>
 							</div>
 							<div class="daybanner">
 								<?php echo $item->startdate['weekday']; ?>
@@ -111,7 +111,7 @@ if ($flyer_link_type == 1) {
 			    	   */
 			    ?>
 				 
-				 <?php /* if no calendar page is displayed */ ?>
+				 <?php /* if no calendar sheet is displayed */ ?>
 				 	<?php if ($showcalendar == 0) : ?>
 						<?php if ($item->date && $datemethod == 2) :?>
 							<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
