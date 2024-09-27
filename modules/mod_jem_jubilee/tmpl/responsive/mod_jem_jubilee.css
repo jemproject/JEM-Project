@@ -1,0 +1,136 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+div#jemmodulejubilee {
+	width: 100%;
+}
+
+div#jemmodulejubilee .banner-jem {
+	font-size: smaller;
+}
+
+#jemmodulejubilee [class|="calendar"] {
+	background-repeat: no-repeat;
+	width: 84px;
+	height: 82px; /* + padding = 87px */
+	text-align: center;
+	padding: 5px 0 0 0;
+	float:left;
+	margin-right:10px;
+	line-height: 24px;
+}
+
+#jemmodulejubilee span.share {
+	margin-left:95px;
+}
+
+#jemmodulejubilee [class|="calendar"] .yearjubilee {
+	font-size: 80%;
+	height:5px;
+	color: #e1e1e1;
+}
+
+#jemmodulejubilee [class|="calendar"] .monthjubilee {
+    font-size: 80%;
+    font-weight:bold;
+    height:20px;
+    color: white;
+    text-shadow: #666 1px 1px 1px;
+}
+
+#jemmodulejubilee [class|="calendar"] .dayjubilee {
+	font-size: 80%;
+    font-weight:bold;
+	min-height: 16px;
+    padding-top:3px;
+}
+
+#jemmodulejubilee [class|="calendar"] .daynumjubilee {
+	font-size: 150%;
+	font-weight:bold;
+	color: #ff6400;
+	text-shadow: #000 1px 1px 1px;
+}
+
+div#jemmodulejubilee .eventset {
+	margin-bottom: 10px;
+	padding: 5px;
+	border: 1px dotted silver;
+    text-align: left;
+}
+
+div#jemmodulejubilee .event-title {
+	padding-left: 0;
+	font-size: x-large;
+	margin: 0 0 5px;
+}
+
+div#jemmodulejubilee .desc {
+	padding-left: 0;
+	padding-top: 2px;
+	font-size: small;
+}
+
+div#jemmodulejubilee .time {
+	padding-top: 2px;
+	font-weight: normal;
+	font-size: smaller;
+	float: left;
+}
+
+div#jemmodulejubilee div.date {
+	padding-top: 2px;
+	font-weight: normal;
+	font-size: smaller;
+	float: left;
+	margin-right: 4px;
+}
+
+div#jemmodulejubilee .category {
+	position: relative;
+	font-size: smaller;
+	float: left;
+}
+
+div#jemmodulejubilee .venue-title {
+	position: relative;
+	font-size: smaller;
+	float: left;
+	margin-right: 8px;
+}
+
+div#jemmodulejubilee .event-image-cell {
+}
+
+div#jemmodulejubilee .venue-image-cell {
+}
+
+div#jemmodulejubilee .image-preview {
+	max-width: 110px;
+	border: 0 solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 2px;
+}
+
+div#jemmodulejubilee .image-preview2 {
+	max-width: 200px;
+	border: 0 solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 2px;
+}
+
+div#jemmodulejubilee .hr {
+	color: silver;
+	height: 12px;
+}
+
+div#jemmodulejubilee .clr {
+	clear: both;
+}
