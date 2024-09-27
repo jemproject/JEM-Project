@@ -27,23 +27,23 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    if (country = $('filter_country')) {
-        country.on('change', function () {
-            if (city = $('filter_city')) {
-                city.selectedIndex = 0;
+   if ($('#filter_country').length) {
+           $('#filter_country').on('change', function () {
+            if ($('#filter_city').length) {
+                $('#filter_city').val('');
             }
             this.form.submit();
-        });
+           });
     }
 
-    if (city = $('filter_city')) {
-        city.on('change', function () {
+    if ($('#filter_city').length) {
+        $('#filter_city').on('change', function () {
             this.form.submit();
         });
     }
 
-    if ($('filter_category')) {
-        $('filter_category').on('change', function () {
+    if ($('#filter_category').length) {
+        $('#filter_category').on('change', function () {
             this.form.submit();
         });
     }
