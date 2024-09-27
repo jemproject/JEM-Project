@@ -102,12 +102,13 @@ body.body-overlayed {
     height:20px;
     color: white;
     text-shadow: #666 1px 1px 1px;
+    padding-top: 5px;
 }
 
 #jemmoduleteaser [class|="calendar"] .dayteaser {
     font-size: 80%;
     font-weight:bold;
-    padding-top:3px;
+    padding-top:5px;
 }
 
 #jemmoduleteaser [class|="calendar"] .daynumteaser {
