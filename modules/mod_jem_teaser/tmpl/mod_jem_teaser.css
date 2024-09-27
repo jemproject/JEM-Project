@@ -28,24 +28,14 @@ div#jemmoduleteaser .venue-title a {
 
 #jemmoduleteaser [class|="calendar"] {
 	background-repeat: no-repeat;
-	width: 81px;
-	height: 85px;
+	width: 82px;
+	height: 82px; /* + padding = 87px */
 	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
 	text-align: center;
 	padding: 5px 1px 0 0;
 	float:left;
 	margin-right:10px;
 	line-height: 24px;
-	border-radius: 8px}
-}
-
-#jemmoduleteaser .calendar-blue {background-image: url(img/calendar_blue.png);}
-#jemmoduleteaser .calendar-green {background-image: url(img/calendar_green.png);}
-#jemmoduleteaser .calendar-orange {background-image: url(img/calendar_orange.png);}
-#jemmoduleteaser .calendar-red {background-image: url(img/calendar_red.png);}
-#jemmoduleteaser .calendar-category, #jemmoduleteaser .calendar-alpha {
-    background-image: url(img/calendar_alpha.png);
-    box-shadow: inset 0 4px 0 white;
 }
 
 #jemmoduleteaser span.share {

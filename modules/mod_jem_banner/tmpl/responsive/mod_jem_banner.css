@@ -76,7 +76,7 @@ body.body-overlayed {
 	text-align: center;
 	padding: 5px 1px 0 0;
 	margin-right:10px;
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 	line-height: 24px;
 }
 
@@ -86,7 +86,7 @@ body.body-overlayed {
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner {
-	font-size: 85%;
+	font-size: 80%;
 	font-weight:bold;
 	height:20px;
   color: #ffffff;
