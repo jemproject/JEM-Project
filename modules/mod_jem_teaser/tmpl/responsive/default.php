@@ -246,34 +246,11 @@ if ($params->get('use_modal', 0)) {
 </div>
 
 <script>
-  // Function to parse color input
   function parseColor(input) {
-    // If the input is a color name, convert it to RGB
-    if (input.indexOf('rgb') === -1) {
-      return nameToRGB(input);
-    }
-    // If it's already in RGB format, split it into an array
     return input.split("(")[1].split(")")[0].split(",");
   }
   
-  // Function to convert color name to RGB values
-  function nameToRGB(name) {
-    // Create a temporary div element
-    var div = document.createElement('div');
-    div.style.color = name;
-    document.body.appendChild(div);
-    
-    // Get the computed style
-    var rgb = window.getComputedStyle(div).color;
-    document.body.removeChild(div);
-    
-    // Extract the RGB values
-    return rgb.match(/\d+/g);
-  }
-  
-  // Function to calculate brightness of a color
   function calculateBrightness(rgb) {
-    // Use the formula: (0.299*R + 0.587*G + 0.114*B)
     var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) /1000);    
     return o;
   }
@@ -282,26 +259,19 @@ if ($params->get('use_modal', 0)) {
   var calendars = document.querySelectorAll('.calendar-category, .calendar-alpha');
 
   var o = 0;
-  // Iterate through each calendar
   calendars.forEach(function(calendar, index) {
-    // Get the background color of the calendar
     var bgColor = window.getComputedStyle(calendar).backgroundColor;
-    // Calculate the brightness
     o = calculateBrightness(parseColor(bgColor));
-    // Select all relevant elements within the calendar
-    var elements = calendar.querySelectorAll('.monthteaser');
-    // Set text color and shadow based on brightness
-    elements.forEach(function(element) {
+    var element = calendar.querySelector('.monthteaser');
+    if (element) {
       if (o > 125) {
-        // For light backgrounds
         element.style.color = 'rgb(0, 0, 0)';
-        element.style.textShadow = '1px 1px 2px rgba(255, 255, 255, 0.7)';
+        element.style.textShadow = '1px 1px 2px rgba(255, 255, 255)';
       } else { 
-        // For dark backgrounds
         element.style.color = 'rgb(255, 255, 255)';
         element.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.7)';
       }
-    });
+    }
   });
 </script>
 <?php /*
