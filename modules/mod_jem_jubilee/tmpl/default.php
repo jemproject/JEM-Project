@@ -11,17 +11,16 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
-$datemethod      = (int)$params->get('datemethod', 0);
-$showtime        = (int)$params->get('showtime', 0);
-$showcalendar    = (int)$params->get('showcalendar', 1);
-$introtext       = $params->get('introtext', '');
-$showflyer       = (int)$params->get('showflyer', 1);
-$flyer_link_type = (int)$params->get('flyer_link_type', 0);
-
-$colorclass      = $params->get('color');
-$user_color      = $params->get('usercolor', '#EEEEEE');
+$datemethod         = (int)$params->get('datemethod', 0);
+$showtime           = (int)$params->get('showtime', 0);
+$showcalendar       = (int)$params->get('showcalendar', 1);
+$introtext          = $params->get('introtext', '');
+$showflyer          = (int)$params->get('showflyer', 1);
+$flyer_link_type    = (int)$params->get('flyer_link_type', 0);
+$colorclass         = $params->get('color');
+$user_color         = $params->get('usercolor', '#EEEEEE');
 $user_color_is_dark = $params->get('usercolor_is_dark', false);
-$date            = (array)$params->get('date');
+$date               = (array)$params->get('date');
 
 if ($flyer_link_type == 1) {
 	echo JemOutput::lightbox();
