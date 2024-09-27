@@ -87,6 +87,8 @@ div#jemmoduleteaser .eventset {
 	text-align: left;
 }
 
+div#jemmoduleteaser .event-datetime {vertical-align: top;}
+
 div#jemmoduleteaser .event-title {
 	font-size: medium;
 }
