@@ -1,4 +1,4 @@
-/**
+/*
  * @package    JEM
  * @subpackage JEM Teaser Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -39,7 +39,7 @@ div#jemmoduleteaser .venue-title a {
 #jemmoduleteaser [class|="calendar"] .yearteaser,
 #jemmoduleteaser [class|="calendar"] .monthteaser {
     font-size: 80%;
-    height: 24px;
+    height: 26px;
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser,
