@@ -22,7 +22,6 @@
 body.body-overlayed {
   overflow: auto;
 }
-/* ----- */
 
 #jemmodulebanner .jem-row-banner {
   display: flex;
@@ -97,7 +96,7 @@ body.body-overlayed {
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner {
-    color: #ffffff;
+    padding-top: 2px;
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner.monthbanner-dark {
@@ -122,11 +121,6 @@ body.body-overlayed {
 
 #jemmodulebanner [class|="calendar"] .daynumbanner {
     font-size: 150%;
-}
-
-
-@media only all and (max-width: 47.938rem) {
-  
 }
 
 @media print {

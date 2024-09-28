@@ -97,6 +97,10 @@ body.body-overlayed {
     text-align: center;
 }
 
+#jemmoduleteaser [class|="calendar"] .monthteaser {
+	padding-top: 2px;
+}
+
 #jemmoduleteaser .time, #jemmoduleteaser .date {
   font-weight: bold;
 }
@@ -123,9 +127,6 @@ body.body-overlayed {
 
 #jemmoduleteaser [class|="calendar"] .daynumteaser {
     font-size: 150%;
-}
-
-@media only all and (max-width: 47.938rem) { 
 }
  
 @media not print {
