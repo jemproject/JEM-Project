@@ -177,16 +177,16 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 							} else {
 								$useravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
 							}
-							echo '<a href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+							echo '<a style="text-decoration: none;" href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
 
 						// User has no avatar
 						else :
 							$nouseravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
-							echo '<a href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>'. $registedplaces;
+							echo '<a style="text-decoration: none;" href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>'. $registedplaces;
 						endif;
 					else :
 						// only show the username with link to profile
-						echo '<span class="username"><a href="' . Route::_('index.php?option=com_comprofiler&amp;task=userProfile&amp;user=' . $register->uid) . '">' . $register->name . '</a></span>' . $registedplaces;
+						echo '<span class="username"><a style="text-decoration: none;" href="' . Route::_('index.php?option=com_comprofiler&amp;task=userProfile&amp;user=' . $register->uid) . '">' . $register->name . '</a></span>' . $registedplaces;
 					endif;
 				// if CB end - if not CB than only name
 				else :
