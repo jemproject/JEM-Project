@@ -115,13 +115,14 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 			</h2>
 
       <div class="jem-row-banner <?php echo $banneralignment; ?>">
+      
+        <!--  ################ START CARENDAR SHEET ################ -->
         <?php if ($showcalendar == 1) :?>
           <div class="calendar<?php echo '-'.$item->colorclass; ?> jem-banner-calendar"
-               title="<?php echo strip_tags($item->dateinfo); ?>"
-            <?php if (!empty($item->color)) : ?>
-               style="background-color: <?php echo $item->color; ?>"
-            <?php endif; ?>
-          >
+               title="<?php echo strip_tags($item->dateinfo); ?>">
+               <?php $color = !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>
+               <div class="color-bar" style="background-color:<?php echo $color; ?>"></div>
+               <div class="background-image"></div>
           <?php if (isset($item->color_is_dark)) : ?>
           	<div class="monthbanner monthbanner-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
           	<?php else : ?>
@@ -137,6 +138,9 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
             </div>
           </div>
         <?php endif; ?>
+        
+  <!-- ################ END CARENDAR SHEET ################ -->
+        
         <div class="jem-event-details-banner jem-row-banner">
         <div class="jem-row-banner <?php echo $banneralignment; ?> jem-banner-datecat">
           <?php /* Datum und Zeitangabe:
