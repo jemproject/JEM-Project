@@ -16,6 +16,15 @@
   border-radius: 5px 5px 0 0;
 }
 
+.jem-banner-calendar .lower-background {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, #ddd 0%, #fff 50%);
+  }
+
 .jem-banner-calendar .background-image {
   position: absolute;
   top: 0;
