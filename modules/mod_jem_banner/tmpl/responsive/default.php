@@ -118,17 +118,26 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
       
         <!--  ################ START CARENDAR SHEET ################ -->
         <?php if ($showcalendar == 1) :?>
-          <div class="calendar<?php echo '-'.$item->colorclass; ?> jem-banner-calendar"
-               title="<?php echo strip_tags($item->dateinfo); ?>">
+		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
                <?php $color = !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>
                <div class="color-bar" style="background-color:<?php echo $color; ?>"></div>
+            <div class="lower-background"></div>
                <div class="background-image"></div>
+    <?php else: ?>
+        <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar"
+             title="<?php echo strip_tags($item->dateinfo); ?>"
+            <?php if (!empty($item->color)): ?>
+             style="background-color: <?php echo $item->color; ?>"
+            <?php endif; ?>>
+    <?php endif; ?>
+    
           <?php if (isset($item->color_is_dark)) : ?>
-          	<div class="monthbanner monthbanner-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+        <div class="monthbanner monthbanner-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
           	<?php else : ?>
 				<div class="monthbanner">
-			<?php endif;
-				echo $item->startdate['month']; ?>
+    <?php endif; ?>
+        <?php echo $item->startdate['month']; ?>
             </div>
             <div class="daybanner">
               <?php echo $item->startdate['weekday']; ?>
