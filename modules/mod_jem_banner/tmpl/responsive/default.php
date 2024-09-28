@@ -136,8 +136,8 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
         <div class="monthbanner monthbanner-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
           	<?php else : ?>
 				<div class="monthbanner">
-    <?php endif; ?>
-        <?php echo $item->startdate['month']; ?>
+    <?php endif;
+    	echo $item->startdate['month']; ?>
             </div>
             <div class="daybanner">
               <?php echo $item->startdate['weekday']; ?>
