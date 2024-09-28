@@ -70,41 +70,61 @@ body.body-overlayed {
 }
  
 #jemmodulebanner [class|="calendar"] {
-	background-repeat: no-repeat;
-	width: 82px;
-	height: 82px;
-	text-align: center;
-	padding: 5px 1px 0 0;
-	margin-right:10px;
-	margin-bottom: 10px;
-	line-height: 24px;
+    background-repeat: no-repeat;
+    width: 82px;
+    height: 82px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
 }
 
-#jemmodulebanner [class|="calendar"] .yearbanner {
-	font-size: 80%;
-	height:5px;
+#jemmodulebanner [class|="calendar"] .yearbanner,
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    font-size: 80%;
+    height: 24px;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner,
+#jemmodulebanner [class|="calendar"] .daybanner,
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner {
-	font-size: 80%;
-	font-weight:bold;
-	height:20px;
-  color: #ffffff;
-  text-shadow: none;
+    color: #ffffff;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner.monthbanner-dark {
+	color: black;
+	text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
+    1px -1px 0 rgba(255,255,255,0.2),
+    -1px 1px 0 rgba(255,255,255,0.2),
+    1px 1px 0 rgba(255,255,255,0.2);
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner.monthbanner-light {
+	color: #FFF;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    1px -1px 0 rgba(0,0,0,0.2),
+    -1px 1px 0 rgba(0,0,0,0.2),
+    1px 1px 0 rgba(0,0,0,0.2);
 }
 
 #jemmodulebanner [class|="calendar"] .daybanner {
-  font-size: 90%;
-	font-weight:bold;
-	padding-top:3px;
+    font-size: 90%;
 }
 
 #jemmodulebanner [class|="calendar"] .daynumbanner {
-	font-size: 150%;
-	font-weight:bold;
+    font-size: 150%;
 }
- 
- 
+
+
 @media only all and (max-width: 47.938rem) {
   
 }
@@ -154,4 +174,3 @@ body.body-overlayed {
       border: none;
   }
 }
-
