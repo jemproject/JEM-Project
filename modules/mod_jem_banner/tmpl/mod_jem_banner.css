@@ -17,8 +17,8 @@ div#jemmodulebanner.banner-jem {
 
 #jemmodulebanner [class|="calendar"] {
 	background-repeat: no-repeat;
-	width: 84px;
-	height: 82px; /* + padding = 87px */
+    width: 81px;
+    height: 85px;
 	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
 	text-align: center;
 	padding: 5px 0 0 0;
