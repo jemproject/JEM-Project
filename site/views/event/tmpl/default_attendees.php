@@ -16,6 +16,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
 ?>
@@ -166,6 +167,10 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
 				// if CB
 				if ($this->settings->get('event_comunsolution', '0') == 1) :
+                    $needle = 'index.php?option=com_comprofiler&view=userprofile';
+                    $menu = Factory::getApplication()->getMenu();
+                    $item = $menu->getItems('link', $needle, true);
+                    $cntlink = !empty($item) ? $needle . '&user=' . $register->uid . '&Itemid=' . $item->id : $needle;
 					if ($this->settings->get('event_comunoption', '0') == 1) :
 						// User has avatar
 						if (!empty($register->avatar)) :
@@ -176,16 +181,16 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 							} else {
 								$useravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
 							}
-							echo '<a style="text-decoration: none;" href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+							echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
 
 						// User has no avatar
 						else :
 							$nouseravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
-							echo '<a style="text-decoration: none;" href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+							echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
 						endif;
 					else :
 						// only show the username with link to profile
-						echo '<span class="username"><a style="text-decoration: none;" href="' . Route::_('index.php?option=com_comprofiler&amp;task=userProfile&amp;user=' . $register->uid) . '">' . $register->name . '</a></span>' . $registedplaces;
+						echo '<span class="username"><a style="text-decoration: none;" href="' . Route::_($cntlink) . '">' . $register->name . '</a></span>' . $registedplaces;
 					endif;
 				// if CB end - if not CB than only name
 				else :
