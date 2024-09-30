@@ -107,7 +107,7 @@ body.body-overlayed {
 
 #jemmoduleteaser [class|="calendar"] .dayteaser {
     font-size: 12px;
-    min-height: 1rem;
+    min-height: 0.8rem;
 }
 
 #jemmoduleteaser [class|="calendar"] .daynumteaser {

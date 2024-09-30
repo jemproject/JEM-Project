@@ -44,7 +44,7 @@ div#jemmodulebanner.banner-jem {
 
 #jemmodulebanner [class|="calendar"] .daybanner {
     font-size: 12px;
-    min-height: 1rem;
+    min-height: 0.8rem;
 }
 
 #jemmodulebanner [class|="calendar"] .daynumbanner {

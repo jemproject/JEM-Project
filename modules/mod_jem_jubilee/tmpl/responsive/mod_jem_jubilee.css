@@ -51,7 +51,7 @@ div#jemmodulejubilee .jubilee-jem {
 
 #jemmodulejubilee [class|="calendar"] .dayjubilee {
     font-size: 12px;
-    min-height: 1rem;
+    min-height: 0.8rem;
 }
 
 #jemmodulejubilee [class|="calendar"] .daynumjubilee {
