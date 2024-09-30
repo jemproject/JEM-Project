@@ -87,11 +87,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
   }
   
   @media not print {
-    @media only all and (max-width: 47.938rem) {  
-      #jemmodulebanner .jem-eventimg-banner {
-        
-      }
-      
+    @media only all and (max-width: 47.938rem) {   
       #jemmodulebanner .jem-eventimg-banner img {
         width: <?php echo $imagewidth; ?>;
         height: <?php echo $imageheight; ?>;
@@ -133,7 +129,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
     <?php endif; ?>
     
           <?php if (isset($item->color_is_dark)) : ?>
-        <div class="monthbanner monthbanner-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
+        <div class="monthbanner monthcolor-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
           	<?php else : ?>
 				<div class="monthbanner">
     <?php endif;

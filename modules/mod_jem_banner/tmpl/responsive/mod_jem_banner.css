@@ -99,24 +99,9 @@ body.body-overlayed {
     padding-top: 2px;
 }
 
-#jemmodulebanner [class|="calendar"] .monthbanner.monthbanner-dark {
-	color: black;
-	text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
-    1px -1px 0 rgba(255,255,255,0.2),
-    -1px 1px 0 rgba(255,255,255,0.2),
-    1px 1px 0 rgba(255,255,255,0.2);
-}
-
-#jemmodulebanner [class|="calendar"] .monthbanner.monthbanner-light {
-	color: #FFF;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
-    1px -1px 0 rgba(0,0,0,0.2),
-    -1px 1px 0 rgba(0,0,0,0.2),
-    1px 1px 0 rgba(0,0,0,0.2);
-}
-
 #jemmodulebanner [class|="calendar"] .daybanner {
-    font-size: 85%;
+    font-size: 12px;
+    min-height: 1rem;
 }
 
 #jemmodulebanner [class|="calendar"] .daynumbanner {
