@@ -48,7 +48,7 @@ if ($flyer_link_type == 1) {
         	<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
     <?php endif; ?>
           <?php if (isset($user_color_is_dark)) : ?>
-        <div class="monthjubilee monthjubilee-<?php echo !empty($user_color_is_dark) ? 'light' : 'dark'; ?>">
+        <div class="monthjubilee monthcolor-<?php echo !empty($user_color_is_dark) ? 'light' : 'dark'; ?>">
           	<?php else : ?>
 				<div class="monthjubilee">
 			<?php endif;
