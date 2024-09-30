@@ -10,20 +10,48 @@ div#jemmodulejubilee {
 	width: 100%;
 }
 
-div#jemmodulejubilee .banner-jem {
+div#jemmodulejubilee .jubilee-jem {
 	font-size: smaller;
 }
 
 #jemmodulejubilee [class|="calendar"] {
-	background-repeat: no-repeat;
+    background-repeat: no-repeat;
     width: 81px;
     height: 85px;
-	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
-	text-align: center;
-	padding: 5px 0 0 0;
-	float:left;
-	margin-right:10px;
-	line-height: 24px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
+}
+
+#jemmodulejubilee span.share {
+	margin-left:95px;
+}
+
+#jemmodulejubilee [class|="calendar"] .yearjubilee,
+#jemmodulejubilee [class|="calendar"] .monthjubilee {
+    font-size: 80%;
+    height: 26px;
+}
+
+#jemmodulejubilee [class|="calendar"] .monthjubilee,
+#jemmodulejubilee [class|="calendar"] .dayjubilee,
+#jemmodulejubilee [class|="calendar"] .daynumjubilee {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
+}
+
+#jemmodulejubilee [class|="calendar"] .dayjubilee {
+    font-size: 12px;
+    min-height: 1rem;
+}
+
+#jemmodulejubilee [class|="calendar"] .daynumjubilee {
+    font-size: 150%;
 }
 
 #jemmodulejubilee span.share {
@@ -36,29 +64,11 @@ div#jemmodulejubilee .banner-jem {
 	color: #e1e1e1;
 }
 
-#jemmodulejubilee [class|="calendar"] .monthjubilee {
-	font-size: 8px;
-	color: white;
-	text-transform:uppercase;
-	font-weight:bold;
-	text-shadow: #666 1px 1px 1px;
-	height:20px;
-}
 
-#jemmodulejubilee [class|="calendar"] .dayjubilee {
-	font-weight:bold;
-	font-size: 12px;
-	padding-top:3px;
-	min-height: 16px;
-	color: #333;
-}
 
-#jemmodulejubilee [class|="calendar"] .daynumjubilee {
-	font-size: 29px;
-	font-weight:bold;
-	color: #FF6400;
-	text-shadow: #000 1px 1px 1px;
-}
+
+
+
 
 
 div#jemmodulejubilee .eventset {
