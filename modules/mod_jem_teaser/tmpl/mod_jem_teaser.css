@@ -57,24 +57,9 @@ div#jemmoduleteaser .venue-title a {
     color: #ffffff;
 }
 
-#jemmoduleteaser [class|="calendar"] .monthteaser.monthteaser-dark {
-	color: black;
-	text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
-    1px -1px 0 rgba(255,255,255,0.2),
-    -1px 1px 0 rgba(255,255,255,0.2),
-    1px 1px 0 rgba(255,255,255,0.2);
-}
-
-#jemmoduleteaser [class|="calendar"] .monthteaser.monthteaser-light {
-	color: #FFF;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
-    1px -1px 0 rgba(0,0,0,0.2),
-    -1px 1px 0 rgba(0,0,0,0.2),
-    1px 1px 0 rgba(0,0,0,0.2);
-}
-
 #jemmoduleteaser [class|="calendar"] .dayteaser {
-    font-size: 85%;
+    font-size: 12px;
+    min-height: 1rem;
 }
 
 #jemmoduleteaser [class|="calendar"] .daynumteaser {
