@@ -38,8 +38,8 @@ div#jemmoduleteaser .venue-title a {
 
 #jemmoduleteaser [class|="calendar"] .yearteaser,
 #jemmoduleteaser [class|="calendar"] .monthteaser {
-    font-size: 80%;
-    height: 26px;
+    font-size: 13px;
+    height: 24px;
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser,
@@ -54,7 +54,7 @@ div#jemmoduleteaser .venue-title a {
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser {
-    color: #ffffff;
+    padding-top: 2px;
 }
 
 #jemmoduleteaser [class|="calendar"] .dayteaser {

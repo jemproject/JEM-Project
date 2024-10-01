@@ -30,8 +30,8 @@ div#jemmodulejubilee .jubilee-jem {
 
 #jemmodulejubilee [class|="calendar"] .yearjubilee,
 #jemmodulejubilee [class|="calendar"] .monthjubilee {
-    font-size: 80%;
-    height: 26px;
+    font-size: 13px;
+    height: 24px;
 }
 
 #jemmodulejubilee [class|="calendar"] .monthjubilee,
@@ -43,6 +43,10 @@ div#jemmodulejubilee .jubilee-jem {
     display: block;
     padding: 0;
     text-align: center;
+}
+
+#jemmodulejubilee [class|="calendar"] .monthjubilee {
+    padding-top: 2px;
 }
 
 #jemmodulejubilee [class|="calendar"] .dayjubilee {

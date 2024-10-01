@@ -27,8 +27,8 @@ div#jemmodulebanner.banner-jem {
 
 #jemmodulebanner [class|="calendar"] .yearbanner,
 #jemmodulebanner [class|="calendar"] .monthbanner {
-    font-size: 80%;
-    height: 26px;
+    font-size: 13px;
+    height: 24px;
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner,
@@ -40,6 +40,10 @@ div#jemmodulebanner.banner-jem {
     display: block;
     padding: 0;
     text-align: center;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    padding-top: 2px;
 }
 
 #jemmodulebanner [class|="calendar"] .daybanner {
