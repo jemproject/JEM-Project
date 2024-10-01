@@ -129,6 +129,25 @@ $params		= $this->params;
         $("#jform_unregistra").on('change', showUnregistraUntil);
         showUnregistraUntil();
     });
+
+    jQuery(document).ready(function($){
+
+        var showRegistraFrom = function(){
+            var registra = $("#jform_registra");
+
+            var registramode = registra.val();
+
+            if (registramode == 2) {
+                document.getElementById('jform_registra_from').style.display = '';
+                document.getElementById('jform_registra_from2').style.display = '';
+            } else {
+                document.getElementById('jform_registra_from').style.display = 'none';
+                document.getElementById('jform_registra_from2').style.display = 'none';
+            }
+        }
+        $("#jform_registra").on('change', showRegistraFrom);
+        showRegistraFrom();
+    });
 </script>
 
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">

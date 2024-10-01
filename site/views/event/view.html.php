@@ -257,17 +257,22 @@ class JemViewEvent extends JemView
 		 */
 		$g_reg = $this->jemsettings->showfroregistra;
 		$g_inv = $this->jemsettings->regallowinvitation;
-		$e_reg = $this->item->registra;
-		$e_unreg = $item->unregistra;
 		$e_dates = $item->dates;
 		$e_times = $item->times;
-		$e_hours = (int)$item->unregistra_until;
+		$e_reg = $this->item->registra;
+		$e_reg_hours = (float)$item->registra_from;
+		$e_unreg = $item->unregistra;
+		$e_unreg_hours = (float)$item->unregistra_until;
 
 		//$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
-		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
-		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
+		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
+		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
+		$this->e_reg = $e_reg;
 
-		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_dates.' '.$e_times.' -'.$e_hours.' hour') > strtotime('now'))));
+		$this->dateRegistationFrom = strtotime($e_dates.' '.$e_times.' -'.(int)($e_reg_hours*3600).' second');
+		$this->allowRegistration = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom < strtotime('now'))));
+		$this->dateUnregistationUntil = strtotime($e_dates.' '.$e_times.' -'.(int)($e_unreg_hours*3600).' second');
+		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > strtotime('now'))));
 
 		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));

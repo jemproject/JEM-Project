@@ -436,11 +436,31 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 	<?php endif; ?>
 
 	<!-- Registration -->
-	<?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
+        <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) { ?>
 		<hr class="jem-hr">
 		<h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
-		<?php echo $this->loadTemplate('attendees'); ?>
-	<?php endif; ?>
+
+            <?php
+            switch ($this->e_reg) {
+                case 0:
+                    //Event without registration
+                    echo Text::_('COM_JEM_VENUE_DESCRIPTION');
+                    break;
+                case 1:
+                    //Event with registration
+                    echo $this->loadTemplate('attendees');
+                    break;
+                case 2:
+                    //Event with date starting registration
+                    if($this->allowRegistration){
+                        echo Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . ' ' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
+                        echo $this->loadTemplate('attendees');
+                    }else{
+                        echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
+                    }
+                    break;
+            }
+        } ?>
 
 	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
 		<hr class="jem-hr">

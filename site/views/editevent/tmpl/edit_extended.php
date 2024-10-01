@@ -199,7 +199,10 @@ use Joomla\CMS\Date\Date;
                 <?php if ($this->jemsettings->showfroregistra == 1) : ?>
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo Text::_('JYES'); ?></li>
                 <?php else : ?>
-                    <li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?></li>
+                    <li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
+                        <?php echo $this->form->getInput('registra_from'); ?>
+                        <span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span>
+                    </li>
                 <?php endif; ?>
                 <br/>
                 <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
