@@ -81,12 +81,6 @@ if ($params->get('use_modal', 0)) {
                 if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
                   echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
                 endif;
-
-                if ($item->eventlink) : ?>
-                    <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
-                      <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
-                    </a>
-                <?php endif;
               endif; ?>
             </div>
                         </div>
