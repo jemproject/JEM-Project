@@ -119,7 +119,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
-    <?php else; ?>
+    <?php else: ?>
         <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar"
              title="<?php echo strip_tags($item->dateinfo); ?>"
             <?php if (!empty($item->color)): ?>
