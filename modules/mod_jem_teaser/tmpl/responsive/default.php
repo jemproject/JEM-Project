@@ -62,6 +62,7 @@ if ($params->get('use_modal', 0)) {
     @media not print {
         @media only all and (max-width: 47.938rem) {
 
+      
       #jemmoduleteaser .jem-eventimg-teaser img {
         width: <?php echo $imagewidth; ?>;
         height: <?php echo $imageheight; ?>;
@@ -93,34 +94,26 @@ if ($params->get('use_modal', 0)) {
       <?php echo $titleendtag; ?>
       
       <div class="jem-row-teaser jem-teaser-event">
-
-		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
-			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
-            <div class="lower-background"></div>
-               <div class="background-image"></div>
-        <?php else: ?>
-    		<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>"<?php if (!empty($item->color)): ?> style="background-color: <?php echo $item->color; ?>"<?php endif; ?>>
-        <?php endif; ?>
-    
-         <div class="monthteaser<?php 
-    echo isset($item->color_is_dark) 
-        ? ($item->color_is_dark === 1 
-            ? ' monthcolor-light">' 
-            : ($item->color_is_dark === 0 
-                ? ' monthcolor-dark">' 
-                : '">'))
-        : '">';
-    	echo $item->startdate['month']; ?>
-            </div>
-            <div class="dayteaser">
-            <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
-            </div>
-            <div class="daynumteaser">
-            <?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
-            </div>
+        <div class="calendar<?php echo '-'.$item->colorclass; ?> jem-teaser-calendar"
+             title="<?php echo strip_tags($item->dateinfo); ?>"
+          <?php if (!empty($item->color)) : ?>
+             style="background-color: <?php echo $item->color; ?>"
+          <?php endif; ?>
+        >
+          <?php if (isset($item->color_is_dark)) : ?>
+          	<div class="monthteaser monthteaser-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+          	<?php else : ?>
+          		<div class="monthteaser">
+          	<?php endif;
+          		echo $item->month; ?>
           </div>
-        
+          <div class="dayteaser">
+            <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
+          </div>
+          <div class="daynumteaser">
+            <?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
+          </div>
+        </div>
         <div class="jem-event-details-teaser">
           <div class="jem-row-teaser jem-teaser-datecat">
             <?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
@@ -218,7 +211,7 @@ if ($params->get('use_modal', 0)) {
 
             <?php if($item->showdescriptionevent): ?>
               <div class="jem-description-teaser">
-                 <?php
+                                            <?php
 					echo $item->eventdescription;
 					if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
                     <div class="jem-readmore">
@@ -226,7 +219,7 @@ if ($params->get('use_modal', 0)) {
                       <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
                     </a>
                     </div>
-                  <?php endif; ?>
+                <?php endif; ?>
               </div>
             <?php endif; ?> 
           </div>
