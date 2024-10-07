@@ -22,40 +22,39 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 		<?php if ($this->updatedata->failed == 0) : ?>
-		<table style="width:100%" class="adminlist">
-			<tr>
-				<td>
+		<p>
 				<?php
 					if ($this->updatedata->current == 0 ) {
-						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-latest-version.png', NULL, NULL, true);
 					} elseif( $this->updatedata->current == -1 ) {
 						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
 					} else {
-						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-unknown-version.png', NULL, NULL, true);
 					}
 				?>
-				</td>
-				<td>
 				<?php
 					if ($this->updatedata->current == 0) {
-						echo '<b><font color="green">'.Text::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</font></b>';
+						echo '<b style="color:green">'.Text::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</b>';
 					} elseif( $this->updatedata->current == -1 ) {
-						echo '<b><font color="red">'.Text::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</font></b>';
+						echo '<b style="color:red">'.Text::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</b>';
 					} else {
-						echo '<b><font color="orange">'.Text::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</font></b>';
+						echo '<b style="color:orange">'.Text::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</b>';
 					}
 				?>
-				</td>
-			</tr>
-		</table>
+		</p>
 		<br />
-		<table style="width:100%" class="adminlist">
+		<table class="updatecheck">
 			<tr>
 				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_VERSION').':'; ?></b></td>
 				<td><?php
 					echo $this->updatedata->versiondetail;
 					?>
 				</td>
+			</tr>
+			<tr>
+		  		<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
+		  		<td><?php echo $this->updatedata->installedversion; ?>
+		  		</td>
 			</tr>
 			<tr>
 				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_RELEASE_DATE').':'; ?></b></td>
@@ -98,7 +97,7 @@ use Joomla\CMS\Router\Route;
 
 		<?php else : ?>
 
-		<table style="width:100%" class="adminlist">
+		<table class="updatecheck">
 			<tr>
 		  		<td>
 		  		<?php
@@ -107,7 +106,7 @@ use Joomla\CMS\Router\Route;
 		  		</td>
 		  		<td>
 		  		<?php
-		  			echo '<b><font color="red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</font></b>';
+		  			echo '<b style="color:red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</b>';
 		  		?>
 		  		</td>
 			</tr>
@@ -115,13 +114,6 @@ use Joomla\CMS\Router\Route;
 		<?php endif; ?>
 
 		<br />
-		<table style="width:200px;" class="adminlist">
-			<tr>
-		  		<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
-		  		<td><?php echo $this->updatedata->installedversion; ?>
-		  		</td>
-			</tr>
-			</table>
 	<?php if (isset($this->sidebar)) : ?>
 	</div>
 	<?php endif; ?>
