@@ -65,7 +65,11 @@ use Joomla\CMS\Router\Route;
 						} ?>
 					</ul>
 					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGELOG'); ?></a></span>
-        	</div></span>
+        	</div>
+        	<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION').':'; ?></strong>
+            	<span>Visit the JEM Website: <a href="https://www.joomlaeventmanager.net/" target="_blank">www.joomlaeventmanager.net</a></span>
+	        </div>
 			<div class="detail-item">
 				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></strong>
       	      <span><a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a></span>
@@ -87,7 +91,7 @@ use Joomla\CMS\Router\Route;
 		  		</td>
 		  		<td>
 		  		<?php
-		  			echo '<b style="color:red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</b>';
+		  			echo '<strong style="color:red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</strong>';
 		  		?></span>
         </div>
 		</table>
