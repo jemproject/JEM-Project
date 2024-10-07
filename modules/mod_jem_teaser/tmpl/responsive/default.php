@@ -54,18 +54,14 @@ if ($params->get('use_modal', 0)) {
  }
  ?>
 
-  #jemmoduleteaser .jem-eventimg-teaser {
-    width: <?php echo $imagewidth; ?>;
-  }
-  
-  #jemmoduleteaser .jem-eventimg-teaser img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
-  }
-  
-  @media not print {
-    @media only all and (max-width: 47.938rem) {  
-      
+    #jemmoduleteaser .jem-eventimg-teaser img {
+        width: 100%;
+        height: <?php echo $imageheight; ?>;
+    }
+
+    @media not print {
+        @media only all and (max-width: 47.938rem) {
+
       #jemmoduleteaser .jem-eventimg-teaser img {
         width: <?php echo $imagewidth; ?>;
         height: <?php echo $imageheight; ?>;
@@ -118,10 +114,10 @@ if ($params->get('use_modal', 0)) {
     	echo $item->startdate['month']; ?>
             </div>
             <div class="dayteaser">
-              <?php echo $item->startdate['weekday']; ?>
+            <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
             </div>
             <div class="daynumteaser">
-              <?php echo $item->startdate['day']; ?>
+            <?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
             </div>
           </div>
         
@@ -222,20 +218,15 @@ if ($params->get('use_modal', 0)) {
 
             <?php if($item->showdescriptionevent): ?>
               <div class="jem-description-teaser">
-                <?php if($item->showdescriptionevent):
+                 <?php
 					echo $item->eventdescription;
-                  if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-                    echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
-                  endif;
-
-                  if ($item->eventlink) : ?>
+					if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
                     <div class="jem-readmore">
                       <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
                       <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
                     </a>
                     </div>
                   <?php endif; ?>
-                <?php endif; ?>
               </div>
             <?php endif; ?> 
           </div>
