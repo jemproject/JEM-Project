@@ -231,7 +231,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
           <div class="desc">
             <?php echo $item->eventdescription; ?> 
           </div>    
-          <?php if (isset($item->link)) : ?>
+          <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
             <div class="jem-readmore-banner">   
               <a href="<?php echo $item->link ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
                 <!--<button class="jem-btn btn">-->
