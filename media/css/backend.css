@@ -866,7 +866,7 @@ table.adminlist {
     flex-wrap: wrap;
     margin-bottom: 0.5rem;
 	border-bottom: 1px solid #ccc;
-    padding: 0.5rem 0 ;
+    padding: 0.2rem 0 0.5rem;
 }
 
 .update-details .detail-item strong {
@@ -887,6 +887,17 @@ table.adminlist {
 
 .update-details .detail-item ul li {
 	padding: 0.1rem 0;
+}
+
+@media (max-width: 600px) {
+    .update-details .detail-item {
+        flex-direction: column;
+    }
+        
+    .update-details .detail-item strong {
+        margin-bottom: 0.25rem;
+        flex: 0;
+    }
 }
 
 input.selectcat {

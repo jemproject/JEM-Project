@@ -871,6 +871,17 @@ table.adminlist {
 	padding: 0.1rem 0;
 }
 
+@media (max-width: 600px) {
+    .update-details .detail-item {
+        flex-direction: column;
+    }
+        
+    .update-details .detail-item strong {
+        margin-bottom: 0.25rem;
+        flex: 0;
+    }
+}
+
 input.selectcat {
     margin-bottom: 3px;
 }
