@@ -54,20 +54,14 @@ if ($params->get('use_modal', 0)) {
  }
  ?>
 
-  #jemmoduleteaser .jem-eventimg-teaser {
-    width: <?php echo $imagewidth; ?>;
-  }
-  
-  #jemmoduleteaser .jem-eventimg-teaser img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
-  }
-  
-  @media not print {
-    @media only all and (max-width: 47.938rem) {  
-      #jemmoduleteaser .jem-eventimg-teaser {
-        
-      }
+    #jemmoduleteaser .jem-eventimg-teaser img {
+        width: 100%;
+        height: <?php echo $imageheight; ?>;
+    }
+
+    @media not print {
+        @media only all and (max-width: 47.938rem) {
+
       
       #jemmoduleteaser .jem-eventimg-teaser img {
         width: <?php echo $imagewidth; ?>;
