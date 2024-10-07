@@ -36,12 +36,10 @@ if ($flyer_link_type == 1) {
 <div class="jemmodulejubilee<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulejubilee">
 <?php ?>
 	<div class="eventset">
-		<!--  ################ START CARENDAR SHEET ################ -->
 		<?php if ($showcalendar == 1) :?>
 		<?php if ($colorclass === "alpha"): ?>
 			<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
-               <?php $color = !empty($user_color) ? $user_color : 'rgb(128,128,128)'; ?>
-               <div class="color-bar" style="background-color:<?php echo $color; ?>"></div>
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
     	<?php else: ?>
@@ -61,10 +59,7 @@ if ($flyer_link_type == 1) {
 					<?php echo $date['day']; ?>
 				</div>
 			</div>
-		<?php endif; ?>
-
-  <!-- ################ END CARENDAR SHEET ################ -->
-		
+		<?php endif; ?>		
 		<?php if (!empty($introtext)) :?>
 		<div class="intro">
 			<?php echo $introtext; ?>

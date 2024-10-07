@@ -46,13 +46,11 @@ if ($flyer_link_type == 1) {
 				<?php endif; ?>
 				</h2>
 				<div class="jem-row-banner <?php echo $banneralignment; ?>">
-      
-        <!--  ################ START CARENDAR SHEET ################ -->
+				      
         <?php if ($showcalendar == 1) :?>
 		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
 			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-               <?php $color = !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>
-               <div class="color-bar" style="background-color:<?php echo $color; ?>"></div>
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
     <?php else: ?>
@@ -78,8 +76,6 @@ if ($flyer_link_type == 1) {
             </div>
           </div>
         <?php endif; ?>
-        
-  <!-- ################ END CARENDAR SHEET ################ -->
 
 					<?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
 					<div>

@@ -38,7 +38,7 @@ if ($params->get('use_modal', 0)) {
             <table>
                 <tr>
                     <td class="event-calendar">
-                       <!--  ################ START CARENDAR SHEET ################ -->
+
         				<?php if ($showcalendar == 1) :?>
 							<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
 								<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
@@ -64,10 +64,7 @@ if ($params->get('use_modal', 0)) {
               <?php echo $item->startdate['day']; ?>
             </div>
           </div>
-        <?php endif; ?>
-        
-  <!-- ################ END CARENDAR SHEET ################ -->
-                        
+        <?php endif; ?>                        
                     </td>
                     <td class="event-info">
                         <div class="teaser-jem">

@@ -97,11 +97,10 @@ if ($params->get('use_modal', 0)) {
       <?php echo $titleendtag; ?>
       
       <div class="jem-row-teaser jem-teaser-event">
-         <!--  ################ START CARENDAR SHEET ################ -->
+
 		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
 			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-               <?php $color = !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>
-               <div class="color-bar" style="background-color:<?php echo $color; ?>"></div>
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
         <?php else: ?>
@@ -126,7 +125,6 @@ if ($params->get('use_modal', 0)) {
             </div>
           </div>
         
-  <!-- ################ END CARENDAR SHEET ################ -->        
         <div class="jem-event-details-teaser">
           <div class="jem-row-teaser jem-teaser-datecat">
             <?php if ($item->date && $params->get('datemethod', 1) == 2) :?>

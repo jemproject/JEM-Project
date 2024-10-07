@@ -87,8 +87,10 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
   }
   
   @media not print {
-    @media only all and (max-width: 47.938rem) {   
-      #jemmodulebanner .jem-eventimg-banner img {
+    @media only all and (max-width: 47.938rem) {
+    	#jemmodulebanner .jem-eventimg-banner {
+    	}
+    	#jemmodulebanner .jem-eventimg-banner img {
         width: <?php echo $imagewidth; ?>;
         height: <?php echo $imageheight; ?>;
       }
@@ -111,16 +113,13 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 			</h2>
 
       <div class="jem-row-banner <?php echo $banneralignment; ?>">
-      
-        <!--  ################ START CARENDAR SHEET ################ -->
         <?php if ($showcalendar == 1) :?>
 		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
 			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-               <?php $color = !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>
-               <div class="color-bar" style="background-color:<?php echo $color; ?>"></div>
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
-    <?php else: ?>
+    <?php else; ?>
         <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar"
              title="<?php echo strip_tags($item->dateinfo); ?>"
             <?php if (!empty($item->color)): ?>
@@ -143,9 +142,6 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
             </div>
           </div>
         <?php endif; ?>
-        
-  <!-- ################ END CARENDAR SHEET ################ -->
-        
         <div class="jem-event-details-banner jem-row-banner">
         <div class="jem-row-banner <?php echo $banneralignment; ?> jem-banner-datecat">
           <?php /* Datum und Zeitangabe:
