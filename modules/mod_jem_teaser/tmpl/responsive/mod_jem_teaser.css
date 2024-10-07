@@ -30,6 +30,16 @@ body.body-overlayed {
   justify-content: flex-start;
 }
 
+#jemmoduleteaser .jem-row-image-teaser {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+#jemmoduleteaser .jem-event-details-teaser {
+  flex: 1;
+}
 
 #jemmoduleteaser .jem-event-image-teaser {
   flex: 1;
