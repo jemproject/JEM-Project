@@ -64,7 +64,7 @@ use Joomla\CMS\Router\Route;
 						echo '<li>'.$change.'</li>';
 						} ?>
 					</ul>
-					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION'); ?></a></span>
+					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGELOG'); ?></a></span>
         	</div></span>
 			<div class="detail-item">
 				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></strong>
