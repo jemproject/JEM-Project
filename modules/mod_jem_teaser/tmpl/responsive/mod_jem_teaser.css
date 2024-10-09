@@ -1,4 +1,4 @@
-/**
+/*
  * @package    JEM
  * @subpackage JEM Teaser Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -30,6 +30,16 @@ body.body-overlayed {
   justify-content: flex-start;
 }
 
+#jemmoduleteaser .jem-row-image-teaser {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+#jemmoduleteaser .jem-event-details-teaser {
+  flex: 1;
+}
 
 #jemmoduleteaser .jem-event-image-teaser {
   flex: 1;
@@ -62,40 +72,47 @@ body.body-overlayed {
  
 #jemmoduleteaser [class|="calendar"] {
     background-repeat: no-repeat;
-	width: 82px;
-	height: 82px;
+    width: 81px;
+    height: 85px;
     text-align: center;
     padding: 5px 1px 0 0;
-    margin-right:10px;
+    margin: 0 10px 10px 0;
     line-height: 24px;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
 }
 
-#jemmoduleteaser [class|="calendar"] .yearteaser {
-    font-size: 80%;
-    height:5px;
+#jemmoduleteaser [class|="calendar"] .yearteaser,
+#jemmoduleteaser [class|="calendar"] .monthteaser {
+    font-size: 13px;
+    height: 24px;
+}
+
+#jemmoduleteaser [class|="calendar"] .monthteaser,
+#jemmoduleteaser [class|="calendar"] .dayteaser,
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
+    font-weight:bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser {
-    font-size: 80%;
-    font-weight:bold;
-    height:20px;
-    color: white;
-    text-shadow: #666 1px 1px 1px;
-}
-
-#jemmoduleteaser [class|="calendar"] .dayteaser {
-    font-size: 80%;
-    font-weight:bold;
-    padding-top:5px;
-}
-
-#jemmoduleteaser [class|="calendar"] .daynumteaser {
-    font-size: 150%;
-    font-weight:bold;
+	padding-top: 2px;
 }
 
 #jemmoduleteaser .time, #jemmoduleteaser .date {
   font-weight: bold;
+}
+
+#jemmoduleteaser [class|="calendar"] .dayteaser {
+    font-size: 12px;
+    min-height: 0.8rem;
+}
+
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
+    font-size: 150%;
 }
  
 @media not print {

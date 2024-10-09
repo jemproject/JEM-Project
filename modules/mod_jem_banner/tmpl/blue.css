@@ -1,1 +1,12 @@
-#jemmodulebanner .calendar-blue {background-image: url(img/calendar_blue.png);}
+#jemmodulebanner .calendar-blue {
+	background-image: url(img/calendar_blue.png);
+    background-size: 100%;
+}
+
+#jemmodulebanner .calendar-blue .monthbanner {
+	color: #fff;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    1px -1px 0 rgba(0,0,0,0.2),
+    -1px 1px 0 rgba(0,0,0,0.2),
+    1px 1px 0 rgba(0,0,0,0.2);
+}

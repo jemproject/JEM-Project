@@ -348,7 +348,6 @@ abstract class ModJemJubileeHelper
 		}
 		return ($gray <= 160) ? 1 : 0;
 	}
-
 	/**
 	 * Method to get current day repecting local time.
 	 *

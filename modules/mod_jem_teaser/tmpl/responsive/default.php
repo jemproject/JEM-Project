@@ -94,18 +94,25 @@ if ($params->get('use_modal', 0)) {
       <?php echo $titleendtag; ?>
       
       <div class="jem-row-teaser jem-teaser-event">
-        <div class="calendar<?php echo '-'.$item->colorclass; ?> jem-teaser-calendar"
-             title="<?php echo strip_tags($item->dateinfo); ?>"
-          <?php if (!empty($item->color)) : ?>
-             style="background-color: <?php echo $item->color; ?>"
-          <?php endif; ?>
-        >
-          <?php if (isset($item->color_is_dark)) : ?>
-          	<div class="monthteaser monthteaser-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+
+		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+            <div class="lower-background"></div>
+               <div class="background-image"></div>
           	<?php else : ?>
-          		<div class="monthteaser">
-          	<?php endif;
-          		echo $item->month; ?>
+    		<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>"<?php if (!empty($item->color)): ?> style="background-color: <?php echo $item->color; ?>"<?php endif; ?>>
+        <?php endif; ?>
+    
+         <div class="monthteaser<?php 
+    echo isset($item->color_is_dark) 
+        ? ($item->color_is_dark === 1 
+            ? ' monthcolor-light">' 
+            : ($item->color_is_dark === 0 
+                ? ' monthcolor-dark">' 
+                : '">'))
+        : '">';
+    	echo $item->startdate['month']; ?>
           </div>
           <div class="dayteaser">
             <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
