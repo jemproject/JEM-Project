@@ -281,14 +281,14 @@
 			<option value="2">COM_JEM_FROM</option>
 			<option value="3">COM_JEM_INVITED_USERS_ONLY</option>
 		</field>
-		<field name="registra_from" type="number"
+		<field name="registra_from" type="text"
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_REGISTRATION_FROM"
 			   description="COM_JEM_EVENT_FIELD_REGISTRATION_FROM_DESC"
-			   filter="float"
-			   step="0.0001"
-			   min="0"
-			   max="9999.9999"
+			   maxlength="7"
+			   pattern="[0-9]{1,4}:[0-5][0-9]|[0-9]{1,4}"
+			   hint="COM_JEM_EVENT_FIELD_REGISTRATION_FROM_HINT"
+			   filter="string"
 			   showon="registra:2"
 		/>
 		<field name="unregistra" type="list"
@@ -302,14 +302,14 @@
 			<option value="1">JYES</option>
 			<option value="2">COM_JEM_UNTIL</option>
 		</field>
-		<field name="unregistra_until" type="number"
+		<field name="unregistra_until" type="text"
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL"
 			   description="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_DESC"
-			   filter="float"
-			   step="0.0001"
-			   min="0"
-			   max="9999.9999"
+			   maxlength="7"
+			   pattern="[0-9]{1,4}:[0-5][0-9]|[0-9]{1,4}"
+			   hint="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_HINT"
+			   filter="string"
 			   showon="unregistra:2"
 		/>
 		<field name="maxplaces" type="number"

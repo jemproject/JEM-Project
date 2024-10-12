@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Date\Date;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -395,8 +396,37 @@ if ($jemsettings->oldevent > 0) {
 	<?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
 		<p></p>
 		<hr />
-		<h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?>:</h2>
-		<?php echo $this->loadTemplate('attendees'); ?>
+		<h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
+
+        <?php
+        switch ($this->e_reg) {
+            case 0:
+                //Event without registration
+                echo Text::_('COM_JEM_VENUE_DESCRIPTION');
+                break;
+            case 1:
+                //Event with registration
+                echo $this->loadTemplate('attendees');
+                break;
+            case 2:
+                //Event with date starting registration
+                if($this->dateRegistationFrom) {
+                    if ($this->allowRegistration) {
+                        echo Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . ' ' . date('Y-m-d H:i', $this->dateRegistationFrom);
+                        echo $this->loadTemplate('attendees');
+
+                        //Event with date starting annulation
+                        if($this->dateUnregistationUntil) {
+                            echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
+
+                        }
+                    } else {
+                        echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . date('Y-m-d H:i', $this->dateRegistationFrom);
+                    }
+                }
+
+                break;
+        }?>
 	<?php endif; ?>
 
 	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>

@@ -10,8 +10,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('recur
 -- change values
 ALTER TABLE `#__jem_events` ADD COLUMN `singlebooking` INT(1) NOT NULL DEFAULT '0' AFTER `requestanswer`;
 ALTER TABLE `#__jem_events` ADD COLUMN `seriesbooking` INT(1) NOT NULL DEFAULT '0' AFTER `requestanswer`;
-ALTER TABLE `#__jem_events` ADD COLUMN `registra_from` FLOAT(8,4) NOT NULL AFTER `registra`;
-ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` FLOAT(8,4) NOT NULL; 
+ALTER TABLE `#__jem_events` ADD COLUMN `registra_from` VARCHAR(7) NOT NULL AFTER `registra`;
+ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(7) NOT NULL; 
 
 -- update values
 UPDATE `#__jem_events` SET `recurrence_number` = 7 WHERE `recurrence_number` = 6 AND `recurrence_type` = 4;

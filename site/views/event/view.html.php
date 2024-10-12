@@ -260,9 +260,10 @@ class JemViewEvent extends JemView
 		$e_dates = $item->dates;
 		$e_times = $item->times;
 		$e_reg = $this->item->registra;
+		$e_reg_hours = $this->convertHoursToFloat ($item->registra_from);
 		$e_reg_hours = (float)$item->registra_from;
 		$e_unreg = $item->unregistra;
-		$e_unreg_hours = (float)$item->unregistra_until;
+		$e_unreg_hours = $this->convertHoursToFloat ($item->unregistra_until);
 
 		//$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
 		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
@@ -519,5 +520,15 @@ class JemViewEvent extends JemView
 					. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
 		}
 	}
+	
+	
+	public function convertHoursToFloat($time_input) {
+		list($hours, $minutes) = explode(":", $time_input);
+		$hours = (int)$hours;
+		$minutes = (int)$minutes;
+		$hours_float = $hours + ($minutes / 60);
+		return $hours_float;
+	}
+
 }
 ?>
