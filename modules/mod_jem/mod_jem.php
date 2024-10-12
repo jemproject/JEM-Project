@@ -10,6 +10,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\Module\Menu\Site\Helper\MenuHelper;
 use Joomla\CMS\Factory;
 // get helper
 require_once __DIR__ . '/helper.php';
@@ -28,11 +30,7 @@ if (empty($list) && !$params->get('show_no_events')) {
 	return;
 }
 
-$mod_name = 'mod_jem';
-
-// maybe a layout style provides a css file
-JemHelper::loadModuleStyleSheet($mod_name);
 // load icon font if needed
 JemHelper::loadIconFont();
 
-require(JemHelper::getModuleLayoutPath($mod_name));
+require ModuleHelper::getLayoutPath('mod_jem', $params->get('layout', 'default'));

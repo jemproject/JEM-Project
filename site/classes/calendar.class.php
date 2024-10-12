@@ -63,10 +63,10 @@ class JemCalendar
 	You can change below the default year's and month's view navigation controls
 	********************************************************************************
 	*/
-	var $yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
-	var $yearNavForw=" &gt;&gt; "; // Next year, this could be an image link
-	var $monthNavBack=" &lt;&lt; "; // Previous month, this could be an image link
-	var $monthNavForw=" &gt;&gt; "; // Next month, this could be an image link
+	var $yearNavBack=" &laquo; "; // Previous year, this could be an image link
+	var $yearNavForw=" &raquo; "; // Next year, this could be an image link
+	var $monthNavBack=" &laquo; "; // Previous month, this could be an image link
+	var $monthNavForw=" &raquo; "; // Next month, this could be an image link
 	var $selBtn="Go"; // value of the date picker button (if enabled)
 	var $monthYearDivider=" "; // the divider between month and year in the month`s title
 	/*
