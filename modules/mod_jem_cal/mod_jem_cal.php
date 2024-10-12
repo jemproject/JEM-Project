@@ -156,7 +156,7 @@ $mod_name = 'mod_jem_cal';
 
 # Add css
 if ($Default_Stylesheet == 1) {
-	JemHelper::loadModuleStyleSheet($mod_name);
+	JemHelper::loadModuleStyleSheet($mod_name, $mod_name);
 } else {
 	$document = $app->getDocument();
 	$document->addStyleSheet(Uri::base() . $User_stylesheet);

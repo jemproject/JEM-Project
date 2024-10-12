@@ -9,6 +9,11 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Component\Finder\Administrator\Indexer\Adapter;
+use Joomla\Component\Finder\Administrator\Indexer\Helper;
+use Joomla\Component\Finder\Administrator\Indexer\Result;
+use Joomla\Registry\Registry;
 
 jimport('joomla.application.component.helper');
 
@@ -22,12 +27,6 @@ require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapt
  * @subpackage Finder.jem
  *
  */
-
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\Component\Finder\Administrator\Indexer\Adapter;
-use Joomla\Component\Finder\Administrator\Indexer\Helper;
-use Joomla\Component\Finder\Administrator\Indexer\Result;
-use Joomla\Registry\Registry;
 
 class plgFinderJEM extends Adapter
 {

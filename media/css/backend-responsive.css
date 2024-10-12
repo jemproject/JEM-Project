@@ -824,6 +824,64 @@ table.adminlist {
     border: 1px solid #999;
 }
 
+.update-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.update-info img {
+    margin-right: 1rem;
+}
+
+.update-info p {
+    margin: 1rem 0;
+}
+
+.update-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.update-details .detail-item {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+	border-bottom: 1px solid #ccc;
+    padding: 0.5rem 0 ;
+}
+
+.update-details .detail-item strong {
+    flex: 0 0 150px;
+    margin-right: 1rem;
+}
+
+.update-details .detail-item span,
+.update-details .detail-item a,
+.update-details .detail-item ul {
+    flex: 1;
+}
+
+.update-details .detail-item ul {
+    padding:  0 0 0 1rem;
+	margin: 0 0 0.3rem;
+}
+
+.update-details .detail-item ul li {
+	padding: 0.1rem 0;
+}
+
+@media (max-width: 600px) {
+    .update-details .detail-item {
+        flex-direction: column;
+    }
+        
+    .update-details .detail-item strong {
+        margin-bottom: 0.25rem;
+        flex: 0;
+    }
+}
+
 input.selectcat {
     margin-bottom: 3px;
 }

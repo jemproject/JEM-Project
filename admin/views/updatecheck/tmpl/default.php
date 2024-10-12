@@ -22,83 +22,67 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 		<?php if ($this->updatedata->failed == 0) : ?>
-		<table style="width:100%" class="adminlist">
-			<tr>
-				<td>
+		<div class="update-info">
 				<?php
 					if ($this->updatedata->current == 0 ) {
-						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-latest-version.png', NULL, NULL, true);
 					} elseif( $this->updatedata->current == -1 ) {
 						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
 					} else {
-						echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+						echo HTMLHelper::_('image', 'com_jem/icon-48-unknown-version.png', NULL, NULL, true);
 					}
 				?>
-				</td>
-				<td>
 				<?php
 					if ($this->updatedata->current == 0) {
-						echo '<b><font color="green">'.Text::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</font></b>';
+						echo '<p style="color:green;font-weight: bold;">'.Text::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</p>';
 					} elseif( $this->updatedata->current == -1 ) {
-						echo '<b><font color="red">'.Text::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</font></b>';
+						echo '<p style="color:red;font-weight: bold;">'.Text::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</p>';
 					} else {
-						echo '<b><font color="orange">'.Text::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</font></b>';
+						echo '<p style="color:orange;font-weight: bold;">'.Text::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</p>';
 					}
 				?>
-				</td>
-			</tr>
-		</table>
-		<br />
-		<table style="width:100%" class="adminlist">
-			<tr>
-				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_VERSION').':'; ?></b></td>
-				<td><?php
-					echo $this->updatedata->versiondetail;
-					?>
-				</td>
-			</tr>
-			<tr>
-				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_RELEASE_DATE').':'; ?></b></td>
-				<td><?php
-					echo $this->updatedata->date;
-					?>
-				</td>
-			</tr>
-			<tr>
-				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGES').':'; ?></b></td>
-				<td><ul>
-					<?php
+		</div>
+
+	    <div class="update-details">
+			<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_VERSION').':'; ?></strong>
+            	<span><?php echo $this->updatedata->versiondetail; ?></span>
+	        </div>
+			<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></strong>
+            	<span><?php echo $this->updatedata->installedversion; ?></span>
+	        </div>
+			<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_RELEASE_DATE').':'; ?></strong>
+            	<span><?php echo $this->updatedata->date; ?></span>
+	        </div>
+			<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGES').':'; ?></strong>
+            	<span>
+            		<ul><?php
 					foreach ($this->updatedata->changes as $change) {
 						echo '<li>'.$change.'</li>';
-					}
-					?>
+						} ?>
 					</ul>
-				</td>
-			</tr>
-			<tr>
-				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION').':'; ?></b></td>
-				<td>
-					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION'); ?></a>
-				</td>
-			</tr>
-			<tr>
-				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></b></td>
-				<td>
-					<a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a>
-				</td>
-			</tr>
-			<tr>
-				<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></b></td>
-				<td><?php
-					echo $this->updatedata->notes;
-					?>
-				</td>
-			</tr>
-		</table>
+					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGELOG'); ?></a></span>
+        	</div>
+        	<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION').':'; ?></strong>
+            	<span>Visit the JEM Website: <a href="https://www.joomlaeventmanager.net/" target="_blank">www.joomlaeventmanager.net</a></span>
+	        </div>
+			<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></strong>
+      	      <span><a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a></span>
+			</div>
+			<div class="detail-item">
+				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></strong>
+    	        <span><?php echo $this->updatedata->notes; ?></span>
+    	    </div>
+    	</div>
 
 		<?php else : ?>
 
-		<table style="width:100%" class="adminlist">
+		<table class="updatecheck">
 			<tr>
 		  		<td>
 		  		<?php
@@ -107,21 +91,13 @@ use Joomla\CMS\Router\Route;
 		  		</td>
 		  		<td>
 		  		<?php
-		  			echo '<b><font color="red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</font></b>';
-		  		?>
-		  		</td>
-			</tr>
+		  			echo '<strong style="color:red">'.Text::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</strong>';
+		  		?></span>
+        </div>
 		</table>
 		<?php endif; ?>
 
 		<br />
-		<table style="width:200px;" class="adminlist">
-			<tr>
-		  		<td><b><?php echo Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
-		  		<td><?php echo $this->updatedata->installedversion; ?>
-		  		</td>
-			</tr>
-			</table>
 	<?php if (isset($this->sidebar)) : ?>
 	</div>
 	<?php endif; ?>

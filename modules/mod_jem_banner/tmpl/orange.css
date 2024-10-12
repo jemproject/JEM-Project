@@ -1,1 +1,12 @@
-#jemmodulebanner .calendar-orange {background-image: url(img/calendar_orange.png);}
+#jemmodulebanner .calendar-orange {
+	background-image: url(img/calendar_orange.png);
+    background-size: 100%;
+}
+
+#jemmodulebanner .calendar-orange .monthbanner {
+	color: #fff;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    1px -1px 0 rgba(0,0,0,0.2),
+    -1px 1px 0 rgba(0,0,0,0.2),
+    1px 1px 0 rgba(0,0,0,0.2);
+}

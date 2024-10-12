@@ -37,14 +37,20 @@ if ($flyer_link_type == 1) {
 <?php ?>
 	<div class="eventset">
 		<?php if ($showcalendar == 1) :?>
-		<div>
-			<div class="calendar<?php echo '-'.$colorclass; ?>"
-				<?php if (($colorclass == 'alpha') && !empty($user_color)) : ?>
-				 style="background-color: <?php echo $user_color; ?>"
-				<?php endif; ?>
-			>
-				<div class="monthjubilee monthjubilee-<?php echo ($user_color_is_dark ? 'light' : 'dark'); ?>">
-					<?php echo $date['month']; ?>
+		<?php if ($colorclass === "alpha"): ?>
+			<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+            <div class="lower-background"></div>
+               <div class="background-image"></div>
+    	<?php else: ?>
+        	<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
+    <?php endif; ?>
+          <?php if (isset($user_color_is_dark)) : ?>
+        <div class="monthjubilee monthcolor-<?php echo !empty($user_color_is_dark) ? 'light' : 'dark'; ?>">
+          	<?php else : ?>
+				<div class="monthjubilee">
+			<?php endif;
+				echo $date['month']; ?>
 				</div>
 				<div class="dayjubilee">
 					<?php /*echo $date['weekday'];*/ ?>
@@ -53,9 +59,7 @@ if ($flyer_link_type == 1) {
 					<?php echo $date['day']; ?>
 				</div>
 			</div>
-		</div>
-		<?php endif; ?>
-
+		<?php endif; ?>		
 		<?php if (!empty($introtext)) :?>
 		<div class="intro">
 			<?php echo $introtext; ?>
