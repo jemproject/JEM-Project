@@ -10,15 +10,15 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
+use Joomla\Component\Finder\Administrator\Indexer\Indexer;
 use Joomla\Component\Finder\Administrator\Indexer\Result;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
-
-jimport('joomla.application.component.helper');
-
-// Load the base adapter.
-require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapter.php';
 
 /**
  * Finder adapter for com_jem.
@@ -117,8 +117,7 @@ class plgFinderJEM extends Adapter
      */
     public function onFinderCategoryChangeState($extension, $pks, $value)
     {
-        // Make sure we're handling com_jem categories
-        if ($extension == 'com_jem') {
+        if ($extension === 'com_jem') {
             $this->categoryStateChange($pks, $value);
         }
     }
@@ -127,18 +126,16 @@ class plgFinderJEM extends Adapter
      * Method to remove the link information for items that have been deleted.
      *
      * @param   string  $context  The context of the action being performed.
-     * @param   JTable  $table    A JTable object containing the record to be deleted
+     * @param   Table   $table    A Table object containing the record to be deleted
      *
      * @return  boolean  True on success.
      *
-     * @throws  Exception on database error.
-     * @since   2.5
      */
     public function onFinderAfterDelete($context, $table)
     {
-        if ($context == 'com_jem.event') {
+        if ($context === 'com_jem.event') {
             $id = $table->id;
-        } elseif ($context == 'com_finder.index') {
+        } elseif ($context === 'com_finder.index') {
             $id = $table->link_id;
         } else {
             return true;
@@ -152,17 +149,16 @@ class plgFinderJEM extends Adapter
      * Method to determine if the access level of an item changed.
      *
      * @param   string   $context  The context of the content passed to the plugin.
-     * @param   JTable   $row      A JTable object
+     * @param   Table    $row      A Table object
      * @param   boolean  $isNew    If the content has just been created
      *
      * @return  boolean  True on success.
      *
-     * @throws  Exception on database error.
      */
     public function onFinderAfterSave($context, $row, $isNew)
     {
         // We only want to handle events here
-        if ($context == 'com_jem.event' || $context == 'com_jem.editevent') {
+        if ($context === 'com_jem.event' || $context === 'com_jem.editevent') {
             // Check if the access levels are different
             if (!$isNew && $this->old_access != $row->access) {
                 // Process the change.
@@ -174,7 +170,7 @@ class plgFinderJEM extends Adapter
         }
 
         // Check for access changes in the category
-        if ($context == 'com_jem.category') {
+        if ($context === 'com_jem.category') {
             // Check if the access levels are different
             if (!$isNew && $this->old_cataccess != $row->access) {
                 $this->categoryAccessChange($row);
@@ -190,24 +186,23 @@ class plgFinderJEM extends Adapter
      * to queue the item to be indexed later.
      *
      * @param   string   $context  The context of the content passed to the plugin.
-     * @param   JTable   $row      A JTable object
+     * @param   Table    $row      A Table object
      * @param   boolean  $isNew    If the content is just about to be created
      *
      * @return  boolean  True on success.
      *
-     * @throws  Exception on database error.
      */
     public function onFinderBeforeSave($context, $row, $isNew)
     {
-        // We only want to handle articles here
-        if ($context == 'com_jem.event' || $context == 'com_jem.editevent') {
+        // We only want to handle events here
+        if ($context === 'com_jem.event' || $context === 'com_jem.editevent') {
             // Query the database for the old access level if the item isn't new
             if (!$isNew) {
                 $this->checkItemAccess($row);
             }
         }
         // Check for access levels from the category
-        if ($context == 'com_jem.category') {
+        if ($context === 'com_jem.category') {
             // Query the database for the old access level if the item isn't new
             if (!$isNew) {
                 $this->checkCategoryAccess($row);
@@ -231,54 +226,44 @@ class plgFinderJEM extends Adapter
      */
     public function onFinderChangeState($context, $pks, $value)
     {
-        // We only want to handle articles here
-        if ($context == 'com_jem.event' || $context == 'com_jem.editevent') {
+        // We only want to handle events here
+        if ($context === 'com_jem.event' || $context === 'com_jem.editevent') {
             $this->itemStateChange($pks, $value);
         }
         // Handle when the plugin is disabled
-        if ($context == 'com_plugins.plugin' && $value === 0) {
+        if ($context === 'com_plugins.plugin' && $value === 0) {
             $this->pluginDisable($pks);
         }
     }
 
     /**
-     * Method to index an item. The item must be a FinderIndexerResult object.
+     * Method to index an item. The item must be a FResult object.
      *
-     * @param   FinderIndexerResult  $item    The item to index as an FinderIndexerResult object.
-     * @param   string               $format  The item format
+     * @param   Result  $item    The item to index as a Result object.
      *
      * @return  void
      *
-     * @throws  Exception on database error.
      */
-    // protected function index(FinderIndexerResult $item, $format = 'html')
     protected function index(Result $item)
     {
         // Check if the extension is enabled
-        if (ComponentHelper::isEnabled($this->extension) == false) {
+        if (ComponentHelper::isEnabled($this->extension) === false) {
             return;
         }
 
         $item->setLanguage();
 
         // Initialize the item parameters.
-        $registry = new Registry;
-        $registry->loadString($item->params);
-        $item->params = ComponentHelper::getParams('com_jem', true);
-        $item->params->merge($registry);
-
-        $registry = new Registry;
-        $registry->loadString($item->metadata);
-        $item->metadata = $registry;
+        $item->params = new Registry($item->params);
+        $item->metadata = new Registry($item->metadata);
 
         // Trigger the onContentPrepare event.
         $item->summary = Helper::prepareContent($item->summary, $item->params);
-        $item->body    = Helper::prepareContent($item->fulltext, $item->params);
+        $item->body    = Helper::prepareContent($item->body, $item->params);
 
         // Build the necessary route and path information.
         $item->url   = $this->getURL($item->id, $this->extension, $this->layout);
         $item->route = JEMHelperRoute::getEventRoute($item->slug, $item->catslug);
-        // $item->path = Helper::getContentPath($item->route);
 
         // Get the menu title if it exists.
         $title = $this->getItemMenuTitle($item->url);
@@ -287,15 +272,16 @@ class plgFinderJEM extends Adapter
         if (!empty($title) && $this->params->get('use_menu_title', true)) {
             $item->title = $title;
         }
-        $item->metaauthor = !isset($item->metaauthor) ? '' : $item->metaauthor;
+
         // Add the meta-author.
-        $item->metaauthor = $item->metadata->get('author');
+        $item->metaauthor = $item->metadata->get('author', '');
 
         // Add the meta-data processing instructions.
-        // TODO:
-// 		$item->addInstruction(FinderIndexer::META_CONTEXT, 'meta_description');
+        $item->addInstruction(Indexer::META_CONTEXT, 'metakey');
+        $item->addInstruction(Indexer::META_CONTEXT, 'metadesc');
+        $item->addInstruction(Indexer::META_CONTEXT, 'author');
 
-        // Translate the state. Articles should only be published if the category is published.
+        // Translate the state. Events should only be published if the category is published.
         $item->state = $this->translateState($item->state, $item->cat_state);
 
         // Add the type taxonomy data.
@@ -304,10 +290,6 @@ class plgFinderJEM extends Adapter
         // Add the author taxonomy data.
         if (!empty($item->author) || !empty($item->created_by_alias)) {
             $item->addTaxonomy('Author', !empty($item->created_by_alias) ? $item->created_by_alias : $item->author);
-        }
-
-        if (!$item->Category) {
-            return true;
         }
 
         // Add the category taxonomy data.
@@ -325,7 +307,6 @@ class plgFinderJEM extends Adapter
         Helper::getContentExtras($item);
 
         // Index the item.
-
         $this->indexer->index($item);
     }
 
@@ -337,8 +318,7 @@ class plgFinderJEM extends Adapter
      */
     protected function setup()
     {
-        // Load dependent classes.
-        include_once JPATH_SITE . '/components/com_jem/helpers/route.php';
+		require_once JPATH_SITE . '/components/com_jem/helpers/route.php';
 
         return true;
     }
