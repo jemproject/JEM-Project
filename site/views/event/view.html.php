@@ -149,7 +149,7 @@ class JemViewEvent extends JemView
 				if ($layout = $item->params->get('event_layout')) {
 					$this->setLayout($layout);
 				}
-            }
+			}
 			$item->params->merge($params);
 		} else {
 			// Merge the menu item params with the event params so that the event params take priority
@@ -201,7 +201,7 @@ class JemViewEvent extends JemView
 
 		$results = $dispatcher->triggerEvent('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
-		
+
 		//use temporary class var to triggerEvent content prepare plugin for venue description
 		$tempVenue = new stdClass();
 		$tempVenue->text = $item->locdescription ?? '';
@@ -209,7 +209,7 @@ class JemViewEvent extends JemView
 		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
 		$item->locdescription = $tempVenue->text;
 		$item->venue = $tempVenue->title;
-		
+
 		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
 			$model->hit();
@@ -218,7 +218,7 @@ class JemViewEvent extends JemView
 		// Escape strings for HTML output
 		$pageclass_sfx 		 =  $this->item->params->get('pageclass_sfx');
 		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
-		
+
 
 		$this->print_link = Route::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
@@ -259,11 +259,10 @@ class JemViewEvent extends JemView
 		$g_inv = $this->jemsettings->regallowinvitation;
 		$e_dates = $item->dates;
 		$e_times = $item->times;
-		$e_reg = $this->item->registra;
-		$e_reg_hours = $this->convertHoursToFloat ($item->registra_from);
-		$e_reg_hours = (float)$item->registra_from;
+		$e_reg = $item->registra;
+		$e_reg_hours = $this->convertHoursToFloat ($item->registra_from ?? '');
 		$e_unreg = $item->unregistra;
-		$e_unreg_hours = $this->convertHoursToFloat ($item->unregistra_until);
+		$e_unreg_hours = $this->convertHoursToFloat ($item->unregistra_until ?? '');
 
 		//$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
 		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
@@ -382,7 +381,7 @@ class JemViewEvent extends JemView
 		}
 
 		$this->_prepareDocument();
-		
+
 		parent::display($tpl);
 	}
 
@@ -395,38 +394,38 @@ class JemViewEvent extends JemView
 
 		switch ($keyword)
 		{
-		case 'categories':
-			$catnames = array();
-			foreach ($categories as $category) {
-				$catnames[] = $this->escape($category->catname);
-			}
-			$content = implode(', ', array_filter($catnames));
-			break;
+			case 'categories':
+				$catnames = array();
+				foreach ($categories as $category) {
+					$catnames[] = $this->escape($category->catname);
+				}
+				$content = implode(', ', array_filter($catnames));
+				break;
 
-		case 'a_name':
-			$content = $row->venue;
-			break;
+			case 'a_name':
+				$content = $row->venue;
+				break;
 
-		case 'times':
-		case 'endtimes':
-			if (isset($row->$keyword)) {
-				$content = JemOutput::formattime($row->$keyword);
-			}
-			break;
+			case 'times':
+			case 'endtimes':
+				if (isset($row->$keyword)) {
+					$content = JemOutput::formattime($row->$keyword);
+				}
+				break;
 
-		case 'dates':
-		case 'enddates':
-			if (isset($row->$keyword)) {
-				$content = JemOutput::formatdate($row->$keyword);
-			}
-			break;
+			case 'dates':
+			case 'enddates':
+				if (isset($row->$keyword)) {
+					$content = JemOutput::formatdate($row->$keyword);
+				}
+				break;
 
-		case 'title':
-		default:
-			if (isset($row->$keyword)) {
-				$content = $row->$keyword;
-			}
-			break;
+			case 'title':
+			default:
+				if (isset($row->$keyword)) {
+					$content = $row->$keyword;
+				}
+				break;
 		}
 
 		return $content;
@@ -438,8 +437,8 @@ class JemViewEvent extends JemView
 	protected function _prepareDocument()
 	{
 		$app     = Factory::getApplication();
-	//	$menus   = $app->getMenu();
-	//	$pathway = $app->getPathway();
+		//	$menus   = $app->getMenu();
+		//	$pathway = $app->getPathway();
 
 		// add css file
 		JemHelper::loadCss('jem');
@@ -451,40 +450,40 @@ class JemViewEvent extends JemView
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 
-	/*
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
+		/*
+            // Because the application sets a default page title,
+            // we need to get it from the menu item itself
+            $menu = $menus->getActive();
 
-		if ($menu) {
-			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-		} else {
-			$this->params->def('page_heading', Text::_('JGLOBAL_JEM_EVENT'));
-		}
-	*/
+            if ($menu) {
+                $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+            } else {
+                $this->params->def('page_heading', Text::_('JGLOBAL_JEM_EVENT'));
+            }
+        */
 		$title = $this->params->get('page_title', '');
-	/*
-		$id = (int) @$menu->query['id'];
+		/*
+            $id = (int) @$menu->query['id'];
 
-		// if the menu item does not concern this event
-		if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id)) {
-			// If this is not a single event menu item, set the page title to the event title
-			if ($this->item->title) {
-				$title = $this->item->title;
-			}
-			$path = array(array('title' => $this->item->title, 'link' => ''));
-			$category = JCategories::getInstance('JEM2')->get($this->item->catid);
-			while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
-					|| $id != $category->id) && $category->id > 1) {
-				$path[] = array('title' => $category->catname, 'link' => JemHelperRoute::getCategoryRoute($category->id));
-				$category = $category->getParent();
-			}
-			$path = array_reverse($path);
-			foreach($path as $item) {
-				$pathway->addItem($item['title'], $item['link']);
-			}
-		}
-	*/
+            // if the menu item does not concern this event
+            if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id)) {
+                // If this is not a single event menu item, set the page title to the event title
+                if ($this->item->title) {
+                    $title = $this->item->title;
+                }
+                $path = array(array('title' => $this->item->title, 'link' => ''));
+                $category = JCategories::getInstance('JEM2')->get($this->item->catid);
+                while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
+                        || $id != $category->id) && $category->id > 1) {
+                    $path[] = array('title' => $category->catname, 'link' => JemHelperRoute::getCategoryRoute($category->id));
+                    $category = $category->getParent();
+                }
+                $path = array_reverse($path);
+                foreach($path as $item) {
+                    $pathway->addItem($item['title'], $item['link']);
+                }
+            }
+        */
 		// Check for empty title and add site name if param is set
 		if (empty($title)) {
 			$title = $app->get('sitename');
@@ -517,12 +516,15 @@ class JemViewEvent extends JemView
 		if (!empty($this->item->page_title)) {
 			$this->item->title = $this->item->title . ' - ' . $this->item->page_title;
 			$this->document->setTitle($this->item->page_title . ' - '
-					. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
+				. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
 		}
 	}
-	
-	
+
+
 	public function convertHoursToFloat($time_input) {
+		if($time_input == ""){
+			$time_input = "0:00";
+		}
 		list($hours, $minutes) = explode(":", $time_input);
 		$hours = (int)$hours;
 		$minutes = (int)$minutes;
