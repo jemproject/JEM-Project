@@ -244,8 +244,8 @@
 
     <fieldset name="registration">
         <field name="registra" type="list"
-            label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
-            description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
+            label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
+            description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
             class="inputbox"
             default="0"
             required="false"
@@ -258,8 +258,8 @@
         <!--field name="registra" type="checkbox"
                size="20"
                class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
-               description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
+               label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
+               description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
                value="1"
                default="0"
         /-->
@@ -282,8 +282,8 @@
                default="0"
         />
         <field name="unregistra" type="list"
-               label="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION"
-               description="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION_DESC"
+               label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"
+               description="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION_DESC"
                class="inputbox"
                default="0"
                required="false"

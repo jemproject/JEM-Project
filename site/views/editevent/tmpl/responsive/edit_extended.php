@@ -213,7 +213,7 @@ use Joomla\CMS\Date\Date;
         <?php endif; ?>
         <dt><?php echo $this->form->getLabel('unregistra'); ?></dt>
         <dd><?php echo $this->form->getInput('unregistra'); ?></dd>
-        <dd><?php echo $this->form->getInput('unregistra_until'); ?> <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></dd>
+        <dd><?php echo $this->form->getInput('unregistra_until'); ?> <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></dd>
         <dt><?php echo $this->form->getLabel('maxplaces'); ?></dt>
         <dd><?php echo $this->form->getInput('maxplaces'); ?></dd>
         <dt><?php echo $this->form->getLabel('minbookeduser'); ?></dt>

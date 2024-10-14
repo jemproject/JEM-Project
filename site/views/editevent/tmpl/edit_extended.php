@@ -201,7 +201,7 @@ use Joomla\CMS\Date\Date;
                 <?php else : ?>
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
                         <?php echo $this->form->getInput('registra_from'); ?>
-                        <span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span>
+                        <span id="jform_registra_from2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span>
                     </li>
                 <?php endif; ?>
                 <br/>
@@ -211,7 +211,7 @@ use Joomla\CMS\Date\Date;
                 <br/>
                 <li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
                     <?php echo $this->form->getInput('unregistra_until'); ?>
-                    <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
+                    <span id="jform_unregistra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
                 </li>
                 <br/>
                 <li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>

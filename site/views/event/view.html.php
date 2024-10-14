@@ -525,11 +525,11 @@ class JemViewEvent extends JemView
 		if($time_input == ""){
 			$time_input = "0:00";
 		}
-		list($hours, $minutes) = explode(":", $time_input);
-		$hours = (int)$hours;
-		$minutes = (int)$minutes;
-		$hours_float = $hours + ($minutes / 60);
-		return $hours_float;
+		if(strpos($time_input,":") === false){
+			$time_input .= ":00";
+		}
+		list($hours, $minutes) = array_map('intval', explode(":", $time_input));
+		return $hours + ($minutes / 60);
 	}
 
 }
