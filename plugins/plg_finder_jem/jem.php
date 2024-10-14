@@ -266,7 +266,7 @@ class plgFinderJEM extends Adapter
         $item->route = JEMHelperRoute::getEventRoute($item->slug, $item->catslug);
 
         // Get the menu title if it exists.
-        $title = $this->getItemMenuTitle($item->url);
+        // $title = $this->getItemMenuTitle($item->url);
 
         // Adjust the title if necessary.
         if (!empty($title) && $this->params->get('use_menu_title', true)) {
