@@ -207,7 +207,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($this->permissions->canEditAttendees) : ?>
-            <dt></dt>
+            <dt style="padding: 0;"></dt>
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
         <?php endif; ?>
     </dl>
@@ -239,8 +239,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             }
                             $uri = Uri::getInstance();
                             $returnUrl = $uri->toString();
-                            $urlLogin   = 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl); ?>
-                            <button class="btn btn-sm btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+                            $urlLogin   = Route::_($uri->root() . 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl)); ?>
+                            <button class="btn btn-sm btn-warning" onclick="location.href='<?php echo $urlLogin; ?>'"
                                     type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
 
                             <?php //insert Breezing Form hack here

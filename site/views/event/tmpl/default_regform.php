@@ -140,7 +140,8 @@ if ($this->showRegForm && empty($this->print)) :
                 <input type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'))"
                     <?php if ($this->isregistered !== false
                         && ($placesavailableevent === 0 || ($placesavailableuser === 0 && $statusRegistrationUser != 0))
-                        && (!$this->item->waitinglist || ($this->item->waitinglist && ($placesBookedUser || $placesavailableuser === 0)))) {
+                            && (!$this->item->waitinglist || ($this->item->waitinglist && ($placesBookedUser || $placesavailableuser === 0)))
+                            || !$this->allowRegistration) {
                         echo 'disabled="disabled"';
                     } else {
                         echo 'checked="checked"';
@@ -326,7 +327,7 @@ if ($this->showRegForm && empty($this->print)) :
                 </p>
             <?php endif; ?>
             <p>
-                <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" <?php echo (!$this->allowAnnulation && !$this->allowRegistration? 'disabled':'');?> value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
+	            <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" <?php echo ((!$placesRegisteredUser && !$this->allowRegistration) || (!$this->allowAnnulation && !$this->allowRegistration)? 'disabled="disabled"':'');?> value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
             </p>
 
             <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />

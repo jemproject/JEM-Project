@@ -443,7 +443,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
             <?php
             $timeNow = time();
-            $timeNow = $timeNow - ($timeNow % 60);
+
             switch ($this->e_reg) {
                 case 0:
                     //Event without registration (NO)
@@ -471,9 +471,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         if($this->dateUnregistationUntil) {
                             echo "<br>" . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
                         }
-                    }else if($this->dateRegistationUntil <= $timeNow) {
+                    }else if($this->dateRegistationUntil < $timeNow) {
                         echo Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL') . ' ' . date('Y-m-d H:i', $this->dateRegistationUntil);
-                        echo "<br>" . $this->loadTemplate('attendees');
+                        echo $this->loadTemplate('attendees');
 
                         //Event with date starting annulation
                         if($this->dateUnregistationUntil) {

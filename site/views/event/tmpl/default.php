@@ -394,13 +394,11 @@ if ($jemsettings->oldevent > 0) {
 
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
-            <p></p>
-            <hr />
+            <hr class="jem-hr">
             <h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
 
             <?php
             $timeNow = time();
-            $timeNow = $timeNow - ($timeNow % 60);
 
             switch ($this->e_reg) {
                 case 0:
@@ -431,11 +429,11 @@ if ($jemsettings->oldevent > 0) {
                         }
                     }else if($this->dateRegistationUntil < $timeNow) {
                         echo Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL') . ' ' . date('Y-m-d H:i', $this->dateRegistationUntil);
-                        if($this->allowAnnulation) {
-                            echo "<br>" . $this->loadTemplate('attendees');
-                        }
+                        echo $this->loadTemplate('attendees');
+
+                        //Event with date starting annulation
                         if($this->dateUnregistationUntil) {
-                            echo "<br>" . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
+                            echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
                         }
                     }
                     break;
@@ -443,8 +441,7 @@ if ($jemsettings->oldevent > 0) {
         <?php endif; ?>
 
         <?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
-            <p></p>
-            <hr />
+            <hr class="jem-hr">
             <?php echo $this->item->pluginevent->onEventEnd; ?>
         <?php endif; ?>
 

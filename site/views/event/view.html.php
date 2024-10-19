@@ -262,19 +262,15 @@ class JemViewEvent extends JemView
 		$e_reg   = $item->registra;
 		$e_unreg = $item->unregistra;
 
-		$e_reg_from_seconds    = $this->convertHoursToSeconds ($item->registra_from ?? '');;
-		$e_reg_until_seconds   = $this->convertHoursToSeconds ($item->registra_until ?? '');
-		$e_unreg_until_seconds = $this->convertHoursToSeconds ($item->unregistra_until ?? '');
 		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
 		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
 		$this->e_reg = $e_reg;
 
 		$timeNow = time();
-		$timeNow = $timeNow - ($timeNow % 60);
-		$this->dateRegistationFrom    = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_from_seconds) . ' second');
-		$this->dateRegistationUntil   = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_until_seconds) . ' second');
+		$this->dateRegistationFrom    = strtotime(($item->registra_from ?? ''));
+		$this->dateRegistationUntil   = strtotime(($item->registra_until ?? ''));
+		$this->dateUnregistationUntil = strtotime(($item->unregistra_until ?? ''));
 		$this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && $timeNow < $this->dateRegistationUntil)));
-		$this->dateUnregistationUntil = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_unreg_until_seconds) . ' second');
 		$this->allowAnnulation        = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
 
 		// Timecheck for registration
@@ -521,24 +517,6 @@ class JemViewEvent extends JemView
 			$this->document->setTitle($this->item->page_title . ' - '
 				. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
 		}
-	}
-
-
-	public function convertHoursToSeconds($time_input)
-	{
-		if ($time_input == "" || $time_input == 0) {
-			return 0;
-		}
-
-		//Format HHHH to seconds
-		if (strpos($time_input, ":") === false) {
-			$hours = (int) $time_input;
-			return $hours * 3600;
-		}
-
-		//Format HHHH:MM to seconds
-		sscanf($time_input, "%d:%d", $hours, $minutes);
-		return ($hours * 3600) + ($minutes * 60);
 	}
 
 }

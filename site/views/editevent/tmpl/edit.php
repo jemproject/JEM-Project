@@ -118,9 +118,11 @@ $params		= $this->params;
             var unregistramode = unregistra.val();
 
             if (unregistramode == 2) {
+	            document.getElementById('unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until2').style.display = '';
             } else {
+	            document.getElementById('unregistra_until').style.display = 'none';			
                 document.getElementById('jform_unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until2').style.display = 'none';
             }
@@ -137,11 +139,15 @@ $params		= $this->params;
             var registramode = registra.val();
 
             if (registramode == 2) {
+                document.getElementById('registra_from').style.display = '';
+                document.getElementById('registra_until').style.display = '';
                 document.getElementById('jform_registra_from').style.display = '';
                 document.getElementById('jform_registra_from2').style.display = '';
                 document.getElementById('jform_registra_until').style.display = '';
                 document.getElementById('jform_registra_until2').style.display = '';
             } else {
+                document.getElementById('registra_from').style.display = 'none';
+                document.getElementById('registra_until').style.display = 'none';
                 document.getElementById('jform_registra_from').style.display = 'none';
                 document.getElementById('jform_registra_from2').style.display = 'none';
                 document.getElementById('jform_registra_until').style.display = 'none';
