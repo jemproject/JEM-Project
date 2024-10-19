@@ -203,8 +203,10 @@ use Joomla\CMS\Date\Date;
         <?php else : ?>
             <dt><?php echo $this->form->getLabel('registra'); ?></dt>
             <dd><?php echo $this->form->getInput('registra'); ?></dd>
-            <dd><?php echo $this->form->getInput('registra_from'); ?> <span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_REGITRATION_FROM_POSTFIX'); ?></span></dd>
-            <dd><?php echo $this->form->getInput('registra_until'); ?> <span id="jform_registra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_REGITRATION_UNTIL_POSTFIX'); ?></span></dd>
+            <dt></dt>
+            <dd><?php echo $this->form->getInput('registra_from'); ?> <span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></dd>
+            <dt></dt>
+            <dd><?php echo $this->form->getInput('registra_until'); ?> <span id="jform_registra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></dd>
         <?php endif; ?>
     </dl>
     <dl class="adminformlist jem-dl jem-dl-rest">
@@ -214,6 +216,7 @@ use Joomla\CMS\Date\Date;
         <?php endif; ?>
         <dt><?php echo $this->form->getLabel('unregistra'); ?></dt>
         <dd><?php echo $this->form->getInput('unregistra'); ?></dd>
+        <dt></dt>
         <dd><?php echo $this->form->getInput('unregistra_until'); ?> <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></dd>
         <dt><?php echo $this->form->getLabel('maxplaces'); ?></dt>
         <dd><?php echo $this->form->getInput('maxplaces'); ?></dd>
