@@ -260,19 +260,25 @@ class JemViewEvent extends JemView
 		$e_dates = $item->dates;
 		$e_times = $item->times;
 		$e_reg = $item->registra;
-		$e_reg_hours = $this->convertHoursToFloat ($item->registra_from ?? '');
 		$e_unreg = $item->unregistra;
-		$e_unreg_hours = $this->convertHoursToFloat ($item->unregistra_until ?? '');
+		$e_reg_from_seconds = $this->convertHoursToSeconds ($item->registra_from ?? '');;
+		$e_reg_until_seconds = $this->convertHoursToSeconds ($item->registra_until ?? '');
+		$e_unreg_until_seconds = $this->convertHoursToSeconds ($item->unregistra_until ?? '');
 
-		//$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
 		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
 		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
 		$this->e_reg = $e_reg;
 
-		$this->dateRegistationFrom = strtotime($e_dates.' '.$e_times.' -'.(int)($e_reg_hours*3600).' second');
-		$this->allowRegistration = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom < strtotime('now'))));
-		$this->dateUnregistationUntil = strtotime($e_dates.' '.$e_times.' -'.(int)($e_unreg_hours*3600).' second');
-		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > strtotime('now'))));
+		$timeNow = time();
+		$timeNow = $timeNow - ($timeNow % 60);
+
+		$this->dateRegistationFrom  = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_from_seconds) . ' second');
+		$this->dateRegistationUntil = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_until_seconds) . ' second');
+		$this->allowRegistration = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && $timeNow < $this->dateRegistationUntil)));
+
+
+		$this->dateUnregistationUntil = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_unreg_until_seconds) . ' second');
+		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
 
 		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));
@@ -521,15 +527,21 @@ class JemViewEvent extends JemView
 	}
 
 
-	public function convertHoursToFloat($time_input) {
-		if($time_input == ""){
-			$time_input = "0:00";
+	public function convertHoursToSeconds($time_input)
+	{
+		if ($time_input == "" || $time_input == 0) {
+			return 0;
 		}
-		if(strpos($time_input,":") === false){
-			$time_input .= ":00";
+
+		//Format HHHH to seconds
+		if (strpos($time_input, ":") === false) {
+			$hours = (int) $time_input;
+			return $hours * 3600;
 		}
-		list($hours, $minutes) = array_map('intval', explode(":", $time_input));
-		return $hours + ($minutes / 60);
+
+		//Format HHHH:MM to seconds
+		sscanf($time_input, "%d:%d", $hours, $minutes);
+		return ($hours * 3600) + ($minutes * 60);
 	}
 
 }

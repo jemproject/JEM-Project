@@ -222,7 +222,7 @@ if ($this->showRegForm && empty($this->print)) :
                                 // Shown the active series event list
                                 echo '<div class="px-3">' . Text::_('COM_JEM_I_WILL_GO_SERIES_4') . '</div>';
                                 echo '<div class="px-3"><table id="table-series"><thead><tr><th>' . Text::_('COM_JEM_DATE') . '</th><th>' . Text::_('COM_JEM_TITLE') . '</th>' . ($this->registereduser? '<th>' . Text::_('COM_JEM_STATUS') . '</th><th>' . Text::_('COM_JEM_PLACES') . '</th>':'') . '<th>ID</th></tr></thead><tbody>';
-                                    
+
                                 foreach ($events as $e) {
                                     if ($this->registereduser) {
                                         switch ($e->status) {
@@ -326,7 +326,7 @@ if ($this->showRegForm && empty($this->print)) :
                 </p>
             <?php endif; ?>
             <p>
-                <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
+                <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" <?php echo (!$this->allowAnnulation && !$this->allowRegistration? 'disabled':'');?> value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
             </p>
 
             <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />

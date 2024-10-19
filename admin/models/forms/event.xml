@@ -291,6 +291,16 @@
 			   filter="string"
 			   showon="registra:2"
 		/>
+		<field name="registra_until" type="text"
+			   class="inputbox"
+			   label="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL"
+			   description="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_DESC"
+			   maxlength="7"
+			   pattern="[0-9]{1,4}:[0-5][0-9]|[0-9]{1,4}"
+			   hint="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_HINT"
+			   filter="string"
+			   showon="registra:2"
+		/>
 		<field name="unregistra" type="list"
 			   label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"
 			   description="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION_DESC"

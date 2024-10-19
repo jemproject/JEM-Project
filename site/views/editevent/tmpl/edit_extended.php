@@ -200,8 +200,8 @@ use Joomla\CMS\Date\Date;
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo Text::_('JYES'); ?></li>
                 <?php else : ?>
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
-                        <?php echo $this->form->getInput('registra_from'); ?>
-                        <span id="jform_registra_from2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span>
+                        <?php echo $this->form->getInput('registra_from'); ?><span id="jform_registra_from2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span>
+                        <?php echo $this->form->getInput('registra_until'); ?><span id="jform_registra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span>						
                     </li>
                 <?php endif; ?>
                 <br/>

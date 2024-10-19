@@ -139,9 +139,14 @@ $params		= $this->params;
             if (registramode == 2) {
                 document.getElementById('jform_registra_from').style.display = '';
                 document.getElementById('jform_registra_from2').style.display = '';
+                document.getElementById('jform_registra_until').style.display = '';
+                document.getElementById('jform_registra_until2').style.display = '';
             } else {
                 document.getElementById('jform_registra_from').style.display = 'none';
                 document.getElementById('jform_registra_from2').style.display = 'none';
+                document.getElementById('jform_registra_until').style.display = 'none';
+                document.getElementById('jform_registra_until2').style.display = 'none';
+
             }
         }
         $("#jform_registra").on('change', showRegistraFrom);
