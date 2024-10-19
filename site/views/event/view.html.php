@@ -247,7 +247,7 @@ class JemViewEvent extends JemView
 		//suggestion by M59S to allow groupmembers too see line 230/231 too 
 		$edit_att->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
-		$this->permissions = $permissions;
+		$this->permissions    = $permissions;
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
 		$this->showvenuestate = $permissions->canEditVenue || $permissions->canPublishVenue;
 
@@ -255,35 +255,32 @@ class JemViewEvent extends JemView
 		 *  but if on event limited to invited users and limitation globally allowed user must be invited
 		 *  (or event owner to see attendees)
 		 */
-		$g_reg = $this->jemsettings->showfroregistra;
-		$g_inv = $this->jemsettings->regallowinvitation;
+		$g_reg   = $this->jemsettings->showfroregistra;
+		$g_inv   = $this->jemsettings->regallowinvitation;
 		$e_dates = $item->dates;
 		$e_times = $item->times;
-		$e_reg = $item->registra;
+		$e_reg   = $item->registra;
 		$e_unreg = $item->unregistra;
-		$e_reg_from_seconds = $this->convertHoursToSeconds ($item->registra_from ?? '');;
-		$e_reg_until_seconds = $this->convertHoursToSeconds ($item->registra_until ?? '');
-		$e_unreg_until_seconds = $this->convertHoursToSeconds ($item->unregistra_until ?? '');
 
-		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
-		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
+		$e_reg_from_seconds    = $this->convertHoursToSeconds ($item->registra_from ?? '');;
+		$e_reg_until_seconds   = $this->convertHoursToSeconds ($item->registra_until ?? '');
+		$e_unreg_until_seconds = $this->convertHoursToSeconds ($item->unregistra_until ?? '');
+		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
+		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
 		$this->e_reg = $e_reg;
 
 		$timeNow = time();
 		$timeNow = $timeNow - ($timeNow % 60);
-
-		$this->dateRegistationFrom  = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_from_seconds) . ' second');
-		$this->dateRegistationUntil = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_until_seconds) . ' second');
-		$this->allowRegistration = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && $timeNow < $this->dateRegistationUntil)));
-
-
+		$this->dateRegistationFrom    = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_from_seconds) . ' second');
+		$this->dateRegistationUntil   = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_reg_until_seconds) . ' second');
+		$this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && $timeNow < $this->dateRegistationUntil)));
 		$this->dateUnregistationUntil = strtotime($e_dates . ' ' . $e_times . ' -' . ($e_unreg_until_seconds) . ' second');
-		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
+		$this->allowAnnulation        = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
 
 		// Timecheck for registration
-		$now = strtotime(date("Y-m-d"));
-		$date = empty($item->dates) ? $now : strtotime($item->dates);
-		$enddate = empty($item->enddates) ? $date : strtotime($item->enddates);
+		$now       = strtotime(date("Y-m-d"));
+		$date      = empty($item->dates) ? $now : strtotime($item->dates);
+		$enddate   = empty($item->enddates) ? $date : strtotime($item->enddates);
 		$timecheck = $now - $date; // on open date $timecheck is 0
 
 		// let's build the registration handling
