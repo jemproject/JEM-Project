@@ -18,11 +18,11 @@ use Joomla\CMS\Date\Date;
     <fieldset class="panelform">
         <legend><?php echo Text::_('COM_JEM_RECURRENCE'); ?></legend>
         <ul class="adminformlist">
-            <li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?></li>
+            <li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type', null, $this->item->recurrence_type); ?></li>
             <li id="recurrence_output"><label></label></li>
             <li id="counter_row" style="display: none;">
                 <?php echo $this->form->getLabel('recurrence_limit_date'); ?>
-                <?php echo $this->form->getInput('recurrence_limit_date'); ?>
+                <?php echo $this->form->getInput('recurrence_limit_date', null, $this->item->recurrence_limit_date); ?>
                 <br><div class="recurrence_notice"><small>
                         <?php
                         switch ($this->item->recurrence_type) {
@@ -57,6 +57,7 @@ use Joomla\CMS\Date\Date;
         <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
         <script type="text/javascript">
+
             <!--
             var $select_output = new Array();
             $select_output[1] = "<?php
@@ -97,10 +98,9 @@ use Joomla\CMS\Date\Date;
         <?php /* show "old" recurrence settings for information */
         if (!empty($this->item->recurr_bak->recurrence_type)) {
             $recurr_type = '';
-            $nullDate = Factory::getContainer()->get('DatabaseDriver')->getNullDate();
+        	$rlDate = $this->item->recurr_bak->recurrence_limit_date;
             $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
-            $rlDate = $this->item->recurr_bak->recurrence_limit_date;
-            if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
+        	if (!empty($rlDate)) {
                 $recurr_limit_date = JemOutput::formatdate($rlDate);
             } else {
                 $recurr_limit_date = Text::_('COM_JEM_UNLIMITED');
@@ -153,7 +153,7 @@ use Joomla\CMS\Date\Date;
 
             if (!empty($recurr_type)) {
                 ?>
-                <hr />
+            	<hr class="jem-hr" />
                 <p><strong><?php echo Text::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
                 <ul class="adminformlist">
                     <li>
