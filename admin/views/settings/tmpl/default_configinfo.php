@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -35,8 +34,7 @@ use Joomla\CMS\Language\Text;
 				                         ,'plg_jem_comments'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS'
 				                         ,'plg_jem_mailer'    => 'COM_JEM_MAIN_CONFIG_VS_PLG_MAILER'
 				                         ,'plg_jem_demo'      => 'COM_JEM_MAIN_CONFIG_VS_PLG_DEMO'
-				                         ,'plg_quickicon_jem' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
-				                         ,'Quick Icon - JEM'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
+				                         ,'plg_quickicon_jemquickicon' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
 				                         ,'AcyMailing Tag : insert events from JEM 2.1+'
 				                                              => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
 				                         );
@@ -45,7 +43,7 @@ use Joomla\CMS\Language\Text;
 					<th><u><?php echo Text::_('COM_JEM_NAME'); ?></u></th>
                     <th><u><?php echo Text::_('COM_JEM_MAIN_CONFIG_VS'); ?></u></th>
                     <th><u><?php echo Text::_('COM_JEM_DATE'); ?></u></th>
-                    <th><u><?php echo Text::_('COM_JEM_STATE'); ?></u></th>
+                    <th><u><?php echo Text::_('JSTATUS'); ?></u></th>
                 </tr>
                 <?php
 				foreach ($known_extensions as $name => $label) {

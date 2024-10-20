@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2013-2024 joomlaeventmanager.net
@@ -235,7 +234,8 @@ abstract class ModJemBannerHelper
 			} else {
 				$title = $fulltitle;
 			}
-
+			
+			$lists[$i]->eventid     = $row->id;
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
@@ -360,7 +360,7 @@ abstract class ModJemBannerHelper
 			}
 		}
 
-		return (!empty($gray) && ($gray <= 160));
+		return ($gray <= 160) ? 1 : 0;
 	}
 
 	/**

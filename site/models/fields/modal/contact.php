@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -34,7 +33,7 @@ class JFormFieldModal_Contact extends FormField
 	{
 		$app      = Factory::getApplication();
 		$document = $app->getDocument();
-
+		$wa 	  = $document->getWebAssetManager();
 
 		// Build the script
 		$script = array();
@@ -45,10 +44,8 @@ class JFormFieldModal_Contact extends FormField
 		$script[] = '        $("#contact-modal").modal("hide");';
 		$script[] = '    }';
 
-		
-
 		// Add to document head
-		$document->addScriptDeclaration(implode("\n", $script));
+		$wa->addInlineScript(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();

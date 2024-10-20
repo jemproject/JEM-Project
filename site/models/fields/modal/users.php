@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -32,6 +31,10 @@ class JFormFieldModal_Users extends FormField
 	 */
 	protected function getInput()
 	{
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+		$wa 	  = $document->getWebAssetManager();
+
 		// Build the script
 		$script = array();
 		$script[] = '    function jSelectUsers_'.$this->id.'(ids, count, object) {';
@@ -42,7 +45,7 @@ class JFormFieldModal_Users extends FormField
 		$script[] = '    }';
 
 		// Add to document head
-		Factory::getDocument()->addScriptDeclaration(implode("\n", $script));
+		$wa->addInlineScript(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();

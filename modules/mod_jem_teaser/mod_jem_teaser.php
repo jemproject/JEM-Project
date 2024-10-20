@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Teaser Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -30,6 +29,7 @@ switch($params->get('color')) {
 	case 'green':
 	case 'orange':
 	case 'category':
+	case 'alpha':			  
 		$color = $params->get('color');
 		break;
 	default:

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="4.0" type="plugin" group="acymailing" method="upgrade">
 	<name>AcyMailing 5.x Tag: insert events from JEM 4</name>
-	<creationDate>April 2024</creationDate>
-	<version>4.2.2</version>
+	<creationDate>October 2024</creationDate>
+	<version>4.3.0</version>
 	<author>Acyba, JEM Community</author>
 	<authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.acymailing.com, https://www.joomlaeventmanager.net</authorUrl>
@@ -15,6 +15,9 @@
 		<filename>index.html</filename>
 		<folder>language</folder>
 	</files>
+	<languages>
+        <language tag="en-GB">language/en-GB/plg_acymailing_tagjem.ini</language>
+    </languages>
 
 	<media folder="media/com_acymailing/plugins" destination="com_acymailing/plugins">
 		<filename>index.html</filename>

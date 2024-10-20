@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    4.1.1
+ * @version    4.2.3
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -160,6 +160,7 @@ class com_jemInstallerScript
             "global_show_timedetails"=>"1",
             "global_show_detailsadress"=>"1",
             "global_show_detlinkvenue"=>"1",
+            "global_show_listevents"=>"1",
             "global_show_mapserv"=>"0",
             "global_tld"=>"",
             "global_lg"=>"",
@@ -259,6 +260,9 @@ class com_jemInstallerScript
             // Remove obsolete files and folder
             $this->deleteObsoleteFiles();
 
+			// Check columns in database
+			$this->checkColumnsIntoDatabase();
+
             // Ensure css files are (over)writable
             $this->makeFilesWritable();
 
@@ -302,7 +306,7 @@ class com_jemInstallerScript
      */
     public function getParam($name)
     {
-        $db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
         $db->setQuery($query);
@@ -560,12 +564,45 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
 			'/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
 			'/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
-			'/administrator/components/com_jem/sql/updates/2.3.1.sql',			
+			'/administrator/components/com_jem/sql/updates/2.3.1.sql',
+            // remove old langage files with lang prefix
+			'/language/en-GB/en-GB.pkg_jem.sys.ini',
+			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
+			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.sys.ini',
+			'/components/com_jem/language/en-GB/en-GB.com_jem.ini',
+			'/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.ini',
+			'/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.sys.ini',
+			'/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.ini',
+			'/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.sys.ini',
+			'/modules/mod_jem_jubilee/language/en-GB/en-GB.mod_jem_jubilee.ini',
+			'/modules/mod_jem_jubilee/language/en-GB/en-GB.mod_jem_jubilee.sys.ini',
+			'/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.ini',
+			'/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.sys.ini',
+			'/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.ini',
+			'/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.sys.ini',
+			'/modules/mod_jem/language/en-GB/en-GB.mod_jem.ini',
+			'/modules/mod_jem/language/en-GB/en-GB.mod_jem.sys.ini',
+			'/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.ini',
+			'/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.sys.ini',
+			'/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.ini',
+			'/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.sys.ini',
+			'/plugins/finder/jem/language/en-GB/en-GB.plg_finder_jem.ini',
+			'/plugins/finder/jem/language/en-GB/en-GB.plg_finder_jem.sys.ini',
+			'/plugins/jem/comments/language/en-GB/en-GB.plg_jem_comments.ini',
+			'/plugins/jem/comments/language/en-GB/en-GB.plg_jem_comments.sys.ini',
+			'/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.ini',
+			'/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
+			'/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
+			'/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',	
+			'/administrator/language/en-GB/en-GB.plg_content_jem.ini',
+			'/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
+			'/administrator/language/en-GB/en-GB.plg_finder_jem.ini',		
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
         $folders = array(            
             '/media/com_jem/FontAwesome',
+            '/plugins/quickicon/jemquickicon',
         );
 
         foreach ($files as $file) {
@@ -580,8 +617,39 @@ class com_jemInstallerScript
             }
         }
     }
-
+    
     /**
+	 * Ensure some columns exist into JEM tables (database)
+	 *
+	 * @return void
+	 */
+	private function checkColumnsIntoDatabase()
+	{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = $db->getQuery(true);
+
+        // Array the columns to check
+		$columnsToCheck = [
+			['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
+			['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
+			['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"]
+		];
+
+		// check if the each column exists
+		foreach ($columnsToCheck as $data) {
+			$query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field ='" . $data['column'] . "'";
+			$db->setQuery($query);
+			$result = $db->loadResult();
+			if (!$result) {
+				// The column does not exist, so add it
+				$alterQuery = "ALTER TABLE " . $data['table'] . " ADD COLUMN " . $data['column'] . " " . $data['definition'];
+				$db->setQuery($alterQuery);
+				$db->execute();
+			}
+		}
+	}
+
+	/**
      * Ensure css files are writable.
      * (they maybe read-only caused by CSS Manager)
      *
@@ -598,7 +666,6 @@ class com_jemInstallerScript
         }
     }
 
-
     /**
      * Update data items related to datetime format into JEM.
      * (required when updating/migrating from 2.3.3/5/6 to new version 4.0.0 with support Joomla 4.x or newer)
@@ -608,7 +675,7 @@ class com_jemInstallerScript
     private function updateJem2315()
     {
         // write changed datetime entry '0000-00-00 ...' to null into DB
-        $db = Factory::getDbo();
+		$db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 		
         //Categories table
@@ -708,7 +775,6 @@ class com_jemInstallerScript
         $db->execute();
     }
 
-
     /**
      * Delete JEM update server entry from #__update_sites table.
      *
@@ -741,9 +807,6 @@ class com_jemInstallerScript
             $db->execute();
         }
     }
-
-
-
 
     /**
      * Deletes all JEM tables on database if option says so.

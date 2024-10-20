@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -12,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 
 ?>
-<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
 		<?php
 		$btn_params = array('id' => $this->venue->slug, 'slug' => $this->venue->slug, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
@@ -111,7 +110,7 @@ use Joomla\CMS\Language\Text;
             } ?>
           </dd>
           <?php endif; ?>
-    
+
           <?php
           for ($cr = 1; $cr <= 10; $cr++) {
             $currentRow = $this->venue->{'custom'.$cr};
@@ -198,28 +197,30 @@ use Joomla\CMS\Language\Text;
 	<?php $this->attachments = $this->venue->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
 
-	<!--table-->
-  <h2 class="jem">
-		<?php echo Text::_('COM_JEM_EVENTS'); ?>
-	</h2>
-	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
-		<?php echo $this->loadTemplate('events_table'); ?>
+    <?php if ($this->settings->get('global_show_listevents', 1)) : ?>
+        <!--table-->
+      <h2 class="jem">
+            <?php echo Text::_('COM_JEM_EVENTS'); ?>
+        </h2>
+        <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
+            <?php echo $this->loadTemplate('events_table'); ?>
 
-		<p>
-		<input type="hidden" name="option" value="com_jem" />
-		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-		<input type="hidden" name="view" value="venue" />
-		<input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
-		</p>
-	</form>
+            <p>
+            <input type="hidden" name="option" value="com_jem" />
+            <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+            <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+            <input type="hidden" name="view" value="venue" />
+            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
+            </p>
+        </form>
 
-	<!--pagination-->
-	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
+        <!--pagination-->
+        <div class="pagination">
+            <?php echo $this->pagination->getPagesLinks(); ?>
+        </div>
 
-	<?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+	    <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+    <?php endif; ?>
 
 	<!--copyright-->
 	<div class="copyright">

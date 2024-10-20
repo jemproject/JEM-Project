@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -112,13 +111,16 @@ function jem_common_show_filter(&$obj) {
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-    <div>
-      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-    </div>
     <div class="jem-row jem-justify-start jem-nowrap">
-      <?php echo $this->lists['filter']; ?>
-      <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+    <?php echo $this->lists['filter']; ?>
+     <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
     </div>
+        <div>
+            <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
+        </div>
+        <div class="jem-row jem-justify-start jem-nowrap">
+            <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" required class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
+        </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
       <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
@@ -171,13 +173,33 @@ function jem_common_show_filter(&$obj) {
         $isSafari = true;
       }
       ?>
-			<?php $this->rows = $this->getRows(); ?>
-			<?php foreach ($this->rows as $row) : ?>
+        <?php
+        $this->rows = $this->getRows();
+        $showMonthRow = false;
+        $previousYearMonth = '';
+        $paramShowMonthRow = $this->params->get('showmonthrow', '');
+        ?>
+
+        <?php foreach ($this->rows as $row) : ?>
+            <?php
+            if ($paramShowMonthRow && $row->dates) {
+                //get event date
+                $year = date('Y', strtotime($row->dates));
+                $month = date('F', strtotime($row->dates));
+                $YearMonth = Text::_('COM_JEM_'.strtoupper ($month)) . ' ' . $year;
+
+                if (!$previousYearMonth || $previousYearMonth != $YearMonth) {
+                    $showMonthRow = $YearMonth;
+                }
+
+                //Publish month row
+                if ($showMonthRow) { ?>
+                    <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><span class="row-month"><?php echo $showMonthRow;?></span></li>
+                <?php }
+            } ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
-				<?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >
-				<?php endif; ?>              
+          <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >				<?php else : ?>
+          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >				<?php endif; ?>              
               <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                 <i class="far fa-clock" aria-hidden="true"></i>
                 <?php
@@ -269,6 +291,12 @@ function jem_common_show_filter(&$obj) {
 				  </div>
                 <?php endif; ?>
               <?php endif; ?> 
+            <?php
+            if ($paramShowMonthRow) {
+                $previousYearMonth = $YearMonth ?? '';
+                $showMonthRow = false;
+            }
+            ?>
 
               <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
               <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -305,9 +333,6 @@ function jem_common_show_filter(&$obj) {
   <div style="margin:0; padding: 0;">
     <?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
       <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-        <div>
-          <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-        </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->lists['filter']; ?>
           <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />

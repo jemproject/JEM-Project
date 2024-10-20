@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -94,7 +93,7 @@ class JemModelAttendee extends BaseDatabaseModel
             $db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
-			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser'));
+			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.seriesbooking'));
 			$query->from('#__jem_register as r');
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 			$query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -136,6 +135,8 @@ class JemModelAttendee extends BaseDatabaseModel
 					$data->event = $table->id;
 					$data->maxbookeduser = $table->maxbookeduser;
 					$data->minbookeduser = $table->minbookeduser;
+                    $data->recurrence_type = $table->recurrence_type;
+                    $data->seriesbooking = $table->seriesbooking;
 				}
 				$data->waitinglist = isset($table->waitinglist) ? $table->waitinglist : 0;
 			}
@@ -233,61 +234,111 @@ class JemModelAttendee extends BaseDatabaseModel
 
 			// Get event
 			$query = $db->getQuery(true);
-			$query->select(array('maxplaces','waitinglist'));
+			$query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','seriesbooking','singlebooking'));
 			$query->from('#__jem_events');
 			$query->where('id= '.$db->quote($eventid));
 
 			$db->setQuery($query);
 			$event = $db->loadObject();
 
-			// Get register information of the event
-			$query = $db->getQuery(true);
-			$query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));
-			$query->from('#__jem_register');
-			$query->where('status = 1 AND event = '.$db->quote($eventid));
+            // If recurrence event, save series event
+            $events = array();
+            if($event->recurrence_type){
+                // Retrieving seriesbooking
+                $seriesbooking = $data["seriesbooking"];
+                $singlebooking = $data["singlebooking"];
 
-			$db->setQuery($query);
-			$register = $db->loadObject();
+                // If event has 'seriesbooking' active
+                if($event->seriesbooking && $seriesbooking && !$singlebooking){
+                    //GEt date and time now
+                    $dateFrom = date('Y-m-d', time());
+                    $timeFrom = date('H:i', time());
 
-			// If no one is registered yet, $register is null!
-			if (is_null($register)) {
-				$register = new stdClass;
-				$register->registered = 0;
-				$register->waiting = 0;
-				$register->booked = 0;
-			} else {
-				$register->booked = $register->registered - $register->waiting;
-			}
+                    // Get the all recurrence events of serie from now
+                    $query = $db->getQuery(true);
+                    $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
+                    $query->from('#__jem_events as a');
+                    $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
+                    $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+                    $db->setQuery($query);
+                    $events = $db->loadObjectList();
+                }
+            }
 
-			// put on waiting list ?
-			if (($event->maxplaces > 0) && ($status == 1)) // there is a max and user will attend
-			{
-				// check if the user should go on waiting list
-				if ($register->booked >= $event->maxplaces)
-				{
-					if (!$event->waitinglist) {
-						Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
-						return false;
-					} else {
-						$row->waiting = 1;
-					}
-				}
-			}
-		}
+            if (!isset($events) || !count ($events)){
+                $events [] = clone $event;
+            }
 
-		// Make sure the data is valid
-		if (!$row->check()) {
-			$this->setError($row->getError());
-			return false;
-		}
+            foreach ($events as $e) {
 
-		// Store it in the db
-		if (!$row->store()) {
-			Factory::getApplication()->enqueueMessage($row->getError(), 'error');
-			return false;
-		}
+                // Check if user is registered to each series event
+                $query = $db->getQuery(true);
+                $query->select(array('COUNT(id) AS count'));
+                $query->from('#__jem_register');
+                $query->where('event = '.$db->quote($e->id));
+                $query->where('uid = '.$db->quote($userid));
+                $db->setQuery($query);
+                $cnt = $db->loadResult();
 
-		return $row;
+                if ($cnt > 0) {
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED') . '[id: ' . $e->id . ']', 'warning');
+                    continue;
+                }
+
+                $row_aux= clone $row;
+                $row_aux->event = $e->id;
+                
+                // Get register information of the event
+                $query = $db->getQuery(true);
+                $query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));
+                $query->from('#__jem_register');
+                $query->where('status = 1 AND event = ' . $db->quote($e->id));
+
+                $db->setQuery($query);
+                $register = $db->loadObject();
+
+                // If no one is registered yet, $register is null!
+                if (is_null($register)) {
+                    $register = new stdClass;
+                    $register->registered = 0;
+                    $register->waiting = 0;
+                    $register->booked = 0;
+                } else {
+                    $register->booked = $register->registered + $register->waiting;
+                }
+
+                // put on waiting list ?
+                if (($event->maxplaces > 0) && ($status == 1)) // there is a max and user will attend
+                {
+                    // check if the user should go on waiting list
+                    if ($register->booked >= $event->maxplaces) {
+                        if (!$event->waitinglist) {
+                            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
+                            return false;
+                        } else {
+                            $row_aux->waiting = 1;
+                        }
+                    }else{
+                        $row_aux->status = $status;
+                    }
+                }else{
+                    $row_aux->status = $status;
+                }
+
+                // Make sure the data is valid
+                if (!$row_aux->check()) {
+                    $this->setError($row->getError());
+                    return false;
+                }
+
+                // Store it in the db
+                if (!$row_aux->store()) {
+                    Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                    return false;
+                }
+            }
+		    return $row;
+        }
 	}
 
 	/**

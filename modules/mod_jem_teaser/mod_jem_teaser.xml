@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>April 2024</creationDate>
+	<creationDate>October 2024</creationDate>
 	<copyright>copyright (C) 2013-2024 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.2.2</version>
+	<version>4.3.0</version>
 	<description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -21,6 +21,12 @@
 		<folder>tmpl</folder>
 		<folder>language</folder>
 	</files>
+	
+	<languages>
+        <language tag="en-GB">language/en-GB/mod_jem_teaser.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_teaser.sys.ini</language>
+    </languages>
+	
 	<help key="Modules" />
 	<config>
 		<fields name="params">
@@ -98,8 +104,9 @@
 					<option value="green">MOD_JEM_TEASER_GREEN</option>
 					<option value="orange">MOD_JEM_TEASER_ORANGE</option>
 					<option value="category">MOD_JEM_TEASER_CATEGORY</option>
+					<option value="alpha">MOD_JEM_TEASER_FALLBACK_COLOR</option>
 				</field>
-				<field name="fallbackcolor" type="text"
+				<field name="fallbackcolor" type="color"
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"
@@ -134,6 +141,15 @@
 					default="0"
 					label="MOD_JEM_TEASER_ALLOW_LINEBREAK"
 					description="MOD_JEM_TEASER_ALLOW_LINEBREAK_DESC"
+					class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field name="readmore" type="radio"
+					default="0"
+					label="MOD_JEM_TEASER_FIELD_READMORE_LABEL"
+					description="MOD_JEM_TEASER_FIELD_READMORE_DESC"
 					class="btn-group btn-group-yesno"
 				>
 					<option value="1">JYES</option>

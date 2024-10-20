@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -34,10 +33,10 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	}
 </script>
 <script type="text/javascript">
-	function jSelectUsers_newusers(ids, count, status, places, eventid, token) {
-		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&'+token+'=1';
-		SqueezeBox.close();
-	}
+    function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
+        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
+        SqueezeBox.close();
+    }
 </script>
 
 <div id="jem" class="jem_attendees<?php echo $this->pageclass_sfx;?>">
@@ -71,7 +70,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 			<tr>
 				<td width="80%">
 					<b><?php echo Text::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
-					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
+					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo $this->event->recurrence_type? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
 					<br />
 					<b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
 						echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>

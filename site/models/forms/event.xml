@@ -356,6 +356,22 @@
                value="0"
                default="0"
         />
+        <field name="seriesbooking" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
+               description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
+               value="0"
+               default="0"
+        />
+        <field name="singlebooking" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
+               description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
+               value="0"
+               default="0"
+        />
     </fieldset>
 
     <fieldset name="recurrence"
@@ -371,6 +387,7 @@
             <option value="2">COM_JEM_WEEKLY</option>
             <option value="3">COM_JEM_MONTHLY</option>
             <option value="4">COM_JEM_WEEKDAY</option>
+            <option value="5">COM_JEM_YEARLY</option>
         </field>
         <field name="recurrence_limit_date" type="calendarjem"
                default="now"

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Wide Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -20,7 +19,7 @@ use Joomla\CMS\Uri\Uri;
 <div class="jemmodulewide<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulewide">
 
 <?php if (count($list)) : ?>
-	<table class="eventset" summary="mod_jem_wide">
+	<table class="eventset">
 
 		<colgroup>
 			<col width="30%" class="jemmodw_col_title" />
@@ -31,7 +30,7 @@ use Joomla\CMS\Uri\Uri;
 		</colgroup>
 
 		<?php foreach ($list as $item) : ?>
-		<tr>
+		<tr class="event_id<?php echo $item->eventid; ?>">
 			<td valign="top">
 				<?php if ($item->eventlink) : ?>
 				<span class="event-title">

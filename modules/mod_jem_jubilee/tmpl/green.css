@@ -1,1 +1,12 @@
-#jemmodulejubilee .calendar-green {background-image: url(img/calendar_green.png);}
+#jemmodulejubilee .calendar-green {
+	background-image: url(img/calendar_green.png);
+    background-size: 100%;
+}
+
+#jemmodulejubilee .calendar-green .monthjubilee {
+	color: #fff;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    1px -1px 0 rgba(0,0,0,0.2),
+    -1px 1px 0 rgba(0,0,0,0.2),
+    1px 1px 0 rgba(0,0,0,0.2);
+}

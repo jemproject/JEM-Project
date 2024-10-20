@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Calendar Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -26,6 +25,8 @@ require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+
+HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 
 # Create JEM's file logger (for debug)
 JemHelper::addFileLogger();
@@ -56,11 +57,6 @@ if($Itemid ==0){
 
 # AJAX requires at least J! 3.2.7 (because we use com_ajax)
 $use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');
-
-# NEVER use setlocale() - see php manual why
-//if (!empty($LocaleOverride)) {
-//	setlocale(LC_ALL, $LocaleOverride);
-//}
 
 # Get switch trigger
 $req_modid = $app->input->getInt('modjemcal_id');
@@ -160,7 +156,7 @@ $mod_name = 'mod_jem_cal';
 
 # Add css
 if ($Default_Stylesheet == 1) {
-	JemHelper::loadModuleStyleSheet($mod_name);
+	JemHelper::loadModuleStyleSheet($mod_name, $mod_name);
 } else {
 	$document = $app->getDocument();
 	$document->addStyleSheet(Uri::base() . $User_stylesheet);

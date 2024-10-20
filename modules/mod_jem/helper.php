@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -128,6 +127,7 @@ abstract class ModJemHelper
 
 			$lists[++$i] = new stdClass;
 
+			$lists[$i]->eventid  = $row->id;
 			$lists[$i]->link     = Route::_(JemHelperRoute::getEventRoute($row->slug));
 			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
 			                                                 $dateFormat, $timeFormat, $addSuffix);

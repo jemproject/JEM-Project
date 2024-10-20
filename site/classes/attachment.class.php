@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -15,6 +14,7 @@ use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Filesystem\Path;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -85,7 +85,7 @@ class JemAttachment extends CMSObject
 			$sanitizedFilename = JemImage::sanitize($path, $file);
 
 			// Make sure that the full file path is safe.
-			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
+			$filepath = Path::clean( $path.'/'.$sanitizedFilename);
 			// Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
             // switch off parsing archives for byte sequences looking like a script file extension
             // but keep all other checks running

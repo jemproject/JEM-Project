@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -30,26 +29,26 @@ class JemModelEventslist extends ListModel
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-					'id', 'a.id',
-					'title', 'a.title',
-					'dates', 'a.dates',
-					'times', 'a.times',
-					'alias', 'a.alias',
-					'venue', 'l.venue','venue_title',
-					'city', 'l.city', 'venue_city',
-					'checked_out', 'a.checked_out',
-					'checked_out_time', 'a.checked_out_time',
-					'c.catname', 'category_title',
-					'state', 'a.state',
-					'access', 'a.access', 'access_level',
-					'created', 'a.created',
-					'created_by', 'a.created_by',
-					'ordering', 'a.ordering',
-					'featured', 'a.featured',
-					'language', 'a.language',
-					'hits', 'a.hits',
-					'publish_up', 'a.publish_up',
-					'publish_down', 'a.publish_down',
+				'id', 'a.id',
+				'title', 'a.title',
+				'dates', 'a.dates',
+				'times', 'a.times',
+				'alias', 'a.alias',
+				'venue', 'l.venue','venue_title',
+				'city', 'l.city', 'venue_city',
+				'checked_out', 'a.checked_out',
+				'checked_out_time', 'a.checked_out_time',
+				'c.catname', 'category_title',
+				'state', 'a.state',
+				'access', 'a.access', 'access_level',
+				'created', 'a.created',
+				'created_by', 'a.created_by',
+				'ordering', 'a.ordering',
+				'featured', 'a.featured',
+				'language', 'a.language',
+				'hits', 'a.hits',
+				'publish_up', 'a.publish_up',
+				'publish_down', 'a.publish_down',
 			);
 		}
 
@@ -89,6 +88,24 @@ class JemModelEventslist extends ListModel
 
 		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);
+
+		$filtermonth  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_month', 'filter_month', 0, 'string');
+		$this->setState('filter.filter_month', $filtermonth);
+
+		# Search - Filter by setting menu
+		$today = new DateTime();
+		$filterDaysBefore = $params->get('tablefiltereventfrom','');
+		if ($filterDaysBefore){
+			$dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
+			$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $dateFrom .'") >= 0';
+			$this->setState('filter.calendar_from',$where);
+		}
+		$filterDaysAfter  = $params->get('tablefiltereventuntil','');
+		if ($filterDaysAfter){
+			$dateTo = (clone $today)->modify( $filterDaysAfter . ' days')->format('Y-m-d');
+			$where = ' DATEDIFF(a.dates, "'. $dateTo . '") <= 0';
+			$this->setState('filter.calendar_to',$where);
+		}
 
 		# publish state
 		$this->_populatePublishState($task);
@@ -318,9 +335,9 @@ class JemModelEventslist extends ListModel
 
 		# Event
 		$query->select(
-				$this->getState('list.select',
+			$this->getState('list.select',
 				'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,a.requestanswer,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
+				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
 				'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
 			)
 		);
@@ -426,8 +443,23 @@ class JemModelEventslist extends ListModel
 		#############################
 		## FILTER - CALENDAR_DATES ##
 		#############################
-		$cal_from = $this->getState('filter.calendar_from');
-		$cal_to   = $this->getState('filter.calendar_to');
+		$cal_from    = $this->getState('filter.calendar_from');
+		$cal_to      = $this->getState('filter.calendar_to');
+		$cal_month   = $this->getState('filter.filter_month');
+		if ($cal_month) {
+			$cal_month = DateTime::createFromFormat('Y-m', $cal_month);
+			$filter_date_from = $cal_month->format('Y-m-01');
+			$filter_date_to = $cal_month->modify('last day of this month')->format('Y-m-d');
+
+			$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $filter_date_from .'") >= 0';
+			$this->setState('filter.calendar_from',$where);
+
+			$where = ' DATEDIFF(a.dates, "'. $filter_date_to . '") <= 0';
+			$this->setState('filter.calendar_to',$where);
+
+			$cal_from = $this->getState('filter.calendar_from');
+			$cal_to   = $this->getState('filter.calendar_to');
+		}
 
 		if ($cal_from) {
 			$query->where($cal_from);
@@ -443,15 +475,15 @@ class JemModelEventslist extends ListModel
 		$opendates = $this->getState('filter.opendates');
 
 		switch ($opendates) {
-		case 0: // don't show events without start date
-		default:
-			$query->where('a.dates IS NOT NULL');
-			break;
-		case 1: // show all events, with or without start date
-			break;
-		case 2: // show only events without startdate
-			$query->where('a.dates IS NULL');
-			break;
+			case 0: // don't show events without start date
+			default:
+				$query->where('a.dates IS NOT NULL');
+				break;
+			case 1: // show all events, with or without start date
+				break;
+			case 2: // show only events without startdate
+				$query->where('a.dates IS NULL');
+				break;
 		}
 
 		#####################
@@ -504,15 +536,15 @@ class JemModelEventslist extends ListModel
 
 			$venueStateMode = $this->getState('filter.venue_state.mode', 0);
 			switch ($venueStateMode) {
-			case 0: # complete match: venue's state must be equal (ignoring upper/lower case) one of the strings given by filter
-			default:
-				array_walk($venueState, function(&$v,$k,$db) { $v = $db->quote(trim($v)); }, $db);
-				$query->where('l.state IN ('.implode(',', $venueState).')');
-				break;
-			case 1: # contain: venue's state must contain one of the strings given by filter
-				array_walk($venueState, function(&$v,$k,$db) { $v = quotemeta($db->escape(trim($v), true)); }, $db);
-				$query->where('l.state REGEXP '.$db->quote(implode('|', $venueState)));
-				break;
+				case 0: # complete match: venue's state must be equal (ignoring upper/lower case) one of the strings given by filter
+				default:
+					array_walk($venueState, function(&$v,$k,$db) { $v = $db->quote(trim($v)); }, $db);
+					$query->where('l.state IN ('.implode(',', $venueState).')');
+					break;
+				case 1: # contain: venue's state must contain one of the strings given by filter
+					array_walk($venueState, function(&$v,$k,$db) { $v = quotemeta($db->escape(trim($v), true)); }, $db);
+					$query->where('l.state REGEXP '.$db->quote(implode('|', $venueState)));
+					break;
 			}
 		}
 
@@ -602,7 +634,7 @@ class JemModelEventslist extends ListModel
 				unset ($items[$index]);
 				continue;
 			} else {
-			# write access permissions.
+				# write access permissions.
 				$item->params->set('access-edit', $user->can('edit', 'event', $item->id, $item->created_by));
 			}
 		} // foreach
@@ -669,24 +701,24 @@ class JemModelEventslist extends ListModel
 		# -let's see if the user has access to this category.-
 		# ==> No. On frontend everybody needs proper access levels to see things. No exceptions.
 
-	//	$query3	= $db->getQuery(true);
-	//	$query3 = 'SELECT gr.id'
-	//			. ' FROM #__jem_groups AS gr'
-	//			. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-	//			. ' WHERE g.member = ' . (int) $user->get('id')
-	//			//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-	//			. ' AND g.member NOT LIKE 0';
-	//	$db->setQuery($query3);
-	//	$groupnumber = $db->loadColumn();
+		//	$query3	= $db->getQuery(true);
+		//	$query3 = 'SELECT gr.id'
+		//			. ' FROM #__jem_groups AS gr'
+		//			. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+		//			. ' WHERE g.member = ' . (int) $user->get('id')
+		//			//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+		//			. ' AND g.member NOT LIKE 0';
+		//	$db->setQuery($query3);
+		//	$groupnumber = $db->loadColumn();
 
-	//	$jemgroups = implode(',',$groupnumber);
+		//	$jemgroups = implode(',',$groupnumber);
 
-	// JEM groups doesn't overrule view access levels!
-	//	if ($jemgroups) {
-	//		$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
-	//	} else {
-			$query->where('(c.access IN ('.implode(',', $levels).'))');
-	//	}
+		// JEM groups doesn't overrule view access levels!
+		//	if ($jemgroups) {
+		//		$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+		//	} else {
+		$query->where('(c.access IN ('.implode(',', $levels).'))');
+		//	}
 
 		#######################
 		## FILTER - CATEGORY ##
@@ -736,7 +768,7 @@ class JemModelEventslist extends ListModel
 
 				if ($search && $settings->get('global_show_filter')) {
 					if ($filter == 4) {
-							$query->where('c.catname LIKE '.$search);
+						$query->where('c.catname LIKE '.$search);
 					}
 				}
 			}
@@ -852,7 +884,8 @@ class JemModelEventslist extends ListModel
 			$show_unpublished = $user->can(array('edit', 'publish'), 'event', false, false, 1);
 			if ($show_unpublished) {
 				// global editor or publisher permission
-				$this->setState('filter.published', array(0, 1));
+				$publishedStates = $this->show_archived_events ? array(0, 1, 2) : array(0, 1);
+				$this->setState('filter.published', $publishedStates);
 			} else {
 				// no global permission but maybe on event level
 				$this->setState('filter.published', 1);
@@ -912,11 +945,11 @@ class JemModelEventslist extends ListModel
 				//$where_pub[] = '(' . $tbl . '.published = ' . $unpublished . ' AND c.groupid IN (' . implode(',', $unpublished_on_groups) . '))';
 				// to allow also events with categories not attached to disallowed jemgroups use this crazy block:
 				$where_pub[] = '(' . $tbl . 'published = ' . $unpublished . ' AND '
-				             . $tbl . 'id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
-				             . '                   INNER JOIN #__jem_cats_event_relations as rel3 '
-				             . '                   WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $unpublished_on_groups) . ')'
-				             . '                   GROUP BY rel3.itemid)'
-				             . ')';
+					. $tbl . 'id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
+					. '                   INNER JOIN #__jem_cats_event_relations as rel3 '
+					. '                   WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $unpublished_on_groups) . ')'
+					. '                   GROUP BY rel3.itemid)'
+					. ')';
 				// hint: above it's a not not ;-)
 				//       meaning: Show unpublished events not connected to a category which is not one of the allowed categories.
 			}

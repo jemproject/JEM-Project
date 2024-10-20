@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -210,6 +209,7 @@ class JemViewCategory extends JemView
 			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 			$filter_type      = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', 0, 'int');
 			$search           = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+			$search_month     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
 			$task             = $app->input->get('task', '');
 
 			// table ordering
@@ -234,7 +234,7 @@ class JemViewCategory extends JemView
 			if ($jemsettings->showstate == 1) {
 				$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+			$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter_type);
 
 			// search filter
 			$lists['search'] = $search;

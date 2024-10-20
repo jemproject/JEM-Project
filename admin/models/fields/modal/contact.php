@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -41,7 +40,7 @@ class JFormFieldModal_Contact extends FormField
 		$script[] = '    }';
 
 		// Add to document head
-		Factory::getApplication()->getDocument()->addScriptDeclaration(implode("\n", $script));
+		Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 
 		// Setup variables for display
 		$html = array();

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -64,7 +63,12 @@ if ($jemsettings->oldevent > 0) {
         <span style="white-space: nowrap;">
             <?php
             echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
-            echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+	        if($this->item_root) {
+	            echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+	        }
+            if(!$this->item_root || ($this->item_root && $this->item->recurrence_first_id)) {
+                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+            }
             echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
             ?>
         </span>
@@ -150,7 +154,7 @@ if ($jemsettings->oldevent > 0) {
 		<dd class="createdby">
 			<?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
 			<?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
-				$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2;
+            $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2 . '&catid=' . $this->item->concatid;
 				$menu = Factory::getApplication()->getMenu();
 				$item = $menu->getItems('link', $needle, true);
 				$cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
@@ -226,7 +230,7 @@ if ($jemsettings->oldevent > 0) {
 		<?php
 		$contact = $this->item->conname;
 		if ($params->get('event_link_contact') == true) :
-			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid;
+			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid . '&catid=' . $this->item->concatid;
 			$menu = Factory::getApplication()->getMenu();
 			$item = $menu->getItems('link', $needle, true);
 			$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
@@ -254,7 +258,7 @@ if ($jemsettings->oldevent > 0) {
 	<p></p>
 	<hr />
 
-	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+	<div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
 		<?php $itemid = $this->item ? $this->item->id : 0 ; ?>
 		<h2 class="location">

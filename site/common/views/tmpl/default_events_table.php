@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -30,11 +29,12 @@ use Joomla\CMS\Router\Route;
 <div id="jem_filter" class="floattext">
 	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
-		<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 		<?php echo $this->lists['filter'].'&nbsp;'; ?>
-		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+		<input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+        <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
+        <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" required class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">        
 		<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
 
@@ -109,9 +109,9 @@ use Joomla\CMS\Router\Route;
 				<?php foreach ($this->rows as $row) : ?>
 					<?php $odd = 1 - $odd; ?>
 					<?php if (!empty($row->featured)) : ?>
-					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php else : ?>
-					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php endif; ?>
 
 						<?php if ($this->jemsettings->showeventimage == 1) : ?>

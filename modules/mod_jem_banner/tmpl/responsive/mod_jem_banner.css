@@ -1,5 +1,4 @@
 /*
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Banner Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -23,7 +22,6 @@
 body.body-overlayed {
   overflow: auto;
 }
-/* ----- */
 
 #jemmodulebanner .jem-row-banner {
   display: flex;
@@ -71,43 +69,44 @@ body.body-overlayed {
 }
  
 #jemmodulebanner [class|="calendar"] {
-	background-repeat: no-repeat;
-	width: 82px;
-	height: 82px;
-	text-align: center;
-	padding: 5px 1px 0 0;
-	margin-right:10px;
-  margin-bottom: 10px;
-	line-height: 24px;
+    background-repeat: no-repeat;
+    width: 81px;
+    height: 85px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
 }
 
-#jemmodulebanner [class|="calendar"] .yearbanner {
-	font-size: 80%;
-	height:5px;
+#jemmodulebanner [class|="calendar"] .yearbanner,
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    font-size: 13px;
+    height: 24px;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner,
+#jemmodulebanner [class|="calendar"] .daybanner,
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner {
-	font-size: 85%;
-	font-weight:bold;
-	height:20px;
-  color: #ffffff;
-  text-shadow: none;
+    padding-top: 2px;
 }
 
 #jemmodulebanner [class|="calendar"] .daybanner {
-  font-size: 90%;
-	font-weight:bold;
-	padding-top:3px;
+    font-size: 12px;
+    min-height: 0.8rem;
 }
 
 #jemmodulebanner [class|="calendar"] .daynumbanner {
-	font-size: 150%;
-	font-weight:bold;
-}
- 
- 
-@media only all and (max-width: 47.938rem) {
-  
+    font-size: 150%;
 }
 
 @media print {
@@ -117,7 +116,7 @@ body.body-overlayed {
   }
 
   div#jem {
-    border: 0px;
+    border: 0;
   }
 
   div#jem h2 {
@@ -155,4 +154,3 @@ body.body-overlayed {
       border: none;
   }
 }
-

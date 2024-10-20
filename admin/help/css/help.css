@@ -1,4 +1,7 @@
-body {line-height: 1.4rem;}
+body {
+	font-family:"Roboto", "Helvetica Neue", Arial, sans-serif;
+	line-height: 1.4rem;
+}
 
 a:link {
 	color: #0B55C4;
@@ -24,7 +27,6 @@ h1 {
 
 h2 {
 	margin: 30px 0 10px;
-	font-family: Helvetica,Arial,sans-serif;
 	font-size: 1.3em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
@@ -33,8 +35,7 @@ h2 {
 }
 
 h3 {
-	margin: 20px 0px 10px;
-	font-family: Helvetica,Arial,sans-serif;
+	margin: 20px 0 10px;
 	font-size: 1.1em;
 	font-weight: bold;
 	border-bottom: 1px solid #cccccc;
@@ -78,7 +79,7 @@ img.left {
 	border-top: 1px solid #ffa909;
 	padding: 3px 3px 3px 54px;
 	font-weight: bold;
-	margin: 8px auto 0px;
+	margin: 8px auto 0;
 	color: #000;
 	background-color: #ffa909;
 }
@@ -88,7 +89,7 @@ img.left {
 	border-right: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
 	padding: 12px 12px 20px 54px;
-	margin: 0px auto 8px;
+	margin: 0 auto 8px;
 	color: #465584;
 	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 15px;
 }
@@ -99,7 +100,7 @@ img.left {
 	border-top: 1px solid #FE8282;
 	padding: 3px 3px 3px 54px;
 	font-weight: bold;
-	margin: 8px auto 0px;
+	margin: 8px auto 0;
 	color: #000;
 	background-color: #FE8C8C;
 }
@@ -109,7 +110,7 @@ img.left {
 	border-right: 2px solid #FE8282;
 	border-bottom: 2px solid #FE8282;
 	padding: 6px 6px 20px 54px;
-	margin: 0px auto 8px;
+	margin: 0 auto 8px;
 	color: #465584;
 	background: #fff url(../images/icon-32-attention.png) no-repeat 6px 6px;
 }
@@ -248,3 +249,41 @@ table.help td {
 .icon-32-unpublish {
 	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-unpublish.png");
 }
+
+@media (prefers-color-scheme: dark) {
+	body
+	{
+    	background-color: #171C24;
+    	color: #fff;
+    }
+    
+    table.help {
+		background-color: #000;
+    }
+    h1, h2, h3 {
+	color: #8BB2ED;
+	}
+	
+	.hint, .attentionheader, .attention, table.help {
+	color: #fff;
+	background-color: #465584;
+}
+
+a:link {
+	color: #fe8282;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #fe8c8c;
+	text-decoration: underline;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+	
+}    
+    
+    

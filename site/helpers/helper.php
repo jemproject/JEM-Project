@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -15,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
@@ -23,6 +23,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -140,7 +141,6 @@ class JemHelper
 	{
 		$jemsettings  = JemHelper::config();
 		$weekstart    = $jemsettings->weekdaystart;
-		$anticipation = $jemsettings->recurrence_anticipation;
 
 		$now = time(); // UTC
 		$offset = idate('Z'); // timezone offset for "new day" test
@@ -214,10 +214,32 @@ class JemHelper
 					// calculate next occurence date
 					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
 
+                    switch ($recurrence_row["recurrence_type"]) {
+                        case 1:
+                            $anticipation	= $jemsettings->recurrence_anticipation_day;
+                            break;
+                        case 2:
+                            $anticipation	= $jemsettings->recurrence_anticipation_week;
+                            break;
+                        case 3:
+                            $anticipation	= $jemsettings->recurrence_anticipation_month;
+                            break;
+                        case 4:
+                            $anticipation	= $jemsettings->recurrence_anticipation_week;
+                            break;
+                        case 5:
+                            $anticipation	= $jemsettings->recurrence_anticipation_year;
+                            break;
+                        default:
+                            $anticipation	= $jemsettings->recurrence_anticipation_day;
+                            break;
+                    }
+
 					// add events as long as we are under the interval and under the limit, if specified.
+					$shieldDate = new Date('now + ' . $anticipation . ' month');
 					while (($recurrence_row['recurrence_limit_date'] == null
 							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
-							&& strtotime($recurrence_row['dates']) <= time() + 86400 * $anticipation)
+							&& strtotime($recurrence_row['dates']) <= strtotime($shieldDate))
 					{
 						$new_event = Table::getInstance('Event', 'JemTable');
 						$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
@@ -340,11 +362,11 @@ class JemHelper
 				// the selected weekdays
 				$selected = JemHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);
 				$days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-				$litterals = array('first', 'second', 'third', 'fourth');
+				$litterals = array('first', 'second', 'third', 'fourth', 'fifth');
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
 					$current_weekday = (int) $date_array["weekday"];
 					$selected = array($current_weekday);
 				}
@@ -353,18 +375,29 @@ class JemHelper
 				foreach ($selected as $s)
 				{
 					$next = null;
+                    $nextmonth = null;
+
 					switch ($recurrence_number) {
-						case 6: // before last 'x' of the month
+						case 7: // before last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s].' - 1 week ',
 							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ',
 							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
-						case 5: // last 'x' of the month
+						case 6: // last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s],
 							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s],
 							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							break;
+						case 5: // 5th of the month
+                            $currentMonth = $date_array["month"];
+                            do {
+                                $timeFisrtDayMonth = mktime(1,0,0, $currentMonth ,1,$date_array["year"]);
+                                $timeLastDayNextMonth = mktime(23, 59, 59, $currentMonth+1, 0, $date_array["year"]);
+                                $next = strtotime($litterals[$recurrence_number - 1] . " " . $days_names[$s] . ' of this month',$timeFisrtDayMonth);
+                                $currentMonth++;
+                            } while ($next > $timeLastDayNextMonth || $next < $date_array['unixtime']);
 							break;
 						case 4: // xth 'x' of the month
 						case 3:
@@ -390,6 +423,9 @@ class JemHelper
 					}
 				}
 				break;
+            case "5": // year recurrence
+                $start_day = mktime(1,0,0,($date_array["month"]),$date_array["day"],$date_array["year"]+ $recurrence_number);
+                break;
 		}
 
 		if (!$start_day) {
@@ -475,8 +511,8 @@ class JemHelper
 			return false;
 		}
 
-		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
-		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
+		$fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
+		$fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
 		if (is_file($fullPath)) {
 			// Count usage and don't delete if used elsewhere.
 			$db = Factory::getContainer()->get('DatabaseDriver');
@@ -582,22 +618,28 @@ class JemHelper
 	 */
 	static public function generate_date($startdate, $enddate)
 	{
-		$validEnddate = JemHelper::isValidDate($enddate);
+		$validStardate = JemHelper::isValidDate($startdate);
+        $validEnddate = JemHelper::isValidDate($enddate);
 
-		$startdate = explode("-",$startdate);
+        if($validStardate) {
+            $startdate = explode("-", $startdate);
 		$date_array = array("year" => $startdate[0],
 							"month" => $startdate[1],
 							"day" => $startdate[2],
 							"weekday" => date("w",mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0])),
 							"unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
 
-		if ($validEnddate) {
-			$enddate = explode("-", $enddate);
-			$day_diff = (mktime(1,0,0,$enddate[1],$enddate[2],$enddate[0]) - mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
-			$date_array["day_diff"] = $day_diff;
-		}
+            if ($validEnddate) {
+                $enddate = explode("-", $enddate);
+                $day_diff = (mktime(1, 0, 0, $enddate[1], $enddate[2], $enddate[0]) - mktime(1, 0, 0, $startdate[1], $startdate[2], $startdate[0]));
+                $date_array["day_diff"] = $day_diff;
+            }
 
-		return $date_array;
+
+            return $date_array;
+        }else{
+            return false;
+        }
 	}
 
 	/**
@@ -1232,14 +1274,8 @@ class JemHelper
 		$jemsettings = self::config();
 		$layoutstyle = isset($jemsettings->layoutstyle) ? (int)$jemsettings->layoutstyle : 0;
 
-		switch ($layoutstyle) {
-		case 1:
-			return 'responsive';
-		case 2:
-			return 'alternative';
-		default:
-			return '';
-		}
+		return $layoutstyle === 1 ? 'responsive' : '';
+
 	}
 
 	/**
@@ -1364,53 +1400,40 @@ class JemHelper
 	 * Get the url to a css file for a module respecting layout style configured in JEM Settings.
 	 *
 	 * @param   string  $module  The name of the module
-	 * @param   string  $css     The name of the css file. If null name of module is used.
+	 * @param   string  $css     The name of the css file (in the root path). If null, the name of module is used (in the suffix directory).
 	 *
 	 * @since   2.3
 	 */
 	public static function loadModuleStyleSheet($module, $css = null)
 	{
-		if (empty($css)) {
+        $app = Factory::getApplication();
+        $wa = $app->getDocument()->getWebAssetManager();
+        $templateName = $app->getTemplate();
+        $suffix = self::getLayoutStyleSuffix();
+
+        if (empty($css)) {
 			$css = $module;
-		}
+            $filestyle = ($suffix? $suffix . '/':'') . $css . '.css';
+		}else{
+            $filestyle = $css . '.css';
+        }
 
-		$suffix = self::getLayoutStyleSuffix();
-
-		if (!empty($suffix)) {
-			# search for template overrides
-			$path = $module . '/' . $suffix . '/' . $css . '.css';
-			$files = HTMLHelper::_('stylesheet', $path, array(), true, true);
-			if (!empty($files)) {
-				# we have to call this stupid function twice; no other way to know if something was loaded
-				HTMLHelper::_('stylesheet', $path, array(), true);
-				return;
-			} else {
-				# search within module because JEM modules doesn't use media folder
-				$path = 'modules/' . $module . '/tmpl/' . $suffix . '/' . $css . '.css';
-				$files = HTMLHelper::_('stylesheet', $path, array());
-				if (!empty($files)) {
-					# we have to call this stupid function twice; no other way to know if something was loaded
-					HTMLHelper::_('stylesheet', $path, array());
-					return;
-				}
-			}
-		}
-
-		$path = $module . '/' . $suffix . '/' . $css . '.css';
-		$files = HTMLHelper::_('stylesheet', $path, array(), true, true);
-		if (!empty($files)) {
-			# we have to call this stupid function twice; no other way to know if something was loaded
-			HTMLHelper::_('stylesheet', $path, array(), true);
-			return;
-		} else {
-			$path = 'modules/' . $module . '/tmpl/' . $css . '.css';
-			$files = HTMLHelper::_('stylesheet', $path, array());
-			if (!empty($files)) {
-				# no css for layout style configured, so use the default css
-				HTMLHelper::_('stylesheet', $path, array());
-				return;
-			}
-		}
+        //Search for template overrides
+        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
+        }
+        //Search in media folder
+        else if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'media/' . $module . '/css/' . $filestyle);
+        }
+        //Search in the module
+        else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
+        }
+        //Error the css file doesn't found
+        else {
+            JemHelper::addLogEntry("Warning: The " . $filestyle . " file doesn't found.", __METHOD__);
+        }
 	}
 
 	static public function loadIconFont()
@@ -1464,7 +1487,7 @@ class JemHelper
 	 * Load Custom CSS
 	 *
 	 * @return boolean
-	 */
+     */
 	static public function loadCustomCss()
 	{
         $app         = Factory::getApplication();

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -80,7 +79,7 @@ class JemViewEditevent extends JemView
 			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-		
+
 		if (empty($item->id)) {
 			$authorised = (bool)$user->can('add', 'event');
 		} else {
@@ -94,14 +93,14 @@ class JemViewEditevent extends JemView
 			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-	
+
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
-		                                && ($menuitem->query['view']   == 'editevent')
-		                                && (0 == $item->id) && (!isset($_GET['from_id']))); // menu item is always for new event
+			&& ($menuitem->query['view']   == 'editevent')
+			&& (0 == $item->id) && (!isset($_GET['from_id']))); // menu item is always for new event
 
 		$title = ($item->id == 0) ? Text::_('COM_JEM_EDITEVENT_ADD_EVENT')
-		                          : Text::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
+			: Text::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
 
 		if ($useMenuItemParams) {
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
@@ -110,7 +109,7 @@ class JemViewEditevent extends JemView
 			$pathwayKeys = array_keys($pathway->getPathway());
 			$lastPathwayEntryIndex = end($pathwayKeys);
 			$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+			//$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from menu item if one is set else from event if there is one set
 			if (isset($menuitem->query['layout'])) {
@@ -118,11 +117,11 @@ class JemViewEditevent extends JemView
 			} elseif ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-			
+
 			$item->params->merge($params);
 		} else {
 			$pagetitle = $title;
-			
+
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
@@ -172,7 +171,7 @@ class JemViewEditevent extends JemView
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
+			Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
 			return false;
 		}
 
@@ -184,21 +183,12 @@ class JemViewEditevent extends JemView
 		JemHelper::loadCustomCss();
 
 		// Load scripts
-		// HTMLHelper::_('jquery.framework');
-		// HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/recurrence.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/seo.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/unlimited.js', false, true);
-		// HTMLHelper::_('script', 'com_jem/other.js', false, true);
-		// $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js');
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		// $wa->useScript('jquery');
 		$wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
 		$wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
 		$wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
 		$wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
 		$wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
-
 
 		// Escape strings for HTML output
 		$pageclass_sfx 		 = $item->params->get('pageclass_sfx');
@@ -285,7 +275,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = Factory::getContainer()->get('DatabaseDriver');
+		//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = $app->getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
@@ -334,7 +324,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$jinput      = Factory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = Factory::getContainer()->get('DatabaseDriver');
+		//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = $app->getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
@@ -360,7 +350,7 @@ class JemViewEditevent extends JemView
 		//Build search filter
 		$filters = array();
 		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
-	/*	$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS')); */ // data security
+		/*	$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS')); */ // data security
 		$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
 		$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
 		$searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
@@ -386,7 +376,7 @@ class JemViewEditevent extends JemView
 		$app         = Factory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
-	//	$db          = Factory::getContainer()->get('DatabaseDriver');
+		//	$db          = Factory::getContainer()->get('DatabaseDriver');
 		$document    = $app->getDocument();
 		$model       = $this->getModel();
 

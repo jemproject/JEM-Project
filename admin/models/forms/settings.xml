@@ -40,14 +40,7 @@
 			<option value="1">JSHOW</option>
 			<option value="0">JHIDE</option>
 		</field>
-		<field name="recurrence_anticipation" type="text"
-			label="COM_JEM_SETTINGS_RECURRENCE_LIMITDAYS"
-			description="COM_JEM_SETTINGS_RECURRENCE_LIMITDAYS_DESC"
-			class="inputbox"
-			size="3"
-			maxlength="3"
-			required="true"
-		/>
+
 		<field name="ical_tz" type="list"
 			label="COM_JEM_SETTINGS_ICAL_TIMEZONE"
 			description="COM_JEM_SETTINGS_ICAL_TIMEZONE_DESC"
@@ -140,6 +133,47 @@
 
 	</fieldset>
 
+
+	<fieldset name="globalparam_recurrence"
+			  label="COM_JEM_GLOBAL_PARAMETERS_RECURRENCE"
+	>
+		<field name="recurrence_anticipation_day" type="text"
+			   label="COM_JEM_SETTINGS_RECURRENCE_LIMITDAYS"
+			   description="COM_JEM_SETTINGS_RECURRENCE_LIMITDAYS_DESC"
+			   class="inputbox"
+			   size="3"
+			   maxlength="3"
+			   required="true"
+			   default="3"
+		/>
+		<field name="recurrence_anticipation_week" type="text"
+			   label="COM_JEM_SETTINGS_RECURRENCE_LIMITWEEKS"
+			   description="COM_JEM_SETTINGS_RECURRENCE_LIMITWEEKS_DESC"
+			   class="inputbox"
+			   size="3"
+			   maxlength="3"
+			   required="true"
+			   default="12"
+		/>
+		<field name="recurrence_anticipation_month" type="text"
+			   label="COM_JEM_SETTINGS_RECURRENCE_LIMITMONTHS"
+			   description="COM_JEM_SETTINGS_RECURRENCE_LIMITMONTHS_DESC"
+			   class="inputbox"
+			   size="3"
+			   maxlength="3"
+			   required="true"
+			   default="60"
+		/>
+		<field name="recurrence_anticipation_year" type="text"
+			   label="COM_JEM_SETTINGS_RECURRENCE_LIMITYEARS"
+			   description="COM_JEM_SETTINGS_RECURRENCE_LIMITYEARS_DESC"
+			   class="inputbox"
+			   size="3"
+			   maxlength="3"
+			   required="true"
+			   default="180"
+		/>
+	</fieldset>
 	<fieldset name="display"
 		label="COM_JEM_DISPLAY_SETTINGS"
 	>
@@ -1009,6 +1043,16 @@
 				<option value="0">COM_JEM_NO_LINK</option>
 				<option value="1">COM_JEM_LINK_TO_URL</option>
 				<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
+			</field>
+			<field name="global_show_listevents" type="radio"
+				   label="COM_JEM_DISPLAY_LIST_EVENTS"
+				   description="COM_JEM_DISPLAY_LIST_EVENTS_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
 			</field>
 			<field name="global_show_mapserv" type="list"
 				label="COM_JEM_DISPLAY_LINK_TO_MAP"

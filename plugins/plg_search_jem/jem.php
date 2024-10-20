@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Search Plugin
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -14,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Registry\Registry;
 
 jimport('joomla.html.parameter');
 
@@ -29,7 +29,7 @@ class plgSearchJEM extends CMSPlugin
     public function __construct(&$subject, $config)
     {
         parent::__construct($subject, $config);
-        Plugin::loadLanguage('plg_search_jem', JPATH_ADMINISTRATOR);
+        CMSPlugin::loadLanguage('plg_search_jem', JPATH_ADMINISTRATOR);
     }
 
 
@@ -83,7 +83,7 @@ class plgSearchJEM extends CMSPlugin
 
         // load plugin params info
         $plugin       = PluginHelper::getPlugin('search', 'jem');
-        $pluginParams = new JRegistry($plugin->params);
+        $pluginParams = new Registry($plugin->params);
 
         $limit = $pluginParams->def('search_limit', 50);
 

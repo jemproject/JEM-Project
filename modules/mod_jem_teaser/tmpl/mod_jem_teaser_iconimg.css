@@ -1,5 +1,4 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Teaser Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -13,7 +12,7 @@ div#jemmoduleteaser .time {
 }
 
 div#jemmoduleteaser div.date {
-	padding-left: 0px;
+	padding-left: 0;
 }
 
 div#jemmoduleteaser .category {

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -130,7 +129,7 @@ Joomla.submitbutton = function(task)
             </tr>
 			<?php if (!empty($this->jemsettings->regallowcomments)): ?>
 			<tr>
-				<td class="key" vertical-align: baseline;">
+				<td class="key" style="vertical-align: baseline;">
 					<label for="comment" <?php echo JemOutput::tooltip(Text::_('COM_JEM_COMMENT'), Text::_('COM_JEM_COMMENT_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_COMMENT').':'; ?>
 					</label>
@@ -143,7 +142,18 @@ Joomla.submitbutton = function(task)
 				</td>
 			</tr>
 			<?php endif; ?>
-			<?php if (1/*!$this->row->id*/): ?>
+			<?php if ($this->row->recurrence_type && $this->row->seriesbooking): ?>
+            <tr>
+                <td class="key">
+                    <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>
+                        <?php echo Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES').':'; ?>
+                    </label>
+                </td>
+                <td>
+                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1""/>
+                </td>
+            </tr>
+            <?php endif; ?>
 			<tr>
 				<td class="key">
 					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>
@@ -154,7 +164,7 @@ Joomla.submitbutton = function(task)
 					<input type="checkbox" id="sendemail" name="sendemail" value="1" checked="checked"/>
 				</td>
 			</tr>
-			<?php endif; ?>
+
 		</table>
 	</fieldset>
 

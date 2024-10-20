@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -37,7 +36,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 		<div class="jem_fleft">
 			<label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
-			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
 			<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
@@ -53,7 +52,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 	<?php endif; ?>
 
 	<div class="table-responsive">
-		<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
+		<table class="eventtable table jem-myattendees table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
 			<colgroup>
 				<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -107,9 +106,9 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 				<?php foreach ($this->attending as $row) : ?>
 					<?php $odd = 1 - $odd; ?>
 					<?php if (!empty($row->featured)) : ?>
-					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php else : ?>
-					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+					<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
 					<?php endif; ?>
 
 						<td headers="jem_date" align="left">

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -141,6 +140,9 @@ class JemModelCategory extends JemModelEventslist
 		# Search - variables
 		$search = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search);
+
+		$month = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
+		$this->setState('filter.filter_month', $month);
 
 		$filtertype = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);

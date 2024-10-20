@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
@@ -36,7 +35,7 @@ class JemView extends HtmlView
 		if (!empty($suffix)) {
 			$this->_layoutStyleSuffix = $suffix;
 			if (is_dir($this->_basePath . '/view')) {
-				$this->addTempltePath($this->_basePath . '/view/' . $this->getName() . '/tmpl/' . $suffix);
+				$this->addTemplatePath($this->_basePath . '/view/' . $this->getName() . '/tmpl/' . $suffix);
 			}
 			else {
 				$this->addTemplatePath($this->_basePath . '/views/' . $this->getName() . '/tmpl/' . $suffix);

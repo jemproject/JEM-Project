@@ -1,5 +1,4 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -16,35 +15,35 @@ jQuery(document).ready(function ($) {
     });
     */
 
-    if ($('filter_continent')) {
-        $('filter_continent').on('change', function () {
-            if (country = $('filter_country')) {
-                country.selectedIndex = 0;
+    if ($('#filter_continent').length) {
+        $('#filter_continent').on('change', function () {
+            if ($('#filter_country').length) {
+                $('#filter_country').val('');
             }
-            if (city = $('filter_city')) {
-                city.selectedIndex = 0;
-            }
-            this.form.submit();
-        });
-    }
-
-    if (country = $('filter_country')) {
-        country.on('change', function () {
-            if (city = $('filter_city')) {
-                city.selectedIndex = 0;
+            if ($('#filter_city').length) {
+                $('#filter_city').val('');
             }
             this.form.submit();
         });
     }
 
-    if (city = $('filter_city')) {
-        city.on('change', function () {
+   if ($('#filter_country').length) {
+           $('#filter_country').on('change', function () {
+            if ($('#filter_city').length) {
+                $('#filter_city').val('');
+            }
+            this.form.submit();
+           });
+    }
+
+    if ($('#filter_city').length) {
+        $('#filter_city').on('change', function () {
             this.form.submit();
         });
     }
 
-    if ($('filter_category')) {
-        $('filter_category').on('change', function () {
+    if ($('#filter_category').length) {
+        $('#filter_category').on('change', function () {
             this.form.submit();
         });
     }

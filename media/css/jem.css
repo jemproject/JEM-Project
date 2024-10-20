@@ -1,12 +1,11 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-#jem .jem-removebutton {
+#jem .jem-removebutton  {
 	cursor: pointer;
 	color: red;
 }
@@ -61,7 +60,7 @@ div#jem .formelm-buttons {
 
 ul.adminformlist,
 ul.adminformlist li {
-    margin: 0;
+    margin: 5px;
     padding: 0;
     list-style: none;
 }
@@ -327,7 +326,7 @@ div#jem .copyright {
     font-size: 0.9em;
     text-align: center;
     margin: 1em 0;
-    color: #AAAAAA;
+    color: #808080;
     float: none;
 }
 
@@ -699,7 +698,6 @@ div.jem_editvenue form input,
 div.jem_editvenue form textarea,
 div.jem_select_users ul.adminformlist select,
 div.jem_select_users ul.adminformlist input {
-    margin: 0 0 0.5em 0;
     padding: 0.2em;
     border: 1px solid #808080;
     cursor: pointer;
@@ -1283,3 +1281,23 @@ div#jem .inline-button-right {
 .jem-registered-user-owner {
     font-weight: bold;
 }
+
+#table-series {
+    border-collapse: collapse;
+    width: auto;
+    max-width: 100%;
+}
+#table-series th {
+    padding: 12px;
+    text-align: center;
+    background-color: #04AA6D;
+    color: white;
+    border: 1px solid #ddd;
+}
+#table-series td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+#table-series tr:nth-child(even){background-color: #f2f2f2;}
+#table-series tr:nth-child(odd){background-color: #ffffff;}

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -85,9 +84,9 @@ $jemsettings = JemHelper::config();
       ?>
 			<?php foreach ($list as $item) : ?>
         <?php if (!empty($item->featured)) :   ?>
-          <li class="jem-event jem-row jem-justify-start jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li class="jem-event jem-row jem-justify-start jem-featured <?php echo ' event_id'.$item->eventid; ?> jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php else : ?>
-          <li class="jem-event jem-row jem-justify-start">
+          <li class="jem-event jem-row jem-justify-start <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php endif; ?>       
           <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?>>
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>

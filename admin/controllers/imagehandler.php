@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -16,7 +15,7 @@ use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
-
+use Joomla\CMS\Filesystem\Path;
 
 /**
  * JEM Component Imagehandler Controller
@@ -123,8 +122,8 @@ class JemControllerImagehandler extends BaseController
 					continue;
 				}
 
-				$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-				$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+				$fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+				$fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 				if (is_file($fullPath)) {
 					File::delete($fullPath);
 					if (File::exists($fullPaththumb)) {

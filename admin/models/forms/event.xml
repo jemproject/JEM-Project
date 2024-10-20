@@ -75,14 +75,14 @@
 			   class="inputbox"
 			   size="10"
 			   label="COM_JEM_STARTTIME"
-			   description="COM_JEM_STARTTIME"
+			   description="COM_JEM_STARTTIME_DESC"
 			   required="false"
 		/>
 		<field name="endtimes" type="endtime"
 			   class="inputbox"
 			   size="10"
 			   label="COM_JEM_ENDTIME"
-			   description="COM_JEM_ENDTIME"
+			   description="COM_JEM_ENDTIME_DESC"
 			   required="false"
 		/>
 		<field name="cats" type="catoptions"
@@ -91,7 +91,7 @@
 			   size="4"
 			   label="COM_JEM_FIELD_CATEGORIES"
 			   labelclass=""
-			   description="COM_JEM_FIELD_CATEGORIES"
+			   description="COM_JEM_FIELD_CATEGORIES_DESC"
 			   required="true"
 		/>
 		<field name="hits" type="hits"
@@ -169,14 +169,14 @@
 	>
 		<field name="locid" type="modal_venue"
 			   label="COM_JEM_VENUE"
-			   description="COM_JEM_VENUE"
+			   description="COM_JEM_SELECTVENUE_DESC"
 			   size="40"
 			   required="false"
 			   default="0"
 		/>
 		<field name="contactid" type="modal_contact"
 			   label="COM_JEM_CONTACT"
-			   description="COM_JEM_CONTACT"
+			   description="COM_JEM_CONTACT_DESC"
 			   size="40"
 			   required="false"
 			    default="0"
@@ -368,6 +368,22 @@
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field>
+		<field name="seriesbooking" type="checkbox"
+			   size="1"
+			   class="inputbox"
+			   label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
+			   description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
+			   value="0"
+			   default="0"
+		/>
+		<field name="singlebooking" type="checkbox"
+			   size="1"
+			   class="inputbox"
+			   label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
+			   description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
+			   value="0"
+			   default="0"
+		/>
 	</fieldset>
 
 	<fieldset name="recurrence"
@@ -383,6 +399,7 @@
 			<option value="2">COM_JEM_WEEKLY</option>
 			<option value="3">COM_JEM_MONTHLY</option>
 			<option value="4">COM_JEM_WEEKDAY</option>
+			<option value="5">COM_JEM_YEARLY</option>
 		</field>
 		<field name="recurrence_limit_date" type="calendarjem"
 			   default="now"

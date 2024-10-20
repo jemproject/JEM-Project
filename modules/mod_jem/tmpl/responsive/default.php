@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -16,18 +15,6 @@ use Joomla\CMS\Uri\Uri;
 
 $app = Factory::getApplication();
 $document = $app->getDocument();
-$module_name = 'mod_jem';
-
-/*
-$uri = Uri::getInstance();
-$css_path = JPATH_THEMES. '/'.$document->template.'/css/'.$module_name;
-if(file_exists($css_path.'/'.$module_name.'.css')) {
-  unset($document->_styleSheets[$uri->base(true).'/modules/mod_jem_/tmpl/mod_jem.css']);
-  $document->addStylesheet($uri->base(true) . '/templates/'.$document->template.'/css/'. $module_name.'/'.$module_name.'.css');
-} else {
-  $document->addStyleSheet($uri->base(true).'/modules/mod_jem/tmpl/mod_jem_responsive.css');
-}
-*/
 
 $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');
@@ -41,7 +28,7 @@ $settings = JemHelper::config();
 <?php if (count($list)): ?>
   <ul>
     <?php foreach ($list as $item) : ?>
-      <li>
+    <li class="event_id<?php echo $item->eventid; ?>">
         <i class="far fa-calendar-alt"></i>
           <?php if($highlight_featured && $item->featured): ?>
             <span class="event-title highlight_featured">

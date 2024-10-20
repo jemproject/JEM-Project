@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -16,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Log\Log;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * HTMLHelper Class
@@ -48,7 +48,7 @@ class JemHtml
 						'COM_JEM_EVENTS_TOGGLE_TO_UNFEATURE'
 				)
 		);
-		$state = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[1]);
+        $state = ArrayHelper::getValue($states, (int)$value, $states[1]);
 		$no_iconfont = (bool)Factory::getApplication()->isClient('administrator'); // requires font and css loaded which isn't yet on backend
 		$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-featured-'.$state[1], $state[3], null, $no_iconfont);
 		if ($canChange) {
@@ -88,7 +88,7 @@ class JemHtml
 						'COM_JEM_ON_WAITINGLIST'
 				)
 		);
-		$state = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[1]);
+        $state = ArrayHelper::getValue($states, (int)$value, $states[1]);
 		$no_iconfont = (bool)Factory::getApplication()->isClient('administrator'); // requires font and css loaded which isn't yet on backend
 		$html = HTMLHelper::_('jemhtml.icon', 'com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $no_iconfont);
 		if ($canChange) {
@@ -154,7 +154,7 @@ class JemHtml
 				)
 		);
 
-		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
+        $state = ArrayHelper::getValue($states, (int)$value, $states[-99]);
 
 		if ($print) {
 			$result = Text::_($state[5]);
@@ -222,7 +222,7 @@ class JemHtml
 		);
 
 		$backend = (bool)Factory::getApplication()->isClient('administrator');
-		$state   = \Joomla\Utilities\ArrayHelper::getValue($states, (int) $value, $states[-99]);
+        $state = ArrayHelper::getValue($states, (int)$value, $states[-99]);
 		HTMLHelper::_('bootstrap.tooltip');
         $attr = 'class="hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText(Text::_('COM_JEM_STATUS'), $canChange ? Text::_($state[4]) : str_replace(" ", "&nbsp",Text::_($state[3])), 0).'"';
 
@@ -274,7 +274,7 @@ class JemHtml
 		if (!$useiconfont) {
 			$html = HTMLHelper::_('image', $image, Text::_($alt), $attribs, $relative);
 		} elseif (!empty($attribs)) {
-			$html = '<span '.trim((is_array($attribs) ? \Joomla\Utilities\ArrayHelper::toString($attribs) : $attribs) . ' /').'><i class="'.$icon.'"></i></span>';
+            $html = '<span ' . trim((is_array($attribs) ? ArrayHelper::toString($attribs) : $attribs) . ' /') . '><i class="' . $icon . '"></i></span>';
 		} else {
 			$html = '<i class="'.$icon.'" aria-hidden="true"></i>';
 		}

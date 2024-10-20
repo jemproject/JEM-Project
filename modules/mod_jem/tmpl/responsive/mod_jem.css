@@ -1,5 +1,4 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Latest Events Basic Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -63,7 +62,7 @@
   }
 
   div#jem {
-    border: 0px;
+    border: 0;
   }
 
   div#jem h2 {

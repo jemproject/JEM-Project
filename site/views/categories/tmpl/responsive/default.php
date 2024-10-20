@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -28,7 +27,8 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 	<?php foreach ($this->rows as $row) : ?>
-		<h2 class="jem cat<?php echo $row->id; ?>">
+	<div class="jem cat_id<?php echo $row->id; ?>">
+		<h2>
 			<?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
     
@@ -85,14 +85,15 @@ use Joomla\CMS\Router\Route;
           ?>
         </button>
       </a>
+    </div>
     </div>    
     
     <?php 
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;
-    ?>
-	<?php endforeach; ?>
+   
+   endforeach; ?>
 
 	<!--pagination-->
 	<div class="pagination">

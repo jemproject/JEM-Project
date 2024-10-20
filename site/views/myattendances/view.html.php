@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -90,7 +89,7 @@ class JemViewMyattendances extends JemView
 			if ($jemsettings->showstate == 1) {
 				$filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter', array('size' => '1', 'class' => 'inputbox'), 'value', 'text', $filter);
+			$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter', array('size' => '1', 'class' => 'form-select'), 'value', 'text', $filter);
 
 			// search filter
 			$lists['search'] = $search;

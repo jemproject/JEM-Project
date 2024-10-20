@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -53,16 +52,3 @@ $controller->execute($input->getCmd('task'));
 $controller->redirect();
 HTMLHelper::_('bootstrap.framework');
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
-
-// $document->addScriptDeclaration('
-//     jQuery(document).ready(function(){
-//         var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'));
-//         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-//             return new bootstrap.Tooltip(tooltipTriggerEl,{
-//                 html:true
-//             })
-//         });
-    
-//     });
-// ');
-

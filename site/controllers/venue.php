@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -211,7 +210,7 @@ class JemControllerVenue extends JemControllerForm
 	 */
 	protected function getReturnPage()
 	{
-        $uri = Uri::getInstance();
+        $uri    = Uri::getInstance();
 		$return = Factory::getApplication()->input->get('return', null, 'base64');
 
 		if (empty($return) || !Uri::isInternal(base64_decode($return))) {

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -40,7 +39,7 @@ class JemOutput
 		if ($app->input->get('print','','int')) {
 			return;
 		} else {
-			echo '<span style="color: grey">Powered by <a href="https://www.joomlaeventmanager.net" target="_blank">JEM</a></span>';
+			echo 'Powered by <a href="https://www.joomlaeventmanager.net" target="_blank" title="Joomla Event Manager">JEM</a>';
 		}
 	}
 	
@@ -52,6 +51,7 @@ static public function lightbox() {
 	$app = Factory::getApplication();
 	if ($settings->lightbox == 1) {
 		$document = Factory::getDocument();
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
 		$document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
 		$document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
 		echo '<script>lightbox.option({
@@ -184,7 +184,6 @@ static public function lightbox() {
 		{
 			$settings  = JemHelper::globalattribs();
 			$settings2 = JemHelper::config();
-
 			$uri       = Uri::getInstance();
 			$app = Factory::getApplication();
 
@@ -221,7 +220,7 @@ static public function lightbox() {
 		if ($addvenuelink) {
 			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			$uri       = Uri::getInstance();
+			$uri      = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -257,7 +256,7 @@ static public function lightbox() {
 		if ($adduserslink) {
 			$app      = Factory::getApplication();
 			$settings = JemHelper::globalattribs();
-			$uri       = Uri::getInstance();
+			$uri      = Uri::getInstance();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -320,7 +319,7 @@ static public function lightbox() {
 	 **/
 	static public function prepareAddEventButton($urlparams = '')
 	{
-		$uri       = Uri::getInstance();
+		$uri   = Uri::getInstance();
 		$image = HTMLHelper::_('image', 'com_jem/icon-16-new.png', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
 		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
 		if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
@@ -428,13 +427,13 @@ static public function lightbox() {
 			}
 
 			// Initialise variables.
-			$user   = JemFactory::getUser();
-			$userId = $user->get('id');
-			$uri       = Uri::getInstance();
+			$user     = JemFactory::getUser();
+			$userId   = $user->get('id');
+			$uri      = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
-			$showIcon = 1; //$settings->get('global_show_icons', 1);
+			$showIcon = $settings->get('global_show_icons', 1);
 
 			switch ($view)
 			{
@@ -447,13 +446,21 @@ static public function lightbox() {
 					}
 
 					if ($showIcon) {
-						$image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+                        if($item->recurrence_type && !$item->recurrence_first_id){
+                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', 'fa-sharp fa-solid fa-pen-to-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
+                            $overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
+                            $text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
+                        }else {
+                            $image = jemhtml::icon('com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+                            $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+                            $text = Text::_('COM_JEM_EDIT_EVENT');
+                        }
 					} else {
 						$image = Text::_('COM_JEM_EDIT_EVENT');
+                        $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+                        $text = Text::_('COM_JEM_EDIT_EVENT');
 					}
 					$id = isset($item->did) ? $item->did : $item->id;
-					$overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
-					$text = Text::_('COM_JEM_EDIT_EVENT');
 					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
@@ -527,9 +534,9 @@ static public function lightbox() {
 			}
 
 			// Initialise variables.
-			$user   = JemFactory::getUser();
-			$userId = $user->get('id');
-			$uri       = Uri::getInstance();
+			$user     = JemFactory::getUser();
+			$userId   = $user->get('id');
+			$uri      = Uri::getInstance();
 			$settings = JemHelper::globalattribs();
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
@@ -609,10 +616,8 @@ static public function lightbox() {
 				//button in popup
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
 				$text = Text::_('COM_JEM_PRINT');
-				// $title = 'title='.Text::_('JGLOBAL_PRINT');
-				// $pimage = HTMLHelper::_('image','system/printButton.png', Text::_('JGLOBAL_PRINT'), $title, true);
-				// $output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
 				$output = '<a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>';
+
 			} else {
 				//button in view
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
@@ -645,10 +650,10 @@ static public function lightbox() {
 				return;
 			}
 
-			$uri = Uri::getInstance();
-			$base = $uri->toString(array('scheme', 'host', 'port'));
+			$uri      = Uri::getInstance();
+			$base     = $uri->toString(array('scheme', 'host', 'port'));
 			$template = Factory::getApplication()->getTemplate();
-			$link = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
+			$link     = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
 			$url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
@@ -1159,8 +1164,8 @@ static public function lightbox() {
 
 	static public function flyer($data, $image, $type, $id = null)
 	{
-		$uri = Uri::getInstance();
-		$id_attr = $id ? 'id="'.$id.'"' : '';
+		$uri      = Uri::getInstance();
+		$id_attr  = $id ? 'id="'.$id.'"' : '';
 		$settings = JemHelper::config();
 		switch($type) {
 			case 'event':

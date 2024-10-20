@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -53,7 +52,8 @@ class JemControllerAttendees extends BaseController
 
 		$jinput  = Factory::getApplication()->input;
 		$eventid = $jinput->getInt('id', 0);
-		$status  = $jinput->getInt('status', 0);		
+		$status  = $jinput->getInt('status', 0);
+		$checkseries  = $jinput->getString('series', '');
 		$comment = '';
 		$fid     = $jinput->getInt('Itemid', 0);
 		$uids    = explode(',', $jinput->getString('uids', ''));
@@ -76,6 +76,12 @@ class JemControllerAttendees extends BaseController
 			}
 		}
 
+		if($checkseries == "on"){
+			$checkseries = 1;
+		}else{
+			$checkseries = 0;
+		}
+
 		JemHelper::addLogEntry("Got attendee add - event: {$eventid}, status: {$status}, users: " . implode(',', $uids), __METHOD__, Log::DEBUG);
 
 		if ($total < 1) {
@@ -95,54 +101,78 @@ class JemControllerAttendees extends BaseController
 			$error   = 0;
 			$changed = 0;
 
-			foreach ($uids as $uid) {
-				if (array_key_exists($uid, $regs)) {
-					$reg = $regs[$uid];
-					$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
-					if (!empty($reg->id) && ($old_status != $status)) {
-						JemHelper::addLogEntry("Change user {$uid} already registered for event {$eventid}.", __METHOD__, Log::DEBUG);
-						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg, $reg->id);
+			// Get event
+			try {
+				$event = $modelEventItem->getItem($eventId);
+			}
+			catch (Exception $e) {
+				$event = false;
+			}
+
+			// If event has 'seriesbooking' active and $series is true then get all recurrence events of series from now (register or unregister)
+			if($event->recurrence_type){
+				if(($event->seriesbooking && $checkseries)) {
+					$events = $modelEventItem->getListRecurrenceEventsbyId($eventid, $event->recurrence_first_id, time());
+				}
+			}
+
+			if (!isset($events) || !count ($events)){
+				$events [] = clone $event;
+			}
+
+			foreach ($events as $key => $row) {
+
+				$skip = $error = $changed = 0;
+				
+				foreach ($uids as $uid) {
+					if (array_key_exists($uid, $regs)) {
+						$reg = $regs[$uid];
+						$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
+						if (!empty($reg->id) && ($old_status != $status)) {
+							JemHelper::addLogEntry("Change user {$uid} already registered for event {$row->id}.", __METHOD__, Log::DEBUG);
+							$reg_id = $modelEventItem->adduser($row->id, $uid, $status, $places, $comment, $errMsg, $reg->id);
+							if ($reg_id) {
+								$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
+								++$changed;
+							} else {
+								JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
+								if (!empty($errMsg)) {
+									$errMsgs[] = $errMsg;
+								}
+								++$error;
+							}
+						} else {
+							JemHelper::addLogEntry("Skip user {$uid} already registered for event {$row->id}.", __METHOD__, Log::DEBUG);
+							++$skip;
+						}
+					} else {
+						$reg_id = $modelEventItem->adduser($row->id, $uid, $status, $places, $comment, $errMsg);
 						if ($reg_id) {
 							$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
-							++$changed;
 						} else {
-							JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
+							JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
 							if (!empty($errMsg)) {
 								$errMsgs[] = $errMsg;
 							}
 							++$error;
 						}
-					} else {
-						JemHelper::addLogEntry("Skip user {$uid} already registered for event {$eventid}.", __METHOD__, Log::DEBUG);
-						++$skip;
-					}
-				} else {
-					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $places, $comment, $errMsg);
-					if ($reg_id) {
-						$res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
-					} else {
-						JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
-						if (!empty($errMsg)) {
-							$errMsgs[] = $errMsg;
-						}
-						++$error;
 					}
 				}
-			}
 
-			$cache = Factory::getCache('com_jem');
-			$cache->clean();
+				$cache = Factory::getCache('com_jem');
+				$cache->clean();
 
-			$msg = ($total - $skip - $error - $changed) . ' ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED');
-			if ($changed > 0) {
-				$msg .= ', ' . $changed . ' ' . Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
-			}
-			$errMsgs = array_unique($errMsgs);
-			if (count($errMsgs)) {
-				$msg .= '<br />' . implode('<br />', $errMsgs);
+				$msg = ($total - $skip - $error - $changed) . ' ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED') . ' [ID: ' . $row->id . ']';
+				if ($changed > 0) {
+					$msg .= ', ' . $changed . ' ' . Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
+				}
+				$errMsgs = array_unique($errMsgs);
+
+				if (count($errMsgs)) {
+					$msg .= '<br />' . implode('<br />', $errMsgs);
+				}
 			}
 		}
-
 		$this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&id='.$eventid.'&Itemid='.$fid, false), $msg);
 	}
 

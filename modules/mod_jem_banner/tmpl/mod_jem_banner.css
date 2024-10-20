@@ -1,5 +1,4 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Banner Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -17,15 +16,44 @@ div#jemmodulebanner.banner-jem {
 
 
 #jemmodulebanner [class|="calendar"] {
-	background-repeat: no-repeat;
-	width: 84px;
-	height: 82px; /* + padding = 87px */
-	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
-	text-align: center;
-	padding: 5px 0 0 0;
-	float:left;
-	margin-right:10px;
-	line-height: 24px;
+    background-repeat: no-repeat;
+    width: 81px;
+    height: 85px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
+}
+
+#jemmodulebanner [class|="calendar"] .yearbanner,
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    font-size: 13px;
+    height: 24px;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner,
+#jemmodulebanner [class|="calendar"] .daybanner,
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    padding-top: 2px;
+}
+
+#jemmodulebanner [class|="calendar"] .daybanner {
+    font-size: 12px;
+    min-height: 0.8rem;
+}
+
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+    font-size: 150%;
 }
 
 #jemmodulebanner span.share {
@@ -38,31 +66,6 @@ div#jemmodulebanner.banner-jem {
 	color: #e1e1e1;
 }
 
-#jemmodulebanner [class|="calendar"] .monthbanner {
-	font-size: 8px;
-	color: white;
-	text-transform:uppercase;
-	font-weight:bold;
-	text-shadow: #666 1px 1px 1px;
-	height:20px;
-}
-
-#jemmodulebanner [class|="calendar"] .daybanner {
-	font-weight:bold;
-	font-size: 12px;
-	padding-top:3px;
-	min-height: 16px;
-	color: #333;
-}
-
-#jemmodulebanner [class|="calendar"] .daynumbanner {
-	font-size: 29px;
-	font-weight:bold;
-	color: #FF6400;
-	text-shadow: #000 1px 1px 1px;
-}
-
-
 div#jemmodulebanner .eventset {
 	margin-bottom: 10px;
 	padding: 5px;
@@ -71,7 +74,7 @@ div#jemmodulebanner .eventset {
 }
 
 div#jemmodulebanner .event-title {
-	padding-left: 0px;
+	padding-left: 0;
 	font-size: x-large;
 	margin: 0 0 5px;
 }
@@ -81,7 +84,7 @@ div#jemmodulebanner .event-title {
 }
 
 div#jemmodulebanner .desc {
-	padding-left: 0px;
+	padding-left: 0;
 	padding-top: 2px;
 	font-size: small;
 }
@@ -121,14 +124,14 @@ div#jemmodulebanner .venue-image-cell {
 }
 
 div#jemmodulebanner .image-preview {
-	border: 0px solid #CCCCCC;
+	border: 0 solid #ccc;
 	padding: 3px;
 	background-color: white;
 	margin: 2px;
 }
 
 div#jemmodulebanner .image-preview2 {
-	border: 0px solid #CCCCCC;
+	border: 0 solid #ccc;
 	padding: 3px;
 	background-color: white;
 	margin: 2px;

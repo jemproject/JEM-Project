@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -232,7 +231,7 @@ class JemControllerEvent extends JemControllerForm
 	 */
 	protected function getReturnPage()
 	{
-        $uri = Uri::getInstance();
+        $uri    = Uri::getInstance();
 		$return = Factory::getApplication()->input->get('return', null, 'base64');
 
 		if (empty($return) || !Uri::isInternal(base64_decode($return))) {
@@ -315,7 +314,7 @@ class JemControllerEvent extends JemControllerForm
 
 		$reg = $model->getUserRegistration($id);
 		if ($reg !== false && $reg->id != $rid) {
-			$msg = Text::_('COM_JEM_ALLREADY_REGISTERED');
+			$msg = Text::_('COM_JEM_ALREADY_REGISTERED') . ' [id: ' . $reg->id . ']';
 			$this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;

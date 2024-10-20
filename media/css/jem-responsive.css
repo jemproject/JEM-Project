@@ -1,11 +1,9 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-
 
 /* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
 
@@ -39,6 +37,10 @@ body.com_jem.body-overlayed {
     float: right;
 }
 
+#jem .buttons a{
+    margin-left: 5px;
+}
+
 #jem .buttons::after {
     clear: both;
 }
@@ -64,6 +66,10 @@ body.com_jem.body-overlayed {
 
 #jem .jem-justify-start {
     justify-content: flex-start;
+}
+
+#jem .jem-justify-center {
+    justify-content: space-around;
 }
 
 #jem .jem-justify-end {
@@ -109,6 +115,12 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dt label span,
 #jem .jem-dl-long dt label span {
     font-weight: normal;
+}
+
+#jem .row-month {
+    font-weight: bold;
+    padding: 5px;
+    font-size: 1.332rem;
 }
 
 /*Special for the description lable in editevent and editvenue*/
@@ -160,10 +172,16 @@ body.com_jem.body-overlayed {
 }
 
 #jem .copyright {
+    font-size: 0.9em;
     text-align: right;
+    color: #808080;
 }
 
 #jem .jem-hr {
+    clear: both;
+}
+
+#jem .clr {
     clear: both;
 }
 
@@ -179,13 +197,8 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    gap: 5px;
-}
-
-#jem #limit {
-    padding: 0 10px;
-    margin: 0;
-    width: 80px;
+    margin-left: 20px;
+    align-items: center;
 }
 
 #jem .jem_limit {
@@ -210,16 +223,29 @@ body.com_jem.body-overlayed {
 }
 
 #jem_filter div {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
 }
 
 #jem_filter label,
 #jem_filter select,
 #jem_filter input,
-#jem_filter button,
 #status-lbl {
     margin-right: 5px;
 }
+
+.jem_search .jem-row {
+    display: flex !important;
+}
+
+#jem_filter button {
+    margin-right: 5px;
+    --btn-padding-x: 0.8rem;
+    --btn-padding-y: 0.4rem;
+}
+
+#jem_filter #filter_continent, 
+#jem_filter #filter_country,
+#jem_filter #filter_city {min-width: 250px;}
 
 #jem .jem-misc {
     padding: 10px 0;
@@ -276,6 +302,15 @@ body.com_jem.body-overlayed {
     width: auto;
 }
 
+#jem #starthours,
+#jem #startminutes,
+#jem #endhours,
+#jem #endminutes,
+#jem #jform_locid_name {
+    padding: .6rem 1rem;
+    border-color: #ced4da;
+}
+
 #jem form input::-webkit-outer-spin-button,
 #jem form input::-webkit-inner-spin-button {
     opacity: 1;
@@ -283,6 +318,7 @@ body.com_jem.body-overlayed {
 
 #jem .choose-status  {padding-right: 30px;}
 #jem .choose-status select#status {display: inline;}
+#jem .choose-places  {padding-right: 30px;}
 
 #jem .jem-sort-parts div::after {
     content: "";
@@ -356,6 +392,10 @@ body.com_jem.body-overlayed {
 
 #jem .jem-event-info-small {
     word-break: keep-all;
+}
+
+#jem .jem-event-info-small h4 {
+    margin: 0px;
 }
 
 #jem .jem-event-info-small:last-child {
@@ -632,3 +672,23 @@ body.com_jem.body-overlayed {
 .jem-registered-user-owner {
     font-weight: bold;
 }
+
+#table-series {
+    border-collapse: collapse;
+    width: auto;
+    max-width: 100%;
+}
+#table-series th {
+    padding: 12px;
+    text-align: center;
+    background-color: #04AA6D;
+    color: white;
+    border: 1px solid #ddd;
+}
+#table-series td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+#table-series tr:nth-child(even){background-color: #f2f2f2;}
+#table-series tr:nth-child(odd){background-color: #ffffff;}

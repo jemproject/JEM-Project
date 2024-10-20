@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Teaser Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -55,20 +54,14 @@ if ($params->get('use_modal', 0)) {
  }
  ?>
 
-  #jemmoduleteaser .jem-eventimg-teaser {
-    width: <?php echo $imagewidth; ?>;
-  }
-  
-  #jemmoduleteaser .jem-eventimg-teaser img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
-  }
-  
-  @media not print {
-    @media only all and (max-width: 47.938rem) {  
-      #jemmoduleteaser .jem-eventimg-teaser {
-        
-      }
+    #jemmoduleteaser .jem-eventimg-teaser img {
+        width: 100%;
+        height: <?php echo $imageheight; ?>;
+    }
+
+    @media not print {
+        @media only all and (max-width: 47.938rem) {
+
       
       #jemmoduleteaser .jem-eventimg-teaser img {
         width: <?php echo $imagewidth; ?>;
@@ -91,7 +84,7 @@ if ($params->get('use_modal', 0)) {
       } 
     ?>
     <?php foreach ($list as $item) : ?>
-      
+    <div class="event_id<?php echo $item->eventid; ?>">
       <?php echo $titletag; ?>
         <?php if ($item->eventlink) : ?>
           <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
@@ -101,14 +94,25 @@ if ($params->get('use_modal', 0)) {
       <?php echo $titleendtag; ?>
       
       <div class="jem-row-teaser jem-teaser-event">
-        <div class="calendar<?php echo '-'.$item->colorclass; ?> jem-teaser-calendar"
-             title="<?php echo strip_tags($item->dateinfo); ?>"
-          <?php if (!empty($item->color)) : ?>
-             style="background-color: <?php echo $item->color; ?>"
-          <?php endif; ?>
-        >
-          <div class="monthteaser">
-            <?php echo $item->month; ?>
+
+		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+            <div class="lower-background"></div>
+               <div class="background-image"></div>
+          	<?php else : ?>
+    		<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>"<?php if (!empty($item->color)): ?> style="background-color: <?php echo $item->color; ?>"<?php endif; ?>>
+        <?php endif; ?>
+    
+         <div class="monthteaser<?php 
+    echo isset($item->color_is_dark) 
+        ? ($item->color_is_dark === 1 
+            ? ' monthcolor-light">' 
+            : ($item->color_is_dark === 0 
+                ? ' monthcolor-dark">' 
+                : '">'))
+        : '">';
+    	echo $item->startdate['month']; ?>
           </div>
           <div class="dayteaser">
             <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
@@ -214,24 +218,20 @@ if ($params->get('use_modal', 0)) {
 
             <?php if($item->showdescriptionevent): ?>
               <div class="jem-description-teaser">
-                <?php if($item->showdescriptionevent):
+                                            <?php
 					echo $item->eventdescription;
-                  if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-                    echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
-                  endif;
-
-                  if ($item->eventlink) : ?>
+					if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
                     <div class="jem-readmore">
                       <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
                       <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
                     </a>
                     </div>
-                  <?php endif; ?>
                 <?php endif; ?>
               </div>
             <?php endif; ?> 
           </div>
         </div>
+      </div>
       </div>
       <?php 
       if ($item !== end($list)) :
@@ -244,69 +244,3 @@ if ($params->get('use_modal', 0)) {
 	<?php endif; ?>
 	</div>
 </div>
-
-<script>
-  function parseColor(input) {
-    return input.split("(")[1].split(")")[0].split(",");
-  }
-  
-  function calculateBrightness(rgb) {
-    var o = Math.round(((parseInt(rgb[0]) * 299) + (parseInt(rgb[1]) * 587) + (parseInt(rgb[2]) * 114)) /1000);    
-    return o;
-  }
-  
-  var calendars = document.getElementsByClassName('calendar-category');
-  if (calendars != undefined) {
-    var o = 0;
-    var monthteaser = null;
-    for (var i = 0; i < calendars.length; i++) {
-      o = calculateBrightness(parseColor(calendars[i].style.backgroundColor));
-      monthteaser = null;
-      for (var j = 0; j < calendars[i].childNodes.length; j++) {
-          if (calendars[i].childNodes[j].className == "monthteaser") {
-            monthteaser = calendars[i].childNodes[j];
-            break;
-          }        
-      }
-      if (monthteaser != null) {
-        if (o > 125) {
-            monthteaser.style.color = 'rgb(0, 0, 0)';
-        } else { 
-            monthteaser.style.color = 'rgb(255, 255, 255)';
-        }        
-      }
-    }
-  }
-</script>
-<?php /*
-function createRSSfeed($list) {
-header("Content-Type: application/rss+xml; charset=UTF-8");
-$baseurl = JURI::base();
-if(substr($baseurl, -1) == '/') {
-    $baseurl = substr($baseurl, 0, -1);
-}
-echo '<?xml version="1.0" encoding="UTF-8" ?>';
-echo '<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">';
-echo '<channel>';
-  $doc = Factory::getDocument(); 
-  $page_title = $doc->getTitle();
-  echo '<title>'.$page_title.'</title>';
-  echo '<link>'.JURI::current().'</link>';
-  echo '<atom:link href="'.JURI::getInstance()->toString().'" rel="self" type="application/rss+xml" />';
-  echo '<description>JEM teasered Events</description>';
-  foreach ($list as $item) :
-    echo '<item>';
-      echo '<title>'.$item->fulltitle.'</title>';
-      echo '<link>'.$baseurl.$item->eventlink.'</link>';
-      echo '<guid>'.$baseurl.$item->eventlink.'</guid>';
-      echo '<description><![CDATA[';
-      echo '<div id="date">'.strip_tags($item->dateinfo).'</div>';
-      echo '<div id="image">'.$baseurl.$item->eventimage.'</div>';
-      echo '<div id="desc">'.$item->eventdescription.'</div>';
-      echo ']]></description>';
-    echo '</item>';
-  endforeach;
-echo '</channel>';
-echo '</rss>';
-}
-*/ ?>

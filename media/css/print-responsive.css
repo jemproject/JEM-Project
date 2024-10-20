@@ -1,6 +1,5 @@
 @charset "ISO-8859-1";
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -27,6 +26,36 @@ a[href]:after {
     content: none !important;
 }
 
+div#jem #jem_filter {
+	background-color: transparent;
+	float:right;
+}
+
+div#jem #jem_filter div.jem-limit-smallist {
+	display:block;
+}
+
+div#jem #jem_filter div, div#jem #jem_filter div label  {
+	display: none;
+}
+
+div#jem a {
+	text-decoration: none !important;
+}
+
+#jem .eventlist li {
+    padding: 10px 0;
+    list-style: none;
+    background-color: #fff !important;
+    break-inside: avoid !important;
+}
+
+#jem .jem-event {
+    cursor: pointer;
+    border-left: none;
+    border-right: none;
+}
+
 @media print {
 
     div#jem .buttons {
@@ -51,8 +80,11 @@ a[href]:after {
         content: none;
     }
 
-
     div#jem .flyerimage {
         border: none;
     }
+    
+    div#jem #jem_filter {
+	display: none;
+	}
 }

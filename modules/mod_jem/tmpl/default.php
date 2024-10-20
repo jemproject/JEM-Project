@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -25,7 +24,7 @@ $settings = JemHelper::config();
 <?php if (count($list)): ?>
 	<ul class="jemmod">
 		<?php foreach ($list as $item) : ?>
-		<li>
+		<li class="event_id<?php echo $item->eventid; ?>">
             <?php if($highlight_featured && $item->featured): ?>
                 <span class="event-title highlight_featured">
             <?php else : ?>

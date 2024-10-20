@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -361,6 +360,16 @@ class JemModelSearch extends BaseDatabaseModel
 		$this->_db->setQuery($query);
 
 		return $this->_db->loadObjectList();
+	}
+
+	public function getContinentFromCountry($country)
+	{
+		$app = Factory::getApplication();
+
+		$query = ' SELECT c.continent as value FROM #__jem_countries as c WHERE c.iso2 = ' . $this->_db->Quote($country);
+		$this->_db->setQuery($query);
+
+		return $this->_db->loadResult();
 	}
 
 	public function getCityOptions()

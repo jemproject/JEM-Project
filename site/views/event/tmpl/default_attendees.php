@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -17,6 +16,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
 ?>
@@ -29,6 +29,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
     <?php $maxbookeduser  = (int)$this->item->maxbookeduser; ?>
     <?php $booked         = (int)$this->item->booked; ?>
     <?php $waitinglist    = (int)$this->item->waitinglist; ?>
+    <?php $seriesbooking    = (int)$this->item->seriesbooking; ?>
 
         <?php if ($this->settings->get('event_show_registration_counters','1')) : ?>
         <?php if ($maxplaces > 0) : ?>
@@ -166,6 +167,10 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
 				// if CB
 				if ($this->settings->get('event_comunsolution', '0') == 1) :
+                    $needle = 'index.php?option=com_comprofiler&view=userprofile';
+                    $menu = Factory::getApplication()->getMenu();
+                    $item = $menu->getItems('link', $needle, true);
+                    $cntlink = !empty($item) ? $needle . '&user=' . $register->uid . '&Itemid=' . $item->id : $needle;
 					if ($this->settings->get('event_comunoption', '0') == 1) :
 						// User has avatar
 						if (!empty($register->avatar)) :
@@ -176,16 +181,16 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 							} else {
 								$useravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
 							}
-							echo '<a href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+							echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
 
 						// User has no avatar
 						else :
 							$nouseravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
-							echo '<a href="' . Route::_('index.php?option=com_comprofiler&task=userProfile&user=' . $register->uid) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+							echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
 						endif;
 					else :
 						// only show the username with link to profile
-						echo '<span class="username"><a href="' . Route::_('index.php?option=com_comprofiler&amp;task=userProfile&amp;user=' . $register->uid) . '">' . $register->name . '</a></span>' . $registedplaces;
+						echo '<span class="username"><a style="text-decoration: none;" href="' . Route::_($cntlink) . '">' . $register->name . '</a></span>' . $registedplaces;
 					endif;
 				// if CB end - if not CB than only name
 				else :
@@ -227,7 +232,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             break;
                         case 2:
 			                if ($this->item->requestanswer) { ?>
-			                <span class="badge bg-warning text-dark">
+                                <span class="badge rounded-pill text-light bg-secondary">
 									<?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
 									</span>
 			                <?php

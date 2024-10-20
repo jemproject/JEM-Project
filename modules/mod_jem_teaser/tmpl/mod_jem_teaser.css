@@ -1,5 +1,4 @@
-/**
- * @version    4.2.2
+/*
  * @package    JEM
  * @subpackage JEM Teaser Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -9,6 +8,12 @@
 
 div#jemmoduleteaser {
 	width: 100%;
+}
+
+div#jemmoduleteaser [class^="event_id"]:not(:last-of-type) {
+	padding-bottom:0.5em;
+	margin-bottom: 0.5em;
+	border-bottom: 1px silver solid;
 }
 
 div#jemmoduleteaser .teaser-jem a,
@@ -22,15 +27,44 @@ div#jemmoduleteaser .venue-title a {
 }
 
 #jemmoduleteaser [class|="calendar"] {
-	background-repeat: no-repeat;
-	width: 82px;
-	height: 82px; /* + padding = 87px */
-	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
-	text-align: center;
-	padding: 5px 1px 0 0;
-	float:left;
-	margin-right:10px;
-	line-height: 24px;
+    background-repeat: no-repeat;
+    width: 81px;
+    height: 85px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
+}
+
+#jemmoduleteaser [class|="calendar"] .yearteaser,
+#jemmoduleteaser [class|="calendar"] .monthteaser {
+    font-size: 13px;
+    height: 24px;
+}
+
+#jemmoduleteaser [class|="calendar"] .monthteaser,
+#jemmoduleteaser [class|="calendar"] .dayteaser,
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
+}
+
+#jemmoduleteaser [class|="calendar"] .monthteaser {
+    padding-top: 2px;
+}
+
+#jemmoduleteaser [class|="calendar"] .dayteaser {
+    font-size: 12px;
+    min-height: 0.8rem;
+}
+
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
+    font-size: 150%;
 }
 
 #jemmoduleteaser span.share {
@@ -43,36 +77,13 @@ div#jemmoduleteaser .venue-title a {
 	color: #e1e1e1;
 }
 
-#jemmoduleteaser [class|="calendar"] .monthteaser {
-	font-size: 8px;
-	color: white;
-	text-transform:uppercase;
-	font-weight:bold;
-	text-shadow: #666 1px 1px 1px;
-	height:20px;
-}
-
-#jemmoduleteaser [class|="calendar"] .dayteaser {
-	font-weight:bold;
-	font-size: 12px;
-	padding-top:3px;
-	color: #333;
-}
-
-#jemmoduleteaser [class|="calendar"] .daynumteaser {
-	font-size: 29px;
-	font-weight:bold;
-	color: #FF6400;
-	text-shadow: #000 1px 1px 1px;
-}
-
 div#jemmoduleteaser .eventset {
 	width: 100%;
-	margin-bottom: 10px;
 	padding: 5px;
-	border-bottom: 1px dotted silver;
 	text-align: left;
 }
+
+div#jemmoduleteaser .event-datetime {vertical-align: top;}
 
 div#jemmoduleteaser .event-title {
 	font-size: medium;

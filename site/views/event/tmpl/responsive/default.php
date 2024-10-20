@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -33,14 +32,28 @@ if ($jemsettings->oldevent > 0) {
 	$expDate = date("D, d M Y H:i:s", strtotime('+1 day', $enddate));
 	$document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
-?>
-<?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
-<div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
-	itemscope="itemscope" itemtype="https://schema.org/Event">
-  
+
+$catclasses = '';
+foreach ((array)$this->categories as $category) {
+    $catclasses .= ' cat_id' . $this->escape($category->id);
+}
+
+if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
+
+<div id="jem" class="event_id<?php
+    echo $this->escape($this->item->did);
+    if (!empty($this->item->locid)) {
+        echo ' venue_id' . $this->escape($this->item->locid);
+    }
+    if (!empty($catclasses)) {
+        echo $this->escape($catclasses);
+    }
+?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>"
+    itemscope="itemscope" itemtype="https://schema.org/Event">
+
   <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
   <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-  
+
 	<div class="buttons">
 		<?php
 		$btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
@@ -56,14 +69,18 @@ if ($jemsettings->oldevent > 0) {
 
 	<!-- Event -->
 	<h2 class="jem">
-		<?php		
-		echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
-        echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+		<?php
+        echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) . ' ';
+        if($this->item_root) {
+            echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+        }
+        if(!$this->item_root || ($this->item_root && $this->item->recurrence_first_id)) {
+        	echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+        }
         echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
 		?>
 	</h2>
   <div class="jem-row">
-  
     <div class="jem-info">
       <dl class="jem-dl">
         <?php if ($params->get('event_show_detailstitle',1)) : ?>
@@ -103,7 +120,7 @@ if ($jemsettings->oldevent > 0) {
         endif;
         $n = is_array($this->categories) ? count($this->categories) : 0;
         ?>
-    
+
         <dt class="jem-category hasTooltip" data-original-title="<?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>">
           <?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:
         </dt>
@@ -119,7 +136,7 @@ if ($jemsettings->oldevent > 0) {
         endforeach;
         ?>
         </dd>
-    
+
         <?php
         for ($cr = 1; $cr <= 10; $cr++) {
           $currentRow = $this->item->{'custom'.$cr};
@@ -134,20 +151,20 @@ if ($jemsettings->oldevent > 0) {
           }
         }
         ?>
-    
+
         <?php if ($params->get('event_show_hits')) : ?>
         <dt class="jem-hits hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
         <dd class="jem-hits"><?php echo Text::sprintf('COM_JEM_EVENT_HITS', $this->item->hits); ?></dd>
         <?php endif; ?>
-    
-    
+
+
       <!-- AUTHOR -->
         <?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
         <dt class="createdby hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
         <dd class="createdby">
           <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
           <?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
-            $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2;
+            $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2 . '&catid=' . $this->item->concatid;
             $menu = Factory::getApplication()->getMenu();
             $item = $menu->getItems('link', $needle, true);
             $cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
@@ -158,7 +175,7 @@ if ($jemsettings->oldevent > 0) {
           ?>
         </dd>
         <?php endif; ?>
-    
+
       <!-- PUBLISHING STATE -->
         <?php if (!empty($this->showeventstate) && isset($this->item->published)) : ?>
         <dt class="jem-published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
@@ -198,7 +215,7 @@ if ($jemsettings->oldevent > 0) {
 			// Optional link to let them register to see the whole event.
 			if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
 				$link1 = Route::_('index.php?option=com_users&view=login');
-				$link = new JUri($link1);
+				$link = new Uri($link1);
 				echo '<p class="readmore">';
 					echo '<a href="'.$link.'">';
 					if ($params->get('event_alternative_readmore') == false) {
@@ -233,7 +250,7 @@ if ($jemsettings->oldevent > 0) {
 		<?php
 		$contact = $this->item->conname;
 		if ($params->get('event_link_contact') == true) :
-			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid;
+			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid . '&catid=' . $this->item->concatid;
 			$menu = Factory::getApplication()->getMenu();
 			$item = $menu->getItems('link', $needle, true);
 			$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
@@ -261,7 +278,7 @@ if ($jemsettings->oldevent > 0) {
 	<p></p>
 	<hr class="jem-hr">
 
-	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+	<div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
     <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
 		<?php $itemid = $this->item ? $this->item->id : 0 ; ?>
 		<h2 class="jem-location">

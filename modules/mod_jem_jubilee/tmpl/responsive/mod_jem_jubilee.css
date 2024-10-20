@@ -1,0 +1,138 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+div#jemmodulejubilee {
+	width: 100%;
+}
+
+div#jemmodulejubilee .jubilee-jem {
+	font-size: smaller;
+}
+
+#jemmodulejubilee [class|="calendar"] {
+	background-repeat: no-repeat;
+    width: 81px;
+    height: 85px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
+}
+
+#jemmodulejubilee span.share {
+	margin-left:95px;
+}
+
+#jemmodulejubilee [class|="calendar"] .yearjubilee,
+#jemmodulejubilee [class|="calendar"] .monthjubilee {
+    font-size: 13px;
+    height: 24px;
+}
+
+#jemmodulejubilee [class|="calendar"] .monthjubilee,
+#jemmodulejubilee [class|="calendar"] .dayjubilee,
+#jemmodulejubilee [class|="calendar"] .daynumjubilee {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
+}
+
+#jemmodulejubilee [class|="calendar"] .monthjubilee {
+    padding-top: 2px;
+}
+
+#jemmodulejubilee [class|="calendar"] .dayjubilee {
+    font-size: 12px;
+    min-height: 0.8rem;
+}
+
+#jemmodulejubilee [class|="calendar"] .daynumjubilee {
+    font-size: 150%;
+}
+
+div#jemmodulejubilee .eventset {
+	margin-bottom: 10px;
+	padding: 5px;
+	border: 1px dotted silver;
+    text-align: left;
+}
+
+div#jemmodulejubilee .event-title {
+	padding-left: 0;
+	font-size: x-large;
+	margin: 0 0 5px;
+}
+
+div#jemmodulejubilee .desc {
+	padding-left: 0;
+	padding-top: 2px;
+	font-size: small;
+}
+
+div#jemmodulejubilee .time {
+	padding-top: 2px;
+	font-weight: normal;
+	font-size: smaller;
+	float: left;
+}
+
+div#jemmodulejubilee div.date {
+	padding-top: 2px;
+	font-weight: normal;
+	font-size: smaller;
+	float: left;
+	margin-right: 4px;
+}
+
+div#jemmodulejubilee .category {
+	position: relative;
+	font-size: smaller;
+	float: left;
+}
+
+div#jemmodulejubilee .venue-title {
+	position: relative;
+	font-size: smaller;
+	float: left;
+	margin-right: 8px;
+}
+
+div#jemmodulejubilee .event-image-cell {
+}
+
+div#jemmodulejubilee .venue-image-cell {
+}
+
+div#jemmodulejubilee .image-preview {
+	max-width: 110px;
+	border: 0 solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 2px;
+}
+
+div#jemmodulejubilee .image-preview2 {
+	max-width: 200px;
+	border: 0 solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 2px;
+}
+
+div#jemmodulejubilee .hr {
+	color: silver;
+	height: 12px;
+}
+
+div#jemmodulejubilee .clr {
+	clear: both;
+}

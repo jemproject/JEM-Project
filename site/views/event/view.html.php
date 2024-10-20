@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -48,11 +47,12 @@ class JemViewEvent extends JemView
 		$userId            = $user->get('id');
 		$dispatcher        = JemFactory::getDispatcher();
 		$document 		   = $app->getDocument();
+		$wa 	  		   = $document->getWebAssetManager();
 		$model             = $this->getModel();
 		$menu              = $app->getMenu();
 		$menuitem          = $menu->getActive();
 		$pathway           = $app->getPathway();
-		$edit_att 	   = new \stdClass();
+		$edit_att 	       = new \stdClass();
 		$this->params      = $app->getParams('com_jem');
 		$this->item        = $this->get('Item');
 		$this->print       = $app->input->getBool('print', false);
@@ -299,7 +299,7 @@ class JemViewEvent extends JemView
 				} else {
 					send.disabled = true;
 				}}";
-			$document->addScriptDeclaration($js);
+			$wa->addInlineScript($js);
 		}
 
 		$this->formhandler = $formhandler;
@@ -368,6 +368,12 @@ class JemViewEvent extends JemView
 		$pageclass_sfx 		 =  $item->params->get('pageclass_sfx');
 		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 		$this->itemid        = $menuitem ? $menuitem->id : false;
+
+		//Get itemRoot if item is a recurrence event
+		$this->item_root = 0;
+		if($this->item->recurrence_type){
+			$this->item_root = $model->getItem($this->item->recurrence_first_id );
+		}
 
 		$this->_prepareDocument();
 		

@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -1080,7 +1079,7 @@ class JemHelperCountries
 	 */
 	static public function getIsoFlag($iso_code)
 	{
-		$uri = Uri::getInstance();
+		$uri      = Uri::getInstance();
 		$settings = JemHelper::config();
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);

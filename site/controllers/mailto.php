@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -36,12 +35,12 @@ class JemControllerMailto extends JemControllerForm
 	public function save($key = NULL, $urlVar = NULL){
 		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-		$app     = Factory::getApplication();
-		$model   = $this->getModel('mailto');
-		$data    = $model->getData();
-		$uri= Uri::getInstance();
-		$form = $model->getForm();
-		$post_link = $this->input->post->get('link', '', 'post');
+		$app        = Factory::getApplication();
+		$model      = $this->getModel('mailto');
+		$data       = $model->getData();
+		$uri        = Uri::getInstance();
+		$form       = $model->getForm();
+		$post_link  = $this->input->post->get('link', '', 'post');
 		$currentUri = $uri->toString() . '&link='.$post_link;
 		
 		if (!$form)

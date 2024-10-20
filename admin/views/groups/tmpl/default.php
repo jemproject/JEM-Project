@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -25,30 +24,39 @@ $params		= (isset($this->state->params)) ? $this->state->params : new CMSObject(
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=groups'); ?>" method="post" name="adminForm" id="adminForm">
-    <?php if (isset($this->sidebar)) : ?>
-		<!-- <div id="j-sidebar-container" class="span2">
-			<?php //echo $this->sidebar; ?>
-		</div> -->
-	<?php endif; ?>
 	<div id="j-main-container" class="j-main-container">
 	    <fieldset id="filter-bar" class=" mb-3">
-			<div class="row mb-3">
-				<div class="col-md-4">
-					<div class="input-group">  
-						<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >											
+            <div class="row">
+				<div class="col-md-11">		
+                    <div class="row mb-12">
+						<div class="col-md-4">
+							<div class="input-group">  
+								<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >											
 						
-						<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-							<span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-						</button>
-						<button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-					</div>
+								<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
+									<span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+							</div>
+                        </div>
+                    </div>
 				</div>
-				
-		</fieldset>
-		<div class="clr"> </div>
-		<table class="table table-striped" id="articleList">
-			<thead>
-				<tr>
+			    <div class="col-md-1">				
+                    <div class="row">
+                        <div class="wauto-minwmax">
+                            <div class="float-end">
+                                <?php echo $this->pagination->getLimitBox(); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="clr"> </div>
+
+        <table class="table table-striped" id="articleList">
+            <thead>
+            <tr>
 				<th width="5" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th width="30%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
 				<th><?php echo Text::_( 'COM_JEM_DESCRIPTION' ); ?></th>
@@ -56,29 +64,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new CMSObject(
 				</tr>
 			</thead>
 
-			<tfoot>
-				<tr>
-					<td colspan="20">
-						<?php //echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter()); ?>
-						<div class="row align-items-center">
-                            <div class="col-md-9">
-                                <?php
-                                echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter());
-                                ?>
-                            </div>
-							<div class="col-md-3">
-								<div class="limit float-end">
-									<?php 
-										echo $this->pagination->getLimitBox();	
-									?>
-								</div>
-							</div>
-						</div>
-					</td>
-				</tr>
-			</tfoot>
-
-			<tbody id="seach_in_here">
+			<tbody>
 				<?php foreach ($this->items as $i => $row) :
 					$ordering	= ($listOrder == 'ordering');
 					$canCreate	= $user->authorise('core.create');
@@ -110,17 +96,22 @@ $params		= (isset($this->state->params)) ? $this->state->params : new CMSObject(
 						?>
 					</td>
                     <td class="center"><?php echo $row->id; ?></td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+			
+		<div class="ms-auto mb-4 me-0">
+            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
+        </div>
 	</div>
-	<div>
-		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-		<?php echo HTMLHelper::_('form.token'); ?>
+
+    <div>
+	    <input type="hidden" name="task" value="" />
+	    <input type="hidden" name="boxchecked" value="0" />
+	    <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+	    <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+
+	    <?php echo HTMLHelper::_('form.token'); ?>
 	</div>
 </form>

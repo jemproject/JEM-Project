@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -47,7 +46,7 @@ class JemModelEvents extends ListModel
 	 * Method to auto-populate the model state.
 	 *
 	 * @Note  Calling getState in this method will result in recursion.
-	 */
+     */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
@@ -83,8 +82,8 @@ class JemModelEvents extends ListModel
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param  string $id A prefix for the store id.
-	 * @return string A store id.
+     * @param string $id A prefix for the store id.
+     * @return string A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -100,7 +99,7 @@ class JemModelEvents extends ListModel
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return JDatabaseQuery
-	 */
+     */
 	protected function getListQuery()
 	{
 		// Create a new query object.
@@ -154,13 +153,13 @@ class JemModelEvents extends ListModel
 		$endDate   = $this->getState('filter_end');
 		if (!empty($startDate) && !empty($endDate)) {
 			$query->where('(a.dates >= '.$db->Quote($startDate).')');
-			$query->where('(a.enddates <= '.$db->Quote($endDate).')');
+            $query->where('(a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' . $db->Quote($endDate) . '))');
 		} else {
 			if (!empty($startDate)) {
 				$query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
 			}
 			if (!empty($endDate)) {
-				$query->where('(a.enddates IS NULL OR a.enddates <= '.$db->Quote($endDate).')');
+                $query->where('(a.enddates IS NULL OR a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' .  $db->Quote($endDate) . '))');
 			}
 		}
 
@@ -231,7 +230,7 @@ class JemModelEvents extends ListModel
 	 * Method to get the userinformation of edited/submitted events
 	 *
 	 * @return object
-	 */
+     */
 	public function getItems()
 	{
 		$items  = parent::getItems();

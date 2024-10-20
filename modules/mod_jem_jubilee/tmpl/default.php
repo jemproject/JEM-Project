@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Jubilee Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -36,16 +35,22 @@ if ($flyer_link_type == 1) {
 
 <div class="jemmodulejubilee<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulejubilee">
 <?php ?>
-	<div class="eventset" summary="mod_jem_jubilee">
+	<div class="eventset">
 		<?php if ($showcalendar == 1) :?>
-		<div>
-			<div class="calendar<?php echo '-'.$colorclass; ?>"
-				<?php if (($colorclass == 'alpha') && !empty($user_color)) : ?>
-				 style="background-color: <?php echo $user_color; ?>"
-				<?php endif; ?>
-			>
-				<div class="monthjubilee monthjubilee-<?php echo ($user_color_is_dark ? 'light' : 'dark'); ?>">
-					<?php echo $date['month']; ?>
+		<?php if ($colorclass === "alpha"): ?>
+			<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
+               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+            <div class="lower-background"></div>
+               <div class="background-image"></div>
+    	<?php else: ?>
+        	<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
+    <?php endif; ?>
+          <?php if (isset($user_color_is_dark)) : ?>
+        <div class="monthjubilee monthcolor-<?php echo !empty($user_color_is_dark) ? 'light' : 'dark'; ?>">
+          	<?php else : ?>
+				<div class="monthjubilee">
+			<?php endif;
+				echo $date['month']; ?>
 				</div>
 				<div class="dayjubilee">
 					<?php /*echo $date['weekday'];*/ ?>
@@ -54,9 +59,7 @@ if ($flyer_link_type == 1) {
 					<?php echo $date['day']; ?>
 				</div>
 			</div>
-		</div>
-		<?php endif; ?>
-
+		<?php endif; ?>		
 		<?php if (!empty($introtext)) :?>
 		<div class="intro">
 			<?php echo $introtext; ?>
@@ -72,7 +75,7 @@ if ($flyer_link_type == 1) {
 		<?php foreach ($list as $item) : ?>
 			<div class="clr"></div>
 			<div class="hr"><hr /></div>
-
+			<div class="event_id<?php echo $item->eventid; ?>">
 			<h2 class="event-title">
 				<?php echo $item->startdate['year'] . ': '; ?>
 			<?php if ($item->eventlink) : ?>
@@ -174,6 +177,7 @@ if ($flyer_link_type == 1) {
 					<?php echo $item->catname; ?>
 				</div>
 			<?php endif; ?>
+			</div>
 		<?php endforeach; ?>
 
 		<div class="clr"></div>

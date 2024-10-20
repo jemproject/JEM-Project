@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -215,7 +214,7 @@ class JemModelMyevents extends BaseDatabaseModel
 		$orderby = $this->_buildOrderBy();
 
 		# Get Events from Database
-		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.requestanswer, '
+		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
 		       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
 		       . ' a.access, a.checked_out, a.checked_out_time, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.contactid, a.created_by_alias, a.datimage, a.featured,'
 		       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'

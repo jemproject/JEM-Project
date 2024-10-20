@@ -15,7 +15,8 @@ defined ('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
-
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Router\Route;
 /**
  * JEM package installer script.
  */
@@ -73,7 +74,7 @@ class Pkg_JemInstallerScript
 	}
 
 	public function makeRoute($uri) {
-		return JRoute::_($uri, false);
+		return Route::_($uri, false);
 	}
 
 	public function postflight($type, $parent) {
@@ -90,6 +91,8 @@ class Pkg_JemInstallerScript
 		if ($type == 'uninstall') return true;
 
 		$this->enablePlugin('content', 'jem');
+		$this->enablePlugin('content', 'jemlistevents');
+		$this->enablePlugin('quickicon', 'jem');
 	//	$this->enablePlugin('search', 'jem');
 	//	$this->enablePlugin('jem', 'mailer');
 
@@ -102,7 +105,7 @@ class Pkg_JemInstallerScript
 	}
 
 	function enablePlugin($group, $element) {
-		$plugin = JTable::getInstance('extension');
+		$plugin = Table::getInstance('extension');
 		if (!$plugin->load(array('type'=>'plugin', 'folder'=>$group, 'element'=>$element))) {
 			return false;
 		}
@@ -111,7 +114,7 @@ class Pkg_JemInstallerScript
 	}
 
 	function disableModule($element) {
-		$module = JTable::getInstance('extension');
+		$module = Table::getInstance('extension');
 		if (!$module->load(array('type'=>'module', 'element'=>$element))) {
 			return false;
 		}

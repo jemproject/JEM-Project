@@ -1,5 +1,4 @@
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Latest Events Wide Module
  * @copyright  (C) 2013-2024 joomlaeventmanager.net
@@ -135,7 +134,7 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-event-details h4 {
-  margin-top: 0px;
+  margin-top: 0;
   margin-bottom: 10px;
   line-height: 110%;
 }
@@ -234,7 +233,7 @@ body.body-overlayed {
   }
 
   div#jem {
-    border: 0px;
+    border: 0;
   }
 
   div#jem h2 {
