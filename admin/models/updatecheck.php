@@ -51,7 +51,7 @@ class JemModelUpdatecheck extends BaseDatabaseModel
 					$updatedata->date             = JemOutput::formatdate($updatexml->date);
 					$updatedata->info             = $updatexml->infourl;
 					$updatedata->download         = $updatexml->downloads->downloadurl;
-					$updatedata->notes            = $updatexml->notes;
+					$updatedata->notes            = explode(';', $updatexml->notes);
 					$updatedata->changes          = explode(';', $updatexml->changes);
 					$updatedata->failed           = 0;
 					$updatedata->installedversion = $installedversion;

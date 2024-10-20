@@ -76,7 +76,12 @@ use Joomla\CMS\Router\Route;
 			</div>
 			<div class="detail-item">
 				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></strong>
-    	        <span><?php echo $this->updatedata->notes; ?></span>
+				<span>
+					<ul><?php
+					foreach ($this->updatedata->notes as $note) {
+						echo '<li>'.$note.'</li>';
+						} ?>
+					</ul>
     	    </div>
     	</div>
 
