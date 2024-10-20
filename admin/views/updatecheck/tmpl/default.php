@@ -72,7 +72,8 @@ use Joomla\CMS\Router\Route;
 	        </div>
 			<div class="detail-item">
 				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></strong>
-      	      <span><a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a></span>
+      	      <span><a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a><br />
+      	     <a href="/administrator/index.php?option=com_installer&view=update&filter[search]=JEM" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE'); ?></a></span>
 			</div>
 			<div class="detail-item">
 				<strong><?php echo Text::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></strong>
