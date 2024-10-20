@@ -306,6 +306,8 @@ $params = $params->toArray();
                         <div class="accordion-body">
                             <ul class="adminformlist" style="margin-bottom: 60px;">
                                 <li><div class="label-form"><?php echo $this->form->renderfield('registra'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('registra_from'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('registra_until'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra_until'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>

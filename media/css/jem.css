@@ -558,9 +558,9 @@ div#jem .jem_fleft {
 
 div#jem .jem_fright {
     float: right;
-	display: flex;
-	align-items: center;
-	gap: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 /* no fixed width on J! 3.x */
@@ -769,15 +769,26 @@ div.jem_editevent form div.jem_register {
     margin: 0 1em 0 0;
 }
 
-#jem input[id$="unregistra_until"] {
-    width: 40px;
+#jem input[id$="registra_from"] {
     text-align: right;
 }
 
+#jem input[id$="registra_until"] {
+    text-align: right;
+}
+
+#jem input[id$="unregistra_until"] {
+    text-align: right;
+}
+
+#jem #jform_registra_from2, #jem #jform_registra_until2, #jem #jform_unregistra_until2 {
+    padding: 5px 0 0 5px;
+}
+
 #jem #addplaces, #jem #cancelplaces {
-	text-align: center;
-	display: inline;
-	max-width: 100px;
+    text-align: center;
+    display: inline;
+    max-width: 100px;
 }
 
 #jem form input::-webkit-outer-spin-button,
@@ -1287,6 +1298,7 @@ div#jem .inline-button-right {
     width: auto;
     max-width: 100%;
 }
+
 #table-series th {
     padding: 12px;
     text-align: center;
@@ -1294,10 +1306,17 @@ div#jem .inline-button-right {
     color: white;
     border: 1px solid #ddd;
 }
+
 #table-series td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
 }
-#table-series tr:nth-child(even){background-color: #f2f2f2;}
-#table-series tr:nth-child(odd){background-color: #ffffff;}
+
+#table-series tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+#table-series tr:nth-child(odd){
+    background-color: #ffffff;
+}

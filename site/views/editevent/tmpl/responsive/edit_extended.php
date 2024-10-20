@@ -203,6 +203,10 @@ use Joomla\CMS\Date\Date;
         <?php else : ?>
             <dt><?php echo $this->form->getLabel('registra'); ?></dt>
             <dd><?php echo $this->form->getInput('registra'); ?></dd>
+            <dt><div id="registra_from"><span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></div></dt>
+            <dd><div id="registra_from2"><?php echo $this->form->getInput('registra_from'); ?></div> </dd>
+            <dt><div id="registra_until"><span id="jform_registra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></div></dt>
+            <dd><div id="registra_until2"><?php echo $this->form->getInput('registra_until'); ?></span></div></dd>
         <?php endif; ?>
     </dl>
     <dl class="adminformlist jem-dl jem-dl-rest">
@@ -212,7 +216,8 @@ use Joomla\CMS\Date\Date;
         <?php endif; ?>
         <dt><?php echo $this->form->getLabel('unregistra'); ?></dt>
         <dd><?php echo $this->form->getInput('unregistra'); ?></dd>
-        <dd><?php echo $this->form->getInput('unregistra_until'); ?> <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></dd>
+        <dt><div id="unregistra_until"><span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL'); ?></span></div></dt>
+        <dd><div id="unregistra_until2"><?php echo $this->form->getInput('unregistra_until'); ?></div></dd>
         <dt><?php echo $this->form->getLabel('maxplaces'); ?></dt>
         <dd><?php echo $this->form->getInput('maxplaces'); ?></dd>
         <dt><?php echo $this->form->getLabel('minbookeduser'); ?></dt>

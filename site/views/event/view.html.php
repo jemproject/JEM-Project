@@ -149,7 +149,7 @@ class JemViewEvent extends JemView
 				if ($layout = $item->params->get('event_layout')) {
 					$this->setLayout($layout);
 				}
-            }
+			}
 			$item->params->merge($params);
 		} else {
 			// Merge the menu item params with the event params so that the event params take priority
@@ -201,7 +201,7 @@ class JemViewEvent extends JemView
 
 		$results = $dispatcher->triggerEvent('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
-		
+
 		//use temporary class var to triggerEvent content prepare plugin for venue description
 		$tempVenue = new stdClass();
 		$tempVenue->text = $item->locdescription ?? '';
@@ -209,7 +209,7 @@ class JemViewEvent extends JemView
 		$results = $dispatcher->triggerEvent('onContentPrepare', array ('com_jem.event', &$tempVenue, &$this->params, $offset));
 		$item->locdescription = $tempVenue->text;
 		$item->venue = $tempVenue->title;
-		
+
 		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
 			$model->hit();
@@ -218,7 +218,7 @@ class JemViewEvent extends JemView
 		// Escape strings for HTML output
 		$pageclass_sfx 		 =  $this->item->params->get('pageclass_sfx');
 		$this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
-		
+
 
 		$this->print_link = Route::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
@@ -247,7 +247,7 @@ class JemViewEvent extends JemView
 		//suggestion by M59S to allow groupmembers too see line 230/231 too 
 		$edit_att->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
-		$this->permissions = $permissions;
+		$this->permissions    = $permissions;
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
 		$this->showvenuestate = $permissions->canEditVenue || $permissions->canPublishVenue;
 
@@ -255,24 +255,28 @@ class JemViewEvent extends JemView
 		 *  but if on event limited to invited users and limitation globally allowed user must be invited
 		 *  (or event owner to see attendees)
 		 */
-		$g_reg = $this->jemsettings->showfroregistra;
-		$g_inv = $this->jemsettings->regallowinvitation;
-		$e_reg = $this->item->registra;
-		$e_unreg = $item->unregistra;
+		$g_reg   = $this->jemsettings->showfroregistra;
+		$g_inv   = $this->jemsettings->regallowinvitation;
 		$e_dates = $item->dates;
 		$e_times = $item->times;
-		$e_hours = (int)$item->unregistra_until;
+		$e_reg   = $item->registra;
+		$e_unreg = $item->unregistra;
 
-		//$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
-		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
-		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
+		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
+		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
+		$this->e_reg = $e_reg;
 
-		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_dates.' '.$e_times.' -'.$e_hours.' hour') > strtotime('now'))));
+		$timeNow = time();
+		$this->dateRegistationFrom    = strtotime(($item->registra_from ?? ''));
+		$this->dateRegistationUntil   = strtotime(($item->registra_until ?? ''));
+		$this->dateUnregistationUntil = strtotime(($item->unregistra_until ?? ''));
+		$this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && $timeNow < $this->dateRegistationUntil)));
+		$this->allowAnnulation        = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
 
 		// Timecheck for registration
-		$now = strtotime(date("Y-m-d"));
-		$date = empty($item->dates) ? $now : strtotime($item->dates);
-		$enddate = empty($item->enddates) ? $date : strtotime($item->enddates);
+		$now       = strtotime(date("Y-m-d"));
+		$date      = empty($item->dates) ? $now : strtotime($item->dates);
+		$enddate   = empty($item->enddates) ? $date : strtotime($item->enddates);
 		$timecheck = $now - $date; // on open date $timecheck is 0
 
 		// let's build the registration handling
@@ -376,7 +380,7 @@ class JemViewEvent extends JemView
 		}
 
 		$this->_prepareDocument();
-		
+
 		parent::display($tpl);
 	}
 
@@ -389,38 +393,38 @@ class JemViewEvent extends JemView
 
 		switch ($keyword)
 		{
-		case 'categories':
-			$catnames = array();
-			foreach ($categories as $category) {
-				$catnames[] = $this->escape($category->catname);
-			}
-			$content = implode(', ', array_filter($catnames));
-			break;
+			case 'categories':
+				$catnames = array();
+				foreach ($categories as $category) {
+					$catnames[] = $this->escape($category->catname);
+				}
+				$content = implode(', ', array_filter($catnames));
+				break;
 
-		case 'a_name':
-			$content = $row->venue;
-			break;
+			case 'a_name':
+				$content = $row->venue;
+				break;
 
-		case 'times':
-		case 'endtimes':
-			if (isset($row->$keyword)) {
-				$content = JemOutput::formattime($row->$keyword);
-			}
-			break;
+			case 'times':
+			case 'endtimes':
+				if (isset($row->$keyword)) {
+					$content = JemOutput::formattime($row->$keyword);
+				}
+				break;
 
-		case 'dates':
-		case 'enddates':
-			if (isset($row->$keyword)) {
-				$content = JemOutput::formatdate($row->$keyword);
-			}
-			break;
+			case 'dates':
+			case 'enddates':
+				if (isset($row->$keyword)) {
+					$content = JemOutput::formatdate($row->$keyword);
+				}
+				break;
 
-		case 'title':
-		default:
-			if (isset($row->$keyword)) {
-				$content = $row->$keyword;
-			}
-			break;
+			case 'title':
+			default:
+				if (isset($row->$keyword)) {
+					$content = $row->$keyword;
+				}
+				break;
 		}
 
 		return $content;
@@ -432,8 +436,8 @@ class JemViewEvent extends JemView
 	protected function _prepareDocument()
 	{
 		$app     = Factory::getApplication();
-	//	$menus   = $app->getMenu();
-	//	$pathway = $app->getPathway();
+		//	$menus   = $app->getMenu();
+		//	$pathway = $app->getPathway();
 
 		// add css file
 		JemHelper::loadCss('jem');
@@ -445,40 +449,40 @@ class JemViewEvent extends JemView
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 
-	/*
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
+		/*
+            // Because the application sets a default page title,
+            // we need to get it from the menu item itself
+            $menu = $menus->getActive();
 
-		if ($menu) {
-			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-		} else {
-			$this->params->def('page_heading', Text::_('JGLOBAL_JEM_EVENT'));
-		}
-	*/
+            if ($menu) {
+                $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+            } else {
+                $this->params->def('page_heading', Text::_('JGLOBAL_JEM_EVENT'));
+            }
+        */
 		$title = $this->params->get('page_title', '');
-	/*
-		$id = (int) @$menu->query['id'];
+		/*
+            $id = (int) @$menu->query['id'];
 
-		// if the menu item does not concern this event
-		if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id)) {
-			// If this is not a single event menu item, set the page title to the event title
-			if ($this->item->title) {
-				$title = $this->item->title;
-			}
-			$path = array(array('title' => $this->item->title, 'link' => ''));
-			$category = JCategories::getInstance('JEM2')->get($this->item->catid);
-			while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
-					|| $id != $category->id) && $category->id > 1) {
-				$path[] = array('title' => $category->catname, 'link' => JemHelperRoute::getCategoryRoute($category->id));
-				$category = $category->getParent();
-			}
-			$path = array_reverse($path);
-			foreach($path as $item) {
-				$pathway->addItem($item['title'], $item['link']);
-			}
-		}
-	*/
+            // if the menu item does not concern this event
+            if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id)) {
+                // If this is not a single event menu item, set the page title to the event title
+                if ($this->item->title) {
+                    $title = $this->item->title;
+                }
+                $path = array(array('title' => $this->item->title, 'link' => ''));
+                $category = JCategories::getInstance('JEM2')->get($this->item->catid);
+                while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
+                        || $id != $category->id) && $category->id > 1) {
+                    $path[] = array('title' => $category->catname, 'link' => JemHelperRoute::getCategoryRoute($category->id));
+                    $category = $category->getParent();
+                }
+                $path = array_reverse($path);
+                foreach($path as $item) {
+                    $pathway->addItem($item['title'], $item['link']);
+                }
+            }
+        */
 		// Check for empty title and add site name if param is set
 		if (empty($title)) {
 			$title = $app->get('sitename');
@@ -511,8 +515,9 @@ class JemViewEvent extends JemView
 		if (!empty($this->item->page_title)) {
 			$this->item->title = $this->item->title . ' - ' . $this->item->page_title;
 			$this->document->setTitle($this->item->page_title . ' - '
-					. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
+				. Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM', $this->state->get('list.offset') + 1));
 		}
 	}
+
 }
 ?>

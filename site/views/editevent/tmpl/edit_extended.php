@@ -200,16 +200,16 @@ use Joomla\CMS\Date\Date;
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo Text::_('JYES'); ?></li>
                 <?php else : ?>
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?></li>
+                    <li><div id="registra_from"><label><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM');?></label><?php echo $this->form->getInput('registra_from'); ?><span id="jform_registra_from2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></div></li>
+                    <li><div id="registra_until"><label><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL');?></label><?php echo $this->form->getInput('registra_until'); ?><span id="jform_registra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></div></li>
                 <?php endif; ?>
                 <br/>
                 <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
                     <li><?php echo $this->form->getLabel('reginvitedonly'); ?> <?php echo $this->form->getInput('reginvitedonly'); ?></li>
-                <?php endif; ?>
-                <br/>
-                <li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
-                    <?php echo $this->form->getInput('unregistra_until'); ?>
-                    <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
-                </li>
+					<br/>
+                <?php endif; ?>              
+                <li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?></li>
+                <li><div id="unregistra_until"><label></label><?php echo $this->form->getInput('unregistra_until'); ?><span id="jform_unregistra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></div></li>
                 <br/>
                 <li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
                 <br/>
