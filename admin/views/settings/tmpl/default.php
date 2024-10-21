@@ -126,7 +126,6 @@ jQuery(document).ready(function($){
 		commoff();
 	}
 
-
 	var ObjArray = $('input.colorpicker').get('id').sort();
 
 	var arrayLength = ObjArray.length;
