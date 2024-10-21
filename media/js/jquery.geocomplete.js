@@ -124,7 +124,7 @@
             }
 
             this.map = new google.maps.Map(
-                $(this.options.map)[0],
+                $.find(this.options.map)[0],
                 this.options.mapOptions
             );
 
