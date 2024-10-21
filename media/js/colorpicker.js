@@ -11,228 +11,277 @@
  *  https://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
  *  
  *--------------------------------------------------------------------------*/
-// JavaScript Document
-var layerWidth = 218;
-var layerHeight = 144;
-var currentId = "";
-var orgColor = "";
-var onPick = "";
-var onCancel = "";
+
+const ColorPickerState = {
+    layerWidth: 218,
+    layerHeight: 144,
+    currentId: "",
+    orgColor: "",
+    onPick: null,
+    onCancel: null
+};
+
+function isValidColor(color) {
+    return /^#[0-9A-F]{6}$/i.test(color);
+}
 
 function openPicker(id, _onPick, _onCancel) {
     if (_onPick) {
-        onPick = _onPick;
+        ColorPickerState.onPick = _onPick;
     }
     if (_onCancel) {
-        onCancel = _onCancel;
+        ColorPickerState.onCancel = _onCancel;
     }
-    currentId = id;
+    ColorPickerState.currentId = id;
     removeLayer("picker");
-    Obj = document.getElementById(id);
+    
+    const targetObj = document.getElementById(id);
+    if (!targetObj) {
+        console.error('Target element not found:', id);
+        return;
+    }
 
-    orgColor = Obj.value;
-    createLayer("picker", findPosX(Obj) + Obj.offsetWidth + 20, findPosY(Obj));
+    ColorPickerState.orgColor = targetObj.value;
+    const pos = targetObj.getBoundingClientRect();
+    createLayer("picker", pos.right + 20, pos.top);
 }
 
 function createLayer(id, left, top) {
-    var width = layerWidth;
-    var height = layerHeight;
-    var zindex = 1000;
-    var bgcolor = "#d4d0c8";
-    var txtcolor = "#000000";
-    var msg = getPickerContent();
-    if (document.layers) {
-        if (document.layers[id]) {
-            return;
-        }
-        var layer = document.layers[id] = new Layer(width);
-        layer.className = "picker_layer";
-        layer.name = id;
-        layer.left = left;
-        layer.top = top;
-        layer.clip.height = height;
-        layer.visibility = 'show';
-        layer.zIndex = zindex;
-        layer.bgColor = bgcolor;
-        layer.innerHTML = msg;
-    } else if (document.all) {
-        if (document.all[id]) {
-            return
-        }
-        var layer = '\n<DIV class="picker_layer" id=' + id + ' style="position:absolute'
-            + '; left:' + left + "px"
-            + '; top:' + top + "px"
-            + '; width:' + width
-            + '; height:' + height
-            + '; visibility:visible'
-            + '; z-index:' + zindex
-            + ';text-align:left">'
-            + msg
-            + '</DIV>';
-        document.body.insertAdjacentHTML("BeforeEnd", layer);
-    } else if (document.getElementById) {
-        var layer = document.createElement('div');
-        layer.setAttribute('id', id);
-        document.body.appendChild(layer);
-        var ly = document.getElementById(id);
-        ly.className = "picker_layer";
-        ly.style.position = "absolute";
-        ly.style.left = left + "px";
-        ly.style.top = top + "px";
-        ly.style.width = width + "px";
-        ly.style.height = height + "px";
-        ly.style.textAlign = "left";
-        ly.innerHTML = msg;
+    const existingLayer = document.getElementById(id);
+    if (existingLayer) {
+        return;
     }
+
+    const layer = document.createElement('div');
+    layer.id = id;
+    layer.className = "picker_layer";
+    
+    Object.assign(layer.style, {
+        position: 'absolute',
+        left: `${left}px`,
+        top: `${top}px`,
+        width: `${ColorPickerState.layerWidth}px`,
+        height: `${ColorPickerState.layerHeight}px`,
+        zIndex: '1000',
+        textAlign: 'left'
+    });
+
+    layer.innerHTML = getPickerContent();
+    document.body.appendChild(layer);
+    
+    // Event Listener für die Farbzellen hinzufügen
+    setupColorCellEvents();
+}
+
+function setupColorCellEvents() {
+    const cells = document.querySelectorAll('.cell_color');
+    cells.forEach(cell => {
+        cell.addEventListener('mouseover', () => showClr(cell.dataset.color));
+        cell.addEventListener('click', () => setClr(cell.dataset.color));
+    });
 }
 
 function showClr(color) {
-    Obj = document.getElementById(currentId);
-    Obj.value = color;
-    Obj.style.backgroundColor = color;
-    Obj = document.getElementById("gcpicker_colorSample");
-    Obj.style.backgroundColor = color;
-    Obj = document.getElementById("gcpicker_colorCode");
-    Obj.innerHTML = color;
+    if (!isValidColor(color)) {
+        console.error('Invalid color format:', color);
+        return;
+    }
 
+    const targetObj = document.getElementById(ColorPickerState.currentId);
+    const colorSample = document.getElementById("gcpicker_colorSample");
+    const colorCode = document.getElementById("gcpicker_colorCode");
+    
+    if (!targetObj || !colorSample || !colorCode) {
+        console.error('Required elements not found');
+        return;
+    }
+    
+    targetObj.value = color;
+    targetObj.style.backgroundColor = color;
+    colorSample.style.backgroundColor = color;
+    colorCode.textContent = color;
 }
 
 function setClr(color) {
-    Obj = document.getElementById(currentId);
-    Obj.value = color;
-    Obj.style.backgroundColor = color;
-    currentId = "";
-    removeLayer("picker");
-    if (onPick) {
-        var fontcolor = testcolor(color);
-        Obj.style.color = fontcolor;
+    if (!isValidColor(color)) {
+        console.error('Invalid color:', color);
+        return;
     }
+
+    const targetObj = document.getElementById(ColorPickerState.currentId);
+    if (!targetObj) {
+        console.error('Target element not found:', ColorPickerState.currentId);
+        return;
+    }
+
+    targetObj.value = color;
+    targetObj.style.backgroundColor = color;
+    
+    if (ColorPickerState.onPick) {
+        const fontColor = testcolor(color);
+        targetObj.style.color = fontColor;
+    }
+    
+    ColorPickerState.currentId = "";
+    removeLayer("picker");
 }
 
 function cancel() {
-    Obj = document.getElementById(currentId);
-    Obj.value = orgColor;
-    Obj.style.backgroundColor = orgColor;
+    const targetObj = document.getElementById(ColorPickerState.currentId);
+    if (!targetObj) {
+        console.error('Target element not found:', ColorPickerState.currentId);
+        return;
+    }
+
+    targetObj.value = ColorPickerState.orgColor;
+    targetObj.style.backgroundColor = ColorPickerState.orgColor;
     removeLayer("picker");
-    if (onCancel) {
+    
+    if (ColorPickerState.onCancel) {
+        ColorPickerState.onCancel();
     }
 }
 
 function removeLayer(id) {
-    if (document.getElementById(id) == null) {
-        return;
-    }
-    if (document.layers && document.layers[id]) {
-        document.layers[id].visibility = 'hide';
-        delete document.layers[id];
-    }
-    if (document.all && document.all[id]) {
-        document.all[id].innerHTML = '';
-        document.all[id].outerHTML = '';
-    } else if (document.getElementById) {
-        var b = document.body;
-        var layer = document.getElementById(id);
-        b.removeChild(layer);
+    const element = document.getElementById(id);
+    if (element) {
+        element.innerHTML = '';
+        element.remove();
     }
 }
 
 function getPickerContent() {
-    var content = '<table width="222" border="0" cellpadding="0" cellspacing="1"><tr><td>';
-    content += '<table width="100%" border="0" cellpadding="0" cellspacing="1" class="color_table"><tr><td bgcolor="' + orgColor + '" id="gcpicker_colorSample" width="40px" class="choosed_color_cell">&nbsp;</td><td align="center"><div id="gcpicker_colorCode">' + orgColor + '</div></td><td width="60px" align="center"><input type="submit" value="" onclick="cancel()" class="default_color_btn" /></td></tr></table>';
-    content += '</td></tr><tr><td>';
-    content += colorTable() + '</td></tr></table>';
-    return content;
+    return `
+        <div class="picker-container">
+            <table width="222" border="0" cellpadding="0" cellspacing="1">
+                <tr>
+                    <td>
+                        <table width="100%" border="0" cellpadding="0" cellspacing="1" class="color_table">
+                            <tr>
+                                <td bgcolor="${ColorPickerState.orgColor}" id="gcpicker_colorSample" width="40px" class="choosed_color_cell">&nbsp;</td>
+                                <td align="center"><div id="gcpicker_colorCode">${ColorPickerState.orgColor}</div></td>
+                                <td width="60px" align="center">
+                                    <button onclick="cancel()" class="default_color_btn">Reset</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>${colorTable()}</td>
+                </tr>
+            </table>
+        </div>
+    `;
 }
 
 function colorTable() {
-    var clrfix = Array("#000000", "#333333", "#666666", "#999999", "#cccccc", "#ffffff", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff");
-    var table = '<table border="0"  cellpadding="0" cellspacing="0" bgcolor="#000000"><tr>';
-    table += '';
-    for (var j = 0; j < 3; j++) {
-        table += '<td width="11"><table bgcolor="#000000"  border="0"  cellpadding="0" cellspacing="1"  class="color_table">';
-        for (var i = 0; i < 12; i++) {
-            var clr = '#000000';
-            if (j == 1) {
-                clr = clrfix[i];
-            }
-            table += '<tr><td bgcolor="' + clr + '" class="cell_color" onmouseover="showClr(' + "'" + clr + "'" + ')" onclick="setClr(' + "'" + clr + "'" + ')"></td></tr>';
+    const basicColors = [
+        "#000000", "#333333", "#666666", "#999999", "#cccccc", "#ffffff",
+        "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff"
+    ];
+
+    let table = '<table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000"><tr>';
+    
+    // Basis-Farben
+    for (let j = 0; j < 3; j++) {
+        table += '<td width="11"><table bgcolor="#000000" border="0" cellpadding="0" cellspacing="1" class="color_table">';
+        for (let i = 0; i < 12; i++) {
+            const color = j === 1 ? basicColors[i] : '#000000';
+            table += `<tr><td bgcolor="${color}" class="cell_color" data-color="${color}"></td></tr>`;
         }
         table += '</table></td>';
     }
+    
+    // Farbspektrum
     table += '<td><table border="0" cellpadding="0" cellspacing="0">';
-    for (var c = 0; c < 6; c++) {
-        if (c == 0 || c == 3) {
-            table += "<tr>";
-        }
+    for (let c = 0; c < 6; c++) {
+        if (c === 0 || c === 3) table += "<tr>";
         table += "<td>";
-
-        table = table + '<table border="0" cellpadding="0" cellspacing="1" class="color_table"> ';
-        for (var j = 0; j < 6; j++) {
+        
+        table += '<table border="0" cellpadding="0" cellspacing="1" class="color_table">';
+        for (let j = 0; j < 6; j++) {
             table += "<tr>";
-            for (var i = 0; i < 6; i++) {
-                var clrhex = rgb2hex(j * 255 / 5, i * 255 / 5, c * 255 / 5);
-                table += '<td bgcolor="' + clrhex + '" class="cell_color" onmouseover="showClr(' + "'" + clrhex + "'" + ')" onclick="setClr(' + "'" + clrhex + "'" + ')"></td>';
+            for (let i = 0; i < 6; i++) {
+                const color = rgb2hex(j * 255 / 5, i * 255 / 5, c * 255 / 5);
+                table += `<td bgcolor="${color}" class="cell_color" data-color="${color}"></td>`;
             }
             table += "</tr>";
         }
-        table += "</table>";
-        table += "</td>";
-        if (c == 2 || c == 5) {
-            table += "</tr>";
-        }
+        table += "</table></td>";
+        if (c === 2 || c === 5) table += "</tr>";
     }
     table += '</table></td></tr></table>';
     return table;
 }
 
-function findPosX(obj) {
-    var curleft = 0;
-    if (obj.offsetParent)
-        while (1) {
-            curleft += obj.offsetLeft;
-            if (!obj.offsetParent)
-                break;
-            obj = obj.offsetParent;
-        }
-    else if (obj.x)
-        curleft += obj.x;
-    return curleft;
-}
-
-function findPosY(obj) {
-    var curtop = 0;
-    if (obj.offsetParent) {
-        while (1) {
-            curtop += obj.offsetTop;
-            if (!obj.offsetParent) {
-                break;
-            }
-            obj = obj.offsetParent;
-        }
-    } else if (obj.y) {
-        curtop += obj.y;
-    }
-    return curtop;
-}
-
 function rgb2hex(red, green, blue) {
-    var decColor = red + 256 * green + 65536 * blue;
-    var clr = decColor.toString(16);
-    for (var i = clr.length; i < 6; i++) {
-        clr = "0" + clr;
-    }
-    return "#" + clr;
+    const r = Math.max(0, Math.min(255, Math.round(red))).toString(16).padStart(2, '0');
+    const g = Math.max(0, Math.min(255, Math.round(green))).toString(16).padStart(2, '0');
+    const b = Math.max(0, Math.min(255, Math.round(blue))).toString(16).padStart(2, '0');
+    return `#${r}${g}${b}`;
 }
 
 function testcolor(color) {
-    if (color.length == 7) {
-        color = color.substring(1);
+    if (!color || typeof color !== 'string') {
+        return '#000000';
     }
-    var R = parseInt(color.substring(0, 2), 16);
-    var G = parseInt(color.substring(2, 4), 16);
-    var B = parseInt(color.substring(4, 6), 16);
-    var x = Math.sqrt(R * R * .299 + G * G * .587 + B * B * .114);
-    var sColorText = x < 130 ? '#FFFFFF' : '#000000';
+    
+    color = color.replace(/^#/, '');
+    if (!/^[0-9A-F]{6}$/i.test(color)) {
+        return '#000000';
+    }
+    
+    const R = parseInt(color.substring(0, 2), 16);
+    const G = parseInt(color.substring(2, 4), 16);
+    const B = parseInt(color.substring(4, 6), 16);
+    const brightness = Math.sqrt(
+        R * R * 0.299 +
+        G * G * 0.587 +
+        B * B * 0.114
+    );
+    
+    return brightness < 130 ? '#FFFFFF' : '#000000';
+}
 
-    return sColorText;
-}	
+// CSS Styles
+const styles = `
+.picker_layer {
+    background: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.cell_color {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.cell_color:hover {
+    outline: 1px solid #fff;
+}
+
+.choosed_color_cell {
+    border: 1px solid #ccc;
+}
+
+.default_color_btn {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    background: #f0f0f0;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.default_color_btn:hover {
+    background: #e0e0e0;
+}
+`;
+
+// Styles einfügen
+const styleSheet = document.createElement('style');
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet);
