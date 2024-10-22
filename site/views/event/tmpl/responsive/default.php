@@ -99,7 +99,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
               ?>
             </span>
                     </dd>
-                    <?php if ($this->item->locid != 0) : ?>
+                    <?php if (!empty($this->item->locid)) : ?>
                         <dt class="jem-where hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHERE'); ?>"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>
                         <dd class="jem-where"><?php
                             if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
@@ -274,8 +274,8 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php $this->attachments = $this->item->attachments; ?>
         <?php echo $this->loadTemplate('attachments'); ?>
 
-        <!--  	Venue  -->
-        <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
+        <!-- Venue -->
+        <?php if ((!empty($this->item->locid)) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr class="jem-hr">
 
@@ -434,8 +434,37 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php echo $this->loadTemplate('attachments'); ?>
 
             </div>
-        <?php endif; ?>
+            
+         <?php elseif (empty($this->item->locid)) : ?>
+         <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+        	<meta itemprop="name" content="None"/>
+        </div>
 
+        <?php else : ?>
+            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display: none;">
+                	<?php if ($this->item->street) : ?>
+                		<meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
+                	<?php endif; ?>
+                	<?php if ($this->item->postalCode) : ?>
+                		<meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
+                	<?php endif; ?>
+                	<?php if ($this->item->city) : ?>
+                		<meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
+                	<?php endif; ?>
+                	<?php if ($this->item->state) : ?>
+                		<meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
+                	<?php endif; ?>
+                	<?php if ($this->item->country) : ?>
+                		<meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
+                	<?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+        
+        
+        
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) { ?>
             <hr class="jem-hr">
