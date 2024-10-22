@@ -35,11 +35,6 @@ class JemViewVenue extends JemAdminView
 			return false;
 		}
 
-		// HTMLHelper::_('behavior.framework');
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.formvalidation');
-
 		//initialise variables
         $app = Factory::getApplication();
         $this->document = $app->getDocument();
