@@ -1232,7 +1232,7 @@ static public function lightbox() {
 				elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
 					$url = $uri->base().$image['original'];
 					$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
-					$icon = '<img class="example-thumbnail" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+					$icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 					$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>'; 
 				
 				}
