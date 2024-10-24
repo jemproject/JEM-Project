@@ -129,6 +129,10 @@ abstract class ModJemHelper
 
 			$lists[$i]->eventid  = $row->id;
 			$lists[$i]->link     = Route::_(JemHelperRoute::getEventRoute($row->slug));
+            $lists[$i]->dates    = $row->dates;
+            $lists[$i]->times    = $row->times;
+            $lists[$i]->enddates = $row->enddates;
+            $lists[$i]->endtimes = $row->endtimes;
 			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
 			                                                 $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->text     = $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
