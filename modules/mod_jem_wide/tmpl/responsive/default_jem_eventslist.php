@@ -84,14 +84,14 @@ $jemsettings = JemHelper::config();
       ?>
 			<?php foreach ($list as $item) : ?>
         <?php if (!empty($item->featured)) :   ?>
-          <li class="jem-event jem-row jem-justify-start jem-featured <?php echo ' event_id'.$item->eventid; ?> jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li itemprop="event" itemscope itemtype="https://schema.org/Event" class="jem-event jem-row jem-justify-start jem-featured <?php echo ' event_id'.$item->eventid; ?> jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php else : ?>
-          <li class="jem-event jem-row jem-justify-start <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li itemprop="event" itemscope itemtype="https://schema.org/Event" class="jem-event jem-row jem-justify-start <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
 				<?php endif; ?>       
           <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?>>
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
-            <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
-              <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
+            <h4 itemprop="name" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>" content="<?php echo $item->fulltitle; ?>">
+              <a itemprop="url" href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
               <?php echo JemOutput::recurrenceicon($item); ?>
               <?php echo JemOutput::publishstateicon($item); ?>
               <?php if (!empty($item->featured)) :?>
@@ -100,7 +100,7 @@ $jemsettings = JemHelper::config();
             </h4>
             
             <?php elseif ($params->get('linkevent') == 0) : //Display title as title of jem-event without link ?>
-            <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
+            <h4 itemprop="name" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <?php echo $item->title . JemOutput::recurrenceicon($item) . JemOutput::publishstateicon($item); ?>
               <?php if (!empty($item->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
@@ -113,24 +113,31 @@ $jemsettings = JemHelper::config();
               
               <?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
                 <div class="jem-event-info date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                  <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
-                  <?php echo $item->date; ?>
+                  <?php echo $item->date;
+                  echo $item->dateschema; ?>
                 </div>
               <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
                 <div class="jem-event-info time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                  <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
-                  <?php echo $item->dateinfo; ?>
+                  <?php echo $item->date;
+                  echo $item->dateschema; ?>
                 </div>
               <?php endif; ?>
               
               <?php if (!empty($item->venue) && (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue'))) : ?>
-                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
+                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if ($params->get('linkvenue') == 1) : ?>
                     <?php echo "<a href='".$item->venuelink."'>".$item->venue."</a>"; ?>
                   <?php else : ?>
                     <?php echo $item->venue; ?>
                   <?php endif; ?>
+                    <meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                  <div class="address" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                  	<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                  	<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                  	<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                  	<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                  </div>
                 </div>
               <?php endif; ?>
 
@@ -175,7 +182,7 @@ $jemsettings = JemHelper::config();
 				
               <a href="<?php echo $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>"  data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
               <?php endif; ?>
-                <img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->fulltitle; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
+                <img src="<?php echo $item->eventimage; ?>" itemprop="image" alt="<?php echo $item->fulltitle; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
               <?php if ($params->get('use_modal')) : ?>
               </a>
               <?php endif; ?>
@@ -187,7 +194,7 @@ $jemsettings = JemHelper::config();
               <?php if ($params->get('use_modal')) : ?>
                 <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                 <?php endif; ?>
-                  <img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
+                  <img src="<?php echo $item->venueimage; ?>" itemprop="image" alt="<?php echo $item->venue; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
                 <?php if ($item->venuelink) : ?>
                 </a>
               <?php endif; ?>
