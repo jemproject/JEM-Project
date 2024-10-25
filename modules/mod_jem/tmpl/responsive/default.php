@@ -53,7 +53,7 @@ $settings = JemHelper::config();
               echo $item->title;
 
           elseif ($showtitloc == 0 && $linkdet == 1) :
-              echo $item->venue . ', ';
+              echo $item->venue;
         endif; ?>
 
         </span>
@@ -87,6 +87,6 @@ $settings = JemHelper::config();
     <?php endforeach; ?>
   </ul>
 <?php else : ?>
-  <?php echo Text::_('COM_JEM_NO_EVENTS'); ?>
+	<?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
 <?php endif; ?>
 </div>
