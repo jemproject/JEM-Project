@@ -39,7 +39,7 @@ if ($flyer_link_type == 1) {
         <?php if ($showcalendar == 1) :?>
 		<?php if ($colorclass === "alpha"): ?>
 			<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
-               <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+               <div class="color-bar" style="background-color:<?php echo !empty($user_color) ? $user_color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
     	<?php else: ?>
