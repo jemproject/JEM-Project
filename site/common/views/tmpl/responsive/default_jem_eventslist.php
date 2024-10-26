@@ -12,7 +12,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-
+use Joomla\CMS\Factory;
 ?>
 
 <script>
@@ -25,7 +25,6 @@ use Joomla\CMS\Router\Route;
     }
 </script>
 
-<style>
     <?php
     $imagewidth = 'inherit';
     if ($this->jemsettings->imagewidth != 0) {
@@ -57,15 +56,16 @@ use Joomla\CMS\Router\Route;
       $endpos = $spacepos - $startpos;
       $imageheight = substr($pageclass_sfx, $startpos, $endpos);
     }
-    ?>
 
-    #jem .jem-list-img {
-        width: <?php echo $imagewidth; ?>;
+$document = Factory::getDocument();
+$css = '
+#jem .jem-list-img {
+        width: ' . $imagewidth . ';
     }
 
     #jem .jem-list-img img {
-        width: <?php echo $imagewidth; ?>;
-        height: <?php echo $imageheight; ?>;
+        width: ' . $imagewidth . ';
+        height: ' . $imageheight . ';
     }
 
     @media not print {
@@ -75,13 +75,14 @@ use Joomla\CMS\Router\Route;
             }
 
             #jem .jem-list-img img {
-                width: <?php echo $imagewidth; ?>;
-                height: <?php echo $imageheight; ?>;
+            	width: ' . $imagewidth . ';
+            	height: ' . $imageheight . ';
             }
         }
-    }
-</style>
-<?php
+    }';
+$document->addStyleDeclaration($css);
+
+
 $uri = Uri::getInstance();
 function jem_common_show_filter(&$obj)
 {
