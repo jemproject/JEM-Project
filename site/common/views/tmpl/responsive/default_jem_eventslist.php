@@ -322,7 +322,7 @@ function jem_common_show_filter(&$obj)
                         <?php else : ?>
                             <div class="jem-event-info-small jem-event-attendees">
                                 <i class="fa fa-user" aria-hidden="true"></i>
-                                <?php echo " &lg; ", $this->escape($row->maxplaces); ?>
+                                <?php echo " &lt; ", $this->escape($row->maxplaces); ?>
 
                             </div>
                         <?php endif; ?>
