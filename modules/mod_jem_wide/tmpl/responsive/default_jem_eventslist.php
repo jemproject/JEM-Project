@@ -88,7 +88,7 @@ $jemsettings = JemHelper::config();
 				<?php else : ?>
           <li class="jem-event jem-row jem-justify-start <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?> >
 				<?php endif; ?>       
-          <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href=\''.$item->eventlink.'\'"'; endif; ?>>
+          <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?>>
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>
