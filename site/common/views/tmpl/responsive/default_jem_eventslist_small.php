@@ -113,7 +113,7 @@ function jem_common_show_filter(&$obj) {
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
     <div class="jem-row jem-justify-start jem-nowrap">
     <?php echo $this->lists['filter']; ?>
-     <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+     <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" onchange="document.adminForm.submit();" />
     </div>
         <div>
             <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
