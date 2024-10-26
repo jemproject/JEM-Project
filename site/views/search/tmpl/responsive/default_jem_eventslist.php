@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 $uri = Uri::getInstance();
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");

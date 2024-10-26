@@ -24,7 +24,7 @@ $wa = $this->document->getWebAssetManager();
 			->useScript('form.validate');
 ?>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'category.cancel' || document.formvalidator.isValid(document.getElementById('item-form'))) {

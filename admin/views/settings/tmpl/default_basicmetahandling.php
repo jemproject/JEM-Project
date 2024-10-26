@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 ?>
 
-<script type="text/javascript">
+<script>
 <!--
 	function insert_keyword($keyword) {
 		document.getElementById("jform_meta_description").value += " " + $keyword;

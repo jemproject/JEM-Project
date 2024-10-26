@@ -45,7 +45,7 @@ $params = $params->toArray();
 
 ?>
 
-<script type="text/javascript">
+<script>
     function checkmaxplaces()
     {
         $('#jform_maxplaces').on('change', function(){
@@ -111,7 +111,7 @@ $params = $params->toArray();
         document.getElementById('comm1').style.display = 'none';
     }
 </script>
-<script type="text/javascript">
+<script>
     Joomla.submitbutton = function(task)
     {
         if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('event-form'))) {
@@ -574,7 +574,7 @@ $params = $params->toArray();
                                 </ul>
                             </fieldset>
 
-                            <script type="text/javascript">
+                            <script>
                                 <!--
                                 starter("<?php
                                     echo Text::_ ( 'COM_JEM_META_ERROR' );

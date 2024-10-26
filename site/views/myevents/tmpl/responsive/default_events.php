@@ -19,7 +19,7 @@ use Joomla\CMS\Router\Route;
 <h2><?php echo Text::_('COM_JEM_MY_EVENTS'); ?></h2>
 <?php endif; ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");

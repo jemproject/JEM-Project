@@ -28,7 +28,7 @@ $params = $params->toArray();
 $location = JemHelper::defineCenterMap($this->form);
 ?>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'venue.cancel' || document.formvalidator.isValid(document.getElementById('venue-form'))) {

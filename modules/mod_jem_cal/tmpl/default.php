@@ -24,7 +24,7 @@ $use_ajax = !empty($use_ajax);
 
 # Use Ajax to navigate through the months if JS is enabled on browser.
 if ($use_ajax && empty($module->in_ajax_call)) { ?>
-<script type="text/javascript">
+<script>
 jQuery(document).ready(function(){
 	jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
 	jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "table-caption");

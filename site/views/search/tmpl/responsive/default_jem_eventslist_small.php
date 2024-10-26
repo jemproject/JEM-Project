@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 $uri = Uri::getInstance();
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");
@@ -196,7 +196,6 @@ $uri = Uri::getInstance();
   <div class="jem-limit-smallist">
     <?php
       echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-      //echo '<span class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
       echo $this->pagination->getLimitBox();
     ?>
   </div>

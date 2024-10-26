@@ -20,7 +20,7 @@ $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate')
 ?>
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'source.cancel' || document.formvalidator.isValid(document.getElementById('source-form'))) {

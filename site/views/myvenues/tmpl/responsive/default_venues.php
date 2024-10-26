@@ -61,7 +61,7 @@ use Joomla\CMS\Router\Route;
   }
 </style>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");

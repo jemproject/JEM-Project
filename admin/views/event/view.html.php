@@ -67,7 +67,7 @@ class JemViewEvent extends JemAdminView
 
 
 		// JQuery noConflict
-		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
+		//$document->addCustomTag('<script>jQuery.noConflict();</script>');
 		//$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		//$document->addScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 

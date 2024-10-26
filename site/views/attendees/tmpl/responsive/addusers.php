@@ -29,7 +29,7 @@ if (empty($form)) {
 }
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");
@@ -39,7 +39,7 @@ if (empty($form)) {
 		form.submit( view );
 	}
 </script>
-<script type="text/javascript">
+<script>
 	function checkList(form)
 	{
 		var r='', i, n, e;

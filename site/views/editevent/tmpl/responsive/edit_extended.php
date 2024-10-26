@@ -64,7 +64,7 @@ use Joomla\CMS\Date\Date;
     <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number;?>"></input>
     <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday; ?>" />
 
-    <script type="text/javascript">
+    <script>
 
         <!--
         var $select_output = new Array();
