@@ -19,10 +19,7 @@ if ($params->get('use_modal', 0)) {
 } else {
 	$modal = 'notmodal';
 }
-?>
 
-<style>
- <?php
  $imagewidth = 'inherit';
  if ($jemsettings->imagewidth != 0) {
   $imagewidth = $jemsettings->imagewidth .'px';
@@ -52,27 +49,27 @@ if ($params->get('use_modal', 0)) {
    $endpos = $spacepos - $startpos;
    $imageheight = substr($pageclass_sfx, $startpos, $endpos);
  }
- ?>
 
+$document = Factory::getDocument();
+$css = '
     #jemmoduleteaser .jem-eventimg-teaser img {
         width: 100%;
-        height: <?php echo $imageheight; ?>;
+        height: ' . $imageheight . ';
     }
 
     @media not print {
         @media only all and (max-width: 47.938rem) {
 
-      
       #jemmoduleteaser .jem-eventimg-teaser img {
-        width: <?php echo $imagewidth; ?>;
-        height: <?php echo $imageheight; ?>;
+        width: ' . $imagewidth . ';
+        height: ' . $imageheight . ';
       }
     }
-  }
-</style>
+  }';
+$document->addStyleDeclaration($css);
+?>
 
 <div class="jemmoduleteaser<?php echo $params->get('moduleclass_sfx')?>" id="jemmoduleteaser">
-<?php ?>
 	<div class="eventset">
 	<?php if (count($list)) : ?>
     <?php

@@ -14,10 +14,6 @@ use Joomla\CMS\Uri\Uri;
 
 $jemsettings = JemHelper::config();
 
-?>
-
-<style>
- <?php
  $imagewidth = 'inherit';
  if ($jemsettings->imagewidth != 0) {
   $imagewidth = $jemsettings->imagewidth / 2; 
@@ -48,15 +44,16 @@ $jemsettings = JemHelper::config();
    $endpos = $spacepos - $startpos;
    $imageheight = substr($pageclass_sfx, $startpos, $endpos);
  }
- ?>
 
+$document = Factory::getDocument();
+$css = '
   #jemmodulewide .jem-list-img {
-    width: <?php echo $imagewidth; ?>;
+    width: ' . $imagewidth . ';
   }
   
   #jemmodulewide .jem-list-img img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
+    width: ' . $imagewidth . ';
+    height: ' . $imageheight . ';
   }
   
   @media not print {
@@ -66,12 +63,13 @@ $jemsettings = JemHelper::config();
       }
       
       #jemmodulewide .jem-list-img img {
-        width: <?php echo $imagewidth; ?>;
-        height: <?php echo $imageheight; ?>;
+      	width: ' . $imagewidth . ';
+      	height: ' . $imageheight . ';
       }
     }
-  }
-</style>
+  }';
+$document->addStyleDeclaration($css);
+?>
 
 <ul class="eventlist">
       <?php
