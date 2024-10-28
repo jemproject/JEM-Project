@@ -255,23 +255,24 @@ class JemViewEvent extends JemView
 		 *  but if on event limited to invited users and limitation globally allowed user must be invited
 		 *  (or event owner to see attendees)
 		 */
-		$g_reg   = $this->jemsettings->showfroregistra;
-		$g_inv   = $this->jemsettings->regallowinvitation;
-		$e_dates = $item->dates;
-		$e_times = $item->times;
-		$e_reg   = $item->registra;
-		$e_unreg = $item->unregistra;
+		$g_reg         = $this->jemsettings->showfroregistra;
+		$g_inv         = $this->jemsettings->regallowinvitation;
+		$e_dates       = $item->dates;
+		$e_times       = $item->times;
+		$e_reg         = $item->registra;
+		$e_unreg       = $item->unregistra;
+		$e_unreg_until = $item->unregistra_until;
 
-		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
-		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
+		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 3) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
+		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 3) && ($g_inv > 0))) || (is_object($registration)));
 		$this->e_reg = $e_reg;
 
 		$timeNow = time();
 		$this->dateRegistationFrom    = strtotime(($item->registra_from ?? ''));
 		$this->dateRegistationUntil   = strtotime(($item->registra_until ?? ''));
 		$this->dateUnregistationUntil = strtotime(($item->unregistra_until ?? ''));
-		$this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && $timeNow < $this->dateRegistationUntil)));
-		$this->allowAnnulation        = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
+		$this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && ($this->dateRegistationUntil? $timeNow < $this->dateRegistationUntil : 1))));
+		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_unreg_until) > strtotime('now'))));
 
 		// Timecheck for registration
 		$now       = strtotime(date("Y-m-d"));
@@ -282,17 +283,20 @@ class JemViewEvent extends JemView
 		// let's build the registration handling
 		$formhandler = 0; // too late to unregister
 
-		if (is_object($registration) && $registration->status != 0) { // is the user allready registered at the event
-			if ($now <= $enddate) { // allows registration changes on unfinished events
-				$formhandler = 4;
+		if (is_object($registration)){
+			if($registration->status != 0) { // is the user allready registered at the event
+				if ($now <= $enddate) { // allows registration changes on unfinished events
+					$formhandler = 4;
+				}
+			} else {
+				$formhandler = 3; // invited user
 			}
-			// else $formahandler = 0, see above
 		} elseif ($timecheck > 0) { // check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
 		} elseif (!$userId) { // user doesn't have an ID (mostly guest)
 			$formhandler = 2;
 		} else {
-			$formhandler = 4; // allow registration (changes)
+			$formhandler = 5; // allow registration, can be invited user
 		}
 
 		if ($formhandler >= 3) {
@@ -361,7 +365,7 @@ class JemViewEvent extends JemView
 			$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 		}
 
-		/* a bit backwaard compaibility... */
+		/* a bit backwaard compatibility... */
 		if (is_object($registration)) {
 			$this->isregistered = $registration->status;
 		} else {

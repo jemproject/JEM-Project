@@ -13,7 +13,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Date\Date;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -434,84 +433,107 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php echo $this->loadTemplate('attachments'); ?>
 
             </div>
-            
-         <?php elseif (empty($this->item->locid)) : ?>
-         <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-        	<meta itemprop="name" content="None"/>
-        </div>
+
+        <?php elseif (empty($this->item->locid)) : ?>
+            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                <meta itemprop="name" content="None"/>
+            </div>
 
         <?php else : ?>
             <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
                 <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display: none;">
-                	<?php if ($this->item->street) : ?>
-                		<meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
-                	<?php endif; ?>
-                	<?php if ($this->item->postalCode) : ?>
-                		<meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
-                	<?php endif; ?>
-                	<?php if ($this->item->city) : ?>
-                		<meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
-                	<?php endif; ?>
-                	<?php if ($this->item->state) : ?>
-                		<meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
-                	<?php endif; ?>
-                	<?php if ($this->item->country) : ?>
-                		<meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
-                	<?php endif; ?>
+                    <?php if ($this->item->street) : ?>
+                        <meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
+                    <?php endif; ?>
+                    <?php if ($this->item->postalCode) : ?>
+                        <meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
+                    <?php endif; ?>
+                    <?php if ($this->item->city) : ?>
+                        <meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
+                    <?php endif; ?>
+                    <?php if ($this->item->state) : ?>
+                        <meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
+                    <?php endif; ?>
+                    <?php if ($this->item->country) : ?>
+                        <meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>
-        
-        
-        
+
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) { ?>
             <hr class="jem-hr">
             <h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
+            <dl class="jem-dl floattext">
+                <?php
+                $timeNow = time();
 
-            <?php
-            $timeNow = time();
-
-            switch ($this->e_reg) {
-                case 0:
-                    //Event without registration (NO)
-                    echo Text::_('COM_JEM_VENUE_DESCRIPTION');
-                    break;
-                case 1:
-                    //Event with registration (YES with or witout UNTIL)
-                    echo $this->loadTemplate('attendees');
-                    if($this->dateUnregistationUntil) {
-                        echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
-                    }
-                    break;
-                case 2:
-                    //Event with date starting registration (FROM with or witout UNTIL)
-                    if($this->dateRegistationFrom > $timeNow) {
-                        echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . date('Y-m-d H:i', $this->dateRegistationFrom);
-                    }else if ($this->allowRegistration) {
-                        echo Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . ' ' . date('Y-m-d H:i', $this->dateRegistationFrom);
-                        if($this->dateRegistationUntil){
-                            echo " " . Text::_('COM_JEM_UNTIL') . ' ' . date('Y-m-d H:i', $this->dateRegistationUntil);
-                        }
+                switch ($this->e_reg) {
+                    case 0:
+                        //Event without registration (NO)
+                        echo Text::_('COM_JEM_VENUE_DESCRIPTION');
+                        break;
+                    case 1:
+                        //Event with registration (YES with or witout UNTIL)
                         echo $this->loadTemplate('attendees');
-
-                        //Event with date starting annulation
                         if($this->dateUnregistationUntil) {
-                            echo "<br>" . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
+                            echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateUnregistationUntil) . '</dd>';
                         }
-                    }else if($this->dateRegistationUntil < $timeNow) {
-                        echo Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL') . ' ' . date('Y-m-d H:i', $this->dateRegistationUntil);
-                        echo $this->loadTemplate('attendees');
+                        break;
+                    case 2:
+                        //Event with date starting registration (FROM with or witout UNTIL)
+                        if($this->dateRegistationFrom > $timeNow) {
+                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
+                        }else if ($this->allowRegistration) {
+                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
+                            if($this->dateRegistationUntil){
+                                echo " " . Text::_('COM_JEM_UNTIL') . ' ' . date('Y-m-d H:i:s', $this->dateRegistationUntil);
+                            }
+                            echo "</dd>";
+                            echo $this->loadTemplate('attendees');
 
-                        //Event with date starting annulation
-                        if($this->dateUnregistationUntil) {
-                            echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . date('Y-m-d H:i', $this->dateUnregistationUntil);
+                            //Event with date starting annulation
+                            if($this->dateUnregistationUntil) {
+                                echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateUnregistationUntil) . '</dd>';
+                            }
+                        }else if($this->dateRegistationUntil !== false && $this->dateRegistationUntil < $timeNow) {
+                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationUntil) . '</dd>';
+                            echo $this->loadTemplate('attendees');
+
+                            //Event with date starting annulation
+                            if($this->dateUnregistationUntil) {
+                                echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateUnregistationUntil) . '</dd>';
+                            }
+                        } else {
+                            // open registration to the end of event
+                            if($this->item->enddates){
+                                $endDateEvent = strtotime($this->item->enddates . ' ' . ($this->item->endtimes ? $this->item->endtimes : '23:59:59'));
+                                if($timeNow <= $endDateEvent){
+                                    echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_IS_UNTIL');
+                                } else {
+                                    echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL');
+                                }
+                                echo '</dt><dd>' . date( 'Y-m-d H:i:s', $endDateEvent) . '</dd>';
+                                echo $this->loadTemplate('attendees');
+                            }else{
+                                if(!empty($this->item->dates)) {
+                                    $endDateEvent = strtotime($this->item->dates . ' ' . ($this->item->times ? $this->item->times : '23:59:59'));
+                                    if($timeNow <= $endDateEvent){
+                                        echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_IS_UNTIL');
+                                    } else {
+                                        echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL');
+                                    }
+                                    echo '</dt><dd>' . date( 'Y-m-d H:i:s', $endDateEvent) . '</dd>';
+                                    echo $this->loadTemplate('attendees');
+                                }
+                            }
                         }
-                    }
-                    break;
-            }
-        } ?>
+                        break;
+                } ?>
+            </dl>
+        <?php } ?>
 
         <?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
             <hr class="jem-hr">

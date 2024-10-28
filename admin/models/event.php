@@ -403,6 +403,17 @@ class JemModelEvent extends JemModelAdmin
 
         if($save) {
 
+            // set to null if registration is empty
+            if($data['registra_from'] == ''){
+                $data['registra_from'] = null;
+            }
+            if($data['registra_until'] == ''){
+                $data['registra_until'] = null;
+            }
+            if($data['unregistra_until'] == ''){
+                $data['unregistra_until'] = null;
+            }
+
             // event maybe first of recurrence set -> dissolve complete set
             if (JemHelper::dissolve_recurrence($data['id'])) {
                 $this->cleanCache();
