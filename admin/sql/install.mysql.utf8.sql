@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `registra_until` datetime DEFAULT NULL,
   `unregistra` tinyint(1) NOT NULL DEFAULT 0,
   `unregistra_until` datetime DEFAULT NULL,  
+  `reginvitedonly` INT(1) NOT NULL DEFAULT '0',
   `maxplaces` int(11) NOT NULL DEFAULT '0',
   `minbookeduser` int(11) NOT NULL DEFAULT 1,
   `maxbookeduser` int(11) NOT NULL DEFAULT 1,

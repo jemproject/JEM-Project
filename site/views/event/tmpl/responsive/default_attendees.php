@@ -219,10 +219,20 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dt class="register registration hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_YOUR_REGISTRATION'); ?>"><?php echo Text::_('COM_JEM_YOUR_REGISTRATION'); ?>:</dt>
             <dd class="register registration">
                 <?php
+                $uri = Uri::getInstance();
+                $returnUrl = $uri->toString();
+                $urlLogin   = Route::_($uri->root() . 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl));
+
                 if ($this->item->published != 1) {
                     echo Text::_('COM_JEM_WRONG_STATE_FOR_REGISTER');
                 } elseif (!$this->showRegForm) {
-                    echo Text::_('COM_JEM_NOT_ALLOWED_TO_REGISTER');
+                    if(!$this->user->id){ ?>
+                        <button class="btn btn-sm btn-warning text-white px-4 py-2" style="border: none; cursor: pointer; transition: background-color 0.3s;"
+                                type="button" onclick="location.href='<?php echo $urlLogin; ?>'"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+                        <?php
+                    }else{
+                        echo Text::_('COM_JEM_NOT_ALLOWED_TO_REGISTER');
+                    }
                 } else {
                     switch ($this->formhandler) {
                         case 0:
@@ -236,21 +246,17 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                                 <span class="badge rounded-pill text-light bg-secondary">
 									<?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
 								</span>
-                                <?php
-                            }
-                            $uri = Uri::getInstance();
-                            $returnUrl = $uri->toString();
-                            $urlLogin   = Route::_($uri->root() . 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl)); ?>
-                            <button class="btn btn-sm btn-warning" onclick="location.href='<?php echo $urlLogin; ?>'"
-                                    type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+                            <?php } ?>
 
+                            <button class="btn btn-sm btn-warning text-white px-4 py-2" style="border: none; cursor: pointer; transition: background-color 0.3s;"
+                                    type="button" onclick="location.href='<?php echo $urlLogin; ?>'"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
                             <?php //insert Breezing Form hack here
                             /*<input class="btn btn-secondary" type="button" value="<?php echo Text::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
                             */?>
                             <?php
                             break;
                         case 3:
-                            if($this->item->registra == 3){
+                            if($this->item->reginvitedonly == 1){
                                 if($this->isregistered === 0){
                                     echo $this->loadTemplate('regform');
                                 }  else{

@@ -144,8 +144,8 @@ if ($this->showRegForm && empty($this->print)) :
                 <input type="radio" name="reg_check" value="1" onclick="check(this, document.getElementById('jem_send_attend'))"
                     <?php if ($this->isregistered !== false
                         && ($placesavailableevent === 0 || ($placesavailableuser === 0 && $statusRegistrationUser != 0))
-                            && (!$this->item->waitinglist || ($this->item->waitinglist && ($placesBookedUser || $placesavailableuser === 0)))
-                            || !$this->allowRegistration) {
+                        && (!$this->item->waitinglist || ($this->item->waitinglist && ($placesBookedUser || $placesavailableuser === 0)))
+                        || !$this->allowRegistration) {
                         echo 'disabled="disabled"';
                     } else {
                         echo 'checked="checked"';
@@ -185,7 +185,7 @@ if ($this->showRegForm && empty($this->print)) :
 
                 // for this user no additional places
                 if ($placesavailableuser === 0 || $this->registration === false) {
-                	echo '<span class="badge bg-warning text-light" role="alert">' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER') . '</span>';
+                    echo '<span class="badge bg-warning text-light" role="alert">' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER') . '</span>';
                 } else {
                     // Booking places
                     if ($this->item->maxbookeduser > 1) {
@@ -316,23 +316,25 @@ if ($this->showRegForm && empty($this->print)) :
                     <?php else :
                         //Unregistration is not possible?>
                         <input type="radio" name="reg_dummy" value="" disabled="disabled" />
+                        <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
                         <?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
                     <?php endif; ?>
                 </p>
             <?php }
+
+            $disabledOptions = ($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration);
+
             //Comment?>
-            <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+            <?php if (!empty($this->jemsettings->regallowcomments)) { ?>
                 <p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
-                <p>
-	                <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255">
-                        <?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
-                        /* looks crazy, but required to prevent unwanted white spaces within textarea content! */ ?>
-                    </textarea>
-                </p>
-            <?php endif; ?>
+                <p><textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255" <?php echo ($disabledOptions ? 'disabled="disabled"':'');?>><?php
+                    if (is_object($this->registration) && !empty($this->registration->comment)) {
+                        echo htmlspecialchars($this->registration->comment);
+                    } ?></textarea></p>
+            <?php } ?>
             <p>
-	            <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend"
-                <?php echo (($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration)? 'disabled="disabled"':'');?>
+                <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend"
+                    <?php echo ($disabledOptions? 'disabled="disabled"':'');?>
                        value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
             </p>
 

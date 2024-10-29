@@ -145,8 +145,6 @@ class JemModelEditevent extends JemModelEvent
 			$value->avplaces = $value->maxplaces - $value->booked;
 		}
 
-		$value->reginvitedonly = !empty($value->registra) && ($value->registra & 3);
-
 		// Get attachments - but not on copied events
 		$files = JemAttachment::getAttachments('event' . $value->id);
 		$value->attachments = $files;

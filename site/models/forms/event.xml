@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fieldset name="details">
-        <field name="articletext" type="editor" class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION" description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
-               filter="\Joomla\CMS\Component\ComponentHelper::filterText" hide="pagebreak"/>
-
+        <field name="articletext" type="editor"
+		class="inputbox"
+		label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION"
+		description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
+		filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+		hide="pagebreak"
+	/>
         <field name="featured" class="inputbox" type="list"
                label="JFEATURED"
                description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
@@ -126,14 +129,12 @@
             <option value="2">JARCHIVED</option>
             <option value="-2">JTRASHED</option>
         </field>
-        <field
-                id="access"
-                name="access"
-                type="list"
+        <field name="access" type="list"
                 label="JFIELD_ACCESS_LABEL"
                 description="JFIELD_ACCESS_DESC"
                 class="inputbox"
-                size="1"/>
+                size="1"
+	/>
     </fieldset>
 
     <fieldset name="request">
@@ -253,12 +254,12 @@
             <option value="0">JNO</option>
             <option value="1">JYES</option>
             <option value="2">COM_JEM_FROM</option>
-            <option value="3">COM_JEM_INVITED_USERS_ONLY</option>
         </field>
         <field name="registra_from" type="calendar"
                label="COM_JEM_EVENT_FIELD_REGISTRATION_FROM"
                description="COM_JEM_EVENT_FIELD_REGISTRATION_FROM_DESC"
                class="input-medium"
+               default="now"
                filter="user_utc"
                format="%Y-%m-%d %H:%M:%S"
                filterformat="Y-m-d H:i:s"
@@ -345,7 +346,7 @@
                description="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER_DESC"
                filter="integer"
                default="1"
-               min="0"
+               min="1"
         />
         <field name="reservedplaces" type="number"
                size="4"
@@ -365,42 +366,40 @@
         <field name="avplaces" type="text"
                size="4"
                class="readonly"
-               readonly="readonly"
-               disabled="disabled"
+               readonly="true"
+               disabled="true"
                label="COM_JEM_AVAILABLE_PLACES"
                description="COM_JEM_AVAILABLE_PLACES_DESC"
         />
         <field name="waitinglist" type="checkbox"
-               size="20"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST"
                description="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST_DESC"
-               value="0"
-               default="0"
+               value="1"
+               checked="0"
         />
         <field name="requestanswer" type="checkbox"
-               size="1"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_REQUEST_ANSWER_ASSISTENCE"
                description="COM_JEM_EDITEVENT_FIELD_REQUEST_ANSWER_ASSISTENCE_DESC"
-               value="0"
-               default="0"
+               value="1"
+               checked="0"
         />
         <field name="seriesbooking" type="checkbox"
                size="1"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
                description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
-               value="0"
-               default="0"
+               value="1"
+               checked="0"
         />
         <field name="singlebooking" type="checkbox"
                size="1"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
                description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
-               value="0"
-               default="0"
+               value="1"
+               checked="0"
         />
     </fieldset>
 

@@ -489,7 +489,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         }else if ($this->allowRegistration) {
                             echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
                             if($this->dateRegistationUntil){
-                                echo " " . Text::_('COM_JEM_UNTIL') . ' ' . date('Y-m-d H:i:s', $this->dateRegistationUntil);
+                                echo " " . mb_strtolower(Text::_('COM_JEM_UNTIL')) . ' ' . date('Y-m-d H:i:s', $this->dateRegistationUntil);
                             }
                             echo "</dd>";
                             echo $this->loadTemplate('attendees');

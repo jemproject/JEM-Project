@@ -419,11 +419,6 @@ class JemModelEvent extends JemModelAdmin
                 $this->cleanCache();
             }
 
-            // on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
-            if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
-                $data['registra'] = ($data['registra'] == 1) ? 3 : 2;
-            }
-
             if ($data['dates'] == null || $data['recurrence_type'] == '0') {
                 $data['recurrence_number'] = '0';
                 $data['recurrence_byday'] = '0';

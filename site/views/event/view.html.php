@@ -262,9 +262,10 @@ class JemViewEvent extends JemView
 		$e_reg         = $item->registra;
 		$e_unreg       = $item->unregistra;
 		$e_unreg_until = $item->unregistra_until;
+		$e_invitedonly = $item->reginvitedonly;
 
-		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 3) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
-		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_reg & 3) && ($g_inv > 0))) || (is_object($registration)));
+		$this->showAttendees   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_invitedonly & 1) && ($g_inv > 0))) || (is_object($registration) || $isAuthor) || $edit_att);
+		$this->showRegForm     = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1 || $e_reg & 2))) && ((!(($e_invitedonly & 1) && ($g_inv > 0))) || (is_object($registration)));
 		$this->e_reg = $e_reg;
 
 		$timeNow = time();
@@ -289,7 +290,11 @@ class JemViewEvent extends JemView
 					$formhandler = 4;
 				}
 			} else {
-				$formhandler = 3; // invited user
+				if($e_invitedonly) {
+					$formhandler = 3; // invited user (no registration) in event for invited users only
+				} else {
+					$formhandler = 4; // invited user (no registration) in event open for all users
+				}
 			}
 		} elseif ($timecheck > 0) { // check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
