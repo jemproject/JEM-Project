@@ -78,7 +78,11 @@ if ($this->showRegForm && empty($this->print)) :
                     if ($this->item->requestanswer) {
                         echo Text::_('COM_JEM_SEND_UNREGISTRATION');
                     }
-                    echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');
+                    if ($this->item->registra == 3) {
+                        echo Text::_('COM_JEM_NOT_INVITED');
+                    } else {
+                        echo Text::_('COM_JEM_YOU_ARE_UNREGISTERED');
+                    }
                 } else {
                     switch ($this->isregistered) :
                         case -1:
@@ -175,15 +179,15 @@ if ($this->showRegForm && empty($this->print)) :
                             }
                         } else {
                             echo Text::_('COM_JEM_I_WILL_GO');
+                            if(!$this->allowRegistration){
+                                echo '<span class="badge bg-warning text-light" role="alert">' . Text::_('COM_JEM_EVENT_REGISTRATION_CLOSED') . '</span>';
+                            }
                         }
                     }
 
                     // for this user no additional places
-                    if ($placesavailableuser === 0) { ?>
-                        <span class="badge bg-warning text-light" role="alert">
-                        <?php echo ' ' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER'); ?>
-					</span>
-                        <?php
+                    if ($placesavailableuser === 0 || $this->registration === false) {
+                        echo '<span class="badge bg-warning text-light" role="alert">' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER') . '</span>';
                     } else {
                         // Booking places
                         if ($this->item->maxbookeduser > 1) {
@@ -314,25 +318,30 @@ if ($this->showRegForm && empty($this->print)) :
                         <?php else :
                             //Unregistration is not possible?>
                             <input type="radio" name="reg_dummy" value="" disabled="disabled" />
-                            <?php echo ' '.Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
+                            <i class="fa fa-times-circle-o fa-lg jem-unregisterbutton" aria-hidden="true"></i>
+                            <?php echo ' ' . Text::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
                         <?php endif; ?>
                     </li>
                 <?php }
+
+                $disabledOptions = ($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration);
+
                 //Comment?>
-                <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+                <?php if (!empty($this->jemsettings->regallowcomments)) { ?>
                     <li class="jem-event jem-nopointer jem-nohover">
                         <p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
                         <div class="jem-regcomment">
-			                <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255">
-                                <?php if (is_object($this->registration) && !empty($this->registration->comment)) { echo $this->registration->comment; }
-                                /* looks crazy, but required to prevent unwanted white spaces within textarea content! */ ?>
-                            </textarea>
+                            <textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255" <?php echo ($disabledOptions ? 'disabled="disabled"':'');?>><?php
+                                if (is_object($this->registration) && !empty($this->registration->comment)) {
+                                    echo htmlspecialchars($this->registration->comment);
+                                } ?></textarea>
                         </div>
                     </li>
-                <?php endif; ?>
+                <?php } ?>
             </ul>
-            <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend" <?php echo ((!$placesRegisteredUser && !$this->allowRegistration) || (!$this->allowAnnulation && !$this->allowRegistration)? 'disabled="disabled"':'');?> value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
-
+            <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend"
+                <?php echo ($disabledOptions? 'disabled="disabled"':'');?>
+                   value="<?php echo ($placesRegisteredUser ? Text::_('COM_JEM_SEND_REGISTER') : Text::_('COM_JEM_REGISTER')); ?>"  />
 
             <input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
             <input type="hidden" name="regid" value="<?php echo (is_object($this->registration) ? $this->registration->id : 0); ?>" />

@@ -45,7 +45,7 @@ $params = $params->toArray();
 
 ?>
 
-<script type="text/javascript">
+<script>
     function checkmaxplaces()
     {
         $('#jform_maxplaces').on('change', function(){
@@ -111,7 +111,7 @@ $params = $params->toArray();
         document.getElementById('comm1').style.display = 'none';
     }
 </script>
-<script type="text/javascript">
+<script>
     Joomla.submitbutton = function(task)
     {
         if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('event-form'))) {
@@ -310,6 +310,9 @@ $params = $params->toArray();
                                 <li><div class="label-form"><?php echo $this->form->renderfield('registra_until'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra_until'); ?></div></li>
+                                <?php if($this->jemsettings->regallowinvitation) { ?>
+                                	<li><div class="label-form"><?php echo $this->form->renderfield('reginvitedonly'); ?></div></li>
+                                <?php } ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('minbookeduser'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('maxbookeduser'); ?></div></li>
@@ -574,7 +577,7 @@ $params = $params->toArray();
                                 </ul>
                             </fieldset>
 
-                            <script type="text/javascript">
+                            <script>
                                 <!--
                                 starter("<?php
                                     echo Text::_ ( 'COM_JEM_META_ERROR' );

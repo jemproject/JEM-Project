@@ -183,7 +183,7 @@ class plgAcymailingTagjem extends CMSPlugin
         echo $tabs->startPane('jem_tab');
         echo $tabs->startPanel(Text::_('JOOMEXT_EVENT'), 'jem_event');
         ?>
-        <script type="text/javascript">
+        <script>
             <!--
             var selectedContents = new Array();
             function applyContent(contentid, rowClass){
@@ -348,7 +348,7 @@ class plgAcymailingTagjem extends CMSPlugin
         echo $tabs->startPanel(Text::_('UPCOMING_EVENTS'), 'jem_auto');
         $type = $app->input->request->getString('type');
         ?>
-        <script type="text/javascript">
+        <script>
             <!--
             var selectedCat = new Array();
             function applyAutoEvent(catid,rowClass){

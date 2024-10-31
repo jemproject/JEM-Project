@@ -277,9 +277,9 @@ use Joomla\CMS\Router\Route;
         $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' .  $featuredclass . '" style="' . $featuredstyle;
         if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
             $content .= '; background-color:'.array_pop($catcolor);
-            $content .= '" onclick=location.href="'.$detaillink.'">';
+            $content .= '" onclick="location.href=\''.$detaillink.'\'">';
         } else {
-            $content .= '" onclick=location.href="'.$detaillink.'">' . $colorpic;
+            $content .= '" onclick="location.href=\''.$detaillink.'\'">' . $colorpic;
         }
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);

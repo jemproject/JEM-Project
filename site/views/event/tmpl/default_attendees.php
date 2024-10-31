@@ -207,7 +207,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($this->permissions->canEditAttendees) : ?>
-            <dt style="padding: 0;"></dt>
+            <dt></dt>
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
         <?php endif; ?>
     </dl>
@@ -249,7 +249,16 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             <?php
                             break;
                         case 3:
+                            if($this->item->reginvitedonly == 1){
+                                if($this->isregistered === 0){
+                                    echo $this->loadTemplate('regform');
+                                }  else{
+                                    echo Text::_('COM_JEM_INVITED_USERS_ONLY') . '.<br>' . Text::_('COM_JEM_NOT_INVITED') . '.';
+                                }
+                            }
+                            break;
                         case 4:
+                        case 5:
                             echo $this->loadTemplate('regform');
                             break;
                     }

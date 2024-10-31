@@ -399,7 +399,7 @@ function registraoff()
     });
 </script>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'settings.cancel' || document.formvalidator.isValid(document.getElementById('settings-form'))) {

@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 $uri = Uri::getInstance();
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");
@@ -113,10 +113,10 @@ function jem_common_show_filter(&$obj) {
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
     <div class="jem-row jem-justify-start jem-nowrap">
     <?php echo $this->lists['filter']; ?>
-     <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+     <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" onchange="document.adminForm.submit();" />
     </div>
         <div>
-            <label for="month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
+            <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" required class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
@@ -198,8 +198,8 @@ function jem_common_show_filter(&$obj) {
                 <?php }
             } ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >				<?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick=location.href="'.Route::_(JemHelperRoute::getEventRoute($row->slug)).'"'; endif; ?> >				<?php endif; ?>              
+          <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"';; endif; ?> >				<?php else : ?>
+          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"';; endif; ?> >				<?php endif; ?>              
               <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                 <i class="far fa-clock" aria-hidden="true"></i>
                 <?php

@@ -24,7 +24,7 @@ $wa = $document->getWebAssetManager();
 $params		= $this->params;
 
 ?>
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task) {
 		if (document.formvalidator.isValid(document.getElementById('adminForm'))) {
 			$(".sbmit-btn").prop('disabled',true);

@@ -112,7 +112,7 @@ div#jem fieldset {
 div#jem {
     overflow: hidden;
     background-color: #EDF4F5;
-    border: 1px solid #000000;
+    border: 1px solid #000;
     border-radius: 5px;
     padding: 10px;
 }
@@ -154,7 +154,7 @@ div#jem .button1 {
     padding: 2px 6px;
     margin: 2px;
     cursor: pointer;
-    color: #000000;
+    color: #000;
     position: relative;
     text-decoration: none;
     top: 8px;
@@ -176,7 +176,7 @@ div#jem .button3 {
 /* Edit-event view, hover */
 div#jem .button1:hover {
     background-color: #D1C9CC;
-    color: #000000;
+    color: #000;
     text-decoration: none;
 }
 
@@ -192,7 +192,7 @@ div#jem .buttonfilter {
     font-weight: 700;
     padding: 2px 6px;
     cursor: pointer;
-    color: #000000;
+    color: #000;
     position: relative;
     text-decoration: none;
     top: inherit;
@@ -205,7 +205,7 @@ div#jem .buttonfilter {
 /* Filter button:hover */
 div#jem .buttonfilter:hover {
     background-color: #D1C9CC;
-    color: #000000;
+    color: #000;
     text-decoration: none;
 }
 
@@ -336,7 +336,7 @@ div#jem .copyright {
  */
 div#jem .flyerimage {
     float: right !important;
-    border: 0px solid #000000;
+    border: 0px solid #000;
     width: auto;
     position: static !important;
     background: transparent;
@@ -344,7 +344,7 @@ div#jem .flyerimage {
 }
 
 div#jem .googlemap {
-    border: 0px solid #000000;
+    border: 0px solid #000;
     width: auto;
     position: static !important;
     background: transparent;
@@ -408,11 +408,11 @@ div#jem ul.user li span.username {
 }
 
 div#jem span.username {
-    color: #000000;
+    color: #000;
 }
 
 div#jem span.username a {
-    color: #000000;
+    color: #000;
     text-decoration: underline;
 }
 
@@ -474,15 +474,16 @@ div#jem table.eventtable {
 
 div#jem table.eventtable th {
     background-color: #809EA8;
-    color: #FFFFFF;
+    color: #fff;
     font-weight: bold;
     padding: 0.4em;
     text-align: left;
-    border: 1px solid #000000;
+    border: 1px solid #000;
+    text-align: left;
 }
 
 div#jem table.eventtable th a {
-    color: #FFFFFF;
+    color: #FFF;
     background-color: transparent;
 }
 
@@ -496,7 +497,7 @@ div#jem table.eventtable th img {
 div#jem table.eventtable td {
     background-color: #EAEBE1;
     padding: 0.4em;
-    border: 1px solid #000000;
+    border: 1px solid #000;
     vertical-align: top;
 }
 
@@ -515,6 +516,17 @@ div#jem table.eventtable tr:hover td {
 
 div#jem table.eventtable tr.featured td {
     background-color: #B6B6B4;
+}
+
+div#jem table.eventtable td.jem_eventimage {
+    text-align: left;
+    vertical-align: top;
+}
+
+div#jem table.eventtable td.jem_eventimage
+div#jem table.eventtable td.header-td {
+    text-align: left;
+    vertical-align: top;
 }
 
 /* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
@@ -634,7 +646,7 @@ div.jem_select_users ul.adminformlist legend {
     font-weight: bold;
     background-color: #FFA500;
     border-radius: 5px;
-    border: 1px solid #000000;
+    border: 1px solid #000;
     line-height: 22px;
 }
 
@@ -823,9 +835,9 @@ table#search tr {
 
 table#el-attachments th {
     background: #366999;
-    color: #FFFFFF;
+    color: #fff;
     line-height: 22px;
-    border: 1px solid #000000;
+    border: 1px solid #000;
     text-align: center;
 }
 
@@ -898,7 +910,7 @@ button.positive:hover {
 .buttons a.positive:active {
     background-color: #529214 !important;
     border: 1px solid #808080 !important;
-    color: #FFFFFF !important;
+    color: #fff !important;
 }
 
 /* NEGATIVE */
@@ -920,7 +932,7 @@ button.negative:hover {
 .buttons a.negative:active {
     background-color: #d12f19 !important;
     border: 1px solid #d12f19 !important;
-    color: #FFFFFF !important;
+    color: #fff !important;
     border: 1px solid #808080 !important;
 }
 
@@ -943,7 +955,7 @@ button.regular:hover {
 .buttons a.regular:active {
     background-color: #6299c5 !important;
     border: 1px solid #808080 !important;
-    color: #FFFFFF !important;
+    color: #fff !important;
 }
 
 /* -- TAB STYLES -- */
@@ -973,7 +985,7 @@ div#jem dl.tabs dt.open {
     background-color: silver;
     border-bottom: 1px solid #F9F9F9;
     z-index: 100;
-    color: #000000;
+    color: #000;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     border-top: 1px solid #808080;
@@ -1222,7 +1234,7 @@ div#jem a.file-name:link,
 div#jem a.file-name:active,
 div#jem a.file-name:visited {
     text-decoration: none;
-    color: #000000;
+    color: #000;
     background-color: transparent;
 }
 
@@ -1251,7 +1263,7 @@ div#jem .inline-button-right {
     div#jem {
         overflow: hidden;
         background: none repeat scroll 0% 0% #EDEDEB;
-        border: 0px solid #000000;
+        border: 0px solid #000;
         border-radius: 5px 5px 5px 5px;
         padding: 10px;
     }
@@ -1318,5 +1330,5 @@ div#jem .inline-button-right {
 }
 
 #table-series tr:nth-child(odd){
-    background-color: #ffffff;
+    background-color: #fff;
 }

@@ -37,7 +37,7 @@ echo HTMLHelper::_(
 );
 ?>
 
-<script type="text/javascript">
+<script>
 function modalSelectUser(id, username)
 {
 		jQuery('#uid').val(id)  ;

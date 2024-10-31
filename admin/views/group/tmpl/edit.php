@@ -22,7 +22,7 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 ?>
-<script type="text/javascript">
+<script>
 	window.addEvent('domready', function(){
 	});
 
@@ -57,7 +57,7 @@ $params = $params->toArray();
         }
     }
 </script>
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		selectAll();

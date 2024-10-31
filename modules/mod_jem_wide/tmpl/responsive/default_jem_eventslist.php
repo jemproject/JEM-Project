@@ -14,10 +14,6 @@ use Joomla\CMS\Uri\Uri;
 
 $jemsettings = JemHelper::config();
 
-?>
-
-<style>
- <?php
  $imagewidth = 'inherit';
  if ($jemsettings->imagewidth != 0) {
   $imagewidth = $jemsettings->imagewidth / 2; 
@@ -48,15 +44,16 @@ $jemsettings = JemHelper::config();
    $endpos = $spacepos - $startpos;
    $imageheight = substr($pageclass_sfx, $startpos, $endpos);
  }
- ?>
 
+$document = Factory::getDocument();
+$css = '
   #jemmodulewide .jem-list-img {
-    width: <?php echo $imagewidth; ?>;
+    width: ' . $imagewidth . ';
   }
   
   #jemmodulewide .jem-list-img img {
-    width: <?php echo $imagewidth; ?>;
-    height: <?php echo $imageheight; ?>;
+    width: ' . $imagewidth . ';
+    height: ' . $imageheight . ';
   }
   
   @media not print {
@@ -66,12 +63,13 @@ $jemsettings = JemHelper::config();
       }
       
       #jemmodulewide .jem-list-img img {
-        width: <?php echo $imagewidth; ?>;
-        height: <?php echo $imageheight; ?>;
+      	width: ' . $imagewidth . ';
+      	height: ' . $imageheight . ';
       }
     }
-  }
-</style>
+  }';
+$document->addStyleDeclaration($css);
+?>
 
 <ul class="eventlist">
       <?php
@@ -84,11 +82,11 @@ $jemsettings = JemHelper::config();
       ?>
 			<?php foreach ($list as $item) : ?>
         <?php if (!empty($item->featured)) :   ?>
-          <li class="jem-event jem-row jem-justify-start jem-featured <?php echo ' event_id'.$item->eventid; ?> jem-featured" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li class="jem-event jem-row jem-justify-start jem-featured <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?> >
 				<?php else : ?>
-          <li class="jem-event jem-row jem-justify-start <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li class="jem-event jem-row jem-justify-start <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?> >
 				<?php endif; ?>       
-          <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?>>
+          <div class="jem-event-details" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?>>
             <?php if ($params->get('linkevent') == 1) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
               <a href="<?php echo $item->eventlink; ?>" ><?php echo $item->title; ?></a>

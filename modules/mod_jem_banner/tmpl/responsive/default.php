@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
 
 $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
@@ -40,65 +41,64 @@ $banneralignment = "jem-vertical-banner";
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizontal")){
     $banneralignment = "jem-horizontal-banner";
 }
-?>
+$imagewidth = '100%';
+$imagewidthstring = 'jem-imagewidth';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
+	$pageclass_sfx = $params->get('moduleclass_sfx');
+	$imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
+	$spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
+	if ($spacepos === false) {
+		$spacepos = strlen($pageclass_sfx);
+	}
+	$startpos = $imagewidthpos + strlen($imagewidthstring);
+	$endpos = $spacepos - $startpos;
+	$imagewidth = substr($pageclass_sfx, $startpos, $endpos);
+}
+$imageheight = 'auto';
+$imageheigthstring = 'jem-imageheight';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
+	$pageclass_sfx = $params->get('moduleclass_sfx');
+	$imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
+	$spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
+	if ($spacepos === false) {
+		$spacepos = strlen($pageclass_sfx);
+	}
+	$startpos = $imageheightpos + strlen($imageheigthstring);
+	$endpos = $spacepos - $startpos;
+	$imageheight = substr($pageclass_sfx, $startpos, $endpos);
+}
+        
+$document = Factory::getDocument();
+$additionalCSS = '';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
+    $additionalCSS = 'order: -1;';
+}
 
-    <style>
-        <?php
-        $imagewidth = '100%';
-        $imagewidthstring = 'jem-imagewidth';
-        if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
-          $pageclass_sfx = $params->get('moduleclass_sfx');
-          $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
-          $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
-          if ($spacepos === false) {
-            $spacepos = strlen($pageclass_sfx);
-          }
-          $startpos = $imagewidthpos + strlen($imagewidthstring);
-          $endpos = $spacepos - $startpos;
-          $imagewidth = substr($pageclass_sfx, $startpos, $endpos);
-        }
-        $imageheight = 'auto';
-        $imageheigthstring = 'jem-imageheight';
-        if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
-          $pageclass_sfx = $params->get('moduleclass_sfx');
-          $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
-          $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
-          if ($spacepos === false) {
-            $spacepos = strlen($pageclass_sfx);
-          }
-          $startpos = $imageheightpos + strlen($imageheigthstring);
-          $endpos = $spacepos - $startpos;
-          $imageheight = substr($pageclass_sfx, $startpos, $endpos);
-        }
-        ?>
+$widthStyle = $imagewidthmax ? 'width:' . $imagewidthmax . 'px' : 'max-width:' . $imagewidth;
+$heightStyle = $imagewidthmax ? 'auto' : $imageheight;
 
-        #jemmodulebanner .jem-eventimg-banner {
-            width: <?php echo $imagewidth; ?>;
-        <?php
-        if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
-          echo "order: -1;";
-        }
-        ?>
-        }
+$css = '
+    #jemmodulebanner .jem-eventimg-banner {
+        width: ' . $imagewidth . ';
+        ' . $additionalCSS . '
+    }
+    #jemmodulebanner .jem-eventimg-banner img {
+        ' . $widthStyle . ';
+        height: ' . $heightStyle . ';
+    }
 
-        #jemmodulebanner .jem-eventimg-banner img {
-        <?php echo ($imagewidthmax? 'width:' . $imagewidthmax .'px': 'max-width:'. $imagewidth); ?>;
-            height: <?php echo ($imagewidthmax? 'auto' : $imageheight); ?>;
-        }
-
-        @media not print {
-            @media only all and (max-width: 47.938rem) {
-                #jemmodulebanner .jem-eventimg-banner {
-
-                }
-
-                #jemmodulebanner .jem-eventimg-banner img {
-                    width: <?php echo $imagewidth; ?>;
-                    height: <?php echo $imageheight; ?>;
-                }
+    @media not print {
+    	@media only all and (max-width: 47.938rem) {
+            #jemmodulebanner .jem-eventimg-banner {
+            }
+            #jemmodulebanner .jem-eventimg-banner img {
+       			width: ' . $imagewidth . ';
+        		height: ' . $imageheight . ';
             }
         }
-    </style>
+    }';
+$document->addStyleDeclaration($css);
+?>
 
     <div class="jemmodulebanner<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebanner">
         <div class="eventset">

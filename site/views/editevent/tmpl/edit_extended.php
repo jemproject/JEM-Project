@@ -56,7 +56,7 @@ use Joomla\CMS\Date\Date;
         <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number;?>"></input>
         <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
-        <script type="text/javascript">
+        <script>
 
             <!--
             var $select_output = new Array();
@@ -209,6 +209,7 @@ use Joomla\CMS\Date\Date;
 					<br/>
                 <?php endif; ?>              
                 <li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?></li>
+                <br/>
                 <li><div id="unregistra_until"><label></label><?php echo $this->form->getInput('unregistra_until'); ?><span id="jform_unregistra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></div></li>
                 <br/>
                 <li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>

@@ -24,7 +24,7 @@ $use_ajax = !empty($use_ajax);
 
 # Use Ajax to navigate through the months if JS is enabled on browser.
 if ($use_ajax && empty($module->in_ajax_call)) { ?>
-<script type="text/javascript">
+<script>
 jQuery(document).ready(function(){
 	jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
 	jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "table-caption");
@@ -79,7 +79,7 @@ if (!function_exists('mb_convert_case')) {
 $title = $the_month . '&nbsp;' . $the_year;
 
 # Begin calendar. Uses a real <caption>. See https://diveintomark.org/archives/2002/07/03
-$calendar .= '<table class="mod_jemcalq_calendar" cellspacing="0" cellpadding="0">' . "\n";
+$calendar .= '<table class="mod_jemcalq_calendar">' . "\n";
 
 # Month navigation links
 # use $url_base_nojs or $url_base_ajax followed by $props_prev, $props_home, or $props_next

@@ -435,6 +435,14 @@ static public function lightbox() {
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = $settings->get('global_show_icons', 1);
 
+            if (version_compare(JVERSION, '5.0.0', '>=')) {
+                // Joomla 5 with Font Awesome 6
+                $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
+            } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+                // Joomla 4 with Font Awesome 5
+                $iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
+            }
+
 			switch ($view)
 			{
 				case 'editevent':
@@ -447,7 +455,7 @@ static public function lightbox() {
 
 					if ($showIcon) {
                         if($item->recurrence_type && !$item->recurrence_first_id){
-                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', 'fa-sharp fa-solid fa-pen-to-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
+                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', $iconEditEventRoot, Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
                             $overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
                             $text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
                         }else {
@@ -1078,10 +1086,20 @@ static public function lightbox() {
 			return;
 		}
 
+        if (version_compare(JVERSION, '5.0.0', '>=')) {
+            // Joomla 5 with Font Awesome 6
+            $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
+            $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
+        } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+            // Joomla 4 witn Font Awesome 5
+            $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
+            $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
+        }
+
 		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
 		/* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
-		$icon  = $first ? 'fa fa-fw fa-refresh jem-recurrencefirsticon' : 'fa fa-fw fa-refresh jem-recurrenceicon';
+		$icon  = $first ? $iconRecurrenceFirst : $iconRecurrence;
 		$showinline &= !($settings2->useiconfont == 1 && $app->isClient('site'));
 		$attr_class = $showinline ? ('class="icon-inline" ') : '';
 		$attr_title = $showtitle  ? ('title="' . Text::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
