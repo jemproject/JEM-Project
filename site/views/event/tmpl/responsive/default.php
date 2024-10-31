@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Date\Date;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -479,32 +480,32 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         //Event with registration (YES with or witout UNTIL)
                         echo $this->loadTemplate('attendees');
                         if($this->dateUnregistationUntil) {
-                            echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateUnregistationUntil) . '</dd>';
+                            echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                         }
                         break;
                     case 2:
                         //Event with date starting registration (FROM with or witout UNTIL)
                         if($this->dateRegistationFrom > $timeNow) {
-                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
+                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . '</dt><dd>' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                         }else if ($this->allowRegistration) {
-                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationFrom);
+                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_IS_FROM') . '</dt><dd>' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                             if($this->dateRegistationUntil){
-                                echo " " . mb_strtolower(Text::_('COM_JEM_UNTIL')) . ' ' . date('Y-m-d H:i:s', $this->dateRegistationUntil);
+                                echo " " . mb_strtolower(Text::_('COM_JEM_UNTIL')) . ' ' . HTMLHelper::_('date', $this->dateRegistationUntil, Text::_('DATE_FORMAT_LC2'));
                             }
                             echo "</dd>";
                             echo $this->loadTemplate('attendees');
 
                             //Event with date starting annulation
                             if($this->dateUnregistationUntil) {
-                                echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateUnregistationUntil) . '</dd>';
+                                echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                             }
                         }else if($this->dateRegistationUntil !== false && $this->dateRegistationUntil < $timeNow) {
-                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL') . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateRegistationUntil) . '</dd>';
+                            echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL') . '</dt><dd>' . HTMLHelper::_('date', $this->dateRegistationUntil, Text::_('DATE_FORMAT_LC2')) .  '</dd>';
                             echo $this->loadTemplate('attendees');
 
                             //Event with date starting annulation
                             if($this->dateUnregistationUntil) {
-                                echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . date('Y-m-d H:i:s', $this->dateUnregistationUntil) . '</dd>';
+                                echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                             }
                         } else {
                             // open registration to the end of event
@@ -515,7 +516,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 } else {
                                     echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL');
                                 }
-                                echo '</dt><dd>' . date( 'Y-m-d H:i:s', $endDateEvent) . '</dd>';
+                                echo '</dt><dd>' . HTMLHelper::_('date', $endDateEvent, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                                 echo $this->loadTemplate('attendees');
                             }else{
                                 if(!empty($this->item->dates)) {
@@ -525,7 +526,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     } else {
                                         echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WAS_UNTIL');
                                     }
-                                    echo '</dt><dd>' . date( 'Y-m-d H:i:s', $endDateEvent) . '</dd>';
+                                    echo '</dt><dd>' . HTMLHelper::_('date', $endDateEvent, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                                     echo $this->loadTemplate('attendees');
                                 }
                             }
