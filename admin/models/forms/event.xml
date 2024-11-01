@@ -312,12 +312,10 @@
 			   showon="registra:2"
         />
         <field name="reginvitedonly" type="checkbox"
-               size="20"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
                description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
-               value="1"
-               default="0"
+               checked="0"
 		/>
 		<field name="unregistra" type="list"
 			   label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"

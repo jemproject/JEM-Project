@@ -57,17 +57,7 @@ class JemCalendar
 	var $thu="Thu";
 	var $fri="Fri";
 	var $sat="Sat";
-	/*
-	********************************************************************************
-	You can change below the default year's and month's view navigation controls
-	********************************************************************************
-	*/
-	var $yearNavBack=" <i class='fa-solid fa-backward'></i> "; // Previous year
-	var $yearNavForw=" <i class='fa-solid fa-forward'></i> "; // Next year
-	var $monthNavBack=" <i class='fa-solid fa-backward-step'></i> "; // Previous month
-	var $monthNavForw=" <i class='fa-solid fa-forward-step'></i> "; // Next month
-	var $selBtn="Go"; // value of the date picker button (if enabled)
-	var $monthYearDivider=" "; // the divider between month and year in the month`s title
+
 	/*
 	********************************************************************************
 	$startOnSun = false: first day of week is Monday
@@ -176,6 +166,28 @@ class JemCalendar
 		else $this->maxdays=30;
 		$this->firstday=$this->mkActiveDate("w", $this->mkActiveTime(0,0,1,$this->actmonth,1,$this->actyear));
 		$this->GMTDiff=$GMTDiff;
+
+		/*
+		********************************************************************************
+		You can change below the default year's and month's view navigation controls
+		********************************************************************************
+		*/
+
+		if (version_compare(JVERSION, '5.0.0', '>=')) {
+			// Joomla 5
+			$this->yearNavBack=" <i class='fa-solid fa-backward'></i> "; // Previous year
+			$this->yearNavForw=" <i class='fa-solid fa-forward'></i> "; // Next year
+			$this->monthNavBack=" <i class='fa-solid fa-backward-step'></i> "; // Previous month
+			$this->monthNavForw=" <i class='fa-solid fa-forward-step'></i> "; // Next month
+		} elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+			// Joomla 4
+			$this->yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
+			$this->yearNavForw=" &gt;&gt; "; // Next year, this could be an image link
+			$this->monthNavBack=" &lt;&lt; "; // Previous month, this could be an image link
+			$this->monthNavForw=" &gt;&gt; "; // Next month, this could be an image link
+		}
+		$this->selBtn="Go"; // value of the date picker button (if enabled)
+		$this->monthYearDivider=" "; // the divider between month and year in the month`s title
 	}
 	/*
 	********************************************************************************

@@ -413,6 +413,9 @@ class JemModelEvent extends JemModelAdmin
             if($data['unregistra_until'] == ''){
                 $data['unregistra_until'] = null;
             }
+            if($data['reginvitedonly']== null){
+                $data['reginvitedonly'] = 0;
+            }
 
             // event maybe first of recurrence set -> dissolve complete set
             if (JemHelper::dissolve_recurrence($data['id'])) {
