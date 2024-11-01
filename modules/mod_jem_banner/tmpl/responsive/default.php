@@ -105,10 +105,10 @@ $document->addStyleDeclaration($css);
             <?php $i = count($list); ?>
             <?php if ($i > 0) : ?>
                 <?php foreach ($list as $item) : ?>
-                    <div class="event_id<?php echo $item->eventid; ?>">
-                        <h2 class="event-title">
+                    <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                        <h2 class="event-title" itemprop="name">
                             <?php if ($item->eventlink) : ?>
-                                <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
+                                <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
                             <?php else : ?>
                                 <?php echo $item->title; ?>
                             <?php endif; ?>
@@ -142,6 +142,7 @@ $document->addStyleDeclaration($css);
                                     <div class="daynumbanner">
                                         <?php echo $item->startdate['day']; ?>
                                     </div>
+                                    	<?php echo $item->dateschema; ?>
                                 </div>
                             <?php endif; ?>
                             <div class="jem-event-details-banner jem-row-banner">
@@ -197,36 +198,43 @@ $document->addStyleDeclaration($css);
                                     <?php /*venue*/ ?>
                                     <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
                                         <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                                            <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
                                             <?php if ($item->venuelink) : ?>
                                                 <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
                                             <?php else : ?>
                                                 <?php echo $item->venue; ?>
                                             <?php endif; ?>
-                                        </div>
+                                    	</div>
                                     <?php endif; ?>
 
                                     <?php /*category*/ ?>
                                     <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
                                         <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-                                            <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
                                             <?php echo $item->catname; ?>
                                         </div>
                                     <?php endif; ?>
-                                </div>
+                                    	<div itemprop="location" itemscope itemtype="https://schema.org/Place"" style="display:none;">
+                                    		<meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                                    		<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                                    			<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                                    			<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                                    			<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                                    			<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                                    		</div>
+                                    	</div>
+                                    </div>
 
                                 <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
                                     <div class="jem-eventimg-banner">
                                         <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                         <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
                                            title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?> " data-title="<?php echo $item->title; ?>">
-                                            <img class="<?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+                                            <img class="<?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                         </a>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if ($params->get('showdesc', 1) == 1) :?>
-                                    <div class="desc">
+                                    <div class="desc" itemprop="description">
                                         <?php echo $item->eventdescription; ?>
                                     </div>
                                     <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
