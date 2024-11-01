@@ -59,7 +59,7 @@ use Joomla\CMS\Factory;
 
 $document = Factory::getDocument();
 $css = '
-#jem .jem-list-img {
+    #jem .jem-list-img {
         width: ' . $imagewidth . ';
     }
 
@@ -81,7 +81,6 @@ $css = '
         }
     }';
 $document->addStyleDeclaration($css);
-
 
 $uri = Uri::getInstance();
 function jem_common_show_filter(&$obj)
