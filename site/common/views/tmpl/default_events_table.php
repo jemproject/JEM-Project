@@ -134,15 +134,17 @@ use Joomla\CMS\Router\Route;
 
 						<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 						<td headers="jem_title" class="header-td">
-							<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+							<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
 								<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-							</a><?php echo JemOutput::publishstateicon($row); ?>
+							</a><?php echo JemOutput::publishstateicon($row);
+							echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
 						</td>
 						<?php endif; ?>
 
 						<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
 						<td headers="jem_title" class="header-td" itemprop="name">
-							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row);
+							echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
 						</td>
 						<?php endif; ?>
 
