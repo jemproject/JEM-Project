@@ -75,11 +75,11 @@ if ($flyer_link_type == 1) {
 		<?php foreach ($list as $item) : ?>
 			<div class="clr"></div>
 			<div class="hr"><hr /></div>
-			<div class="event_id<?php echo $item->eventid; ?>">
-			<h2 class="event-title">
+			<div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+			<h2 class="event-title" itemprop="name" content="<?php echo $item->title; ?>">
 				<?php echo $item->startdate['year'] . ': '; ?>
 			<?php if ($item->eventlink) : ?>
-				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
+				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
 			<?php else : ?>
 				<?php echo $item->title; ?>
 			<?php endif; ?>
@@ -104,13 +104,23 @@ if ($flyer_link_type == 1) {
 				<?php endif; ?>
 
 				<?php if ($params->get('showdesc', 1) == 1) :?>
-				<div class="desc">
+				<div class="desc" itemprop="description">
 					<?php echo $item->eventdescription; ?>
 					<?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
 						echo '</br><a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
 					endif;?>
 				</div>
-				<?php endif; ?>
+				<?php endif;
+				 echo $item->dateschema; ?>
+      			<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+      				<meta itemprop="name" content="<?php echo $item->venue; ?>" />
+      				<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+      					<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+      					<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+      					<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+      					<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+      				</div>
+          		</div>
 			</div>
 
 			<div class="clr"></div>
