@@ -134,43 +134,51 @@ use Joomla\CMS\Router\Route;
 
 						<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 						<td headers="jem_title" class="header-td">
-							<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+							<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
 								<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-							</a><?php echo JemOutput::publishstateicon($row); ?>
+							</a><?php echo JemOutput::publishstateicon($row);
+							echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
 						</td>
 						<?php endif; ?>
 
 						<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
 						<td headers="jem_title" class="header-td" itemprop="name">
-							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row);
+							echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
 						</td>
 						<?php endif; ?>
 
 						<?php if ($this->jemsettings->showlocate == 1) : ?>
-						<td headers="jem_location" class="header-td">
+						<td headers="jem_location" class="header-td" itemtype="https://schema.org/Place" itemscope itemprop="location">
 							<?php
 							if (!empty($row->venue)) :
 								if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
-									echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+									echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span itemprop='name'>".$this->escape($row->venue)."</span></a>";
 								else :
-									echo $this->escape($row->venue);
+									echo "<span itemprop='name'>" . $this->escape($row->venue)."</span>";
 								endif;
 							else :
-								echo '-';
-							endif;
-							?>
+								echo "-<meta itemprop='name' content='' />";
+							endif; ?>
+							<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+								<meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" />
+								<meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" />
+								<meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" />
+								<meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" />
+							</div>
+			
 						</td>
 						<?php endif; ?>
 
 						<?php if ($this->jemsettings->showcity == 1) : ?>
 						<td headers="jem_city" class="header-td">
-							<?php echo !empty($row->city) ? $this->escape($row->city) : '-'; ?>
+							<?php echo !empty($row->city) ? $this->escape($row->city) : "-"; ?>
 						</td>
 						<?php endif; ?>
 
 						<?php if ($this->jemsettings->showstate == 1) : ?>
 						<td headers="jem_state" class="header-td">
-							<?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+							<?php echo !empty($row->state) ? $this->escape($row->state) : "-"; ?>
 						</td>
 						<?php endif; ?>
 
