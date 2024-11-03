@@ -45,7 +45,7 @@ $document->addStyleDeclaration($css);
         <?php foreach ($list as $item) : ?>
         <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
         	<h2 class="event-title" itemprop="name">
-                <?php if ($item->eventlink) : ?>
+        		<?php if ($item->eventlink) : ?>
                                 <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
                 <?php else : ?>
                     <?php echo $item->title; ?>
