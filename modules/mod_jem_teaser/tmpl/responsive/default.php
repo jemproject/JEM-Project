@@ -148,7 +148,6 @@ $document->addStyleDeclaration($css);
             <?php endif; ?>
             <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
               <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-                <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
                 <?php echo $item->catname; ?>
               </div>
             <?php endif; ?>
