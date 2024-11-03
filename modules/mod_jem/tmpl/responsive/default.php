@@ -51,12 +51,9 @@ $settings = JemHelper::config();
             </a>
           <?php elseif ($showtitloc == 1 && $linkdet == 1) :
               echo $item->title; ?>
-              <meta itemprop="url" conntent="<?php echo $item->link; ?>">
           <?php elseif ($showtitloc == 0 && $linkdet == 1) :
               echo $item->venue; ?>
-              <meta itemprop="url" conntent="<?php echo $item->link; ?>">
           <?php endif; ?>
-
         </span>
         <br />
         <?php if($highlight_featured && $item->featured): ?>
