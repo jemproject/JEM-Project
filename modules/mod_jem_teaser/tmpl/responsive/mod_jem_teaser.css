@@ -65,8 +65,6 @@ body.body-overlayed {
 
 #jemmoduleteaser .event-title, 
 #jemmoduleteaser .jem-teaser-datecat {
-  -ms-hyphens: auto;
-  -webkit-hyphens: auto;
   hyphens: auto;
 }
  
