@@ -100,7 +100,7 @@ use Joomla\CMS\Uri\Uri;
 				 <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
 				<?php endif; ?>
                   <img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
-				<?php if ($item->venuelink) : ?>
+				<?php if ($params->get('use_modal')) : ?>
 				</a>
 				<?php endif; ?>
 			</td>

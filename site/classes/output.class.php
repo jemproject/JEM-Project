@@ -1259,7 +1259,7 @@ static public function lightbox() {
 				$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';				
 			}			
 		}else{
-			$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" style="width:auto;height:200px;" alt="'.$info.'" />';
 		}
 		return $output;
 	}

@@ -114,7 +114,7 @@ if ($flyer_link_type == 1) {
 				<?php endif;
 				 
 				 echo $item->dateschema; ?>
-      			<div itemprop="location" itemscope itemtype="https://schema.org/Place"" style="display:none;">
+      			<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
       				<meta itemprop="name" content="<?php echo $item->venue; ?>" />
       				<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
       					<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />

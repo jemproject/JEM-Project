@@ -277,7 +277,7 @@
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="2">COM_JEM_FROM</option>
+			<option value="2">COM_JEM_EVENT_FIELD_FROM</option>
 		</field>
 		<field name="registra_from" type="calendar"
 			   label="COM_JEM_EVENT_FIELD_REGISTRATION_FROM"
@@ -326,7 +326,7 @@
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="2">COM_JEM_UNTIL</option>
+			<option value="2">COM_JEM_EVENT_FIELD_UNTIL</option>
 		</field>
 		<field name="unregistra_until" type="calendar"
 			   label="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL"

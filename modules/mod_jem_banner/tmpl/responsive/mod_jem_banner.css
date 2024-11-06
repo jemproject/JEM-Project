@@ -43,8 +43,6 @@ body.body-overlayed {
 
 #jemmodulebanner .event-title, 
 #jemmodulebanner .jem-banner-datecat {
-  -ms-hyphens: auto;
-  -webkit-hyphens: auto;
   hyphens: auto;
 }
 

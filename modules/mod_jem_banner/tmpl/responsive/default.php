@@ -158,19 +158,16 @@ $document->addStyleDeclaration($css);
                                     <?php if ($showcalendar == 0) : ?>
                                         <?php if ($item->date && $datemethod == 2) :?>
                                             <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                                                 <?php echo $item->date; ?>
                                             </div>
                                         <?php endif; ?>
 
                                         <?php if ($item->date && $datemethod == 1) :?>
                                             <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                                                 <?php echo $item->date; ?>
                                             </div>
                                             <?php if ($item->time && $datemethod == 1) :?>
                                                 <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                    <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                                                     <?php echo $item->time; ?>
                                                 </div>
                                             <?php endif; ?>
@@ -180,16 +177,14 @@ $document->addStyleDeclaration($css);
                                         <?php /* if time difference should be displayed */ ?>
                                         <?php if ($item->date && $datemethod == 2) : ?>
                                             <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                                                 <?php echo $item->date; ?>
                                             </div>
-                                        <?php endif; ?>
+                                        <?php endif;
 
-                                        <?php /* if date is to be displayed */ ?>
-                                        <?php if ($item->time && $datemethod == 1) :?>
-                                            <?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
+                    // if date is to be displayed
+                    if ($item->time && $datemethod == 1) :
+                        // only the time needs to be displayed (as the date is already displayed on the calendar page) ?>
                                             <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                                                 <?php echo $item->time; ?>
                                             </div>
                                         <?php endif; ?>
@@ -204,15 +199,15 @@ $document->addStyleDeclaration($css);
                                                 <?php echo $item->venue; ?>
                                             <?php endif; ?>
                                     	</div>
-                                    <?php endif; ?>
+                                    <?php endif;
 
-                                    <?php /*category*/ ?>
-                                    <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                // category
+                if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
                                         <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
                                             <?php echo $item->catname; ?>
                                         </div>
                                     <?php endif; ?>
-                                    	<div itemprop="location" itemscope itemtype="https://schema.org/Place"" style="display:none;">
+                                    	<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
                                     		<meta itemprop="name" content="<?php echo $item->venue; ?>" />
                                     		<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
                                     			<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
