@@ -273,7 +273,7 @@ class JemViewEvent extends JemView
 		$this->dateRegistationUntil   = strtotime(($item->registra_until ?? ''));
 		$this->dateUnregistationUntil = strtotime(($item->unregistra_until ?? ''));
 		$this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && ($this->dateRegistationUntil? $timeNow < $this->dateRegistationUntil : 1))));
-		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_unreg_until) > strtotime('now'))));
+		$this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_unreg_until ?? '') > strtotime('now'))));
 
 		// Timecheck for registration
 		$now       = strtotime(date("Y-m-d"));
