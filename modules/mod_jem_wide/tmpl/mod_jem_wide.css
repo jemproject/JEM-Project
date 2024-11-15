@@ -39,6 +39,7 @@ div#jemmodulewide span.venue-title {
 }
 
 div#jemmodulewide .event-image-cell {
+	text-align: center;
 }
 
 div#jemmodulewide .venue-image-cell {

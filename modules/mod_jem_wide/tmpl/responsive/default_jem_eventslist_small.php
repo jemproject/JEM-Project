@@ -44,11 +44,11 @@ use Joomla\CMS\Language\Text;
       ?>
 			<?php foreach ($list as $item) : ?>
         <?php if (!empty($item->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li itemprop="event" itemscope itemtype="https://schema.org/Event" class="jem-event jem-list-row jem-small-list jem-featured <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'"'; endif; ?> >
 				<?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick=location.href="'.$item->eventlink.'"'; endif; ?> >
+          <li itemprop="event" itemscope itemtype="https://schema.org/Event" class="jem-event jem-list-row jem-small-list <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?> >
 				<?php endif; ?>              
-              <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
+              <div itemprop="event" itemscope itemtype="https://schema.org/Event" class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
                 <i class="fa fa-clock" aria-hidden="true"></i>
                 <?php 
                 if ($item->date && $params->get('datemethod', 1) == 2) :
@@ -65,7 +65,7 @@ use Joomla\CMS\Language\Text;
               </div>
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
-                <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>">
+                <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$item->fulltitle; ?>" itemprop="name">
                   <i class="fa fa-comment" aria-hidden="true"></i>
                   <?php if ($params->get('linkevent') == 1) : ?>
                   <a href="<?php echo $item->eventlink; ?>">
@@ -82,13 +82,20 @@ use Joomla\CMS\Language\Text;
               
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                 <?php if (!empty($item->venue)) : ?>
-                  <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>">
+                  <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                     <?php if ($params->get('linkvenue') == 1) : ?>
                       <?php echo "<a href='".$item->venuelink."'>".$item->venue."</a>"; ?>
                     <?php else : ?>
                       <?php echo $item->venue; ?>
-                    <?php endif; ?>                  
+                    <?php endif; ?>
+                    <meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                  	<div class="address" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                  		<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                  		<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                  		<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                  		<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                  	</div>
                   </div>
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-venue"><i class="fa fa-map-marker" aria-hidden="true"></i> -</div>

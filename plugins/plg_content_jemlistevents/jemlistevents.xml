@@ -7,8 +7,8 @@
 	<authorUrl>www.joomlaeventmanager.net</authorUrl>
 	<copyright>copyright (C) 2013-2024 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.3.0</version>
-	<description>PLG_CONTENT_JEMLISTEVENTS_XML_DESCRIPTION</description>
+	<version>4.3.1</version>
+	<description>PLG_CONTENT_JEMLISTEVENTS_XML_INSTRUCTION</description>
 
 	<files>
 		<filename plugin="jemlistevents">jemlistevents.php</filename>

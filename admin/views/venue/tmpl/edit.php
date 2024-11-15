@@ -12,10 +12,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-// HTMLHelper::_('behavior.tooltip');
-// HTMLHelper::_('behavior.formvalidation');
-// HTMLHelper::_('behavior.keepalive');
-
 $wa = $this->document->getWebAssetManager();
 		$wa->useStyle('jem.geostyle')
 			->useScript('keepalive')
@@ -32,7 +28,7 @@ $params = $params->toArray();
 $location = JemHelper::defineCenterMap($this->form);
 ?>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'venue.cancel' || document.formvalidator.isValid(document.getElementById('venue-form'))) {

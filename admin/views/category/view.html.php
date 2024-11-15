@@ -45,9 +45,6 @@ class JemViewCategory extends JemAdminView
 		}
 		$wa = $app->getDocument()->getWebAssetManager();
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
-			
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css');
 

@@ -3,9 +3,7 @@
 	<config>
 		<inlinehelp button="show"/>
 	</config>
-	<fieldset name="details"
-			  addfieldpath="/administrator/components/com_jem/models/fields"
-	>
+    <fieldset name="details" addfieldpath="/administrator/components/com_jem/models/fields">
 		<field name="articletext" type="editor"
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"
@@ -41,7 +39,7 @@
 			   label="COM_JEM_ALIAS"
 			   description="COM_JEM_ALIAS"
 			   required="false"
-               hint="JFIELD_ALIAS_PLACEHOLDER"
+			   hint="JFIELD_ALIAS_PLACEHOLDER"
 		/>
 		<field name="datdescription" type="editor"
 			   hide="pagebreak,readmore"
@@ -119,8 +117,8 @@
 			   format="%Y-%m-%d %H:%M:%S"
 			   translateformat="true"
 			   filter="user_utc"
-			showtime="true"
-         		filterformat="%Y-%m-%d %H:%M:%S"
+			   showtime="true"
+			   filterformat="%Y-%m-%d %H:%M:%S"
 		/>
 		<field name="modified" type="calendar"
 			   class="readonly"
@@ -131,8 +129,8 @@
 			   format="%Y-%m-%d %H:%M:%S"
 			   translateformat="true"
 			   filter="user_utc"
-			showtime="true"
-			filterformat="%Y-%m-%d %H:%M:%S"
+			   showtime="true"
+			   filterformat="%Y-%m-%d %H:%M:%S"
 		/>
 		<field name="version" type="text"
 			   default="0"
@@ -149,7 +147,8 @@
 			   label="COM_JEM_FIELD_CREATED_BY_ALIAS_LABEL"
 			   description="COM_JEM_FIELD_CREATED_BY_ALIAS_DESC"
 			   class="inputbox"
-			   size="20" />
+               size="20"
+	/>
 		<field name="published" type="list"
 			   label="JSTATUS"
 			   description="JFIELD_PUBLISHED_DESC"
@@ -179,7 +178,7 @@
 			   description="COM_JEM_CONTACT_DESC"
 			   size="40"
 			   required="false"
-			    default="0"
+			   default="0"
 		/>
 	</fieldset>
 
@@ -270,36 +269,79 @@
 
 	<fieldset name="registration">
 		<field name="registra" type="list"
-			label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
-			description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
+			   label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
+			   description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
+			   class="inputbox"
+			   default="0"
+			   required="false"
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="3">COM_JEM_INVITED_USERS_ONLY</option>
+			<option value="2">COM_JEM_EVENT_FIELD_FROM</option>
 		</field>
+		<field name="registra_from" type="calendar"
+			   label="COM_JEM_EVENT_FIELD_REGISTRATION_FROM"
+			   description="COM_JEM_EVENT_FIELD_REGISTRATION_FROM_DESC"
+			   class="input-medium"
+			   default="now"
+			   filter="user_utc"
+			   format="%Y-%m-%d %H:%M:%S"
+			   filterformat="Y-m-d H:i:s"
+			   singleheader="true"
+			   showtime="true"
+			   timeformat="24"
+			   todaybutton="true"
+			   weeknumbers="true"
+			   filltable="true"
+			   showon="registra:2"
+		/>
+
+		<field name="registra_until" type="calendar"
+			   label="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL"
+			   description="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_DESC"
+			   class="input-medium"
+			   filter="user_utc"
+			   format="%Y-%m-%d %H:%M:%S"
+			   filterformat="Y-m-d H:i:s"
+			   singleheader="true"
+			   showtime="true"
+			   timeformat="24"
+			   todaybutton="true"
+			   weeknumbers="true"
+			   filltable="true"
+			   showon="registra:2"
+        />
+        <field name="reginvitedonly" type="checkbox"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
+               description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
+               checked="0"
+		/>
 		<field name="unregistra" type="list"
 			   label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"
 			   description="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION_DESC"
 			   class="inputbox"
 			   default="0"
-		       required="false"
+			   required="false"
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="2">COM_JEM_UNTIL</option>
+			<option value="2">COM_JEM_EVENT_FIELD_UNTIL</option>
 		</field>
-		<field name="unregistra_until" type="number"
-			size="4"
-			class="inputbox"
-			label="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL"
-			description="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_DESC"
-			filter="integer"
-			min="0"
-			max="999"
-			showon="unregistra:2"
+		<field name="unregistra_until" type="calendar"
+			   label="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL"
+			   description="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_DESC"
+			   class="input-medium"
+			   filter="user_utc"
+			   format="%Y-%m-%d %H:%M:%S"
+			   filterformat="Y-m-d H:i:s"
+			   singleheader="true"
+			   showtime="true"
+			   timeformat="24"
+			   todaybutton="true"
+			   weeknumbers="true"
+			   filltable="true"
+			   showon="unregistra:2"
 		/>
 		<field name="maxplaces" type="number"
 			   size="4"
@@ -338,53 +380,50 @@
 			   min="0"
 		/>
 		<field name="invited" type="modal_users"
-			label="COM_JEM_EDITEVENT_FIELD_INVITED_USERS"
-			description="COM_JEM_EDITEVENT_FIELD_INVITED_USERS_DESC"
-			size="4"
-			required="false"
-		/>	
-		<field name="avplaces" type="text"
+			   label="COM_JEM_EDITEVENT_FIELD_INVITED_USERS"
+			   description="COM_JEM_EDITEVENT_FIELD_INVITED_USERS_DESC"
 			   size="4"
-			   readonly="true"
-			   class="readonly"
-			   label="COM_JEM_AVAILABLE_PLACES"
-			   description="COM_JEM_AVAILABLE_PLACES_DESC"
+			   required="false"
 		/>
-		<field name="waitinglist" type="checkbox"
-			   class="inputbox btn-group btn-group-yesno"
-			   label="COM_JEM_ENABLE_WAITINGLIST"
-			   description="COM_JEM_ENABLE_WAITINGLIST_DESC"
-			   default="0"
-		>
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
-		<field name="requestanswer" type="checkbox"
-			   class="inputbox btn-group btn-group-yesno"
-			   label="COM_JEM_REQUEST_ANSWER_ASSISTENCE"
-			   description="COM_JEM_REQUEST_ANSWER_ASSISTENCE_DESC"
-			   default="0"
-		>
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
-		<field name="seriesbooking" type="checkbox"
-			   size="1"
-			   class="inputbox"
-			   label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
-			   description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
-			   value="0"
-			   default="0"
-		/>
-		<field name="singlebooking" type="checkbox"
-			   size="1"
-			   class="inputbox"
-			   label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
-			   description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
-			   value="0"
-			   default="0"
-		/>
-	</fieldset>
+        <field name="avplaces" type="text"
+               size="4"
+               class="readonly"
+               readonly="true"
+               disabled="true"
+               label="COM_JEM_AVAILABLE_PLACES"
+               description="COM_JEM_AVAILABLE_PLACES_DESC"
+        />
+        <field name="waitinglist" type="checkbox"
+               class="inputbox btn-group btn-group-yesno"
+               label="COM_JEM_ENABLE_WAITINGLIST"
+               description="COM_JEM_ENABLE_WAITINGLIST_DESC"
+               value="1"
+               checked="0"
+        />
+        <field name="requestanswer" type="checkbox"
+               class="inputbox btn-group btn-group-yesno"
+               label="COM_JEM_REQUEST_ANSWER_ASSISTENCE"
+               description="COM_JEM_REQUEST_ANSWER_ASSISTENCE_DESC"
+               value="1"
+               checked="0"
+        />
+        <field name="seriesbooking" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
+               description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
+               value="1"
+               checked="0"
+        />
+        <field name="singlebooking" type="checkbox"
+               size="1"
+               class="inputbox"
+               label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
+               description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
+               value="1"
+               checked="0"
+        />
+    </fieldset>
 
 	<fieldset name="recurrence"
 			  label="COM_JEM_RECURRING_EVENTS"
@@ -634,26 +673,26 @@
 		</fieldset>
 	</fields>
 	<fields name="metadata">
-			<field name="robots" type="list"
-				   label="JFIELD_METADATA_ROBOTS_LABEL"
-				   description="JFIELD_METADATA_ROBOTS_DESC"
-				   default=""
-			>
-				<option value="">JGLOBAL_USE_GLOBAL</option>
-				<option value="index, follow">COM_JEM_INDEX_FOLLOW</option>
-				<option value="noindex, follow">COM_JEM_NOINDEX_FOLLOW</option>
-				<option value="index, nofollow">COM_JEM_INDEX_NOFOLLOW</option>
-				<option value="noindex, nofollow">COM_JEM_NOINDEX_NOFOLLOW</option>
-			</field>
-			<field name="author" type="text"
-				   label="JAUTHOR"
-				   description="JFIELD_METADATA_AUTHOR_DESC"
-				   size="20" />
-			<field name="rights" type="textarea"
-				   label="JFIELD_META_RIGHTS_LABEL"
-				   description="JFIELD_META_RIGHTS_DESC"
-				   required="false"
-				   filter="string"
-				   cols="30" rows="2" />
-		</fields>
+		<field name="robots" type="list"
+			   label="JFIELD_METADATA_ROBOTS_LABEL"
+			   description="JFIELD_METADATA_ROBOTS_DESC"
+			   default=""
+		>
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="index, follow">COM_JEM_INDEX_FOLLOW</option>
+			<option value="noindex, follow">COM_JEM_NOINDEX_FOLLOW</option>
+			<option value="index, nofollow">COM_JEM_INDEX_NOFOLLOW</option>
+			<option value="noindex, nofollow">COM_JEM_NOINDEX_NOFOLLOW</option>
+		</field>
+		<field name="author" type="text"
+			   label="JAUTHOR"
+			   description="JFIELD_METADATA_AUTHOR_DESC"
+			   size="20" />
+		<field name="rights" type="textarea"
+			   label="JFIELD_META_RIGHTS_LABEL"
+			   description="JFIELD_META_RIGHTS_DESC"
+			   required="false"
+			   filter="string"
+			   cols="30" rows="2" />
+	</fields>
 </form>

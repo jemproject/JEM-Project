@@ -22,7 +22,7 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 ?>
-<script type="text/javascript">
+<script>
 	window.addEvent('domready', function(){
 	});
 
@@ -57,7 +57,7 @@ $params = $params->toArray();
         }
     }
 </script>
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		selectAll();
@@ -84,12 +84,9 @@ $params = $params->toArray();
 							<?php echo empty($this->item->id) ? Text::_('COM_JEM_NEW_GROUP') : Text::sprintf('COM_JEM_GROUP_DETAILS', $this->item->id); ?>
 						</legend>
 						<ul class="adminformlist">
-							<li><div class="label-form"><?php echo $this->form->renderfield('name'); ?></div>
-							</li>
-							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div>
-							</li>
-							<li><div class="label-form"><?php echo $this->form->renderfield('maintainers2'); ?></div>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('name'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('maintainers2'); ?></div></li>
 						</ul>
 					</fieldset>
 					<fieldset class="adminform">

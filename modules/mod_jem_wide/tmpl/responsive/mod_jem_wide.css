@@ -32,8 +32,6 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-sort {
-  -ms-hyphens: auto;
-  -webkit-hyphens: auto;
   hyphens: auto;
 }
 
@@ -180,8 +178,6 @@ body.body-overlayed {
   margin: 0;
   padding: 0;
   list-style-type: none;
-  -ms-hyphens: auto;
-  -webkit-hyphens: auto;
   hyphens: auto;
 }
 

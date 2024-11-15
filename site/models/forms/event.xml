@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fieldset name="details">
-        <field name="articletext" type="editor" class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION" description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
-               filter="\Joomla\CMS\Component\ComponentHelper::filterText" hide="pagebreak"/>
-
+        <field name="articletext" type="editor"
+		class="inputbox"
+		label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION"
+		description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
+		filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+		hide="pagebreak"
+	/>
         <field name="featured" class="inputbox" type="list"
                label="JFEATURED"
                description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
@@ -126,14 +129,12 @@
             <option value="2">JARCHIVED</option>
             <option value="-2">JTRASHED</option>
         </field>
-        <field
-                id="access"
-                name="access"
-                type="list"
+        <field name="access" type="list"
                 label="JFIELD_ACCESS_LABEL"
                 description="JFIELD_ACCESS_DESC"
                 class="inputbox"
-                size="1"/>
+                size="1"
+	/>
     </fieldset>
 
     <fieldset name="request">
@@ -243,52 +244,80 @@
     </fieldset>
 
     <fieldset name="registration">
-        <!--field name="registra" type="list"
-            label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
-            description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
+        <field name="registra" type="list"
+            label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
+            description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
             class="inputbox"
             default="0"
             required="false"
         >
             <option value="0">JNO</option>
             <option value="1">JYES</option>
-            <option value="2">COM_JEM_INVITED_USERS_ONLY</option>
-        </field-->
-        <field name="registra" type="checkbox"
-               size="20"
-               class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION"
-               description="COM_JEM_EDITEVENT_FIELD_ENABLE_REGISTRATION_DESC"
-               value="1"
-               default="0"
+            <option value="2">COM_JEM_EVENT_FIELD_FROM</option>
+        </field>
+        <field name="registra_from" type="calendar"
+               label="COM_JEM_EVENT_FIELD_REGISTRATION_FROM"
+               description="COM_JEM_EVENT_FIELD_REGISTRATION_FROM_DESC"
+               class="input-medium"
+               default="now"
+               filter="user_utc"
+               format="%Y-%m-%d %H:%M:%S"
+               filterformat="Y-m-d H:i:s"
+               singleheader="true"
+               showtime="true"
+               timeformat="24"
+               todaybutton="true"
+               weeknumbers="true"
+               filltable="true"
+               showon="registra:2"
+        />
+
+        <field name="registra_until" type="calendar"
+               label="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL"
+               description="COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_DESC"
+               class="input-medium"
+               filter="user_utc"
+               format="%Y-%m-%d %H:%M:%S"
+               filterformat="Y-m-d H:i:s"
+               singleheader="true"
+               showtime="true"
+               timeformat="24"
+               todaybutton="true"
+               weeknumbers="true"
+               filltable="true"
+               showon="registra:2"
         />
         <field name="reginvitedonly" type="checkbox"
-               size="20"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
                description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
-               value="1"
-               default="0"
+               checked="0"
         />
         <field name="unregistra" type="list"
-               label="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION"
-               description="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION_DESC"
+               label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"
+               description="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION_DESC"
                class="inputbox"
                default="0"
                required="false"
         >
             <option value="0">JNO</option>
             <option value="1">JYES</option>
-            <option value="2">COM_JEM_UNTIL</option>
+            <option value="2">COM_JEM_EVENT_FIELD_UNTIL</option>
         </field>
-        <field name="unregistra_until" type="number"
-               size="4"
-               class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL"
-               description="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_DESC"
-               filter="integer"
-               min="0"
-               max="999"
+        <field name="unregistra_until" type="calendar"
+               label="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL"
+               description="COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_DESC"
+               class="input-medium"
+               filter="user_utc"
+               format="%Y-%m-%d %H:%M:%S"
+               filterformat="Y-m-d H:i:s"
+               singleheader="true"
+               showtime="true"
+               timeformat="24"
+               todaybutton="true"
+               weeknumbers="true"
+               filltable="true"
+               showon="unregistra:2"
         />
         <field name="maxplaces" type="number"
                size="4"
@@ -315,7 +344,7 @@
                description="COM_JEM_MAXIMUM_BOOKED_PLACES_PER_USER_DESC"
                filter="integer"
                default="1"
-               min="0"
+               min="1"
         />
         <field name="reservedplaces" type="number"
                size="4"
@@ -335,42 +364,36 @@
         <field name="avplaces" type="text"
                size="4"
                class="readonly"
-               readonly="readonly"
-               disabled="disabled"
+               readonly="true"
+               disabled="true"
                label="COM_JEM_AVAILABLE_PLACES"
                description="COM_JEM_AVAILABLE_PLACES_DESC"
         />
         <field name="waitinglist" type="checkbox"
-               size="20"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST"
                description="COM_JEM_EDITEVENT_FIELD_ENABLE_WAITINGLIST_DESC"
-               value="0"
-               default="0"
+               checked="0"
         />
         <field name="requestanswer" type="checkbox"
-               size="1"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_REQUEST_ANSWER_ASSISTENCE"
                description="COM_JEM_EDITEVENT_FIELD_REQUEST_ANSWER_ASSISTENCE_DESC"
-               value="0"
-               default="0"
+               checked="0"
         />
         <field name="seriesbooking" type="checkbox"
                size="1"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
                description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
-               value="0"
-               default="0"
+               checked="0"
         />
         <field name="singlebooking" type="checkbox"
                size="1"
                class="inputbox"
                label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
                description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
-               value="0"
-               default="0"
+               checked="0"
         />
     </fieldset>
 

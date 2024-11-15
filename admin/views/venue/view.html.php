@@ -35,11 +35,6 @@ class JemViewVenue extends JemAdminView
 			return false;
 		}
 
-		// HTMLHelper::_('behavior.framework');
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.formvalidation');
-
 		//initialise variables
         $app = Factory::getApplication();
         $this->document = $app->getDocument();
@@ -70,7 +65,7 @@ class JemViewVenue extends JemAdminView
 		// $this->document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
-		$this->document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
+		$this->document->addCustomTag('<script>jQuery.noConflict();</script>');
 
 		// JQuery scripts
 		// $this->document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');

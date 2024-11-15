@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 
 // JEMHelper::headerDeclarations();
 ?>
-<script type="text/javascript">
+<script>
     function selectAll()
     {
         selectBox = document.getElementById("cid");

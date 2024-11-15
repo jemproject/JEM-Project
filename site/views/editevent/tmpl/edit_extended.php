@@ -56,7 +56,7 @@ use Joomla\CMS\Date\Date;
         <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number;?>"></input>
         <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
-        <script type="text/javascript">
+        <script>
 
             <!--
             var $select_output = new Array();
@@ -200,16 +200,17 @@ use Joomla\CMS\Date\Date;
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo Text::_('JYES'); ?></li>
                 <?php else : ?>
                     <li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?></li>
+                    <li><div id="registra_from"><label><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM');?></label><?php echo $this->form->getInput('registra_from'); ?><span id="jform_registra_from2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></div></li>
+                    <li><div id="registra_until"><label><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL');?></label><?php echo $this->form->getInput('registra_until'); ?><span id="jform_registra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></div></li>
                 <?php endif; ?>
                 <br/>
                 <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
                     <li><?php echo $this->form->getLabel('reginvitedonly'); ?> <?php echo $this->form->getInput('reginvitedonly'); ?></li>
-                <?php endif; ?>
+					<br/>
+                <?php endif; ?>              
+                <li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?></li>
                 <br/>
-                <li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
-                    <?php echo $this->form->getInput('unregistra_until'); ?>
-                    <span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
-                </li>
+                <li><div id="unregistra_until"><label></label><?php echo $this->form->getInput('unregistra_until'); ?><span id="jform_unregistra_until2"> <?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span></div></li>
                 <br/>
                 <li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
                 <br/>

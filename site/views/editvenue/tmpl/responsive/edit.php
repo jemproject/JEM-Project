@@ -42,14 +42,14 @@ $options = array(
 $location = JemHelper::defineCenterMap($this->form);
 ?>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task) {
 		if (task == 'venue.cancel' || document.formvalidator.isValid(document.getElementById('venue-form'))) {
 			Joomla.submitform(task, document.getElementById('venue-form'));
 		}
 	}
 </script>
-<script type="text/javascript">
+<script>
 	// window.addEvent('domready', function() {
 window.onload = (event) => {
 

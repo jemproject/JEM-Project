@@ -93,6 +93,7 @@ class Pkg_JemInstallerScript
 		$this->enablePlugin('content', 'jem');
 		$this->enablePlugin('content', 'jemlistevents');
 		$this->enablePlugin('quickicon', 'jem');
+	//	$this->enablePlugin('finder', 'jem');
 	//	$this->enablePlugin('search', 'jem');
 	//	$this->enablePlugin('jem', 'mailer');
 

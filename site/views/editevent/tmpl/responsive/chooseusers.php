@@ -20,7 +20,7 @@ $checked = 0;
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");
@@ -30,7 +30,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 		form.submit( view );
 	}
 </script>
-<script type="text/javascript">
+<script>
 	function checkList(form)
 	{
 		var r='', i, n, e;

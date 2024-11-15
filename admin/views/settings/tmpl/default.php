@@ -126,7 +126,6 @@ jQuery(document).ready(function($){
 		commoff();
 	}
 
-
 	var ObjArray = $('input.colorpicker').get('id').sort();
 
 	var arrayLength = ObjArray.length;
@@ -400,7 +399,7 @@ function registraoff()
     });
 </script>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'settings.cancel' || document.formvalidator.isValid(document.getElementById('settings-form'))) {

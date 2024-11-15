@@ -80,7 +80,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 		</div>
 		<!-- include the metatags end-->
 
-		<script type="text/javascript">
+		<script>
 			<!--
 			starter("<?php
 						echo Text::_('COM_JEM_META_ERROR');

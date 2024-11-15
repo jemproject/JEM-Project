@@ -17,7 +17,7 @@ use Joomla\CMS\Session\Session;
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");

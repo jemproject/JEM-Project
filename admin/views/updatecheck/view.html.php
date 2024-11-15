@@ -28,12 +28,8 @@ class JemViewUpdatecheck extends JemAdminView
 		$updatedata      	= $this->get('Updatedata');
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-	
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		// Load script
-		// HTMLHelper::_('behavior.framework');
 
 		//assign data to template
 		$this->updatedata	= $updatedata;

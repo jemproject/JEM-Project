@@ -23,7 +23,7 @@ $params		= $this->params;
 // $settings	= json_decode($this->item->attribs);
 ?>
 
-<script type="text/javascript">
+<script>
     jQuery(document).ready(function($){
 
         function checkmaxplaces(){
@@ -51,7 +51,7 @@ $params		= $this->params;
     });
 </script>
 
-<script type="text/javascript">
+<script>
     $(document).ready(function () {
         var $registraCheckbox = $('input[name="jform[registra]"]');
         var $restOfContent = $(".jem-dl-rest").children("dd, dt");
@@ -98,7 +98,7 @@ $params		= $this->params;
     });
 </script>
 
-<script type="text/javascript">
+<script>
     Joomla.submitbutton = function(task) {
         if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
             <?php //echo $this->form->getField('articletext')->save(); ?>
@@ -108,7 +108,7 @@ $params		= $this->params;
         }
     }
 </script>
-<script type="text/javascript">
+<script>
     // window.addEvent('domready', function(){
     jQuery(document).ready(function($){
 
@@ -118,15 +118,45 @@ $params		= $this->params;
             var unregistramode = unregistra.val();
 
             if (unregistramode == 2) {
+	            document.getElementById('unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until2').style.display = '';
             } else {
+	            document.getElementById('unregistra_until').style.display = 'none';			
                 document.getElementById('jform_unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until2').style.display = 'none';
             }
         }
         $("#jform_unregistra").on('change', showUnregistraUntil);
         showUnregistraUntil();
+    });
+
+    jQuery(document).ready(function($){
+
+        var showRegistraFrom = function(){
+            var registra = $("#jform_registra");
+
+            var registramode = registra.val();
+
+            if (registramode == 2) {
+                document.getElementById('registra_from').style.display = '';
+                document.getElementById('registra_until').style.display = '';
+                document.getElementById('jform_registra_from').style.display = '';
+                document.getElementById('jform_registra_from2').style.display = '';
+                document.getElementById('jform_registra_until').style.display = '';
+                document.getElementById('jform_registra_until2').style.display = '';
+            } else {
+                document.getElementById('registra_from').style.display = 'none';
+                document.getElementById('registra_until').style.display = 'none';
+                document.getElementById('jform_registra_from').style.display = 'none';
+                document.getElementById('jform_registra_from2').style.display = 'none';
+                document.getElementById('jform_registra_until').style.display = 'none';
+                document.getElementById('jform_registra_until2').style.display = 'none';
+
+            }
+        }
+        $("#jform_registra").on('change', showRegistraFrom);
+        showRegistraFrom();
     });
 </script>
 

@@ -403,14 +403,23 @@ class JemModelEvent extends JemModelAdmin
 
         if($save) {
 
+            // set to null if registration is empty
+            if($data['registra_from'] == ''){
+                $data['registra_from'] = null;
+            }
+            if($data['registra_until'] == ''){
+                $data['registra_until'] = null;
+            }
+            if($data['unregistra_until'] == ''){
+                $data['unregistra_until'] = null;
+            }
+            if($data['reginvitedonly']== null){
+                $data['reginvitedonly'] = 0;
+            }
+
             // event maybe first of recurrence set -> dissolve complete set
             if (JemHelper::dissolve_recurrence($data['id'])) {
                 $this->cleanCache();
-            }
-
-            // on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
-            if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
-                $data['registra'] = ($data['registra'] == 1) ? 3 : 2;
             }
 
             if ($data['dates'] == null || $data['recurrence_type'] == '0') {
@@ -528,7 +537,7 @@ class JemModelEvent extends JemModelAdmin
             }
         }else{
             // Update field of this event
-            $fieldAllow=['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow=['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = true;
             $fieldsupdated="";
             foreach ($diff as $d => $value){
@@ -829,9 +838,8 @@ class JemModelEvent extends JemModelAdmin
                     $db->execute();
                 }
             } else {
-
                 // Update the value of field into events table
-                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . (($value!==null AND $value!='')? $db->quote($value) : 'null') . ' WHERE id = ' . $db->quote($eventid));
+                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . ($value!==null ? $db->quote($value) : 'null') . ' WHERE id = ' . $db->quote($eventid));
                 $db->execute();
             }
 
