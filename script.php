@@ -262,6 +262,11 @@ class com_jemInstallerScript
 
 			// Check columns in database
 			$this->checkColumnsIntoDatabase();
+			
+			// Verify the data type of 'unregistra_until' in the database
+			if($this->oldRelease < '4.3.1'){
+				$this->checkUnregistraUntil();
+			}
 
             // Ensure css files are (over)writable
             $this->makeFilesWritable();
@@ -834,6 +839,47 @@ class com_jemInstallerScript
                 // simply continue with next table
             }
         }
-    }
+    }	
+	
+	/**
+	 * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
+     *
+     * @return void
+     */
+    private function checkUnregistraUntil()
+    {
+		$db = Factory::getContainer()->get('DatabaseDriver');      		
+
+    	try {
+			
+	        $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
+	        $db->setQuery($query);
+	        $db->execute();
+
+	        $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
+	        $db->setQuery($query);
+	        $db->execute();       
+			
+	        $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
+	        $db->setQuery($query);
+	        $db->execute();       
+
+	        $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
+	        $db->setQuery($query);
+	        $db->execute();
+			
+			$query = "UPDATE `#__jem_events` SET `unregistra_until` = DATE_FORMAT(DATE_SUB(CONCAT(`dates`, ' ', `times`), INTERVAL `unregistra_until` HOUR),'%Y-%m-%d %H:%i:%s') WHERE `unregistra_until` != 0 AND `times` IS NOT NULL AND `dates` IS NOT NULL";
+	        $db->setQuery($query);
+    	    $db->execute();
+
+            $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` DATETIME DEFAULT NULL";
+			$db->setQuery($query);
+			$db->execute();
+
+	    } catch (\Exception $e) {    
+	        echo "Error updating `unregistra_until`: " . $e->getMessage();
+    	}
+
+}
 
 }
