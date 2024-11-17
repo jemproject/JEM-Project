@@ -18,19 +18,13 @@ $gdv = JEMImage::gdVersion();
 		<legend><?php echo Text::_( 'COM_JEM_IMAGE_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
 			<li><div class="label-form"><?php echo $this->form->renderfield('image_filetypes'); ?></div></li>
-
 			<li><div class="label-form"><?php echo $this->form->renderfield('sizelimit'); ?></div></li>
-
 			<li><div class="label-form"><?php echo $this->form->renderfield('imagehight'); ?></div></li>
-
 			<li><div class="label-form"><?php echo $this->form->renderfield('imagewidth'); ?></div></li>
-
 			<?php if ($gdv && $gdv >= 2) : //is the gd library installed on the server and its version > 2? ?>
 				<li><div class="label-form"><?php echo $this->form->renderfield('gddisabled'); ?></div></li>
 			<?php endif; ?>
-
 			<li><div class="label-form"><?php echo $this->form->renderfield('lightbox'); ?></div></li>
-
             <li><div class="label-form"><?php echo $this->form->renderfield('flyer'); ?></div></li>
 		</ul>
 	</fieldset>

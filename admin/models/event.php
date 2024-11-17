@@ -838,9 +838,8 @@ class JemModelEvent extends JemModelAdmin
                     $db->execute();
                 }
             } else {
-
                 // Update the value of field into events table
-                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . (($value!==null AND $value!='')? $db->quote($value) : 'null') . ' WHERE id = ' . $db->quote($eventid));
+                $db->setQuery('UPDATE #__jem_events SET ' . $field . ' = ' . ($value!==null ? $db->quote($value) : 'null') . ' WHERE id = ' . $db->quote($eventid));
                 $db->execute();
             }
 
