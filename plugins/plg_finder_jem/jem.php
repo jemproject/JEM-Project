@@ -244,22 +244,32 @@ class plgFinderJEM extends Adapter
      * @return  void
      *
      */
-    protected function index(Result $item)
-    {
-        // Check if the extension is enabled
-        if (ComponentHelper::isEnabled($this->extension) === false) {
-            return;
-        }
+ protected function index(Result $item)
+{
+    // Check if the extension is enabled
+    if (ComponentHelper::isEnabled($this->extension) === false) {
+        return;
+    }
 
-        $item->setLanguage();
+    $item->setLanguage();
 
-        // Initialize the item parameters.
-        $item->params = new Registry($item->params);
-        $item->metadata = new Registry($item->metadata);
+    // Initialize the item parameters.
+    $item->params = new Registry($item->params);
+    $item->metadata = new Registry($item->metadata);
 
-        // Trigger the onContentPrepare event.
+    // Ensure both summary and body are populated
+    // Prioritize introtext for summary if it exists
+    if (!empty($item->summary)) {
         $item->summary = Helper::prepareContent($item->summary, $item->params);
-        $item->body    = Helper::prepareContent($item->body, $item->params);
+    }
+
+    // Fallback to fulltext if summary is empty
+    if (empty($item->summary) && !empty($item->body)) {
+        $item->summary = Helper::prepareContent($item->body, $item->params);
+    }
+
+    // Ensure body is processed
+    $item->body = Helper::prepareContent($item->body, $item->params);
 
         // Build the necessary route and path information.
         $item->url   = $this->getURL($item->id, $this->extension, $this->layout);
@@ -347,7 +357,7 @@ class plgFinderJEM extends Adapter
         $sql->select('a.id, a.access, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
         $sql->select('a.created AS publish_start_date, a.dates AS start_date, a.enddates AS end_date');
         $sql->select('a.created_by, a.modified, a.version, a.published AS state');
-        $sql->select('a.fulltext AS body, a.introtext AS summary');
+        $sql->select('a.introtext AS summary, a.fulltext AS body');
         $sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
         $sql->select('l.published AS loc_published');
         $sql->select('ct.name AS countryname');
