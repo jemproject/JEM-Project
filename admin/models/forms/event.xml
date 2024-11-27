@@ -476,6 +476,25 @@
 		<fieldset name="basic"
 				  label="COM_JEM_EVENT_FIELDSET_ATTRIBS_LABEL"
 		>
+			<field name="event_show_category" type="list"
+				label="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_DESC"
+				default=""
+			>
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="1">JSHOW</option>
+				<option	value="0">JHIDE</option>
+			</field>
+			<field name="event_link_category" type="list"
+				label="COM_JEM_EVENT_FIELD_LINK_CATEGORY_LABEL"
+				description="COM_JEM_EVENT_FIELD_LINK_CATEGORY_DESC"
+				default=""
+				showon="event_show_category:1"
+			>
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="1">JYES</option>
+				<option	value="0">JNO</option>
+			</field>
 			<field name="event_show_author" type="list"
 				   label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
 				   description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC"
@@ -489,6 +508,7 @@
 				   label="COM_JEM_EVENT_FIELD_LINK_AUTHOR_LABEL"
 				   description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC"
 				   default=""
+				   showon="event_show_author:1"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JNO</option>
@@ -507,6 +527,7 @@
 				   label="COM_JEM_EVENT_FIELD_LINK_CONTACT_LABEL"
 				   description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC"
 				   default=""
+				   showon="event_show_contact:1"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JNO</option>

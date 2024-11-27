@@ -112,14 +112,17 @@ if ($jemsettings->oldevent > 0) {
             <?php
             endif;
             $n = is_array($this->categories) ? count($this->categories) : 0;
-            ?>
+            if ($params->get('event_show_category') == 1) : ?>
 
             <dt class="category"><?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:</dt>
             <dd class="category">
                 <?php
                 $i = 0;
                 foreach ((array)$this->categories as $category) :
-                    ?><a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php
+                   if ($params->get('event_link_category') == 1) : ?>
+                    <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php else :
+                       echo $this->escape($category->catname); 
+                   endif;
                     $i++;
                     if ($i != $n) :
                         echo ', ';
@@ -127,8 +130,8 @@ if ($jemsettings->oldevent > 0) {
                 endforeach;
                 ?>
             </dd>
-
-            <?php
+            <?php endif;
+            
             for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
