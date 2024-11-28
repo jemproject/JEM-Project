@@ -233,9 +233,8 @@ class JemTableEvent extends Table
 				}
 
 				if (!empty($file['name'])) {
-					// only on first event, skip on recurrence events
-					
-					if (empty($this->recurrence_first_id)) {
+					// only on first event, skip on recurrence events					
+					//if (empty($this->recurrence_first_id)) {
 						//check the image
 						$check = JemImage::check($file, $jemsettings);
 
@@ -249,7 +248,7 @@ class JemTableEvent extends Table
 								$this->datimage = $filename;
 							}
 						}
-					}
+					//}
 				} elseif (!empty($removeimage)) {
 					// if removeimage is non-zero remove image from event
 					// (file will be deleted later (e.g. housekeeping) if unused)
