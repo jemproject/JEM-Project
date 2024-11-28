@@ -91,7 +91,7 @@ if ($jemsettings->oldevent > 0) {
                 echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
                 ?>
             </dd>
-            <?php if ($this->item->locid != 0) : ?>
+            <?php if (($this->item->locid != 0) && ($params->get('event_show_venue_name') == 1)) : ?>
                 <dt class="where"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>
                 <dd class="where"><?php
                     if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :

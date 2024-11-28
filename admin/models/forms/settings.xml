@@ -36,9 +36,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JSHOW</option>
 			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
 		</field>
 
 		<field name="ical_tz" type="list"
@@ -126,9 +128,11 @@
 			size="1"
 			default="1"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 
 	</fieldset>
@@ -230,9 +234,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -254,9 +260,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -324,9 +332,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="regallowcomments" type="radio"
 			label="COM_JEM_ALLOW_REGISTER_COMMENTS"
@@ -334,9 +344,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -382,9 +394,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="gdversion" type="text"
 			label="COM_JEM_GD_VERSION"
@@ -392,6 +406,8 @@
 			class="inputbox"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		/>
 		<field name="lightbox" type="radio"
 			label="COM_JEM_IMAGE_LIGHTBOX"
@@ -399,9 +415,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="flyer" type="radio"
 			   label="COM_JEM_IMAGE_FLYER"
@@ -409,9 +427,11 @@
 			   class="inputbox btn-group btn-group-yesno"
 			   default="0"
 			   required="false"
+			   layout="joomla.form.field.radio.switcher"
+			   filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="meta_description" type="textarea"
 			label="COM_JEM_META_DESCRIPTION"
@@ -471,9 +491,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JSHOW</option>
 			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
 		</field>
 		<field name="datemode" type="list"
 			label="COM_JEM_DATE_COLUMN_LAYOUT"
@@ -496,9 +518,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="citywidth" type="text"
 			label="COM_JEM_WIDTH_CITY_COLUMN"
@@ -519,9 +543,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="attewidth" type="text"
 			label="COM_JEM_WIDTH_ATTENDEE_COLUMN"
@@ -542,9 +568,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="titlewidth" type="text"
 			label="COM_JEM_WIDTH_TITLE_COLUMN"
@@ -565,9 +593,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="locationwidth" type="text"
 			label="COM_JEM_WIDTH_VENUE_COLUMN"
@@ -583,9 +613,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -598,9 +630,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="statewidth" type="text"
 			label="COM_JEM_WIDTH_STATE_COLUMN"
@@ -621,9 +655,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="catfrowidth" type="text"
 			label="COM_JEM_WIDTH_CATEGORY_COLUMN"
@@ -639,9 +675,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -654,9 +692,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="tableeventimagewidth" type="text"
 			label="COM_JEM_LAYOUT_TABLE_EVENTIMAGE_WIDTH"
@@ -707,9 +747,11 @@
 			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -749,12 +791,13 @@
 		<field name="venueowner" type="radio"
 			label="COM_JEM_EDIT_VENUE_FRONTEND_USER"
 			description="COM_JEM_EDIT_VENUE_FRONTEND_USER_DESC"
-			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
+			layout="joomla.form.field.radio.switcher"
+			filter="boolean"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 
@@ -762,116 +805,138 @@
 		<fieldset name="basic"
 			label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
 		>
+			<field name="event_show_venue_name" type="radio"
+				label="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_NAME_VENUE_DESC"
+				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
+			>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
 			<field name="event_show_category" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_link_category" type="radio"
 				label="COM_JEM_EVENT_FIELD_LINK_CATEGORY_LABEL"
 				description="COM_JEM_EVENT_FIELD_LINK_CATEGORY_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 				showon="event_show_category:1"
 			>
-				<option	value="1">JYES</option>
-				<option	value="0">JNO</option>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="event_show_author" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_link_author" type="radio"
 				label="COM_JEM_EVENT_FIELD_LINK_AUTHOR_LABEL"
 				description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 				showon="event_show_author:1"
 			>
-				<option	value="1">JYES</option>
-				<option	value="0">JNO</option>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="event_show_contact" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_link_contact" type="radio"
 				label="COM_JEM_EVENT_FIELD_LINK_CONTACT_LABEL"
 				description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 				showon="event_show_contact:1"
 			>
-				<option	value="1">JYES</option>
-				<option	value="0">JNO</option>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="event_show_hits" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_print_icon" type="radio"
 				label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
 				description="JGLOBAL_SHOW_PRINT_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_email_icon" type="radio"
 				label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
 				description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_ical_icon" type="radio"
 				label="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON"
 				description="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option	value="1">JSHOW</option>
-				<option	value="0">JHIDE</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_readmore" type="radio"
 				label="JGLOBAL_SHOW_READMORE_LABEL"
 				description="JGLOBAL_SHOW_READMORE_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_intro" type="radio"
 				description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
 				label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 		</fieldset>
 
@@ -881,82 +946,90 @@
 			<field name="global_show_filter" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_FILTER"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_FILTER_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_display" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_LIMITBOX"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_LIMITBOX_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_icons" type="radio"
 				label="COM_JEM_SHOW_ICONS"
 				description="COM_JEM_SHOW_ICONS_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_print_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_PRINT_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_PRINT_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_archive_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_ARCHIVE_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_ARCHIVE_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_email_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_EMAIL_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_EMAIL_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_ical_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_ICAL_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_ICAL_ICON_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_timedetails" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_TIME"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="spacer1" type="spacer"
 				hr="true"
@@ -968,17 +1041,18 @@
 				default="1"
 				required="false"
 			>
-				<option value="1">COM_JEM_NAME</option>
 				<option value="0">COM_JEM_USERNAME</option>
+				<option value="1">COM_JEM_NAME</option>
 			</field>
 			<field name="highlight" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT"
 				description="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="default_Itemid" type="text"
 				label="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID"
@@ -1022,12 +1096,13 @@
 			<field name="global_cleanup_db_on_uninstall" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_CLEANUP_DB_ON_UNINSTALL"
 				description="COM_JEM_SETTINGS_FIELD_CLEANUP_DB_ON_UNINSTALL_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 		</fieldset>
 
@@ -1037,22 +1112,24 @@
 			<field name="global_show_locdescription" type="radio"
 				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_detailsadress" type="radio"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_detlinkvenue" type="list"
 				label="COM_JEM_DISPLAY_LINK_TO_VENUE"
@@ -1068,12 +1145,13 @@
 			<field name="global_show_listevents" type="radio"
 				   label="COM_JEM_DISPLAY_LIST_EVENTS"
 				   description="COM_JEM_DISPLAY_LIST_EVENTS_DESC"
-				   class="inputbox btn-group btn-group-yesno"
 				   default="1"
 				   required="false"
+				   layout="joomla.form.field.radio.switcher"
+				   filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_mapserv" type="list"
 				label="COM_JEM_DISPLAY_LINK_TO_MAP"
@@ -1108,12 +1186,13 @@
 			<field name="global_show_ownedvenuesonly" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="global_editevent_maxnumcustomfields" type="list"
 				label="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS"
@@ -1161,22 +1240,24 @@
 			<field name="event_show_description" type="radio"
 				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_detailstitle" type="radio"
 				label="COM_JEM_DISPLAY_EVENT_TITLE"
 				description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 		</fieldset>
 
@@ -1186,32 +1267,35 @@
 			<field name="event_show_venue" type="radio"
 				   label="COM_JEM_EVENT_DISPLAY_VENUE"
 				   description="COM_JEM_EVENT_DISPLAY_VENUE_DESC"
-				   class="inputbox btn-group btn-group-yesno"
 				   default="1"
 				   required="false"
+				   layout="joomla.form.field.radio.switcher"
+				   filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_locdescription" type="radio"
 				label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_detailsadress" type="radio"
 				label="COM_JEM_EVENT_DISPLAY_ADDRESS"
 				description="COM_JEM_EVENT_DISPLAY_ADDRESS_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_detlinkvenue" type="list"
 				label="COM_JEM_EVENT_DISPLAY_LINK_TO_VENUE"
@@ -1260,34 +1344,37 @@
 			label="COM_JEM_REGISTRATION"
 		>
 			<field name="event_show_registration" type="radio"
-				   label="COM_JEM_EVENT_DISPLAY_REGISTRATION"
-				   description="COM_JEM_EVENT_DISPLAY_REGISTRATION_DESC"
-				   class="inputbox btn-group btn-group-yesno"
-				   default="1"
-				   required="false"
+				label="COM_JEM_EVENT_DISPLAY_REGISTRATION"
+				description="COM_JEM_EVENT_DISPLAY_REGISTRATION_DESC"
+				default="1"
+				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_registration_counters" type="radio"
-				   label="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS"
-				   description="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS_DESC"
-				   class="inputbox btn-group btn-group-yesno"
-				   default="1"
-				   required="false"
+				label="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS"
+				description="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS_DESC"
+				default="1"
+				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_more_attendeedetails" type="radio"
 				label="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS"
 				description="COM_JEM_REG_SHOW_MORE_ATTENDEEDETAILS_DESC"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="event_show_attendeenames" type="list"
 				label="COM_JEM_REG_SHOW_ATTENDEENAMES_TO"
@@ -1329,8 +1416,8 @@
 				description="SOMETHING"
 				label="SOMETHING_DESC"
 				>
-				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
 		</fieldset>
 	</fields>
@@ -1340,11 +1427,12 @@
 			<field name="css_backend_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_backend_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE_DESC"
@@ -1357,11 +1445,12 @@
 			<field name="css_calendar_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_calendar_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE_DESC"
@@ -1374,11 +1463,12 @@
 			<field name="css_colorpicker_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_colorpicker_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE_DESC"
@@ -1391,11 +1481,12 @@
 			<field name="css_geostyle_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_geostyle_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE_DESC"
@@ -1408,11 +1499,12 @@
 			<field name="css_googlemap_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_googlemap_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE_DESC"
@@ -1425,11 +1517,10 @@
 			<field name="css_jem_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_jem_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE_DESC"
@@ -1442,11 +1533,12 @@
 			<field name="css_print_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM"
-				class="inputbox btn-group btn-group-yesno"
 				default="0"
+				layout="joomla.form.field.radio.switcher"
+				filter="boolean"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 			<field name="css_print_customfile" type="text"
 				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE_DESC"

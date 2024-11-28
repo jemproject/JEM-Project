@@ -99,7 +99,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
               ?>
             </span>
                     </dd>
-                    <?php if (!empty($this->item->locid)) : ?>
+                    <?php if ((!empty($this->item->locid)) && ($params->get('event_show_venue_name') == 1)) : ?>
                         <dt class="jem-where hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHERE'); ?>"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>
                         <dd class="jem-where"><?php
                             if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :

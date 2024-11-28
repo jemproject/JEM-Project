@@ -123,14 +123,14 @@ class com_jemInstallerScript
             </p> <?php
         }
 
-
         $param_array = array(
             "event_comunoption"=>"0",
             "event_comunsolution"=>"0",
             "event_show_attendeenames"=>"2",
             "event_show_more_attendeedetails"=>"0",
+            "event_show_venue_name"=>"1",
             "event_show_category"=>"1",
-            "event_link_categoryx"=>"1",
+            "event_link_category"=>"1",
             "event_show_author"=>"1",
             "event_lg"=>"",
             "event_link_author"=>"1",
