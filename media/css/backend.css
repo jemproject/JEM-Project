@@ -1080,15 +1080,8 @@ fieldset.adminform.long span.faux-label {
     min-width: 180px;
 }
 
-/* Field label widths - short label */
-fieldset.adminform label,
-fieldset.adminform span.faux-label {
-    /* min-width: 135px; */
-    padding-right: 5px;
-}
-
 fieldset.adminform label.btn {
-    min-width: 135px;
+    min-width: 75px;
 }
 
 .btn-margin {
