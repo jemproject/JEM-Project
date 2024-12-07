@@ -372,7 +372,7 @@ body.com_jem.body-overlayed {
 #jem .jem-list-row {
     display: flex;
     flex-direction: row;
-    /* flex-wrap: wrap; */
+    flex-wrap: wrap;
     justify-content: flex-start;
 }
 
