@@ -987,8 +987,10 @@ static public function lightbox() {
 				}
 
 				JemHelper::loadCss('googlemap');
-				HTMLHelper::_('script', 'com_jem/infobox.js', null, true);
-				HTMLHelper::_('script', 'com_jem/googlemap.js', null, true);
+				
+	 			$wa = $app->getDocument()->getWebAssetManager();
+	 			$wa->registerScript('jem.infobox', 'com_jem/infobox.js')->useScript('jem.infobox');
+	 			$wa->registerScript('jem.googlemap', 'com_jem/googlemap.js')->useScript('jem.googlemap');
 
 				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
@@ -1054,7 +1056,10 @@ static public function lightbox() {
 	 			$lat = $decoded[0]["lat"] ?? null;
 	 			$lng = $decoded[0]["lon"] ?? null;
 	 			}
-
+	 			
+	 			$wa = $app->getDocument()->getWebAssetManager();
+	 			$wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
+	 			
 	 			if ($lat && $lng) {
 				    $zoom = 15; // Adjust the zoom level as per your requirement
 				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;layer=mapnik&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
