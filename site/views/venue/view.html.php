@@ -255,11 +255,11 @@ class JemViewVenue extends JemView
 				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-				$archive_link = Route::_('index.php?option=com_jem&view=venue-calendar');
+				$archive_link = Route::_('index.php?option=com_jem&view=venue');
 			} else {
 				//$pathway->addItem($venue->venue, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
 				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
-				$archive_link = Route::_('index.php?option=com_jem&view=venue-calendar');
+				$archive_link = Route::_('index.php?option=com_jem&view=venue');
 			}
 
 			$params->set('page_heading', $pageheading);
