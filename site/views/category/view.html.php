@@ -147,6 +147,7 @@ class JemViewCategory extends JemView
 			$this->print_link    = $print_link;
 			$this->print         = $print;
 			$this->ical_link     = $partDate;
+			$this->archive_link  = $archive_link;
 
 		}
 		else
@@ -284,6 +285,7 @@ class JemViewCategory extends JemView
 			} else {
 				$print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
+			$archive_link = Route::_('index.php?option=com_jem&view=category');
 
 			$params->set('page_heading', $pageheading);
 
@@ -325,6 +327,7 @@ class JemViewCategory extends JemView
 
 			$this->lists         = $lists;
 			$this->action        = $uri->toString();
+			$this->archive_link  = $archive_link;
 			$this->cimage        = $cimage;
 			$this->rows          = $items;
 			$this->noevents      = $noevents;

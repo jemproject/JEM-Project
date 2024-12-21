@@ -35,11 +35,9 @@ $group = 'globalattribs';
 	</div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-            <legend><?php echo Text::_('COM_JEM_SETIINGS_GLOBAL_RECURRENCE'); ?></legend>
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITVENUE'); ?></legend>
             <ul class="adminformlist">
-                <?php foreach ($this->form->getFieldset('globalparam_recurrence') as $field): ?>
-                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
-                <?php endforeach; ?>
+                <li><?php echo $this->form->getLabel('global_editvenue_maxnumcustomfields',$group); ?> <?php echo $this->form->getInput('global_editvenue_maxnumcustomfields',$group); ?></li>
             </ul>
         </fieldset>
     </div>
@@ -57,25 +55,13 @@ $group = 'globalattribs';
 	</div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo Text::_('COM_JEM_VENUES'); ?></legend>
-			<ul class="adminformlist">
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_locdescription',$group); ?></div></li>
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_detailsadress',$group); ?></div></li>
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_detlinkvenue',$group); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('global_show_listevents',$group); ?></div></li>
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_mapserv',$group); ?></div></li>
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_tld',$group); ?></div></li>
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_lg',$group); ?></div></li>
-			</ul>
-		</fieldset>
-	</div>
-    <div class="width-100" style="padding: 10px 1vw;">
-        <fieldset class="options-form">
-			<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITVENUE'); ?></legend>
-			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('global_editvenue_maxnumcustomfields',$group); ?> <?php echo $this->form->getInput('global_editvenue_maxnumcustomfields',$group); ?></li>
-			</ul>
-		</fieldset>
-	</div>
+            <legend><?php echo Text::_('COM_JEM_SETIINGS_GLOBAL_RECURRENCE'); ?></legend>
+            <ul class="adminformlist">
+                <?php foreach ($this->form->getFieldset('globalparam_recurrence') as $field): ?>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
+    </div>
 </div>
 <div class="clr"></div>

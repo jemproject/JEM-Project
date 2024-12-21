@@ -91,15 +91,15 @@ static public function lightbox() {
 			${$key} = isset($permissions->$key) ? $permissions->$key: null;
 		}
 		if (is_object($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
 				${$key} = isset($params->$key) ? $params->$key : null;
 			}
 		} elseif (is_array($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
 				${$key} = key_exists($key, $params) ? $params[$key] : null;
 			}
 		} else {
-			foreach (array('id', 'slug', 'task', 'print_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'archive_link', 'print_link') as $key) {
 				${$key} = null;
 			}
 		}
