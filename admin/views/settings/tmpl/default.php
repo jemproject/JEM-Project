@@ -449,6 +449,13 @@ function registraoff()
 					<div class="clr"></div>
 
 
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_VENUE_PAGE')); ?>
+                    <fieldset class="adminform">
+                        <?php echo $this->loadTemplate('evvenues'); ?>
+                    </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
 				
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_LAYOUT')); ?>
 					    <fieldset class="adminform">
