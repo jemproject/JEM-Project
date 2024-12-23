@@ -287,7 +287,7 @@ class JemViewCategory extends JemView
 			} else {
 				$print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
-			$archive_link = Route::_(JemHelperRoute::getVenueRoute($category->id));
+			$archive_link = Route::_(JemHelperRoute::getCategoryRoute($category->id));
 
 			$params->set('page_heading', $pageheading);
 
