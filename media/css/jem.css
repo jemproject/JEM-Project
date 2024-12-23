@@ -222,10 +222,6 @@ div#jem .floattext:after {
     visibility: hidden;
 }
 
-div#jem .floattext {
-    display: block; /* safari */
-}
-
 /* used in venue select popup */
 div#jem .pointer {
     cursor: pointer;
@@ -265,7 +261,6 @@ div#jc h4 {
 
 }
 
-
 /**
  * @section definitionlist
  *
@@ -273,34 +268,29 @@ div#jc h4 {
  */
 div#jem dl {
     margin: 0 5px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: baseline;
 }
 
 div#jem dt { /* definition term */
-    margin: 0;
-    padding: 0.3em 0;
-    float: left;
-    font-size: 1em;
     font-weight: bold;
-    width: 165px;
-    background: transparent;
+    text-align: left;
+    padding-right: 10px;
 }
 
 div#jem dd { /* definition description */
-    display: block;
-    margin: 0 0 5px 12em;
+    margin: 0;
     padding: 0.3em 0;
-    font-size: 1em;
-    background: transparent;
-    margin-left: 160px;
+}
+
+div#jem .jcomments dd {
+    grid-column: 2;
 }
 
 div#jem .jcomments dd {
     margin-left: 0px;
-}
-
-* html .floattext dd /* ie6 fix against the 3px jog bug */
-{
-    height: 1%;
 }
 
 div#jem div.description {

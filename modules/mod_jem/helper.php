@@ -140,9 +140,9 @@ abstract class ModJemHelper
 			$lists[$i]->venue      = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->text       = $params->get('showtitloc', 0) ? $lists[$i]->title : $lists[$i]->venue;
 			$lists[$i]->city       = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
-			$lists[$i]->postalCode = htmlspecialchars($row->postalCode, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->street     = htmlspecialchars($row->street, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->state      = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->postalCode = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->street     = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->state      = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->country    = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venueurl   = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
 			$lists[$i]->featured   = $row->featured;

@@ -372,7 +372,7 @@ body.com_jem.body-overlayed {
 #jem .jem-list-row {
     display: flex;
     flex-direction: row;
-    /* flex-wrap: wrap; */
+    flex-wrap: wrap;
     justify-content: flex-start;
 }
 
@@ -484,6 +484,17 @@ body.com_jem.body-overlayed {
 #jem div.jem-map {
     padding-top: 15px;
     padding-bottom: 5px;
+    animation: bleindin .5s ease-out forwards;   
+}
+
+/* prevent osm maps from flickering */
+@keyframes blendin {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 #jem div.jem-map iframe {

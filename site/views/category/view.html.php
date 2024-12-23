@@ -128,6 +128,8 @@ class JemViewCategory extends JemView
 			$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
 
 			$print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
+			$archive_link = Route::_('index.php?option=com_jem&view=category');
+			$archive_link = Route::_(JemHelperRoute::getVenueRoute($catid));
 
 			// init calendar
 			$cal = new JemCalendar($year, $month, 0);
@@ -147,6 +149,7 @@ class JemViewCategory extends JemView
 			$this->print_link    = $print_link;
 			$this->print         = $print;
 			$this->ical_link     = $partDate;
+			$this->archive_link  = $archive_link;
 
 		}
 		else
@@ -264,10 +267,10 @@ class JemViewCategory extends JemView
 			if ($useMenuItemParams) {
 				$pagetitle   = $params->get('page_title', $menuitem->title ? $menuitem->title : $category->catname);
 				$pageheading = $params->get('page_heading', $pagetitle);
-        $pathwayKeys = array_keys($pathway->getPathway());
-        $lastPathwayEntryIndex = end($pathwayKeys);
-        $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-        //$pathway->setItemName(1, $menuitem->title);
+				$pathwayKeys = array_keys($pathway->getPathway());
+				$lastPathwayEntryIndex = end($pathwayKeys);
+				$pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+				//$pathway->setItemName(1, $menuitem->title);
 			} else {
 				$pagetitle   = $category->catname;
 				$pageheading = $pagetitle;
@@ -284,6 +287,7 @@ class JemViewCategory extends JemView
 			} else {
 				$print_link = Route::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
+			$archive_link = Route::_(JemHelperRoute::getVenueRoute($category->id));
 
 			$params->set('page_heading', $pageheading);
 
@@ -325,6 +329,7 @@ class JemViewCategory extends JemView
 
 			$this->lists         = $lists;
 			$this->action        = $uri->toString();
+			$this->archive_link  = $archive_link;
 			$this->cimage        = $cimage;
 			$this->rows          = $items;
 			$this->noevents      = $noevents;
