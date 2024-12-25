@@ -46,7 +46,7 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 </div>
 <?php endif; ?>
-
+<?php $paramShowIcons = $this->params->get('showicons',1); ?>
 <div class="table-responsive">
 	<table class="eventtable table table-striped" style="width:<?php echo !empty($this->jemsettings->tablewidth) ? $this->jemsettings->tablewidth : '100%'; ?>;">
 		<colgroup>
@@ -77,26 +77,26 @@ use Joomla\CMS\Router\Route;
 		<thead>		
 			<tr>
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
-				<th id="jem_eventimage" class="sectiontableheader"><?php echo Text::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
+				<th id="jem_eventimage" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="far fa-image" aria-hidden="true"></i>&nbsp;' : '');?><?php echo Text::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
 				<?php endif; ?>
-				<th id="jem_date" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_date" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="far fa-clock" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
-				<th id="jem_title" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_title" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
-				<th id="jem_location" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_location" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-				<th id="jem_city" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_city" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="fa fa-building" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-				<th id="jem_state" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_state" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="fa fa-map" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcat == 1) : ?>
-				<th id="jem_category" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_category" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="fa fa-tag" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showatte == 1) : ?>
-				<th id="jem_attendees" class="sectiontableheader"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+				<th id="jem_attendees" class="sectiontableheader"><?php echo ($paramShowIcons? '<i class="fa fa-user" aria-hidden="true"></i>&nbsp;' : '');?><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 				<?php endif; ?>
 			</tr>
 		</thead>
