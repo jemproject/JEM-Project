@@ -26,6 +26,15 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+			<field name="showicons" type="radio"
+				   default="1"
+				   label="COM_JEM_SHOW_ICONS_IN_ORDER"
+				   description="COM_JEM_SHOW_ICONS_IN_ORDER_DESC"
+				   class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="tableorderby" type="radio"
 				   default="0"
 				   label="COM_JEM_TABLE_ORDER_BY"
