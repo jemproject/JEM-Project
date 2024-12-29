@@ -290,7 +290,7 @@
 		>
 			<option value="0">COM_JEM_DISABLED</option>
 			<option value="1">COM_JEM_ENABLED</option>
-		</field>		
+		</field>
 	</fieldset>
 
 	<fieldset name="usercontrolregistration"
@@ -457,20 +457,26 @@
 			maxlength="10"
 			required="false"
 		/>
+
+	</fieldset>
+
+	<fieldset name="layoutdatecolumn"
+		  label="COM_JEM_DATE_COLUMN"
+	>
 		<field name="datewidth" type="text"
-			label="COM_JEM_WIDTH_DATE_COLUMN"
-			description="COM_JEM_WIDTH_DATE_COLUMN_DESC"
-			class="inputbox"
-			size="10"
-			maxlength="10"
-			required="false"
+			   label="COM_JEM_WIDTH_DATE_COLUMN"
+			   description="COM_JEM_WIDTH_DATE_COLUMN_DESC"
+			   class="inputbox"
+			   size="10"
+			   maxlength="10"
+			   required="false"
 		/>
 		<field name="showtime" type="radio"
-			label="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS"
-			description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS_DESC"
-			class="inputbox btn-group btn-group-yesno"
-			default="0"
-			required="false"
+			   label="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS"
+			   description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS_DESC"
+			   class="inputbox btn-group btn-group-yesno"
+			   default="0"
+			   required="false"
 		>
 			<option value="1">JSHOW</option>
 			<option value="0">JHIDE</option>
