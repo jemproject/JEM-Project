@@ -225,7 +225,7 @@ function jem_common_show_filter(&$obj) {
 
 
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
-                        <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                        <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '') . JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
@@ -246,7 +246,7 @@ function jem_common_show_filter(&$obj) {
                     </div>
                 <?php else : ?>
                     <div class="jem-event-info-small jem-event-venue">
-                        <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i> -':''); ?>
+                        <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?> -
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
@@ -258,7 +258,9 @@ function jem_common_show_filter(&$obj) {
                         <?php echo $this->escape($row->city); ?>
                     </div>
                 <?php else : ?>
-                    <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
+                    <div class="jem-event-info-small jem-event-city">
+                        <?php echo ($showiconsineventdata? '<i class="fa fa-building" aria-hidden="true"></i>':''); ?> -
+                    </div>
                 <?php endif; ?>
             <?php endif; ?>
 
@@ -269,7 +271,9 @@ function jem_common_show_filter(&$obj) {
                         <?php echo $this->escape($row->state); ?>
                     </div>
                 <?php else : ?>
-                    <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
+                    <div class="jem-event-info-small jem-event-state">
+                        <?php echo ($showiconsineventdata? '<i class="fa fa-map" aria-hidden="true"></i>':''); ?> -
+                    </div>
                 <?php endif; ?>
             <?php endif; ?>
 
