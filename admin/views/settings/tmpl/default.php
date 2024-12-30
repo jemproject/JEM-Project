@@ -441,7 +441,6 @@ function registraoff()
 								<?php echo $this->loadTemplate('evevents'); ?>
 							</div>
 							<div class="width-50 fltrt">
-								<?php echo $this->loadTemplate('evvenues'); ?>
 								<?php echo $this->loadTemplate('evregistration'); ?>
 							</div>
 						</fieldset>
