@@ -762,13 +762,41 @@
 		<fieldset name="basic"
 			label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
 		>
+			<field name="event_show_venue_name" type="radio"
+				label="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_NAME_VENUE_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
+			>
+				<option value="1">JSHOW</option>
+				<option	value="0">JHIDE</option>
+			</field>
+			<field name="event_show_category" type="radio"
+				label="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
+			>
+				<option value="1">JSHOW</option>
+				<option	value="0">JHIDE</option>
+			</field>
+			<field name="event_link_category" type="radio"
+				label="COM_JEM_EVENT_FIELD_LINK_CATEGORY_LABEL"
+				description="COM_JEM_EVENT_FIELD_LINK_CATEGORY_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
+				showon="event_show_category:1"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="event_show_author" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC"
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JSHOW</option>
+				<option value="1">JSHOW</option>
 				<option	value="0">JHIDE</option>
 			</field>
 			<field name="event_link_author" type="radio"
@@ -777,7 +805,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JYES</option>
+				<option value="1">JYES</option>
 				<option	value="0">JNO</option>
 			</field>
 			<field name="event_show_contact" type="radio"
@@ -786,7 +814,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JSHOW</option>
+				<option value="1">JSHOW</option>
 				<option	value="0">JHIDE</option>
 			</field>
 			<field name="event_link_contact" type="radio"
@@ -795,7 +823,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JYES</option>
+				<option value="1">JYES</option>
 				<option	value="0">JNO</option>
 			</field>
 			<field name="event_show_hits" type="radio"
@@ -804,7 +832,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JSHOW</option>
+				<option value="1">JSHOW</option>
 				<option	value="0">JHIDE</option>
 			</field>
 			<field name="event_show_print_icon" type="radio"
@@ -813,7 +841,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JSHOW</option>
+				<option value="1">JSHOW</option>
 				<option	value="0">JHIDE</option>
 			</field>
 			<field name="event_show_email_icon" type="radio"
@@ -822,7 +850,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JSHOW</option>
+				<option value="1">JSHOW</option>
 				<option	value="0">JHIDE</option>
 			</field>
 			<field name="event_show_ical_icon" type="radio"
@@ -831,7 +859,7 @@
 				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
-				<option	value="1">JSHOW</option>
+				<option value="1">JSHOW</option>
 				<option	value="0">JHIDE</option>
 			</field>
 			<field name="event_show_readmore" type="radio"
@@ -1239,21 +1267,21 @@
 			label="COM_JEM_REGISTRATION"
 		>
 			<field name="event_show_registration" type="radio"
-				   label="COM_JEM_EVENT_DISPLAY_REGISTRATION"
-				   description="COM_JEM_EVENT_DISPLAY_REGISTRATION_DESC"
+				label="COM_JEM_EVENT_DISPLAY_REGISTRATION"
+				description="COM_JEM_EVENT_DISPLAY_REGISTRATION_DESC"
 				   class="inputbox btn-group btn-group-yesno"
-				   default="1"
-				   required="false"
+				default="1"
+				required="false"
 			>
 				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
 			</field>
 			<field name="event_show_registration_counters" type="radio"
-				   label="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS"
-				   description="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS_DESC"
+				label="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS"
+				description="COM_JEM_EVENT_DISPLAY_REGISTRATION_COUNTERS_DESC"
 				   class="inputbox btn-group btn-group-yesno"
-				   default="1"
-				   required="false"
+				default="1"
+				required="false"
 			>
 				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
