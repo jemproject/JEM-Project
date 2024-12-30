@@ -1369,13 +1369,13 @@ static public function lightbox() {
 			$output .= '</span>';
 
 			if ($showTime && JemHelper::isValidTime($timeStart)) {
-				$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
+				$output .= '<span class="jem_time-1">, '.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 			}
 
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - <span class="jem_date2">';
+				$output .= '<span class="jem_date2"> - ';
 				if ($showDayLink) {
 					$output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
 				}
@@ -1397,11 +1397,11 @@ static public function lightbox() {
 
 			if ($showTime) {
 				if (JemHelper::isValidTime($timeStart)) {
-					$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
+					$output .= '<span class="jem_time-1">, '.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 
 					// Display end time only when both times are set
 					if (JemHelper::isValidTime($timeEnd)) {
-						$output .= ' - <span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
+						$output .= '<span class="jem_time-1"> - '.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
 					}
 				}
 			}

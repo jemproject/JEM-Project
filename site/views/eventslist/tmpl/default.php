@@ -53,6 +53,11 @@ defined('_JEXEC') or die;
         <input type="hidden" name="view" value="eventslist"/>
     </form>
 
+    <div class="pagination">
+        <?php
+        echo $this->pagination->getPagesLinks(); ?>
+    </div>
+
     <?php
     if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
@@ -63,11 +68,6 @@ defined('_JEXEC') or die;
     endif; ?>
 
     <!--footer-->
-
-    <div class="pagination">
-        <?php
-        echo $this->pagination->getPagesLinks(); ?>
-    </div>
     <div class="copyright">
         <?php
         echo JemOutput::footer(); ?>
