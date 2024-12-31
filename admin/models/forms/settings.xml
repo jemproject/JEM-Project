@@ -841,54 +841,7 @@
 		   maxlength="10"
 		   required="false"
 	/>
-	<field name="global_show_ownedvenuesonly" type="radio"
-		   label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
-		   description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
-		   class="inputbox btn-group btn-group-yesno"
-		   default="0"
-		   required="false"
-	>
-		<option value="1">JYES</option>
-		<option value="0">JNO</option>
-	</field>
-	<field name="global_editevent_maxnumcustomfields" type="list"
-		   label="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS"
-		   description="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS_DESC"
-		   class="inputbox"
-		   default="-1"
-		   required="false"
-	>
-		<option value="-1">JALL</option>
-		<option value="0"> JNONE</option>
-		<option value="1"> 1</option>
-		<option value="2"> 2</option>
-		<option value="3"> 3</option>
-		<option value="4"> 4</option>
-		<option value="5"> 5</option>
-		<option value="6"> 6</option>
-		<option value="7"> 7</option>
-		<option value="8"> 8</option>
-		<option value="9"> 9</option>
-	</field>
-	<field name="global_editvenue_maxnumcustomfields" type="list"
-		   label="COM_JEM_SETTINGS_FIELD_EDITVENUE_MAXNUMCUSTOMFIELDS"
-		   description="COM_JEM_SETTINGS_FIELD_EDITVENUE_MAXNUMCUSTOMFIELDS_DESC"
-		   class="inputbox"
-		   default="-1"
-		   required="false"
-	>
-		<option value="-1">JALL</option>
-		<option value="0"> JNONE</option>
-		<option value="1"> 1</option>
-		<option value="2"> 2</option>
-		<option value="3"> 3</option>
-		<option value="4"> 4</option>
-		<option value="5"> 5</option>
-		<option value="6"> 6</option>
-		<option value="7"> 7</option>
-		<option value="8"> 8</option>
-		<option value="9"> 9</option>
-	</field>
+
 </fieldset>
 
 
@@ -1325,6 +1278,55 @@
 			<option value="0">JHIDE</option>
 		</field>
 	</fieldset>
+	
+	<field name="global_show_ownedvenuesonly" type="radio"
+		   label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
+		   description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
+		   class="inputbox btn-group btn-group-yesno"
+		   default="0"
+		   required="false"
+	>
+		<option value="1">JYES</option>
+		<option value="0">JNO</option>
+	</field>
+	<field name="global_editevent_maxnumcustomfields" type="list"
+		   label="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS"
+		   description="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS_DESC"
+		   class="inputbox"
+		   default="-1"
+		   required="false"
+	>
+		<option value="-1">JALL</option>
+		<option value="0"> JNONE</option>
+		<option value="1"> 1</option>
+		<option value="2"> 2</option>
+		<option value="3"> 3</option>
+		<option value="4"> 4</option>
+		<option value="5"> 5</option>
+		<option value="6"> 6</option>
+		<option value="7"> 7</option>
+		<option value="8"> 8</option>
+		<option value="9"> 9</option>
+	</field>
+	<field name="global_editvenue_maxnumcustomfields" type="list"
+		   label="COM_JEM_SETTINGS_FIELD_EDITVENUE_MAXNUMCUSTOMFIELDS"
+		   description="COM_JEM_SETTINGS_FIELD_EDITVENUE_MAXNUMCUSTOMFIELDS_DESC"
+		   class="inputbox"
+		   default="-1"
+		   required="false"
+	>
+		<option value="-1">JALL</option>
+		<option value="0"> JNONE</option>
+		<option value="1"> 1</option>
+		<option value="2"> 2</option>
+		<option value="3"> 3</option>
+		<option value="4"> 4</option>
+		<option value="5"> 5</option>
+		<option value="6"> 6</option>
+		<option value="7"> 7</option>
+		<option value="8"> 8</option>
+		<option value="9"> 9</option>
+	</field>
 </fields>
 
 <fields name="css">
