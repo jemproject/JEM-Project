@@ -441,6 +441,7 @@ function registraoff()
 								<?php echo $this->loadTemplate('evevents'); ?>
 							</div>
 							<div class="width-50 fltrt">
+                                <?php echo $this->loadTemplate('evvenues'); ?>
 								<?php echo $this->loadTemplate('evregistration'); ?>
 							</div>
 						</fieldset>
@@ -450,7 +451,7 @@ function registraoff()
 
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_VENUE_PAGE')); ?>
                     <fieldset class="adminform">
-                        <?php echo $this->loadTemplate('evvenues'); ?>
+                        <?php echo $this->loadTemplate('venues'); ?>
                     </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
