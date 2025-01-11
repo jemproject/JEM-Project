@@ -27,7 +27,7 @@ endif;
 
 <div class="width-100" style="padding: 10px 1vw;">
     <fieldset class="options-form">
-		<legend><?php echo Text::_('COM_JEM_EVENTS'); ?></legend>
+		<legend><?php echo Text::_('COM_JEM_SETTINGS_EVENT_PART'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('evevents') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>

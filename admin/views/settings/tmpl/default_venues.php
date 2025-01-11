@@ -15,7 +15,7 @@ $group = 'globalattribs';
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-            <legend><?php echo Text::_('COM_JEM_VENUES'); ?></legend>
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_VENUE_DETAIL'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('venues') as $field): ?>
                     <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
