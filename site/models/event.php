@@ -680,6 +680,34 @@ class JemModelEvent extends ItemModel
 			$where[] = 'status = 1';
 		}
 
+		// seet order by
+		$order = $settings->get('event_show_attendeenames_order','0');
+		switch ($order) {
+			case 0:
+				$order = 'r.id ASC';
+				break;
+			case 1:
+				$order = 'r.id DESC';
+				break;
+			case 2:
+				$order = 'u.id ASC';
+				break;
+			case 3:
+				$order = 'u.id DESC';
+				break;
+			case 4:
+				$order = 'u.username ASC';
+				break;
+			case 5:
+				$order = 'u.username DESC';
+				break;
+			case 6:
+				$order = 'u.name ASC';
+				break;
+			case 7:
+				$order = 'u.name DESC';
+				break;
+		}
     // Get registered users
     $query = $db->getQuery(true);
 		$query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, r.uid, r.comment, r.places'
@@ -687,7 +715,8 @@ class JemModelEvent extends ItemModel
            . ' FROM #__jem_register AS r'
            . ' LEFT JOIN #__users AS u ON u.id = r.uid'
            . $join
-           . ' WHERE ' . implode(' AND ', $where);
+			. ' WHERE ' . implode(' AND ', $where)
+			. ' ORDER BY ' . $order;
     $db->setQuery($query);
 
 		try {

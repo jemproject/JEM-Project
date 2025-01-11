@@ -20,6 +20,7 @@ $group = 'globalattribs';
 			<li><div class="label-form"><?php echo $this->form->renderfield('event_show_registration',$group); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('event_show_registration_counters',$group); ?></div></li>
 			<li><div class="label-form"><?php echo $this->form->renderfield('event_show_attendeenames',$group); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('event_show_attendeenames_order',$group); ?></div></li>
 			<li><div class="label-form"><?php echo $this->form->renderfield('event_show_more_attendeedetails',$group); ?></div></li>
 			<li><div class="label-form"><?php echo $this->form->renderfield('event_comunsolution',$group); ?></div></li>
 			<li><div class="label-form"><?php echo $this->form->renderfield('event_comunoption',$group); ?></div></li>
