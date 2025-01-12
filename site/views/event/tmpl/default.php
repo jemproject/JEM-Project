@@ -196,7 +196,7 @@ if ($jemsettings->oldevent > 0) {
                     // Optional link to let them register to see the whole event.
                     if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
                         $link1 = Route::_('index.php?option=com_users&view=login');
-                        $link = new JUri($link1);
+                        $link = new Uri($link1);
                         echo '<p class="readmore">';
                         echo '<a href="'.$link.'">';
                         if ($params->get('event_alternative_readmore') == false) {
@@ -395,18 +395,17 @@ if ($jemsettings->oldevent > 0) {
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
             <hr class="jem-hr">
-            <h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
-
+           
             <?php
             $timeNow = time();
 
             switch ($this->e_reg) {
                 case 0:
                     //Event without registration (NO)
-                    echo Text::_('COM_JEM_VENUE_DESCRIPTION');
                     break;
                 case 1:
                     //Event with registration (YES with or witout UNTIL)
+                         echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     echo $this->loadTemplate('attendees');
                     if($this->dateUnregistationUntil) {
                         echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2'));
@@ -414,6 +413,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 2:
                     //Event with date starting registration (FROM with or witout UNTIL)
+                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     if($this->dateRegistationFrom > $timeNow) {
                         echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                     }else if ($this->allowRegistration) {

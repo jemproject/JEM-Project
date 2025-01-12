@@ -192,59 +192,86 @@ use Joomla\CMS\Date\Date;
 <!-- REGISTRATION START -->
 <fieldset class="" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
-    <dl class="adminformlist jem-dl">
-        <?php if ($this->jemsettings->showfroregistra == 0) : ?>
+    <?php if ($this->jemsettings->showfroregistra == 0) : ?>
+        <dl class="adminformlist jem-dl">
             <dt><?php echo $this->form->getLabel('registra'); ?></dt>
             <dd><?php echo Text::_('JNO'); ?></dd>
-        <?php else : ?>
-        <?php if ($this->jemsettings->showfroregistra == 1) : ?>
+        </dl>
+    <?php else : ?>
+        <dl class="adminformlist jem-dl">
             <dt><?php echo $this->form->getLabel('registra'); ?></dt>
-            <dd><?php echo Text::_('JYES'); ?></dd>
-        <?php else : ?>
-            <dt><?php echo $this->form->getLabel('registra'); ?></dt>
-            <dd><?php echo $this->form->getInput('registra'); ?></dd>
-            <dt><div id="registra_from"><span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></div></dt>
-            <dd><div id="registra_from2"><?php echo $this->form->getInput('registra_from'); ?></div> </dd>
-            <dt><div id="registra_until"><span id="jform_registra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></div></dt>
-            <dd><div id="registra_until2"><?php echo $this->form->getInput('registra_until'); ?></span></div></dd>
-        <?php endif; ?>
-    </dl>
-    <dl class="adminformlist jem-dl jem-dl-rest">
-        <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
-            <dt><?php echo $this->form->getLabel('reginvitedonly'); ?></dt>
-            <dd><?php echo $this->form->getInput('reginvitedonly'); ?></dd>
-        <?php endif; ?>
-        <dt><?php echo $this->form->getLabel('unregistra'); ?></dt>
-        <dd><?php echo $this->form->getInput('unregistra'); ?></dd>
-        <dt><div id="unregistra_until"><span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL'); ?></span></div></dt>
-        <dd><div id="unregistra_until2"><?php echo $this->form->getInput('unregistra_until'); ?></div></dd>
-        <dt><?php echo $this->form->getLabel('maxplaces'); ?></dt>
-        <dd><?php echo $this->form->getInput('maxplaces'); ?></dd>
-        <dt><?php echo $this->form->getLabel('minbookeduser'); ?></dt>
-        <dd><?php echo $this->form->getInput('minbookeduser'); ?></dd>
-        <dt><?php echo $this->form->getLabel('maxbookeduser'); ?></dt>
-        <dd><?php echo $this->form->getInput('maxbookeduser'); ?></dd>
-        <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br></dt>
-        <dd><?php echo $this->form->getInput('reservedplaces'); ?></dd>
-        <dt><?php echo $this->form->getLabel('waitinglist'); ?></dt>
-        <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
-        <dt><?php echo $this->form->getLabel('requestanswer'); ?></dt>
-        <dd><?php echo $this->form->getInput('requestanswer'); ?></dd>
-        <dt><?php echo $this->form->getLabel('seriesbooking'); ?></dt>
-        <dd><?php echo $this->form->getInput('seriesbooking'); ?></dd>
-        <dt><?php echo $this->form->getLabel('singlebooking'); ?></dt>
-        <dd><?php echo $this->form->getInput('singlebooking'); ?></dd>
+            <dd class="registra-status"><?php echo $this->form->getInput('registra'); ?></dd>
+        </dl>
+        <div id="optional-limited">
+            <dl class="adminformlist jem-dl jem-dl-rest">
+                <dt><div id="registra_from"><span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></div></dt>
+                <dd><div id="registra_from2"><?php echo $this->form->getInput('registra_from'); ?></div> </dd>
+                <dt><div id="registra_until"><span id="jform_registra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></div></dt>
+                <dd><div id="registra_until2"><?php echo $this->form->getInput('registra_until'); ?></span></div></dd>
+            </dl>
+        </div>
+        <div id="optional-fields">
+            <dl class="adminformlist jem-dl jem-dl-rest">
+                <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+                    <dt><?php echo $this->form->getLabel('reginvitedonly'); ?></dt>
+                    <dd><?php echo $this->form->getInput('reginvitedonly'); ?></dd>
+                <?php endif; ?>
+                <dt><?php echo $this->form->getLabel('unregistra'); ?></dt>
+                <dd><?php echo $this->form->getInput('unregistra'); ?></dd>
+                <dt><div id="unregistra_until"><span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL'); ?></span></div></dt>
+                <dd><div id="unregistra_until2"><?php echo $this->form->getInput('unregistra_until'); ?></div></dd>
+                <dt><?php echo $this->form->getLabel('maxplaces'); ?></dt>
+                <dd><?php echo $this->form->getInput('maxplaces'); ?></dd>
+                <dt><?php echo $this->form->getLabel('minbookeduser'); ?></dt>
+                <dd><?php echo $this->form->getInput('minbookeduser'); ?></dd>
+                <dt><?php echo $this->form->getLabel('maxbookeduser'); ?></dt>
+                <dd><?php echo $this->form->getInput('maxbookeduser'); ?></dd>
+                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br></dt>
+                <dd><?php echo $this->form->getInput('reservedplaces'); ?></dd>
+                <dt><?php echo $this->form->getLabel('waitinglist'); ?></dt>
+                <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
+                <dt><?php echo $this->form->getLabel('requestanswer'); ?></dt>
+                <dd><?php echo $this->form->getInput('requestanswer'); ?></dd>
+                <dt><?php echo $this->form->getLabel('seriesbooking'); ?></dt>
+                <dd><?php echo $this->form->getInput('seriesbooking'); ?></dd>
+                <dt><?php echo $this->form->getLabel('singlebooking'); ?></dt>
+                <dd><?php echo $this->form->getInput('singlebooking'); ?></dd>
 
-        <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
-            <dt><?php echo $this->form->getLabel('invited'); ?></dt>
-            <dd><?php echo $this->form->getInput('invited'); ?></dd>
-        <?php endif; ?>
-        <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br></dt>
-        <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
-        <?php if ($this->item->maxplaces) : ?>
-            <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>
-            <dd><?php echo '<input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="' . ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces) . '" />'; ?></dd>
-        <?php endif; ?>
-        <?php endif; ?>
-    </dl>
+                <?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+                    <dt><?php echo $this->form->getLabel('invited'); ?></dt>
+                    <dd><?php echo $this->form->getInput('invited'); ?></dd>
+                <?php endif; ?>
+                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br></dt>
+                <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
+                <?php if ($this->item->maxplaces) : ?>
+                    <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>
+                    <dd><?php echo '<input id="event-available" class="form-control readonly inputbox" type="text" readonly="true" value="' . ($this->item->maxplaces-$this->item->booked-$this->item->reservedplaces) . '" />'; ?></dd>
+                <?php endif; ?>
+            </dl>
+        </div>
+    <?php endif; ?>
 </fieldset>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const registraSelect  = document.getElementById('jform_registra');
+        const optionalFields  = document.getElementById('optional-fields');
+        const optionalLimited = document.getElementById('optional-limited');
+
+        const updateOptionalFieldsVisibility = () => {
+            const selectedValue = registraSelect.value;
+            if (selectedValue === '1') {
+                optionalFields.style.display  = 'block';
+                optionalLimited.style.display = 'none';
+            } else if (selectedValue === '2') {
+                optionalFields.style.display  = 'block';
+                optionalLimited.style.display = 'block';
+            } else {
+                optionalFields.style.display  = 'none';
+                optionalLimited.style.display = 'none';
+            }
+        };
+        updateOptionalFieldsVisibility();
+        registraSelect.addEventListener('change', updateOptionalFieldsVisibility);
+    });
+</script>
