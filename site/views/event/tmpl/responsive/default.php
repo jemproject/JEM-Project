@@ -465,9 +465,8 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php endif; ?>
 
         <!-- Registration -->
-        <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) { ?>
+        <?php if ($this->showAttendees && $params->get('event_show_registration', '0')) { ?>
             <hr class="jem-hr">
-            <h2 class="register"><?php echo Text::_('COM_JEM_REGISTRATION'); ?></h2>
             <dl class="jem-dl floattext">
                 <?php
                 $timeNow = time();
@@ -475,10 +474,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 switch ($this->e_reg) {
                     case 0:
                         //Event without registration (NO)
-                        echo Text::_('COM_JEM_VENUE_DESCRIPTION');
                         break;
                     case 1:
                         //Event with registration (YES with or witout UNTIL)
+                         echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                         echo $this->loadTemplate('attendees');
                         if($this->dateUnregistationUntil) {
                             echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
@@ -486,6 +485,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         break;
                     case 2:
                         //Event with date starting registration (FROM with or witout UNTIL)
+                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                         if($this->dateRegistationFrom > $timeNow) {
                             echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . '</dt><dd>' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                         }else if ($this->allowRegistration) {

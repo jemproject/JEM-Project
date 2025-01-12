@@ -401,6 +401,11 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
+        // if the 'registra' field does not exist or is null, set it to the value from jem settings
+        if(!isset($data['registra'])) {
+            $data['registra'] =$jemsettings->showfroregistra;
+        }
+
         // set to null if registration is empty
         if($data['registra_from'] == ''){
             $data['registra_from'] = null;

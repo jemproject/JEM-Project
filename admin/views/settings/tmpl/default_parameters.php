@@ -16,23 +16,23 @@ $group = 'globalattribs';
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
-			<ul class="adminformlist">
-				<?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
-					<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-				<?php endforeach; ?>
-			</ul>
-		</fieldset>
-	</div>
+            <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
+            <ul class="adminformlist">
+                <?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
+                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
+    </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITEVENT'); ?></legend>
-			<ul class="adminformlist">
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_show_ownedvenuesonly',$group); ?></div></li>
-				<li><div class="label-form"><?php echo $this->form->renderfield('global_editevent_maxnumcustomfields',$group); ?></div></li>
-			</ul>
-		</fieldset>
-	</div>
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITEVENT'); ?></legend>
+            <ul class="adminformlist">
+                <li><div class="label-form"><?php echo $this->form->renderfield('global_show_ownedvenuesonly',$group); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('global_editevent_maxnumcustomfields',$group); ?></div></li>
+            </ul>
+        </fieldset>
+    </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITVENUE'); ?></legend>
@@ -45,14 +45,14 @@ $group = 'globalattribs';
 <div class="width-50 fltrt">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-			<legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
-			<ul class="adminformlist">
-				<?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
-					<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-				<?php endforeach; ?>
-			</ul>
-		</fieldset>
-	</div>
+            <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
+            <ul class="adminformlist">
+                <?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
+                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
+    </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_SETIINGS_GLOBAL_RECURRENCE'); ?></legend>

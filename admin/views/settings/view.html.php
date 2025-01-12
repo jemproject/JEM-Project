@@ -34,6 +34,7 @@ class JemViewSettings extends JemAdminView
 		$state       = $this->get('State');
 		$config      = $this->get('ConfigInfo');
 		$jemsettings = $this->get('Data');
+        $settings    = JemHelper::globalattribs();
 		$this->document = $document;
 
 		// Load css
@@ -82,6 +83,7 @@ class JemViewSettings extends JemAdminView
 		$this->state       = $state;
 		$this->jemsettings = $jemsettings;
 		$this->config      = $config;
+        $this->settings	   = $settings;
 
 		// add toolbar
 		$this->addToolbar();
