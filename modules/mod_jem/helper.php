@@ -127,14 +127,18 @@ abstract class ModJemHelper
 
 			$lists[++$i] = new stdClass;
 
-			$lists[$i]->eventid    = $row->id;
-			$lists[$i]->title      = htmlspecialchars($row->title ?? '', ENT_COMPAT, 'UTF-8');
-			$lists[$i]->link       = Route::_(JemHelperRoute::getEventRoute($row->slug));
-			$lists[$i]->dateinfo   = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
-			                                                 $dateFormat, $timeFormat, $addSuffix);
+			$lists[$i]->eventid  = $row->id;
+			$lists[$i]->title    = htmlspecialchars($row->title ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->link     = Route::_(JemHelperRoute::getEventRoute($row->slug));
+            $lists[$i]->dates    = $row->dates;
+            $lists[$i]->times    = $row->times;
+            $lists[$i]->enddates = $row->enddates;
+            $lists[$i]->endtimes = $row->endtimes;
+			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->dateschema = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
 			$lists[$i]->venue      = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
+			$lists[$i]->text       = $params->get('showtitloc', 0) ? $lists[$i]->title : $lists[$i]->venue;
 			$lists[$i]->city       = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->postalCode = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
 			$lists[$i]->street     = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');

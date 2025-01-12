@@ -99,7 +99,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
               ?>
             </span>
                     </dd>
-                    <?php if (!empty($this->item->locid)) : ?>
+                    <?php if ((!empty($this->item->locid)) && ($params->get('event_show_venue_name') == 1)) : ?>
                         <dt class="jem-where hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHERE'); ?>"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>
                         <dd class="jem-where"><?php
                             if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
@@ -120,25 +120,26 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     <?php
                     endif;
                     $n = is_array($this->categories) ? count($this->categories) : 0;
-                    ?>
+                    if ($params->get('event_show_category') == 1) : ?>
 
                     <dt class="jem-category hasTooltip" data-original-title="<?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>">
                         <?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:
                     </dt>
                     <dd class="jem-category">
                         <?php
-                        $i = 0;
-                        foreach ((array)$this->categories as $category) :
-                            ?><a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php
-                            $i++;
-                            if ($i != $n) :
-                                echo ', ';
-                            endif;
-                        endforeach;
-                        ?>
-                    </dd>
+                	foreach ((array)$this->categories as $i => $category) {
+        				if ($i > 0) {
+                        		echo ', ';
+        				}
+       					if ($params->get('event_link_category') == 1) {
+            				echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+        				} else {
+            				echo $this->escape($category->catname);
+            			}
+            		}
+            		echo '</dd>';
+                        	endif;
 
-                    <?php
                     for ($cr = 1; $cr <= 10; $cr++) {
                         $currentRow = $this->item->{'custom'.$cr};
                         if (preg_match('%^http(s)?://%', $currentRow)) {
