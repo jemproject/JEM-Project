@@ -1247,6 +1247,22 @@
 			<option value="4">COM_JEM_ONLYUSER</option>
 			<option value="3">COM_JEM_EVERYBODY</option>
 		</field>
+		<field name="event_show_attendeenames_order" type="list"
+			   label="COM_JEM_REG_SHOW_ATTENDEENAMES_ORDER"
+			   description="COM_JEM_REG_SHOW_ATTENDEENAMES_ORDER_DESC"
+			   class="inputbox"
+			   default="0"
+			   required="false"
+		>
+			<option value="0">COM_JEM_ORDER_REGISTRATION_ASC</option>
+			<option value="1">COM_JEM_ORDER_REGISTRATION_DESC</option>
+			<option value="2">COM_JEM_ORDER_USERID_ASC</option>
+			<option value="3">COM_JEM_ORDER_USERID_DESC</option>
+			<option value="4">COM_JEM_ORDER_USERNAME_ASC</option>
+			<option value="5">COM_JEM_ORDER_USERNAME_DESC</option>
+			<option value="6">COM_JEM_ORDER_NAME_ASC</option>
+			<option value="7">COM_JEM_ORDER_NAME_DESC</option>
+		</field>
 		<field name="event_comunsolution" type="list"
 			   label="COM_JEM_COM_SOL"
 			   description="COM_JEM_COM_SOL_DESC"
