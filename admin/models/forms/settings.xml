@@ -765,87 +765,6 @@
 		</field>
 	</fieldset>
 
-
-
-	<fieldset name="venues"
-			  label="COM_JEM_VENUES"
-	>
-		<field name="global_show_locdescription" type="radio"
-			   label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
-			   description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
-			   class="inputbox btn-group btn-group-yesno"
-			   default="1"
-			   required="false"
-		>
-			<option value="1">JSHOW</option>
-			<option value="0">JHIDE</option>
-		</field>
-		<field name="global_show_detailsadress" type="radio"
-			   label="COM_JEM_DISPLAY_ADDRESS"
-			   description="COM_JEM_DISPLAY_ADDRESS_DESC"
-			   class="inputbox btn-group btn-group-yesno"
-			   default="0"
-			   required="false"
-		>
-			<option value="1">JSHOW</option>
-			<option value="0">JHIDE</option>
-		</field>
-		<field name="global_show_detlinkvenue" type="list"
-			   label="COM_JEM_DISPLAY_LINK_TO_VENUE"
-			   description="COM_JEM_DISPLAY_LINK_TO_VENUE_DESC"
-			   class="inputbox"
-			   default="0"
-			   required="false"
-		>
-			<option value="0">COM_JEM_NO_LINK</option>
-			<option value="1">COM_JEM_LINK_TO_URL</option>
-			<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
-		</field>
-		<field name="global_show_listevents" type="radio"
-			   label="COM_JEM_DISPLAY_LIST_EVENTS"
-			   description="COM_JEM_DISPLAY_LIST_EVENTS_DESC"
-			   class="inputbox btn-group btn-group-yesno"
-			   default="1"
-			   required="false"
-		>
-			<option value="1">JSHOW</option>
-			<option value="0">JHIDE</option>
-		</field>
-		<field name="global_show_mapserv" type="list"
-			   label="COM_JEM_DISPLAY_LINK_TO_MAP"
-			   description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
-			   class="inputbox"
-			   default="0"
-			   required="false"
-		>
-			<option value="0">COM_JEM_NO_MAP_SERVICE</option>
-			<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
-			<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
-			<option value="3">COM_JEM_GOOGLE_MAP_DISP_API</option>
-			<option value="4">COM_JEM_OSM_MAP_LINK</option>
-			<option value="5">COM_JEM_OSM_MAP_DISP</option>
-		</field>
-		<field name="global_tld" type="text"
-			   label="COM_JEM_GOOGLE_MAP_TLD"
-			   description="COM_JEM_GOOGLE_MAP_TLD_DESC"
-			   class="inputbox"
-			   size="10"
-			   maxlength="10"
-			   required="false"
-		/>
-		<field name="global_lg" type="text"
-			   label="COM_JEM_GOOGLE_MAP_LG"
-			   description="COM_JEM_GOOGLE_MAP_LG_DESC"
-			   class="inputbox"
-			   size="10"
-			   maxlength="10"
-			   required="false"
-		/>
-
-	</fieldset>
-
-
-
 	<fields name="globalattribs">
 		<fieldset name="basic"
 				  label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
@@ -1126,14 +1045,12 @@
 			</field>
 		</fieldset>
 
-
-
-		<fieldset name="evevents"
-				  label="COM_JEM_EVENTS"
+		<fieldset name="venues"
+				  label="COM_JEM_VENUES"
 		>
-			<field name="event_show_description" type="radio"
-				   label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
-				   description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
+			<field name="global_show_locdescription" type="radio"
+				   label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
+				   description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 				   class="inputbox btn-group btn-group-yesno"
 				   default="1"
 				   required="false"
@@ -1141,9 +1058,84 @@
 				<option value="1">JSHOW</option>
 				<option value="0">JHIDE</option>
 			</field>
+			<field name="global_show_detailsadress" type="radio"
+				   label="COM_JEM_DISPLAY_ADDRESS"
+				   description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="0"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
+			</field>
+			<field name="global_show_detlinkvenue" type="list"
+				   label="COM_JEM_DISPLAY_LINK_TO_VENUE"
+				   description="COM_JEM_DISPLAY_LINK_TO_VENUE_DESC"
+				   class="inputbox"
+				   default="0"
+				   required="false"
+			>
+				<option value="0">COM_JEM_NO_LINK</option>
+				<option value="1">COM_JEM_LINK_TO_URL</option>
+			</field>
+			<field name="global_show_listevents" type="radio"
+				   label="COM_JEM_DISPLAY_LIST_EVENTS"
+				   description="COM_JEM_DISPLAY_LIST_EVENTS_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
+			</field>
+			<field name="global_show_mapserv" type="list"
+				   label="COM_JEM_DISPLAY_LINK_TO_MAP"
+				   description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
+				   class="inputbox"
+				   default="0"
+				   required="false"
+			>
+				<option value="0">COM_JEM_NO_MAP_SERVICE</option>
+				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
+				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+				<option value="3">COM_JEM_GOOGLE_MAP_DISP_API</option>
+				<option value="4">COM_JEM_OSM_MAP_LINK</option>
+				<option value="5">COM_JEM_OSM_MAP_DISP</option>
+			</field>
+			<field name="global_tld" type="text"
+				   label="COM_JEM_GOOGLE_MAP_TLD"
+				   description="COM_JEM_GOOGLE_MAP_TLD_DESC"
+				   class="inputbox"
+				   size="10"
+				   maxlength="10"
+				   required="false"
+			/>
+			<field name="global_lg" type="text"
+				   label="COM_JEM_GOOGLE_MAP_LG"
+				   description="COM_JEM_GOOGLE_MAP_LG_DESC"
+				   class="inputbox"
+				   size="10"
+				   maxlength="10"
+				   required="false"
+			/>
+		</fieldset>
+
+		<fieldset name="evevents"
+				  label="COM_JEM_EVENTS"
+		>
 			<field name="event_show_detailstitle" type="radio"
 				   label="COM_JEM_DISPLAY_EVENT_TITLE"
 				   description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JSHOW</option>
+				<option value="0">JHIDE</option>
+			</field>
+			<field name="event_show_description" type="radio"
+				   label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
+				   description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
 				   class="inputbox btn-group btn-group-yesno"
 				   default="1"
 				   required="false"
