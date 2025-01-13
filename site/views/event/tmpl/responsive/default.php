@@ -106,7 +106,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 ?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                             elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
                                 ?><a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
-                            else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+                            else :
                                 echo $this->escape($this->item->venue);
                             endif;
 
@@ -301,7 +301,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
                                     elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
                                         echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                                    else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+                                    else :
                                         echo $this->escape($this->item->venue);
                                     endif;
                                     ?>
@@ -389,7 +389,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
                                     elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
                                         echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                                    else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+                                    else :
                                         echo $this->escape($this->item->venue);
                                     endif;
                                     ?>
