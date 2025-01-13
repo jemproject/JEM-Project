@@ -117,7 +117,7 @@ $document->addStyleDeclaration($css);
                 </div>
               <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
                 <div class="jem-event-info time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                  <?php echo $item->date;
+                        <?php echo $item->dateinfo;
                   echo $item->dateschema; ?>
                 </div>
               <?php endif; ?>
