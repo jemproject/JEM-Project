@@ -98,7 +98,7 @@ if ($jemsettings->oldevent > 0) {
                         ?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
                         ?><a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
-                    else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+                    else :
                         echo $this->escape($this->item->venue);
                     endif;
 
