@@ -369,7 +369,7 @@ $params = $params->toArray();
                                 <li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type', null, $recurr->recurrence_type); ?></div></li>
                                 <li id="recurrence_output" class="m-3">
                                     <?php if ($recurr->recurrence_number){ ?>
-                                        <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $recurr->recurrence_number;?>"></input>
+                                        <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $recurr->recurrence_number;?>">
                                     <?php } ?>
                                     <label></label>
                                 </li>
@@ -438,6 +438,7 @@ $params = $params->toArray();
                             <?php /* show "old" recurrence settings for information */
                             if (!empty($this->item->recurr_bak->recurrence_type)) {
                                 $recurr_type = '';
+                                $recurr_info = '';
                                 $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
                                 $rlDate = $this->item->recurr_bak->recurrence_limit_date;
                                 if (!empty($rlDate)) {

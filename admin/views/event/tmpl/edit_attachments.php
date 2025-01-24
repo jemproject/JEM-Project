@@ -21,7 +21,7 @@ use Joomla\CMS\Session\Session;
             <td>
                 <div>
                     <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE');?></div>
-                    <input class="form-control readonly valid form-control-success w-75" type="text" readonly="readonly" value="<?php echo $file->file; ?>"></input>
+                    <input class="form-control readonly valid form-control-success w-75" type="text" readonly="readonly" value="<?php echo $file->file; ?>">
                     <input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/>
                 </div>
                 <div>
@@ -48,10 +48,10 @@ use Joomla\CMS\Session\Session;
         </tr>
     <?php endforeach; ?>
     <tr>
-        <td width="100%">
+        <td style="width:100%">
             <div style="display: inline-block; text-wrap: none;">
                 <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
-                <input type="file" name="attach[]" class="attach-field"></input>
+                <input type="file" name="attach[]" class="attach-field">
                 <input type="reset" value="<?php echo Text::_('JSEARCH_FILTER_CLEAR') ?>" class="btn btn-primary">
             </div>
             <div>
