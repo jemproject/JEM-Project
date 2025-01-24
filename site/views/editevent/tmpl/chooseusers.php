@@ -79,16 +79,16 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 		<table class="eventtable table table-striped" style="width:100%" summary="jem">
 			<thead>
 				<tr>
-					<th width="1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-					<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
-					<th width="10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
-					<th width="10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
+                    <th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
+                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
+                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php if (empty($this->rows)) : ?>
-					<tr align="center"><td colspan="0"><?php echo Text::_('COM_JEM_NOUSERS'); ?></td></tr>
+					<tr style="text-align: center;"><td colspan="0"><?php echo Text::_('COM_JEM_NOUSERS'); ?></td></tr>
 				<?php else :?>
 					<?php foreach ($this->rows as $i => $row) : ?>
 					<tr class="row<?php echo $i % 2; ?>">
@@ -104,9 +104,9 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 							}
 							echo $cb;
 						?></td>
-						<td align="left"><?php echo $this->escape($row->name); ?></td>
+						<td style="text-align: left;"><?php echo $this->escape($row->name); ?></td>
 						<td class="center"><?php echo jemhtml::toggleAttendanceStatus( 0, $row->status, false); ?></td>
-						<td align="left"><?php echo $this->escape($row->places); ?></td>
+						<td style="text-align: left;"><?php echo $this->escape($row->places); ?></td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>

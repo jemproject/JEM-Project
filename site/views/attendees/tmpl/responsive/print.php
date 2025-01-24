@@ -14,7 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 <table class="table" style="width: 100%">
 	<tr>
-		<td class="sectionname" width="100%"><span
+		<td class="sectionname" style="width: 100%"><span
 			style="color: #C24733; font-size: 18px; font-weight: bold;"><?php echo Text::_( 'COM_JEM_REGISTERED_USER' ); ?>
 			</span>
 		</td>
@@ -29,7 +29,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 <br />
 <table class="adminlist">
 	<tr>
-		<td align="left"><b><?php echo Text::_( 'COM_JEM_TITLE' ).':'; ?> </b>&nbsp;<?php echo $this->escape($this->event->title); ?><br />
+		<td style="text-align: left;"><b><?php echo Text::_( 'COM_JEM_TITLE' ).':'; ?> </b>&nbsp;<?php echo $this->escape($this->event->title); ?><br />
 			<b><?php echo Text::_( 'COM_JEM_DATE' ).':'; ?> </b>&nbsp;<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
 					$this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?></td>
 	</tr>

@@ -104,19 +104,19 @@ $wa->useScript('table.columns');
             <table class="table table-striped itemList" id="eventList">
                 <thead>
                 <tr>
-                    <th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTTIME_SHORT', 'a.times', $listDirn, $listOrder ); ?></th>
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
                     <th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
-                    <th width="1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
-                    <th width="1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
+                    <th style="width: 1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
+                    <th style="width: 1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
                     <th class="nowrap"><?php echo Text::_('COM_JEM_AUTHOR'); ?></th>
                     <th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
-                    <th width="1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
-                    <th width="9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
-                    <th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
+                    <th style="width: 1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
+                    <th style="width: 9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
+                    <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
                 </tr>
                 </thead>
 

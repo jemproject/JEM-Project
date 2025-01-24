@@ -245,11 +245,11 @@ class JemModelCategory extends AdminModel
 		if ($table->parent_id != $data['parent_id'] || $data['id'] == 0) {
 			$table->setLocation($data['parent_id'], 'last-child');
 		}
-		$data['title'] = isset($data['title']) ? $data['title']  : '';
-		$data['note'] = isset($data['note']) ? $data['note']  : '';
-		$data['language'] = isset($data['language']) ? $data['language']  : '';
-		$data['path'] = isset($data['path']) ? $data['path']  : '';
-		$data['metadata'] = isset($data['metadata']) ? $data['metadata']  : '';
+		$data['title'] = $data['title'] ?? '';
+		$data['note'] = $data['note'] ?? '';
+		$data['language'] = $data['language'] ?? '';
+		$data['path'] = $data['path'] ?? '';
+		$data['metadata'] = $data['metadata'] ?? '';
 		
 		// Alter the title for save as copy
 		if ($jinput->get('task', '') == 'save2copy') {
@@ -524,7 +524,7 @@ class JemModelCategory extends AdminModel
 			// If we a copying children, the Old ID will turn up in the parents
 			// list
 			// otherwise it's a new top level item
-			$table->parent_id = isset($parents[$oldParentId]) ? $parents[$oldParentId] : $parentId;
+			$table->parent_id = $parents[$oldParentId] ?? $parentId;
 
 			// Set the new location in the tree for the node.
 			$table->setLocation($table->parent_id, 'last-child');

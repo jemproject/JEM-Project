@@ -63,7 +63,7 @@ use Joomla\CMS\Session\Session;
 			<?php endforeach; ?>
 			<?php if ($this->jemsettings->attachmentenabled != 0) : ?>
 			<tr>
-				<td width="100%">
+				<td style="width: 100%">
 					<div>
 						<div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
 						<input type="file" name="attach[]" class="attach-field" /><input type="reset" value="<?php echo Text::_('JSEARCH_FILTER_CLEAR') ?>" class="btn btn-primary">

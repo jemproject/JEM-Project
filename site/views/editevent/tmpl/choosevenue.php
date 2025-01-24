@@ -58,26 +58,26 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
 		<table class="eventtable table table-striped" style="width:100%" summary="jem">
 			<thead>
 				<tr>
-					<th width="7" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-					<th align="left" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-					<th align="left" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-					<th align="left" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-					<th align="left" class="sectiontableheader" align="left"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                    <th style="width: 7px; text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php if (empty($this->rows)) : ?>
-					<tr align="center"><td colspan="0"><?php echo Text::_('COM_JEM_NOVENUES'); ?></td></tr>
+					<tr style="text-align: center"><td colspan="0"><?php echo Text::_('COM_JEM_NOVENUES'); ?></td></tr>
 				<?php else :?>
 					<?php foreach ($this->rows as $i => $row) : ?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-						<td align="left">
+						<td style="text-align: left;">
 							<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
 						</td>
-						<td align="left"><?php echo $this->escape($row->city); ?></td>
-						<td align="left"><?php echo $this->escape($row->state); ?></td>
-						<td align="left"><?php echo !empty($row->country) ? $this->escape($row->country) : ''; ?></td>
+						<td style="text-align: left;"><?php echo $this->escape($row->city); ?></td>
+						<td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
+						<td style="text-align: left;"><?php echo !empty($row->country) ? $this->escape($row->country) : ''; ?></td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>

@@ -340,13 +340,13 @@ class JemModelExport extends ListModel
 			// First pass - collect children
 			foreach ($mitems as $v) {
 				$pt = $v->parent_id;
-				$list = isset($children[$pt]) ? $children[$pt] : array();
+				$list = $children[$pt] ?? array();
 				array_push($list, $v);
 				$children[$pt] = $list;
 			}
 
 			// list childs of "root" which has no parent and normally id 1
-			$parentid = intval(isset($children[0][0]->id) ? $children[0][0]->id : 1);
+			$parentid = intval($children[0][0]->id ?? 1);
 		}
 
 		//get list of the items

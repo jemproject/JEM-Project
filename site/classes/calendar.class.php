@@ -553,7 +553,7 @@ class JemCalendar
 				else $out.="<option value=\"".$z."\">".$z."</option>\n";
 			}
 			$out.="</select>\n";
-			$out.="<input type=\"submit\" value=\"".$this->selBtn."\" class=\"".$this->cssPickerButton."\"></input>\n";
+			$out.="<input type=\"submit\" value=\"".$this->selBtn."\" class=\"".$this->cssPickerButton."\">\n";
 			$out.="</form>\n";
 			$out.="</td></tr>\n";
 		}
