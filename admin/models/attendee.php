@@ -138,7 +138,7 @@ class JemModelAttendee extends BaseDatabaseModel
                     $data->recurrence_type = $table->recurrence_type;
                     $data->seriesbooking = $table->seriesbooking;
 				}
-				$data->waitinglist = isset($table->waitinglist) ? $table->waitinglist : 0;
+                $data->waitinglist = $table->waitinglist ?? 0;
 			}
 			$this->_data = $data;
 		}
@@ -175,7 +175,7 @@ class JemModelAttendee extends BaseDatabaseModel
 		$eventid = $data['event'];
 		$userid  = $data['uid'];
 		$id      = !empty($data['id']) ? (int)$data['id'] : 0;
-		$status  = isset($data['status']) ? $data['status'] : false;
+        $status = $data['status'] ?? false;
 
 		// Split status and waiting
 		if ($status !== false) {

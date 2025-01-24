@@ -69,7 +69,7 @@ class JemModelEvent extends JemModelAdmin
     {
         $user = JemFactory::getUser();
 
-        $id    = isset($record->id) ? $record->id : false; // isset ensures 0 !== false
+        $id    = $record->id ?? false; // isset ensures 0 !== false
         $owner = !empty($record->created_by) ? $record->created_by : false;
         $cats  = !empty($record->catid) ? array($record->catid) : false;
 
@@ -249,15 +249,15 @@ class JemModelEvent extends JemModelAdmin
 
         // Variables
         $cats                 = $data['cats'];
-        $invitedusers         = isset($data['invited']) ? $data['invited'] : '';
+        $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
         $metakeywords         = $jinput->get('meta_keywords', '', '');
         $metadescription      = $jinput->get('meta_description', '', '');
         $task                 = $jinput->get('task', '', 'cmd');
-        $data['metadata']     = isset($data['metadata']) ? $data['metadata'] : '';
-        $data['attribs']      = isset($data['attribs']) ? $data['attribs'] : '';
-        $data['ordering']     = isset($data['ordering']) ? $data['ordering'] : '';
+        $data['metadata']     = $data['metadata'] ?? '';
+        $data['attribs']      = $data['attribs'] ?? '';
+        $data['ordering']     = $data['ordering'] ?? '';
 
         // convert international date formats...
         $db = Factory::getContainer()->get('DatabaseDriver');
