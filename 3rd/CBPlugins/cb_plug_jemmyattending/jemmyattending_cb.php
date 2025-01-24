@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    JEM My Attending for CB
- * @version    2.8.0 (for JEM 4 & CB v2.8)
- * @author     JEM Community
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @package JEM My Attending for CB
+ * @version 2.1.6 for JEM v2.1 & CB v2.0
+ * @author JEM Community
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Just a note:
  * Keep the query code inline with my-attendances view
@@ -12,6 +12,9 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
@@ -52,7 +55,7 @@ class jemmyattendingTab extends cbTabHandler {
 	{
 		global $_CB_framework;
 
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('com_jem', JPATH_BASE.'/components/com_jem');
 
 		$UElanguagePath = dirname(__FILE__);
@@ -106,7 +109,7 @@ class jemmyattendingTab extends cbTabHandler {
 		// Support Joomla access levels instead of single group id
 		// Note: $user is one which profile is requested, not the asking user!
 		//       $juser is the asking user which view access levels must be used.
-		$juser  = JFactory::getUser();
+		$juser  = Factory::getUser();
 		$levels = $juser->getAuthorisedViewLevels();
 
 		$query      = 'SELECT DISTINCT a.id';
@@ -116,11 +119,10 @@ class jemmyattendingTab extends cbTabHandler {
 			        . ' l.venue, l.city, l.state, l.url, '
 			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
 			        . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
-					. ' r.waiting, r.places, ' 
+			        . ' r.waiting, r.places, ' 
 					. ($this->_found_state_field ? 'r.status' : '1') . ' AS reg_state '
+					. ($this->_found_state_field ? ', r.comment AS reg_comment' : '')
 					. ($this->_found_state_field ? ', r.places AS reg_places' : '')
-			        . ($this->_found_state_field ? ', r.comment AS reg_comment' : '')
-																	
 			        ;
 		}
 		$query     .= ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
@@ -150,17 +152,17 @@ class jemmyattendingTab extends cbTabHandler {
 		global $_CB_database;
 
 		$total = 0;
-		$juser = JFactory::getUser();
+		$juser = Factory::getUser();
 
 		if ($this->_jemFound && $this->_checkPermission($user, $juser)) {
 			$query = $this->_getQuery($user, true);
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
 			$total = !empty($result) ? count($result) : 0;
-			return parent::getTabTitle($tab, $user, $ui, $postdata) . ' <span class="badge badge-default">' . (int)$total . '</span>';
+			return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL) . ' <span class="badge badge-default">' . (int)$total . '</span>';
 		}
 
-		return parent::getTabTitle($tab, $user, $ui, $postdata);
+		return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL);
 	}
 
 	/**
@@ -192,12 +194,12 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_startdate = $params->get('event_startdate');
 		$event_datecombi = $params->get('event_datecombi');
 		$event_venue = $params->get('event_venue');
-		$reg_places = $params->get('reg_places') && $this->_found_state_field;																		
+		$reg_places = $params->get('reg_places') && $this->_found_state_field;
 		$reg_comment = $params->get('reg_comment') && $this->_found_state_field;
 
 		/* access rights check */
 		// $user is profile's owner but we need logged-in user here
-		$juser = JFactory::getUser();
+		$juser = Factory::getUser();
 
 		if (!$this->_checkPermission($user, $juser)) {
 			return ''; // which will completely hide the tab
@@ -250,7 +252,7 @@ class jemmyattendingTab extends cbTabHandler {
 		$return .= "\n\t<form method=\"post\" name=\"jemmyattendingForm\">";
 
 		/* Start of Table */
-		$return .= "\n\t<table class='jemmyattendingCBTabTable'>";
+		//$return .= "\n\t<table class='jemmyattendingCBTabTable'>";
 		$return .= "\n\t<table class='table table-hover mb-0'>";
 		/* start of headerline */
 		$return .= "\n\t\t<tr class='jemmyattendingtableheader'>";
@@ -345,7 +347,7 @@ class jemmyattendingTab extends cbTabHandler {
 
 				/* Title field */
 				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableTitle'>";
-				$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->slug)) ."\">{$result->title}</a>";
+				$return .= "\n\t\t\t\t<a href=\"". Route::_(JEMHelperRoute::getEventRoute($result->slug)) ."\">{$result->title}</a>";
 				$return .= "\n\t\t\t</td>";
 
 				/*
@@ -400,7 +402,7 @@ class jemmyattendingTab extends cbTabHandler {
 				 * a link to the venueevent is specified so people can visit the venue page
 				 */
 				if ($event_venue) {
-					$location = empty($result->venueslug) ? '' : "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
+					$location = empty($result->venueslug) ? '' : "<a href='".Route::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
 					$return .= "\n\t\t\t\t$location";
 					if (!empty($result->city)) {
@@ -416,26 +418,26 @@ class jemmyattendingTab extends cbTabHandler {
 				 */
 				switch ($result->reg_state) {
 				case -1: // explicitely unregistered
-					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.png');
+					$img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.png');
 					$tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNREGISTERED', 'Not attending' );
 					break;
 				case  0: // invited, not answered yet
-					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.png');
+					$img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.png');
 					$tip = CBTxt::T( 'JEMMYATTENDING_STATUS_INVITED', 'Invited' );
 					break;
 				case  1: // registered
-					$img = JRoute::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
+					$img = Route::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
 					$tip = $result->waiting ? CBTxt::T( 'JEMMYATTENDING_STATUS_WAITINGLIST', 'On Waitinglist' ) : CBTxt::T( 'JEMMYATTENDING_STATUS_REGISTERED', 'Attending' );
 					break;
 				default: // ? - shouldn't happen...
-					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.png');
+					$img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.png');
 					$tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNKNOWN', 'Status unknown' );
 					break;
 				}
 				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
 				$return .= "\n\t\t\t\t<img src='$img' alt='$tip' title='$tip'>";
 				$return .= "\n\t\t\t</td>";
-	
+				
 				/* Places field */
 				if ($reg_places) {
 					$places = strip_tags($result->reg_places);
@@ -446,6 +448,8 @@ class jemmyattendingTab extends cbTabHandler {
 					$return .= "\n\t\t\t\t{$places}";
 					$return .= "\n\t\t\t</td>";			
 				}
+	
+				
 
 				/* Comment field */
 				if ($reg_comment) {

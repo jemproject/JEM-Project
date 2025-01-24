@@ -274,14 +274,13 @@ class JemModelEvent extends JemModelAdmin
             $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
         }
 
-        // Load the event from db, detect if the event isn't new and is recurrence type.
-        // In this case, the event just needs to be updated if the recurrence setting hasn't changed.
-        $save = true;
+        // Load the event from the database, check if the event is the initial event (new, root, and not a recurrence).
+        // In this case, the event only needs to be updated if the recurrence setting has not changed.
+        $isInitialEvent = true;
 
         if(!$new && $data["recurrence_type"]) {
-
-            // This is event exist in event table and it's recurrence
-            $save = false;
+            // This event is a child, it has recurrence, is not a root event, and has ID.
+            $isInitialEvent = false;
             $this->eventid = $data["id"];
 
             // Get data event in DB
@@ -367,15 +366,16 @@ class JemModelEvent extends JemModelAdmin
                 if (in_array($d, $fieldNotAllow)) {
                     // This event must be updated its fields
                     $data[$d] =  $value;
-                    $save = true;
+                    // Mark the event as root or new
+                    $isInitialEvent = true;
                 }
             }
 
-            // If $save is true and recurrence_first_id != 0 then this event must be the first event of a new recurrence (series)
-            if($save){
+            // If $isInitialEvent is true and recurrence_first_id != 0 then this event must be the first event of a new recurrence (series)
+            if($isInitialEvent){
                 if($eventdb['recurrence_first_id'] != 0) {
-				
-					// Convert to root event
+
+                    // Convert to root event
                     $data['recurrence_first_id'] = 0;
 
                     // Copy the recurrence data if it doesn't exist
@@ -398,6 +398,9 @@ class JemModelEvent extends JemModelAdmin
                         $data['recurrence_byday'] = $eventdb['recurrence_byday'];
                     }
                 }
+            }else{
+                // Get the recurrence_first_id for this recurrence event
+                $data['recurrence_first_id'] = $eventdb ['recurrence_first_id'];
             }
         }
 
@@ -420,7 +423,7 @@ class JemModelEvent extends JemModelAdmin
             $data['reginvitedonly'] = 0;
         }
 
-        if($save) {
+        if($isInitialEvent) {
             // event maybe first of recurrence set -> dissolve complete set
             if (JemHelper::dissolve_recurrence($data['id'])) {
                 $this->cleanCache();
@@ -539,21 +542,57 @@ class JemModelEvent extends JemModelAdmin
                     JemHelper::cleanup(2); // 2 = force on save, needs special attention
                 }
             }
-        }else{
-            $saved = parent::save($data);
+        } else {
+            // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
+            if (!$data["recurrence_first_id"]) {
+                // the event is root
+                $events = [];
+                // retrieve all recurrence events associated with this root ID
+                $allRecurrenceEvents = $this->getListRecurrenceEventsbyId($data['id'], $data['id'], time());
 
-            $fieldAllow=['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
-            $saved = true;
-            $fieldsupdated="";
-            foreach ($diff as $d => $value){
-                if(in_array($d, $fieldAllow)) {
-                    $this->updateField($data['id'], $d, $value);
-                    $fieldsupdated = $fieldsupdated . ($fieldsupdated!=''? ', ':'') . $d;
+                // convert them to an array of objects each event and update the events with the data fields
+                foreach ($allRecurrenceEvents as $recurrenceEvent){
+                    $event = (array) $recurrenceEvent;
+                    // update only the fields that were changed
+                    foreach ($diff as $field => $value) {
+                        if (array_key_exists($field, $event)) {
+                            $event[$field] = $value;
+                        }
+                    }
+                    $events[] = $event;
+                }
+            } else {
+                // the event is a child
+                $events[] = $data;
+            }
+
+            //Fields allowed to update
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $saved = false;
+
+            // get the fields update
+            foreach ($events as $event) {
+                $fieldsupdated = "";
+
+                // save the event
+                $saved = parent::save($event);
+
+                if ($saved){
+                    foreach ($diff as $d => $value) {
+                        // update only the fields that were changed
+                        if (in_array($d, $fieldAllow)) {
+                            $this->updateField($data['id'], $d, $value);
+                            $fieldsupdated = $fieldsupdated . ($fieldsupdated != '' ? ', ' : '') . $d;
+                        }
+                    }
+                    if ($fieldsupdated != '') {
+                        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_FIELDS_EVENT_UPDATED') . ' ' . $fieldsupdated . ' [ID:' . $event['id'] . ']', 'info');
+                    }
+                } else {
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ERROR_EVENT_UPDATED') . ' ' . implode(", ", array_keys($diff)) . ' [ID:' . $event['id'] . ']', 'info');
                 }
             }
-            if($fieldsupdated!='') {
-                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_FIELDS_EVENT_UPDATED') . ' ' . $fieldsupdated . ' [ID:' . $data['id'] . ']', 'info');
-            }
+
             $table->load($data['id']);
             if (isset($table->id)) {
                 $this->setState($this->getName() . '.id', $table->id);
@@ -561,6 +600,62 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return $saved;
+    }
+
+
+    /**
+     * Method to get list recurrence events data.
+     *
+     * @param  int  The id of the event.
+     * @param  int  The id of the parent event.
+     * @return mixed  item data object on success, false on failure.
+     */
+    public function getListRecurrenceEventsbyId ($id, $pk, $datetimeFrom, $iduser=null, $status=null)
+    {
+        // Initialise variables.
+        $pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
+
+        if ($this->_item === null) {
+            $this->_item = array();
+        }
+
+        try
+        {
+            $settings = JemHelper::globalattribs();
+            $user     = JemFactory::getUser();
+            $levels   = $user->getAuthorisedViewLevels();
+
+            $db    = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true);
+
+            # Event
+            $query->select(
+                $this->getState('item.select',
+                    'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, ' .
+                    'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
+                    'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
+                    'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
+                    'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+                    'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
+                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))	;
+            $query->from('#__jem_events AS a');
+
+            $dateFrom = date('Y-m-d', $datetimeFrom);
+            $timeFrom = date('H:i:s', $datetimeFrom);
+            $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
+            $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+            $query->order('a.dates ASC');
+
+            $db->setQuery($query);
+            $data = $db->loadObjectList();
+        }
+        catch (Exception $e)
+        {
+            $this->setError($e);
+            return false;
+        }
+
+        return $data;
     }
 
 
