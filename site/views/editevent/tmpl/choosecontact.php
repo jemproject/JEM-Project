@@ -58,39 +58,39 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 		<table class="eventtable table table-striped" style="width:100%" summary="jem">
 			<thead>
 				<tr>
-					<th width="7" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+                    <th style="width: 7px" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
-						<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+						<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php endif; ?>
-					<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
-						<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
-						<th align="left" class="sectiontableheader"><?php echo Text::_('COM_JEM_TELEPHONE'); ?></th>
+						<th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
+						<th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_TELEPHONE'); ?></th>
 					<?php endif; ?>
 				</tr>
 			</thead>
 			<tbody>
 				<?php if (empty($this->rows)) : ?>
-					<tr align="center"><td colspan="0"><?php echo Text::_('COM_JEM_NOCONTACTS'); ?></td></tr>
+					<tr style="text-align: center;"><td colspan="0"><?php echo Text::_('COM_JEM_NOCONTACTS'); ?></td></tr>
 				<?php else :?>
 					<?php foreach ($this->rows as $i => $row) : ?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-						<td align="left">
+						<td style="text-align: left;">
 							<span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
 								<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
 							</span>
 						</td>
 						<?php if (0) : /* removed because it maybe forbidden to show */ ?>
-							<td align="left"><?php echo $this->escape($row->address); ?></td>
+							<td style="text-align: left;"><?php echo $this->escape($row->address); ?></td>
 						<?php endif; ?>
-						<td align="left"><?php echo $this->escape($row->suburb); ?></td>
-						<td align="left"><?php echo $this->escape($row->state); ?></td>
+						<td style="text-align: left;"><?php echo $this->escape($row->suburb); ?></td>
+						<td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
 						<?php if (0) : /* removed because it maybe forbidden to show */ ?>
-							<td align="left"><?php echo $this->escape($row->email_to); ?></td>
-							<td align="left"><?php echo $this->escape($row->telephone); ?></td>
+							<td style="text-align: left;"><?php echo $this->escape($row->email_to); ?></td>
+							<td style="text-align: left;"><?php echo $this->escape($row->telephone); ?></td>
 						<?php endif; ?>
 					</tr>
 					<?php endforeach; ?>

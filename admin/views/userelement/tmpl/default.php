@@ -16,7 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 	<table class="adminform">
 		<tr>
-			<td width="100%">
+			<td style="width: 100%;">
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 				<button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 				<button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
@@ -27,7 +27,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
-				<th class="center" width="5"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+				<th class="center" style="width: 5px"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 				<th class="title"><?php echo HTMLHelper::_('grid.sort', 'Name', 'u.name', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 				<th class="title"><?php echo HTMLHelper::_('grid.sort', 'Username', 'u.username', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 				<th class="title"><?php echo HTMLHelper::_('grid.sort', 'Email', 'u.email', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>

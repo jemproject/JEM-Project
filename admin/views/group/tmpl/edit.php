@@ -97,13 +97,13 @@ $params = $params->toArray();
 								<td><b><?php echo Text::_('COM_JEM_GROUP_MAINTAINERS').':'; ?></b></td>
 							</tr>
 							<tr>
-								<td width="44%"><?php echo $this->lists['available_users']; ?></td>
-								<td width="10%">
+								<td style="width: 44%"><?php echo $this->lists['available_users']; ?></td>
+								<td style="width: 10%">
 									<input style="width: 90%" type="button" name="right" value="&gt;" onClick="moveOptions(document.adminForm['available_users'], document.adminForm['maintainers[]'])" />
 									<br /><br />
 									<input style="width: 90%" type="button" name="left" value="&lt;" onClick="moveOptions(document.adminForm['maintainers[]'], document.adminForm['available_users'])" />
 								</td>
-								<td width="44%"><?php echo $this->lists['maintainers']; ?></td>
+								<td style="width: 44%"><?php echo $this->lists['maintainers']; ?></td>
 							</tr>
 						</table>
 					</fieldset>

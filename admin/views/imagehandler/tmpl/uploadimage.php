@@ -16,7 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 <table class="noshow">
 	<tr>
-		<td width="50%" valign="top">
+		<td style="width: 50%; vertical-align: top;">
 
 			<?php if($this->ftp): ?>
 				<fieldset class="adminform">
@@ -31,7 +31,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 					<table class="adminform nospace">
 						<tbody>
 							<tr>
-								<td width="120">
+								<td style="width: 120px">
 									<label for="username"><?php echo Text::_('COM_JEM_USERNAME'); ?>:</label>
 								</td>
 								<td>
@@ -39,7 +39,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 								</td>
 							</tr>
 							<tr>
-								<td width="120">
+								<td style="width: 120px">
 									<label for="password"><?php echo Text::_('COM_JEM_PASSWORD'); ?>:</label>
 								</td>
 								<td>
@@ -67,7 +67,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 			</fieldset>
 
 		</td>
-		<td width="50%" valign="top">
+		<td style="width: 50%; vertical-align: top;">
 
 			<fieldset class="adminform">
 				<legend><?php echo Text::_('COM_JEM_ATTENTION'); ?></legend>

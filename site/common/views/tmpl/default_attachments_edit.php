@@ -36,7 +36,7 @@ use Joomla\CMS\Session\Session;
 		<?php endforeach; ?>
 		<tr>
 			<td>
-				<input type="file" name="attach[]" class="attach-field" size="10" style="width:200px"></input>
+				<input type="file" name="attach[]" class="attach-field" size="10" style="width:200px">
 			</td>
 			<td>
 				<input type="text" name="attach-name[]" value="" />
