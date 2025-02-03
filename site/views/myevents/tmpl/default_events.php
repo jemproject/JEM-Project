@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -14,7 +14,7 @@ use Joomla\CMS\Router\Route;
 
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");
@@ -55,28 +55,28 @@ use Joomla\CMS\Router\Route;
 		<table class="eventtable table jem-myevents table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 			<colgroup>
 				<?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
-				<col width="1%" class="jem_col_checkall" />
+				<col wstyle="width: 1%" class="jem_col_checkall" />
 				<?php endif; ?>
-				<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
+				<col style="width: <?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
-				<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
+				<col style="width: <?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
-				<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
+				<col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-				<col width="<?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
+				<col style="width: <?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-				<col width="<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
+				<col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcat == 1) : ?>
-				<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
+				<col style="width: <?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 				<?php endif; ?>
 				<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
-				<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
+				<col style="width: "<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
 				<?php endif; ?>
-				<col width="1%" class="jem_col_status" />
+				<col style="width: 1%" class="jem_col_status" />
 			</colgroup>
 
 			<thead>
@@ -84,24 +84,24 @@ use Joomla\CMS\Router\Route;
 					<?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
 					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<?php endif; ?>
-					<th id="jem_date" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_date" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php if ($this->jemsettings->showtitle == 1) : ?>
-					<th id="jem_title" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_title" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showlocate == 1) : ?>
-					<th id="jem_location" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_location" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showcity == 1) : ?>
-					<th id="jem_city" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_city" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showstate == 1) : ?>
-					<th id="jem_state" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_state" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showcat == 1) : ?>
-					<th id="jem_category" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_category" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
-					<th id="jem_atte" class="sectiontableheader" align="center"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+					<th id="jem_atte" class="sectiontableheader" style="text-align: center;"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 					<?php endif; ?>
 					<th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 				</tr>
@@ -124,12 +124,12 @@ use Joomla\CMS\Router\Route;
 							</td>
 							<?php endif; ?>
 
-							<td headers="jem_date" align="left">
+							<td headers="jem_date" style="text-align: left;">
 								<?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime); ?>
 							</td>
 
 							<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
-							<td headers="jem_title" align="left" valign="top">
+							<td headers="jem_title" style="text-align: left; vertical-align: top;">
 								<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
 									<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 								</a>
@@ -137,13 +137,13 @@ use Joomla\CMS\Router\Route;
 							<?php endif; ?>
 
 							<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
-							<td headers="jem_title" align="left" valign="top">
+							<td headers="jem_title" style="text-align: left; vertical-align: top;">
 								<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 							</td>
 							<?php endif; ?>
 
 							<?php if ($this->jemsettings->showlocate == 1) : ?>
-							<td headers="jem_location" align="left" valign="top">
+							<td headers="jem_location" style="text-align: left; vertical-align: top;">
 								<?php
 								if (!empty($row->venue)) :
 									if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
@@ -159,25 +159,25 @@ use Joomla\CMS\Router\Route;
 							<?php endif; ?>
 
 							<?php if ($this->jemsettings->showcity == 1) : ?>
-							<td headers="jem_city" align="left" valign="top">
+							<td headers="jem_city" style="text-align: left; vertical-align: top;">
 								<?php echo !empty($row->city) ? $this->escape($row->city) : '-'; ?>
 							</td>
 							<?php endif; ?>
 
 							<?php if ($this->jemsettings->showstate == 1) : ?>
-							<td headers="jem_state" align="left" valign="top">
+							<td headers="jem_state" style="text-align: left; vertical-align: top;">
 								<?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
 							</td>
 							<?php endif; ?>
 
 							<?php if ($this->jemsettings->showcat == 1) : ?>
-							<td headers="jem_category" align="left" valign="top">
+							<td headers="jem_category" style="text-align: left; vertical-align: top;">
 								<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
 							</td>
 							<?php endif; ?>
 
 							<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
-							<td headers="jem_atte" align="center" valign="top">
+							<td headers="jem_atte" style="text-align: center; vertical-align: top;">
 								<?php
 								if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
 									$linkreg  = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$this->itemid;

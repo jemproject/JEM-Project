@@ -2,7 +2,7 @@
 /**
  * @JEM Tag Plugin for AcyMailing 5.x
  * @copyright  (C) 2014 Ghost Art digital media.
- * @copyright  (C) 2013-2024 joomlaeventmanager.net. All rights reserved.
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net. All rights reserved.
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist tag and JEM specific code by JEM Community
  */
@@ -183,7 +183,7 @@ class plgAcymailingTagjem extends CMSPlugin
         echo $tabs->startPane('jem_tab');
         echo $tabs->startPanel(Text::_('JOOMEXT_EVENT'), 'jem_event');
         ?>
-        <script type="text/javascript">
+        <script>
             <!--
             var selectedContents = new Array();
             function applyContent(contentid, rowClass){
@@ -348,7 +348,7 @@ class plgAcymailingTagjem extends CMSPlugin
         echo $tabs->startPanel(Text::_('UPCOMING_EVENTS'), 'jem_auto');
         $type = $app->input->request->getString('type');
         ?>
-        <script type="text/javascript">
+        <script>
             <!--
             var selectedCat = new Array();
             function applyAutoEvent(catid,rowClass){

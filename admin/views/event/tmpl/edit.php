@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
@@ -45,7 +45,7 @@ $params = $params->toArray();
 
 ?>
 
-<script type="text/javascript">
+<script>
     function checkmaxplaces()
     {
         $('#jform_maxplaces').on('change', function(){
@@ -111,7 +111,7 @@ $params = $params->toArray();
         document.getElementById('comm1').style.display = 'none';
     }
 </script>
-<script type="text/javascript">
+<script>
     Joomla.submitbutton = function(task)
     {
         if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('event-form'))) {
@@ -306,8 +306,13 @@ $params = $params->toArray();
                         <div class="accordion-body">
                             <ul class="adminformlist" style="margin-bottom: 60px;">
                                 <li><div class="label-form"><?php echo $this->form->renderfield('registra'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('registra_from'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('registra_until'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra_until'); ?></div></li>
+                                <?php if($this->jemsettings->regallowinvitation) { ?>
+                                	<li><div class="label-form"><?php echo $this->form->renderfield('reginvitedonly'); ?></div></li>
+                                <?php } ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('minbookeduser'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('maxbookeduser'); ?></div></li>
@@ -364,7 +369,7 @@ $params = $params->toArray();
                                 <li><div class="label-form"><?php echo $this->form->renderfield('recurrence_type', null, $recurr->recurrence_type); ?></div></li>
                                 <li id="recurrence_output" class="m-3">
                                     <?php if ($recurr->recurrence_number){ ?>
-                                        <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $recurr->recurrence_number;?>"></input>
+                                        <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $recurr->recurrence_number;?>">
                                     <?php } ?>
                                     <label></label>
                                 </li>
@@ -433,6 +438,7 @@ $params = $params->toArray();
                             <?php /* show "old" recurrence settings for information */
                             if (!empty($this->item->recurr_bak->recurrence_type)) {
                                 $recurr_type = '';
+                                $recurr_info = '';
                                 $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
                                 $rlDate = $this->item->recurr_bak->recurrence_limit_date;
                                 if (!empty($rlDate)) {
@@ -572,7 +578,7 @@ $params = $params->toArray();
                                 </ul>
                             </fieldset>
 
-                            <script type="text/javascript">
+                            <script>
                                 <!--
                                 starter("<?php
                                     echo Text::_ ( 'COM_JEM_META_ERROR' );

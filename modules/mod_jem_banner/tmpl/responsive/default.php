@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Banner Module
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
 
 $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
@@ -40,75 +41,74 @@ $banneralignment = "jem-vertical-banner";
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizontal")){
     $banneralignment = "jem-horizontal-banner";
 }
-?>
+$imagewidth = '100%';
+$imagewidthstring = 'jem-imagewidth';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
+	$pageclass_sfx = $params->get('moduleclass_sfx');
+	$imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
+	$spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
+	if ($spacepos === false) {
+		$spacepos = strlen($pageclass_sfx);
+	}
+	$startpos = $imagewidthpos + strlen($imagewidthstring);
+	$endpos = $spacepos - $startpos;
+	$imagewidth = substr($pageclass_sfx, $startpos, $endpos);
+}
+$imageheight = 'auto';
+$imageheigthstring = 'jem-imageheight';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
+	$pageclass_sfx = $params->get('moduleclass_sfx');
+	$imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
+	$spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
+	if ($spacepos === false) {
+		$spacepos = strlen($pageclass_sfx);
+	}
+	$startpos = $imageheightpos + strlen($imageheigthstring);
+	$endpos = $spacepos - $startpos;
+	$imageheight = substr($pageclass_sfx, $startpos, $endpos);
+}
+        
+$document = Factory::getDocument();
+$additionalCSS = '';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
+    $additionalCSS = 'order: -1;';
+}
 
-    <style>
-        <?php
-        $imagewidth = '100%';
-        $imagewidthstring = 'jem-imagewidth';
-        if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
-          $pageclass_sfx = $params->get('moduleclass_sfx');
-          $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
-          $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
-          if ($spacepos === false) {
-            $spacepos = strlen($pageclass_sfx);
-          }
-          $startpos = $imagewidthpos + strlen($imagewidthstring);
-          $endpos = $spacepos - $startpos;
-          $imagewidth = substr($pageclass_sfx, $startpos, $endpos);
-        }
-        $imageheight = 'auto';
-        $imageheigthstring = 'jem-imageheight';
-        if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
-          $pageclass_sfx = $params->get('moduleclass_sfx');
-          $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
-          $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
-          if ($spacepos === false) {
-            $spacepos = strlen($pageclass_sfx);
-          }
-          $startpos = $imageheightpos + strlen($imageheigthstring);
-          $endpos = $spacepos - $startpos;
-          $imageheight = substr($pageclass_sfx, $startpos, $endpos);
-        }
-        ?>
+$widthStyle = $imagewidthmax ? 'width:' . $imagewidthmax . 'px' : 'max-width:' . $imagewidth;
+$heightStyle = $imagewidthmax ? 'auto' : $imageheight;
 
-        #jemmodulebanner .jem-eventimg-banner {
-            width: <?php echo $imagewidth; ?>;
-        <?php
-        if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
-          echo "order: -1;";
-        }
-        ?>
-        }
+$css = '
+    #jemmodulebanner .jem-eventimg-banner {
+        width: ' . $imagewidth . ';
+        ' . $additionalCSS . '
+    }
+    #jemmodulebanner .jem-eventimg-banner img {
+        ' . $widthStyle . ';
+        height: ' . $heightStyle . ';
+    }
 
-        #jemmodulebanner .jem-eventimg-banner img {
-        <?php echo ($imagewidthmax? 'width:' . $imagewidthmax .'px': 'max-width:'. $imagewidth); ?>;
-            height: <?php echo ($imagewidthmax? 'auto' : $imageheight); ?>;
-        }
-
-        @media not print {
-            @media only all and (max-width: 47.938rem) {
-                #jemmodulebanner .jem-eventimg-banner {
-
-                }
-
-                #jemmodulebanner .jem-eventimg-banner img {
-                    width: <?php echo $imagewidth; ?>;
-                    height: <?php echo $imageheight; ?>;
-                }
+    @media not print {
+    	@media only all and (max-width: 47.938rem) {
+            #jemmodulebanner .jem-eventimg-banner {
+            }
+            #jemmodulebanner .jem-eventimg-banner img {
+       			width: ' . $imagewidth . ';
+        		height: ' . $imageheight . ';
             }
         }
-    </style>
+    }';
+$document->addStyleDeclaration($css);
+?>
 
     <div class="jemmodulebanner<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebanner">
         <div class="eventset">
             <?php $i = count($list); ?>
             <?php if ($i > 0) : ?>
                 <?php foreach ($list as $item) : ?>
-                    <div class="event_id<?php echo $item->eventid; ?>">
-                        <h2 class="event-title">
+                    <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                        <h2 class="event-title" itemprop="name">
                             <?php if ($item->eventlink) : ?>
-                                <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
+                                <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
                             <?php else : ?>
                                 <?php echo $item->title; ?>
                             <?php endif; ?>
@@ -142,6 +142,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                                     <div class="daynumbanner">
                                         <?php echo $item->startdate['day']; ?>
                                     </div>
+                                    	<?php echo $item->dateschema; ?>
                                 </div>
                             <?php endif; ?>
                             <div class="jem-event-details-banner jem-row-banner">
@@ -157,19 +158,16 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                                     <?php if ($showcalendar == 0) : ?>
                                         <?php if ($item->date && $datemethod == 2) :?>
                                             <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                                                 <?php echo $item->date; ?>
                                             </div>
                                         <?php endif; ?>
 
                                         <?php if ($item->date && $datemethod == 1) :?>
                                             <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                                                 <?php echo $item->date; ?>
                                             </div>
                                             <?php if ($item->time && $datemethod == 1) :?>
                                                 <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                    <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                                                     <?php echo $item->time; ?>
                                                 </div>
                                             <?php endif; ?>
@@ -179,16 +177,14 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                                         <?php /* if time difference should be displayed */ ?>
                                         <?php if ($item->date && $datemethod == 2) : ?>
                                             <div class="date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
                                                 <?php echo $item->date; ?>
                                             </div>
-                                        <?php endif; ?>
+                                        <?php endif;
 
-                                        <?php /* if date is to be displayed */ ?>
-                                        <?php if ($item->time && $datemethod == 1) :?>
-                                            <?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
+                    // if date is to be displayed
+                    if ($item->time && $datemethod == 1) :
+                        // only the time needs to be displayed (as the date is already displayed on the calendar page) ?>
                                             <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                                <!-- <i class="fa fa-clock" aria-hidden="true"></i> -->
                                                 <?php echo $item->time; ?>
                                             </div>
                                         <?php endif; ?>
@@ -197,36 +193,43 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
                                     <?php /*venue*/ ?>
                                     <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
                                         <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                                            <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
                                             <?php if ($item->venuelink) : ?>
                                                 <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
                                             <?php else : ?>
                                                 <?php echo $item->venue; ?>
                                             <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
+                                    	</div>
+                                    <?php endif;
 
-                                    <?php /*category*/ ?>
-                                    <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                // category
+                if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
                                         <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
-                                            <!-- <i class="fa fa-tag" aria-hidden="true"></i> -->
                                             <?php echo $item->catname; ?>
                                         </div>
                                     <?php endif; ?>
-                                </div>
+                                    	<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                                    		<meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                                    		<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                                    			<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                                    			<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                                    			<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                                    			<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                                    		</div>
+                                    	</div>
+                                    </div>
 
                                 <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
                                     <div class="jem-eventimg-banner">
                                         <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                         <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
                                            title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?> " data-title="<?php echo $item->title; ?>">
-                                            <img class="<?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+                                            <img class="<?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                         </a>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if ($params->get('showdesc', 1) == 1) :?>
-                                    <div class="desc">
+                                    <div class="desc" itemprop="description">
                                         <?php echo $item->eventdescription; ?>
                                     </div>
                                     <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>

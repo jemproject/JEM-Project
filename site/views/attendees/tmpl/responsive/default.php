@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -23,7 +23,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
 
 ?>
-<script type="text/javascript">
+<script>
     function tableOrdering(order, dir, view)
     {
         var form = document.getElementById("adminForm");
@@ -33,7 +33,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         form.submit(view);
     }
 </script>
-<script type="text/javascript">
+<script>
     function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
         document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
         SqueezeBox.close();

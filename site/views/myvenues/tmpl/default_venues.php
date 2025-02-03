@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -13,7 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 ?>
 
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");
@@ -64,18 +64,18 @@ div#jem_filter select {
 		<table class="eventtable jem-myvenues" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 			<colgroup>
 				<?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
-				<col width="1%" class="jem_col_checkall" />
+				<col style="width: 1%" class="jem_col_checkall" />
 				<?php endif; ?>
 				<?php if (/*$this->jemsettings->showlocate ==*/ 1) : ?>
-				<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
+				<col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-				<col width="<?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
+				<col style="width: <?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
 				<?php endif; ?>
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-				<col width="<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
+				<col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
 				<?php endif; ?>
-				<col width="1%" class="jem_col_status" />
+				<col style="width: 1%" class="jem_col_status" />
 			</colgroup>
 
 			<thead>
@@ -84,13 +84,13 @@ div#jem_filter select {
 					<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<?php endif; ?>
 					<?php if (/*$this->jemsettings->showlocate ==*/ 1) : ?>
-					<th id="jem_location" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_location" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showcity == 1) : ?>
-					<th id="jem_city" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_city" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<?php if ($this->jemsettings->showstate == 1) : ?>
-					<th id="jem_state" class="sectiontableheader" align="left"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_state" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
 					<th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 				</tr>
@@ -114,7 +114,7 @@ div#jem_filter select {
 							<?php endif; ?>
 
 							<?php if (/*$this->jemsettings->showlocate ==*/ 1) : ?>
-							<td headers="jem_location" align="left" valign="top">
+							<td headers="jem_location" style="text-align: left; vertical-align: top;">
 								<?php
 								if (!empty($row->venue)) :
 									if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
@@ -130,13 +130,13 @@ div#jem_filter select {
 							<?php endif; ?>
 
 							<?php if ($this->jemsettings->showcity == 1) : ?>
-							<td headers="jem_city" align="left" valign="top">
+							<td headers="jem_city" style="text-align: left; vertical-align: top;">
 								<?php echo !empty($row->city) ? $this->escape($row->city) : '-'; ?>
 							</td>
 							<?php endif; ?>
 
 							<?php if ($this->jemsettings->showstate == 1) : ?>
-							<td headers="jem_state" align="left" valign="top">
+							<td headers="jem_state" style="text-align: left; vertical-align: top;">
 								<?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
 							</td>
 							<?php endif; ?>

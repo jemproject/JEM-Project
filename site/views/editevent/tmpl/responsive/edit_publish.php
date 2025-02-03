@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -80,7 +80,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 		</div>
 		<!-- include the metatags end-->
 
-		<script type="text/javascript">
+		<script>
 			<!--
 			starter("<?php
 						echo Text::_('COM_JEM_META_ERROR');

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
@@ -125,7 +125,6 @@ jQuery(document).ready(function($){
 	} else {
 		commoff();
 	}
-
 
 	var ObjArray = $('input.colorpicker').get('id').sort();
 
@@ -400,7 +399,7 @@ function registraoff()
     });
 </script>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'settings.cancel' || document.formvalidator.isValid(document.getElementById('settings-form'))) {
@@ -436,19 +435,26 @@ function registraoff()
 
 
 					
-					<?php echo HTMLHelper::_('uitab.addTab','settings-pane', 'settings-pane-2', Text::_('COM_JEM_EVENT_PAGE')); ?>
+					<?php echo HTMLHelper::_('uitab.addTab','settings-pane', 'event-settings', Text::_('COM_JEM_EVENT_PAGE')); ?>
 					    <fieldset class="adminform">
 							<div class="width-50 fltlft">
 								<?php echo $this->loadTemplate('evevents'); ?>
 							</div>
 							<div class="width-50 fltrt">
-								<?php echo $this->loadTemplate('evvenues'); ?>
+                                <?php echo $this->loadTemplate('evvenues'); ?>
 								<?php echo $this->loadTemplate('evregistration'); ?>
 							</div>
 						</fieldset>
 					<?php echo HTMLHelper::_('uitab.endTab'); ?>
 					<div class="clr"></div>
 
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'venue-settings', Text::_('COM_JEM_VENUE_PAGE')); ?>
+                    <fieldset class="adminform">
+                        <?php echo $this->loadTemplate('venues'); ?>
+                    </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
 
 				
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_LAYOUT')); ?>

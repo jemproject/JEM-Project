@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -16,7 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 <table class="adminform">
 	<tr>
-		<td width="100%">
+		<td style="width: 100%;">
 			<?php echo Text::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -34,14 +34,14 @@ use Joomla\CMS\HTML\HTMLHelper;
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th class="center" width="5"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+			<th class="center" style="width: 5px;"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo Text::_('COM_JEM_CATEGORY'); ?></th>
-			<th class="center" width="1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
+			<th class="center" style="width: 1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    My Events
- * @version    2.8.0 (for JEM 4 & CB v2.8)
- * @author     JEM Community
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @package My Events
+ * @version 2.1.7 for JEM v2.1 & CB v2.0
+ * @author JEM Community
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Just a note:
  * Keep the query code inline with my-events view
@@ -12,6 +12,11 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+
+//use CBLib\Language\CBTxt;
 
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
@@ -53,7 +58,7 @@ class jemmyeventsTab extends cbTabHandler {
 		global $_CB_framework;
 
 		/* need JEM's language file, e.g. for JEMOutput::formatDateTime() */
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('com_jem', JPATH_BASE.'/components/com_jem');
 
 		$UElanguagePath = dirname(__FILE__);
@@ -103,7 +108,7 @@ class jemmyeventsTab extends cbTabHandler {
 		// Support Joomla access levels instead of single group id
 		// Note: $user is one which profile is requested, not the asking user!
 		//       $juser is the asking user which view access levels must be used.
-		$juser  = JFactory::getUser();
+		$juser  = Factory::getUser();
 		$levels = $juser->getAuthorisedViewLevels();
 
 		$myprofile = !$juser->guest && ($juser->get('id') == $userid); // true if both users are equal
@@ -117,7 +122,7 @@ class jemmyeventsTab extends cbTabHandler {
 		if (!$fast) {
 			$query .= '  AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
 			        . ' CONCAT(a.introtext,a.fulltext) AS text, a.published, a.registra, a.maxplaces, a.waitinglist,'
-					. ' l.venue, l.city, l.state, l.url,'
+			        . ' l.venue, l.city, l.state, l.url,'
 			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
 			        . ',CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			        ;
@@ -153,10 +158,10 @@ class jemmyeventsTab extends cbTabHandler {
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
 			$total = !empty($result) ? count($result) : 0;
-			return parent::getTabTitle($tab, $user, $ui, $postdata) . ' <span class="badge badge-default">' . (int)$total . '</span>';
+			return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL) . ' <span class="badge badge-default">' . (int)$total . '</span>';
 		}
 
-		return parent::getTabTitle($tab, $user, $ui, $postdata);
+		return parent::getTabTitle($tab, $user, $ui, $postdata, $reason=NULL);
 	}
 
 	/**
@@ -177,7 +182,7 @@ class jemmyeventsTab extends cbTabHandler {
 		// Support Joomla access levels instead of single group id
 		// Note: $user is one which profile is requested, not the asking user!
 		//       $juser is the asking user which view access levels must be used.
-		$juser     = JFactory::getUser();
+		$juser     = Factory::getUser();
 		$levels    = $juser->getAuthorisedViewLevels();
 		$myprofile = !empty($user->id) && ($juser->get('id') == $user->id); // true if both users are equal
 
@@ -241,7 +246,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$return .= "\n\t<form method=\"post\" name=\"jemmyeventsForm\">";
 
 		/* Start of Table */
-		$return .= "\n\t<table  class='jemmyeventsCBTabTable'>";
+		//$return .= "\n\t<table  class='jemmyeventsCBTabTable'>";
 		$return .= "\n\t<table  class='table table-hover mb-0'>";
 		/* start of headerline */
 		$return .= "\n\t\t<tr class='jemmyeventstableheader'>";
@@ -249,7 +254,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 		/* start of imagefield */
 		if ($event_image) {
-			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableTitle'>";
+			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableImage'>";
 			$return .= "\n\t\t\t\t" . CBTxt::T( 'JEMMYEVENTS_IMAGE', 'Image' );
 			$return .= "\n\t\t\t</th>";
 			++$span;
@@ -261,6 +266,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$return .= "\n\t\t\t</th>";
 		++$span;
 
+		
 		/* Category header */
 		if ($event_categories) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableCat'>";
@@ -342,7 +348,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 				/* Title field */
 				$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableTitle'>";
-				$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->slug)) ."\">{$result->title}</a>";
+				$return .= "\n\t\t\t\t<a href=\"". Route::_(JEMHelperRoute::getEventRoute($result->slug)) ."\">{$result->title}</a>";
 				$return .= "\n\t\t\t</td>";
 
 				/* Category field */
@@ -351,7 +357,7 @@ class jemmyeventsTab extends cbTabHandler {
 					$cats = array();
 					if (is_array($cats)) {
 						foreach ($categories as $cat) {
-							$cats[] = "<a href='".JRoute::_(JEMHelperRoute::getCategoryRoute($cat->catslug))."'>{$cat->catname}</a>";
+							$cats[] = "<a href='".Route::_(JEMHelperRoute::getCategoryRoute($cat->catslug))."'>{$cat->catname}</a>";
 						}
 					}
 					if (empty($cats)) {
@@ -395,7 +401,7 @@ class jemmyeventsTab extends cbTabHandler {
 				 * a link to the venueevent is specified so people can visit the venue page
 				 */
 				if ($event_place) {
-					$location = empty($result->venueslug) ? '' : "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
+					$location = empty($result->venueslug) ? '' : "<a href='".Route::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
 					$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableVenue'>";
 					$return .= "\n\t\t\t\t$location";
 					if (!empty($result->city)) {
@@ -404,7 +410,7 @@ class jemmyeventsTab extends cbTabHandler {
 																
 												  
 					$return .= "\n\t\t\t</td>";
-				}				
+				}
 				/* Attendees field */
 				if ($event_attending) {
 					$regs = '-';

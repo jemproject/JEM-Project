@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -46,7 +46,7 @@ $options = array(
 	<div id="j-main-container" class="j-main-container">
 		<table style="width:100%">
 			<tr>
-				<td valign="top">
+				<td style="vertical-align: top">
 					<table>
 						<tr>
 							<td>
@@ -111,7 +111,7 @@ $options = array(
 						</tr>
 					</table>
 				</td>
-				<td valign="top" width="320px" style="padding: 7px 0 0 18px">
+				<td style="vertical-align: top; width: 320px; padding: 7px 0 0 18px">
 					
 					<div class="accordion" id="accordion_jem">
 						<?php //echo HTMLHelper::_('sliders.start','stat-pane',$options); ?>

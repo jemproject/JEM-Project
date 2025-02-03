@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -281,7 +281,7 @@ class JemControllerAttendees extends BaseController
 		$params    = $app->getParams();
 		$jemconfig = JemConfig::getInstance()->toRegistry();
 
-		$enableemailadress = $params->get('enableemailaddress', 0);
+		$enableemailaddress = $params->get('enableemailaddress', 0);
 		$separator         = $jemconfig->get('csv_separator', ';');
 		$delimiter         = $jemconfig->get('csv_delimiter', '"');
 		$csv_bom           = $jemconfig->get('csv_bom', '1');
@@ -308,7 +308,7 @@ class JemControllerAttendees extends BaseController
 		$cols = array();
 		$cols[] = Text::_('COM_JEM_NUM');
 		$cols[] = Text::_($jemconfig->get('globalattribs.global_regname', 1) ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME');
-		if ($enableemailadress == 1) {
+		if ($enableemailaddress == 1) {
 			$cols[] = Text::_('COM_JEM_EMAIL');
 		}
 		$cols[] = Text::_('COM_JEM_REGDATE');
@@ -327,7 +327,7 @@ class JemControllerAttendees extends BaseController
 
 			$cols[] = ++$i;
 			$cols[] = $data->$userfield;
-			if ($enableemailadress == 1) {
+			if ($enableemailaddress == 1) {
 				$cols[] = $data->email;
 			}
 			$cols[] = empty($data->uregdate) ? '' : HTMLHelper::_('date',$data->uregdate, Text::_('DATE_FORMAT_LC5'));

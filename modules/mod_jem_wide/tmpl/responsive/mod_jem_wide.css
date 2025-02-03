@@ -1,7 +1,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Latest Events Wide Module
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -32,8 +32,6 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-sort {
-  -ms-hyphens: auto;
-  -webkit-hyphens: auto;
   hyphens: auto;
 }
 
@@ -180,8 +178,6 @@ body.body-overlayed {
   margin: 0;
   padding: 0;
   list-style-type: none;
-  -ms-hyphens: auto;
-  -webkit-hyphens: auto;
   hyphens: auto;
 }
 

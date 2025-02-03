@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -68,7 +68,7 @@ $wa->addInlineScript('
 		</fieldset>
 		<table class="adminform">
 			<tr>
-				<td width="100%">
+				<td style="width: 100%;">
 					<?php echo Text::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
 					<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 					<button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -82,7 +82,7 @@ $wa->addInlineScript('
 		<table class="table table-striped" id="attendeeList">
 			<thead>
 				<tr>
-					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'u.name', $listDirn, $listOrder); ?></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $listDirn, $listOrder); ?></th>
 					<th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
@@ -95,7 +95,7 @@ $wa->addInlineScript('
 					<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif;?>
 					<th class="title center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
-					<th width="1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
+                    <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
 				</tr>
 			</thead>
 

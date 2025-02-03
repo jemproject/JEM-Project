@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -219,7 +219,7 @@ class JemModelAttendees extends ListModel
 		$event = $this->getEvent();
 		$items = $this->getItems();
 
-		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
+        $waitinglist = $event->waitinglist ?? false;
 
 		$csv = fopen('php://output', 'w');
 
@@ -240,7 +240,7 @@ class JemModelAttendees extends ListModel
 
 		foreach ($items as $item)
 		{
-			$status = isset($item->status) ? $item->status : 1;
+			$status = $item->status ?? 1;
 			if ($status < 0) {
 				$txt_stat = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
 			} elseif ($status > 0) {

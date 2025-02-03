@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -22,7 +22,7 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 ?>
-<script type="text/javascript">
+<script>
 	window.addEvent('domready', function(){
 	});
 
@@ -57,7 +57,7 @@ $params = $params->toArray();
         }
     }
 </script>
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		selectAll();
@@ -84,12 +84,9 @@ $params = $params->toArray();
 							<?php echo empty($this->item->id) ? Text::_('COM_JEM_NEW_GROUP') : Text::sprintf('COM_JEM_GROUP_DETAILS', $this->item->id); ?>
 						</legend>
 						<ul class="adminformlist">
-							<li><div class="label-form"><?php echo $this->form->renderfield('name'); ?></div>
-							</li>
-							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div>
-							</li>
-							<li><div class="label-form"><?php echo $this->form->renderfield('maintainers2'); ?></div>
-							</li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('name'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
+							<li><div class="label-form"><?php echo $this->form->renderfield('maintainers2'); ?></div></li>
 						</ul>
 					</fieldset>
 					<fieldset class="adminform">
@@ -100,13 +97,13 @@ $params = $params->toArray();
 								<td><b><?php echo Text::_('COM_JEM_GROUP_MAINTAINERS').':'; ?></b></td>
 							</tr>
 							<tr>
-								<td width="44%"><?php echo $this->lists['available_users']; ?></td>
-								<td width="10%">
+								<td style="width: 44%"><?php echo $this->lists['available_users']; ?></td>
+								<td style="width: 10%">
 									<input style="width: 90%" type="button" name="right" value="&gt;" onClick="moveOptions(document.adminForm['available_users'], document.adminForm['maintainers[]'])" />
 									<br /><br />
 									<input style="width: 90%" type="button" name="left" value="&lt;" onClick="moveOptions(document.adminForm['maintainers[]'], document.adminForm['available_users'])" />
 								</td>
-								<td width="44%"><?php echo $this->lists['maintainers']; ?></td>
+								<td style="width: 44%"><?php echo $this->lists['maintainers']; ?></td>
 							</tr>
 						</table>
 					</fieldset>

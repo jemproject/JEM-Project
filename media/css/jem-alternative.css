@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -105,8 +105,6 @@ div#jem .buttons span.gap {
 
 /* Edit-event view */
 div#jem .button1 {
-    -webkit-box-shadow: rgb(0, 0, 0) 0 1px 0 0;
-    -moz-box-shadow: rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
     box-shadow: rgb(0, 0, 0) 0 1px 0 0;
     background-color: #EBE8E9;
     border: 1px solid #29447E;
@@ -122,8 +120,6 @@ div#jem .button1 {
     top: 8px;
     left: 3px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px
 }
 
 div#jem .button1:disabled,
@@ -144,8 +140,6 @@ div#jem .button1:hover {
 
 /* Filter button */
 div#jem .buttonfilter {
-    -webkit-box-shadow: rgb(0, 0, 0) 0 1px 0 0;
-    -moz-box-shadow: rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
     box-shadow: rgb(0, 0, 0) 0 1px 0 0;
     background-color: #EBE8E9;
     border: 1px solid #29447E;
@@ -160,8 +154,6 @@ div#jem .buttonfilter {
     top: inherit;
     left: inherit;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px
 }
 
 /* Filter button:hover */
@@ -687,8 +679,6 @@ table#el-attachments input {
     margin: 0px 0px 0.5em;
     padding: 0.2em;
     box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
 }
 
 table#el-attachments input.attach-field {
@@ -696,8 +686,6 @@ table#el-attachments input.attach-field {
     margin: 0px 0px 0.5em;
     padding: 0.2em;
     box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
 }
 
 div.jem_editevent form input#a_name {

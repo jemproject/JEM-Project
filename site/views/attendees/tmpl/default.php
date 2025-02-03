@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -22,7 +22,7 @@ $detaillink = Route::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this-
 $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
 ?>
-<script type="text/javascript">
+<script>
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");
@@ -32,7 +32,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 		form.submit(view);
 	}
 </script>
-<script type="text/javascript">
+<script>
     function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
         document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
         SqueezeBox.close();
@@ -68,7 +68,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	<form action="<?php echo htmlspecialchars($this->action); ?>"  method="post" name="adminForm" id="adminForm">
 		<table class="adminlist">
 			<tr>
-				<td width="80%">
+				<td style="width: 80%">
 					<b><?php echo Text::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
 					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo $this->event->recurrence_type? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
 					<br />
@@ -112,8 +112,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 			<table class="eventtable table table-striped" style="margin: 20px 0 0 0;" id="articleList">
 				<thead>
 					<tr>
-						<th width="1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-						<!--th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
+                        <th style="width: 1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+						<!--th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
 						<th class="title"><?php echo HTMLHelper::_('grid.sort', $namelabel, 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if ($this->enableemailaddress == 1) : ?>
 						<th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>

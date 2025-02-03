@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -34,11 +34,10 @@ class JemViewSettings extends JemAdminView
 		$state       = $this->get('State');
 		$config      = $this->get('ConfigInfo');
 		$jemsettings = $this->get('Data');
+        $settings    = JemHelper::globalattribs();
 		$this->document = $document;
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
 		$wa = $document->getWebAssetManager();
 	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
@@ -70,16 +69,9 @@ class JemViewSettings extends JemAdminView
 
 		// Load Script
 		$wa = $app->getDocument()->getWebAssetManager();
-		// $document->addScript(Uri::root().'media/com_jem/js/colorpicker.js');
 		$wa->useScript('jquery');
 		$wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
 
-		// HTMLHelper::_('behavior.modal', 'a.modal');
-		// HTMLHelper::_('behavior.tooltip');
-		// HTMLHelper::_('behavior.formvalidation');
-		// HTMLHelper::_('behavior.framework');
-		// HTMLHelper::_('jquery.framework');
-		// only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			$app->redirect('index.php?option=com_jem&view=main');
@@ -91,6 +83,7 @@ class JemViewSettings extends JemAdminView
 		$this->state       = $state;
 		$this->jemsettings = $jemsettings;
 		$this->config      = $config;
+        $this->settings	   = $settings;
 
 		// add toolbar
 		$this->addToolbar();

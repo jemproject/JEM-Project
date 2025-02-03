@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Banner Module
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 
 $datemethod      = (int)$params->get('datemethod', 1);
 $showcalendar    = (int)$params->get('showcalendar', 1);
@@ -25,22 +27,26 @@ if ($flyer_link_type == 1) {
 } else {
     $modal = '';
 }
-?>
-<style>
+
+$document = Factory::getDocument();
+$widthStyle = $imagewidthmax ? 'width:' . $imagewidthmax . 'px' : 'max-width: 100%';
+
+$css = '
     .banner-jem img {
-    <?php echo ($imagewidthmax? "width:" . $imagewidthmax ."px": "max-width:100%"); ?>;
-    }
-</style>
+        ' . $widthStyle . ';
+    }';
+$document->addStyleDeclaration($css);
+?>
 
 <div class="jemmodulebanner<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebanner">
     <div class="eventset">
         <?php $i = count($list); ?>
         <?php if ($i > 0) : ?>
         <?php foreach ($list as $item) : ?>
-        <div class="event_id<?php echo $item->eventid; ?>">
-            <h2 class="event-title">
-                <?php if ($item->eventlink) : ?>
-                    <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
+        <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+        	<h2 class="event-title" itemprop="name">
+        		<?php if ($item->eventlink) : ?>
+                                <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
                 <?php else : ?>
                     <?php echo $item->title; ?>
                 <?php endif; ?>
@@ -74,6 +80,7 @@ if ($flyer_link_type == 1) {
                             <div class="daynumbanner">
                                 <?php echo $item->startdate['day']; ?>
                             </div>
+                                <?php echo $item->dateschema; ?>
                         </div>
                     <?php endif; ?>
 
@@ -83,8 +90,8 @@ if ($flyer_link_type == 1) {
                                 <div>
                                     <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                     <?php if ($flyer_link_type != 3) : ?>
-                                    <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="jubilee-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
-                                        <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+                                    <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="banner-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
+                                        <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                         <?php if ($flyer_link_type != 3) { echo '</a>'; } ?>
                                 </div>
                             </div>
@@ -174,6 +181,15 @@ if ($flyer_link_type == 1) {
                         <?php echo $item->catname; ?>
                     </div>
                 <?php endif; ?>
+                <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                                    		<meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                                    		<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                                    			<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                                    			<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                                    			<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                                    			<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                                    		</div>
+                                    	</div>
 
                 <div class="clr"></div>
 

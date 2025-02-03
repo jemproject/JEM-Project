@@ -3,7 +3,7 @@
  * JEM Package
  * @package    JEM.Package
  *
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * @copyright  (C) 2008 - 2013 Kunena Team. All rights reserved.
@@ -93,6 +93,7 @@ class Pkg_JemInstallerScript
 		$this->enablePlugin('content', 'jem');
 		$this->enablePlugin('content', 'jemlistevents');
 		$this->enablePlugin('quickicon', 'jem');
+	//	$this->enablePlugin('finder', 'jem');
 	//	$this->enablePlugin('search', 'jem');
 	//	$this->enablePlugin('jem', 'mailer');
 

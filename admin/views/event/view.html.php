@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -64,10 +64,10 @@ class JemViewEvent extends JemAdminView
 		$wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
 		$wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
 		$wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
-		
+
 
 		// JQuery noConflict
-		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
+		//$document->addCustomTag('<script>jQuery.noConflict();</script>');
 		//$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		//$document->addScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 

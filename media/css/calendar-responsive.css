@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -105,16 +105,7 @@ div[id^='scat'] {
     padding: 5px;
     margin: 5px;
     overflow: hidden;
-    /* use this only if you really want a break at any position
-     -ms-word-break: break-all;
-         word-break: break-all;
-     */
-    /* Non standard for webkit */
     word-break: break-word;
-
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
     hyphens: auto;
 }
 

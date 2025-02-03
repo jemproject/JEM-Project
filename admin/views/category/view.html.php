@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -45,9 +45,6 @@ class JemViewCategory extends JemAdminView
 		}
 		$wa = $app->getDocument()->getWebAssetManager();
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		// HTMLHelper::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
-			
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css');
 

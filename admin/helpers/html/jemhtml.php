@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -274,7 +274,7 @@ class JemHtml
 		if (!$useiconfont) {
 			$html = HTMLHelper::_('image', $image, Text::_($alt), $attribs, $relative);
 		} elseif (!empty($attribs)) {
-            $html = '<span ' . trim((is_array($attribs) ? ArrayHelper::toString($attribs) : $attribs) . ' /') . '><i class="' . $icon . '"></i></span>';
+            $html = '<span ' . trim((is_array($attribs) ? ArrayHelper::toString($attribs) : $attribs)) . '><i class="' . $icon . '"></i></span>';
 		} else {
 			$html = '<i class="'.$icon.'" aria-hidden="true"></i>';
 		}

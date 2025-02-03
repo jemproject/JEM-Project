@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -254,8 +254,6 @@ body.com_jem.body-overlayed {
 #jem .jem-sort {
     flex: 1;
     align-items: baseline;
-    -ms-hyphens: auto;
-    -webkit-hyphens: auto;
     hyphens: auto;
 }
 
@@ -374,7 +372,7 @@ body.com_jem.body-overlayed {
 #jem .jem-list-row {
     display: flex;
     flex-direction: row;
-    /* flex-wrap: wrap; */
+    flex-wrap: wrap;
     justify-content: flex-start;
 }
 
@@ -406,8 +404,6 @@ body.com_jem.body-overlayed {
     margin: 0;
     padding: 0;
     list-style: none;
-    -ms-hyphens: auto;
-    -webkit-hyphens: auto;
     hyphens: auto;
 }
 
@@ -429,8 +425,6 @@ body.com_jem.body-overlayed {
 }
 
 #jem #reg_comment {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
     min-width: 200px;
     width: 100%;
@@ -490,6 +484,17 @@ body.com_jem.body-overlayed {
 #jem div.jem-map {
     padding-top: 15px;
     padding-bottom: 5px;
+    animation: blendin .5s ease-out forwards;   
+}
+
+/* prevent osm maps from flickering */
+@keyframes blendin {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 #jem div.jem-map iframe {
@@ -678,6 +683,7 @@ body.com_jem.body-overlayed {
     width: auto;
     max-width: 100%;
 }
+
 #table-series th {
     padding: 12px;
     text-align: center;
@@ -685,10 +691,18 @@ body.com_jem.body-overlayed {
     color: white;
     border: 1px solid #ddd;
 }
+
 #table-series td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
 }
-#table-series tr:nth-child(even){background-color: #f2f2f2;}
-#table-series tr:nth-child(odd){background-color: #ffffff;}
+
+#table-series tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+#table-series tr:nth-child(odd){
+    background-color: #ffffff;
+}
+

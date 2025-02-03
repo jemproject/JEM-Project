@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -91,15 +91,15 @@ static public function lightbox() {
 			${$key} = isset($permissions->$key) ? $permissions->$key: null;
 		}
 		if (is_object($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
 				${$key} = isset($params->$key) ? $params->$key : null;
 			}
 		} elseif (is_array($params)) {
-			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
 				${$key} = key_exists($key, $params) ? $params[$key] : null;
 			}
 		} else {
-			foreach (array('id', 'slug', 'task', 'print_link') as $key) {
+			foreach (array('id', 'slug', 'task', 'archive_link', 'print_link') as $key) {
 				${$key} = null;
 			}
 		}
@@ -435,6 +435,14 @@ static public function lightbox() {
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = $settings->get('global_show_icons', 1);
 
+            if (version_compare(JVERSION, '5.0.0', '>=')) {
+                // Joomla 5 with Font Awesome 6
+                $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
+            } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+                // Joomla 4 with Font Awesome 5
+                $iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
+            }
+
 			switch ($view)
 			{
 				case 'editevent':
@@ -447,7 +455,7 @@ static public function lightbox() {
 
 					if ($showIcon) {
                         if($item->recurrence_type && !$item->recurrence_first_id){
-                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', 'fa-sharp fa-solid fa-pen-to-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
+                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', $iconEditEventRoot, Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
                             $overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
                             $text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
                         }else {
@@ -979,8 +987,10 @@ static public function lightbox() {
 				}
 
 				JemHelper::loadCss('googlemap');
-				HTMLHelper::_('script', 'com_jem/infobox.js', null, true);
-				HTMLHelper::_('script', 'com_jem/googlemap.js', null, true);
+				
+	 			$wa = $app->getDocument()->getWebAssetManager();
+	 			$wa->registerScript('jem.infobox', 'com_jem/infobox.js')->useScript('jem.infobox');
+	 			$wa->registerScript('jem.googlemap', 'com_jem/googlemap.js')->useScript('jem.googlemap');
 
 				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
@@ -1046,7 +1056,10 @@ static public function lightbox() {
 	 			$lat = $decoded[0]["lat"] ?? null;
 	 			$lng = $decoded[0]["lon"] ?? null;
 	 			}
-
+	 			
+	 			$wa = $app->getDocument()->getWebAssetManager();
+	 			$wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
+	 			
 	 			if ($lat && $lng) {
 				    $zoom = 15; // Adjust the zoom level as per your requirement
 				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;layer=mapnik&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
@@ -1078,10 +1091,20 @@ static public function lightbox() {
 			return;
 		}
 
+        if (version_compare(JVERSION, '5.0.0', '>=')) {
+            // Joomla 5 with Font Awesome 6
+            $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
+            $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
+        } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+            // Joomla 4 witn Font Awesome 5
+            $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
+            $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
+        }
+
 		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
 		/* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
-		$icon  = $first ? 'fa fa-fw fa-refresh jem-recurrencefirsticon' : 'fa fa-fw fa-refresh jem-recurrenceicon';
+		$icon  = $first ? $iconRecurrenceFirst : $iconRecurrence;
 		$showinline &= !($settings2->useiconfont == 1 && $app->isClient('site'));
 		$attr_class = $showinline ? ('class="icon-inline" ') : '';
 		$attr_title = $showtitle  ? ('title="' . Text::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
@@ -1232,7 +1255,7 @@ static public function lightbox() {
 				elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
 					$url = $uri->base().$image['original'];
 					$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
-					$icon = '<img class="example-thumbnail" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+					$icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 					$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>'; 
 				
 				}
@@ -1241,7 +1264,7 @@ static public function lightbox() {
 				$output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';				
 			}			
 		}else{
-			$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" width="auto" height="200px" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" style="width:auto;height:200px;" alt="'.$info.'" />';
 		}
 		return $output;
 	}
@@ -1346,13 +1369,13 @@ static public function lightbox() {
 			$output .= '</span>';
 
 			if ($showTime && JemHelper::isValidTime($timeStart)) {
-				$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
+				$output .= '<span class="jem_time-1">, '.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 			}
 
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - <span class="jem_date2">';
+				$output .= '<span class="jem_date2"> - ';
 				if ($showDayLink) {
 					$output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
 				}
@@ -1374,11 +1397,11 @@ static public function lightbox() {
 
 			if ($showTime) {
 				if (JemHelper::isValidTime($timeStart)) {
-					$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
+					$output .= '<span class="jem_time-1">, '.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 
 					// Display end time only when both times are set
 					if (JemHelper::isValidTime($timeEnd)) {
-						$output .= ' - <span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
+						$output .= '<span class="jem_time-1"> - '.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
 					}
 				}
 			}

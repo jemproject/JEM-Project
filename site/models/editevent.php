@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -144,8 +144,6 @@ class JemModelEditevent extends JemModelEvent
 		if (!empty($value->maxplaces)) {
 			$value->avplaces = $value->maxplaces - $value->booked;
 		}
-
-		$value->reginvitedonly = !empty($value->registra) && ($value->registra & 2);
 
 		// Get attachments - but not on copied events
 		$files = JemAttachment::getAttachments('event' . $value->id);

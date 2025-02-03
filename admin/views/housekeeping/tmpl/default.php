@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -23,7 +23,7 @@ use Joomla\CMS\Session\Session;
 			<tbody>
 				<!-- CLEAN EVENT IMG -->
 				<tr>
-					<td width="60px;">
+					<td style="width: 60px;">
 						<div class="linkicon">
 							<a href="index.php?option=com_jem&amp;task=housekeeping.cleaneventimg&amp;<?php echo Session::getFormToken(); ?>=1">
 								<?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleaneventimg.png', Text::_('COM_JEM_HOUSEKEEPING_EVENT_IMG'), NULL, true); ?>
@@ -37,7 +37,7 @@ use Joomla\CMS\Session\Session;
 				</tr>
 			<!-- CLEAN VENUE IMG -->
 				<tr>
-					<td width="60px;">
+					<td style="width: 60px;">
 						<div class="linkicon">
 							<a href="index.php?option=com_jem&amp;task=housekeeping.cleanvenueimg&amp;<?php echo Session::getFormToken(); ?>=1">
 								<?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanvenueimg.png', Text::_('COM_JEM_HOUSEKEEPING_VENUE_IMG'), NULL, true); ?>
@@ -51,7 +51,7 @@ use Joomla\CMS\Session\Session;
 				</tr>
 			<!-- CLEAN CATEGORY IMG -->
 				<tr>
-					<td width="60px;">
+					<td style="width: 60px;">
 						<div class="linkicon">
 							<a href="index.php?option=com_jem&amp;task=housekeeping.cleancategoryimg&amp;<?php echo Session::getFormToken(); ?>=1">
 								<?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancategoryimg.png', Text::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG'), NULL, true); ?>
@@ -65,7 +65,7 @@ use Joomla\CMS\Session\Session;
 				</tr>
 			<!-- CLEAN TRIGGER ARCHIVE -->
 				<tr>
-					<td width="60px;">
+					<td style="width: 60px;">
 						<div class="linkicon">
 							<a href="index.php?option=com_jem&amp;task=housekeeping.triggerarchive&amp;<?php echo Session::getFormToken(); ?>=1">
 								<?php echo HTMLHelper::_('image', 'com_jem/icon-48-archive.png', Text::_('COM_JEM_HOUSEKEEPING_TRIGGER_AUTOARCHIVE'), NULL, true); ?>
@@ -79,7 +79,7 @@ use Joomla\CMS\Session\Session;
 				</tr>
 			<!-- TRUNCATE CATEGORY/EVENT REFERENCES -->
 				<tr>
-					<td width="60px;">
+					<td style="width: 60px;">
 						<div class="linkicon">
 							<a href="index.php?option=com_jem&amp;task=housekeeping.cleanupCatsEventRelations&amp;<?php echo Session::getFormToken(); ?>=1">
 								<?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancategoryimg.png', Text::_('COM_JEM_HOUSEKEEPING_CATSEVENT_RELS'), NULL, true); ?>
@@ -94,9 +94,9 @@ use Joomla\CMS\Session\Session;
 				</tr>
 			<!-- TRUNCATE ALL DATA -->
 				<tr>
-					<td width="60px;">
+					<td style="width: 60px;">
 						<div class="linkicon">
-							<a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="javascript:return confirm('<?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
+							<a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="return confirm('<?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
 								<?php echo HTMLHelper::_('image', 'com_jem/icon-48-truncatealldata.png', Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'), NULL, true); ?>
 							</a>
 						</div>

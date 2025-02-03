@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -19,7 +19,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 
 <table class="adminform">
 	<tr>
-		<td width="100%">
+		<td style="width: 100%;">
 			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 			<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
@@ -37,10 +37,10 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="7" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-			<th align="left" class="title"><?php echo HTMLHelper::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo Text::_('COM_JEM_ACCESS'); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
+            <th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+			<th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
+            <th style="width: 1%" nowrap="nowrap"><?php echo Text::_('COM_JEM_ACCESS'); ?></th>
+            <th style="width: 1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 
@@ -58,8 +58,8 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 			$access = $row->groupname;
    		?>
 		 <tr class="row<?php echo $i % 2; ?>">
-			<td class="center" width="7"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-			<td align="left">
+			<td class="center" style="width: 7px;"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td style="text-align: left;">
 				<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo htmlspecialchars_decode($this->escape($row->treename)); ?></a>
 			</td>
 			<td class="center"><?php echo $access; ?></td>

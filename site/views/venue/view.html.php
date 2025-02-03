@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -255,12 +255,11 @@ class JemViewVenue extends JemView
 				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-				$archive_link = Route::_('index.php?option=com_jem&view=venue-calendar');
 			} else {
 				//$pathway->addItem($venue->venue, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
 				$print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
-				$archive_link = Route::_('index.php?option=com_jem&view=venue-calendar');
 			}
+			$archive_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug));
 
 			$params->set('page_heading', $pageheading);
 

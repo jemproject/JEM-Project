@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -164,7 +164,7 @@ class JemViewEditvenue extends JemView
 		// $document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language);
 
 		// Noconflict
-		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		$document->addCustomTag( '<script>jQuery.noConflict();</script>' );
 
 		// JQuery scripts
 		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');

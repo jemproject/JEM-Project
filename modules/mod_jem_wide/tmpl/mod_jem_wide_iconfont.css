@@ -1,7 +1,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Latest Events Wide Module
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -12,7 +12,7 @@ div#jemmodulewide div.date:before,
 div#jemmodulewide .category:before,
 div#jemmodulewide .venue-title:before {
 	font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
-	font-weight:var(--fa-style,900)
+	font-weight:var(--fa-style,900);
 	padding-right: 4px;
 	font-weight: 600;
 }

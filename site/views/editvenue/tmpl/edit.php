@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2024 joomlaeventmanager.net
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -42,7 +42,7 @@ $options = array(
 $location = JemHelper::defineCenterMap($this->form);
 ?>
 
-<script type="text/javascript">
+<script>
 	Joomla.submitbutton = function(task)
 	{
 		if (task == 'venue.cancel' || document.formvalidator.isValid(document.getElementById('venue-form'))) {
@@ -50,7 +50,7 @@ $location = JemHelper::defineCenterMap($this->form);
 		}
 	}
 </script>
-<script type="text/javascript">
+<script>
 	// window.addEvent('domready', function(){
 window.onload = (event) => {
 
