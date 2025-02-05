@@ -1,10 +1,10 @@
 <?php
 /**
  * @package JEM My Attending for CB
- * @version 2.1.6 for JEM v2.1 & CB v2.0
- * @author JEM Community
- * @copyright (C) 2013-2016 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
+ * @version    2.8.0 (for JEM 4 & CB v2.8)
+ * @author     JEM Community
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Just a note:
  * Keep the query code inline with my-attendances view
