@@ -126,9 +126,9 @@ function jem_common_show_filter(&$obj)
     <div class="jem-sort jem-row jem-justify-start jem-nowrap">
         <?php echo ($paramShowIconsOrder? '<i class="fa fa-sort fa-lg jem-sort-icon" aria-hidden="true"></i>' : '');?>
         <div class="jem-row jem-justify-start jem-sort-parts">
-			<?php if ($this->jemsettings->showeventimage == 1) : ?>
+
 	            <div id="jem_date" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-clock" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-			<?php endif; ?>
+
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
     	        <div id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
 			<?php endif; ?>
