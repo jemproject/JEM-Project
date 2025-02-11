@@ -728,27 +728,53 @@ class JemHelper
 
 	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
-		$timelist = array();
-		$timelist[0] = HTMLHelper::_('select.option', '', '');
+        $min = 0;
+        $timelist = array();
+        $timelist[0] = HTMLHelper::_('select.option', '', '');
 
-		if ($max == 23) {
-			// does user prefer 12 or 24 hours format?
-			$jemreg = JemConfig::getInstance()->toRegistry();
-			$format = $jemreg->get('formathour', false);
-		} else {
-			$format = false;
-		}
+        $jemreg = JemConfig::getInstance()->toRegistry();
 
-		foreach (range(0, $max) as $value) {
-			if ($value < 10) {
-				$value = '0'.$value;
-			}
+        if ($max == 23) {
+            // does user prefer 12 or 24 hours format?
 
-			$timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
-		}
+            $format = $jemreg->get('formathour', false);
+        } else {
+            $format = false;
+        }
 
-		return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
-	}
+        $settings = JemHelper::globalattribs();
+
+        if ($name == 'starthours' || $name == 'endhours'){
+            $min = $settings->get('global_editevent_starttime_limit');
+            $max = $settings->get('global_editevent_endtime_limit');
+            foreach (range($min, $max) as $value) {
+                if ($value < 10) {
+                    $value = '0'.$value;
+                }
+
+                $timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
+            }
+        } else if ($name=='startminutes' || $name=='endminutes'){
+            $block = $settings->get('global_editevent_minutes_block');
+            for ($value = 0; $value <=59; $value += $block) {
+                if ($value < 10) {
+                    $value = '0'.$value;
+                }
+
+                $timelist[] = HTMLHelper::_('select.option', $value, $value);
+            }
+        } else {
+            foreach (range($min, $max) as $value) {
+                if ($value < 10) {
+                    $value = '0'.$value;
+                }
+
+                $timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
+            }
+        }
+
+        return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+    }
 
 	/**
 	 * returns mime type of a file
