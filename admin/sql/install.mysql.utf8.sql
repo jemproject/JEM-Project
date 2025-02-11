@@ -569,5 +569,6 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (251, 'EU', 'XK', 'XKX', '688', 'Kosovo');
 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time` ) VALUES
-(1, 0, 0, 1, 0, 'root', 'root', 1, 1, now());
+(1, 0, 0, 3, 0, 'root', 'root', 1, 1, now()),
+(2, 1, 1, 2, 0, 'Uncategorised', 'uncategorised', 1, 1, now());
 
