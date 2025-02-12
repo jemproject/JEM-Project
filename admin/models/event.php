@@ -331,8 +331,20 @@ class JemModelEvent extends JemModelAdmin
                 $data['alias'] = $eventdb['alias'];
             }
 
-            // Introtext
-            $data['introtext'] = $data['articletext'];
+            // Introtext & Fulltext: Search for the {readmore} tag and split the text up accordingly.
+            if (isset($data['articletext'])) {
+                $pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
+                $tagPos = preg_match($pattern, $data['articletext']);
+
+                if ($tagPos == 0) {
+                    $data['introtext'] = $data['articletext'];
+                    $data['fulltext'] = '';
+                } else {
+                    list ( $data['introtext'], $data['fulltext']) = preg_split($pattern, $data['articletext'], 2);
+                }
+            }else{
+                $data['introtext'] = $data['articletext'];
+            }
 
             // Contact
             if($data['contactid'] == ''){
