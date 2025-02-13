@@ -153,7 +153,9 @@ use Joomla\CMS\Router\Route;
                             if ($this->params->get('show_introtext_events') == 1) : ?>
                                 <div class="jem-event-intro">
                                     <?php echo $row->introtext; ?>
-                                    <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                                    <?php if ($row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
 						</td>
