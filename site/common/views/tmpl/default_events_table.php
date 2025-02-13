@@ -85,8 +85,10 @@ use Joomla\CMS\Router\Route;
 				<?php endif; ?>
 				<th id="jem_date" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-clock" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php if ($this->jemsettings->showtitle == 1) : ?>
-				<th id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-				<?php endif; ?>
+				    <th id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<?php elseif ($this->params->get('show_introtext_events') == 1): ?>
+                    <th id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-textt" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DESCRIPTION', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                <?php endif; ?>
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 				<th id="jem_location" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
@@ -137,15 +139,23 @@ use Joomla\CMS\Router\Route;
 							?>
 						</td>
 
-						<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
+						<?php if ((($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) || $this->params->get('show_introtext_events')) : ?>
 						<td headers="jem_title" class="header-td">
-							<a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
-								<span itemprop="name"><?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '');?></span></a>
-							<?php echo JemOutput::publishstateicon($row);
-							echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
-							<?php if (!empty($row->featured)) :
-                            	echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
-	                        endif; ?>
+                            <?php if ($this->jemsettings->showtitle == 1) : ?>
+                                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
+                                    <span itemprop="name"><?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '');?></span></a>
+                                <?php echo JemOutput::publishstateicon($row);
+                                echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
+                                <?php if (!empty($row->featured)) :
+                                    echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
+                                endif;
+                            endif;
+                            if ($this->params->get('show_introtext_events') == 1) : ?>
+                                <div class="jem-event-intro">
+                                    <?php echo $row->introtext; ?>
+                                    <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                                </div>
+                            <?php endif; ?>
 						</td>
 						<?php endif; ?>
 

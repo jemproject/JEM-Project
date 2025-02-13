@@ -330,6 +330,12 @@ function jem_common_show_filter(&$obj)
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
+                <?php if ($this->params->get('show_introtext_events') == 1) : ?>
+                    <div class="jem-event-intro">
+                        <?php echo $row->introtext; ?>
+                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <?php
