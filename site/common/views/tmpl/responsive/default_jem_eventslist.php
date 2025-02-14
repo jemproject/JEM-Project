@@ -198,7 +198,6 @@ function jem_common_show_filter(&$obj)
                         $dimage = JemImage::flyercreator($row->datimage, 'event');
                         echo JemOutput::flyer($row, $dimage, 'event');
                         ?>
-                    <?php else : ?>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -227,10 +226,8 @@ function jem_common_show_filter(&$obj)
                     <h4>
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
                             <?php
-                            echo JemOutput::formatShortDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes);
+                            echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
                             ?>
                         </a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
@@ -262,10 +259,8 @@ function jem_common_show_filter(&$obj)
                         <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                             <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                             <?php
-                            echo JemOutput::formatShortDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes);
+                            echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
                             ?>
                         </div>
                     <?php endif; ?>
