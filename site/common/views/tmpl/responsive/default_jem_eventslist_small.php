@@ -153,7 +153,6 @@ function jem_common_show_filter(&$obj) {
 
 <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
-        <!--
         <?php if ($this->jemsettings->showeventimage == 1) : ?>
 			<div id="jem_eventimage" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-image" aria-hidden="true"></i>&nbsp;' : '');?><?php echo Text::_('COM_JEM_TABLE_EVENTIMAGE'); ?></div>
 		<?php else : ?>	
