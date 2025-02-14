@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2024 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -34,12 +34,23 @@ $uri = Uri::getInstance();
     }
     <?php endif; ?>
 
+    .jem-sort #jem_eventimage,
+    #jem .jem-event .jem-eventimage {
+    <?php if (($this->jemsettings->showeventimage == 1) && (!empty($this->jemsettings->tableeventimagewidth))) : ?>
+        flex: 0 <?php echo ($this->jemsettings->tableeventimagewidth); ?>;
+		margin-right:10px;
+    <?php else : ?>
+        flex: 1;
+    <?php endif; ?>
+    }
     .jem-sort #jem_date,
     #jem .jem-event .jem-event-date {
     <?php if (!empty($this->jemsettings->datewidth)) : ?>
         flex: 1 <?php echo ($this->jemsettings->datewidth); ?>;
+		margin-left:15px;
     <?php else : ?>
         flex: 1;
+		margin-left:15px;
     <?php endif; ?>
     }
 
@@ -141,6 +152,14 @@ function jem_common_show_filter(&$obj) {
 
 <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
+<!--
+        <?php if ($this->jemsettings->showeventimage == 1) : ?>
+            <div id="jem_eventimage" class="sectiontableheader"></div>
+		<?php endif; ?>	
+-->		
+		<?php if ($this->jemsettings->showeventimage == 1) : ?>
+			<div id="jem_eventimage" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-image" aria-hidden="true"></i>&nbsp;' : '');?><?php echo Text::_('COM_JEM_TABLE_EVENTIMAGE'); ?></div>
+		<?php endif; ?>
         <div id="jem_date" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-clock" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
         <?php if ($this->jemsettings->showtitle == 1) : ?>
             <div id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
@@ -183,6 +202,7 @@ function jem_common_show_filter(&$obj) {
         ?>
 
         <?php foreach ($this->rows as $row) : ?>
+						  
             <?php
             if ($paramShowMonthRow && $row->dates) {
                 //get event date
@@ -202,7 +222,19 @@ function jem_common_show_filter(&$obj) {
             <?php if (!empty($row->featured)) :   ?>
                 <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"';; endif; ?> >				<?php else : ?>
                 <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"';; endif; ?> >				<?php endif; ?>
-            <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
+
+				<?php if ($this->jemsettings->showeventimage == 1) : ?>
+				<div class="jem-event-info-small jem-eventimage">
+					<?php if (!empty($row->datimage)) : ?>
+						<?php
+						$dimage = JemImage::flyercreator($row->datimage, 'event');
+						echo JemOutput::flyer($row, $dimage, 'event');
+						?>
+					<?php endif; ?>
+				</div>
+				<?php endif; ?>	 
+
+ <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                 <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                 <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
