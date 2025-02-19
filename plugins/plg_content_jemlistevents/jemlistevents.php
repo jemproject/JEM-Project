@@ -123,6 +123,8 @@ class PlgContentJemlistevents extends CMSPlugin
 			return true;
 		}
 		
+		$templateName = Factory::getApplication()->getTemplate();
+		
 		// load CSS-file
 		$document = Factory::getApplication()->getDocument();
 		$wa = $document->getWebAssetManager();
@@ -305,6 +307,32 @@ class PlgContentJemlistevents extends CMSPlugin
 
 		$html_list  = '<div class="jemlistevents" id="jemlistevents-'.$listevents_id.'">';
 		$html_list .= '<table class="table table-hover table-striped">';
+
+		// insert table header
+		$html_list .= '<thead><tr>';
+
+		$columns = [
+		    'title' => 'COM_JEM_TITLE',
+		    'show_date' => 'COM_JEM_DATE',
+		    'show_venue' => 'COM_JEM_VENUE',
+		    'show_category' => 'COM_JEM_CATEGORY'
+		];
+
+		// Standard columns
+		foreach ($columns as $param => $translation) {
+		    if ($parameters[$param] !== 'off') {
+        		$html_list .= '<th>' . Text::_($translation) . '</th>';
+ 		   }
+		}
+		// Special handling for time column
+		if ($parameters['show_time'] !== 'off') {
+		    $showTimeColumn = ($parameters['show_date'] === 'off' && $parameters['show_enddatetime'] !== 'off') ||
+		                     ($parameters['show_enddatetime'] === 'off');
+    		if ($showTimeColumn) {
+       			$html_list .= '<th>' . Text::_('COM_JEM_STARTTIME_SHORT') . '</th>';
+    		}
+		}
+		$html_list .= '</tr></thead>';
 
 		if ($rows === false) {
 			$rows = array(); // to skip foreach w/o warning

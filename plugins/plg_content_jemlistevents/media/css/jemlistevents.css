@@ -1,0 +1,46 @@
+.jemlistevents {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.jemlistevents .table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+}
+
+.jemlistevents .table thead {
+    display: none; /* Optional: do not show headers */
+}
+
+@media screen and (max-width: 768px) {
+  .jemlistevents .table, 
+  .jemlistevents .table tbody, 
+  .jemlistevents .table tr, 
+  .jemlistevents .table td {
+    display: block;
+    width: 100%;
+  }
+  
+  .jemlistevents .table tr {
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .jemlistevents .table td {
+    text-align: left;
+    padding: .1rem .5rem;
+    position: relative;
+    padding-left: calc(10% + 60px)
+  }
+  
+  .jemlistevents .table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: bold;
+  }
+  
+}

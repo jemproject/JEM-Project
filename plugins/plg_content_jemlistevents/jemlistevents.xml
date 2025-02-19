@@ -15,6 +15,9 @@
 		<filename>index.html</filename>
 		<folder>language</folder>
 	</files>
+	<media destination="plg_content_jemlistevents" folder="media">
+		<folder>css</folder>
+	</media>
 	<languages>
         <language tag="en-GB">language/en-GB/plg_content_jemlistevents.ini</language>
         <language tag="en-GB">language/en-GB/plg_content_jemlistevents.sys.ini</language>
