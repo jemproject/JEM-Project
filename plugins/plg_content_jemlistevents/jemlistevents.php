@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
@@ -120,7 +122,18 @@ class PlgContentJemlistevents extends CMSPlugin
 		if (!isset($row->text) || \Joomla\String\StringHelper::strpos($row->text, 'jemlistevents') === false) {
 			return true;
 		}
-
+		
+		// load CSS-file
+		$document = Factory::getApplication()->getDocument();
+		$wa = $document->getWebAssetManager();
+		$templatePath = JPATH_BASE . '/templates/' . $templateName . '/css/jemlistevents.css';
+		if(file_exists($templatePath)) {
+			$wa->registerAndUseStyle('jemlistevents', 'templates/' . $templateName . '/css/jemlistevents.css');
+			}
+		else {
+			$wa->registerAndUseStyle('jemlistevents', 'media/plg_content_jemlistevents/css/jemlistevents.css');
+			}
+			
 		// expression to search for
 		$regex = '/{jemlistevents\s*(.*?)}/i';
 
@@ -307,7 +320,7 @@ class PlgContentJemlistevents extends CMSPlugin
 			$html_list .= '<tr class="listevent event'.($n_event + 1).'">';
 
 			if ($parameters['title'] !== 'off') {
-				$html_list .= '<td class="eventtitle">';
+				$html_list .= '<td class="eventtitle" data-label="' . Text::_('COM_JEM_TITLE') . '">';
 				$html_list .= (($parameters['title'] === 'link') ? ('<a href="'.$linkdetails.'">') : '');
 				$fulltitle  = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
 				if (mb_strlen($fulltitle) > $parameters['cut_title']) {
@@ -323,7 +336,7 @@ class PlgContentJemlistevents extends CMSPlugin
 			if (($parameters['show_enddatetime'] === 'off') || ($parameters['show_date'] === 'off')) {
 				if ($parameters['show_date'] !== 'off') {
 					// Display startdate.
-					$html_list .= '<td class="eventdate">';
+					$html_list .= '<td class="eventdate" data-label="' . Text::_('COM_JEM_DATE') . '">';
 					if ($event->dates) {
 						$html_list .= (($parameters['show_date'] === 'link') ? ('<a href="'.$linkdate.'">') : '');
 						$html_list .= JemOutput::formatdate($event->dates, $parameters['date_format']);
@@ -334,7 +347,7 @@ class PlgContentJemlistevents extends CMSPlugin
 
 				if ($parameters['show_time'] !== 'off') {
 					// Display starttime.
-					$html_list .= ' '.'<td class="eventtime">';
+					$html_list .= ' '.'<td class="eventtime" data-label="' . Text::_('COM_JEM_STARTTIME') . '">';
 					if ($event->times) {
 						$html_list .= JemOutput::formattime($event->times, $parameters['time_format']);
 					}
@@ -357,13 +370,13 @@ class PlgContentJemlistevents extends CMSPlugin
 					);
 
 				// Display start/end date/time.
-				$html_list .= ' '.'<td class="eventdatetime">';
+				$html_list .= ' '.'<td class="eventdatetime" data-label="' . Text::_('COM_JEM_STARTTIME_SHORT') . '">';
 				$html_list .= JemOutput::formatDateTime($params);
 				$html_list .= '</td>';
 			}
 
 			if ($parameters['show_venue'] !== 'off') {
-				$html_list .= '<td class="eventvenue">';
+				$html_list .= '<td class="eventvenue" data-label="' . Text::_('COM_JEM_VENUE') . '">';
 				if ($event->venue) {
 					$html_list .= (($parameters['show_venue'] === 'link') ? ('<a href="'.$linkvenue.'">') : '');
 					$html_list .= $event->venue;
@@ -379,7 +392,7 @@ class PlgContentJemlistevents extends CMSPlugin
 					$catlink = false;
 				}
 
-				$html_list .= "<td>";
+				$html_list .= '<td class="eventcategory" data-label="' . Text::_('COM_JEM_CATEGORY') . '">';
 				if ($event->categories) {
 					$html_list .= implode(", ", JemOutput::getCategoryList($event->categories, $catlink));
 				}
