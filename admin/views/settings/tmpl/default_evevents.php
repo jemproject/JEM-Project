@@ -23,6 +23,8 @@ $params['show_article_options'] = '1';
 $params['show_urls_images_backend'] = '0';
 $params['show_urls_images_frontend'] = '0';
 endif;
+
+$group = 'globalattribs';
 ?>
 
 <div class="width-100" style="padding: 10px 1vw;">
@@ -30,12 +32,12 @@ endif;
 		<legend><?php echo Text::_('COM_JEM_SETTINGS_EVENT_PART'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('evevents') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
 			<?php endforeach; ?>
 		</ul>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('basic') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
 			<?php endforeach; ?>
 		</ul>
 	</fieldset>

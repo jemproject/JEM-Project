@@ -771,7 +771,7 @@
 		>
 			<field name="event_show_venue_name" type="radio"
 				   label="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_LABEL"
-				   description="COM_JEM_EVENT_FIELD_SHOW_NAME_VENUE_DESC"
+				   description="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_LABEL_DESC"
 				   class="inputbox btn-group btn-group-yesno"
 				   default="0"
 			>
@@ -780,7 +780,7 @@
 			</field>
 			<field name="event_show_category" type="radio"
 				   label="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_LABEL"
-				   description="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_DESC"
+				   description="COM_JEM_EVENT_FIELD_SHOW_CATEGORY_LABEL_DESC"
 				   class="inputbox btn-group btn-group-yesno"
 				   default="0"
 			>
@@ -844,7 +844,7 @@
 			</field>
 			<field name="event_show_print_icon" type="radio"
 				   label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
-				   description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+				   description="JGLOBAL_SHOW_PRINT_ICON_LABEL_DESC"
 				   class="inputbox btn-group btn-group-yesno"
 				   default="0"
 			>
@@ -853,7 +853,7 @@
 			</field>
 			<field name="event_show_email_icon" type="radio"
 				   label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
-				   description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+				   description="JGLOBAL_SHOW_EMAIL_ICON_LABEL_DESC"
 				   class="inputbox btn-group btn-group-yesno"
 				   default="0"
 			>

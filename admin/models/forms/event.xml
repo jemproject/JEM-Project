@@ -556,7 +556,7 @@
 			</field>
 			<field name="event_show_print_icon" type="list"
 				   label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
-				   description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+				   description="JGLOBAL_SHOW_PRINT_ICON_LABEL_DESC"
 				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -565,7 +565,7 @@
 			</field>
 			<field name="event_show_email_icon" type="list"
 				   label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
-				   description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+				   description="JGLOBAL_SHOW_EMAIL_ICON_LABEL_DESC"
 				   default=""
 			>
 				<option	value="">JGLOBAL_USE_GLOBAL</option>
