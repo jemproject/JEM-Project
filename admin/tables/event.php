@@ -53,6 +53,7 @@ class JemTableEvent extends Table
 
 		// Search for the {readmore} tag and split the text up accordingly.
 		if (isset($array['articletext'])) {
+			$array['articletext'] = preg_replace('/(\r\n)*<hr id=\'system-readmore\'>(\r\n)*/', '<hr id=\'system-readmore\'>', $array['articletext']);
 			$pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
 			$tagPos = preg_match($pattern, $array['articletext']);
 
