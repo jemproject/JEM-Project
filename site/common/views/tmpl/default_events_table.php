@@ -139,21 +139,25 @@ use Joomla\CMS\Router\Route;
                     ?>
                 </td>
 
-                <?php if ((($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) || $this->params->get('show_introtext_events')) : ?>
+                <?php if ($this->jemsettings->showtitle == 1 ) : ?>
                     <td headers="jem_title" class="header-td">
-                        <?php if ($this->jemsettings->showtitle == 1) : ?>
+                        <?php if ($this->jemsettings->showdetails == 1) : ?>
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
-                                <span itemprop="name"><?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '');?></span></a>
-                            <?php echo JemOutput::publishstateicon($row);
-                            echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
-                            <?php if (!empty($row->featured)) :
-                                echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
-                            endif;
+                        <?php endif; ?>
+                        <span itemprop="name"><?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '');?></span>
+                        <?php if ($this->jemsettings->showdetails == 1) : ?>
+                            </a>
+                        <?php endif; ?>
+                        <?php echo JemOutput::publishstateicon($row);
+                        echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
+                        <?php if (!empty($row->featured)) :
+                            echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
+
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
                                 <?php echo $row->introtext; ?>
-                                <?php if ($row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                                <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
                                     <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
                                 <?php endif; ?>
                             </div>
@@ -161,13 +165,22 @@ use Joomla\CMS\Router\Route;
                     </td>
                 <?php endif; ?>
 
-                <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
+                <?php if ($this->jemsettings->showtitle == 0) : ?>
                     <td headers="jem_title" class="header-td" itemprop="name">
-                        <?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '11') . JemOutput::publishstateicon($row);
+                        <?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '') . JemOutput::publishstateicon($row);
                         if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
-                        echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
+
+                        if ($this->params->get('show_introtext_events') == 1) : ?>
+                            <div class="jem-event-intro">
+                                <?php echo $row->introtext; ?>
+                                <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                                    <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
                     </td>
                 <?php endif; ?>
 

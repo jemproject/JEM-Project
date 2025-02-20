@@ -209,7 +209,11 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
                 <?php
                 if ($params->get('access-view')) {
-                    echo $this->item->text;
+                    if (!$params->get('event_show_intro') && $this->item->fulltext != null) {
+                        echo $this->item->fulltext;
+                    } else {
+                        echo $this->item->text;
+                    }
                 }
                 /* optional teaser intro text for guests - NOT SUPPORTED YET */
                 elseif (0 /*$params->get('event_show_noauth') == true and  $user->get('guest')*/ ) {
