@@ -316,12 +316,7 @@ class JemModelExport extends ListModel
 		$where = ' WHERE c.published = 1';
 		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
 		
-
-		// Check for a database error.
-		// if ($db->getErrorNum()){
-		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
-		// }
-		try
+        try
 		{
 			$db->setQuery($query);
 			$mitems = $db->loadObjectList();
