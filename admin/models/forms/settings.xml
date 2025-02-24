@@ -1305,16 +1305,6 @@
 			</field>
 		</fieldset>
 
-		<fieldset name="advanced" label="LABEL2">
-			<field name="show_something" type="list"
-				   description="SOMETHING"
-				   label="SOMETHING_DESC"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-		</fieldset>
-
 		<field name="global_show_ownedvenuesonly" type="radio"
 			   label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
 			   description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
