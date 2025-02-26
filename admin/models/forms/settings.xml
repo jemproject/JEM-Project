@@ -173,6 +173,15 @@
 			   required="true"
 			   default="180"
 		/>
+		<field name="recurrence_anticipation_lastday" type="text"
+			   label="COM_JEM_SETTINGS_RECURRENCE_LIMITLASTDAYS"
+			   description="COM_JEM_SETTINGS_RECURRENCE_LIMITLASTDAYS_DESC"
+			   class="inputbox"
+			   size="3"
+			   maxlength="3"
+			   required="true"
+			   default="60"
+		/>
 	</fieldset>
 
 	<fieldset name="display"
