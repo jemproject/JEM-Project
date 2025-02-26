@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `created_by` int(11) unsigned NOT NULL DEFAULT '0',
   `modified` datetime NULL DEFAULT NULL,
   `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+  `publish_up` datetime DEFAULT NULL,
+  `publish_down` datetime DEFAULT NULL,
   `version` int(11) unsigned NOT NULL DEFAULT '0',
   `author_ip` varchar(39) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,

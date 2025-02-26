@@ -223,6 +223,8 @@ $params = $params->toArray();
                     <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                 </ul>
             </fieldset>
