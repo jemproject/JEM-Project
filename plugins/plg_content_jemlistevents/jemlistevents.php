@@ -267,7 +267,7 @@ class PlgContentJemlistevents extends CMSPlugin
 			$model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
 			$timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 			$to_date = date('Y-m-d', $timestamp);
-            $where = ' (DATEDIFF (a.dates, "'. $to_date .'") = 0 AND a.enddates IS null) OR (DATEDIFF (a.dates, "'. $to_date .'") <= 0 AND DATEDIFF (a.enddates, "'. $to_date .'") >= 0)';
+            $where = ' DATEDIFF (a.dates, "'. $to_date .'") >= 0 AND (a.enddates IS NULL OR DATEDIFF(a.enddates, "'. $to_date .'") >= 0)';
 			$model->setState('filter.calendar_to', $where);
 			break;
 		case 'upcoming': // All upcoming events, excl. today.
