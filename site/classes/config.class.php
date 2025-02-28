@@ -215,7 +215,13 @@ class JemConfig
 				$query->insert('#__jem_config');
 				$query->set(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
 			}
-			$query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
+
+            if (is_array($v)) {
+                $query->set(array($db->quoteName('value') . ' = \'' . implode(',', $v) . '\''));
+            } else {
+                $query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
+            }
+			//$query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
 			$db->setQuery($query);
 			$db->execute();
 		}

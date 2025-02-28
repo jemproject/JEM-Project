@@ -6,6 +6,25 @@
 	<fieldset name="globalparam2"
 			  label="COM_JEM_GLOBAL_PARAMETERS"
 	>
+		<field name="access_level_listview" type="accesslevel"
+			   label="COM_JEM_SETTINGS_ACCESS_LEVEL_LISTVIEW"
+			   description="COM_JEM_SETTINGS_ACCESS_LEVEL_LISTVIEW_DESC"
+			   class="span12 small"
+			   default="1"
+			   multiple="true"
+		/>
+		<field name="categories_order" type="list"
+			   label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
+			   description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"
+			   class="inputbox"
+			   default="0"
+			   required="false"
+		>
+			<option value="0">COM_JEM_SETTINGS_CATEGORIES_ORDER_ID_ASC</option>
+			<option value="1">COM_JEM_SETTINGS_CATEGORIES_ORDER_ID_DESC</option>
+			<option value="2">COM_JEM_SETTINGS_CATEGORIES_ORDER_NAME_ASC</option>
+			<option value="3">COM_JEM_SETTINGS_CATEGORIES_ORDER_NAME_DESC</option>
+		</field>
 		<field name="categories_order" type="list"
 			   label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
 			   description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"

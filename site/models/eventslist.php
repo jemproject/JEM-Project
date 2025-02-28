@@ -326,6 +326,7 @@ class JemModelEventslist extends ListModel
 
 		$params    = $app->getParams();
 		$settings  = JemHelper::globalattribs();
+		$jemsettings = JemHelper::config();
 		$user      = JemFactory::getUser();
 		$levels    = $user->getAuthorisedViewLevels();
 
@@ -376,7 +377,13 @@ class JemModelEventslist extends ListModel
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
-		$query->select(array($case_when_e, $case_when_l));
+		$case_when_a  = ' CASE WHEN ';
+		$case_when_a .= " a.access IN ('" . implode(',',$levels) . "')";
+		$case_when_a .= ' THEN 1 ';
+		$case_when_a .= ' ELSE 0 ';
+		$case_when_a .= ' END as user_has_access';
+
+		$query->select(array($case_when_e, $case_when_l, $case_when_a));
 
 		# join over the category-tables
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -408,8 +415,13 @@ class JemModelEventslist extends ListModel
 		## FILTER-ACCESS ##
 		###################
 
-		# Filter by access level - always.
-		$query->where('a.access IN ('.implode(',', $levels).')');
+		# Filter by access level - public or with access_level_listview.
+		if($jemsettings->access_level_listview != '1') {
+			$newlevels = array_values(array_unique(array_merge($levels, explode(',', $jemsettings->access_level_listview))));
+			$query->where('a.access IN ('.implode(',', $newlevels).')');
+		} else {
+			$query->where('a.access IN ('.implode(',', $levels).')');
+		}
 
 		####################
 		## FILTER-PUBLISH ##
