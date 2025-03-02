@@ -217,7 +217,7 @@ class JemConfig
 			}
 
             if (is_array($v)) {
-                $query->set(array($db->quoteName('value') . ' = \'' . implode(',', $v) . '\''));
+                $query->set($db->quoteName('value') . ' = ' . $db->quote(json_encode($v)));
             } else {
                 $query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
             }

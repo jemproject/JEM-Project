@@ -415,9 +415,10 @@ class JemModelEventslist extends ListModel
 		## FILTER-ACCESS ##
 		###################
 
-		# Filter by access level - public or with access_level_listview.
-		if($jemsettings->access_level_listview != '1') {
-			$newlevels = array_values(array_unique(array_merge($levels, explode(',', $jemsettings->access_level_listview))));
+		# Filter by access level - public or with access_level_locked_events active.
+		if($jemsettings->access_level_locked_events != "[\"1\"]") {
+			$accessLevels = json_decode($jemsettings->access_level_locked_events, true);
+			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
 			$query->where('a.access IN ('.implode(',', $newlevels).')');
 		} else {
 			$query->where('a.access IN ('.implode(',', $levels).')');

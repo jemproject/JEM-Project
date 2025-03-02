@@ -7,7 +7,7 @@ ALTER TABLE `#__jem_events` ADD `recurrence_bylastday` VARCHAR(20) NULL DEFAULT 
 ALTER TABLE `#__jem_events` ADD `publish_down` DATETIME NULL DEFAULT NULL AFTER `modified_by`;
 ALTER TABLE `#__jem_events` ADD `publish_up` DATETIME NULL DEFAULT NULL AFTER `modified_by`;
 INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('categories_order', '0', '0');
-INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level_listview', '1', '0');
+INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level_locked_events', '[\"1\"]', '0');
 
 -- change values
 

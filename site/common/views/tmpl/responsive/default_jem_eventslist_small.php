@@ -213,7 +213,16 @@ function jem_common_show_filter(&$obj) {
                 if ($showMonthRow) { ?>
                     <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><span class="row-month"><?php echo $showMonthRow;?></span></li>
                 <?php }
-            } ?>
+            }
+
+            // has user access
+            $eventaccess = '';
+            if (!$row->user_has_access) {
+                // show a closed lock icon
+                $statusicon = JemOutput::publishstateicon($row);
+                $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
             <?php if (!empty($row->featured)) : ?>
                 <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php else : ?>
@@ -250,6 +259,7 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+						<?php echo $eventaccess; ?>
                     </h4>
                 </div>
             <?php else : ?>
@@ -281,6 +291,7 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+						<?php echo $eventaccess; ?>
                     </h4>
                 </div>
             <?php else : ?>

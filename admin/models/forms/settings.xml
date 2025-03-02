@@ -6,9 +6,9 @@
 	<fieldset name="globalparam2"
 			  label="COM_JEM_GLOBAL_PARAMETERS"
 	>
-		<field name="access_level_listview" type="accesslevel"
-			   label="COM_JEM_SETTINGS_ACCESS_LEVEL_LISTVIEW"
-			   description="COM_JEM_SETTINGS_ACCESS_LEVEL_LISTVIEW_DESC"
+		<field name="access_level_locked_events" type="accesslevel"
+			   label="COM_JEM_SETTINGS_DISPLAY_LOCKED_EVENTS"
+			   description="COM_JEM_SETTINGS_DISPLAY_LOCKED_EVENTS_DESC"
 			   class="span12 small"
 			   default="1"
 			   multiple="true"
