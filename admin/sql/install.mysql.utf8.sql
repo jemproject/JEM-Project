@@ -320,7 +320,8 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('useiconfont', '1'),
 ('flyer', '0'),
 ('categories_order', '2'),
-('access_level_locked_events', '[\"1\"]');
+('access_level_locked_events', '[\"1\"]'),
+('access_level_locked_venues', '[\"1\"]');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan'),

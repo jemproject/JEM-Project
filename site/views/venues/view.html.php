@@ -53,6 +53,10 @@ class JemViewVenues extends JemView
 		// Request variables
 		$items = $this->get('Items');
 
+        if($items === false) {
+            return;
+        }
+
 		foreach ($items AS $item) {
 			// Create image information
 			$item->limage = JemImage::flyercreator($item->locimage, 'venue');

@@ -378,7 +378,7 @@ class JemModelEventslist extends ListModel
 		$case_when_l .= $id_l.' END as venueslug';
 
 		$case_when_a  = ' CASE WHEN ';
-		$case_when_a .= " a.access IN ('" . implode(',',$levels) . "')";
+		$case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
 		$case_when_a .= ' THEN 1 ';
 		$case_when_a .= ' ELSE 0 ';
 		$case_when_a .= ' END as user_has_access';

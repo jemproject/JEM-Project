@@ -13,6 +13,13 @@
 			   default="1"
 			   multiple="true"
 		/>
+		<field name="access_level_locked_venues" type="accesslevel"
+			   label="COM_JEM_SETTINGS_DISPLAY_LOCKED_VENUES"
+			   description="COM_JEM_SETTINGS_DISPLAY_LOCKED_VENUES_DESC"
+			   class="span12 small"
+			   default="1"
+			   multiple="true"
+		/>
 		<field name="categories_order" type="list"
 			   label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
 			   description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"
