@@ -241,6 +241,9 @@ class JemViewCategory extends JemView
 
 			// search filter
 			$lists['search'] = $search;
+			if(!empty($search_month)){
+				$lists['month'] = $search_month;
+			}
 
 			// don't show column "Category" on Category view
 			$lists['hide'] = array('category' => 1);
