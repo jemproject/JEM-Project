@@ -447,13 +447,12 @@ class JemModelCategories extends BaseDatabaseModel
 		       . '  LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
 		       . '  LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
 		       . $where_sub
-			   . $where_access
 		       . '  GROUP BY cc.id'
 		       . ' ) AS assignedevents'
 		       . ' FROM #__jem_categories AS c'
 		       . ' WHERE c.published = 1'
 		       . ' AND '.$parentCategoryQuery
-		       . ' AND c.access IN (' . implode(',', $levels) . ')'
+			   . $where_access
 		       . ' GROUP BY c.id '.$empty
 		       . ' ORDER BY '.$ordering
 		       ;
