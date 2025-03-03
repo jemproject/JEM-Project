@@ -9,6 +9,7 @@ ALTER TABLE `#__jem_events` ADD `publish_up` DATETIME NULL DEFAULT NULL AFTER `m
 INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('categories_order', '0', '0');
 INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level_locked_events', '[\"1\"]', '0');
 INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level_locked_venues', '[\"1\"]', '0');
+INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level_locked_categories', '[\"1\"]', '0');
 
 -- change values
 

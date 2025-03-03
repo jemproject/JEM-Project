@@ -112,7 +112,7 @@ class JemModelVenues extends JemModelEventslist
 		## FILTER-ACCESS ##
 		###################
 
-		# Filter by access level - public or with access_level_locked_events active.
+		# Filter by access level - public or with access_level_locked_venues active.
 		if($jemsettings->access_level_locked_venues != "[\"1\"]") {
 			$accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
 			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));

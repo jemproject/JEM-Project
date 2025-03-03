@@ -13,9 +13,9 @@ use Joomla\CMS\Router\Route;
 ?>
 
 <div class="table-responsive">
-	<table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
-		<colgroup>
-			<col style="width: <?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
+    <table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
+        <colgroup>
+            <col style="width: <?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col style="width: <?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 			<?php endif; ?>

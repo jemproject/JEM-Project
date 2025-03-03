@@ -316,7 +316,7 @@ class JemModelEventslist extends ListModel
 	}
 
 	/**
-	 * Build the query
+	 * Build the query of events
 	 */
 	protected function getListQuery()
 	{
@@ -678,6 +678,7 @@ class JemModelEventslist extends ListModel
 		$user     = JemFactory::getUser();
 		$levels   = $user->getAuthorisedViewLevels();
 		$settings = JemHelper::globalattribs();
+		$jemsettings = JemHelper::config();
 
 		// Query
 		$db = Factory::getContainer()->get('DatabaseDriver');
@@ -691,7 +692,13 @@ class JemModelEventslist extends ListModel
 		$case_when_c .= ' ELSE ';
 		$case_when_c .= $id_c.' END as catslug';
 
-		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
+		$case_when_a  = ' CASE WHEN ';
+		$case_when_a .= " c.access IN (" . implode(',',$levels) . ")";
+		$case_when_a .= ' THEN 1 ';
+		$case_when_a .= ' ELSE 0 ';
+		$case_when_a .= ' END as user_has_access';
+
+		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c,$case_when_a));
 		$query->from('#__jem_categories as c');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 
@@ -708,7 +715,14 @@ class JemModelEventslist extends ListModel
 		## FILTER-ACCESS ##
 		###################
 
-		# Filter by access level.
+		# Filter by access level - public or with access_level_locked_categories active.
+		if($jemsettings->access_level_locked_categories != "[\"1\"]") {
+			$accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
+			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+			$query->where('c.access IN ('.implode(',', $newlevels).')');
+		} else {
+			$query->where('c.access IN ('.implode(',', $levels).')');
+		}
 
 		###################################
 		## FILTER - MAINTAINER/JEM GROUP ##

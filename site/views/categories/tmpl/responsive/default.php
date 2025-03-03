@@ -13,9 +13,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
-	<div class="buttons">
-		<?php
-		$btn_params = array('id' => $this->catid, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
+    <div class="buttons">
+        <?php
+        $btn_params = array('id' => $this->id, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
 		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>
@@ -27,11 +27,20 @@ use Joomla\CMS\Router\Route;
 	<?php endif; ?>
 
 	<?php foreach ($this->rows as $row) : ?>
+        <?php
+        // has user access
+        $categoriesaccess = '';
+        if (!$row->user_has_access) {
+            // show a closed lock icon
+            $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+        } ?>
 	<div class="jem cat_id<?php echo $row->id; ?>">
 		<h2>
 			<?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
+                <?php echo $categoriesaccess; ?>
 		</h2>
     
+            <?php if ($row->user_has_access) : ?>
     <?php if (($this->jemsettings->discatheader) && (!empty($row->image))) : ?>
       <div class="jem-catimg">
         <?php $cimage = JemImage::flyercreator($row->image, 'category'); ?>
@@ -42,15 +51,31 @@ use Joomla\CMS\Router\Route;
     <div class="description">
       <?php echo $row->description; ?>
       <?php if ($i = count($row->subcats)) : ?>
+                        <?php
+                        // has user access
+                        $subcategoriesaccess = '';
+                        if (!$row->user_has_access) {
+                            // show a closed lock icon $row->subcats[0]->user_has_access
+                            $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                        } ?>
         <h3 class="subcategories">
           <?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
+                            <?php echo $categoriesaccess; ?>
         </h3>
         <div class="subcategorieslist">
           <?php foreach ($row->subcats as $sub) : ?>
+                                <?php
+                                // has user access
+                                $subcategoriesaccess = '';
+                                if (!$sub->user_has_access) {
+                                    // show a closed lock icon
+                                    $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                                } ?>
             <strong>
               <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
                 <?php echo $this->escape($sub->catname); ?></a>
             </strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
+                                <?php echo $subcategoriesaccess; ?>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
@@ -86,6 +111,7 @@ use Joomla\CMS\Router\Route;
         </button>
       </a>
     </div>
+            <?php endif; ?>
     </div>    
     
     <?php 
