@@ -55,8 +55,8 @@ use Joomla\CMS\Router\Route;
                         // has user access
                         $subcategoriesaccess = '';
                         if (!$row->user_has_access) {
-                            // show a closed lock icon $row->subcats[0]->user_has_access
-                            $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                            // show a closed lock icon
+                            $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                         } ?>
                         <h3 class="subcategories">
                             <?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
@@ -66,16 +66,16 @@ use Joomla\CMS\Router\Route;
                             <?php foreach ($row->subcats as $sub) : ?>
                                 <?php
                                 // has user access
-                                $subcategoriesaccess = '';
+                                $eventsaccess = '';
                                 if (!$sub->user_has_access) {
                                     // show a closed lock icon
-                                    $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                                    $eventsaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                                 } ?>
                                 <strong>
                                     <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
                                         <?php echo $this->escape($sub->catname); ?></a>
                                 </strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
-                                <?php echo $subcategoriesaccess; ?>
+                                <?php echo $eventsaccess; ?>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>

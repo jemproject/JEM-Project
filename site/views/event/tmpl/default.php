@@ -260,7 +260,7 @@ if ($jemsettings->oldevent > 0) {
         <?php echo $this->loadTemplate('attachments'); ?>
 
         <!--  	Venue  -->
-        <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
+        <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1') && ($this->item->user_has_access_venue == 1)) : ?>
             <p></p>
             <hr />
 

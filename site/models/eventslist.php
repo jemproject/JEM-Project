@@ -748,7 +748,7 @@ class JemModelEventslist extends ListModel
 		//	if ($jemgroups) {
 		//		$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
 		//	} else {
-		$query->where('(c.access IN ('.implode(',', $levels).'))');
+		//	$query->where('(c.access IN ('.implode(',', $levels).'))');
 		//	}
 
 		#######################

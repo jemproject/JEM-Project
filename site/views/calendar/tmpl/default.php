@@ -226,7 +226,6 @@ use Joomla\CMS\HTML\HTMLHelper;
         $eventaccess = "";
         if(!$row->user_has_access){
             // show a closed lock icon
-            $statusicon  = JemOutput::publishstateicon($row);
             $eventaccess  = '<span class="icon-lock" style="margin-left:5px;" aria-hidden="true"></span>';
         }
 
