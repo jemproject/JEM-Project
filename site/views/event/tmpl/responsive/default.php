@@ -280,7 +280,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php echo $this->loadTemplate('attachments'); ?>
 
         <!-- Venue -->
-        <?php if ((!empty($this->item->locid)) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
+        <?php if ((!empty($this->item->locid)) && !empty($this->item->venue) && $params->get('event_show_venue', '1') && ($this->item->user_has_access_venue == 1)) : ?>
             <p></p>
             <hr class="jem-hr">
 
