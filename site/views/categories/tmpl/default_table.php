@@ -63,7 +63,7 @@ use Joomla\CMS\Router\Route;
 				<?php
                 // has user access
                 $eventaccess = '';
-                if (!$row->user_has_access) {
+                if (!$row->user_has_access_category) {
                     // show a closed lock icon
                     $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                 } ?>

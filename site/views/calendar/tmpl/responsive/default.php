@@ -230,7 +230,7 @@ td.today div.daynum::after {
 
         // has user access
         $eventaccess = "";
-        if(!$row->user_has_access){
+        if(!$row->user_has_access_event){
             // show a closed lock icon
             $statusicon  = JemOutput::publishstateicon($row);
             $eventaccess  = '<span class="icon-lock" style="margin-left:5px;" aria-hidden="true"></span>';

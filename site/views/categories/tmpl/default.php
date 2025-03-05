@@ -33,7 +33,7 @@ use Joomla\CMS\Router\Route;
         <?php
         // has user access
         $categoriesaccess = '';
-        if (!$row->user_has_access) {
+        if (!$row->user_has_access_category) {
             // show a closed lock icon
             $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
         } ?>
@@ -73,7 +73,7 @@ use Joomla\CMS\Router\Route;
                         <?php
                         // has user access
                         $subcategoriesaccess = '';
-                        if (!$row->user_has_access) {
+                        if (!$row->user_has_access_category) {
                             // show a closed lock icon
                             $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                         } ?>
@@ -86,7 +86,7 @@ use Joomla\CMS\Router\Route;
                                 <?php
                                 // has user access
                                 $eventsaccess = '';
-                                if (!$sub->user_has_access) {
+                                if (!$sub->user_has_access_category ) {
                                     // show a closed lock icon
                                     $eventsaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                                 } ?>

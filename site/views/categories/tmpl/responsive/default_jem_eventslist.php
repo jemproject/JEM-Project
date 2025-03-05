@@ -89,7 +89,7 @@ if (empty($this->catrow->events)) { return; }
                 <?php
                 // has user access
                 $eventaccess = '';
-                if (!$row->user_has_access) {
+                if (!$row->user_has_access_event) {
                     // show a closed lock icon
                     $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                 } ?>
@@ -167,7 +167,7 @@ if (empty($this->catrow->events)) { return; }
                     <?php endif; ?>
 
                     <?php // Display other information below in a row
-                    if ($row->user_has_access) :?>
+                    if ($row->user_has_access_event) :?>
                         <div class="jem-list-row">
                             <?php if ($this->jemsettings->showtitle == 1) : ?>
                                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" >
@@ -229,7 +229,7 @@ if (empty($this->catrow->events)) { return; }
                         </div>
                     <?php endif; ?>
                 </div>
-                <?php if ($row->user_has_access) :?>
+                <?php if ($row->user_has_access_event) :?>
                     <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
                     <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
                     <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />

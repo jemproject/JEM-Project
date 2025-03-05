@@ -195,7 +195,7 @@ class JemModelVenue extends JemModelEventslist
 		$case_when_a .= " access IN (" . implode(',',$levels) . ")";
 		$case_when_a .= ' THEN 1 ';
 		$case_when_a .= ' ELSE 0 ';
-		$case_when_a .= ' END as user_has_access';
+		$case_when_a .= ' END as user_has_access_venue';
 
 		$query->select(array($case_when_a));
 
@@ -229,7 +229,7 @@ class JemModelVenue extends JemModelEventslist
 		if (empty($_venue)) {
 			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
 			return false;
-		}else if(!$_venue->user_has_access) {
+		}else if(!$_venue->user_has_access_venue) {
 			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 			return false;
 		}

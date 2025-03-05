@@ -381,9 +381,21 @@ class JemModelEventslist extends ListModel
 		$case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
 		$case_when_a .= ' THEN 1 ';
 		$case_when_a .= ' ELSE 0 ';
-		$case_when_a .= ' END as user_has_access';
+		$case_when_a .= ' END as user_has_access_event';
 
-		$query->select(array($case_when_e, $case_when_l, $case_when_a));
+		$case_when_v  = ' CASE WHEN ';
+		$case_when_v .= " l.access IN (" . implode(',',$levels) . ")";
+		$case_when_v .= ' THEN 1 ';
+		$case_when_v .= ' ELSE 0 ';
+		$case_when_v .= ' END as user_has_access_venue';
+
+		$case_when_c  = ' CASE WHEN ';
+		$case_when_c .= " c.access IN (" . implode(',',$levels) . ")";
+		$case_when_c .= ' THEN 1 ';
+		$case_when_c .= ' ELSE 0 ';
+		$case_when_c .= ' END as user_has_access_category';
+
+		$query->select(array($case_when_e, $case_when_l, $case_when_a, $case_when_v, $case_when_c));
 
 		# join over the category-tables
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -699,7 +711,7 @@ class JemModelEventslist extends ListModel
 		$case_when_a .= " c.access IN (" . implode(',',$levels) . ")";
 		$case_when_a .= ' THEN 1 ';
 		$case_when_a .= ' ELSE 0 ';
-		$case_when_a .= ' END as user_has_access';
+		$case_when_a .= ' END as user_has_access_category';
 
 		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c,$case_when_a));
 		$query->from('#__jem_categories as c');
