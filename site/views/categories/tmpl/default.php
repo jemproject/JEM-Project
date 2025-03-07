@@ -42,7 +42,7 @@ use Joomla\CMS\Router\Route;
                     <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
                 <?php echo $categoriesaccess; ?>
                 </h2>
-
+                <?php if ($row->user_has_access_category) : ?>
                 <div class="floattext">
                     <?php if ($this->jemsettings->discatheader) { ?>
                         <div class="catimg">
@@ -106,6 +106,7 @@ use Joomla\CMS\Router\Route;
                     echo $this->loadTemplate('table');
                 }
                 ?>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
 

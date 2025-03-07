@@ -30,7 +30,7 @@ use Joomla\CMS\Router\Route;
         <?php
         // has user access
         $categoriesaccess = '';
-        if (!$row->user_has_access) {
+        if (!$row->user_has_access_category) {
             // show a closed lock icon
             $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
         } ?>
@@ -40,7 +40,7 @@ use Joomla\CMS\Router\Route;
                 <?php echo $categoriesaccess; ?>
             </h2>
 
-            <?php if ($row->user_has_access) : ?>
+            <?php if ($row->user_has_access_category) : ?>
                 <?php if (($this->jemsettings->discatheader) && (!empty($row->image))) : ?>
                     <div class="jem-catimg">
                         <?php $cimage = JemImage::flyercreator($row->image, 'category'); ?>
@@ -51,13 +51,6 @@ use Joomla\CMS\Router\Route;
                 <div class="description">
                     <?php echo $row->description; ?>
                     <?php if ($i = count($row->subcats)) : ?>
-                        <?php
-                        // has user access
-                        $subcategoriesaccess = '';
-                        if (!$row->user_has_access) {
-                            // show a closed lock icon
-                            $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
-                        } ?>
                         <h3 class="subcategories">
                             <?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
                             <?php echo $categoriesaccess; ?>
@@ -67,15 +60,15 @@ use Joomla\CMS\Router\Route;
                                 <?php
                                 // has user access
                                 $eventsaccess = '';
-                                if (!$sub->user_has_access) {
+                                if (!$sub->user_has_access_category) {
                                     // show a closed lock icon
-                                    $eventsaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                                    $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                                 } ?>
                                 <strong>
                                     <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
                                         <?php echo $this->escape($sub->catname); ?></a>
                                 </strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
-                                <?php echo $eventsaccess; ?>
+                                <?php echo $subcategoriesaccess; ?>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
