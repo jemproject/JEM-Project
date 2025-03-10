@@ -117,7 +117,7 @@ use Joomla\CMS\Router\Route;
 	            <?php 
 				// has user access
 	            $eventaccess = '';
-	            if (!$row->user_has_access) {
+	            if (!$row->user_has_access_event) {
 	                // show a closed lock icon
 	                $statusicon = JemOutput::publishstateicon($row);
 	                $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';

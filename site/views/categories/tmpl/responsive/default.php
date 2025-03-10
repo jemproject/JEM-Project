@@ -59,7 +59,7 @@ use Joomla\CMS\Router\Route;
                             <?php foreach ($row->subcats as $sub) : ?>
                                 <?php
                                 // has user access
-                                $eventsaccess = '';
+                                $subcategoriesaccess = '';
                                 if (!$sub->user_has_access_category) {
                                     // show a closed lock icon
                                     $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';

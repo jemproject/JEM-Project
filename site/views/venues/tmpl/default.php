@@ -33,7 +33,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php
         // has user access
         $venueaccess = '';
-        if (!$row->user_has_access) {
+        if (!$row->user_has_access_venue) {
             // show a closed lock icon
             $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
         } ?>
@@ -48,7 +48,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 			<?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
 
 			<!--  -->
-            <?php if ($row->user_has_access) : ?>
+            <?php if ($row->user_has_access_venue) : ?>
                 <dl class="location">
                     <?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
                     <dt class="venue_website">

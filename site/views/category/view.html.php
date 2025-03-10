@@ -191,7 +191,7 @@ class JemViewCategory extends JemView
 			if (empty($category)) {
 				$app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
 				return false;
-			} else if(!$category->user_has_access) {
+			} else if(!$category->user_has_access_category) {
 				$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 				return false;
 			}

@@ -36,7 +36,7 @@ use Joomla\CMS\Language\Text;
             <?php
             // has user access
             $venueaccess = '';
-            if (!$row->user_has_access) {
+            if (!$row->user_has_access_venue) {
                 // show a closed lock icon
                 $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
             } ?>
@@ -46,7 +46,7 @@ use Joomla\CMS\Language\Text;
                     <?php echo $venueaccess;?>
                 </h2>
 
-                <?php if ($row->user_has_access) : ?>
+                <?php if ($row->user_has_access_venue) : ?>
                     <div class="jem-row">
                         <div class="jem-info">
                             <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">

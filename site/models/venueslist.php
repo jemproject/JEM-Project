@@ -128,7 +128,7 @@ class JemModelVenueslist extends ListModel
         $case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
         $case_when_a .= ' THEN 1 ';
         $case_when_a .= ' ELSE 0 ';
-        $case_when_a .= ' END as user_has_access';
+        $case_when_a .= ' END as user_has_access_venue';
 
         $query->select(array($case_when_l, $case_when_a));
 

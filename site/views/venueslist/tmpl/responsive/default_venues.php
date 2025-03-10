@@ -113,7 +113,7 @@ function jem_common_show_filter(&$obj) {
             <?php
             // has user access
             $venueaccess = '';
-            if (!$row->user_has_access) {
+            if (!$row->user_has_access_venue) {
                 // show a closed lock icon
                 $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
             } ?>
