@@ -114,32 +114,32 @@ if ($jemsettings->oldevent > 0) {
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
-            <dt class="category"><?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:</dt>
-            <dd class="category">
+                <dt class="category"><?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:</dt>
+                <dd class="category">
                 <?php
-                	foreach ((array)$this->categories as $i => $category) {
-        				if ($i > 0) {
+                foreach ((array)$this->categories as $i => $category) {
+                    if ($i > 0) {
                         echo ', ';
-        				}
-       					if ($params->get('event_link_category') == 1) {
-            				echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
-        				} else {
-            				echo $this->escape($category->catname);
-            			}
-            		}
-            	echo '</dd>';
-                    endif;
-            
+                    }
+                    if ($params->get('event_link_category') == 1) {
+                        echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+                    } else {
+                        echo $this->escape($category->catname);
+                    }
+                }
+                echo '</dd>';
+            endif;
+
             for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
                     $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
                 }
                 if ($currentRow) {
-                    ?>
+                ?>
                     <dt class="custom<?php echo $cr; ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
                     <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                    <?php
+                <?php
                 }
             }
             ?>
@@ -404,14 +404,14 @@ if ($jemsettings->oldevent > 0) {
                 <?php $this->attachments = $this->item->vattachments; ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
 
-            </div>
-        <?php endif; ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '0')) : ?>
             <hr class="jem-hr">
-           
+
             <?php
             $timeNow = time();
 
@@ -421,7 +421,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 1:
                     //Event with registration (YES with or witout UNTIL)
-                         echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                    echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     echo $this->loadTemplate('attendees');
                     if($this->dateUnregistationUntil) {
                         echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2'));
@@ -429,7 +429,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 2:
                     //Event with date starting registration (FROM with or witout UNTIL)
-                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                    echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     if($this->dateRegistationFrom > $timeNow) {
                         echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                     }else if ($this->allowRegistration) {
