@@ -260,38 +260,48 @@ if ($jemsettings->oldevent > 0) {
         <?php echo $this->loadTemplate('attachments'); ?>
 
         <!--  	Venue  -->
-        <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1') && ($this->item->user_has_access_venue == 1)) : ?>
+        <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr />
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$this->item->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
 
-            <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
-                <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
-                <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
-                <h2 class="location">
+        <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+            <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+            <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
+            <h2 class="location">
+                <?php
+                echo Text::_('COM_JEM_VENUE') ;
+                $itemid = $this->item ? $this->item->id : 0 ;
+                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
+                echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
+                ?>
+            </h2>
+            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+
+            <dl class="location">
+                <dt class="venue"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
+                <dd class="venue">
                     <?php
-                    echo Text::_('COM_JEM_VENUE') ;
-                    $itemid = $this->item ? $this->item->id : 0 ;
-                    echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
-                    echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
+                    if (!empty($this->item->venueslug)) :
+                        echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+                    else :
+                        echo $this->escape($this->item->venue);
+                    endif;
+                    if (!empty($this->item->url)) :
+                        echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+                    endif;
+                    echo $venueaccess;
                     ?>
-                </h2>
-                <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
-
-                <dl class="location">
-                    <dt class="venue"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
-                    <dd class="venue">
-                        <?php
-                        if (!empty($this->item->venueslug)) :
-                            echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                        else :
-                            echo $this->escape($this->item->venue);
-                        endif;
-                        if (!empty($this->item->url)) :
-                            echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
-                        endif;
-                        ?>
-                    </dd>
-                </dl>
+                </dd>
+            </dl>
+            <?php if($this->item->user_has_access_venue) : ?>
                 <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext" itemprop="address" itemscope
                         itemtype="https://schema.org/PostalAddress">
@@ -396,9 +406,10 @@ if ($jemsettings->oldevent > 0) {
 
             </div>
         <?php endif; ?>
+        <?php endif; ?>
 
         <!-- Registration -->
-        <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
+        <?php if ($this->showAttendees && $params->get('event_show_registration', '0')) : ?>
             <hr class="jem-hr">
            
             <?php

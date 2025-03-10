@@ -280,17 +280,23 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php echo $this->loadTemplate('attachments'); ?>
 
         <!-- Venue -->
-        <?php if ((!empty($this->item->locid)) && !empty($this->item->venue) && $params->get('event_show_venue', '1') && ($this->item->user_has_access_venue == 1)) : ?>
+        <?php if ((!empty($this->item->locid)) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr class="jem-hr">
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$this->item->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
 
             <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
                 <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
                 <h2 class="jem-location">
-                    <?php
-                    echo Text::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
-                    ?>
+                    <?php echo Text::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue'); ?>
                 </h2>
 
                 <div class="jem-row jem-wrap-reverse">
@@ -308,11 +314,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     else :
                                         echo $this->escape($this->item->venue);
                                     endif;
+                                    echo $venueaccess;
                                     ?>
                                 </dd>
-                                <?php if ($this->item->street) : ?>
-                                    <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
-                                    <dd class="venue_street" itemprop="streetAddress">
+                                <?php if($this->item->user_has_access_venue) : ?>
+                                    <?php if ($this->item->street) : ?>
+                                        <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
+                                        <dd class="venue_street" itemprop="streetAddress">
                                         <?php echo $this->escape($this->item->street); ?>
                                     </dd>
                                 <?php endif; ?>
@@ -376,6 +384,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
                                     <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
                                 <?php endif; ?>
+                                <?php endif; ?>
                             </dl>
                         </div>
 
@@ -406,7 +415,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
                     <?php endif; /* event_show_detailsadress */ ?>
                 </div>
-
+                <?php if($this->item->user_has_access_venue) : ?>
                 <?php
                 $event_show_mapserv = $params->get('event_show_mapserv');
                 if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
@@ -433,6 +442,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
                     </div>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <?php $this->attachments = $this->item->vattachments; ?>

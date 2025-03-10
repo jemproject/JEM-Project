@@ -158,13 +158,22 @@ class JemModelEvent extends ItemModel
 				## FILTER-ACCESS ##
 				###################
 
+				# Filter by access level - public or with access_level_locked_events active.
+				if($jemsettings->access_level_locked_events != "[\"1\"]") {
+					$accessLevels = json_decode($jemsettings->access_level_locked_events, true);
+					$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+					$query->where('a.access IN ('.implode(',', $newlevels).')');
+				} else {
+					$query->where('a.access IN ('.implode(',', $levels).')');
+				}
+
 				# Filter by access level - public or with access_level_locked_venues active.
 				if($jemsettings->access_level_locked_venues != "[\"1\"]") {
 					$accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
 					$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
-					$query->where('l.access IN ('.implode(',', $newlevels).')');
+					$query->where('(l.id IS null OR l.access IN ('.implode(',', $newlevels).'))');
 				} else {
-					$query->where('l.access IN ('.implode(',', $levels).')');
+					$query->where('(l.id IS null OR l.access IN ('.implode(',', $levels).'))');
 				}
 
 				# Filter by published state ==> later.
