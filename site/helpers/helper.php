@@ -934,6 +934,7 @@ class JemHelper
 					}
 					else
 					{
+                        $placesavailable -= $waitreg->places;
 						PluginHelper::importPlugin('jem');
 						$dispatcher = JemFactory::getDispatcher();
 						$res        = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($waitreg->id));
