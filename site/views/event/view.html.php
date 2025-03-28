@@ -285,7 +285,7 @@ class JemViewEvent extends JemView
 		$formhandler = 0; // too late to unregister
 
 		if (is_object($registration)){
-			if($registration->status != 0) { // is the user allready registered at the event
+			if($registration->status != 0) { // is the user already registered at the event
 				if ($now <= $enddate) { // allows registration changes on unfinished events
 					$formhandler = 4;
 				}
