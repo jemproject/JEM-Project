@@ -14,7 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 <div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		$btn_params = array('id' => $this->category->slug, 'slug' => $this->category->slug, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
+		$btn_params = array('id' => $this->category->id, 'slug' => $this->category->slug, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
 		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>

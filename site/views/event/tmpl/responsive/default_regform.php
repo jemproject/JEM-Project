@@ -157,7 +157,7 @@ if ($this->showRegForm && empty($this->print)) :
                     <?php
 
                     //FULL AND WAITLIST
-                    if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces)) {
+                    if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && $placesavailableuser !==    0) {
                         if ($this->item->waitinglist) {
                             if ($placesBookedUser) {
                                 $placesavailableuser = 0;
@@ -266,7 +266,7 @@ if ($this->showRegForm && empty($this->print)) :
                     }
                     ?>
                 </li>
-                <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser) {?>
+                <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser || $this->allowAnnulation) {?>
                     <li class="jem-event" onclick="document.getElementById('jem_unregister_event').click();">
 
                         <?php if ($this->allowAnnulation || ($this->isregistered != 1) || $waitingPlacesUser) : ?>

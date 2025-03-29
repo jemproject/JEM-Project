@@ -82,12 +82,10 @@ class jem_events extends Table
 	* @var string
 	*/
 	public $recurrence_limit_date = null;
-	/**
-	* list of day the event occurs on (2 letters, separated by comma)
-	*
-	* @var string
-	*/
+	/**  @var string list of day the event occurs on (2 letters, separated by comma) */
 	public $recurrence_byday = '';
+	/**  @var string list of last day the event occurs on (1 letter L + [0-6], separated by comma) */
+	public $recurrence_bylastday = '';
 	/** @var int id of first event for recurrence events*/
 	public $recurrence_first_id = 0;
 	/** @var string */

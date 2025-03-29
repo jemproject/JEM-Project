@@ -6,6 +6,18 @@
 	<fieldset name="globalparam2"
 			  label="COM_JEM_GLOBAL_PARAMETERS"
 	>
+		<field name="categories_order" type="list"
+			   label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
+			   description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"
+			   class="inputbox"
+			   default="0"
+			   required="false"
+		>
+			<option value="0">COM_JEM_SETTINGS_CATEGORIES_ORDER_ID_ASC</option>
+			<option value="1">COM_JEM_SETTINGS_CATEGORIES_ORDER_ID_DESC</option>
+			<option value="2">COM_JEM_SETTINGS_CATEGORIES_ORDER_NAME_ASC</option>
+			<option value="3">COM_JEM_SETTINGS_CATEGORIES_ORDER_NAME_DESC</option>
+		</field>
 		<field name="ical_max_items" type="text"
 			   label="COM_JEM_SETTINGS_ICAL_MAX_ITEMS"
 			   description="COM_JEM_SETTINGS_ICAL_MAX_ITEMS_DESC"
@@ -172,6 +184,15 @@
 			   maxlength="3"
 			   required="true"
 			   default="180"
+		/>
+		<field name="recurrence_anticipation_lastday" type="text"
+			   label="COM_JEM_SETTINGS_RECURRENCE_LIMITLASTDAYS"
+			   description="COM_JEM_SETTINGS_RECURRENCE_LIMITLASTDAYS_DESC"
+			   class="inputbox"
+			   size="3"
+			   maxlength="3"
+			   required="true"
+			   default="60"
 		/>
 	</fieldset>
 
@@ -1271,7 +1292,7 @@
 				   label="COM_JEM_REG_SHOW_ATTENDEENAMES_ORDER"
 				   description="COM_JEM_REG_SHOW_ATTENDEENAMES_ORDER_DESC"
 				   class="inputbox"
-				   default="0"
+				   default="8"
 				   required="false"
 			>
 				<option value="0">COM_JEM_ORDER_REGISTRATION_ASC</option>
@@ -1282,6 +1303,8 @@
 				<option value="5">COM_JEM_ORDER_USERNAME_DESC</option>
 				<option value="6">COM_JEM_ORDER_NAME_ASC</option>
 				<option value="7">COM_JEM_ORDER_NAME_DESC</option>
+				<option value="8">COM_JEM_ORDER_STATUS_ASC</option>
+				<option value="9">COM_JEM_ORDER_STATUS_DESC</option>
 			</field>
 			<field name="event_comunsolution" type="list"
 				   label="COM_JEM_COM_SOL"
@@ -1302,16 +1325,6 @@
 			>
 				<option value="0">COM_JEM_LINK_PROFILE</option>
 				<option value="1">COM_JEM_LINK_AVATAR</option>
-			</field>
-		</fieldset>
-
-		<fieldset name="advanced" label="LABEL2">
-			<field name="show_something" type="list"
-				   description="SOMETHING"
-				   label="SOMETHING_DESC"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
 			</field>
 		</fieldset>
 
