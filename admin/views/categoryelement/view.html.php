@@ -38,9 +38,7 @@ class JemViewCategoryelement extends HtmlView {
 		$document->setTitle(Text::_('COM_JEM_SELECT_CATEGORY'));
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Get data from the model

@@ -36,11 +36,10 @@ class JemViewHelp extends JemAdminView
 		//get vars
 		$helpsearch = Factory::getApplication()->input->getString('filter_search', '');
 
-		// // Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		// Load css
 		$wa = $app->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+		
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
