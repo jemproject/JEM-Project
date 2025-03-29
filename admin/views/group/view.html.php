@@ -52,10 +52,9 @@ class JemViewGroup extends JemAdminView
 		$url 		= Uri::root();
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = $app->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+		
 		$maintainers 		= $this->get('Members');
 		$available_users 	= $this->get('Available');
 

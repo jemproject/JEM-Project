@@ -39,11 +39,9 @@ class JemViewCategories extends JemAdminView
 			return false;
 		}
 
-		$wa = $this->app->getDocument()->getWebAssetManager();
-	
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
+		$wa = $this->app->getDocument()->getWebAssetManager();
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Preprocess the list of items to find ordering divisions.
 		foreach ($this->items as &$item) {

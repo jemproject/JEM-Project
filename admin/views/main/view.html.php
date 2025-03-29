@@ -37,9 +37,7 @@ class JemViewMain extends JemAdminView
 		$category = $this->get('CategoriesData');
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		//assign vars to the template
