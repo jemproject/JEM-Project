@@ -33,11 +33,32 @@ class PlgContentJemembed extends CMSPlugin
 {
     /** all options with their default values */
     protected static $optionDefaults = array(
-        'type'             => 'unfinished',
-        'show_featured'    => 'off',
-        'max_events'       => '100',
-        'catids'           => '',
-        'venueids'         => '',
+        'type'              => 'unfinished',
+        'show_featured'     => 'off',
+        'title'             => 'on',
+        'cut_title'         => 40,
+        'show_date'         => 'on',
+        'date_format'       => '',
+        'show_time'         => 'on',
+        'time_format'       => '',
+        'show_enddatetime'  => 'off',
+        'catids'            => '',
+        'show_category'     => 'off',
+        'venueids'          => '',
+        'show_venue'        => 'off',
+        'max_events'        => '100',
+    );
+
+    /** all valid token values */
+    protected static $tokenValues = array(
+        'type'        => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
+        'featured'    => array('on', 'off'),
+        'title'       => array('on', 'link', 'off'),
+        'date'        => array('on', 'link', 'off'),
+        'time'        => array('on', 'off'),
+        'enddatetime' => array('on', 'off'),
+        'category'    => array('on', 'link', 'off'),
+        'venue'       => array('on', 'link', 'off'),
     );
 
     /**
@@ -90,15 +111,69 @@ class PlgContentJemembed extends CMSPlugin
     }
 
     /**
+     * Validate and clean input parameters
+     * 
+     * @param array $params The input parameters
+     * @return array The validated and cleaned parameters
+     */
+    protected function validateParams($params)
+    {
+        $cleanParams = $params;
+        
+        // Validate type parameter
+        if (isset($cleanParams['type']) && !in_array($cleanParams['type'], self::$tokenValues['type'])) {
+            $cleanParams['type'] = self::$optionDefaults['type'];
+        }
+        
+        // Validate boolean-like parameters
+        $boolParams = ['show_featured', 'title', 'show_date', 'show_time', 'show_enddatetime', 'show_category', 'show_venue'];
+        foreach ($boolParams as $param) {
+            if (isset($cleanParams[$param])) {
+                if ($cleanParams[$param] === '1') {
+                    $cleanParams[$param] = 'on';
+                } elseif ($cleanParams[$param] === '0') {
+                    $cleanParams[$param] = 'off';
+                }
+            }
+        }
+        
+        // Validate parameters with specific allowed values
+        $valueParams = ['title', 'show_date', 'show_category', 'show_venue'];
+        foreach ($valueParams as $param) {
+            $tokenName = str_replace('show_', '', $param);
+            if (isset($cleanParams[$param]) && !in_array($cleanParams[$param], self::$tokenValues[$tokenName])) {
+                $cleanParams[$param] = self::$optionDefaults[$param];
+            }
+        }
+        
+        // Ensure numeric parameters are positive integers
+        $numericParams = ['max_events', 'cut_title'];
+        foreach ($numericParams as $param) {
+            if (isset($cleanParams[$param])) {
+                $cleanParams[$param] = max(1, (int)$cleanParams[$param]);
+            }
+        }
+        
+        return $cleanParams;
+    }
+
+    /**
      * AJAX endpoint to retrieve events in JSON format
      * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_API_TOKEN
      * 
      * Optional parameters:
      * - type: today, unfinished, upcoming, ongoing, archived, newest, open, all
-     * - featured: on or off (or 1/0)
+     * - featured: on or off
+     * - title: on, link, off
+     * - date: on, link, off
+     * - time: on, off
+     * - enddatetime: on, off
      * - catids: comma-separated list of category IDs
+     * - category: on, link, off
      * - venueids: comma-separated list of venue IDs
+     * - venue: on, link, off
      * - max: maximum number of events to return
+     * - cuttitle: maximum length of title before truncation
      * - token: API token for authentication
      */
     public function onAjaxJemembed()
@@ -109,16 +184,35 @@ class PlgContentJemembed extends CMSPlugin
         }
         
         try {
-            // Get request parameters or use defaults
+            // Get request parameters
             $app = Factory::getApplication();
             $parameters = self::$optionDefaults;
             
-            // Retrieve parameters from request
-            $parameters['type'] = $app->input->getString('type', $parameters['type']);
-            $parameters['show_featured'] = $app->input->getString('featured', $parameters['show_featured']);
-            $parameters['max_events'] = $app->input->getInt('max', $parameters['max_events']);
-            $parameters['catids'] = $app->input->getString('catids', $parameters['catids']);
-            $parameters['venueids'] = $app->input->getString('venueids', $parameters['venueids']);
+            // Map request parameters to internal parameters
+            $paramMapping = [
+                'type' => 'type',
+                'featured' => 'show_featured',
+                'title' => 'title',
+                'cuttitle' => 'cut_title',
+                'date' => 'show_date',
+                'time' => 'show_time',
+                'enddatetime' => 'show_enddatetime',
+                'catids' => 'catids',
+                'category' => 'show_category',
+                'venueids' => 'venueids',
+                'venue' => 'show_venue',
+                'max' => 'max_events'
+            ];
+            
+            // Get parameters from request
+            foreach ($paramMapping as $requestParam => $internalParam) {
+                if ($app->input->exists($requestParam)) {
+                    $parameters[$internalParam] = $app->input->getString($requestParam);
+                }
+            }
+            
+            // Validate and clean parameters
+            $parameters = $this->validateParams($parameters);
             
             // Load events
             $eventlist = $this->_load($parameters);
@@ -130,38 +224,71 @@ class PlgContentJemembed extends CMSPlugin
                 $linkdate = Route::_(JemHelperRoute::getRoute($event->dates !== null ? str_replace('-', '', $event->dates) : '', 'day'));
                 $linkvenue = Route::_(JemHelperRoute::getVenueRoute($event->venueslug));
                 
+                // Format title based on parameters
+                $fulltitle = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
+                $displayTitle = $fulltitle;
+                if (mb_strlen($fulltitle) > $parameters['cut_title']) {
+                    $displayTitle = mb_substr($fulltitle, 0, $parameters['cut_title']) . '…';
+                }
+                
+                // Build the formatted event data
                 $formattedEvent = [
                     'id' => $event->id,
-                    'title' => $event->title,
+                    'title' => [
+                        'full' => $fulltitle,
+                        'display' => $displayTitle,
+                        'url' => $linkdetails,
+                        'display_mode' => $parameters['title']
+                    ],
                     'slug' => $event->slug,
                     'description' => $event->introtext,
+                    'featured' => (bool)$event->featured,
                     'dates' => [
                         'start_date' => $event->dates,
                         'end_date' => $event->enddates,
                         'start_time' => $event->times,
                         'end_time' => $event->endtimes,
-                        'formatted_start_date' => JemOutput::formatdate($event->dates),
-                        'formatted_start_time' => $event->times ? JemOutput::formattime($event->times) : ''
-                    ],
-                    'venue' => [
+                        'formatted_start_date' => JemOutput::formatdate($event->dates, $parameters['date_format']),
+                        'formatted_start_time' => $event->times ? JemOutput::formattime($event->times, $parameters['time_format']) : '',
+                        'formatted_end_time' => $event->endtimes ? JemOutput::formattime($event->endtimes, $parameters['time_format']) : '',
+                        'date_url' => $linkdate,
+                        'date_display_mode' => $parameters['show_date'],
+                        'time_display_mode' => $parameters['show_time'],
+                        'enddatetime_display_mode' => $parameters['show_enddatetime']
+                    ]
+                ];
+                
+                // Add venue details if it exists
+                if ($event->venue) {
+                    $formattedEvent['venue'] = [
                         'id' => $event->locid,
                         'name' => $event->venue,
                         'slug' => $event->venueslug,
                         'url' => $linkvenue,
                         'city' => $event->city,
                         'state' => $event->state,
-                        'country' => $event->country
-                    ],
-                    'categories' => $this->_formatCategories($event->categories),
-                    'featured' => (bool)$event->featured,
-                    'url' => $linkdetails,
-                    'datelink' => $linkdate
-                ];
+                        'country' => $event->country,
+                        'display_mode' => $parameters['show_venue']
+                    ];
+                } else {
+                    $formattedEvent['venue'] = null;
+                }
+                
+                // Add categories
+                $formattedEvent['categories'] = $this->_formatCategories($event->categories, $parameters['show_category']);
                 
                 $events[] = $formattedEvent;
             }
             
-            return ['success' => true, 'data' => $events];
+            // Include the query parameters in the response
+            return [
+                'success' => true, 
+                'meta' => [
+                    'count' => count($events),
+                    'parameters' => $parameters
+                ],
+                'data' => $events
+            ];
             
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -170,8 +297,12 @@ class PlgContentJemembed extends CMSPlugin
     
     /**
      * Format categories for JSON output
+     * 
+     * @param array $categories The categories to format
+     * @param string $displayMode The display mode (on, link, off)
+     * @return array The formatted categories
      */
-    protected function _formatCategories($categories)
+    protected function _formatCategories($categories, $displayMode = 'off')
     {
         if (!$categories) {
             return [];
@@ -185,7 +316,8 @@ class PlgContentJemembed extends CMSPlugin
                         'id' => $category->id,
                         'name' => $category->catname,
                         'slug' => $category->catslug,
-                        'url' => Route::_(JemHelperRoute::getCategoryRoute($category->catslug))
+                        'url' => Route::_(JemHelperRoute::getCategoryRoute($category->catslug)),
+                        'display_mode' => $displayMode
                     ];
                     $result[] = $cat;
                 }
