@@ -36,16 +36,16 @@ class PlgContentJemembed extends CMSPlugin
         'type'              => 'unfinished',
         'show_featured'     => 'off',
         'title'             => 'on',
-        'cut_title'         => 40,
+        'cut_title'         => 100,
         'show_date'         => 'on',
         'date_format'       => '',
         'show_time'         => 'on',
         'time_format'       => '',
-        'show_enddatetime'  => 'off',
+        'show_enddatetime'  => 'on',
         'catids'            => '',
-        'show_category'     => 'off',
+        'show_category'     => 'on',
         'venueids'          => '',
-        'show_venue'        => 'off',
+        'show_venue'        => 'on',
         'max_events'        => '100',
     );
 
@@ -201,7 +201,9 @@ class PlgContentJemembed extends CMSPlugin
                 'category' => 'show_category',
                 'venueids' => 'venueids',
                 'venue' => 'show_venue',
-                'max' => 'max_events'
+                'max' => 'max_events',
+                'dateformat' => 'date_format',
+                'timeformat' => 'time_format'
             ];
             
             // Get parameters from request
@@ -335,8 +337,9 @@ class PlgContentJemembed extends CMSPlugin
         // Retrieve Eventslist model for the data
         $model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
-        if (isset($parameters['max_events'])) {
-            $max = $parameters['max_events'];
+        // Set max events limit
+        if (isset($parameters['max_events']) && is_numeric($parameters['max_events'])) {
+            $max = (int)$parameters['max_events'];
             $model->setState('list.limit', ($max > 0) ? $max : 100);
         }
 
@@ -344,23 +347,33 @@ class PlgContentJemembed extends CMSPlugin
         if (!empty($parameters['catids'])) {
             $included_cats = explode(",", $parameters['catids']);
             // Sanitize array of category IDs
-            $included_cats = array_map('intval', $included_cats);
-            $model->setState('filter.category_id', $included_cats);
-            $model->setState('filter.category_id.include', 1);
+            $included_cats = array_filter(array_map('intval', $included_cats));
+            if (!empty($included_cats)) {
+                $model->setState('filter.category_id', $included_cats);
+                $model->setState('filter.category_id.include', 1);
+            }
         }
 
         // Filter by venues
         if (!empty($parameters['venueids'])) {
-            // Sanitize venue ID directly
-            $venueid = (int)$parameters['venueids'];
-            $model->setState('filter.venue_id', $venueid);
-            $model->setState('filter.venue_id.include', 1);
+            // Parse comma-separated venue IDs
+            $venue_ids = explode(",", $parameters['venueids']);
+            // Sanitize array of venue IDs
+            $venue_ids = array_filter(array_map('intval', $venue_ids));
+            if (!empty($venue_ids)) {
+                $model->setState('filter.venue_id', $venue_ids);
+                $model->setState('filter.venue_id.include', 1);
+            }
         }
 
         // Filter by featured status
         if ($parameters['show_featured'] == 'on' || $parameters['show_featured'] == '1') {
             $model->setState('filter.featured', 1);
+        } elseif ($parameters['show_featured'] == 'off' || $parameters['show_featured'] == '0') {
+            // Explicitly show only non-featured events
+            $model->setState('filter.featured', 0);
         }
+        // If nothing specified, we show all events (featured and non-featured)
 
         // Set type filters
         $type = isset($parameters['type']) ? $parameters['type'] : 'unfinished';
