@@ -2,38 +2,44 @@
 header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json');
 
-// Basis-URL mit eventuellen Parametern
-$baseUrl = 'https://j5.datenablage.info/index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=qqwwee112233&type=upcoming&max=10&catids=1,2,3&title=link&date=on&venue=link&category=link&cuttitle=30';
+// API base URL
+$feedUrl = 'https://j5.datenablage.info/index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=qwe&type=upcoming&max=10&catids=4&title=link&date=on&venue=link&category=link&cuttitle=30';
 
-// Standard-Parameter (werden durch $baseUrl-Parameter überschrieben)
-$defaultParams = [
-    'token' => 'qwert',   // Wird überschrieben, falls in $baseUrl vorhanden
-    'type' => 'past',     // Wird überschrieben, falls in $baseUrl vorhanden
-    'max' => 10,
-    'catids' => '1,2,3',
-    'title' => 'link',
-    'venue' => 'link'
-];
-
-// 1. Parse Parameter aus $baseUrl
-$urlParts = parse_url($baseUrl);
-parse_str($urlParts['query'] ?? '', $baseParams);
-
-// 2. Merge: $baseParams überschreibt $defaultParams
-$finalParams = array_merge($defaultParams, $baseParams);
-
-// 3. URL neu zusammensetzen (ohne doppelte Parameter)
-$cleanUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . $urlParts['path'];
-$feedUrl = $cleanUrl . '?' . http_build_query($finalParams);
-
-// Debug: Logge finale URL (optional)
-file_put_contents('proxy.log', "Final URL: $feedUrl\n", FILE_APPEND);
-
-// cURL-Request
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $feedUrl);
+$ch = curl_init($feedUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-// ... (Rest des cURL-Codes wie zuvor)
+curl_setopt($ch, CURLOPT_FAILONERROR, false);
+curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
-echo $response;
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+if (curl_errno($ch)) {
+    // Display CURL errors
+    echo json_encode([
+        'error' => 'Proxy error: ' . curl_error($ch),
+        'url' => $feedUrl
+    ]);
+} elseif ($httpCode >= 400) {
+    // Handle HTTP errors
+    echo json_encode([
+        'error' => 'HTTP error: ' . $httpCode,
+        'url' => $feedUrl
+    ]);
+} else {
+    // Check if the response is valid JSON
+    $decoded = json_decode($response);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        echo json_encode([
+            'error' => 'Invalid JSON: ' . json_last_error_msg(),
+            'url' => $feedUrl
+        ]);
+    } else {
+        // Success: Valid JSON received
+        echo $response;
+    }
+}
+
+curl_close($ch);
 ?>
