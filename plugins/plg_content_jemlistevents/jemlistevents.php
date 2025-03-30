@@ -227,9 +227,10 @@ class PlgContentJemlistevents extends CMSPlugin
          * FILTER - VENUE.
          ****************************/
         if (isset($parameters['venueids']) && !empty($parameters['venueids'])) {
-            // Sanitize venue ID directly
-            $venueid = (int)$parameters['venueids'];
-            $model->setState('filter.venue_id', $venueid);
+            $included_venues = explode(",", $parameters['venueids']);
+            // Sanitize array of venue IDs
+            $included_venues = array_map('intval', $included_venues);
+            $model->setState('filter.venue_id', $included_venues);
             $model->setState('filter.venue_id.include', 1);
         }
 
