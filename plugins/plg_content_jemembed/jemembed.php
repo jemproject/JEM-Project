@@ -401,7 +401,7 @@ class PlgContentJemembed extends CMSPlugin
                     $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
                     $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';        
                     $model->setState('filter.calendar_to', $where);
-                    break; 
+                    break;
                 case 'archived': // Archived events only.
                     $model->setState('filter.published', 2);
                     $model->setState('filter.orderby', array('a.dates DESC', 'a.times DESC'));
