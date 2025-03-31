@@ -53,7 +53,6 @@ use Joomla\CMS\Uri\Uri;
 		}
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = $app->getDocument()->getWebAssetManager();
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 

@@ -750,6 +750,12 @@ class JemModelEvent extends ItemModel
 			case 7:
 				$order = 'u.name DESC';
 				break;
+			case 8:
+				$order = 'r.status ASC, r.waiting ASC, r.id ASC';
+				break;
+			case 9:
+				$order = 'r.status DESC, r.waiting ASC, r.id ASC';
+				break;
 		}
 
 		// Get registered users
