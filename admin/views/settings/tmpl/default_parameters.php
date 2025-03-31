@@ -68,3 +68,17 @@ $group = 'globalattribs';
     </div>
 </div>
 <div class="clr"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('jform_defaultCategory');
+        if (select) {
+            const selectedOption = select.querySelector('option[selected]');
+            if (selectedOption) {
+                const optionIndex = Array.from(select.options).indexOf(selectedOption);
+                const optionHeight = selectedOption.offsetHeight;
+                select.scrollTop = optionIndex * optionHeight - (select.offsetHeight / 2);
+            }
+        }
+    });
+</script>
