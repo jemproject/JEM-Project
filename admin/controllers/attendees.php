@@ -98,10 +98,15 @@ class JemControllerAttendees extends BaseController
 		// Check for request forgeries
 		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-		header('Content-Type: text/x-csv');
+        header('Content-Description: File Transfer');
+        header('Content-Type: text/csv; charset=utf-8');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Content-Disposition: attachment; filename=attendees.csv');
+        header('Content-Disposition: attachment; filename="attendees_'.date('Y-m-d').'.csv"');
+        header('Content-Transfer-Encoding: binary');
 		header('Pragma: no-cache');
+
+        echo "\xEF\xBB\xBF"; // Add BOM
+
 		$model = $this->getModel('attendees');
 		$model->getCsv();
 		jexit();
