@@ -9,16 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 events.forEach(event => {
                     const eventElement = document.createElement('div');
-                    eventElement.className = 'event';
+                    eventElement.className = 'jemevent';
                     
                     // TITLE according to display_mode
                     let titleHTML = '';
                     if (event.title && event.title.display_mode !== 'off') {
                         const titleText = event.title?.display || event.title?.full || 'Kein Titel';
                         if (event.title.display_mode === 'link') {
-                            titleHTML = `<h3 class="event-title"><a href="${event.title.url}">${titleText}</a></h3>`;
+                            titleHTML = `<h3 class="jemevent-title"><a href="${event.title.url}">${titleText}</a></h3>`;
                         } else if (event.title.display_mode === 'on') {
-                            titleHTML = `<h3 class="event-title">${titleText}</h3>`;
+                            titleHTML = `<h3 class="jemevent-title">${titleText}</h3>`;
                         }
                     }
                     
@@ -30,9 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         const venueText = venueCity ? `${venueName}, ${venueCity}` : venueName;
                         
                         if (event.venue.display_mode === 'link') {
-                            venueHTML = `<div class="event-venue"><a href="${event.venue.url}">${venueText}</a></div>`;
+                            venueHTML = `<div class="jemevent-venue"><a href="${event.venue.url}">${venueText}</a></div>`;
                         } else if (event.venue.display_mode === 'on') {
-                            venueHTML = `<div class="event-venue">${venueText}</div>`;
+                            venueHTML = `<div class="jemevent-venue">${venueText}</div>`;
                         }
                     }
                     
@@ -52,25 +52,25 @@ document.addEventListener('DOMContentLoaded', function() {
                             .filter(Boolean);
                             
                         if (visibleCategories.length > 0) {
-                            categoriesHTML = `<div class="event-categories">${visibleCategories.join(', ')}</div>`;
+                            categoriesHTML = `<div class="jemevent-categories">${visibleCategories.join(', ')}</div>`;
                         }
                     }
                     
                     eventElement.innerHTML = `
                         ${titleHTML}
-                        <div class="event-date">
+                        <div class="jemevent-date">
                             ${event.dates?.formatted_start_date || 'Datum unbekannt'}
                             ${event.dates?.formatted_start_time ? ', ' + event.dates.formatted_start_time : ''}
                         </div>
                         ${venueHTML}
                         ${categoriesHTML}
-                        <div class="event-description">${event.description?.substring(0, 150) || 'Keine Beschreibung'}...</div>
+                        <div class="jemevent-description">${event.description?.substring(0, 150) || 'Keine Beschreibung'}...</div>
                     `;
                     
                     container.appendChild(eventElement);
                 });
             } else {
-                container.innerHTML = '<p>Keine Events gefunden oder Datenformat ungültig.</p>';
+                container.innerHTML = '<p>No events or invlaid date format.</p>';
             }
         })
         .catch(error => {
