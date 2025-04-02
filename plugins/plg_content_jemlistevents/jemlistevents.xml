@@ -43,13 +43,13 @@
 				</field>
 				<field name="show_featured" type="list"
 					size="1"
-					default="1"
+					default="on"
 				    label="PLG_CONTENT_JEMLISTEVENTS_FEATURED_LABEL"
 					description="PLG_CONTENT_JEMLISTEVENTS_FEATURED_DESCRIPTION"
 				>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-					<option value="2">JONLY</option>
+					<option value="off">JNO</option>
+					<option value="on">JYES</option>
+					<option value="only">JONLY</option>
 				</field>
 				<field name="title" type="list"
 					size="1"
