@@ -146,6 +146,7 @@ use Joomla\CMS\Router\Route;
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
                   <?php endif; ?>                  
+					<?php echo JemOutput::publishstateicon($row); ?>				  
                 </div>               
             <?php endif; ?>
 

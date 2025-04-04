@@ -126,6 +126,7 @@ div#jem_filter select {
 									echo '-';
 								endif;
 								?>
+								<?php echo JemOutput::publishstateicon($row); ?>
 							</td>
 							<?php endif; ?>
 

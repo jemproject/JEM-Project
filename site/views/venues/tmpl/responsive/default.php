@@ -34,6 +34,7 @@ use Joomla\CMS\Language\Text;
         <!--Venue-->
         <?php foreach($this->rows as $row) : ?>
             <?php
+
             // has user access
             $venueaccess = '';
             if (!$row->user_has_access_venue) {
@@ -43,6 +44,7 @@ use Joomla\CMS\Language\Text;
             <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
                 <h2 class="jem">
                     <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
+					<?php echo JemOutput::publishstateicon($row); ?>
                     <?php echo $venueaccess;?>
                 </h2>
 

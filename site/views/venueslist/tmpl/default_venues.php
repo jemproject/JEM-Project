@@ -107,6 +107,7 @@ use Joomla\CMS\Router\Route;
                             else :
                                 echo $row->id ? $this->escape($row->venue) : '-';
                             endif;
+							echo JemOutput::publishstateicon($row);
                             echo $venueaccess;
                             ?>
                         </td>
