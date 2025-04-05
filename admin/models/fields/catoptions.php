@@ -32,7 +32,10 @@ class JFormFieldCatOptions extends ListField
 	 */
 	public function getInput()
 	{
+        $jinput = Factory::getApplication()->input;
+        $currentid = $jinput->getInt('id');
 		$attr = '';
+        $selectedcats = [];
 
 		// Initialize field attributes.
         $attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
@@ -52,19 +55,21 @@ class JFormFieldCatOptions extends ListField
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
-		$jinput = Factory::getApplication()->input;
-		$currentid = $jinput->getInt('id');
-
-        $db = Factory::getContainer()->get('DatabaseDriver');
-		$query	= $db->getQuery(true);
-		$query->select('DISTINCT catid');
-		$query->from('#__jem_cats_event_relations');
-		$query->where('itemid = '. $db->quote($currentid));
-		$db->setQuery($query);
-		$selectedcats = $db->loadColumn();
+		// Gets currently selected categories (existing event) or default categories (new event)
+        if(empty($currentid)) {
+            $selectedcats = $this->default ? (array)$this->default : [];
+        } else {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true);
+            $query->select('DISTINCT catid');
+            $query->from('#__jem_cats_event_relations');
+            $query->where('itemid = ' . $db->quote($currentid));
+            $db->setQuery($query);
+            $selectedcats = $db->loadColumn();
+        }
 
 		// Create a read-only list (no name) with a hidden input to store the value.
-		if ((string) $this->readonly == '1' || (string) $this->readonly == 'true')
+		if ((string) $this->readonly == '1' || (string  ) $this->readonly == 'true')
 		{
 			$html[] = HTMLHelper::_('select.genericlist', $options, $this->name, trim($attr), 'value', 'text', $selectedcats,$this->id);
 			$html[] = '<input type="hidden" name="' . $this->name . '" value="' . htmlspecialchars($selectedcats, ENT_COMPAT, 'UTF-8') . '"/>';

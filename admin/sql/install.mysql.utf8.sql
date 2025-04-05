@@ -320,7 +320,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('useiconfont', '1'),
 ('flyer', '0'),
 ('categories_order', '2'),
-('defaultCategory', '1'),
+('defaultCategory', '0'),
 ('defaultVenue', '0');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES

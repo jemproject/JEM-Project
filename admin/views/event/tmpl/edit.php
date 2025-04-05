@@ -213,12 +213,18 @@ $params = $params->toArray();
                     <li><div class="label-form"><?php echo $this->form->renderfield('enddates'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('times'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
+                    <?php if($this->jemsettings->defaultCategory && empty($item->id)) {
+                        $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
+                    } ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('cats'); ?></div></li>
                 </ul>
             </fieldset>
 
             <fieldset class="adminform">
                 <ul class="adminformlist">
+                    <?php if($this->jemsettings->defaultVenue && empty($item->id)) {
+                        $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
+                    } ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>

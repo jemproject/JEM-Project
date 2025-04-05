@@ -85,12 +85,13 @@
 		/>
 		<field name="cats" type="catoptions"
 			   multiple="true"
-			   class="inputbox form-select"
+			   class="inputbox required form-select"
 			   size="4"
 			   label="COM_JEM_FIELD_CATEGORIES"
 			   labelclass=""
 			   description="COM_JEM_FIELD_CATEGORIES_DESC"
 			   required="true"
+			   default=""
 		/>
 		<field name="hits" type="hits"
 			   default="0"

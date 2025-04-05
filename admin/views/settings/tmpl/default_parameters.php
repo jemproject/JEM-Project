@@ -19,7 +19,7 @@ $group = 'globalattribs';
             <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -51,7 +51,7 @@ $group = 'globalattribs';
             <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
