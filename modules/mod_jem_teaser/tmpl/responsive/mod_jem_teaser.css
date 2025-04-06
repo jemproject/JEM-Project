@@ -61,7 +61,7 @@ body.body-overlayed {
   float: right;
   margin-left: 5px;
   margin-bottom: 5px;
-  min-width: 100px;
+    min-width: 200px;
 }
 
 #jemmoduleteaser .event-title, 
