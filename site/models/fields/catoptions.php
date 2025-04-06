@@ -34,7 +34,13 @@ class JFormFieldCatOptions extends ListField
 	 */
 	public function getInput()
 	{
-		$attr = '';
+        $jinput = Factory::getApplication()->input;
+        $currentid = $jinput->getInt('a_id');
+        if (!$currentid) { // special case: new event as copy of another one
+            $currentid = $jinput->getInt('from_id');
+        }
+        $attr = '';
+        $selectedcats = [];
 
 		// Initialize field attributes.
         $attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
@@ -51,22 +57,21 @@ class JFormFieldCatOptions extends ListField
         // Initialize JavaScript field attributes.
         $attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 
-		// Output
-		$currentid = Factory::getApplication()->input->getInt('a_id');
-		if (!$currentid) { // special case: new event as copy of another one
-			$currentid = Factory::getApplication()->input->getInt('from_id');
-		}
-
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
-		$query->select('DISTINCT catid');
-		$query->from('#__jem_cats_event_relations');
-		$query->where('itemid = '. $db->quote($currentid));
-		$db->setQuery($query);
-		$selectedcats = $db->loadColumn();
+        // Gets currently selected categories (existing event) or default categories (new event)
+        if(empty($currentid)) {
+            $selectedcats = $this->default ? (array)$this->default : [];
+        } else {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true);
+            $query->select('DISTINCT catid');
+            $query->from('#__jem_cats_event_relations');
+            $query->where('itemid = ' . $db->quote($currentid));
+            $db->setQuery($query);
+            $selectedcats = $db->loadColumn();
+        }
 
 		// On new event we may have a category preferred to select.
 		if (empty($selectedcats) && !empty($this->element['prefer'])) {
