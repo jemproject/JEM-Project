@@ -19,7 +19,7 @@ $group = 'globalattribs';
             <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -51,7 +51,7 @@ $group = 'globalattribs';
             <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -68,3 +68,17 @@ $group = 'globalattribs';
     </div>
 </div>
 <div class="clr"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('jform_defaultCategory');
+        if (select) {
+            const selectedOption = select.querySelector('option[selected]');
+            if (selectedOption) {
+                const optionIndex = Array.from(select.options).indexOf(selectedOption);
+                const optionHeight = selectedOption.offsetHeight;
+                select.scrollTop = optionIndex * optionHeight - (select.offsetHeight / 2);
+            }
+        }
+    });
+</script>

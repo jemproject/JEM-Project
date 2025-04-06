@@ -1389,3 +1389,9 @@ input#places::-webkit-inner-spin-button {
     width: auto;
     min-width: max-content;
 }
+
+#jform_defaultCategory option:checked {
+    background-color: #007bff !important;
+    color: white !important;
+    font-weight: bold;
+}
