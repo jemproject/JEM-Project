@@ -420,7 +420,7 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
-		// publish_down can be empty; if it is, set it to null. However, publish_up must always have a valid datetime.
+		// Set publish_down to null if they are empty (publish_up must have a datetime)
 		if (empty($data['publish_down'])) {
 		    $data['publish_down'] = null;
 		}

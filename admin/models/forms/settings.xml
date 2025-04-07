@@ -94,10 +94,6 @@
 			   size="40"
 			   required="true"
 		/>
-		<field name="defaultCountry" type="countryoptions"
-			   label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
-			   description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
-		/>
 		<field name="flagicons_path" type="text"
 			   label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
 			   description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
@@ -107,6 +103,28 @@
 			   required="true"
 		/>
 		<field name="spacer2" type="spacer"
+			   hr="true"
+		/>
+		<field name="defaultCategory" type="catoptionsdefault"
+			   label="COM_JEM_SETTINGS_SELECT_DEFAULT_CATEGORY"
+			   description="COM_JEM_SETTINGS_SELECT_DEFAULT_CATEGORY_DESC"
+			   class="inputbox form-select"
+			   size="4"
+			   default="0"
+		>
+			<option value="0">COM_JEM_SETTINGS_SELECT_CATEGORY_NONE</option>
+		</field>
+		<field name="defaultVenue" type="modal_venue"
+			   label="COM_JEM_SETTINGS_SELECT_DEFAULT_VENUE"
+			   description="COM_JEM_SETTINGS_SELECT_DEFAULT_VENUE_DESC"
+			   size="40"
+			   default="0"
+		/>
+		<field name="defaultCountry" type="countryoptions"
+			   label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
+			   description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
+		/>
+		<field name="spacer3" type="spacer"
 			   hr="true"
 		/>
 		<field name="csv_separator" type="list"
