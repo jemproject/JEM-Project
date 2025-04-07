@@ -80,7 +80,7 @@
                label="COM_JEM_ENABLE_MAP"
                description="COM_JEM_ENABLE_MAP"
                value="1"
-               default="0"
+               default="1"
         />
         <field name="published" type="list"
                label="JSTATUS"
