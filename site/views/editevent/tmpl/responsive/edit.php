@@ -230,8 +230,14 @@ $params		= $this->params;
                     <dd><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
                     <dd><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
+                        $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
+                    } ?>
                     <dt><?php echo $this->form->getLabel('cats'); ?></dt>
                     <dd><?php echo $this->form->getInput('cats'); ?></dd>
+                    <?php if($this->jemsettings->defaultVenue && empty($this->item->id)) {
+                        $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
+                    } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
 

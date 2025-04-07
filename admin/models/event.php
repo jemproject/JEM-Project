@@ -420,6 +420,11 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
+		// Set publish_down to null if they are empty (publish_up must have a datetime)
+		if (empty($data['publish_down'])) {
+		    $data['publish_down'] = null;
+		}
+
         // if the 'registra' field does not exist or is null, set it to the value from jem settings
         if(!isset($data['registra'])) {
             $data['registra'] =$jemsettings->showfroregistra;
