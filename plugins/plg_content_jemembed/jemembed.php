@@ -100,13 +100,6 @@ class PlgContentJemembed extends CMSPlugin
             return true;
         }
         
-        // If we've enabled CSRF token fallback, check for valid CSRF token
-        $csrfFallback = (bool) $this->params->get('csrf_fallback', 0);
-        if ($csrfFallback) {
-            // Check if the token matches the session token (for same-origin requests)
-            return Session::checkToken('get');
-        }
-        
         return false;
     }
 
