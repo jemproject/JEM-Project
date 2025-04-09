@@ -405,7 +405,8 @@ class PlgContentJemlistevents extends CMSPlugin
             $linkdate    = Route::_(JemHelperRoute::getRoute($event->dates !== null ? str_replace('-', '', $event->dates) : '','day'));
             $linkvenue   = Route::_(JemHelperRoute::getVenueRoute($event->venueslug));
 
-            $html_list .= '<tr class="listevent event'.($n_event + 1).'">';
+            $featured_class = isset($event->featured) && $event->featured ? ' jemlistevent-featured' : '';
+            $html_list .= '<tr class="listevent event'.($n_event + 1).$featured_class.'">';
 
             if ($parameters['title'] !== 'off') {
                 $html_list .= '<td class="eventtitle" data-label="' . Text::_('COM_JEM_TITLE') . '">';
