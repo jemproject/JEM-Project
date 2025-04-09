@@ -16,7 +16,7 @@
     </files>
     
     <media destination="plg_content_jemembed" folder="media">
-        <folder>css</folder>
+        <folder>files</folder>
     </media>
     
 	<languages>
@@ -37,11 +37,6 @@
                 </field>
                 
                 <field name="api_tokens" type="textarea" label="PLG_CONTENT_JEMEMBED_API_TOKENS_LABEL" description="PLG_CONTENT_JEMEMBED_API_TOKENS_DESC" rows="5" cols="30" />
-                
-                <field name="csrf_fallback" type="radio" label="PLG_CONTENT_JEMEMBED_CSRF_FALLBACK_LABEL" description="PLG_CONTENT_JEMEMBED_CSRF_FALLBACK_DESC" default="0" class="btn-group btn-group-yesno">
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
             </fieldset>
         </fields>
     </config>
