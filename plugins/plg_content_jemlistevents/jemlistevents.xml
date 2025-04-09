@@ -41,14 +41,15 @@
 					<option value="open"      >PLG_CONTENT_JEMLISTEVENTS_OPEN_EVENTS</option>
 					<option value="all"       >PLG_CONTENT_JEMLISTEVENTS_ALL_EVENTS</option>
 				</field>
-				<field name="show_featured" type="radio"
-					class="btn-group btn-group-yesno"
+				<field name="show_featured" type="list"
+					size="1"
 					default="0"
 				    label="PLG_CONTENT_JEMLISTEVENTS_FEATURED_LABEL"
 					description="PLG_CONTENT_JEMLISTEVENTS_FEATURED_DESCRIPTION"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="2">JONLY</option>
 				</field>
 				<field name="title" type="list"
 					size="1"

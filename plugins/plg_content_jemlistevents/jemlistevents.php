@@ -35,7 +35,7 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     protected static $optionDefaults = array(
             'type'              => 'unfinished',
-            'show_featured'     => 'off',
+            'show_featured'     => '0',
             'title'             => 'on',
             'cut_title'         => 40,
             'show_date'         => 'on',
@@ -57,29 +57,29 @@ class PlgContentJemlistevents extends CMSPlugin
 
     /** all text tokens with their corresponding option
      */
-    protected static $optionTokens = array(      // {jemlistevents
-            'type'        => 'type',             //  [type=today|unfinished|ongoing|upcoming|archived|newest|open|all];
-            'featured'    => 'show_featured',    //  [featured=on|off];
-            'title'       => 'title',            //  [title=on|link|off];
-            'cuttitle'    => 'cut_title',        //  [cuttitle=n];
-            'date'        => 'show_date',        //  [date=on|link|off];
-        //    'dateformat'  => 'date_format',      //
-            'time'        => 'show_time',        //  [time=on|off];
-        //    'timeformat'  => 'time_format',      //
-            'enddatetime' => 'show_enddatetime', //  [enddatetime=on|off];
-            'catids'      => 'catids',           //  [catids=n];
-            'category'    => 'show_category',    //  [category=on|link|off];
-            'venueids'    => 'venueids',         //  [venueids=n];
-            'venue'       => 'show_venue',       //  [venue=on|link|off];
-            'max'         => 'max_events',       //  [max=n];
-            'noeventsmsg' => 'no_events_msg',    //  [noeventsmsg=msg]
-            );                                   // }
+    protected static $optionTokens = array(              //  {jemlistevents
+            'type'        => 'type',                     //  [type=today|unfinished|ongoing|upcoming|archived|newest|open|all];
+            'featured'    => 'show_featured',            //  [featured=0|1|2];
+            'title'       => 'title',                    //  [title=on|link|off];
+            'cuttitle'    => 'cut_title',                //  [cuttitle=n];
+            'date'        => 'show_date',                //  [date=on|link|off];
+      //    'dateformat'  => 'date_format',            //
+            'time'        => 'show_time',                //  [time=on|off];
+      //    'timeformat'  => 'time_format',            //
+            'enddatetime' => 'show_enddatetime',         //  [enddatetime=on|off];
+            'catids'      => 'catids',                   //  [catids=n];
+            'category'    => 'show_category',            //  [category=on|link|off];
+            'venueids'    => 'venueids',                 //  [venueids=n];
+            'venue'       => 'show_venue',               //  [venue=on|link|off];
+            'max'         => 'max_events',               //  [max=n];
+            'noeventsmsg' => 'no_events_msg',            //  [noeventsmsg=msg]
+            );                                           // }
 
     /** all text tokens with their corresponding option
      */
     protected static $tokenValues = array(    // {jemlistevents
             'type'        => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
-            'featured'    => array('on', 'off'),
+            'featured'    => array('on', 'off', 'only'),
             'title'       => array('on', 'link', 'off'),
             'date'        => array('on', 'link', 'off'),
             'time'        => array('on', 'off'),
@@ -237,8 +237,16 @@ class PlgContentJemlistevents extends CMSPlugin
         if (isset($parameters['show_featured'])) {
             $featured = $parameters['show_featured'];
 
-            if ($featured == 'on') {
-                $model->setState('filter.featured', 1);
+            switch ($featured) {
+                case '0': // 0 = no: Show only non-featured events
+                    $model->setState('filter.featured', 0);
+                break;
+                case '1': // 1 = yes: Show both featured and non-featured events
+                    // No additional filtering needed
+                break;
+                case '2': // 2 = only: Show only featured events
+                    $model->setState('filter.featured', 1);
+                break;
             }
         }
 
@@ -397,7 +405,8 @@ class PlgContentJemlistevents extends CMSPlugin
             $linkdate    = Route::_(JemHelperRoute::getRoute($event->dates !== null ? str_replace('-', '', $event->dates) : '','day'));
             $linkvenue   = Route::_(JemHelperRoute::getVenueRoute($event->venueslug));
 
-            $html_list .= '<tr class="listevent event'.($n_event + 1).'">';
+            $featured_class = isset($event->featured) && $event->featured ? ' jemlistevent-featured' : '';
+            $html_list .= '<tr class="listevent event'.($n_event + 1).$featured_class.'">';
 
             if ($parameters['title'] !== 'off') {
                 $html_list .= '<td class="eventtitle" data-label="' . Text::_('COM_JEM_TITLE') . '">';
