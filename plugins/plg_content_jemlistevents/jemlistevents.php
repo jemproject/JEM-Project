@@ -79,7 +79,7 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     protected static $tokenValues = array(    // {jemlistevents
             'type'        => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
-            'featured'    => array('on', 'off', 'only'),
+            'featured'    => array('1', '0', '2'),
             'title'       => array('on', 'link', 'off'),
             'date'        => array('on', 'link', 'off'),
             'time'        => array('on', 'off'),
