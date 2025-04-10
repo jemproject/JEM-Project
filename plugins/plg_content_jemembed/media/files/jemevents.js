@@ -50,7 +50,7 @@ function createTitleHTML(title) {
 
     const titleText = title.display || title.full || 'Kein Titel';
     if (title.display_mode === 'link') {
-        return `<h3 class="jemevent-title"><a href="${title.url}">${titleText}</a></h3>`;
+        return `<h3 class="jemevent-title"><a href="${title.url}" target="_blank">${titleText}</a></h3>`;
     } else if (title.display_mode === 'on') {
         return `<h3 class="jemevent-title">${titleText}</h3>`;
     }
