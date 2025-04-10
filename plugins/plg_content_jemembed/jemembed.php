@@ -151,6 +151,18 @@ class PlgContentJemembed extends CMSPlugin
     }
 
     /**
+     * Get the site domain for absolute URLs
+     * 
+     * @return string The site domain with protocol
+     */
+    protected function getSiteDomain()
+    {
+        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+                   $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        return rtrim($protocol . $_SERVER['HTTP_HOST'], '/');
+    }
+
+    /**
      * AJAX endpoint to retrieve events in JSON format
      * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_API_TOKEN
      * 
@@ -180,6 +192,9 @@ class PlgContentJemembed extends CMSPlugin
             // Get request parameters
             $app = Factory::getApplication();
             $parameters = self::$optionDefaults;
+            
+            // Get site domain for absolute URLs
+            $siteDomain = $this->getSiteDomain();
             
             // Map request parameters to internal parameters
             $paramMapping = [
@@ -215,9 +230,9 @@ class PlgContentJemembed extends CMSPlugin
             // Format events for JSON output
             $events = [];
             foreach ($eventlist as $event) {
-                $linkdetails = Route::_(JemHelperRoute::getEventRoute($event->slug));
-                $linkdate = Route::_(JemHelperRoute::getRoute($event->dates !== null ? str_replace('-', '', $event->dates) : '', 'day'));
-                $linkvenue = Route::_(JemHelperRoute::getVenueRoute($event->venueslug));
+                $linkdetails = $siteDomain . Route::_(JemHelperRoute::getEventRoute($event->slug));
+                $linkdate = $siteDomain . Route::_(JemHelperRoute::getRoute($event->dates !== null ? str_replace('-', '', $event->dates) : '', 'day'));
+                $linkvenue = $siteDomain . Route::_(JemHelperRoute::getVenueRoute($event->venueslug));
                 
                 // Format title based on parameters
                 $fulltitle = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
@@ -270,7 +285,7 @@ class PlgContentJemembed extends CMSPlugin
                 }
                 
                 // Add categories
-                $formattedEvent['categories'] = $this->_formatCategories($event->categories, $parameters['show_category']);
+                $formattedEvent['categories'] = $this->_formatCategories($event->categories, $parameters['show_category'], $siteDomain);
                 
                 $events[] = $formattedEvent;
             }
@@ -295,12 +310,18 @@ class PlgContentJemembed extends CMSPlugin
      * 
      * @param array $categories The categories to format
      * @param string $displayMode The display mode (on, link, off)
+     * @param string $siteDomain The site domain for absolute URLs
      * @return array The formatted categories
      */
-    protected function _formatCategories($categories, $displayMode = 'off')
+    protected function _formatCategories($categories, $displayMode = 'off', $siteDomain = '')
     {
         if (!$categories) {
             return [];
+        }
+        
+        // If no siteDomain was passed, get it
+        if (empty($siteDomain)) {
+            $siteDomain = $this->getSiteDomain();
         }
         
         $result = [];
@@ -311,7 +332,7 @@ class PlgContentJemembed extends CMSPlugin
                         'id' => $category->id,
                         'name' => $category->catname,
                         'slug' => $category->catslug,
-                        'url' => Route::_(JemHelperRoute::getCategoryRoute($category->catslug)),
+                        'url' => $siteDomain . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)),
                         'display_mode' => $displayMode
                     ];
                     $result[] = $cat;
