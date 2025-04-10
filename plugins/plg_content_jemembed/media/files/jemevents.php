@@ -31,20 +31,20 @@ const CACHE_TTL = 300;            // Cache lifetime in seconds (5 minutes)
 
 // Parameters to define which events are loaded
 $config = [
-    'type' => 'unfinished',
-    'show_featured' => 'off',
-    'title' => 'on',
-    'cut_title' => 100,
-    'show_date' => 'on',
-    'date_format' => '',
-    'show_time' => 'on',
-    'time_format' => '',
-    'show_enddatetime' => 'on',
-    'catids' => '',
-    'show_category' => 'on',
-    'venueids' => '',
-    'show_venue' => 'on',
-    'max_events' => '100'
+    'type' => 'unfinished', // today|unfinished|upcoming|archived|newest
+    'show_featured' => 'off', // 0 = off, 1 = on, 2 = only
+    'title' => 'link', // on|link|off
+    'cut_title' => 100, // a positive number
+    'show_date' => 'on', // on|link|off
+    'date_format' => '', // 
+    'show_time' => 'on', // on|off
+    'time_format' => '', // 
+    'show_enddatetime' => 'on', // on|off
+    'catids' => '', // comma separated category ids
+    'show_category' => 'on', // on|link|off
+    'venueids' => '', // comma separated venue ids
+    'show_venue' => 'on', // on|link|off
+    'max_events' => 100 // a positive number
 ];
 
 // ############################################
