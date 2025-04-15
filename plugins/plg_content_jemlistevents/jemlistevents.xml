@@ -35,7 +35,7 @@
 					<option value="today"     >PLG_CONTENT_JEMLISTEVENTS_TODAYS_EVENTS</option>
 					<option value="unfinished">PLG_CONTENT_JEMLISTEVENTS_UNFINISHED_EVENTS</option>
 					<option value="upcoming"  >PLG_CONTENT_JEMLISTEVENTS_UPCOMING_EVENTS</option>
-					<option value="ongoing"  >PLG_CONTENT_JEMLISTEVENTS_ONGOING_EVENTS</option>
+					<option value="ongoing"   >PLG_CONTENT_JEMLISTEVENTS_ONGOING_EVENTS</option>
 					<option value="archived"  >PLG_CONTENT_JEMLISTEVENTS_ARCHIVED_EVENTS</option>
 					<option value="newest"    >PLG_CONTENT_JEMLISTEVENTS_NEWEST_EVENTS</option>
 					<option value="open"      >PLG_CONTENT_JEMLISTEVENTS_OPEN_EVENTS</option>
@@ -43,7 +43,7 @@
 				</field>
 				<field name="show_featured" type="list"
 					size="1"
-					default="0"
+					default="1"
 				    label="PLG_CONTENT_JEMLISTEVENTS_FEATURED_LABEL"
 					description="PLG_CONTENT_JEMLISTEVENTS_FEATURED_DESCRIPTION"
 				>

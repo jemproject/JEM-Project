@@ -23,7 +23,6 @@ BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemM
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
-
 /**
  * JEM List Events Plugin
  *
@@ -35,7 +34,7 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     protected static $optionDefaults = array(
             'type'              => 'unfinished',
-            'show_featured'     => '0',
+            'show_featured'     => 'on',
             'title'             => 'on',
             'cut_title'         => 40,
             'show_date'         => 'on',
@@ -53,13 +52,13 @@ class PlgContentJemlistevents extends CMSPlugin
 
     /** options we have to convert from numbers to 'on'/'off'
      */
-    protected static $optionConvert = array('show_featured', 'show_time', 'show_enddatetime');
+    protected static $optionConvert = array('show_time', 'show_enddatetime');
 
     /** all text tokens with their corresponding option
      */
     protected static $optionTokens = array(              //  {jemlistevents
             'type'        => 'type',                     //  [type=today|unfinished|ongoing|upcoming|archived|newest|open|all];
-            'featured'    => 'show_featured',            //  [featured=0|1|2];
+            'featured'    => 'show_featured',            //  [featured=on|off|only];
             'title'       => 'title',                    //  [title=on|link|off];
             'cuttitle'    => 'cut_title',                //  [cuttitle=n];
             'date'        => 'show_date',                //  [date=on|link|off];
@@ -79,7 +78,7 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     protected static $tokenValues = array(    // {jemlistevents
             'type'        => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
-            'featured'    => array('0', '1', '2'),
+            'featured'    => array('on', 'off', 'only'),
             'title'       => array('on', 'link', 'off'),
             'date'        => array('on', 'link', 'off'),
             'time'        => array('on', 'off'),
@@ -123,9 +122,9 @@ class PlgContentJemlistevents extends CMSPlugin
         if (empty($row->text) || mb_strpos($row->text, 'jemlistevents') === false) {
             return true;
         }
-        
+
         $templateName = Factory::getApplication()->getTemplate();
-        
+
         // load CSS-file
         $document = Factory::getApplication()->getDocument();
         $wa = $document->getWebAssetManager();
@@ -136,7 +135,7 @@ class PlgContentJemlistevents extends CMSPlugin
         else {
             $wa->registerAndUseStyle('jemlistevents', 'media/plg_content_jemlistevents/css/jemlistevents.css');
             }
-            
+
         // expression to search for
         $regex = '/{jemlistevents\s*(.*?)}/i';
 
@@ -238,13 +237,13 @@ class PlgContentJemlistevents extends CMSPlugin
             $featured = $parameters['show_featured'];
 
             switch ($featured) {
-                case '0': // 0 = no: Show only non-featured events
+                case 'off': // Show only non-featured events
                     $model->setState('filter.featured', 0);
                 break;
-                case '1': // 1 = yes: Show both featured and non-featured events
+                case 'on': // Show both featured and non-featured events
                     // No additional filtering needed
                 break;
-                case '2': // 2 = only: Show only featured events
+                case 'only': // Show only featured events
                     $model->setState('filter.featured', 1);
                 break;
             }
@@ -286,7 +285,7 @@ class PlgContentJemlistevents extends CMSPlugin
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $full_start_datetime = 'CONCAT(a.dates, " ", COALESCE(a.times, "00:00:00"))';
                     $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
-                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';        
+                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';
                     $model->setState('filter.calendar_to', $where);
                     break;
                 case 'archived': // Archived events only.
@@ -311,18 +310,18 @@ class PlgContentJemlistevents extends CMSPlugin
         } catch (\Exception $e) {
             // Log the error to the Joomla log
             JLog::add(
-                sprintf('Error in JemListEvents plugin: %s (File: %s, Line: %s)', 
-                    $e->getMessage(), 
-                    $e->getFile(), 
+                sprintf('Error in JemListEvents plugin: %s (File: %s, Line: %s)',
+                    $e->getMessage(),
+                    $e->getFile(),
                     $e->getLine()
-                ), 
-                JLog::ERROR, 
+                ),
+                JLog::ERROR,
                 'plg_content_jemlistevents'
             );
 
             // Show a user-friendly error message
             Factory::getApplication()->enqueueMessage(
-                Text::_('PLG_CONTENT_JEMLISTEVENTS_ERROR_LOADING_EVENTS'), 
+                Text::_('PLG_CONTENT_JEMLISTEVENTS_ERROR_LOADING_EVENTS'),
                 'error'
             );
             // Set to default filter (unfinished events)
@@ -352,9 +351,9 @@ class PlgContentJemlistevents extends CMSPlugin
         if ($rows === false) {
             $rows = array(); // to skip foreach w/o warning
         }
-        
+
         $n_event = 0;
-        
+
         // thead only if there are events
         if (count($rows) > 0) {
             // insert table header
@@ -390,12 +389,12 @@ class PlgContentJemlistevents extends CMSPlugin
         if ($parameters['show_date'] !== 'off') $cols_count++;
         if ($parameters['show_venue'] !== 'off') $cols_count++;
         if ($parameters['show_category'] !== 'off') $cols_count++;
-        if ($parameters['show_time'] !== 'off' && 
+        if ($parameters['show_time'] !== 'off' &&
             (($parameters['show_date'] === 'off' && $parameters['show_enddatetime'] !== 'off') ||
              ($parameters['show_enddatetime'] === 'off'))) {
             $cols_count++;
         }
-        
+
         // at least 1 Spalte column
         $cols_count = max(1, $cols_count);
 
