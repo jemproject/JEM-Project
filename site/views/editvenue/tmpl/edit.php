@@ -255,8 +255,12 @@ window.onload = (event) => {
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
 				</ul>
 			</fieldset>
+			<p>&nbsp;</p>
 
 			<!-- VENUE-GEODATA-->
+			<?php
+			$global_show_mapserv = $this->settings->get('global_show_mapserv');
+			if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
 			<fieldset class="adminform" id="geodata">
 				<legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
 				<ul class="adminformlist">
@@ -307,6 +311,8 @@ window.onload = (event) => {
 					<input id="cp-latlong" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
 				</div>
 			</fieldset>
+			<p>&nbsp;</p>
+			<?php endif; ?>
 			<fieldset>
 				<legend><?php echo Text::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>
 				<div class="clr"></div>

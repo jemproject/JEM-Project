@@ -85,7 +85,7 @@
 			label="COM_JEM_ENABLE_MAP"
 			description="COM_JEM_ENABLE_MAP"
 			value="1"
-			checked="0"
+			checked="1"
 		/>
 		<field name="locimage" type="imageselect"
 			class="inputbox"
