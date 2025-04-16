@@ -203,7 +203,7 @@
                 <field type="radio" name="newevent_mail_category_acl"
                        label="PLG_JEM_MAILER_CATEGORY_ACL_LABEL"
                        default="0"
-                       description="PLG_JEM_MAILER_NOTIFY_ACL_CATEGORY_DESC"
+                       description="PLG_JEM_MAILER_NOTIFY_CATEGORY_ACL_DESC"
                        class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
