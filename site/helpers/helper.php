@@ -1718,6 +1718,16 @@ class JemHelper
 	}
 
 	/**
+	 * Loads Custom Tags
+	 *
+	 * @return boolean
+	 */
+	static public function loadCustomTag()
+	{
+		// emtpy method
+	}
+
+	/**
 	 * Get a variable from the manifest file (actually, from the manifest cache).
 	 *
 	 * @param  $column  manifest_cache(1),params(2)
