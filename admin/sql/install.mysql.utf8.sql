@@ -259,6 +259,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('formattime', 'H:i'),
 ('formathour', 'H'),
 ('timename', 'h'),
+('show_date_in_title', '1'),
 ('showdetails', '1'),
 ('showlinkvenue', '1'),
 ('delivereventsyes', '-2'),
