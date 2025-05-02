@@ -29,6 +29,8 @@
 
 		<file type="plugin" id="jem" group="content">plg_content_jem.zip</file>
 		<file type="plugin" id="jemlistevents" group="content">plg_content_jemlistevents.zip</file>
+		<file type="plugin" id="jemembed" group="content">plg_content_jemembed.zip</file>
+		
 		<file type="plugin" id="jem" group="search">plg_search_jem.zip</file>
 		<file type="plugin" id="jem" group="finder">plg_finder_jem.zip</file>
 		<file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>
