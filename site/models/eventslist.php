@@ -417,7 +417,7 @@ class JemModelEventslist extends ListModel
 
 		# Filter by published state.
 		$where_pub = $this->_getPublishWhere();
-		$currentDate   = Factory::getDate()->format('Y-m-d H:i:s');
+		$currentDate = Factory::getDate('now', Factory::getApplication()->get('offset'))->format('Y-m-d H:i:s', true);
 
 		if (!empty($where_pub)) {
 			if($this->getState('filter.published') == 2) {

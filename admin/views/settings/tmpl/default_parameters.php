@@ -40,7 +40,7 @@ $group = 'globalattribs';
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITVENUE'); ?></legend>
             <ul class="adminformlist">
-                <li><?php echo $this->form->getLabel('global_editvenue_maxnumcustomfields',$group); ?> <?php echo $this->form->getInput('global_editvenue_maxnumcustomfields',$group); ?></li>
+				<li><div class="label-form"><?php echo $this->form->renderfield('global_editvenue_maxnumcustomfields',$group); ?></div></li>
             </ul>
         </fieldset>
     </div>

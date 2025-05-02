@@ -36,6 +36,7 @@ use Joomla\CMS\Language\Text;
 		<div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
 			<h2 class="jem">
 				<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
+				<?php echo JemOutput::publishstateicon($row); ?>
 			</h2>
     
       <div class="jem-row">

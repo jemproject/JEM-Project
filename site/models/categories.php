@@ -233,14 +233,14 @@ class JemModelCategories extends BaseDatabaseModel
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$task   = Factory::getApplication()->input->getCmd('task', '');
-		$currentDate   = Factory::getDate()->format('Y-m-d H:i:s');
+		$currentDate = Factory::getDate()->format('Y-m-d H:i:s');
 
 		$id = (int)$id;
 
 		// First thing we need to do is to select only the requested events
 		if ($task == 'archive') {
 			$where = ' WHERE a.published = 2 AND rel.catid = '.$id;
-		} else {		
+		} else {
 			$ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
 			$where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
 		}

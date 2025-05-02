@@ -1724,14 +1724,7 @@ class JemHelper
 	 */
 	static public function loadCustomTag()
 	{
-        $app = Factory::getApplication();
-        $document = $app->getDocument();
-		$tag = "";
-		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
-
-		$document->addCustomTag($tag);
-
-		return true;
+		// emtpy method
 	}
 
 	/**

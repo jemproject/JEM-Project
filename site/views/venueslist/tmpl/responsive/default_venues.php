@@ -143,6 +143,7 @@ function jem_common_show_filter(&$obj) {
 						else :
 							echo $row->id ? $this->escape($row->venue) : '-';
 						 endif; ?> 
+						<?php echo JemOutput::publishstateicon($row); ?>
 					</div>			
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-venue">
@@ -153,6 +154,7 @@ function jem_common_show_filter(&$obj) {
 						else :
 							echo $row->id ? $this->escape($row->venue) : '-';
 						 endif; ?> 										 
+						<?php echo JemOutput::publishstateicon($row); ?>
                   </div>
                 <?php endif; ?> 			  
 				 
