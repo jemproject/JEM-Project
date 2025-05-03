@@ -1062,7 +1062,7 @@ static public function lightbox() {
 	 			
 	 			if ($lat && $lng) {
 				    $zoom = 15; // Adjust the zoom level as per your requirement
-				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;layer=mapnik&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
 	 			} else { 
 	 				$fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
 	 				$output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
