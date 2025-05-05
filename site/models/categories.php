@@ -233,6 +233,7 @@ class JemModelCategories extends BaseDatabaseModel
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$task   = Factory::getApplication()->input->getCmd('task', '');
+		$currentDate = Factory::getDate()->format('Y-m-d H:i:s');
 
 		$id = (int)$id;
 
@@ -240,7 +241,8 @@ class JemModelCategories extends BaseDatabaseModel
 		if ($task == 'archive') {
 			$where = ' WHERE a.published = 2 AND rel.catid = '.$id;
 		} else {
-			$where = ' WHERE a.published = 1 AND rel.catid = '.$id;
+			$ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
+			$where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
 		}
 
 		// Second is to only select events assigned to category the user has access to

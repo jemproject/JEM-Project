@@ -155,7 +155,7 @@ if ($this->showRegForm && empty($this->print)) :
                 <?php
 
                 //FULL AND WAITLIST
-                if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces)) {
+                    if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && $placesavailableuser !==    0) {
                     if ($this->item->waitinglist) {
                         if ($placesBookedUser) {
                             $placesavailableuser = 0;
@@ -264,7 +264,7 @@ if ($this->showRegForm && empty($this->print)) :
                 }
                 ?>
             </p>
-            <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser) {?>
+            <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser || $this->allowAnnulation	) {?>
                 <p>
 
                     <?php if ($this->allowAnnulation || ($this->isregistered != 1) || $waitingPlacesUser) : ?>

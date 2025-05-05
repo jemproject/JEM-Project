@@ -66,12 +66,19 @@ function generate_output($select_output, $select_value) {
     var $span = document.createElement("span");					// create a new element
     for ($i = 0; $i < $output_array.length; $i++) {
         $weekday_array = $output_array[$i].split("[placeholder_weekday]");	// split by the weekday placeholder
-
+        $lastday_array = $output_array[$i].split("[placeholder_lastday]");	// split by the weekday placeholder
         if ($weekday_array.length > 1) {	// is the weekday placeholder set?
             for ($k = 0; $k < $weekday_array.length; $k++) {
                 $span.appendChild(document.createTextNode($weekday_array[$k]));	// include the the text snippets into span - element
                 if ($k == 0) {	// the first iteration get an extra weekday selectlist
                     $span.appendChild(generate_selectlist_weekday());
+                }
+            }
+        } else  if ($lastday_array.length > 1) {	// is the lastday placeholder set?
+            for ($k = 0; $k < $lastday_array.length; $k++) {
+                $span.appendChild(document.createTextNode($lastday_array[$k]));	// include the the text snippets into span - element
+                if ($k == 0) {	// the first iteration get an extra weekday selectlist
+                    $span.appendChild(generate_selectlist_lastday());
                 }
             }
         } else {
@@ -98,19 +105,22 @@ function generate_selectlist($select_value) {
     $selectlist.onchange = set_parameter;
     switch ($select_value) {
         case "1":
-            $limit = 30;	// days (1 month)
+            $limit = 31;	// days (1 month)
             break;
         case "2":
-            $limit = 13;	// weeks (1/4 year)
+            $limit = 52;	// weeks (1 year)
             break;
         case "3":
             $limit = 18;	// months (1'5 years)
             break;
         case "4":
-            $limit = 7;	    // weekdays (7 cases)
+            $limit = 7;	  // weekdays (7 cases)
             break;
         case "5":
             $limit = 12;	// years ( 1 dozen years)
+            break;
+        case "6":
+            $limit = 7;	  // last day ( 7 last days of month)
             break;
         default:
             $limit =24;		// orders (future, hours?)
@@ -123,7 +133,7 @@ function generate_selectlist($select_value) {
         if ($j == $valueSelected_saved - 1) {	// the selected - attribute
             $option.selected = true;
         }
-        if (($j >= 5) && ($select_value ==4)) {	// get the word for "last" and "before last" in the weekday section
+        if (($j >= 5) && ($select_value == 4)) {	// get the word for "last" and "before last" in the weekday section
             var $name_value = "";
             switch ($j) {
                 case 5:
@@ -185,6 +195,50 @@ function generate_selectlist_weekday() {
     });
     return $selectlist;
 }
+
+/**
+ * this function generate the lastday selectlist
+ *
+ * @return object the generated lastday selectlist
+ * @access public
+ **/
+function generate_selectlist_lastday() {
+    var $selectlist = document.createElement("select");	// the new selectlist
+    $selectlist.name = "recurrence_selectlist_lastday";	// add attributes
+    $selectlist.id = "recurrence_selectlist_lastday";
+    $selectlist.multiple = true;
+    $selectlist.size = 7;
+
+    var selected = document.getElementById("recurrence_bylastday").value.split(','); // array of selected values
+
+    for ($j = 0; $j < 7; $j++) {						// the 7 last days
+        var $option = document.createElement("option");	// create the option - elements
+        $option.value = $lastday[$j][0];	// add the value
+        $option.appendChild(document.createTextNode($lastday[$j][1])); // + 1 day because their is no recuring each "0" day
+        if (selected.includes($option.value)) {	// the selected - attribute
+            $option.selected = true;
+        }
+        $selectlist.appendChild($option);	// include the option - element into the select - element
+    }
+    $($selectlist).on('change', function () {
+        var result = '';
+        var isempty = true;
+        for (i = 0; i < this.length; i++) {
+            if (this.options[i].selected) {
+                if (isempty) {
+                    isempty = false;
+                } else {
+                    result += ',';
+                }
+                result += this.options[i].value
+            }
+        }
+        document.getElementById('recurrence_bylastday').value = result;
+    });
+    return $selectlist;
+}
+
+
 
 /**
  * set the value of the hidden input tags

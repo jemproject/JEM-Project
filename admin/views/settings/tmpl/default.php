@@ -434,7 +434,6 @@ function registraoff()
 					<div class="clr"></div>
 
 
-					
 					<?php echo HTMLHelper::_('uitab.addTab','settings-pane', 'event-settings', Text::_('COM_JEM_EVENT_PAGE')); ?>
 					    <fieldset class="adminform">
 							<div class="width-50 fltlft">
@@ -473,7 +472,6 @@ function registraoff()
 					<div class="clr"></div>
 
 
-				
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
 					    <fieldset class="adminform">
 						   <?php echo $this->loadTemplate('usercontrol'); ?>
@@ -482,7 +480,6 @@ function registraoff()
 					<div class="clr"></div>
 
 
-					
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'configinfo', Text::_('COM_JEM_SETTINGS_TAB_CONFIGINFO')); ?>
 					    <fieldset class="adminform">
 						   <?php echo $this->loadTemplate('configinfo'); ?>

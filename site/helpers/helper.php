@@ -175,7 +175,7 @@ class JemHelper
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 				// Ignore published field to prevent duplicate events.
 				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-				       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
+				       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, recurrence_bylastday, '
 				       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
 				       . ' FROM #__jem_events '
 				       . ' WHERE recurrence_type <> "0" '
@@ -229,6 +229,9 @@ class JemHelper
                             break;
                         case 5:
                             $anticipation	= $jemsettings->recurrence_anticipation_year;
+                            break;
+                        case 6:
+                            $anticipation	= $jemsettings->recurrence_anticipation_lastday;
                             break;
                         default:
                             $anticipation	= $jemsettings->recurrence_anticipation_day;
@@ -425,6 +428,15 @@ class JemHelper
 				break;
             case "5": // year recurrence
                 $start_day = mktime(1,0,0,($date_array["month"]),$date_array["day"],$date_array["year"]+ $recurrence_number);
+                break;
+            case "6": // last day recurrence
+                $selected = $recurrence_row['recurrence_bylastday'];
+                $lastdays_names = array('L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7');
+                $lastday_number = array_search($selected, $lastdays_names);
+                $start_day = mktime(1, 0, 0, ($date_array["month"] + $recurrence_number), 1, $date_array["year"]); // Set day to 1 to avoid issues
+                $last_day_of_month = (int)date('t', $start_day);
+                $day_of_month = $last_day_of_month - $lastday_number;
+                $start_day = mktime(1, 0, 0, ($date_array["month"] + $recurrence_number), $day_of_month, $date_array["year"]);
                 break;
 		}
 
@@ -677,7 +689,7 @@ class JemHelper
 					$result[] = (7 - $firstday) % 7;
 					break;
 				default:
-					\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
 			}
 		}
 
@@ -728,27 +740,53 @@ class JemHelper
 
 	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
-		$timelist = array();
-		$timelist[0] = HTMLHelper::_('select.option', '', '');
+        $min = 0;
+        $timelist = array();
+        $timelist[0] = HTMLHelper::_('select.option', '', '');
 
-		if ($max == 23) {
-			// does user prefer 12 or 24 hours format?
-			$jemreg = JemConfig::getInstance()->toRegistry();
-			$format = $jemreg->get('formathour', false);
-		} else {
-			$format = false;
-		}
+        $jemreg = JemConfig::getInstance()->toRegistry();
 
-		foreach (range(0, $max) as $value) {
-			if ($value < 10) {
-				$value = '0'.$value;
-			}
+        if ($max == 23) {
+            // does user prefer 12 or 24 hours format?
 
-			$timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
-		}
+            $format = $jemreg->get('formathour', false);
+        } else {
+            $format = false;
+        }
 
-		return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
-	}
+        $settings = JemHelper::globalattribs();
+
+        if ($name == 'starthours' || $name == 'endhours'){
+            $min = $settings->get('global_editevent_starttime_limit');
+            $max = $settings->get('global_editevent_endtime_limit');
+            foreach (range($min, $max) as $value) {
+                if ($value < 10) {
+                    $value = '0'.$value;
+                }
+
+                $timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
+            }
+        } else if ($name=='startminutes' || $name=='endminutes'){
+            $block = $settings->get('global_editevent_minutes_block');
+            for ($value = 0; $value <=59; $value += $block) {
+                if ($value < 10) {
+                    $value = '0'.$value;
+                }
+
+                $timelist[] = HTMLHelper::_('select.option', $value, $value);
+            }
+        } else {
+            foreach (range($min, $max) as $value) {
+                if ($value < 10) {
+                    $value = '0'.$value;
+                }
+
+                $timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
+            }
+        }
+
+        return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+    }
 
 	/**
 	 * returns mime type of a file
@@ -896,6 +934,7 @@ class JemHelper
 					}
 					else
 					{
+                        $placesavailable -= $waitreg->places;
 						PluginHelper::importPlugin('jem');
 						$dispatcher = JemFactory::getDispatcher();
 						$res        = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($waitreg->id));
@@ -1685,14 +1724,7 @@ class JemHelper
 	 */
 	static public function loadCustomTag()
 	{
-        $app = Factory::getApplication();
-        $document = $app->getDocument();
-		$tag = "";
-		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
-
-		$document->addCustomTag($tag);
-
-		return true;
+		// emtpy method
 	}
 
 	/**

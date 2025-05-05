@@ -45,8 +45,6 @@ class JemViewVenue extends JemAdminView
 		$wa = $app->getDocument()->getWebAssetManager();
 	
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-		// HTMLHelper::_('stylesheet', 'com_jem/geostyle.css', array(), true);
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 		$wa->registerStyle('jem.geostyle', 'com_jem/geostyle.css')->useStyle('jem.geostyle');
 

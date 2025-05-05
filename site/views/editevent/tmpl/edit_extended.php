@@ -41,6 +41,9 @@ use Joomla\CMS\Date\Date;
                             case 5:
                                 $anticipation	= $this->jemsettings->recurrence_anticipation_year;
                                 break;
+                            case 6:
+                                $anticipation	= $this->jemsettings->recurrence_anticipation_lastday;
+                                break;
                             default:
                                 $anticipation	= $this->jemsettings->recurrence_anticipation_day;
                                 break;
@@ -75,6 +78,9 @@ use Joomla\CMS\Date\Date;
             $select_output[5] = "<?php
                 echo Text::_('COM_JEM_OUTPUT_YEAR');
                 ?>";
+            $select_output[6] = "<?php
+                echo Text::_('COM_JEM_OUTPUT_LASTDAY');
+                ?>";
 
             var $weekday = new Array();
             $weekday[0] = new Array("MO", "<?php echo Text::_('COM_JEM_MONDAY'); ?>");
@@ -84,6 +90,15 @@ use Joomla\CMS\Date\Date;
             $weekday[4] = new Array("FR", "<?php echo Text::_('COM_JEM_FRIDAY'); ?>");
             $weekday[5] = new Array("SA", "<?php echo Text::_('COM_JEM_SATURDAY'); ?>");
             $weekday[6] = new Array("SU", "<?php echo Text::_('COM_JEM_SUNDAY'); ?>");
+
+            var $lastday = new Array();
+            $lastday[0]  = new Array("L1", "<?php echo Text::_ ('COM_JEM_LAST_DAY'); ?>");
+            $lastday[1]  = new Array("L2", "<?php echo Text::_ ('COM_JEM_LAST_DAY_SECOND'); ?>");
+            $lastday[2]  = new Array("L3", "<?php echo Text::_ ('COM_JEM_LAST_DAY_THIRD'); ?>");
+            $lastday[3]  = new Array("L4", "<?php echo Text::_ ('COM_JEM_LAST_DAY_FOURTH'); ?>");
+            $lastday[4]  = new Array("L5", "<?php echo Text::_ ('COM_JEM_LAST_DAY_FIFTH'); ?>");
+            $lastday[5]  = new Array("L6", "<?php echo Text::_ ('COM_JEM_LAST_DAY_SIXTH'); ?>");
+            $lastday[6]  = new Array("L7", "<?php echo Text::_ ('COM_JEM_LAST_DAY_SEVEN'); ?>");
 
             var $before_last = "<?php
                 echo Text::_('COM_JEM_BEFORE_LAST');

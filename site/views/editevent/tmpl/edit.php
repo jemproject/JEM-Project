@@ -217,7 +217,13 @@ $params		= $this->params;
                     <li><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
                     <li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
                     <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
+                    <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
+                        $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
+                    } ?>
                     <li><?php echo $this->form->getLabel('cats'); ?><?php echo $this->form->getInput('cats'); ?></li>
+                    <?php if($this->jemsettings->defaultVenue && empty($this->item->id)) {
+                        $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
+                    } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
 
                 </ul>

@@ -13,6 +13,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Button\PublishedButton;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $user		= JemFactory::getUser();
@@ -199,11 +200,19 @@ $wa->useScript('table.columns');
                                 'disabled' => !$canChange,
                                 'id' => 'featured-' . $row->id
                             ];
-                            echo (new FeaturedButton())
-                                ->render((int) $row->featured, $i, $options);
+                            echo (new FeaturedButton())->render((int) $row->featured, $i, $options);
                             ?>
                         </td>
-                        <td class="center"><?php echo $published; ?></td>
+                        <td class="center">
+                            <?php
+                            $options = [
+                            'task_prefix' => 'events.',
+                            'disabled' => !$canChange,
+                            'id' => 'state-' . $row->id
+                            ];
+                            echo (new PublishedButton())->render((int) $row->published, $i, $options, $row->publish_up, $row->publish_down);
+                            ?>
+                        </td>
                         <td>
                             <?php
                             $created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));

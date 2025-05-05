@@ -204,6 +204,16 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                         ?>
                     </ul>
                 </dd>
+            <?php else : ?>
+                <?php
+                // get the postion in the register array for the user
+                foreach ($this->registers as $k => $register) :
+                    //Registered user in the event
+                    if($register->uid == $this->user->id) {
+                        $this->registereduser = $k;
+                        break;
+                    }
+                endforeach; ?>
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($this->permissions->canEditAttendees) : ?>
