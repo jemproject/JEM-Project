@@ -20,6 +20,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Helper\ModuleHelper;
 
 require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
@@ -162,10 +163,9 @@ if ($Default_Stylesheet == 1) {
 	$document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
+
 # Load icon font if needed
 JemHelper::loadIconFont();
 
 # Render
-require(JemHelper::getModuleLayoutPath($mod_name));
-
-?>
+require ModuleHelper::getLayoutPath('mod_jem_cal', $params->get('layout', 'default'));
