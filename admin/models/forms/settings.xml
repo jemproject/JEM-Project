@@ -250,16 +250,17 @@
 	<fieldset name="display"
 			  label="COM_JEM_DISPLAY_SETTINGS"
 	>
-		<field name="showdetails" type="list"
+		<field name="showdetails" type="radio"
 			   label="COM_JEM_SHOW_EVENT"
 			   description="COM_JEM_SHOW_EVENT_DESC"
-			   class="inputbox"
+			   class="inputbox btn-group btn-group-yesno"
 			   size="1"
 			   default="1"
 			   required="false"
 		>
-			<option value="0">COM_JEM_EVENT_OFF</option>
-			<option value="1">COM_JEM_LINK_ON_TITLE</option>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+
 		</field>
 		<field name="formatdate" type="text"
 			   label="COM_JEM_SETTINGS_DATE_FORMAT"
@@ -354,15 +355,15 @@
 			<option value="1">COM_JEM_OPTIONAL</option>
 			<option value="2">COM_JEM_REQUIRED</option>
 		</field>
-		<field name="attachmentenabled" type="list"
+		<field name="attachmentenabled" type="radio"
 			   label="COM_JEM_ATTACHMENT_UPLOAD_OPTIONS"
 			   description="COM_JEM_ATTACHMENT_UPLOAD_OPTIONS_DESC"
-			   class="inputbox"
+			   class="inputbox btn-group btn-group-yesno"
 			   default="0"
 			   required="false"
 		>
-			<option value="0">COM_JEM_DISABLED</option>
-			<option value="1">COM_JEM_ENABLED</option>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 	</fieldset>
 
@@ -1120,16 +1121,6 @@
 		<fieldset name="venues"
 				  label="COM_JEM_VENUES"
 		>
-			<field name="global_show_locdescription" type="radio"
-				   label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
-				   description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
-				   class="inputbox btn-group btn-group-yesno"
-				   default="1"
-				   required="false"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
 			<field name="global_show_detailsadress" type="radio"
 				   label="COM_JEM_DISPLAY_ADDRESS"
 				   description="COM_JEM_DISPLAY_ADDRESS_DESC"
@@ -1140,15 +1131,28 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
-			<field name="global_show_detlinkvenue" type="list"
+
+			<field name="global_show_locdescription" type="radio"
+				   label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
+				   description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+
+			<field name="global_show_detlinkvenue" type="radio"
 				   label="COM_JEM_DISPLAY_LINK_TO_VENUE"
 				   description="COM_JEM_DISPLAY_LINK_TO_VENUE_DESC"
-				   class="inputbox"
+				   class="inputbox btn-group btn-group-yesno"
 				   default="0"
 				   required="false"
 			>
-				<option value="0">COM_JEM_NO_LINK</option>
-				<option value="1">COM_JEM_LINK_TO_URL</option>
+				<option value="1">JYES</option>			
+				<option value="0">JNO</option>
+
 			</field>
 			<field name="global_show_listevents" type="radio"
 				   label="COM_JEM_DISPLAY_LIST_EVENTS"
@@ -1230,16 +1234,7 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
-			<field name="event_show_locdescription" type="radio"
-				   label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
-				   description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
-				   class="inputbox btn-group btn-group-yesno"
-				   default="1"
-				   required="false"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
+
 			<field name="event_show_detailsadress" type="radio"
 				   label="COM_JEM_EVENT_DISPLAY_ADDRESS"
 				   description="COM_JEM_EVENT_DISPLAY_ADDRESS_DESC"
@@ -1250,6 +1245,18 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
+			
+			<field name="event_show_locdescription" type="radio"
+				   label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
+				   description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
+				   class="inputbox btn-group btn-group-yesno"
+				   default="1"
+				   required="false"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+
 			<field name="event_show_detlinkvenue" type="list"
 				   label="COM_JEM_EVENT_DISPLAY_LINK_TO_VENUE"
 				   description="COM_JEM_EVENT_DISPLAY_LINK_TO_VENUE_DESC"
@@ -1276,16 +1283,16 @@
 				<option value="5">COM_JEM_OSM_MAP_DISP</option>
 			</field>
 			<field name="event_tld" type="text"
-				   label="COM_JEM_GOOGLE_MAP_TLD"
-				   description="COM_JEM_GOOGLE_MAP_TLD_DESC"
+				   label="COM_JEM_EVENT_GOOGLE_MAP_TLD"
+				   description="COM_JEM_EVENT_GOOGLE_MAP_TLD_DESC"
 				   class="inputbox"
 				   size="10"
 				   maxlength="10"
 				   required="false"
 			/>
 			<field name="event_lg" type="text"
-				   label="COM_JEM_GOOGLE_MAP_LG"
-				   description="COM_JEM_GOOGLE_MAP_LG_DESC"
+				   label="COM_JEM_EVENT_GOOGLE_MAP_LG"
+				   description="COM_JEM_EVENT_GOOGLE_MAP_LG_DESC"
 				   class="inputbox"
 				   size="10"
 				   maxlength="10"
