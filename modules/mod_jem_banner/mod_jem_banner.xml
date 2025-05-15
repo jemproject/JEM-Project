@@ -20,16 +20,12 @@
 		<folder>tmpl</folder>
 		<folder>language</folder>
 	</files>
-	<languages>
-        <language tag="en-GB">language/en-GB/mod_jem_banner.ini</language>
-        <language tag="en-GB">language/en-GB/mod_jem_banner.sys.ini</language>
-    </languages>
 	<help key="Modules" />
 	<config>
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="type" type="list"
-					default="1"
+					default="0"
 					label="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT"
 					description="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
 				>
@@ -77,7 +73,6 @@
 					label="MOD_JEM_BANNER_SHUFFLE_COUNT"
 					description="MOD_JEM_BANNER_SHUFFLE_COUNT_DESC"
 				/>
-
 				<field name="cuttitle" type="text"
 					default="25"
 					label="MOD_JEM_BANNER_MAX_TITLE_LENGTH"
@@ -199,7 +194,6 @@
 					label="MOD_JEM_BANNER_TIME_FORMAT"
 					description="MOD_JEM_BANNER_TIME_FORMAT_DESC"
 				/>
-
 				<field name="showcategory" type="radio"
 					default="0"
 					label="MOD_JEM_BANNER_SHOWCATEGORY"
@@ -284,21 +278,46 @@
 					description="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX_DESC"
 				/>
 			</fieldset>
-
 			<fieldset name="advanced">
-				<field name="cache" type="list"
-					default="1"
-					label="MOD_JEM_BANNER_CACHING"
-					description="MOD_JEM_BANNER_CACHING_DESC"
-				>
-					<option value="1">MOD_JEM_BANNER_USE_GLOBAL</option>
-					<option value="0">MOD_JEM_BANNER_NO_CACHING</option>
-				</field>
-				<field name="cache_time" type="text"
-					default="900"
-					label="MOD_JEM_BANNER_CACHE_TIME"
-					description="MOD_JEM_BANNER_CACHE_TIME_DESC"
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					class="form-select"
+					validate="moduleLayout"
 				/>
+				<field
+					name="moduleclass_sfx"
+					type="textarea"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					rows="3"
+					validate="CssIdentifier"
+				/>
+				<field
+					name="cache"
+					type="list"
+					label="COM_MODULES_FIELD_CACHING_LABEL"
+					default="1"
+					filter="integer"
+					validate="options"
+					>
+					<option value="1">JGLOBAL_USE_GLOBAL</option>
+					<option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+				</field>
+				<field
+					name="cache_time"
+					type="number"
+					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+					default="900"
+					filter="integer"
+				/>
+				<field
+					name="cachemode"
+					type="hidden"
+					default="static"
+					>
+					<option value="static"></option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>
