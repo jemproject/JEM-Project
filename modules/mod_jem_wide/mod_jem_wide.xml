@@ -22,9 +22,9 @@
 		<folder>language</folder>
 	</files>
 	<languages>
-        <language tag="en-GB">language/en-GB/mod_jem_wide.ini</language>
-        <language tag="en-GB">language/en-GB/mod_jem_wide.sys.ini</language>
-    </languages>
+		<language tag="en-GB">language/en-GB/mod_jem_wide.ini</language>
+		<language tag="en-GB">language/en-GB/mod_jem_wide.sys.ini</language>
+	</languages>
 	<help key="Modules" />
 	<config>
 		<fields name="params">
@@ -142,21 +142,46 @@
 					description="MOD_JEM_WIDE_MODULE_CLASS_SUFFIX_DESC"
 				/>
 			</fieldset>
-
 			<fieldset name="advanced">
-				<field name="cache" type="list"
+				<field 
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					class="form-select"
+					validate="moduleLayout"
+				/>
+				<field 
+					name="moduleclass_sfx"
+					type="textarea"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					rows="3"
+					validate="CssIdentifier"
+				/>
+				<field
+					name="cache"
+					type="list"
+					label="MOD_JEM_CACHING"
+					description="MOD_JEM_CACHING_DESC"
 					default="1"
-					label="MOD_JEM_WIDE_CACHING"
-					description="MOD_JEM_WIDE_CACHING_DESC"
+					filter="integer"
+					validate="options"
 				>
-					<option value="1">MOD_JEM_WIDE_USE_GLOBAL</option>
-					<option value="0">MOD_JEM_WIDE_NO_CACHING</option>
+					<option value="1">JGLOBAL_USE_GLOBAL</option>
+					<option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
 				</field>
-				<field name="cache_time" type="text"
-					default="900"
+				<field 
+					name="cache_time" 
+					type="number"
 					label="MOD_JEM_WIDE_CACHE_TIME"
 					description="MOD_JEM_WIDE_CACHE_TIME_DESC"
+					default="900"
+					filter="integer"
 				/>
+				<field name="cachemode" type="hidden"
+					default="static"
+				>
+					<option value="static"></option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>

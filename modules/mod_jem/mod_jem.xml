@@ -30,142 +30,149 @@
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="type" type="list"
-					   default="0"
-					   label="MOD_JEM_UPCOMING_OR_ARCHIVED"
-					   description="MOD_JEM_UPCOMING_OR_ARCHIVED_DESC"
+					default="0"
+					label="MOD_JEM_UPCOMING_OR_ARCHIVED"
+					description="MOD_JEM_UPCOMING_OR_ARCHIVED_DESC"
 				>
 					<option value="0">MOD_JEM_UPCOMING_EVENTS</option>
 					<option value="1">MOD_JEM_UNFINISHED_EVENTS</option>
 					<option value="2">MOD_JEM_ARCHIVED_EVENTS</option>
 				</field>
 				<field name="count" type="text"
-					   default="5"
-					   label="MOD_JEM_EVENTS_IN_MODULE"
-					   description="MOD_JEM_EVENTS_IN_MODULE_DESC"
+					default="5"
+					label="MOD_JEM_EVENTS_IN_MODULE"
+					description="MOD_JEM_EVENTS_IN_MODULE_DESC"
 				/>
 				<field name="show_no_events" type="radio"
-					   default="1"
-					   label="MOD_JEM_SHOW_NO_EVENTS"
-					   description="MOD_JEM_SHOW_NO_EVENTS_DESC"
-					   class="btn-group btn-group-yesno"
+					default="1"
+					label="MOD_JEM_SHOW_NO_EVENTS"
+					description="MOD_JEM_SHOW_NO_EVENTS_DESC"
+					class="btn-group btn-group-yesno"
 				>
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
 				<field name="highlight_featured" type="radio"
-					   default="0"
-					   label="MOD_JEM_HIGHLIGHT_FEATURED"
-					   description="MOD_JEM_HIGHLIGHT_FEATURED_DESC"
-					   class="btn-group btn-group-yesno"
+					default="0"
+					label="MOD_JEM_HIGHLIGHT_FEATURED"
+					description="MOD_JEM_HIGHLIGHT_FEATURED_DESC"
+					class="btn-group btn-group-yesno"
 				>
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
 
 				<field name="offset_hours" type="text"
-					   default=""
-					   label="MOD_JEM_OFFSET_HOURS"
-					   description="MOD_JEM_OFFSET_HOURS_DESC"
+					default=""
+					label="MOD_JEM_OFFSET_HOURS"
+					description="MOD_JEM_OFFSET_HOURS_DESC"
 				/>
 				<field name="showtitloc" type="list"
-					   default="1"
-					   label="MOD_JEM_TITLE_OR_VENUE"
-					   description="MOD_JEM_TITLE_OR_VENUE_DESC"
+					default="1"
+					label="MOD_JEM_TITLE_OR_VENUE"
+					description="MOD_JEM_TITLE_OR_VENUE_DESC"
 				>
 					<option value="0">MOD_JEM_VENUE</option>
 					<option value="1">MOD_JEM_TITLE</option>
 				</field>
 				<field name="cuttitle" type="text"
-					   default="30"
-					   label="MOD_JEM_MAX_TITLE_LENGTH"
-					   description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
+					default="30"
+					label="MOD_JEM_MAX_TITLE_LENGTH"
+					description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
 				/>
 				<field name="linkloc" type="radio"
-					   default="1"
-					   label="MOD_JEM_LINK_TO_VENUE"
-					   description="MOD_JEM_LINK_TO_VENUE_DESC"
-					   class="btn-group btn-group-yesno"
+					default="1"
+					label="MOD_JEM_LINK_TO_VENUE"
+					description="MOD_JEM_LINK_TO_VENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
 				<field name="linkdet" type="list"
-					   default="1"
-					   label="MOD_JEM_LINK_TO_EVENT"
-					   description="MOD_JEM_LINK_TO_EVENT_DESC"
+					default="1"
+					label="MOD_JEM_LINK_TO_EVENT"
+					description="MOD_JEM_LINK_TO_EVENT_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">MOD_JEM_DATE</option>
 					<option value="2">MOD_JEM_TITLE</option>
 				</field>
 				<field name="showiconcountry" type="radio"
-					   default="0"
-					   label="MOD_JEM_SHOW_ICON_COUNTRY_VENUE"
-					   description="MOD_JEM_SHOW_ICON_COUNTRY_VENUE_DESC"
-					   class="btn-group btn-group-yesno"
+					default="0"
+					label="MOD_JEM_SHOW_ICON_COUNTRY_VENUE"
+					description="MOD_JEM_SHOW_ICON_COUNTRY_VENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
 				<field name="catid" type="categoryedit"
-					   default=""
-					   multiple="true"
-					   removeroot="true"
-					   label="MOD_JEM_CATEGORY_ID"
-					   description="MOD_JEM_CATEGORY_ID_DESC"
+					default=""
+					multiple="true"
+					removeroot="true"
+					label="MOD_JEM_CATEGORY_ID"
+					description="MOD_JEM_CATEGORY_ID_DESC"
 				/>
 				<field name="venid" type="venueoptions"
-					   default=""
-					   multiple="true"
-					   label="MOD_JEM_VENUE_ID"
-					   description="MOD_JEM_VENUE_ID_DESC"
+					default=""
+					multiple="true"
+					label="MOD_JEM_VENUE_ID"
+					description="MOD_JEM_VENUE_ID_DESC"
 				/>
 				<field name="formatdate" type="text"
-					   default="D, j. F Y"
-					   label="MOD_JEM_DATE_FORMAT"
-					   description="MOD_JEM_DATE_FORMAT_DESC"
+					default="D, j. F Y"
+					label="MOD_JEM_DATE_FORMAT"
+					description="MOD_JEM_DATE_FORMAT_DESC"
 				/>
 				<field name="formattime" type="text"
-					   default=""
-					   label="MOD_JEM_TIME_FORMAT"
-					   description="MOD_JEM_TIME_FORMAT_DESC"
+					default=""
+					label="MOD_JEM_TIME_FORMAT"
+					description="MOD_JEM_TIME_FORMAT_DESC"
 				/>
 				<field name="moduleclass_sfx" type="text"
-					   default=""
-					   label="MOD_JEM_MODULE_CLASS_SUFFIX"
-					   description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC"
+					default=""
+					label="MOD_JEM_MODULE_CLASS_SUFFIX"
+					description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC"
 				/>
 			</fieldset>
-
 			<fieldset name="advanced">
-				<field name="layout" type="modulelayout"
-					   label="JFIELD_ALT_LAYOUT_LABEL"
-					   class="form-select"
-					   validate="moduleLayout"
+				<field 
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					class="form-select"
+					validate="moduleLayout"
 				/>
-				<field name="moduleclass_sfx" type="textarea"
-					   label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
-					   rows="3"
-					   validate="CssIdentifier"
+				<field 
+				    name="moduleclass_sfx"
+				    type="textarea"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					rows="3"
+					validate="CssIdentifier"
 				/>
-				<field name="cache" type="list"
-					   label="MOD_JEM_CACHING"
-					   description="MOD_JEM_CACHING_DESC"
-					   default="1"
-					   filter="integer"
-					   validate="options"
+				<field
+					name="cache"
+				    type="list"
+					label="MOD_JEM_CACHING"
+					description="MOD_JEM_CACHING_DESC"
+					default="1"
+					filter="integer"
+					validate="options"
 				>
 					<option value="1">JGLOBAL_USE_GLOBAL</option>
 					<option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
 				</field>
-				<field name="cache_time" type="number"
-					   label="MOD_JEM_CACHE_TIME"
-					   description="MOD_JEM_CACHE_TIME_DESC"
-					   default="900"
-					   filter="integer"
+				<field 
+				    name="cache_time" 
+				    type="number"
+					label="MOD_JEM_CACHE_TIME"
+					description="MOD_JEM_CACHE_TIME_DESC"
+					default="900"
+					filter="integer"
 				/>
 				<field name="cachemode" type="hidden"
-					   default="static"
+					default="static"
 				>
 					<option value="static"></option>
 				</field>
