@@ -302,8 +302,8 @@
 				<field
 					name="cache"
 					type="list"
-					label="MOD_JEM_CACHING"
-					description="MOD_JEM_CACHING_DESC"
+					label="COM_MODULES_FIELD_CACHING_LABEL"
+					description="MOD_JEM_JUBILEE_CACHING_DESC"
 					default="1"
 					filter="integer"
 					validate="options"
@@ -314,7 +314,7 @@
 				<field 
 					name="cache_time" 
 					type="number"
-					label="MOD_JEM_JUBILEE_CACHE_TIME"
+					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
 					description="MOD_JEM_JUBILEE_CACHE_TIME_DESC"
 					default="900"
 					filter="integer"

@@ -297,6 +297,7 @@
 					name="cache"
 					type="list"
 					label="COM_MODULES_FIELD_CACHING_LABEL"
+					description="MOD_JEM_BANNER_CACHING_DESC"
 					default="1"
 					filter="integer"
 					validate="options"
@@ -308,6 +309,7 @@
 					name="cache_time"
 					type="number"
 					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+					description="MOD_JEM_BANNER_CACHE_TIME_DESC"
 					default="900"
 					filter="integer"
 				/>
