@@ -2,13 +2,13 @@
 <extension type="package" version="4.4" method="upgrade">
 	<name>pkg_jem</name>
 	<packagename>jem</packagename>
-	<creationDate>February 2025</creationDate>
+	<creationDate>May 2025</creationDate>
 	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
 	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<version>4.3.2</version>
+	<version>4.3.3</version>
 	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
 	<url>https://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
