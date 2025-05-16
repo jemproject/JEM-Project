@@ -103,7 +103,7 @@ function jem_common_show_filter(&$obj)
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
-            <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" required class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
+            <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -126,12 +126,10 @@ function jem_common_show_filter(&$obj)
     <div class="jem-sort jem-row jem-justify-start jem-nowrap">
         <?php echo ($paramShowIconsOrder? '<i class="fa fa-sort fa-lg jem-sort-icon" aria-hidden="true"></i>' : '');?>
         <div class="jem-row jem-justify-start jem-sort-parts">
-			<?php if ($this->jemsettings->showeventimage == 1) : ?>
-	            <div id="jem_date" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-clock" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-			<?php endif; ?>
-			<?php if ($this->jemsettings->showtitle == 1) : ?>
-    	        <div id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-			<?php endif; ?>
+            <div id="jem_date" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="far fa-clock" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+            <?php if ($this->jemsettings->showtitle == 1) : ?>
+                <div id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+            <?php endif; ?>
             <?php if ($this->jemsettings->showlocate == 1) : ?>
                 <div id="jem_location" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php endif; ?>
@@ -200,7 +198,6 @@ function jem_common_show_filter(&$obj)
                         $dimage = JemImage::flyercreator($row->datimage, 'event');
                         echo JemOutput::flyer($row, $dimage, 'event');
                         ?>
-                    <?php else : ?>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -229,10 +226,8 @@ function jem_common_show_filter(&$obj)
                     <h4>
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
                             <?php
-                            echo JemOutput::formatShortDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes);
+                            echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
                             ?>
                         </a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
@@ -264,10 +259,8 @@ function jem_common_show_filter(&$obj)
                         <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                             <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                             <?php
-                            echo JemOutput::formatShortDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                                $row->enddates, $row->endtimes);
+                            echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
                             ?>
                         </div>
                     <?php endif; ?>
@@ -332,6 +325,14 @@ function jem_common_show_filter(&$obj)
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
+                <?php if ($this->params->get('show_introtext_events') == 1) : ?>
+                    <div class="jem-event-intro">
+                        <?php echo $row->introtext; ?>
+                        <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                            <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <?php

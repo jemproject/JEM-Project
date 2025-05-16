@@ -9,7 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-
 ?>
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
@@ -27,7 +26,7 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_AC_EVENTS'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrolacevent') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+					              <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -50,7 +49,7 @@ use Joomla\CMS\Language\Text;
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrolacvenue') as $field): ?>
                     <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-                <?php endforeach; ?>
+				<?php endforeach; ?>
             </ul>
         </fieldset>
     </div>

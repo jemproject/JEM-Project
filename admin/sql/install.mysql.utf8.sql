@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `created_by` int(11) unsigned NOT NULL DEFAULT '0',
   `modified` datetime NULL DEFAULT NULL,
   `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+  `publish_up` datetime DEFAULT NULL,
+  `publish_down` datetime DEFAULT NULL,
   `version` int(11) unsigned NOT NULL DEFAULT '0',
   `author_ip` varchar(39) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -23,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `recurrence_limit` int(11) NOT NULL DEFAULT '0',
   `recurrence_limit_date` date NULL DEFAULT NULL,
   `recurrence_byday` varchar(20) NULL DEFAULT NULL,
+  `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
   `datimage` varchar(100) NOT NULL DEFAULT '',
   `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
   `checked_out_time` datetime NULL DEFAULT NULL,
@@ -302,6 +305,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('recurrence_anticipation_week', '12'),
 ('recurrence_anticipation_month', '60'),
 ('recurrence_anticipation_year', '180'),
+('recurrence_anticipation_lastday', '60'),
 ('ical_max_items', '100'),
 ('defaultCountry', ''),
 ('flagicons_path', 'media/com_jem/images/flags/w20-png/'),
@@ -314,7 +318,10 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('regallowinvitation', '0'),
 ('layoutstyle', '1'),
 ('useiconfont', '1'),
-('flyer', '0');
+('flyer', '0'),
+('categories_order', '2'),
+('defaultCategory', '0'),
+('defaultVenue', '0');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan'),
@@ -568,6 +575,7 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (250, 'AF', 'SS', 'SSD', 728, 'South Sudan'),
 (251, 'EU', 'XK', 'XKX', '688', 'Kosovo');
 
-INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time` ) VALUES
-(1, 0, 0, 1, 0, 'root', 'root', 1, 1, now());
+INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time`, `path` ) VALUES
+(1, 0, 0, 3, 0, 'root', 'root', 1, 1, now(), null),
+(2, 1, 1, 2, 0, 'Uncategorised', 'uncategorised', 1, 1, now(), 'uncategorised');
 

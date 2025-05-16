@@ -252,6 +252,7 @@ class JemModelEvent extends JemModelAdmin
         $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
+        $recurrencebylastday  = $jinput->get('recurrence_bylastday', '', 'string');
         $metakeywords         = $jinput->get('meta_keywords', '', '');
         $metadescription      = $jinput->get('meta_description', '', '');
         $task                 = $jinput->get('task', '', 'cmd');
@@ -331,8 +332,20 @@ class JemModelEvent extends JemModelAdmin
                 $data['alias'] = $eventdb['alias'];
             }
 
-            // Introtext
-            $data['introtext'] = $data['articletext'];
+            // Introtext & Fulltext: Search for the {readmore} tag and split the text up accordingly.
+            if (isset($data['articletext'])) {
+                $pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
+                $tagPos = preg_match($pattern, $data['articletext']);
+
+                if ($tagPos == 0) {
+                    $data['introtext'] = $data['articletext'];
+                    $data['fulltext'] = '';
+                } else {
+                    list ( $data['introtext'], $data['fulltext']) = preg_split($pattern, $data['articletext'], 2);
+                }
+            }else{
+                $data['introtext'] = $data['articletext'];
+            }
 
             // Contact
             if($data['contactid'] == ''){
@@ -361,7 +374,7 @@ class JemModelEvent extends JemModelAdmin
 
             //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
             //If not, update de field of this event (save=false).
-            $fieldNotAllow = ['recurrence_first_id', 'recurrence_number', 'recurrence_type', 'recurrence_counter', 'recurrence_limit', 'recurrence_limit_date', 'recurrence_byday'];
+            $fieldNotAllow = ['recurrence_first_id', 'recurrence_number', 'recurrence_type', 'recurrence_counter', 'recurrence_limit', 'recurrence_limit_date', 'recurrence_byday', 'recurrence_bylastday'];
             foreach ($diff as $d => $value) {
                 if (in_array($d, $fieldNotAllow)) {
                     // This event must be updated its fields
@@ -397,12 +410,20 @@ class JemModelEvent extends JemModelAdmin
                     if (!isset($data['recurrence_byday'])) {
                         $data['recurrence_byday'] = $eventdb['recurrence_byday'];
                     }
+                    if (!isset($data['recurrence_bylastday'])) {
+                        $data['recurrence_bylastday'] = $eventdb['recurrence_bylastday'];
+                    }
                 }
             }else{
                 // Get the recurrence_first_id for this recurrence event
                 $data['recurrence_first_id'] = $eventdb ['recurrence_first_id'];
             }
         }
+
+		// Set publish_down to null if they are empty (publish_up must have a datetime)
+		if (empty($data['publish_down'])) {
+		    $data['publish_down'] = null;
+		}
 
         // if the 'registra' field does not exist or is null, set it to the value from jem settings
         if(!isset($data['registra'])) {
@@ -432,6 +453,7 @@ class JemModelEvent extends JemModelAdmin
             if ($data['dates'] == null || $data['recurrence_type'] == '0') {
                 $data['recurrence_number'] = '0';
                 $data['recurrence_byday'] = '0';
+                $data['recurrence_bylastday'] = '0';
                 $data['recurrence_counter'] = '0';
                 $data['recurrence_type'] = '0';
                 $data['recurrence_limit'] = '0';
@@ -447,6 +469,7 @@ class JemModelEvent extends JemModelAdmin
 
                 $data['recurrence_number'] = $recurrencenumber;
                 $data['recurrence_byday'] = $recurrencebyday;
+                $data['recurrence_bylastday'] = $recurrencebylastday;
 
                 if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
                     $d = Factory::getDate($data['recurrence_limit_date'], 'UTC');

@@ -85,12 +85,13 @@
 		/>
 		<field name="cats" type="catoptions"
 			   multiple="true"
-			   class="inputbox form-select"
+			   class="inputbox required form-select"
 			   size="4"
 			   label="COM_JEM_FIELD_CATEGORIES"
 			   labelclass=""
 			   description="COM_JEM_FIELD_CATEGORIES_DESC"
 			   required="true"
+			   default=""
 		/>
 		<field name="hits" type="hits"
 			   default="0"
@@ -161,6 +162,27 @@
 			<option value="2">JARCHIVED</option>
 			<option value="-2">JTRASHED</option>
 		</field>
+		<field name="publish_up" type="calendar"
+			   label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
+			   description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
+			   size="22"
+			   default="now"
+			   format="%Y-%m-%d %H:%M:%S"
+			   translateformat="true"
+			   filter="user_utc"
+			   showtime="true"
+			   filterformat="%Y-%m-%d %H:%M:%S"
+		/>
+		<field name="publish_down" type="calendar"
+			   label="JGLOBAL_FIELD_PUBLISH_DOWN_LABEL"
+			   description="JGLOBAL_FIELD_PUBLISH_DOWN_DESC"
+			   size="22"
+			   format="%Y-%m-%d %H:%M:%S"
+			   translateformat="true"
+			   filter="user_utc"
+			   showtime="true"
+			   filterformat="%Y-%m-%d %H:%M:%S"
+		/>
 	</fieldset>
 
 	<fieldset name="request"
@@ -439,11 +461,12 @@
 			<option value="3">COM_JEM_MONTHLY</option>
 			<option value="4">COM_JEM_WEEKDAY</option>
 			<option value="5">COM_JEM_YEARLY</option>
+			<option value="6">COM_JEM_LASTDAY</option>
 		</field>
 		<field name="recurrence_limit_date" type="calendarjem"
 			   default="now"
 			   label="COM_JEM_RECURRENCE_COUNTER"
-			   description="COM_JEM_RECURRENCE_COUNTER"
+			   description="COM_JEM_RECURRENCE_COUNTER_DESC"
 			   class="inputbox"
 			   size="22"
 			   format="%Y-%m-%d"
@@ -556,7 +579,7 @@
 			</field>
 			<field name="event_show_print_icon" type="list"
 				   label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
-				   description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+				   description="JGLOBAL_SHOW_PRINT_ICON_LABEL_DESC"
 				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -565,7 +588,7 @@
 			</field>
 			<field name="event_show_email_icon" type="list"
 				   label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
-				   description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+				   description="JGLOBAL_SHOW_EMAIL_ICON_LABEL_DESC"
 				   default=""
 			>
 				<option	value="">JGLOBAL_USE_GLOBAL</option>

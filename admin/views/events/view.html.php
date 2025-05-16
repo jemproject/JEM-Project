@@ -54,9 +54,7 @@ class JemViewEvents extends JemAdminView
 		}
 
 		// Load css
-		// HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-	
 		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		// Load Scripts

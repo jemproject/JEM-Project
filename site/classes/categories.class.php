@@ -593,17 +593,27 @@ class JemCategories
 			$where  = ' WHERE published IN (' . implode(',', $state) . ')';
 			$where .= ' AND alias NOT LIKE "root"';
 		}
-
 		$where .= ' AND access IN ('.implode(',', $levels).')';
 
-		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, lft';
-		
+		$jemsettings = JemHelper::config();
+		$orderBy = $jemsettings->categories_order;
+		switch ($orderBy){
+			case 3:
+				$order = 'catname DESC, parent_id, lft';
+				break;
+			case 2:
+				$order = 'catname ASC, parent_id, lft';
+				break;
+			case 1:
+				$order = 'id DESC, parent_id ASC, lft';
+				break;
+			case 0:
+				$order = 'id ASC, parent_id ASC, lft';
+				break;
+		}
 
-		// Check for a database error.
-		// if ($db->getErrorNum())
-		// {
-		// 	\Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
-		// }
+		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY ' . $order;
+
 		try
 		{
 			$db->setQuery($query);

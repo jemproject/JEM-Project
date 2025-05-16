@@ -707,6 +707,12 @@ class JemModelEvent extends ItemModel
 			case 7:
 				$order = 'u.name DESC';
 				break;
+			case 8:
+				$order = 'r.status ASC, r.waiting ASC, r.id ASC';
+				break;
+			case 9:
+				$order = 'r.status DESC, r.waiting ASC, r.id ASC';
+				break;
 		}
 
 		// Get registered users
@@ -770,7 +776,7 @@ class JemModelEvent extends ItemModel
 		}
 
 		if (empty($event)) {
-			$errMsg = Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+			$errMsg = Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId  .']';
 			return false;
 		}
 
@@ -796,7 +802,7 @@ class JemModelEvent extends ItemModel
 			$status = 1;
 		}
 		elseif ($respectPlaces && ($oldstat == 1) && ($status == -1) && !$event->unregistra) {
-			$errMsg = Text::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED');
+			$errMsg = Text::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED') . ' [id: ' . $eventId  .']';
 			return false;
 		}
 
@@ -823,7 +829,7 @@ class JemModelEvent extends ItemModel
 		}
 		catch (Exception $e) {
 			// we have a unique user-event key so registering twice will fail
-			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION');
+			$errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $eventId  .']';
 			return false;
 		}
 
@@ -964,7 +970,7 @@ class JemModelEvent extends ItemModel
 
 		// Acting user must be logged in
 		if ($user->get('id') < 1) {
-			\Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 

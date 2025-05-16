@@ -17,6 +17,15 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
+			<field name="show_introtext_events" type="radio"
+				   default="0"
+				   label="COM_JEM_SHOW_INTROTEXT_EVENTS"
+				   description="COM_JEM_SHOW_INTROTEXT_EVENTS_DESC"
+				   class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
             <field name="show_archived_events" type="radio"
                    default="0"
                    label="COM_JEM_SHOW_ARCHIVED_EVENTS"

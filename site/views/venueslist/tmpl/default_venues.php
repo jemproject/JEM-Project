@@ -106,6 +106,7 @@ function jem_common_show_filter(&$obj) {
 						else :
 							echo $row->id ? $this->escape($row->venue) : '-';
 						endif;
+						echo JemOutput::publishstateicon($row);
 						?>
 					</td>
 				</tr>
