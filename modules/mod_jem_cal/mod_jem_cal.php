@@ -21,6 +21,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\Module\Menu\Site\Helper\MenuHelper;
+
 
 require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
