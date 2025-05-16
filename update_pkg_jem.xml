@@ -64,7 +64,7 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>4.3.2</version>
+        <version>4.3.3</version>
         <infourl title="JEM Package">http://www.joomlaeventmanager.net/project/changelog-jem-4</infourl>
         <downloads>
             <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=129:jem-4-3-2-stable</downloadurl>
