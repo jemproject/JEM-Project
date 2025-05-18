@@ -1186,6 +1186,15 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
+			<field name="show_date_in_title" type="radio"
+				   class="btn-group btn-group-yesno"
+				   default="0"
+				   label="COM_JEM_SETTINGS_SHOW_DATE_BROWSER_TITLE"
+				   description="COM_JEM_SETTINGS_SHOW_DATE_BROWSER_TITLE_DESC"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="evvenues"
