@@ -57,7 +57,7 @@ class JFormFieldCategoryParent extends ListField
 			$oldCat = $this->form->getValue($name);
 		}
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('a.id AS value, a.title AS text, a.level');
@@ -96,10 +96,10 @@ class JFormFieldCategoryParent extends ListField
 		// if ($db->getErrorNum()) {
 		// 	Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
 		// }
-		try 
+		try
 		{
 			$options = $db->loadObjectList();
-		} 
+		}
 		catch (\InvalidArgumentException $e)
 		{
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');

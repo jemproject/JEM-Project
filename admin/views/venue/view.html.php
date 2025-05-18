@@ -36,8 +36,8 @@ class JemViewVenue extends JemAdminView
 		}
 
 		//initialise variables
-        $app = Factory::getApplication();
-        $this->document = $app->getDocument();
+		$app = Factory::getApplication();
+		$this->document = $app->getDocument();
 		$this->settings = JemAdmin::config();
 		$globalregistry = JemHelper::globalattribs();
 		$task           = $app->input->get('task', '');
@@ -116,6 +116,6 @@ class JemViewVenue extends JemAdminView
 
 		ToolbarHelper::divider();
 		ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('editvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues/add-venue');
+		ToolBarHelper::help('editvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues/add-venue');
 	}
 }

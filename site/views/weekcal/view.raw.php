@@ -26,20 +26,20 @@ class JemViewWeekcal extends HtmlView
 		$app       = Factory::getApplication();
 		$jinput    = $app->input;
 
-        $year = (int)$jinput->getInt('yearID', date("Y"));
-        $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
+		$year = (int)$jinput->getInt('yearID', date("Y"));
+		$week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
 
-        if ($settings2->get('global_show_ical_icon','0')==1) {
-            // Get data from the model
-            $model = $this->getModel();
-            $model->setState('list.start',0);
-            $model->setState('list.limit',$settings->ical_max_items);
-            $rows = $this->get('Items');
+		if ($settings2->get('global_show_ical_icon','0')==1) {
+			// Get data from the model
+			$model = $this->getModel();
+			$model->setState('list.start',0);
+			$model->setState('list.limit',$settings->ical_max_items);
+			$rows = $this->get('Items');
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
 
-            $vcal->setConfig("filename", "events_week_" . $year . $week . ".ics");
+			$vcal->setConfig("filename", "events_week_" . $year . $week . ".ics");
 
 			if (!empty($rows)) {
 				foreach ($rows as $row) {

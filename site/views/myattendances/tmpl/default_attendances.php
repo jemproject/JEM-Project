@@ -90,8 +90,8 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<?php if ($this->jemsettings->showcat == 1) : ?>
 					<th id="jem_category" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php endif; ?>
-                    <th id="jem_category" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-                   	<th id="jem_status" class="sectiontableheader center" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+					<th id="jem_category" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				   	<th id="jem_status" class="sectiontableheader center" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<th id="jem_comment" class="sectiontableheader" style="text-align: left;"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif; ?>
@@ -165,10 +165,10 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 						</td>
 						<?php endif; ?>
 
-                        <td class="center" headers="jem_places" style="text-align: left; vertical-align: top;">
-                            <?php echo !empty($row->places) ? $this->escape($row->places) : '-'; ?>
-                        </td>
-                        
+						<td class="center" headers="jem_places" style="text-align: left; vertical-align: top;">
+							<?php echo !empty($row->places) ? $this->escape($row->places) : '-'; ?>
+						</td>
+						
 						<td class="center">
 							<?php
 							$status = (int)$row->status;

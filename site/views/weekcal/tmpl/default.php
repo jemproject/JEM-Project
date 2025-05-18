@@ -16,7 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-        $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link);
+		$btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link);
 		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>
@@ -265,17 +265,17 @@ use Joomla\CMS\HTML\HTMLHelper;
 		
 		//get border for featured event
 		$usefeaturedborder = $this->params->get('usefeaturedborder', 0);
-    	$featuredbordercolor = $this->params->get('featuredbordercolor', 0);
+		$featuredbordercolor = $this->params->get('featuredbordercolor', 0);
 		$featuredclass = '';
 		$featuredstyle ='';
 		if($usefeaturedborder && $row->featured){
-            $featuredclass="borderfeatured";
-            $featuredstyle="border-color:" . $featuredbordercolor;
+			$featuredclass="borderfeatured";
+			$featuredstyle="border-color:" . $featuredbordercolor;
 		}
 
 		//generate the output
 		// if we have exact one color from categories we can use this as background color of event
-		$content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' .  $featuredclass . '" style="' . $featuredstyle; 
+		$content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' .  $featuredclass . '" style="' . $featuredstyle;
 		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
 			$content .= '; background-color:'.array_pop($catcolor).'">';
 		} else {

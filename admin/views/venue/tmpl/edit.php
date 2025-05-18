@@ -119,9 +119,9 @@ $location = JemHelper::defineCenterMap($this->form);
 			detailsAttribute: "geo-data",
 			types: ['establishment', 'geocode'],
 			mapOptions: {
-			      zoom: 16,
-			      mapTypeId: "hybrid"
-			    },
+				  zoom: 16,
+				  mapTypeId: "hybrid"
+				},
 			markerOptions: {
 				draggable: true
 			}
@@ -185,15 +185,15 @@ $location = JemHelper::defineCenterMap($this->form);
 		});	
 
 		jQuery('#jform_map').on('keyup keypress blur change', function() {
-		    test();
+			test();
 		});
 
 		jQuery('#jform_latitude').on('keyup keypress blur change', function() {
-		    test();
+			test();
 		});
 
 		jQuery('#jform_longitude').on('keyup keypress blur change', function() {
-		    test();
+			test();
 		});
 	});
 
@@ -399,7 +399,7 @@ $location = JemHelper::defineCenterMap($this->form);
 											<div class="geodata-info">
 												<input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_longitude" />
 											 </div>
-                                            </li>
+											</li>
 										</ul>
 										<div class="clr"></div>
 										<input id="cp-all" class="geobutton btn btn-primary btn-margin" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />

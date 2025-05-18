@@ -34,17 +34,17 @@ class JemModelMailto extends FormModel
 	 * @since   3.8.9
 	 */
 
-    protected function populateState()
-    {
-        $app = Factory::getApplication();
-        $params = $app->getParams();
+	protected function populateState()
+	{
+		$app = Factory::getApplication();
+		$params = $app->getParams();
 		$this->setState('params', $params);
 
 		$this->setState('layout', $app->input->getCmd('layout', ''));
-    }
+	}
 	public function getForm($data = array(), $loadData = true)
 	{
-        
+		
 		// Get the form.
 		$form = $this->loadForm('com_jem.mailto', 'mailto', array('load_data' => $loadData));
 
@@ -63,12 +63,12 @@ class JemModelMailto extends FormModel
 	 *
 	 * @since   3.8.9
 	 */
-   
+
 	protected function loadFormData()
 	{
-        $app  = Factory::getApplication();
+		$app  = Factory::getApplication();
 		$user = $app->getIdentity();
-      
+	
 		$data = $app->getUserState('jem.mailto.form.data', array());
 		
 		$data['link'] = urldecode($app->input->get('link', '', 'BASE64'));
@@ -76,7 +76,7 @@ class JemModelMailto extends FormModel
 		if ($data['link'] == '')
 		{
 			// JError::raiseError(403, Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'));
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
 
 			return false;
 		}
@@ -92,7 +92,7 @@ class JemModelMailto extends FormModel
 			$data['sender']    = $user->name;
 			$data['emailfrom'] = $user->email;
 		}
-        
+		
 		$app->setUserState('jem.mailto.form.data', $data);
 
 		$this->preprocessData('com_jem.mailto', $data);
@@ -120,5 +120,5 @@ class JemModelMailto extends FormModel
 		return $data;
 	}
 
- 
+
 }

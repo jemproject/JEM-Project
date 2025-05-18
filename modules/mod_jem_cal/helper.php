@@ -12,7 +12,7 @@
  * see example at https://keithdevens.com/weblog
  * License: https://keithdevens.com/software/license
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -196,7 +196,7 @@ abstract class ModJemCalHelper extends ModuleHelper
 			}
 
 			if (($greq_year >= $event->created_year) && ($greq_year <= $eyear) &&
-			    ($greq_month >= $event->created_month) && ($greq_month <= $emonth))
+				($greq_month >= $event->created_month) && ($greq_month <= $emonth))
 			{
 				//JemHelper::addLogEntry("mod_jem_cal[$params->module_id] : Show event $event->title on $event->dates - $event->enddates");
 

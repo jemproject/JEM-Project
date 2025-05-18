@@ -11,12 +11,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 
 class JemMailtoHelper {
-    public static function addLink($url)
+	public static function addLink($url)
 	{
 		$hash = sha1($url);
 		self::cleanHashes();
 
-        $app = Factory::getApplication();
+		$app = Factory::getApplication();
 		$session      = $app->getSession();
 		$mailto_links = $session->get('com_jem.links', array());
 
@@ -40,7 +40,7 @@ class JemMailtoHelper {
 		if (!$cleaned)
 		{
 			$past         = time() - $lifetime;
-            $app = Factory::getApplication();
+			$app = Factory::getApplication();
 			$session      = $app->getSession();
 			$mailto_links = $session->get('com_jem.links', array());
 
@@ -60,7 +60,7 @@ class JemMailtoHelper {
 	public static function validateHash($hash)
 	{
 		$retval  = false;
-        $app = Factory::getApplication();
+		$app = Factory::getApplication();
 		$session = $app->getSession();
 
 		self::cleanHashes();

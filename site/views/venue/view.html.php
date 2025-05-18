@@ -204,9 +204,9 @@ class JemViewVenue extends JemView
 
 			// Decide which parameters should take priority
 			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-			                                && $menuitem->query['view']   == 'venue'
-			                                && (!isset($menuitem->query['layout']) || $menuitem->query['layout'] == 'default')
-			                                && $menuitem->query['id']     == $venue->id);
+											&& $menuitem->query['view']   == 'venue'
+											&& (!isset($menuitem->query['layout']) || $menuitem->query['layout'] == 'default')
+											&& $menuitem->query['id']     == $venue->id);
 
 			// get search & user-state variables
 			$filter_order = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');

@@ -201,7 +201,7 @@ class JemModelDay extends JemModelEventslist
 			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder, 'a.created ' . $listOrder);
 		} else {
 			$orderby = array($orderCol . ' ' . $listOrder,
-			                 'a.dates ' . $defaultOrder, 'a.times ' . $defaultOrder, 'a.created ' . $defaultOrder);
+							 'a.dates ' . $defaultOrder, 'a.times ' . $defaultOrder, 'a.created ' . $defaultOrder);
 		}
 		$this->setState('filter.orderby', $orderby);
 

@@ -126,10 +126,10 @@ class JemModelUsers extends BaseDatabaseModel
 		$orderby = $this->_buildContentOrderBy();
 
 		$query = 'SELECT u.id, u.name, u.username, u.email '
-		       . ' FROM #__users AS u '
-		       . $where
-		       . $orderby
-		       ;
+			   . ' FROM #__users AS u '
+			   . $where
+			   . $orderby
+			   ;
 
 		return $query;
 	}

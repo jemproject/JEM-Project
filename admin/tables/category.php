@@ -56,7 +56,7 @@ class JemTableCategory extends Nested
 			return;
 		}
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Insert columns.
@@ -120,7 +120,7 @@ class JemTableCategory extends Nested
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		$results = $this->_db->execute();
-        if ($results === false){
+		if ($results === false){
 			return -1;
 		}
 		$id = $this->_db->insertid();
@@ -215,7 +215,7 @@ class JemTableCategory extends Nested
 		$table = Table::getInstance('Category', 'JEMTable', array('dbo' => Factory::getContainer()->get('DatabaseDriver')));
 
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
-		    && ($table->id != $this->id || $this->id == 0)) {
+			&& ($table->id != $this->id || $this->id == 0)) {
 			
 			$this->setError(Text::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
@@ -230,18 +230,18 @@ class JemTableCategory extends Nested
 	 */
 	public function checkCsvImport()
 	{
-        foreach (get_object_vars($this) as $k => $v) {
-            if (is_array($v) or is_object($v) or $v === NULL) {
-                continue;
-            }
-            if ($k[0] == '_') { // internal field
-                continue;
-            }
-            //Change datetime to null when its value is '000-00-00' (support J4 & J5)
-            if(strpos($v, "0000-00-00")!== FALSE){
-                $this->$k = null;
-            }
-        }
+		foreach (get_object_vars($this) as $k => $v) {
+			if (is_array($v) or is_object($v) or $v === NULL) {
+				continue;
+			}
+			if ($k[0] == '_') { // internal field
+				continue;
+			}
+			//Change datetime to null when its value is '000-00-00' (support J4 & J5)
+			if(strpos($v, "0000-00-00")!== FALSE){
+				$this->$k = null;
+			}
+		}
 		return true;
 	}
 

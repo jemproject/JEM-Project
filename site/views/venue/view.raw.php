@@ -21,21 +21,21 @@ class JemViewVenue extends HtmlView
 	 */
 	public function display($tpl = null)
 	{
-        $settings  = JemHelper::config();
-        $settings2 = JemHelper::globalattribs();
+		$settings  = JemHelper::config();
+		$settings2 = JemHelper::globalattribs();
 
-        $app          = Factory::getApplication();
-        $jinput       = $app->input;
+		$app       = Factory::getApplication();
+		$jinput    = $app->input;
 
-        $year = (int)$jinput->getInt('yearID', date("Y"));
-        $month = (int)$jinput->getInt('monthID', date("m"));
+		$year = (int)$jinput->getInt('yearID', date("Y"));
+		$month = (int)$jinput->getInt('monthID', date("m"));
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
 			// Get data from the model
 			$model = $this->getModel('VenueCal');
 			$model->setState('list.start',0);
 			$model->setState('list.limit',$settings->ical_max_items);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 			$rows = $model->getItems();
 			$venueid = $jinput->getInt('id');
 

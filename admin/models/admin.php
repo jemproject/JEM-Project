@@ -13,12 +13,12 @@ use Joomla\CMS\MVC\Model\AdminModel;
 
 abstract class JemModelAdmin extends AdminModel
 {
-    protected function _prepareTable($table)
-    {
-        // Derived class will provide its own implementation if required.
-    }
-    protected function prepareTable($table)
-    {
-        $this->_prepareTable($table);
-    }
+	protected function _prepareTable($table)
+	{
+		// Derived class will provide its own implementation if required.
+	}
+	protected function prepareTable($table)
+	{
+		$this->_prepareTable($table);
+	}
 }

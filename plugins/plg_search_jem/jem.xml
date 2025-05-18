@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="search" method="upgrade">
-    <name>plg_search_jem</name>
-    <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <creationDate>May 2025</creationDate>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.3</version>
-    <description>PLG_SEARCH_JEM_XML_DESCRIPTION</description>
+	<name>plg_search_jem</name>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+	<creationDate>May 2025</creationDate>
+	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>4.3.3</version>
+	<description>PLG_SEARCH_JEM_XML_DESCRIPTION</description>
 
-    <files>
-        <filename plugin="jem">jem.php</filename>
-        <filename>index.html</filename>
+	<files>
+		<filename plugin="jem">jem.php</filename>
+		<filename>index.html</filename>
 
-        <folder>language</folder>
-    </files>
-    <languages>
-        <language tag="en-GB">language/en-GB/plg_search_jem.ini</language>
-        <language tag="en-GB">language/en-GB/plg_search_jem.sys.ini</language>
-    </languages>
+		<folder>language</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/plg_search_jem.ini</language>
+		<language tag="en-GB">language/en-GB/plg_search_jem.sys.ini</language>
+	</languages>
 
-    <config>
-        <fields name="params">
-            <fieldset name="basic">
-                <field name="search_limit" type="text"
-                       size="5"
-                       default="50"
-                       label="PLG_JEM_SEARCH_SEARCH_LIMIT"
-                       description="PLG_JEM_SEARCH_NUMBER_ITEMS_RETURN"
-                />
-            </fieldset>
-        </fields>
-    </config>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="search_limit" type="text"
+					   size="5"
+					   default="50"
+					   label="PLG_JEM_SEARCH_SEARCH_LIMIT"
+					   description="PLG_JEM_SEARCH_NUMBER_ITEMS_RETURN"
+				/>
+			</fieldset>
+		</fields>
+	</config>
 </extension>

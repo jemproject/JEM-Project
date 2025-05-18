@@ -26,16 +26,16 @@ $params		= $this->item->params;
 //$settings = json_decode($this->item->attribs);
 
 $options = array(
-    'onActive' => 'function(title, description){
-        description.setStyle("display", "block");
-        title.addClass("open").removeClass("closed");
-    }',
-    'onBackground' => 'function(title, description){
-        description.setStyle("display", "none");
-        title.addClass("closed").removeClass("open");
-    }',
-    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-    'useCookie' => true, // this must not be a string. Don't use quotes.
+	'onActive' => 'function(title, description){
+		description.setStyle("display", "block");
+		title.addClass("open").removeClass("closed");
+	}',
+	'onBackground' => 'function(title, description){
+		description.setStyle("display", "none");
+		title.addClass("closed").removeClass("open");
+	}',
+	'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+	'useCookie' => true, // this must not be a string. Don't use quotes.
 );
 
 # defining values for centering default-map
@@ -131,9 +131,9 @@ window.onload = (event) => {
 			detailsAttribute: "geo-data",
 			types: ['establishment', 'geocode'],
 			mapOptions: {
-			      zoom: 16,
-			      mapTypeId: "hybrid"
-			    },
+				  zoom: 16,
+				  mapTypeId: "hybrid"
+				},
 			markerOptions: {
 				draggable: true
 			}
@@ -196,15 +196,15 @@ window.onload = (event) => {
 		});
 
 		jQuery('#jform_map').on('keyup keypress blur change', function() {
-		    test();
+			test();
 		});
 
 		jQuery('#jform_latitude').on('keyup keypress blur change', function() {
-		    test();
+			test();
 		});
 
 		jQuery('#jform_longitude').on('keyup keypress blur change', function() {
-		    test();
+			test();
 		});
 	});
 </script>

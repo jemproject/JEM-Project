@@ -160,6 +160,6 @@ class JemControllerMailto extends JemControllerForm
 		$this->setRedirect($currentUri);
 		//--------------end new code ------------
 
-    }
+	}
 
 }

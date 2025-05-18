@@ -38,8 +38,8 @@ $options = array(
 	}
 	.jem-wei-menus .icon a{
 		display: flex;
-    	flex-direction: column;
-    	align-items: center;
+		flex-direction: column;
+		align-items: center;
 	}
 </style>
 <form action="<?php echo Route::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">

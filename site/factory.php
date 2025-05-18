@@ -37,7 +37,7 @@ abstract class JemFactory extends Factory
 	 */
 	public static function getUser($id = null)
 	{
-        $app = Factory::getApplication();
+		$app = Factory::getApplication();
 		if (is_null($id))
 		{
 			$instance = $app->getSession()->get('user');
@@ -76,6 +76,6 @@ abstract class JemFactory extends Factory
 	 */
 	public static function getDispatcher()
 	{
-        return Factory::getApplication();
+		return Factory::getApplication();
 	}
 }

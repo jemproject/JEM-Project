@@ -121,21 +121,21 @@ class jemmyeventsTab extends cbTabHandler {
 		$query      = 'SELECT DISTINCT a.id';
 		if (!$fast) {
 			$query .= '  AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
-			        . ' CONCAT(a.introtext,a.fulltext) AS text, a.published, a.registra, a.maxplaces, a.waitinglist,'
-			        . ' l.venue, l.city, l.state, l.url,'
-			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
-			        . ',CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-			        ;
+					. ' CONCAT(a.introtext,a.fulltext) AS text, a.published, a.registra, a.maxplaces, a.waitinglist,'
+					. ' l.venue, l.city, l.state, l.url,'
+					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
+					. ',CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+					;
 		}
 		$query     .= ' FROM `#__jem_events` AS a '
-			        . ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
-			        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
-			        . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-		            . ' WHERE ' . $where_pub . ' AND a.created_by = ' . $userid . '  AND a.access IN (' . implode(',', $levels) . ')'
-		            . '  AND c.published = 1 AND c.access IN (' . implode(',', $levels) . ')'
-			        . ' GROUP BY a.id'
-			        . ' ORDER BY a.dates, a.times'
-			        ;
+					. ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
+					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
+					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
+					. ' WHERE ' . $where_pub . ' AND a.created_by = ' . $userid . '  AND a.access IN (' . implode(',', $levels) . ')'
+					. '  AND c.published = 1 AND c.access IN (' . implode(',', $levels) . ')'
+					. ' GROUP BY a.id'
+					. ' ORDER BY a.dates, a.times'
+					;
 
 		return $query;
 	}
@@ -390,7 +390,7 @@ class jemmyeventsTab extends cbTabHandler {
 					 */
 					if ($end_date) {
 						$enddate2 = $result->enddates ? JEMOutput::formatDateTime($result->enddates, $result->endtimes, '', '', $formatShortDate)
-							                          : JEMOutput::formattime($result->endtimes);
+													  : JEMOutput::formattime($result->endtimes);
 						$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableExp'>";
 						$return .= "\n\t\t\t\t{$enddate2}";
 						$return .= "\n\t\t\t</td>";
@@ -408,7 +408,7 @@ class jemmyeventsTab extends cbTabHandler {
 						$return .= "<small style='font-style:italic;'> - {$result->city}</small>";
 					}
 																
-												  
+												
 					$return .= "\n\t\t\t</td>";
 				}
 				/* Attendees field */
@@ -418,7 +418,7 @@ class jemmyeventsTab extends cbTabHandler {
 						if ($this->_found_state_field) {
 							// state 1: user registered, state -1: user exlicitely unregistered, state 0: user is invited but hadn't answered yet
 							$qry = "SELECT COUNT(IF(waiting <= 0 AND status = 1, 1, null)) AS registered, COUNT(IF(waiting > 0 AND status = 1, 1, null)) AS waiting,"
-							     . " COUNT(IF(status = -1, 1, null)) AS unregistered, COUNT(IF(status = 0, 1, null)) AS invited FROM #__jem_register WHERE event = $result->eventid";
+								 . " COUNT(IF(status = -1, 1, null)) AS unregistered, COUNT(IF(status = 0, 1, null)) AS invited FROM #__jem_register WHERE event = $result->eventid";
 						} else {
 							$qry = "SELECT COUNT(IF(waiting <= 0, 1, null)) AS registered, COUNT(IF(waiting > 0, 1, null)) AS waiting FROM #__jem_register WHERE event = $result->eventid";
 						}

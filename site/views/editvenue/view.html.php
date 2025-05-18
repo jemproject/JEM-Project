@@ -83,20 +83,20 @@ class JemViewEditvenue extends JemView
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view']   == 'editvenue'
-		                                && 0 == $item->id); // menu item is always for new venues
+										&& $menuitem->query['view']   == 'editvenue'
+										&& 0 == $item->id); // menu item is always for new venues
 
 		$title = ($item->id == 0) ? Text::_('COM_JEM_EDITVENUE_VENUE_ADD')
-		                          : Text::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
+								  : Text::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
 
 		if ($useMenuItemParams) {
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
 			$params->def('page_title', $pagetitle);
 			$params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+	  $pathwayKeys = array_keys($pathway->getPathway());
+	  $lastPathwayEntryIndex = end($pathwayKeys);
+	  $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+	  //$pathway->setItemName(1, $menuitem->title);
 
 			// Load layout from menu item if one is set else from venue if there is one set
 			if (isset($menuitem->query['layout'])) {

@@ -250,24 +250,24 @@ class JemModelCategories extends BaseDatabaseModel
 		$where .= ' AND a.access IN (' . implode(',', $levels) . ')';
 
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.published,'
-		       . ' a.recurrence_type, a.recurrence_first_id,'
-		       . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
-		       . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
-		       . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
-		       . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
-		       . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
-		       . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
-		       . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
-		       . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
-		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-		       . ' FROM #__jem_events AS a'
-		       . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-		       . ' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
-		       . $where
-		       . ' ORDER BY a.dates, a.times, a.created DESC'
-		       ;
+			   . ' a.recurrence_type, a.recurrence_first_id,'
+			   . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
+			   . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
+			   . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
+			   . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
+			   . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+			   . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+			   . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+			   . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+			   . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+			   . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			   . ' FROM #__jem_events AS a'
+			   . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+			   . ' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
+			   . $where
+			   . ' ORDER BY a.dates, a.times, a.created DESC'
+			   ;
 
 		return $query;
 	}
@@ -279,13 +279,13 @@ class JemModelCategories extends BaseDatabaseModel
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
-		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-		       . ' FROM #__jem_categories AS c'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-		       . ' WHERE rel.itemid = '.(int)$id
-		       . ' AND c.published = 1'
-		       . ' AND c.access IN (' . implode(',', $levels) . ')'
-		       ;
+			   . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+			   . ' FROM #__jem_categories AS c'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+			   . ' WHERE rel.itemid = '.(int)$id
+			   . ' AND c.published = 1'
+			   . ' AND c.access IN (' . implode(',', $levels) . ')'
+			   ;
 
 		$this->_db->setQuery($query);
 		return $this->_db->loadObjectList();
@@ -378,11 +378,11 @@ class JemModelCategories extends BaseDatabaseModel
 					//$where_sub_or[] = '(i.published = 0 AND c.groupid IN (' . implode(',', $on_groups) . '))';
 					// to allow also events with categories not attached to disallowed jemgroups use this crazy block:
 					$where_sub_or[] = '(i.published = 0 AND '
-					                . ' i.id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
-					                . '              INNER JOIN #__jem_cats_event_relations as rel3 '
-					                . '              WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $on_groups) . ')'
-					                . '              GROUP BY rel3.itemid)'
-					                . ')';
+									. ' i.id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
+									. '              INNER JOIN #__jem_cats_event_relations as rel3 '
+									. '              WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $on_groups) . ')'
+									. '              GROUP BY rel3.itemid)'
+									. ')';
 					// hint: above it's a not not ;-)
 					//       meaning: Show unpublished events not connected to a category which is not one of the allowed categories.
 				}
@@ -402,22 +402,22 @@ class JemModelCategories extends BaseDatabaseModel
 		$parentCategoryQuery = $parentCategory ? 'c.id='.(int)$parent_id : 'c.parent_id='.(int)$parent_id;
 
 		$query = 'SELECT c.*,'
-		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
-		       . ' ('
-		       . '  SELECT COUNT(DISTINCT i.id)'
-		       . '  FROM #__jem_events AS i'
-		       . '  LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
-		       . '  LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
-		       . $where_sub
-		       . '  GROUP BY cc.id'
-		       . ' ) AS assignedevents'
-		       . ' FROM #__jem_categories AS c'
-		       . ' WHERE c.published = 1'
-		       . ' AND '.$parentCategoryQuery
-		       . ' AND c.access IN (' . implode(',', $levels) . ')'
-		       . ' GROUP BY c.id '.$empty
-		       . ' ORDER BY '.$ordering
-		       ;
+			   . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
+			   . ' ('
+			   . '  SELECT COUNT(DISTINCT i.id)'
+			   . '  FROM #__jem_events AS i'
+			   . '  LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
+			   . '  LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
+			   . $where_sub
+			   . '  GROUP BY cc.id'
+			   . ' ) AS assignedevents'
+			   . ' FROM #__jem_categories AS c'
+			   . ' WHERE c.published = 1'
+			   . ' AND '.$parentCategoryQuery
+			   . ' AND c.access IN (' . implode(',', $levels) . ')'
+			   . ' GROUP BY c.id '.$empty
+			   . ' ORDER BY '.$ordering
+			   ;
 
 		return $query;
 	}
@@ -436,17 +436,17 @@ class JemModelCategories extends BaseDatabaseModel
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id'
-		       . ' FROM #__jem_categories AS c';
+			   . ' FROM #__jem_categories AS c';
 
 		if (!$this->_showemptycats) {
 			$query .= ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id '
-			        . ' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
+					. ' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
 		}
 
 		$query .= ' WHERE c.published = 1'
-		        . ' AND c.parent_id = ' . (int) $this->_id
-		        . ' AND c.access IN (' . implode(',', $levels) . ')'
-		        ;
+				. ' AND c.parent_id = ' . (int) $this->_id
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
+				;
 
 		if (!$this->_showemptycats) {
 			$query .= ' AND e.access IN (' . implode(',', $levels) . ')';

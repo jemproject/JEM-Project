@@ -40,7 +40,7 @@ use Joomla\CMS\Session\Session;
 						<dt><?php echo Text::_('COM_JEM_ATTACHMENT_REMOVE') . ' ' . $file->name; ?></dt>
 						<dd><?php echo JemOutput::removebutton(Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove' . $file->id . ':' . Session::getFormToken(), 'class' => 'attach-remove btn', 'title' => Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></dd>
 						<?php endif; ?>
-                    </dl>
+					</dl>
 				</td>
 				<td>
 					<div>

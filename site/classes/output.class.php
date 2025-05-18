@@ -435,13 +435,13 @@ static public function lightbox() {
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
 			$showIcon = $settings->get('global_show_icons', 1);
 
-            if (version_compare(JVERSION, '5.0.0', '>=')) {
-                // Joomla 5 with Font Awesome 6
-                $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
-            } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-                // Joomla 4 with Font Awesome 5
-                $iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
-            }
+			if (version_compare(JVERSION, '5.0.0', '>=')) {
+				// Joomla 5 with Font Awesome 6
+				$iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
+			} elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+				// Joomla 4 with Font Awesome 5
+				$iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
+			}
 
 			switch ($view)
 			{
@@ -454,19 +454,19 @@ static public function lightbox() {
 					}
 
 					if ($showIcon) {
-                        if($item->recurrence_type && !$item->recurrence_first_id){
-                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', $iconEditEventRoot, Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
-                            $overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
-                            $text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
-                        }else {
-                            $image = jemhtml::icon('com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
-                            $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
-                            $text = Text::_('COM_JEM_EDIT_EVENT');
-                        }
+						if($item->recurrence_type && !$item->recurrence_first_id){
+							$image = jemhtml::icon('com_jem/calendar_edit_root.png', $iconEditEventRoot, Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
+							$overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
+							$text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
+						}else {
+							$image = jemhtml::icon('com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+							$overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+							$text = Text::_('COM_JEM_EDIT_EVENT');
+						}
 					} else {
 						$image = Text::_('COM_JEM_EDIT_EVENT');
-                        $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
-                        $text = Text::_('COM_JEM_EDIT_EVENT');
+						$overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
+						$text = Text::_('COM_JEM_EDIT_EVENT');
 					}
 					$id = isset($item->did) ? $item->did : $item->id;
 					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
@@ -631,7 +631,7 @@ static public function lightbox() {
 				$overlib = Text::_('COM_JEM_PRINT_DESC');
 				$text = Text::_('COM_JEM_PRINT');
 				$output = '<a href="' . Route::_($print_link) . '&tmpl=component" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
-				        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
+						. ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
 			}
 			return $output;
 		}
@@ -696,8 +696,8 @@ static public function lightbox() {
 	 * Creates the ical button
 	 *
 	 * @param object $slug
-     * @view string view name
-     * @task string task name
+	 * @view string view name
+	 * @task string task name
 	 */
 	static public function icalbutton($slug, $view, $task = null)
 	{
@@ -927,7 +927,7 @@ static public function lightbox() {
 			$data->longitude = null;
 		}
 
-		$url = 'https://nominatim.openstreetmap.org/ui/search.html?q=' . urlencode($data->street . ', ' . $data->postalCode . ' ' . $data->city); 
+		$url = 'https://nominatim.openstreetmap.org/ui/search.html?q=' . urlencode($data->street . ', ' . $data->postalCode . ' ' . $data->city);
 
 		// maps
 		switch ($mapserv)
@@ -965,11 +965,11 @@ static public function lightbox() {
 				$output = '';
 
 				if (empty($api) || empty($clientid)) {
-				    $output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
-				    break;
+					$output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
+					break;
 				} else {
-				    $api = trim($api);
-				    $clientid = trim($clientid);
+					$api = trim($api);
+					$clientid = trim($clientid);
 				}
 				
 				$document   = $app->getDocument();
@@ -999,17 +999,17 @@ static public function lightbox() {
 				// OpenStreetMap link
 				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
 					$lat = $data->latitude;
-					$lng = $data->longitude;   
+					$lng = $data->longitude;
 				} else {
 				$address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
 				$search_url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=jsonv2";
 				$websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
 
 				$httpOptions = [
-				    "http" => [
-				        "method" => "GET",
-				        "header" => "User-Agent: JEM 4.0 on" . $websiteUrl
-				    ]
+					"http" => [
+						"method" => "GET",
+						"header" => "User-Agent: JEM 4.0 on" . $websiteUrl
+					]
 				];
 
 				$streamContext = stream_context_create($httpOptions);
@@ -1021,9 +1021,9 @@ static public function lightbox() {
 				}
 
 				if ($lat && $lng) {
-				    $url = 'https://www.openstreetmap.org/?mlat=' . htmlentities($lat) . '&mlon=' . htmlentities($lng) . '&zoom=15#map=15/' . htmlentities($lat) . '/' . htmlentities($lng);
+					$url = 'https://www.openstreetmap.org/?mlat=' . htmlentities($lat) . '&mlon=' . htmlentities($lng) . '&zoom=15#map=15/' . htmlentities($lat) . '/' . htmlentities($lng);
 				} else {
-				    $url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
+					$url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
 				}
 								
 				$message = Text::_('COM_JEM_MAP') . ':';
@@ -1034,9 +1034,9 @@ static public function lightbox() {
 			case 5:
 				// embed OpenStreetMap
 				if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
-				    $lat = $data->latitude;
-				    $lng = $data->longitude;
-				} else {  
+					$lat = $data->latitude;
+					$lng = $data->longitude;
+				} else {
 
 				$address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
 	 			$search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
@@ -1061,9 +1061,9 @@ static public function lightbox() {
 	 			$wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
 	 			
 	 			if ($lat && $lng) {
-				    $zoom = 15; // Adjust the zoom level as per your requirement
-				    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
-	 			} else { 
+					$zoom = 15; // Adjust the zoom level as per your requirement
+					$output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+	 			} else {
 	 				$fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
 	 				$output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
 	 			}
@@ -1091,15 +1091,15 @@ static public function lightbox() {
 			return;
 		}
 
-        if (version_compare(JVERSION, '5.0.0', '>=')) {
-            // Joomla 5 with Font Awesome 6
-            $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
-        } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-            // Joomla 4 witn Font Awesome 5
-            $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
-        }
+		if (version_compare(JVERSION, '5.0.0', '>=')) {
+			// Joomla 5 with Font Awesome 6
+			$iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
+			$iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
+		} elseif (version_compare(JVERSION, '4.0.0', '>=')) {
+			// Joomla 4 witn Font Awesome 5
+			$iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
+			$iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
+		}
 
 		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
@@ -1197,7 +1197,7 @@ static public function lightbox() {
 				$info = $data->title;
 				if(!$settings->flyer){
 					$precaption = Text::_('COM_JEM_EVENT');
-    	            $id = 'eventid-'. $data->id;
+					$id = 'eventid-'. $data->id;
 				}
 				break;
 
@@ -1256,7 +1256,7 @@ static public function lightbox() {
 					$url = $uri->base().$image['original'];
 					$attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
 					$icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-					$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>'; 
+					$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 				
 				}
 				// If there is no thumbnail, then take the values for the original image specified in the settings
@@ -1591,8 +1591,8 @@ static public function lightbox() {
 		$parsed = date('Y-m-d H:i:s', $sec);
 
 		$date = array('year'  => (int) substr($parsed, 0, 4),
-		              'month' => (int) substr($parsed, 5, 2),
-		              'day'   => (int) substr($parsed, 8, 2));
+					  'month' => (int) substr($parsed, 5, 2),
+					  'day'   => (int) substr($parsed, 8, 2));
 
 		//Format time
 		if (substr($parsed, 11, 8) != '00:00:00')
@@ -1621,11 +1621,11 @@ static public function lightbox() {
 						$path = str_replace('/', ' &#187; ', $path);
 						$value  = '<span ' . self::tooltip(Text::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip') . '>';
 						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . $category->id . '">' .
-						              $category->catname . '</a>';
+									  $category->catname . '</a>';
 						$value .= '</span>';
 					} else {
 						$value  = '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
-						              $category->catname . '</a>';
+									  $category->catname . '</a>';
 					}
 				} else {
 					$value = $category->catname;

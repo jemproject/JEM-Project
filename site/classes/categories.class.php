@@ -215,7 +215,7 @@ class JemCategories
 		}
 
 		$subQuery = ' (SELECT cat.id as id FROM #__jem_categories AS cat JOIN #__jem_categories AS parent'
-		          . ' ON cat.lft BETWEEN parent.lft AND parent.rgt WHERE parent.published != 1 GROUP BY cat.id) ';
+				  . ' ON cat.lft BETWEEN parent.lft AND parent.rgt WHERE parent.published != 1 GROUP BY cat.id) ';
 		$query->leftJoin($subQuery . ' AS badcats ON badcats.id = c.id');
 		$query->where('badcats.id is null');
 

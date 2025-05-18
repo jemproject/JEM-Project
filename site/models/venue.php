@@ -99,7 +99,7 @@ class JemModelVenue extends JemModelEventslist
 			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder, 'a.created ' . $listOrder);
 		} else {
 			$orderby = array($orderCol . ' ' . $listOrder,
-			                 'a.dates ' . $defaultOrder, 'a.times ' . $defaultOrder, 'a.created ' . $defaultOrder);
+							 'a.dates ' . $defaultOrder, 'a.times ' . $defaultOrder, 'a.created ' . $defaultOrder);
 		}
 		$this->setState('filter.orderby', $orderby);
 
@@ -184,9 +184,9 @@ class JemModelVenue extends JemModelEventslist
 		$query  = $db->getQuery(true);
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
-		               ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
-		               ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
-		               ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
+					   ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
+					   ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
+					   ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
 		$query->from($db->quoteName('#__jem_venues'));
 		$query->where('id = '.(int)$this->_id);
 

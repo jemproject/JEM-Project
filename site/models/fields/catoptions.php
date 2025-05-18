@@ -34,44 +34,44 @@ class JFormFieldCatOptions extends ListField
 	 */
 	public function getInput()
 	{
-        $jinput = Factory::getApplication()->input;
-        $currentid = $jinput->getInt('a_id');
-        if (!$currentid) { // special case: new event as copy of another one
-            $currentid = $jinput->getInt('from_id');
-        }
-        $attr = '';
-        $selectedcats = [];
+		$jinput = Factory::getApplication()->input;
+		$currentid = $jinput->getInt('a_id');
+		if (!$currentid) { // special case: new event as copy of another one
+			$currentid = $jinput->getInt('from_id');
+		}
+		$attr = '';
+		$selectedcats = [];
 
 		// Initialize field attributes.
-        $attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
-        $attr .= !empty($this->size) ? ' size="' . $this->size . '"' : '';
-        $attr .= $this->multiple ? ' multiple' : '';
-        $attr .= $this->required ? ' required aria-required="true"' : '';
+		$attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
+		$attr .= !empty($this->size) ? ' size="' . $this->size . '"' : '';
+		$attr .= $this->multiple ? ' multiple' : '';
+		$attr .= $this->required ? ' required aria-required="true"' : '';
 
-        // To avoid user's confusion, readonly="true" should imply disabled="true".
-        if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
-        {
-            $attr .= ' disabled="disabled"';
-        }
+		// To avoid user's confusion, readonly="true" should imply disabled="true".
+		if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
+		{
+			$attr .= ' disabled="disabled"';
+		}
 
-        // Initialize JavaScript field attributes.
-        $attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
+		// Initialize JavaScript field attributes.
+		$attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
-        // Gets currently selected categories (existing event) or default categories (new event)
-        if(empty($currentid)) {
-            $selectedcats = $this->default ? (array)$this->default : [];
-        } else {
-            $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->select('DISTINCT catid');
-            $query->from('#__jem_cats_event_relations');
-            $query->where('itemid = ' . $db->quote($currentid));
-            $db->setQuery($query);
-            $selectedcats = $db->loadColumn();
-        }
+		// Gets currently selected categories (existing event) or default categories (new event)
+		if(empty($currentid)) {
+			$selectedcats = $this->default ? (array)$this->default : [];
+		} else {
+			$db = Factory::getContainer()->get('DatabaseDriver');
+			$query = $db->getQuery(true);
+			$query->select('DISTINCT catid');
+			$query->from('#__jem_cats_event_relations');
+			$query->where('itemid = ' . $db->quote($currentid));
+			$db->setQuery($query);
+			$selectedcats = $db->loadColumn();
+		}
 
 		// On new event we may have a category preferred to select.
 		if (empty($selectedcats) && !empty($this->element['prefer'])) {
@@ -137,7 +137,7 @@ class JFormFieldCatOptions extends ListField
 	 */
 	public function getCategories($id)
 	{
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$userid = (int) $user->get('id');
 
@@ -148,9 +148,9 @@ class JFormFieldCatOptions extends ListField
 		} else {
 			$query = $db->getQuery(true);
 			$query = 'SELECT COUNT(*)'
-			       . ' FROM #__jem_events AS e'
-			       . ' WHERE e.id = ' . $db->quote($id)
-			       . '   AND e.created_by = ' . $db->quote($userid);
+				   . ' FROM #__jem_events AS e'
+				   . ' WHERE e.id = ' . $db->quote($id)
+				   . '   AND e.created_by = ' . $db->quote($userid);
 			$db->setQuery($query);
 			$owner = $db->loadResult();
 

@@ -155,7 +155,7 @@ class JemHelper
 
 		if (($nrdaysnow > $nrdaysupdate) || $forced) {
 			JemHelper::addLogEntry('forced: ' . $forced . ', now: '. $now . ', last update: ' . $lastupdate .
-		                           ', running update: ' . $runningupdate . ', delay: ' . $delay . ', tz-offset: ' . $offset, __METHOD__);
+								   ', running update: ' . $runningupdate . ', delay: ' . $delay . ', tz-offset: ' . $offset, __METHOD__);
 
 			if (($runningupdate + $delay) < $now) {
 				// Set timestamp of running cleanup
@@ -169,20 +169,20 @@ class JemHelper
 					$dispatcher->triggerEvent('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
-                $db = Factory::getContainer()->get('DatabaseDriver');
+				$db = Factory::getContainer()->get('DatabaseDriver');
 				$query = $db->getQuery(true);
 
 				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 				// Ignore published field to prevent duplicate events.
 				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-				       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, recurrence_bylastday, '
-				       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-				       . ' FROM #__jem_events '
-				       . ' WHERE recurrence_type <> "0" '
-				       . ' AND CASE  WHEN recurrence_limit_date IS null THEN 1 ELSE NOW() < recurrence_limit_date END '
-				       . ' AND recurrence_number <> "0" '
-				       . ' GROUP BY first_id'
-				       . ' ORDER BY dates DESC';
+					   . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, recurrence_bylastday, '
+					   . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
+					   . ' FROM #__jem_events '
+					   . ' WHERE recurrence_type <> "0" '
+					   . ' AND CASE  WHEN recurrence_limit_date IS null THEN 1 ELSE NOW() < recurrence_limit_date END '
+					   . ' AND recurrence_number <> "0" '
+					   . ' GROUP BY first_id'
+					   . ' ORDER BY dates DESC';
 
 				$db->SetQuery($query);
 				$recurrence_array = $db->loadAssocList();
@@ -194,7 +194,7 @@ class JemHelper
 					$ref_event = Table::getInstance('Event', 'JemTable');
 					$ref_event->load($recurrence_row['id']);
 
-                    $db = Factory::getContainer()->get('DatabaseDriver');
+					$db = Factory::getContainer()->get('DatabaseDriver');
 					$query = $db->getQuery(true);
 					$query->select('*');
 					$query->from($db->quoteName('#__jem_events').' AS a');
@@ -214,29 +214,29 @@ class JemHelper
 					// calculate next occurence date
 					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
 
-                    switch ($recurrence_row["recurrence_type"]) {
-                        case 1:
-                            $anticipation	= $jemsettings->recurrence_anticipation_day;
-                            break;
-                        case 2:
-                            $anticipation	= $jemsettings->recurrence_anticipation_week;
-                            break;
-                        case 3:
-                            $anticipation	= $jemsettings->recurrence_anticipation_month;
-                            break;
-                        case 4:
-                            $anticipation	= $jemsettings->recurrence_anticipation_week;
-                            break;
-                        case 5:
-                            $anticipation	= $jemsettings->recurrence_anticipation_year;
-                            break;
-                        case 6:
-                            $anticipation	= $jemsettings->recurrence_anticipation_lastday;
-                            break;
-                        default:
-                            $anticipation	= $jemsettings->recurrence_anticipation_day;
-                            break;
-                    }
+					switch ($recurrence_row["recurrence_type"]) {
+						case 1:
+							$anticipation	= $jemsettings->recurrence_anticipation_day;
+							break;
+						case 2:
+							$anticipation	= $jemsettings->recurrence_anticipation_week;
+							break;
+						case 3:
+							$anticipation	= $jemsettings->recurrence_anticipation_month;
+							break;
+						case 4:
+							$anticipation	= $jemsettings->recurrence_anticipation_week;
+							break;
+						case 5:
+							$anticipation	= $jemsettings->recurrence_anticipation_year;
+							break;
+						case 6:
+							$anticipation	= $jemsettings->recurrence_anticipation_lastday;
+							break;
+						default:
+							$anticipation	= $jemsettings->recurrence_anticipation_day;
+							break;
+					}
 
 					// add events as long as we are under the interval and under the limit, if specified.
 					$shieldDate = new Date('now + ' . $anticipation . ' month');
@@ -257,8 +257,8 @@ class JemHelper
 							$recurrence_row['counter']++;
 							//duplicate categories event relationships
 							$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-							       . ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
-							       . ' WHERE itemid = ' . $db->Quote($ref_event->id);
+								   . ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
+								   . ' WHERE itemid = ' . $db->Quote($ref_event->id);
 							$db->setQuery($query);
 
 							if ($db->execute() === false) {
@@ -277,7 +277,7 @@ class JemHelper
 				//delete outdated events
 				if ($jemsettings->oldevent == 1) {
 					$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
-					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+						   .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
 					$db->SetQuery($query);
 					$db->execute();
 				}
@@ -285,8 +285,8 @@ class JemHelper
 				//Set state archived of outdated events
 				if ($jemsettings->oldevent == 2) {
 					$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
-					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-					       .' AND published = 1';
+						   .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+						   .' AND published = 1';
 					$db->SetQuery($query);
 					$db->execute();
 				}
@@ -294,8 +294,8 @@ class JemHelper
 				//Set state trashed of outdated events
 				if ($jemsettings->oldevent == 3) {
 					$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
-					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-					       .' AND published = 1';
+						   .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+						   .' AND published = 1';
 					$db->SetQuery($query);
 					$db->execute();
 				}
@@ -303,8 +303,8 @@ class JemHelper
 				//Set state unpublished of outdated events
 				if ($jemsettings->oldevent == 4) {
 					$query = 'UPDATE #__jem_events SET published = 0 WHERE dates > 0 AND '
-					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-					       .' AND published = 1';
+						   .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+						   .' AND published = 1';
 					$db->SetQuery($query);
 					$db->execute();
 				}
@@ -378,29 +378,29 @@ class JemHelper
 				foreach ($selected as $s)
 				{
 					$next = null;
-                    $nextmonth = null;
+					$nextmonth = null;
 
 					switch ($recurrence_number) {
 						case 7: // before last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s].' - 1 week ',
-							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ',
-							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+											mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
 						case 6: // last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s],
-							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s],
-							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+											mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
 						case 5: // 5th of the month
-                            $currentMonth = $date_array["month"];
-                            do {
-                                $timeFisrtDayMonth = mktime(1,0,0, $currentMonth ,1,$date_array["year"]);
-                                $timeLastDayNextMonth = mktime(23, 59, 59, $currentMonth+1, 0, $date_array["year"]);
-                                $next = strtotime($litterals[$recurrence_number - 1] . " " . $days_names[$s] . ' of this month',$timeFisrtDayMonth);
-                                $currentMonth++;
-                            } while ($next > $timeLastDayNextMonth || $next < $date_array['unixtime']);
+							$currentMonth = $date_array["month"];
+							do {
+								$timeFisrtDayMonth = mktime(1,0,0, $currentMonth ,1,$date_array["year"]);
+								$timeLastDayNextMonth = mktime(23, 59, 59, $currentMonth+1, 0, $date_array["year"]);
+								$next = strtotime($litterals[$recurrence_number - 1] . " " . $days_names[$s] . ' of this month',$timeFisrtDayMonth);
+								$currentMonth++;
+							} while ($next > $timeLastDayNextMonth || $next < $date_array['unixtime']);
 							break;
 						case 4: // xth 'x' of the month
 						case 3:
@@ -408,9 +408,9 @@ class JemHelper
 						case 1:
 						default:
 							$next      = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month',
-							                mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
+											mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
 							$nextmonth = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month',
-							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							break;
 					}
 
@@ -426,18 +426,18 @@ class JemHelper
 					}
 				}
 				break;
-            case "5": // year recurrence
-                $start_day = mktime(1,0,0,($date_array["month"]),$date_array["day"],$date_array["year"]+ $recurrence_number);
-                break;
-            case "6": // last day recurrence
-                $selected = $recurrence_row['recurrence_bylastday'];
-                $lastdays_names = array('L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7');
-                $lastday_number = array_search($selected, $lastdays_names);
-                $start_day = mktime(1, 0, 0, ($date_array["month"] + $recurrence_number), 1, $date_array["year"]); // Set day to 1 to avoid issues
-                $last_day_of_month = (int)date('t', $start_day);
-                $day_of_month = $last_day_of_month - $lastday_number;
-                $start_day = mktime(1, 0, 0, ($date_array["month"] + $recurrence_number), $day_of_month, $date_array["year"]);
-                break;
+			case "5": // year recurrence
+				$start_day = mktime(1,0,0,($date_array["month"]),$date_array["day"],$date_array["year"]+ $recurrence_number);
+				break;
+			case "6": // last day recurrence
+				$selected = $recurrence_row['recurrence_bylastday'];
+				$lastdays_names = array('L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7');
+				$lastday_number = array_search($selected, $lastdays_names);
+				$start_day = mktime(1, 0, 0, ($date_array["month"] + $recurrence_number), 1, $date_array["year"]); // Set day to 1 to avoid issues
+				$last_day_of_month = (int)date('t', $start_day);
+				$day_of_month = $last_day_of_month - $lastday_number;
+				$start_day = mktime(1, 0, 0, ($date_array["month"] + $recurrence_number), $day_of_month, $date_array["year"]);
+				break;
 		}
 
 		if (!$start_day) {
@@ -473,14 +473,14 @@ class JemHelper
 		}
 
 		try {
-            $db = Factory::getContainer()->get('DatabaseDriver');
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			$db->setQuery('UPDATE #__jem_events'
-			            . ' SET recurrence_first_id = 0, recurrence_type = 0'
-			            . '   , recurrence_counter = 0, recurrence_number = 0'
-			            . '   , recurrence_limit = 0, recurrence_limit_date = null'
-			            . '   , recurrence_byday = ' . $db->quote('')
-			            . ' WHERE recurrence_first_id = ' . $first_id
-			             );
+						. ' SET recurrence_first_id = 0, recurrence_type = 0'
+						. '   , recurrence_counter = 0, recurrence_number = 0'
+						. '   , recurrence_limit = 0, recurrence_limit_date = null'
+						. '   , recurrence_byday = ' . $db->quote('')
+						. ' WHERE recurrence_first_id = ' . $first_id
+						 );
 			$db->execute();
 		} catch (Exception $e) {
 			return false;
@@ -593,7 +593,7 @@ class JemHelper
 			$fnames[] = $db->Quote($f);
 		}
 		$query = ' SELECT object, file '
-		       . ' FROM #__jem_attachments ';
+			   . ' FROM #__jem_attachments ';
 		if (!empty($fnames)) {
 			$query .= ' WHERE object IN ('.implode(',', $fnames).')';
 		}
@@ -631,27 +631,27 @@ class JemHelper
 	static public function generate_date($startdate, $enddate)
 	{
 		$validStardate = JemHelper::isValidDate($startdate);
-        $validEnddate = JemHelper::isValidDate($enddate);
+		$validEnddate = JemHelper::isValidDate($enddate);
 
-        if($validStardate) {
-            $startdate = explode("-", $startdate);
+		if($validStardate) {
+			$startdate = explode("-", $startdate);
 		$date_array = array("year" => $startdate[0],
 							"month" => $startdate[1],
 							"day" => $startdate[2],
 							"weekday" => date("w",mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0])),
 							"unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
 
-            if ($validEnddate) {
-                $enddate = explode("-", $enddate);
-                $day_diff = (mktime(1, 0, 0, $enddate[1], $enddate[2], $enddate[0]) - mktime(1, 0, 0, $startdate[1], $startdate[2], $startdate[0]));
-                $date_array["day_diff"] = $day_diff;
-            }
+			if ($validEnddate) {
+				$enddate = explode("-", $enddate);
+				$day_diff = (mktime(1, 0, 0, $enddate[1], $enddate[2], $enddate[0]) - mktime(1, 0, 0, $startdate[1], $startdate[2], $startdate[0]));
+				$date_array["day_diff"] = $day_diff;
+			}
 
 
-            return $date_array;
-        }else{
-            return false;
-        }
+			return $date_array;
+		}else{
+			return false;
+		}
 	}
 
 	/**
@@ -723,10 +723,10 @@ class JemHelper
 		}
 
 		$query = 'SELECT id AS value, title AS text' . $selDisabled
-		       . ' FROM #__viewlevels'
-		       . $where
-		       . ' ORDER BY ordering, id'
-		       ;
+			   . ' FROM #__viewlevels'
+			   . $where
+			   . ' ORDER BY ordering, id'
+			   ;
 
 		//JemHelper::addLogEntry('AccessLevel query: ' . $query, __METHOD__);
 
@@ -740,53 +740,53 @@ class JemHelper
 
 	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
-        $min = 0;
-        $timelist = array();
-        $timelist[0] = HTMLHelper::_('select.option', '', '');
+		$min = 0;
+		$timelist = array();
+		$timelist[0] = HTMLHelper::_('select.option', '', '');
 
-        $jemreg = JemConfig::getInstance()->toRegistry();
+		$jemreg = JemConfig::getInstance()->toRegistry();
 
-        if ($max == 23) {
-            // does user prefer 12 or 24 hours format?
+		if ($max == 23) {
+			// does user prefer 12 or 24 hours format?
 
-            $format = $jemreg->get('formathour', false);
-        } else {
-            $format = false;
-        }
+			$format = $jemreg->get('formathour', false);
+		} else {
+			$format = false;
+		}
 
-        $settings = JemHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 
-        if ($name == 'starthours' || $name == 'endhours'){
-            $min = $settings->get('global_editevent_starttime_limit');
-            $max = $settings->get('global_editevent_endtime_limit');
-            foreach (range($min, $max) as $value) {
-                if ($value < 10) {
-                    $value = '0'.$value;
-                }
+		if ($name == 'starthours' || $name == 'endhours'){
+			$min = $settings->get('global_editevent_starttime_limit');
+			$max = $settings->get('global_editevent_endtime_limit');
+			foreach (range($min, $max) as $value) {
+				if ($value < 10) {
+					$value = '0'.$value;
+				}
 
-                $timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
-            }
-        } else if ($name=='startminutes' || $name=='endminutes'){
-            $block = $settings->get('global_editevent_minutes_block');
-            for ($value = 0; $value <=59; $value += $block) {
-                if ($value < 10) {
-                    $value = '0'.$value;
-                }
+				$timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
+			}
+		} else if ($name=='startminutes' || $name=='endminutes'){
+			$block = $settings->get('global_editevent_minutes_block');
+			for ($value = 0; $value <=59; $value += $block) {
+				if ($value < 10) {
+					$value = '0'.$value;
+				}
 
-                $timelist[] = HTMLHelper::_('select.option', $value, $value);
-            }
-        } else {
-            foreach (range($min, $max) as $value) {
-                if ($value < 10) {
-                    $value = '0'.$value;
-                }
+				$timelist[] = HTMLHelper::_('select.option', $value, $value);
+			}
+		} else {
+			foreach (range($min, $max) as $value) {
+				if ($value < 10) {
+					$value = '0'.$value;
+				}
 
-                $timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
-            }
-        }
+				$timelist[] = HTMLHelper::_('select.option', $value, ($format ? date($format, strtotime("$value:00:00")) : $value));
+			}
+		}
 
-        return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
-    }
+		return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+	}
 
 	/**
 	 * returns mime type of a file
@@ -893,10 +893,10 @@ class JemHelper
 
 		// get attendees after deletion, and their status
 		$query = 'SELECT r.id, r.waiting, r.places'
-		       . ' FROM #__jem_register AS r'
-		       . ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
-		       . ' ORDER BY r.uregdate ASC '
-		       ;
+			   . ' FROM #__jem_register AS r'
+			   . ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
+			   . ' ORDER BY r.uregdate ASC '
+			   ;
 		$db->SetQuery($query);
 		$res = $db->loadObjectList();
 
@@ -934,7 +934,7 @@ class JemHelper
 					}
 					else
 					{
-                        $placesavailable -= $waitreg->places;
+						$placesavailable -= $waitreg->places;
 						PluginHelper::importPlugin('jem');
 						$dispatcher = JemFactory::getDispatcher();
 						$res        = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($waitreg->id));
@@ -970,14 +970,14 @@ class JemHelper
 
 		// status 1: user registered (attendee or waiting list), status -1: user exlicitely unregistered, status 0: user is invited but hadn't answered yet
 		$query = ' SELECT COUNT(id) as total,'
-		       . '        SUM(IF(status =  1 AND waiting = 0, places, 0)) AS registered,'
-		       . '        SUM(IF(status =  1 AND waiting >  0, places, 0)) AS waiting,'
-		       . '        SUM(IF(status = -1,                  places, 0)) AS unregistered,'
-		       . '        SUM(IF(status =  0,                  places, 0)) AS invited,'
-		       . '        event '
-		       . ' FROM #__jem_register '
-		       . ' WHERE event IN (' . $ids .')'
-		       . ' GROUP BY event ';
+			   . '        SUM(IF(status =  1 AND waiting = 0, places, 0)) AS registered,'
+			   . '        SUM(IF(status =  1 AND waiting >  0, places, 0)) AS waiting,'
+			   . '        SUM(IF(status = -1,                  places, 0)) AS unregistered,'
+			   . '        SUM(IF(status =  0,                  places, 0)) AS invited,'
+			   . '        event '
+			   . ' FROM #__jem_register '
+			   . ' WHERE event IN (' . $ids .')'
+			   . ' GROUP BY event ';
 
 		$db->setQuery($query);
 		$res = $db->loadObjectList('event');
@@ -1051,7 +1051,7 @@ class JemHelper
 		$timezone_name = JemHelper::getTimeZoneName();
 		$config        = Factory::getConfig();
 		$sitename      = $config->get('sitename');
-        $uri           = Uri::getInstance();
+		$uri           = Uri::getInstance();
 
 		// get categories names
 		$categories = array();
@@ -1113,7 +1113,7 @@ class JemHelper
 
 			// if same day but end time < start time, change end date to +1 day
 			if ($event->enddates == $event->dates &&
-			    strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
+				strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
 			{
 				$event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
 			}
@@ -1233,16 +1233,16 @@ class JemHelper
 	static public function getValidIds($ids_in)
 	{
 		$ids_out = array();
-        if($ids_in) {
-            $tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
-            if (!empty($tmp)) {
-                foreach ($tmp as $id) {
-                    if ((int)$id > 0) {
-                        $ids_out[] = (int)$id;
-                    }
-                }
-            }
-        }
+		if($ids_in) {
+			$tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
+			if (!empty($tmp)) {
+				foreach ($tmp as $id) {
+					if ((int)$id > 0) {
+						$ids_out[] = (int)$id;
+					}
+				}
+			}
+		}
 
 		return (empty($ids_out) ? false : $ids_out);
 	}
@@ -1252,14 +1252,14 @@ class JemHelper
 	 */
 	static public function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '')
 	{
-        HTMLHelper::_('bootstrap.tooltip');
-        if (0) { /* old style using 'hasTip' */
-            $title = HTMLHelper::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
-        } else { /* new style using 'has Tooltip' */
-            $class = str_replace('hasTip', '', $class) . ' hasTooltip';
-            $title = HTMLHelper::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
-        }
-        $tooltip = '';
+		HTMLHelper::_('bootstrap.tooltip');
+		if (0) { /* old style using 'hasTip' */
+			$title = HTMLHelper::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
+		} else { /* new style using 'has Tooltip' */
+			$class = str_replace('hasTip', '', $class) . ' hasTooltip';
+			$title = HTMLHelper::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
+		}
+		$tooltip = '';
 
 
 		if ($href) {
@@ -1365,9 +1365,9 @@ class JemHelper
 	{
 		$settings = self::retrieveCss();
 		$suffix   = self::getLayoutStyleSuffix();
-        $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $uri      = Uri::getInstance();
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+		$uri      = Uri::getInstance();
 		$url      = $uri->root();
 		if (!empty($suffix)) {
 			$suffix = '-' . $suffix;
@@ -1445,34 +1445,34 @@ class JemHelper
 	 */
 	public static function loadModuleStyleSheet($module, $css = null)
 	{
-        $app = Factory::getApplication();
-        $wa = $app->getDocument()->getWebAssetManager();
-        $templateName = $app->getTemplate();
-        $suffix = self::getLayoutStyleSuffix();
+		$app = Factory::getApplication();
+		$wa = $app->getDocument()->getWebAssetManager();
+		$templateName = $app->getTemplate();
+		$suffix = self::getLayoutStyleSuffix();
 
-        if (empty($css)) {
+		if (empty($css)) {
 			$css = $module;
-            $filestyle = ($suffix? $suffix . '/':'') . $css . '.css';
+			$filestyle = ($suffix? $suffix . '/':'') . $css . '.css';
 		}else{
-            $filestyle = $css . '.css';
-        }
+			$filestyle = $css . '.css';
+		}
 
-        //Search for template overrides
-        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
-        }
-        //Search in media folder
-        else if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'media/' . $module . '/css/' . $filestyle);
-        }
-        //Search in the module
-        else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
-        }
-        //Error the css file doesn't found
-        else {
-            JemHelper::addLogEntry("Warning: The " . $filestyle . " file doesn't found.", __METHOD__);
-        }
+		//Search for template overrides
+		if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+			$wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
+		}
+		//Search in media folder
+		else if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
+			$wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'media/' . $module . '/css/' . $filestyle);
+		}
+		//Search in the module
+		else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
+			$wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
+		}
+		//Error the css file doesn't found
+		else {
+			JemHelper::addLogEntry("Warning: The " . $filestyle . " file doesn't found.", __METHOD__);
+		}
 	}
 
 	static public function loadIconFont()
@@ -1526,11 +1526,11 @@ class JemHelper
 	 * Load Custom CSS
 	 *
 	 * @return boolean
-     */
+	 */
 	static public function loadCustomCss()
 	{
-        $app         = Factory::getApplication();
-        $document    = $app->getDocument();
+		$app         = Factory::getApplication();
+		$document    = $app->getDocument();
 		$settings    = self::retrieveCss();
 		$jemsettings = self::config();
 		$layoutstyle = isset($jemsettings->layoutstyle) ? (int)$jemsettings->layoutstyle : 0;
@@ -1758,7 +1758,7 @@ class JemHelper
 				break;
 		}
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array($column));
 		$query->from('#__extensions');

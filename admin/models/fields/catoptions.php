@@ -32,41 +32,41 @@ class JFormFieldCatOptions extends ListField
 	 */
 	public function getInput()
 	{
-        $jinput = Factory::getApplication()->input;
-        $currentid = $jinput->getInt('id');
+		$jinput = Factory::getApplication()->input;
+		$currentid = $jinput->getInt('id');
 		$attr = '';
-        $selectedcats = [];
+		$selectedcats = [];
 
 		// Initialize field attributes.
-        $attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
-        $attr .= !empty($this->size) ? ' size="' . $this->size . '"' : '';
-        $attr .= $this->multiple ? ' multiple' : '';
-        $attr .= $this->required ? ' required aria-required="true"' : '';
+		$attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
+		$attr .= !empty($this->size) ? ' size="' . $this->size . '"' : '';
+		$attr .= $this->multiple ? ' multiple' : '';
+		$attr .= $this->required ? ' required aria-required="true"' : '';
 
-        // To avoid user's confusion, readonly="true" should imply disabled="true".
-        if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
-        {
-            $attr .= ' disabled="disabled"';
-        }
+		// To avoid user's confusion, readonly="true" should imply disabled="true".
+		if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
+		{
+			$attr .= ' disabled="disabled"';
+		}
 
-        // Initialize JavaScript field attributes.
-        $attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
+		// Initialize JavaScript field attributes.
+		$attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
 		// Gets currently selected categories (existing event) or default categories (new event)
-        if(empty($currentid)) {
-            $selectedcats = $this->default ? (array)$this->default : [];
-        } else {
-            $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->select('DISTINCT catid');
-            $query->from('#__jem_cats_event_relations');
-            $query->where('itemid = ' . $db->quote($currentid));
-            $db->setQuery($query);
-            $selectedcats = $db->loadColumn();
-        }
+		if(empty($currentid)) {
+			$selectedcats = $this->default ? (array)$this->default : [];
+		} else {
+			$db = Factory::getContainer()->get('DatabaseDriver');
+			$query = $db->getQuery(true);
+			$query->select('DISTINCT catid');
+			$query->from('#__jem_cats_event_relations');
+			$query->where('itemid = ' . $db->quote($currentid));
+			$db->setQuery($query);
+			$selectedcats = $db->loadColumn();
+		}
 
 		// Create a read-only list (no name) with a hidden input to store the value.
 		if ((string) $this->readonly == '1' || (string  ) $this->readonly == 'true')

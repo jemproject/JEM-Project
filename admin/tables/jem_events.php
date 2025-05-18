@@ -140,7 +140,7 @@ class jem_events extends Table
 			return false;
 		}
 		if (empty($this->endtimes) || empty($this->times) || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)
-		    || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times))
+			|| preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times))
 		{
 			$this->endtimes = NULL;
 		}

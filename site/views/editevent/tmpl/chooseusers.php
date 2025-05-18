@@ -79,11 +79,11 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 		<table class="eventtable table table-striped" style="width:100%" summary="jem">
 			<thead>
 				<tr>
-                    <th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+					<th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
-                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
-                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
+					<th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
+					<th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -113,17 +113,17 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 			</tbody>
 		</table>
 
-        <div class="jem-row jem-justify-start valign-baseline">
-           <div style="padding-right:5px;">
+		<div class="jem-row jem-justify-start valign-baseline">
+		   <div style="padding-right:5px;">
 				<?php echo Text::_('COM_JEM_SELECT');?>
-            </div>
-            <div style="padding-right:10px;">
+			</div>
+			<div style="padding-right:10px;">
 				<?php echo Text::_('COM_JEM_PLACES'); ?>
-            </div>
-            <div style="padding-right:10px;">
-                <input id="places" name="places" type="number" style="text-align: center; width:auto;"  value="0" max="1" min="0">
-            </div>
-        </div>
+			</div>
+			<div style="padding-right:10px;">
+				<input id="places" name="places" type="number" style="text-align: center; width:auto;"  value="0" max="1" min="0">
+			</div>
+		</div>
 
 		<input type="hidden" name="task" value="selectusers" />
 		<input type="hidden" name="option" value="com_jem" />

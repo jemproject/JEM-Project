@@ -20,7 +20,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 		</td>
 		<td><div class="button2-left">
 				<div class="blank">
-                    <a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>
+					<a href="#" onclick="window.print();return false;"><span class="icon icon-print"></span></a>
 				</div>
 			</div>
 		</td>

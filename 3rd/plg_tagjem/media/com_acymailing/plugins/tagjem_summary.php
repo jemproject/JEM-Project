@@ -12,10 +12,8 @@ include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
 
 $result .= '<div class="acymailing_content">';
 $result .= '<p>';
-$result .= JemOutput::formatShortDateTime($event->dates, $event->times,
-                                          $event->enddates, $event->endtimes);
-$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times,
-                                              $event->enddates, $event->endtimes);
+$result .= JemOutput::formatShortDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
+$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
 $result .= '</p>';
 
 $link = JemHelperRoute::getEventRoute($event->slug);

@@ -14,28 +14,28 @@ use Joomla\CMS\Language\Text;
 
 
 $options = array(
-    'onActive' => 'function(title, description){
-        description.setStyle("display", "block");
-        title.addClass("open").removeClass("closed");
-    }',
-    'onBackground' => 'function(title, description){
-        description.setStyle("display", "none");
-        title.addClass("closed").removeClass("open");
-    }',
+	'onActive' => 'function(title, description){
+		description.setStyle("display", "block");
+		title.addClass("open").removeClass("closed");
+	}',
+	'onBackground' => 'function(title, description){
+		description.setStyle("display", "none");
+		title.addClass("closed").removeClass("open");
+	}',
 	'opacityTransition' => true,
-    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-    'useCookie' => true, // this must not be a string. Don't use quotes.
+	'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+	'useCookie' => true, // this must not be a string. Don't use quotes.
 );
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=help'); ?>" method="post" name="adminForm" id="adminForm">
 
 	<div id="j-main-container" class="j-main-container">
-	    <div class="row mb-3">
+		<div class="row mb-3">
 		   <div class="col-md-12">
 				<fieldset id="filter-bar" class=" mb-3">
 					<div class="row mb-3">
 						<div class="col-md-4">
-							<div class="input-group">  
+							<div class="input-group">
 								<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->helpsearch;?>"  inputmode="search" onChange="document.adminForm.submit();" >											
 								
 								<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
@@ -108,7 +108,7 @@ $options = array(
 	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
-<?php 
+<?php
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive');
 

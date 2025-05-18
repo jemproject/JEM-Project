@@ -38,7 +38,7 @@ class JFormFieldVenueoptions extends ListField
 		$jinput = Factory::getApplication()->input;
 
 		// Create SQL
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('l.id AS value, l.venue AS text, l.published');

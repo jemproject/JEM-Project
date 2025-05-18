@@ -25,12 +25,12 @@ $params		= (isset($this->state->params)) ? $this->state->params : new CMSObject(
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=groups'); ?>" method="post" name="adminForm" id="adminForm">
 	<div id="j-main-container" class="j-main-container">
-	    <fieldset id="filter-bar" class=" mb-3">
-            <div class="row">
+		<fieldset id="filter-bar" class=" mb-3">
+			<div class="row">
 				<div class="col-md-11">		
-                    <div class="row mb-12">
+					<div class="row mb-12">
 						<div class="col-md-4">
-							<div class="input-group">  
+							<div class="input-group">
 								<input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >											
 						
 								<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
@@ -38,29 +38,29 @@ $params		= (isset($this->state->params)) ? $this->state->params : new CMSObject(
 								</button>
 								<button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 							</div>
-                        </div>
-                    </div>
+						</div>
+					</div>
 				</div>
-			    <div class="col-md-1">				
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-        <div class="clr"> </div>
+				<div class="col-md-1">				
+					<div class="row">
+						<div class="wauto-minwmax">
+							<div class="float-end">
+								<?php echo $this->pagination->getLimitBox(); ?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		<div class="clr"> </div>
 
-        <table class="table table-striped" id="articleList">
-            <thead>
-            <tr>
-                <th style="width: 5px" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-                <th style="width: 30%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
+		<table class="table table-striped" id="articleList">
+			<thead>
+			<tr>
+				<th style="width: 5px" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th style="width: 30%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
 				<th><?php echo Text::_( 'COM_JEM_DESCRIPTION' ); ?></th>
-                <th style="width: 1%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'id', $listDirn, $listOrder ); ?></th>
+				<th style="width: 1%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'id', $listDirn, $listOrder ); ?></th>
 				</tr>
 			</thead>
 
@@ -95,23 +95,23 @@ $params		= (isset($this->state->params)) ? $this->state->params : new CMSObject(
 							echo $this->escape($descoutput);
 						?>
 					</td>
-                    <td class="center"><?php echo $row->id; ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+					<td class="center"><?php echo $row->id; ?></td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
 			
 		<div class="ms-auto mb-4 me-0">
-            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
-        </div>
+			<?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
+		</div>
 	</div>
 
-    <div>
-	    <input type="hidden" name="task" value="" />
-	    <input type="hidden" name="boxchecked" value="0" />
-	    <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-	    <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+	<div>
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 
-	    <?php echo HTMLHelper::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 	</div>
 </form>

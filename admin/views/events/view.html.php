@@ -63,9 +63,9 @@ class JemViewEvents extends JemAdminView
 		if ($highlighter) {
 			$this->document->addScript($url.'media/com_jem/js/highlighter.js');
 			$style = '
-			    .red, .red a {
-			    color:red;}
-			    ';
+				.red, .red a {
+				color:red;}
+				';
 			$this->document->addStyleDeclaration($style);
 		}
 

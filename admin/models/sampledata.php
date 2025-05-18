@@ -5,7 +5,7 @@
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -120,11 +120,11 @@ class JemModelSampledata extends BaseDatabaseModel
 		try {
 			$archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
 			$result = $archiveObj->extract($archive, $extractdir);
-        } catch (\Exception $e) {
+		} catch (\Exception $e) {
 			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
 
-            return false;
-        }
+			return false;
+		}
 
 		if ($result === false) {
 			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');

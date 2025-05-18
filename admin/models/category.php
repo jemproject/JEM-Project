@@ -172,7 +172,7 @@ class JemModelCategory extends AdminModel
 	{
 		// Get the form.
 		$form = $this->loadForm('com_jem.category', 'category',
-		                        array('control' => 'jform', 'load_data' => $loadData));
+								array('control' => 'jform', 'load_data' => $loadData));
 
 		if (empty($form)) {
 			return false;
@@ -748,8 +748,8 @@ class JemModelCategory extends AdminModel
 	{
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = 'SELECT id AS value, name AS text'
-		       . ' FROM #__jem_groups'
-		       . ' ORDER BY name';
+			   . ' FROM #__jem_groups'
+			   . ' ORDER BY name';
 		$db->setQuery($query);
 
 		$groups = $db->loadObjectList('value');
@@ -783,9 +783,9 @@ class JemModelCategory extends AdminModel
 		}
 
 		$query = 'SELECT c.id, c.catname, COUNT( e.catid ) AS numcat'
-		       . ' FROM #__jem_categories AS c'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS e ON e.catid = c.id'
-		       . ' WHERE c.id IN (' . $cids .')' . ' GROUP BY c.id';
+			   . ' FROM #__jem_categories AS c'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS e ON e.catid = c.id'
+			   . ' WHERE c.id IN (' . $cids .')' . ' GROUP BY c.id';
 		$this->_db->setQuery($query);
 
 		if (!($rows = $this->_db->loadObjectList())) {
@@ -810,7 +810,7 @@ class JemModelCategory extends AdminModel
 		if (count($cid) && count($err) == 0) {
 			$cids = implode(',', $cid);
 			$query = 'DELETE FROM #__jem_categories'
-			       . ' WHERE id IN (' . $cids . ')';
+				   . ' WHERE id IN (' . $cids . ')';
 
 			$this->_db->setQuery($query);
 
@@ -856,8 +856,8 @@ class JemModelCategory extends AdminModel
 
 		// Get all rows with parent of $id
 		$query = 'SELECT ' . $get
-		       . ' FROM #__jem_categories'
-		       . ' WHERE ' . $source . ' = ' . (int)$id;
+			   . ' FROM #__jem_categories'
+			   . ' WHERE ' . $source . ' = ' . (int)$id;
 		$this->_db->setQuery( $query );
 		
 
@@ -866,10 +866,10 @@ class JemModelCategory extends AdminModel
 		// 	$this->setError($this->_db->getErrorMsg());
 		// 	return false;
 		// }
-		try 
+		try
 		{
 			$rows = $this->_db->loadObjectList();
-		} 
+		}
 		catch (\InvalidArgumentException $e)
 		{
 			$this->setError($e->getMessage());			

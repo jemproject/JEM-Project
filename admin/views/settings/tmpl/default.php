@@ -130,7 +130,7 @@ jQuery(document).ready(function($){
 
 	var arrayLength = ObjArray.length;
 	for (var i = 0; i < arrayLength; i++) {
-	    var Obj 	= $(ObjArray[i]);
+		var Obj 	= $(ObjArray[i]);
 		var color = testcolor(Obj.value);
 		if (color) {
 			Obj.style.color = color;
@@ -381,22 +381,22 @@ function registraoff()
 	document.getElementById('froreg2').style.display = 'none';
 }
 
-    $(document).ready(function() {
-        function updateLightboxVisibility() {
-            if ($('input[name="jform[gddisabled]"]:checked').val() === '0') {
-                $('input[name="jform[lightbox]"]').val(['0']);
-                $('#jform_lightbox, #jform_lightbox-lbl').css('display', 'none');
-            } else {
-                $('#jform_lightbox, #jform_lightbox-lbl').css('display', '');
-            }
-        }
+	$(document).ready(function() {
+		function updateLightboxVisibility() {
+			if ($('input[name="jform[gddisabled]"]:checked').val() === '0') {
+				$('input[name="jform[lightbox]"]').val(['0']);
+				$('#jform_lightbox, #jform_lightbox-lbl').css('display', 'none');
+			} else {
+				$('#jform_lightbox, #jform_lightbox-lbl').css('display', '');
+			}
+		}
 
-        updateLightboxVisibility();
+		updateLightboxVisibility();
 
-        $('input[name="jform[gddisabled]"]').on('change', function() {
-            updateLightboxVisibility();
-        });
-    });
+		$('input[name="jform[gddisabled]"]').on('change', function() {
+			updateLightboxVisibility();
+		});
+	});
 </script>
 
 <script>
@@ -416,10 +416,10 @@ function registraoff()
 
 			<div class="row">
 				<div class="col-md-12">
-				    <?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'settings-basic', 'recall' => true, 'breakpoint' => 768]); ?>
+					<?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'settings-basic', 'recall' => true, 'breakpoint' => 768]); ?>
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'settings-basic', Text::_('COM_JEM_BASIC_SETTINGS')); ?>
-					    <fieldset class="adminform">
-						      
+						<fieldset class="adminform">
+							
 								<div class="w-50 fltlft">
 									<?php echo $this->loadTemplate('basicdisplay'); ?>
 									<?php echo $this->loadTemplate('basiclayout'); ?>
@@ -435,12 +435,12 @@ function registraoff()
 
 
 					<?php echo HTMLHelper::_('uitab.addTab','settings-pane', 'event-settings', Text::_('COM_JEM_EVENT_PAGE')); ?>
-					    <fieldset class="adminform">
+						<fieldset class="adminform">
 							<div class="width-50 fltlft">
 								<?php echo $this->loadTemplate('evevents'); ?>
 							</div>
 							<div class="width-50 fltrt">
-                                <?php echo $this->loadTemplate('evvenues'); ?>
+								<?php echo $this->loadTemplate('evvenues'); ?>
 								<?php echo $this->loadTemplate('evregistration'); ?>
 							</div>
 						</fieldset>
@@ -448,16 +448,16 @@ function registraoff()
 					<div class="clr"></div>
 
 
-                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'venue-settings', Text::_('COM_JEM_VENUE_PAGE')); ?>
-                    <fieldset class="adminform">
-                        <?php echo $this->loadTemplate('venues'); ?>
-                    </fieldset>
-                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                    <div class="clr"></div>
+					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'venue-settings', Text::_('COM_JEM_VENUE_PAGE')); ?>
+					<fieldset class="adminform">
+						<?php echo $this->loadTemplate('venues'); ?>
+					</fieldset>
+					<?php echo HTMLHelper::_('uitab.endTab'); ?>
+					<div class="clr"></div>
 
 				
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_LAYOUT')); ?>
-					    <fieldset class="adminform">
+						<fieldset class="adminform">
 						   <?php echo $this->loadTemplate('layout'); ?>
 						</fieldset>
 					<?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -465,15 +465,15 @@ function registraoff()
 
 					
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'parameters', Text::_('COM_JEM_GLOBAL_PARAMETERS')); ?>
-					    <fieldset class="adminform">
-						    <?php echo $this->loadTemplate('parameters'); ?>
+						<fieldset class="adminform">
+							<?php echo $this->loadTemplate('parameters'); ?>
 						</fieldset>
 					<?php echo HTMLHelper::_('uitab.endTab'); ?>
 					<div class="clr"></div>
 
 
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
-					    <fieldset class="adminform">
+						<fieldset class="adminform">
 						   <?php echo $this->loadTemplate('usercontrol'); ?>
 						</fieldset>
 					<?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -481,7 +481,7 @@ function registraoff()
 
 
 					<?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'configinfo', Text::_('COM_JEM_SETTINGS_TAB_CONFIGINFO')); ?>
-					    <fieldset class="adminform">
+						<fieldset class="adminform">
 						   <?php echo $this->loadTemplate('configinfo'); ?>
 						</fieldset>
 					<?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -489,7 +489,7 @@ function registraoff()
 					
 				</div>
 			</div>
-  
+
 	</div>
 
 	<input type="hidden" name="task" value="">

@@ -31,7 +31,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-            <th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+			<th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 			<th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>

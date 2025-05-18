@@ -151,10 +151,10 @@ class JemModelMyevents extends BaseDatabaseModel
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'
-			       . ' SET published = '. (int) $publish
-			       . ' WHERE id IN ('. $cids .')'
-			       . ' AND (checked_out = 0 OR checked_out Is null OR (checked_out = ' .$userid. '))'
-			       ;
+				   . ' SET published = '. (int) $publish
+				   . ' WHERE id IN ('. $cids .')'
+				   . ' AND (checked_out = 0 OR checked_out Is null OR (checked_out = ' .$userid. '))'
+				   ;
 
 			$this->_db->setQuery($query);
 			$result = true;
@@ -215,26 +215,26 @@ class JemModelMyevents extends BaseDatabaseModel
 
 		# Get Events from Database
 		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
-		       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
-		       . ' a.access, a.checked_out, a.checked_out_time, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.contactid, a.created_by_alias, a.datimage, a.featured,'
-		       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
-		       . ' a.fulltext, a.hits, a.introtext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
-		       . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
-		       . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
-		       . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
-		       . ' l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
-		       . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
-		       . ' c.catname, c.id AS catid,'
-		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-		       . ' FROM #__jem_events AS a'
-		       . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-		       . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-		       . $where
-		       . ' GROUP BY a.id'
-		       . $orderby
-		       ;
+			   . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
+			   . ' a.access, a.checked_out, a.checked_out_time, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.contactid, a.created_by_alias, a.datimage, a.featured,'
+			   . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+			   . ' a.fulltext, a.hits, a.introtext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
+			   . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+			   . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+			   . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+			   . ' l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+			   . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+			   . ' c.catname, c.id AS catid,'
+			   . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+			   . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			   . ' FROM #__jem_events AS a'
+			   . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+			   . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+			   . $where
+			   . ' GROUP BY a.id'
+			   . $orderby
+			   ;
 
 		return $query;
 	}
@@ -259,11 +259,11 @@ class JemModelMyevents extends BaseDatabaseModel
 
 		if ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
-			         . ', a.created ' . $filter_order_Dir;
+					 . ', a.created ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir
-			         . ', a.dates ' . $default_order_Dir . ', a.times ' . $default_order_Dir
-			         . ', a.created ' . $default_order_Dir;
+					 . ', a.dates ' . $default_order_Dir . ', a.times ' . $default_order_Dir
+					 . ', a.created ' . $default_order_Dir;
 		}
 
 		return $orderby;
@@ -344,13 +344,13 @@ class JemModelMyevents extends BaseDatabaseModel
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out, c.groupid,'
-		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-		       . ' FROM #__jem_categories AS c'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-		       . ' WHERE rel.itemid = '.(int)$id
-		       . ' AND c.published = 1'
-		       . ' AND c.access IN (' . implode(',', $levels) . ')'
-		       ;
+			   . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+			   . ' FROM #__jem_categories AS c'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+			   . ' WHERE rel.itemid = '.(int)$id
+			   . ' AND c.published = 1'
+			   . ' AND c.access IN (' . implode(',', $levels) . ')'
+			   ;
 
 		$this->_db->setQuery($query);
 		return $this->_db->loadObjectList();

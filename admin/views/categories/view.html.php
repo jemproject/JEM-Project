@@ -31,11 +31,11 @@ class JemViewCategories extends JemAdminView
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->app          = Factory::getApplication();
-        $this->document     = $this->app->getDocument();
+		$this->document     = $this->app->getDocument();
 		// Check for errors.
 		$errors = $this->get('Errors');
 		if (is_array($errors) && count($errors)) {
-            $this->app->enqueueMessage(implode("\n", $errors), 'error');
+			$this->app->enqueueMessage(implode("\n", $errors), 'error');
 			return false;
 		}
 
@@ -115,6 +115,6 @@ class JemViewCategories extends JemAdminView
 		}
 
 		ToolbarHelper::divider();
-        ToolBarHelper::help('listcategories', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/categories');
+		ToolBarHelper::help('listcategories', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/categories');
 	}
 }

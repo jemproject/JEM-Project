@@ -46,7 +46,7 @@ class JemModelEvents extends ListModel
 	 * Method to auto-populate the model state.
 	 *
 	 * @Note  Calling getState in this method will result in recursion.
-     */
+	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
@@ -82,8 +82,8 @@ class JemModelEvents extends ListModel
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-     * @param string $id A prefix for the store id.
-     * @return string A store id.
+	 * @param string $id A prefix for the store id.
+	 * @return string A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -99,7 +99,7 @@ class JemModelEvents extends ListModel
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return JDatabaseQuery
-     */
+	 */
 	protected function getListQuery()
 	{
 		// Create a new query object.
@@ -131,9 +131,9 @@ class JemModelEvents extends ListModel
 		$query->select('vl.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS vl ON vl.id = a.access');
 
-        // Join over the country.
-        $query->select('co.name AS country');
-        $query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
+		// Join over the country.
+		$query->select('co.name AS country');
+		$query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
 
 		// Filter by published state
 		$published = $this->getState('filter_state');
@@ -153,13 +153,13 @@ class JemModelEvents extends ListModel
 		$endDate   = $this->getState('filter_end');
 		if (!empty($startDate) && !empty($endDate)) {
 			$query->where('(a.dates >= '.$db->Quote($startDate).')');
-            $query->where('(a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' . $db->Quote($endDate) . '))');
+			$query->where('(a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' . $db->Quote($endDate) . '))');
 		} else {
 			if (!empty($startDate)) {
 				$query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
 			}
 			if (!empty($endDate)) {
-                $query->where('(a.enddates IS NULL OR a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' .  $db->Quote($endDate) . '))');
+				$query->where('(a.enddates IS NULL OR a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' .  $db->Quote($endDate) . '))');
 			}
 		}
 
@@ -204,12 +204,12 @@ class JemModelEvents extends ListModel
 							break;
 						case 7:
 							/* search all */
-                            $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
-                            $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-                            $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.')');
+							$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+							$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.')');
 							break;
 						default:
-                            /* search event and location (city, state, country)*/
+							/* search event and location (city, state, country)*/
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.')');
 					}
 				}
@@ -230,7 +230,7 @@ class JemModelEvents extends ListModel
 	 * Method to get the userinformation of edited/submitted events
 	 *
 	 * @return object
-     */
+	 */
 	public function getItems()
 	{
 		$items  = parent::getItems();
@@ -274,7 +274,7 @@ class JemModelEvents extends ListModel
 		$levels = $user->getAuthorisedViewLevels();
 
 		# Query
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query  = $db->getQuery(true);
 
 		$case_when_c  = ' CASE WHEN ';

@@ -3,7 +3,7 @@
 	<config>
 		<inlinehelp button="show"/>
 	</config>
-    <fieldset name="details" addfieldpath="/administrator/components/com_jem/models/fields">
+	<fieldset name="details" addfieldpath="/administrator/components/com_jem/models/fields">
 		<field name="articletext" type="editor"
 			   class="inputbox"
 			   label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"
@@ -148,7 +148,7 @@
 			   label="COM_JEM_FIELD_CREATED_BY_ALIAS_LABEL"
 			   description="COM_JEM_FIELD_CREATED_BY_ALIAS_DESC"
 			   class="inputbox"
-               size="20"
+			   size="20"
 	/>
 		<field name="published" type="list"
 			   label="JSTATUS"
@@ -332,12 +332,12 @@
 			   weeknumbers="true"
 			   filltable="true"
 			   showon="registra:2"
-        />
-        <field name="reginvitedonly" type="checkbox"
-               class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
-               description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
-               checked="0"
+		/>
+		<field name="reginvitedonly" type="checkbox"
+			   class="inputbox"
+			   label="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY"
+			   description="COM_JEM_EDITEVENT_FIELD_REG_INVITED_ONLY_DESC"
+			   checked="0"
 		/>
 		<field name="unregistra" type="list"
 			   label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"
@@ -407,45 +407,45 @@
 			   size="4"
 			   required="false"
 		/>
-        <field name="avplaces" type="text"
-               size="4"
-               class="readonly"
-               readonly="true"
-               disabled="true"
-               label="COM_JEM_AVAILABLE_PLACES"
-               description="COM_JEM_AVAILABLE_PLACES_DESC"
-        />
-        <field name="waitinglist" type="checkbox"
-               class="inputbox btn-group btn-group-yesno"
-               label="COM_JEM_ENABLE_WAITINGLIST"
-               description="COM_JEM_ENABLE_WAITINGLIST_DESC"
-               value="1"
-               checked="0"
-        />
-        <field name="requestanswer" type="checkbox"
-               class="inputbox btn-group btn-group-yesno"
-               label="COM_JEM_REQUEST_ANSWER_ASSISTENCE"
-               description="COM_JEM_REQUEST_ANSWER_ASSISTENCE_DESC"
-               value="1"
-               checked="0"
-        />
-        <field name="seriesbooking" type="checkbox"
-               size="1"
-               class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
-               description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
-               value="1"
-               checked="0"
-        />
-        <field name="singlebooking" type="checkbox"
-               size="1"
-               class="inputbox"
-               label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
-               description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
-               value="1"
-               checked="0"
-        />
-    </fieldset>
+		<field name="avplaces" type="text"
+			   size="4"
+			   class="readonly"
+			   readonly="true"
+			   disabled="true"
+			   label="COM_JEM_AVAILABLE_PLACES"
+			   description="COM_JEM_AVAILABLE_PLACES_DESC"
+		/>
+		<field name="waitinglist" type="checkbox"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_ENABLE_WAITINGLIST"
+			   description="COM_JEM_ENABLE_WAITINGLIST_DESC"
+			   value="1"
+			   checked="0"
+		/>
+		<field name="requestanswer" type="checkbox"
+			   class="inputbox btn-group btn-group-yesno"
+			   label="COM_JEM_REQUEST_ANSWER_ASSISTENCE"
+			   description="COM_JEM_REQUEST_ANSWER_ASSISTENCE_DESC"
+			   value="1"
+			   checked="0"
+		/>
+		<field name="seriesbooking" type="checkbox"
+			   size="1"
+			   class="inputbox"
+			   label="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING"
+			   description="COM_JEM_EDITEVENT_FIELD_SERIES_EVENT_BOOKING_DESC"
+			   value="1"
+			   checked="0"
+		/>
+		<field name="singlebooking" type="checkbox"
+			   size="1"
+			   class="inputbox"
+			   label="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING"
+			   description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
+			   value="1"
+			   checked="0"
+		/>
+	</fieldset>
 
 	<fieldset name="recurrence"
 			  label="COM_JEM_RECURRING_EVENTS"

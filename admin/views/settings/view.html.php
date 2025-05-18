@@ -27,14 +27,14 @@ class JemViewSettings extends JemAdminView
 
 	public function display($tpl = null)
 	{
-        $app         = Factory::getApplication();
-        $document    = $app->getDocument();
+		$app         = Factory::getApplication();
+		$document    = $app->getDocument();
 		$form        = $this->get('Form');
 		$data        = $this->get('Data');
 		$state       = $this->get('State');
 		$config      = $this->get('ConfigInfo');
 		$jemsettings = $this->get('Data');
-        $settings    = JemHelper::globalattribs();
+		$settings    = JemHelper::globalattribs();
 		$this->document = $document;
 
 		// Load css
@@ -44,9 +44,9 @@ class JemViewSettings extends JemAdminView
 		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
 
 		$style = '
-		    div.current fieldset.radio input {
-		        cursor: pointer;
-		    }';
+			div.current fieldset.radio input {
+				cursor: pointer;
+			}';
 		$document->addStyleDeclaration($style);
 
 		// Check for model errors.
@@ -83,7 +83,7 @@ class JemViewSettings extends JemAdminView
 		$this->state       = $state;
 		$this->jemsettings = $jemsettings;
 		$this->config      = $config;
-        $this->settings	   = $settings;
+		$this->settings	   = $settings;
 
 		// add toolbar
 		$this->addToolbar();

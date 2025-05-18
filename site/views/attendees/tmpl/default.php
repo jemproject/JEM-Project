@@ -33,10 +33,10 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 	}
 </script>
 <script>
-    function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
-        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
-        SqueezeBox.close();
-    }
+	function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
+		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
+		SqueezeBox.close();
+	}
 </script>
 
 <div id="jem" class="jem_attendees<?php echo $this->pageclass_sfx;?>">
@@ -112,7 +112,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 			<table class="eventtable table table-striped" style="margin: 20px 0 0 0;" id="articleList">
 				<thead>
 					<tr>
-                        <th style="width: 1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+						<th style="width: 1%" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 						<!--th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
 						<th class="title"><?php echo HTMLHelper::_('grid.sort', $namelabel, 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 						<?php if ($this->enableemailaddress == 1) : ?>
@@ -140,12 +140,12 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<td class="center">
 							<?php
 							$status = (int)$row->status;
-                            if($this->event->waitinglist) {
-                                if ($status === 1 && $row->waiting == 1) { $status = 2; }
-                                echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
-                            }else{
-                                echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
-                            }
+							if($this->event->waitinglist) {
+								if ($status === 1 && $row->waiting == 1) { $status = 2; }
+								echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
+							}else{
+								echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
+							}
 							?>
 						</td>
 						<td class="center"><?php echo $row->places; ?></td>
@@ -153,10 +153,10 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 						<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 						<td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 						<?php endif;?>
-                        <td class="center">
-                            <a href="<?php echo Route::_($del_link.'&cid[]='.$row->id); ?>">
-                                <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
-                            </a>
+						<td class="center">
+							<a href="<?php echo Route::_($del_link.'&cid[]='.$row->id); ?>">
+								<?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
+							</a>
 						</td>
 					</tr>
 				<?php endforeach; ?>

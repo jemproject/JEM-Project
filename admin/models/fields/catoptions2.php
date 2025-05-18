@@ -62,7 +62,7 @@ class JFormFieldCatOptions2 extends FormField
 		$currentid = Factory::getApplication()->input->getInt('id');
 		$categories = JEMCategories::getCategoriesTree(0);
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 		$query = 'SELECT DISTINCT parent_id FROM #__jem_categories WHERE id = '. $db->quote($currentid);
 

@@ -21,15 +21,15 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 class JemSidebarHelper extends Sidebar
 
 {
-    public static function render()
-    {
-        /* Do nothing */
-    }
+	public static function render()
+	{
+		/* Do nothing */
+	}
 
-    public static function getEntries()
-    {
-        return array();
-    }
+	public static function getEntries()
+	{
+		return array();
+	}
 }
 
 

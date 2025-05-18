@@ -24,7 +24,7 @@ class JemViewMyvenues extends JemView
 	 */
 	public function display($tpl = null)
 	{
-        // Get data from model
+		// Get data from model
 		$venues 	  = $this->get('Venues');
 		$pagination   = $this->get('VenuesPagination');
 
@@ -148,7 +148,7 @@ class JemViewMyvenues extends JemView
 				if ($canPublishVenue) break;
 			}
 
-        	//Check if the user has permission to add things
+			//Check if the user has permission to add things
 			$permissions = new stdClass();
 			$permissions->canAddEvent = $user->can('add', 'event');
 			$permissions->canAddVenue = $user->can('add', 'venue');

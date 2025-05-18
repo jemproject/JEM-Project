@@ -47,7 +47,7 @@ class JemModelMain extends BaseDatabaseModel
 		$query->from($db->quoteName($tablename));
 		if ($tablename == "#__jem_categories")
 		{
-		    $query->where('alias NOT LIKE "root"');
+			$query->where('alias NOT LIKE "root"');
 		}
 		$query->group('published');
 

@@ -71,9 +71,9 @@ $class = ' class="first"';
 			<?php elseif ($this->params->get('show_cat_num_articles', 1)) : ?>
 				<?php echo ' (' . $child->getNumItems(false) . ')';  /* count direct events only, not recursive */ ?>
 				<?php /* experimental * /
-				      $count = $child->getNumItemsByState(false);
-				      echo ' (' . $count['published'] . ' + ' . $count['unpublished'] . ' / ' . $count['archived'] . ' - ' . $count['trashed'] . ')';
-				      /**/
+					  $count = $child->getNumItemsByState(false);
+					  echo ' (' . $count['published'] . ' + ' . $count['unpublished'] . ' / ' . $count['archived'] . ' - ' . $count['trashed'] . ')';
+					  /**/
 				?>
 			<?php endif; ?>
 

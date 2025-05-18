@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="jem" method="upgrade">
-    <name>plg_jem_comments</name>
-    <creationDate>May 2025</creationDate>
-    <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.3</version>
-    <description>PLG_JEM_COMMENTS_XML_DESCRIPTION</description>
+	<name>plg_jem_comments</name>
+	<creationDate>May 2025</creationDate>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>4.3.3</version>
+	<description>PLG_JEM_COMMENTS_XML_DESCRIPTION</description>
 
-    <files>
-        <filename plugin="comments">comments.php</filename>
-        <filename>index.html</filename>
-        <folder>language</folder>
-    </files>
-    <languages>
-        <language tag="en-GB">language/en-GB/plg_jem_comments.ini</language>
-        <language tag="en-GB">language/en-GB/plg_jem_comments.sys.ini</language>
-    </languages>
-    <config>
-        <fields name="params">
-            <fieldset name="basic">
-                <field type="list" name="commentsystem"
-                       label="PLG_JEM_COMMENTS_COMMENTSYSTEM"
-                       default="0"
-                       description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
-                >
-                    <option value="0">PLG_JEM_COMMENTS_NONE</option>
-                    <option value="2">PLG_JEM_COMMENTS_JCOMMENTS</option>
-                </field>
-            </fieldset>
-        </fields>
-    </config>
+	<files>
+		<filename plugin="comments">comments.php</filename>
+		<filename>index.html</filename>
+		<folder>language</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/plg_jem_comments.ini</language>
+		<language tag="en-GB">language/en-GB/plg_jem_comments.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field type="list" name="commentsystem"
+					   label="PLG_JEM_COMMENTS_COMMENTSYSTEM"
+					   default="0"
+					   description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
+				>
+					<option value="0">PLG_JEM_COMMENTS_NONE</option>
+					<option value="2">PLG_JEM_COMMENTS_JCOMMENTS</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
 </extension>

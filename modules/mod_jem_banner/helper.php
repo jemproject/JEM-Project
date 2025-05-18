@@ -38,7 +38,7 @@ abstract class ModJemBannerHelper
 		static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l');
 		static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '');
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -249,15 +249,15 @@ abstract class ModJemBannerHelper
 
 			# time/date
 			/* depending on settongs we need:
-		     *  showcalendar 1, datemethod 1 : month, weekday, day + time
-		     *  showcalendar 1, datemethod 2 : month, weekday, day + relative date + time
-		     *  showcalendar 0, datemethod 1 : (long) date + time
-		     *  showcalendar 0, datemethod 2 : relative date + time
-		     */
+			 *  showcalendar 1, datemethod 1 : month, weekday, day + time
+			 *  showcalendar 1, datemethod 2 : month, weekday, day + relative date + time
+			 *  showcalendar 0, datemethod 1 : (long) date + time
+			 *  showcalendar 0, datemethod 2 : relative date + time
+			 */
 			$lists[$i]->startdate   = empty($row->dates)    ? $defaults : self::_format_date_fields($row->dates,    $formats);
 			$lists[$i]->enddate     = empty($row->enddates) ? $defaults : self::_format_date_fields($row->enddates, $formats);
 			list($lists[$i]->date,
-			     $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
+				 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
@@ -351,15 +351,15 @@ abstract class ModJemBannerHelper
 			$scan = sscanf($color, '#%1x%1x%1x');
 			if (is_array($scan) && count($scan) == 3) {
 				$gray = (17 * $scan[0] *  77) / 255
-				      + (17 * $scan[1] * 150) / 255
-				      + (17 * $scan[2] *  28) / 255;
+					  + (17 * $scan[1] * 150) / 255
+					  + (17 * $scan[2] *  28) / 255;
 			}
 		} else {
 			$scan = sscanf($color, '#%2x%2x%2x');
 			if (is_array($scan) && count($scan) == 3) {
 				$gray = ($scan[0] *  77) / 255
-				      + ($scan[1] * 150) / 255
-				      + ($scan[2] *  28) / 255;
+					  + ($scan[1] * 150) / 255
+					  + ($scan[2] *  28) / 255;
 			}
 		}
 
@@ -376,7 +376,7 @@ abstract class ModJemBannerHelper
 		//Get needed timestamps and format
 		//setlocale (LC_TIME, 'de_DE.UTF8');
 		$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
-		$yesterday       = date("Y-m-d", $yesterday_stamp); 
+		$yesterday       = date("Y-m-d", $yesterday_stamp);
 		$today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
 		$today           = date('Y-m-d');
 		$tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));

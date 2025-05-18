@@ -34,8 +34,8 @@
 			class="form-control"
 			default=""
 			size="8"
-        	label="COM_JEM_CATEGORY_COLOR"
-        	description="COM_JEM_CATEGORY_COLOR"
+			label="COM_JEM_CATEGORY_COLOR"
+			description="COM_JEM_CATEGORY_COLOR"
 		/>
 		<field name="description" type="editor"
 			hide="pagebreak,readmore"

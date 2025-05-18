@@ -211,7 +211,7 @@ class JemModelSettings extends AdminModel
 		$config->vs_gd = $gd_version;
 
 		// Get info about all JEM parts
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('name', 'type', 'enabled', 'manifest_cache'));
 		$query->from('#__extensions');
@@ -220,12 +220,12 @@ class JemModelSettings extends AdminModel
 		$extensions = $db->loadObjectList('name');
 
 		$known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
-		                          'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide',
-		                          'plg_content_jem', 'plg_content_jemlistevents',
-		                          'plg_finder_jem', 'plg_search_jem',
-		                          'plg_quickicon_jem', 'Quick Icon - JEM',
-		                          'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
-		                          'AcyMailing Tag : insert events from JEM 2.1+');
+								  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide',
+								  'plg_content_jem', 'plg_content_jemlistevents',
+								  'plg_finder_jem', 'plg_search_jem',
+								  'plg_quickicon_jem', 'Quick Icon - JEM',
+								  'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
+								  'AcyMailing Tag : insert events from JEM 2.1+');
 
 		foreach ($extensions as $name => $extension) {
 			if (in_array($name, $known_extensions)) {

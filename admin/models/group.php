@@ -161,8 +161,8 @@ class JemModelGroup extends JemModelAdmin
 			$values = array((int)$table->id, $member);
 
 			$query->insert($db->quoteName('#__jem_groupmembers'))
-			      ->columns($db->quoteName($columns))
-			      ->values(implode(',', $values));
+				  ->columns($db->quoteName($columns))
+				  ->values(implode(',', $values));
 
 			$db->setQuery($query);
 			$db->execute();
@@ -184,10 +184,10 @@ class JemModelGroup extends JemModelAdmin
 
 		if (!empty($members)) {
 			$query = 'SELECT id AS value, username, name'
-			       . ' FROM #__users'
-			       . ' WHERE id IN ('.$members.')'
-			       . ' ORDER BY name ASC'
-			       ;
+				   . ' FROM #__users'
+				   . ' WHERE id IN ('.$members.')'
+				   . ' ORDER BY name ASC'
+				   ;
 
 			$this->_db->setQuery($query);
 			$users = $this->_db->loadObjectList();
@@ -216,8 +216,8 @@ class JemModelGroup extends JemModelAdmin
 		//get selected members
 		if ($item->id) {
 			$query = 'SELECT member'
-			       . ' FROM #__jem_groupmembers'
-			       . ' WHERE group_id = '.(int)$item->id;
+				   . ' FROM #__jem_groupmembers'
+				   . ' WHERE group_id = '.(int)$item->id;
 
 			$this->_db->setQuery ($query);
 			$member_ids = $this->_db->loadColumn();

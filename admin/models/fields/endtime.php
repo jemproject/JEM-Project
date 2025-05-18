@@ -17,7 +17,7 @@ jimport('joomla.html.html');
 /**
  * Endtime Field class.
  *
- * 
+ *
  */
 class JFormFieldEndtime extends FormField
 {

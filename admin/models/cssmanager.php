@@ -170,8 +170,8 @@ class JemModelCssmanager extends BaseDatabaseModel
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('params')
-		      ->from('#__extensions')
-		      ->where(array("type = 'plugin'", "element = 'codemirror'"));
+			  ->from('#__extensions')
+			  ->where(array("type = 'plugin'", "element = 'codemirror'"));
 
 		$db->setQuery($query);
 		$params = json_decode($db->loadResult(), true);
@@ -181,8 +181,8 @@ class JemModelCssmanager extends BaseDatabaseModel
 		$paramsString = json_encode($params);
 		$query = $db->getQuery(true);
 		$query->update('#__extensions')
-		      ->set('params = '.$db->quote($paramsString))
-		      ->where(array("type = 'plugin'", "element = 'codemirror'"));
+			  ->set('params = '.$db->quote($paramsString))
+			  ->where(array("type = 'plugin'", "element = 'codemirror'"));
 
 		$db->setQuery($query);
 		$db->execute();

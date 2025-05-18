@@ -15,9 +15,9 @@ use Joomla\CMS\Router\Route;
 
 <style>
 div#jem_filter select {
-    width: auto;
-    margin-right:10px;
-    border: 1px solid #808080;
+	width: auto;
+	margin-right:10px;
+	border: 1px solid #808080;
 	background-color: #C6CCBE;
 	cursor: pointer;
 }
@@ -28,10 +28,10 @@ div#jem_filter select {
 <?php
 function jem_common_show_filter(&$obj) {
   if ($obj->settings->get('global_show_filter',1) && !JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
-    return true;
+	return true;
   }
   if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
-    return true;
+	return true;
   }
   return false;
 }
@@ -44,7 +44,7 @@ function jem_common_show_filter(&$obj) {
 			<?php echo $this->lists['filter'].'&nbsp;'; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
 			<button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-		    <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+			<button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 	<?php endif; ?>
 
@@ -64,7 +64,7 @@ function jem_common_show_filter(&$obj) {
 	<?php if ($this->params->get('showstate')) : ?>			
 			<col style="width: 20%" class="jem_col_state" />
 	<?php endif; ?>	
-			<?php if ($this->jemsettings->showlocate == 1) : ?>													  
+			<?php if ($this->jemsettings->showlocate == 1) : ?>													
 			<col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
 			<?php endif; ?>
 		</colgroup>
@@ -90,7 +90,7 @@ function jem_common_show_filter(&$obj) {
 			<?php else : ?>
 				<?php $odd = 0; ?>
 				<?php foreach ($this->rows as $row) : ?>
-                    <tr class="venue_id<?php echo $this->escape($row->id); ?>">
+					<tr class="venue_id<?php echo $this->escape($row->id); ?>">
 					<?php $odd = 1 - $odd; ?>
 					<td headers="jem_city" style="text-align: left; vertical-align: top;"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 				<?php if ($this->params->get('showstate')) : ?>

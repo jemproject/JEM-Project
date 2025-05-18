@@ -28,7 +28,7 @@ class JemRouter extends RouterView
 	 * Router segments.
 	 *
 	 * @var  array
-	 *  
+	 *
 	 * @since  1.0.0
 	 */
 	protected $_segments = array();

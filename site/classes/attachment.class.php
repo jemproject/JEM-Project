@@ -87,9 +87,9 @@ class JemAttachment extends CMSObject
 			// Make sure that the full file path is safe.
 			$filepath = Path::clean( $path.'/'.$sanitizedFilename);
 			// Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
-            // switch off parsing archives for byte sequences looking like a script file extension
-            // but keep all other checks running
-            File::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
+			// switch off parsing archives for byte sequences looking like a script file extension
+			// but keep all other checks running
+			File::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
 
 			$table = Table::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
@@ -156,7 +156,7 @@ class JemAttachment extends CMSObject
 		$files = Folder::files($path, null, false, false);
 
 		// then get info for files from db
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$fnames = array();
 		foreach ($files as $f) {
 			$fnames[] = $db->Quote($f);
@@ -176,11 +176,11 @@ class JemAttachment extends CMSObject
 		}
 
 		$query = 'SELECT * '
-		       . ' FROM #__jem_attachments '
-		       . ' WHERE file IN ('. implode(',', $fnames) .')'
-		       . '   AND object = '. $db->Quote($object)
-		       . $qAccess
-		       . ' ORDER BY ordering ASC ';
+			   . ' FROM #__jem_attachments '
+			   . ' WHERE file IN ('. implode(',', $fnames) .')'
+			   . '   AND object = '. $db->Quote($object)
+			   . $qAccess
+			   . ' ORDER BY ordering ASC ';
 
 		$db->setQuery($query);
 		$res = $db->loadObjectList();
@@ -201,10 +201,10 @@ class JemAttachment extends CMSObject
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = 'SELECT * '
-		       . ' FROM #__jem_attachments '
-		       . ' WHERE id = '. $db->Quote(intval($id));
+			   . ' FROM #__jem_attachments '
+			   . ' WHERE id = '. $db->Quote(intval($id));
 
 		$db->setQuery($query);
 		$res = $db->loadObject();
@@ -242,11 +242,11 @@ class JemAttachment extends CMSObject
 		$userid = $user->get('id');
 
 		// then get info for files from db
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = 'SELECT file, object, added_by '
-		       . ' FROM #__jem_attachments '
-		       . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+			   . ' FROM #__jem_attachments '
+			   . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
 
 		$db->setQuery($query);
 		$res = $db->loadObject();
@@ -287,7 +287,7 @@ class JemAttachment extends CMSObject
 		}
 
 		$query = 'DELETE FROM #__jem_attachments '
-		       . ' WHERE id = '. $db->Quote($id);
+			   . ' WHERE id = '. $db->Quote($id);
 
 		$db->setQuery($query);
 		$res = $db->execute();

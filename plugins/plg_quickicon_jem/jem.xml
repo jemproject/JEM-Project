@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="quickicon" method="upgrade">
-    <name>plg_quickicon_jem</name>
-    <creationDate>May 2025</creationDate>
-    <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.3</version>
-    <description>PLG_QUICKICON_JEM_XML_DESCRIPTION</description>
-    <namespace path="src">Joomla\Plugin\Quickicon\Jem</namespace>
+	<name>plg_quickicon_jem</name>
+	<creationDate>May 2025</creationDate>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+	<version>4.3.3</version>
+	<description>PLG_QUICKICON_JEM_XML_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\Quickicon\Jem</namespace>
 	<scriptfile>script.php</scriptfile>
-    <files>
-        <filename plugin="jem">jem.php</filename>
-        <filename>script.php</filename>
-        <folder>services</folder>
-        <folder>src</folder>
-        <folder>language</folder>
-    </files>
-    <languages>
-        <language tag="en-GB">language/en-GB/plg_quickicon_jem.ini</language>
-        <language tag="en-GB">language/en-GB/plg_quickicon_jem.sys.ini</language>
-    </languages>
+	<files>
+		<filename plugin="jem">jem.php</filename>
+		<filename>script.php</filename>
+		<folder>services</folder>
+		<folder>src</folder>
+		<folder>language</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/plg_quickicon_jem.ini</language>
+		<language tag="en-GB">language/en-GB/plg_quickicon_jem.sys.ini</language>
+	</languages>
 </extension>

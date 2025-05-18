@@ -58,7 +58,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 		<table class="eventtable table table-striped" style="width:100%" summary="jem">
 			<thead>
 				<tr>
-                    <th style="width: 7px" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+					<th style="width: 7px" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
 					<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
 						<th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>

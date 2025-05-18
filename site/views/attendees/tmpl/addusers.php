@@ -90,11 +90,11 @@ if (empty($form)) {
 		<table class="eventtable table table-striped" style="width:100%" summary="jem">
 			<thead>
 				<tr>
-                    <th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+					<th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
-                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
-                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
+					<th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
+					<th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -123,25 +123,25 @@ if (empty($form)) {
 		}
 		?>
 
-        <div class="jem-row jem-justify-start valign-baseline">
-            <div class="choose-status">
+		<div class="jem-row jem-justify-start valign-baseline">
+			<div class="choose-status">
 				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo $form->getLabel('status'); ?> <?php echo $form->getInput('status'); ?>
-            </div>
-            <div class="choose-places">
+			</div>
+			<div class="choose-places">
 				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?>
-            </div>
-            <div style="padding-right:10px;">
-                <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ?  $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
-            </div>
-            <?php if ($this->event->recurrence_type && $this->event->seriesbooking): ?>
-                <div class="choose-places">
-                    <?php echo Text::_('COM_JEM_SERIES_BOOKED').':'; ?>
-                    <input type="checkbox" id="seriesbooking" name="seriesbooking" />
-                </div>
-            <?php else : ?>
-                <input type="hidden" name="seriesbooking" value=-1 />
-            <?php endif; ?>
-        </div>
+			</div>
+			<div style="padding-right:10px;">
+				<input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ?  $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
+			</div>
+			<?php if ($this->event->recurrence_type && $this->event->seriesbooking): ?>
+				<div class="choose-places">
+					<?php echo Text::_('COM_JEM_SERIES_BOOKED').':'; ?>
+					<input type="checkbox" id="seriesbooking" name="seriesbooking" />
+				</div>
+			<?php else : ?>
+				<input type="hidden" name="seriesbooking" value=-1 />
+			<?php endif; ?>
+		</div>
 
 		<input type="hidden" name="task" value="selectusers" />
 		<input type="hidden" name="option" value="com_jem" />

@@ -28,9 +28,9 @@ use Joomla\CMS\Uri\Uri;
 	public function display($tpl = null)
 	{
 		$user     = JemFactory::getUser();
-        $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $uri      = Uri::getInstance();
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
+		$uri      = Uri::getInstance();
 		$url      = $uri->root();
 		$settings = JemHelper::globalattribs();
 
@@ -124,6 +124,6 @@ use Joomla\CMS\Uri\Uri;
 		}
 
 		ToolbarHelper::divider();
-        ToolBarHelper::help('listvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues');
+		ToolBarHelper::help('listvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues');
 	}
 }

@@ -30,40 +30,40 @@ $wa->addInlineScript('
 			Joomla.submitform(task, document.getElementById("adminForm"));
 			document.adminForm.task.value="";
 		} else {
-      		Joomla.submitform(task, document.getElementById("adminForm"));
+	  		Joomla.submitform(task, document.getElementById("adminForm"));
 		}
 	};
 ');
 $wa->addInlineScript('
-    function submitName(node) {
-      node.parentNode.previousElementSibling.childNodes[0].checked = true;
-      Joomla.submitbutton("attendees.edit");
-    }
+	function submitName(node) {
+	  node.parentNode.previousElementSibling.childNodes[0].checked = true;
+	  Joomla.submitbutton("attendees.edit");
+	}
 ');
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&eventid='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
-    <div id="j-main-container" class="j-main-container">
-        <fieldset id="filter-bar" class="mb-3">
-            <div class="row">
-                <div class="col-md-11">
+	<div id="j-main-container" class="j-main-container">
+		<fieldset id="filter-bar" class="mb-3">
+			<div class="row">
+				<div class="col-md-11">
 					 <div class="row mb-12">
-	                        <div class="col-md-2">
+							<div class="col-md-2">
 				   				<strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br />
 							</div>
-			                <div class="col-md-2">
+							<div class="col-md-2">
 								<strong><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></strong>&nbsp;<?php echo $this->escape($this->event->title); ?>
 							</div>
 					 </div>
 				</div>
-                <div class="col-md-1">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+				<div class="col-md-1">
+					<div class="row">
+						<div class="wauto-minwmax">
+							<div class="float-end">
+								<?php echo $this->pagination->getLimitBox(); ?>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</fieldset>
 		<table class="adminform">
@@ -82,7 +82,7 @@ $wa->addInlineScript('
 		<table class="table table-striped" id="attendeeList">
 			<thead>
 				<tr>
-                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'u.name', $listDirn, $listOrder); ?></th>
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $listDirn, $listOrder); ?></th>
 					<th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
@@ -90,12 +90,12 @@ $wa->addInlineScript('
 					<th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
-                    <th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_PLACES', 'r.waiting',$listDirn, $listOrder); ?></th>
+					<th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_PLACES', 'r.waiting',$listDirn, $listOrder); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif;?>
 					<th class="title center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
-                    <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
+					<th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
 				</tr>
 			</thead>
 
@@ -118,19 +118,19 @@ $wa->addInlineScript('
 					<td class="center">
 						<?php
 						$status = (int)$row->status;
-                        if($this->event->waitinglist) {
-                            if ($status === 1 && $row->waiting == 1) {
-                                $status = 2;
-                            }
-                            echo jemhtml::toggleAttendanceStatus($i, $status, $canChange);
-                        } else {
-                            echo jemhtml::toggleAttendanceStatus($i, $status, false);
-                        }
+						if($this->event->waitinglist) {
+							if ($status === 1 && $row->waiting == 1) {
+								$status = 2;
+							}
+							echo jemhtml::toggleAttendanceStatus($i, $status, $canChange);
+						} else {
+							echo jemhtml::toggleAttendanceStatus($i, $status, false);
+						}
 						?>
 					</td>
-                    <td class="center">
+					<td class="center">
 						<?php echo $row->places; ?>
-                    </td>
+					</td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (rtrim(\Joomla\String\StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
@@ -148,17 +148,17 @@ $wa->addInlineScript('
 			</tbody>
 		</table>
 
-	    <div class="ms-auto mb-4 me-0">
-	        <?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
-	    </div>
-    </div>
+		<div class="ms-auto mb-4 me-0">
+			<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
+		</div>
+	</div>
 
-    <div>
-        <input type="hidden" name="task" value=""/>
-        <input type="hidden" name="boxchecked" value="0"/>
-        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>"/>
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>"/>
+	<div>
+		<input type="hidden" name="task" value=""/>
+		<input type="hidden" name="boxchecked" value="0"/>
+		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>"/>
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>"/>
 
-        <?php echo HTMLHelper::_('form.token'); ?>
-    </div>
+		<?php echo HTMLHelper::_('form.token'); ?>
+	</div>
 </form>

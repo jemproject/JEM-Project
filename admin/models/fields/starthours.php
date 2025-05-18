@@ -17,7 +17,7 @@ jimport('joomla.html.html');
 /**
  * StartHours Field class.
  *
- * 
+ *
  */
 class JFormFieldStarthours extends FormField
 {

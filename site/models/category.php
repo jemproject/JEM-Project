@@ -173,7 +173,7 @@ class JemModelCategory extends JemModelEventslist
 			$orderby = array('a.dates ' . $filter_order_Dir, 'a.times ' . $filter_order_Dir, 'a.created ' . $filter_order_Dir);
 		} else {
 			$orderby = array($filter_order . ' ' . $filter_order_Dir,
-			                 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
+							 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
 		}
 
 		$this->setState('filter.orderby',$orderby);

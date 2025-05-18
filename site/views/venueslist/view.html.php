@@ -32,31 +32,31 @@ class JemViewVenueslist extends JemView
 	/**
 	 * Creates the Venueslist View
 	 */
-    public function display($tpl = null)
-    {
-        // Get data from model
-        $rows 		  = $this->get('Items');
-        $pagination   = $this->get('Pagination');
+	public function display($tpl = null)
+	{
+		// Get data from model
+		$rows 		  = $this->get('Items');
+		$pagination   = $this->get('Pagination');
 
-        // initialize variables
-        $app          = Factory::getApplication();
-        $document     = $app->getDocument();
-        $jemsettings  = JemHelper::config();
-        $settings     = JemHelper::globalattribs();
-        $menu         = $app->getMenu();
-        $menuitem     = $menu->getActive();
-        $params       = $app->getParams();
-        $uri          = Uri::getInstance();
-        $user         = JemFactory::getUser();
-        $userId       = $user->get('id');
-        $pathway      = $app->getPathWay();
-        $jinput       = $app->input;
-        $print        = $jinput->getBool('print', false);
-        $task         = $jinput->getCmd('task', '');
+		// initialize variables
+		$app          = Factory::getApplication();
+		$document     = $app->getDocument();
+		$jemsettings  = JemHelper::config();
+		$settings     = JemHelper::globalattribs();
+		$menu         = $app->getMenu();
+		$menuitem     = $menu->getActive();
+		$params       = $app->getParams();
+		$uri          = Uri::getInstance();
+		$user         = JemFactory::getUser();
+		$userId       = $user->get('id');
+		$pathway      = $app->getPathWay();
+		$jinput       = $app->input;
+		$print        = $jinput->getBool('print', false);
+		$task         = $jinput->getCmd('task', '');
 
-        // Decide which parameters should take priority
-        $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view'] == 'venueslist');
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+										&& $menuitem->query['view'] == 'venueslist');
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -146,21 +146,21 @@ class JemViewVenueslist extends JemView
 		// $pagination = $this->get('Pagination');
 		
 
-		$this->action             = $uri->toString();
-		$this->rows				  = $rows;
-		$this->task               = $task;
-		$this->print              = $print;
-		$this->params             = $params;
-		$this->pagination 		  = $pagination;
-		$this->jemsettings        = $jemsettings;
-		$this->settings           = $settings;
-		$this->pagetitle          = $pagetitle;
-		$this->lists              = $lists;
-		$this->novenues           = $novenues;
-		$this->permissions		  = $permissions;
-        $this->show_status		  = $permissions->canEditPublishVenue;
-        $this->print_link		  = $print_link;
-		$this->pageclass_sfx      = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+		$this->action         = $uri->toString();
+		$this->rows           = $rows;
+		$this->task           = $task;
+		$this->print          = $print;
+		$this->params         = $params;
+		$this->pagination     = $pagination;
+		$this->jemsettings    = $jemsettings;
+		$this->settings       = $settings;
+		$this->pagetitle      = $pagetitle;
+		$this->lists          = $lists;
+		$this->novenues       = $novenues;
+		$this->permissions    = $permissions;
+		$this->show_status    = $permissions->canEditPublishVenue;
+		$this->print_link     = $print_link;
+		$this->pageclass_sfx  = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
 		parent::display($tpl);
 	}

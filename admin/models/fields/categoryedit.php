@@ -64,7 +64,7 @@ class JFormFieldCategoryEdit extends ListField
 			//$extension = $this->element['extension'] ? (string) $this->element['extension'] : (string) $jinput->get('option','com_content');
 		}
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query	= $db->getQuery(true);
 
 		$query->select('a.id AS value, a.catname AS text, a.level, a.published');

@@ -79,7 +79,7 @@ Joomla.submitbutton = function(task)
 				</td>
 				<td>
 					<input type="text" name="eventtitle" id="eventtitle" class="form-control inputbox required valid form-control-success" readonly="readonly"
-					       value="<?php echo !empty($this->row->eventtitle) ? $this->row->eventtitle : '?'; ?>"
+						   value="<?php echo !empty($this->row->eventtitle) ? $this->row->eventtitle : '?'; ?>"
 					/>
 				</td>
 			</tr>
@@ -106,27 +106,27 @@ Joomla.submitbutton = function(task)
 				<td>
 					<?php
 					$options = array(HTMLHelper::_('select.option',  0, Text::_('COM_JEM_ATTENDEES_INVITED')),
-					                 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATTENDEES_NOT_ATTENDING')),
-					                 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATTENDEES_ATTENDING')),
-						             HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
+									 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATTENDEES_NOT_ATTENDING')),
+									 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATTENDEES_ATTENDING')),
+									 HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
 
 					$selectOptions = array('id' => 'reg_status', 'class' => 'form-select');
 					echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions);
 					?>
 				</td>
 			</tr>
-            <tr>
-                <td class="key">
-                    <label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>
+			<tr>
+				<td class="key">
+					<label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>
 						<?php echo Text::_('COM_JEM_ATTENDEES_PLACES').':'; ?>
-                    </label>
-                </td>
-                <td>
-                    <input type="number" name="places" id="places" class="form-control inputbox" min="<?php echo $this->row->minbookeduser; ?>" max="<?php echo $this->row->maxbookeduser; ?>"
-                           value="<?php echo !empty($this->row->places) ? $this->row->places : $this->row->minbookeduser; ?>"
-                    />
-                </td>
-            </tr>
+					</label>
+				</td>
+				<td>
+					<input type="number" name="places" id="places" class="form-control inputbox" min="<?php echo $this->row->minbookeduser; ?>" max="<?php echo $this->row->maxbookeduser; ?>"
+						   value="<?php echo !empty($this->row->places) ? $this->row->places : $this->row->minbookeduser; ?>"
+					/>
+				</td>
+			</tr>
 			<?php if (!empty($this->jemsettings->regallowcomments)): ?>
 			<tr>
 				<td class="key" style="vertical-align: baseline;">
@@ -143,17 +143,17 @@ Joomla.submitbutton = function(task)
 			</tr>
 			<?php endif; ?>
 			<?php if ($this->row->recurrence_type && $this->row->seriesbooking): ?>
-            <tr>
-                <td class="key">
-                    <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>
-                        <?php echo Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES').':'; ?>
-                    </label>
-                </td>
-                <td>
-                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1""/>
-                </td>
-            </tr>
-            <?php endif; ?>
+			<tr>
+				<td class="key">
+					<label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>
+						<?php echo Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES').':'; ?>
+					</label>
+				</td>
+				<td>
+					<input type="checkbox" id="seriesbooking" name="seriesbooking" value="1""/>
+				</td>
+			</tr>
+			<?php endif; ?>
 			<tr>
 				<td class="key">
 					<label for="sendemail" <?php echo JemOutput::tooltip(Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL'), Text::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL_DESC')); ?>>

@@ -92,11 +92,11 @@ class JemViewAttendees extends JemView
 
 		$pathway = $app->getPathWay();
 		if($menuitem) {
-      //https://www.joomlaeventmanager.net/forum/jem-2-2-x-on-joomla-3/10474-category-name-doubled-in-breadcrumb
-      $pathwayKeys = array_keys($pathway->getPathway()); //
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+	  //https://www.joomlaeventmanager.net/forum/jem-2-2-x-on-joomla-3/10474-category-name-doubled-in-breadcrumb
+	  $pathwayKeys = array_keys($pathway->getPathway()); //
+	  $lastPathwayEntryIndex = end($pathwayKeys);
+	  $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+	  //$pathway->setItemName(1, $menuitem->title);
 		}
 		$pathway->addItem('Att:'.$event->title);
 		
@@ -121,10 +121,10 @@ class JemViewAttendees extends JemView
 
 		// attendee status
 		$options = array(HTMLHelper::_('select.option', -2, Text::_('COM_JEM_ATT_FILTER_ALL')),
-		                 HTMLHelper::_('select.option',  0, Text::_('COM_JEM_ATT_FILTER_INVITED')),
-		                 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
-		                 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATT_FILTER_ATTENDING')),
-		                 HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATT_FILTER_WAITING'))) ;
+						 HTMLHelper::_('select.option',  0, Text::_('COM_JEM_ATT_FILTER_INVITED')),
+						 HTMLHelper::_('select.option', -1, Text::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
+						 HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATT_FILTER_ATTENDING')),
+						 HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATT_FILTER_WAITING'))) ;
 		$lists['status'] = HTMLHelper::_('select.genericlist', $options, 'filter_status', array('class'=>'inputbox','onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
 
 		// table ordering

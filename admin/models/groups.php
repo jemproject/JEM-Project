@@ -156,8 +156,8 @@ class JemModelGroups extends ListModel
 			$cids = implode(',', $cid);
 
 			$query = 'DELETE FROM #__jem_groups'
-			       . ' WHERE id IN ('. $cids .')'
-			       ;
+				   . ' WHERE id IN ('. $cids .')'
+				   ;
 
 			$this->_db->setQuery($query);
 
@@ -167,8 +167,8 @@ class JemModelGroups extends ListModel
 			}
 
 			$query = 'DELETE FROM #__jem_groupmembers'
-			       . ' WHERE group_id IN ('. $cids .')'
-			       ;
+				   . ' WHERE group_id IN ('. $cids .')'
+				   ;
 
 			$this->_db->setQuery($query);
 

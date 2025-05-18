@@ -26,9 +26,9 @@ use Joomla\CMS\Router\Route;
 
 <style>
 div#jem_filter select {
-    width: auto;
-    margin-right:10px;
-    border: 1px solid #808080;
+	width: auto;
+	margin-right:10px;
+	border: 1px solid #808080;
 	background-color: #C6CCBE;
 	cursor: pointer;
 }

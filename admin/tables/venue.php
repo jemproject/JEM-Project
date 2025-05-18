@@ -76,7 +76,7 @@ class JemTableVenue extends Table
 				return false;
 			}
 			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9äöüáéíóúñ]+)*\.[a-z]{2,24}'
-			               .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url))
+						   .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url))
 			{
 				$this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
 				return false;

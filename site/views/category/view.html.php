@@ -198,9 +198,9 @@ class JemViewCategory extends JemView
 
 			// Decide which parameters should take priority
 			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-			                                && $menuitem->query['view']   == 'category'
-			                                && (!isset($menuitem->query['layout']) || $menuitem->query['layout'] == 'default')
-			                                && $menuitem->query['id']     == $category->id);
+											&& $menuitem->query['view']   == 'category'
+											&& (!isset($menuitem->query['layout']) || $menuitem->query['layout'] == 'default')
+											&& $menuitem->query['id']     == $category->id);
 
 			// get variables
 			$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);

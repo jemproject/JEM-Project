@@ -190,16 +190,16 @@ class JemModelAttendees extends BaseDatabaseModel
 		$where   = $this->_buildContentWhere();
 
 		$query = 'SELECT r.*, u.username, u.name, u.email, a.created_by, a.published,'
-		       . ' c.catname, c.id AS catid'
-		       . ' FROM #__jem_register AS r'
-		       . ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
-		       . ' LEFT JOIN #__users AS u ON u.id = r.uid'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-		       . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-		       . $where
-		       . ' GROUP BY r.id'
-		       . $orderby
-		       ;
+			   . ' c.catname, c.id AS catid'
+			   . ' FROM #__jem_register AS r'
+			   . ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
+			   . ' LEFT JOIN #__users AS u ON u.id = r.uid'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+			   . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+			   . $where
+			   . ' GROUP BY r.id'
+			   . $orderby
+			   ;
 
 		return $query;
 	}
@@ -300,12 +300,12 @@ class JemModelAttendees extends BaseDatabaseModel
 	{
 		if (empty($this->_event)) {
 			$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
-			       . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
-			       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-			       . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
-			       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
-			       . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
-			       . ' FROM #__jem_events AS a WHERE a.id = '.$this->_db->Quote($this->_id);
+				   . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
+				   . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+				   . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
+				   . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+				   . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
+				   . ' FROM #__jem_events AS a WHERE a.id = '.$this->_db->Quote($this->_id);
 			$this->_db->setQuery($query);
 
 			$this->_event = $this->_db->loadObject();

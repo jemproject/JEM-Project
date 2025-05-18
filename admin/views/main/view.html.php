@@ -27,8 +27,8 @@ class JemViewMain extends JemAdminView
 		jimport('joomla.html.pane');
 
 		//initialise variables
-        $app = Factory::getApplication();
-        $document = $app->getDocument();
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
 		$user     = JemFactory::getUser();
 
 		// Get data from the model
@@ -63,8 +63,8 @@ class JemViewMain extends JemAdminView
 			ToolbarHelper::preferences('com_jem');
 		}
 
-        ToolBarHelper::divider();
-        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
+		ToolBarHelper::divider();
+		ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
 	}
 
 	/**

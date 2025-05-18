@@ -165,7 +165,7 @@ class JemModelAttendees extends ListModel
 	 */
 	public function getEvent()
 	{
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('id','title','dates','maxplaces','waitinglist'));
 		$query->from('#__jem_events');
@@ -188,7 +188,7 @@ class JemModelAttendees extends ListModel
 		{
 			\Joomla\Utilities\ArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
-            $db = Factory::getContainer()->get('DatabaseDriver');
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_register'));
@@ -219,7 +219,7 @@ class JemModelAttendees extends ListModel
 		$event = $this->getEvent();
 		$items = $this->getItems();
 
-        $waitinglist = $event->waitinglist ?? false;
+		$waitinglist = $event->waitinglist ?? false;
 
 		$csv = fopen('php://output', 'w');
 

@@ -99,7 +99,7 @@ class JemConfig
 	 */
 	protected function loadData()
 	{
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 
 		// new table
 		$query = $db->getQuery(true);
@@ -195,7 +195,7 @@ class JemConfig
 		}
 
 		// Store into new table
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array($db->quoteName('keyname'), $db->quoteName('value')));
 		$query->from('#__jem_config');

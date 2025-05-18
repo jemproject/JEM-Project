@@ -14,7 +14,7 @@ use Joomla\CMS\Form\FormField;
 /**
  * Endtime Field class.
  *
- * 
+ *
  */
 class JFormFieldEndtime extends FormField
 {

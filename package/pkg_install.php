@@ -10,7 +10,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link https://www.kunena.org
  **/
- 
+
 defined ('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -32,13 +32,13 @@ class Pkg_JemInstallerScript
 			'0' => '8.0' // Preferred version
 			),
 		'MySQL' => array (
-			'8.0' => '8.0', 
+			'8.0' => '8.0',
 			'5.6' => '5.6',
 			'0' => '5.6' // Preferred version
 			),
 		'Joomla!' => array (
-			'4.2' => '4.2', 
-			'4.0' => '', 
+			'4.2' => '4.2',
+			'4.0' => '',
 			'0' => '4.2' // Preferred version
 			)
 		);
@@ -66,10 +66,10 @@ class Pkg_JemInstallerScript
 	}
 
 	public function preflight($type, $parent) {
-        // Prevent installation if requirements are not met.
+		// Prevent installation if requirements are not met.
 		if (!$this->checkRequirements()){
-            return false;
-        }
+			return false;
+		}
 		return true;
 	}
 
@@ -124,7 +124,7 @@ class Pkg_JemInstallerScript
 	}
 
 	public function checkRequirements() {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$pass  = $this->checkVersion('PHP', phpversion());
 		$pass &= $this->checkVersion('Joomla!', JVERSION);
 		$pass &= $this->checkVersion('MySQL', $db->getVersion ());
@@ -141,16 +141,16 @@ class Pkg_JemInstallerScript
 		$major = $minor = 0;
 		foreach ($this->versions[$name] as $major=>$minor) {
 			if (!$major || version_compare($version, $major, '<')) {
-                continue;
-            }
-            if ($minor && version_compare($version, $minor, '>=')) {
-                return true;
-            }
-            break;
+				continue;
+			}
+			if ($minor && version_compare($version, $minor, '>=')) {
+				return true;
+			}
+			break;
 		}
 		if (!$major) {
-            $minor = reset($this->versions[$name]);
-        }
+			$minor = reset($this->versions[$name]);
+		}
 		$recommended = end($this->versions[$name]);
 		if ($minor) {
 			$app->enqueueMessage(sprintf("%s %s is not supported. Minimum required version is %s %s, but it is highly recommended to use %s %s or later.", $name, $version, $name, $minor, $name, $recommended), 'notice');

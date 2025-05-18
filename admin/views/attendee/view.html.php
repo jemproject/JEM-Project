@@ -21,14 +21,14 @@ class JemViewAttendee extends HtmlView {
 	public function display($tpl = null)
 	{
 		//initialise variables
-        $app      = Factory::getApplication();
-        $document = $app->getDocument();
+		$app      = Factory::getApplication();
+		$document = $app->getDocument();
 		$jinput   = $app->input;
 
 		$this->jemsettings = JemHelper::config();
 
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+		$wa = $app->getDocument()->getWebAssetManager();
+		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
 		//get id register user for event
 		$id = $jinput->getInt('id', 0);

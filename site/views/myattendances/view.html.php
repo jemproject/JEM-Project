@@ -124,11 +124,11 @@ class JemViewMyattendances extends JemView
 				$print_link = Route::_(JemHelperRoute::getMyAttendancesRoute() . '&task=archive&print=1&tmpl=component');
 				$pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-			    $archive_link = Route::_('index.php?option=com_jem&view=myattendances');
+				$archive_link = Route::_('index.php?option=com_jem&view=myattendances');
 				$params->set('page_heading', $pageheading);
 			} else {
 				$print_link = Route::_(JemHelperRoute::getMyAttendancesRoute() . '&print=1&tmpl=component');
-			    $archive_link = $uri->toString();
+				$archive_link = $uri->toString();
 			}
 
 			$params->set('page_heading', $pageheading);
@@ -136,7 +136,7 @@ class JemViewMyattendances extends JemView
 			// Add site name to title if param is set
 			if ($app->get('sitename_pagetitles', 0) == 1) {
 				$pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
-			} 
+			}
 			elseif ($app->get('sitename_pagetitles', 0) == 2) {
 				$pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
 			}

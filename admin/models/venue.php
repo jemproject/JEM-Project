@@ -65,7 +65,7 @@ class JemModelVenue extends JemModelAdmin
 		{
 			$pksTodelete = array();
 			$errorNotice = array();
-            $db = Factory::getContainer()->get('DatabaseDriver');
+			$db = Factory::getContainer()->get('DatabaseDriver');
 			foreach ($pks as $pk)
 			{
 				$result = array();

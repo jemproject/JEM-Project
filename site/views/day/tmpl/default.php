@@ -52,7 +52,7 @@ defined('_JEXEC') or die;
 		<div class="description no_space floattext">
 			<?php echo $this->params->get('footertext'); ?>
 		</div>
-	<?php endif; ?>													 
+	<?php endif; ?>													
 
 	<!--footer-->
 	<div class="pagination">

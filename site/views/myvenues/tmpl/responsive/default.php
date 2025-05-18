@@ -13,14 +13,14 @@ use Joomla\CMS\Uri\Uri;
 ?>
 
 <div id="jem" class="jem_myvenues<?php echo $this->pageclass_sfx;?>">
-    <?php if ($this->needLoginFirst) {
-        $uri = Uri::getInstance();
-        $returnUrl = $uri->toString();
-        $urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl); ?>
-        <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
-                type="button"><?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?></button>
+	<?php if ($this->needLoginFirst) {
+		$uri = Uri::getInstance();
+		$returnUrl = $uri->toString();
+		$urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl); ?>
+		<button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'"
+				type="button"><?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?></button>
 
-    <?php } else { ?>
+	<?php } else { ?>
 	<div class="buttons">
 		<?php
 		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
@@ -41,5 +41,5 @@ use Joomla\CMS\Uri\Uri;
 	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
 	</div>
-    <?php } ?>
+	<?php } ?>
 </div>

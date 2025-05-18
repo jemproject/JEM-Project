@@ -39,15 +39,15 @@ if ($flyer_link_type == 1) {
 		<?php if ($showcalendar == 1) :?>
 		<?php if ($colorclass === "alpha"): ?>
 			<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
-               <div class="color-bar" style="background-color:<?php echo !empty($user_color) ? $user_color : 'rgb(128,128,128)'; ?>"></div>
-            <div class="lower-background"></div>
-               <div class="background-image"></div>
-    	<?php else: ?>
-        	<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
-    <?php endif; ?>
-          <?php if (isset($user_color_is_dark)) : ?>
-        <div class="monthjubilee monthcolor-<?php echo !empty($user_color_is_dark) ? 'light' : 'dark'; ?>">
-          	<?php else : ?>
+			   <div class="color-bar" style="background-color:<?php echo !empty($user_color) ? $user_color : 'rgb(128,128,128)'; ?>"></div>
+			<div class="lower-background"></div>
+			   <div class="background-image"></div>
+		<?php else: ?>
+			<div class="calendar<?php echo '-' . $colorclass; ?> jem-jubilee-calendar">
+	<?php endif; ?>
+		  <?php if (isset($user_color_is_dark)) : ?>
+		<div class="monthjubilee monthcolor-<?php echo !empty($user_color_is_dark) ? 'light' : 'dark'; ?>">
+		  	<?php else : ?>
 				<div class="monthjubilee">
 			<?php endif;
 				echo $date['month']; ?>
@@ -112,15 +112,15 @@ if ($flyer_link_type == 1) {
 				</div>
 				<?php endif;
 				 echo $item->dateschema; ?>
-      			<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-      				<meta itemprop="name" content="<?php echo $item->venue; ?>" />
-      				<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-      					<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-      					<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-      					<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-      					<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-      				</div>
-          		</div>
+	  			<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+	  				<meta itemprop="name" content="<?php echo $item->venue; ?>" />
+	  				<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+	  					<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+	  					<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+	  					<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+	  					<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+	  				</div>
+		  		</div>
 			</div>
 
 			<div class="clr"></div>

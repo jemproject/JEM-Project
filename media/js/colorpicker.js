@@ -6,10 +6,10 @@
  *  Gchats color picker is freely distributable under the terms of GPL license.
  *  Please visit: https://www.gchats.com for updates
  *  @Version 1.2
- *  
+ *
  *  The code in function testcolor is based upon:
  *  https://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
- *  
+ *
  *--------------------------------------------------------------------------*/
 // JavaScript Document
 var layerWidth = 218;

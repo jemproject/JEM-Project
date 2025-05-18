@@ -77,7 +77,7 @@ class JemControllerVenues extends AdminController
 				}
 			}
 
-            $this->postDeleteHook($model,$cid);
+			$this->postDeleteHook($model,$cid);
 		}
 
 		$cache = Factory::getCache('com_jem');

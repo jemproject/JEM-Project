@@ -115,27 +115,27 @@ class jemmyattendingTab extends cbTabHandler {
 		$query      = 'SELECT DISTINCT a.id';
 		if (!$fast) {
 			$query .= '  AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
-			        . ' CONCAT(a.introtext,a.fulltext) AS text, a.published,'
-			        . ' l.venue, l.city, l.state, l.url, '
-			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
-			        . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
-			        . ' r.waiting, r.places, ' 
+					. ' CONCAT(a.introtext,a.fulltext) AS text, a.published,'
+					. ' l.venue, l.city, l.state, l.url, '
+					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
+					. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
+					. ' r.waiting, r.places, '
 					. ($this->_found_state_field ? 'r.status' : '1') . ' AS reg_state '
 					. ($this->_found_state_field ? ', r.comment AS reg_comment' : '')
 					. ($this->_found_state_field ? ', r.places AS reg_places' : '')
-			        ;
+					;
 		}
 		$query     .= ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
-		            . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
-			        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
-			        . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-		            . ' WHERE a.published = 1 AND r.uid = '.$userid
-			        . '  AND a.access IN (' . implode(',', $levels) . ')'
-			        . '  AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
-		            . '  AND c.published = 1 AND c.access IN (' . implode(',', $levels) . ')'
-			        . ' GROUP BY a.id'
-			        . ' ORDER BY a.dates, a.times'
-			        ;
+					. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
+					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
+					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
+					. ' WHERE a.published = 1 AND r.uid = '.$userid
+					. '  AND a.access IN (' . implode(',', $levels) . ')'
+					. '  AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
+					. '  AND c.published = 1 AND c.access IN (' . implode(',', $levels) . ')'
+					. ' GROUP BY a.id'
+					. ' ORDER BY a.dates, a.times'
+					;
 
 		return $query;
 	}
@@ -391,7 +391,7 @@ class jemmyattendingTab extends cbTabHandler {
 					 */
 					if ($event_enddate) {
 						$enddate2 = $result->enddates ? JEMOutput::formatDateTime($result->enddates, $result->endtimes, '', '', $formatShortDate)
-							                          : JEMOutput::formattime($result->endtimes);
+													  : JEMOutput::formattime($result->endtimes);
 						$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableExp'>";
 						$return .= "\n\t\t\t\t{$enddate2}";
 						$return .= "\n\t\t\t</td>";

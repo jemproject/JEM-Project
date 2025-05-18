@@ -26,15 +26,15 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
-            <field name="show_archived_events" type="radio"
-                   default="0"
-                   label="COM_JEM_SHOW_ARCHIVED_EVENTS"
-                   description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
-                   class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
+			<field name="show_archived_events" type="radio"
+				   default="0"
+				   label="COM_JEM_SHOW_ARCHIVED_EVENTS"
+				   description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
+				   class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field name="showiconsinorder" type="radio"
 				   default="1"
 				   label="COM_JEM_SHOW_ICONS_IN_ORDER"
@@ -84,23 +84,23 @@
 			<option value="ASC">COM_JEM_ORDER_ASCENDING</option>
 			<option value="DESC">COM_JEM_ORDER_DESCENDING</option>
 		</field>
-            <field name="tablefiltereventfrom" type="number"
-                   default="0"
-                   filter="integer"
-                   min="0"
-                   step="1"
-                   validate="number"
-                   label="COM_JEM_FILTER_EVENT_FROM"
-                   description="COM_JEM_FILTER_EVENT_FROM_DESC"
+			<field name="tablefiltereventfrom" type="number"
+				   default="0"
+				   filter="integer"
+				   min="0"
+				   step="1"
+				   validate="number"
+				   label="COM_JEM_FILTER_EVENT_FROM"
+				   description="COM_JEM_FILTER_EVENT_FROM_DESC"
   		   class="w-auto" />
-            <field name="tablefiltereventuntil" type="number"
-                   default="0"
-                   filter="integer"
-                   min="0"
-                   step="1"
-                   validate="number"
-                   label="COM_JEM_FILTER_EVENT_UNTIL"
-                   description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
+			<field name="tablefiltereventuntil" type="number"
+				   default="0"
+				   filter="integer"
+				   min="0"
+				   step="1"
+				   validate="number"
+				   label="COM_JEM_FILTER_EVENT_UNTIL"
+				   description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
    		   class="w-auto" />
 			<field name="showmonthrow" type="radio"
 				   default="0"
@@ -120,8 +120,8 @@
 				<option value="ASC">COM_JEM_ORDER_ASCENDING</option>
 				<option value="DESC">COM_JEM_ORDER_DESCENDING</option>
 			</field>
-      <field type="spacer" name="spacer1" hr="true" />
-      <field name="introtext" type="editor"
+	  <field type="spacer" name="spacer1" hr="true" />
+	  <field name="introtext" type="editor"
 				filter="safehtml"
 				hide="readmore,pagebreak,module,menu,fields,contact,article"
 				default=""

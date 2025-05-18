@@ -24,22 +24,22 @@ use Joomla\CMS\Language\Text;
 	<h1 class="componentheading">
 		<span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
 		<?php
-        echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
-        echo JemOutput::copybutton($this->venue, $this->params, NULL, $this->permissions->canAddVenue, 'venue');
-        ?>
+		echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
+		echo JemOutput::copybutton($this->venue, $this->params, NULL, $this->permissions->canAddVenue, 'venue');
+		?>
 	</h1>
 	<?php endif; ?>
-  
+
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
-    <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
-      <h2 class="jem-venue-title">
-        <?php echo $this->escape($this->venue->title);?>
-      </h2>
-    <?php else : ?>
-      <h1 class="jem-venue-title">
-        <?php echo $this->escape($this->venue->title);?>
-      </h1>
-    <?php endif; ?>
+	<?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
+	  <h2 class="jem-venue-title">
+		<?php echo $this->escape($this->venue->title);?>
+	  </h2>
+	<?php else : ?>
+	  <h1 class="jem-venue-title">
+		<?php echo $this->escape($this->venue->title);?>
+	  </h1>
+	<?php endif; ?>
 	<?php endif; ?>
 
 	<!--Venue-->
@@ -128,7 +128,7 @@ use Joomla\CMS\Language\Text;
 			endif; ?>
 			
 		</dl>
-		<?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?> 
+		<?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?>
 			<div class="jem-map">
 				<?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
 			</div>
@@ -161,7 +161,7 @@ use Joomla\CMS\Language\Text;
 	<?php endif; ?>
 
 	<?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
-	          $this->venuedescription != '<br />') : ?>
+			  $this->venuedescription != '<br />') : ?>
 
 		<h2 class="description"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
 		<div class="description no_space floattext" itemprop="description">
@@ -172,27 +172,27 @@ use Joomla\CMS\Language\Text;
 	<?php $this->attachments = $this->venue->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
 
-    <?php if ($this->settings->get('global_show_listevents', 1)) : ?>
-        <!--table-->
-        <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
-            <?php echo $this->loadTemplate('events_table'); ?>
+	<?php if ($this->settings->get('global_show_listevents', 1)) : ?>
+		<!--table-->
+		<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
+			<?php echo $this->loadTemplate('events_table'); ?>
 
-            <p>
-            <input type="hidden" name="option" value="com_jem" />
-            <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-            <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-            <input type="hidden" name="view" value="venue" />
-            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
-            </p>
-        </form>
+			<p>
+			<input type="hidden" name="option" value="com_jem" />
+			<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+			<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+			<input type="hidden" name="view" value="venue" />
+			<input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
+			</p>
+		</form>
 
-        <!--pagination-->
-        <div class="pagination">
-            <?php echo $this->pagination->getPagesLinks(); ?>
-        </div>
+		<!--pagination-->
+		<div class="pagination">
+			<?php echo $this->pagination->getPagesLinks(); ?>
+		</div>
 
-        <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
-    <?php endif; ?>
+		<?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+	<?php endif; ?>
 
 	<!--copyright-->
 	<div class="copyright">

@@ -18,7 +18,7 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
-    ->useScript('form.validate')
+	->useScript('form.validate')
 ?>
 <script>
 	Joomla.submitbutton = function(task)

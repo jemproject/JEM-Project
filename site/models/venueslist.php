@@ -111,7 +111,7 @@ class JemModelVenueslist extends ListModel
 		$user      = JemFactory::getUser();
 		
 		# Query
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		
 		$case_when_l = ' CASE WHEN ';
@@ -169,26 +169,26 @@ class JemModelVenueslist extends ListModel
 			}
 		}
 
-        ####################
-        ## FILTER-PUBLISH ##
-        ####################
+		####################
+		## FILTER-PUBLISH ##
+		####################
 
-        // all together: if published or the user is creator of the venue or allowed to edit or publish venues
-        if (empty($user->id)) {
-            $query->where(' a.published = 1');
-        }
-        // no limit if user can publish or edit foreign venues
-        elseif ($user->can(array('edit', 'publish'), 'venue')) {
-            $query->where(' a.published IN (0,1)');
-        }
-        // user maybe creator
-        else {
-            $query->where(' (a.published = 1 OR (a.published = 0 AND a.created_by = ' . $this->_db->Quote($user->id) . '))');
-        }
+		// all together: if published or the user is creator of the venue or allowed to edit or publish venues
+		if (empty($user->id)) {
+			$query->where(' a.published = 1');
+		}
+		// no limit if user can publish or edit foreign venues
+		elseif ($user->can(array('edit', 'publish'), 'venue')) {
+			$query->where(' a.published IN (0,1)');
+		}
+		// user maybe creator
+		else {
+			$query->where(' (a.published = 1 OR (a.published = 0 AND a.created_by = ' . $this->_db->Quote($user->id) . '))');
+		}
 
-        ##############
-        ## ORDERING ##
-        ##############
+		##############
+		## ORDERING ##
+		##############
 
 		$orderby = $this->getState('filter.orderby');
 		

@@ -48,14 +48,14 @@ $params = $params->toArray();
 	}
 
 	function selectAll()
-    {
-        selectBox = document.getElementById("maintainers");
+	{
+		selectBox = document.getElementById("maintainers");
 
-        for (var i = 0; i < selectBox.options.length; i++)
-        {
-             selectBox.options[i].selected = true;
-        }
-    }
+		for (var i = 0; i < selectBox.options.length; i++)
+		{
+			 selectBox.options[i].selected = true;
+		}
+	}
 </script>
 <script>
 	Joomla.submitbutton = function(task)
@@ -75,8 +75,8 @@ $params = $params->toArray();
 	class="form-validate" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 
 	<div class="row">
-		    <div class="col-md-7">
-		        <!-- <div class="width-55 fltlft"> -->
+			<div class="col-md-7">
+				<!-- <div class="width-55 fltlft"> -->
 					<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'group-info', 'recall' => true, 'breakpoint' => 768]); ?>
 					<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'group-info', Text::_('COM_JEM_GROUP_INFO_TAB')); ?>
 					<fieldset class="adminform">
@@ -144,7 +144,7 @@ $params = $params->toArray();
 					</div>
 				<!-- </div> -->
 			</div>
-    </div>
+	</div>
 
 	<div class="clr"></div>
 	<input type="hidden" name="task" value="" />

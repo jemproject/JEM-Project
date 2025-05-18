@@ -17,7 +17,7 @@ jimport('joomla.html.html');
 /**
  * CountryOptions Field class.
  *
- * 
+ *
  */
 class JFormFieldStartminutes extends FormField
 {

@@ -349,16 +349,16 @@
 			<option value="2">COM_JEM_USE_EVENT_SETTING</option>
 		</field>
 		<!--field name="showfrounregistra" type="list"
-            label="COM_JEM_SUBMIT_UNREGISTER"
-            description="COM_JEM_SUBMIT_UNREGISTER_DESC"
-            class="inputbox"
-            default="0"
-            required="false"
-        >
-            <option value="0">JNO</option>
-            <option value="1">JYES</option>
-            <option value="2">COM_JEM_OPTIONAL</option>
-        </field-->
+			label="COM_JEM_SUBMIT_UNREGISTER"
+			description="COM_JEM_SUBMIT_UNREGISTER_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			<option value="2">COM_JEM_OPTIONAL</option>
+		</field-->
 		<field name="regallowinvitation" type="radio"
 			   label="COM_JEM_ALLOW_INVITATION"
 			   description="COM_JEM_ALLOW_INVITATION_DESC"

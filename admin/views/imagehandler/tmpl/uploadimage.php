@@ -107,11 +107,11 @@ use Joomla\CMS\HTML\HTMLHelper;
 								} else {
 									echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_GIF_SUPPORT')."</span>";
 								}
-                                if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_WEBP)) {
-                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM_WEBP_SUPPORT')."</span>";
-                                } else {
-                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_WEBP_SUPPORT')."</span>";
-                                }
+								if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_WEBP)) {
+									echo "<br /><span style='color:green'>".Text::_('COM_JEM_WEBP_SUPPORT')."</span>";
+								} else {
+									echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_WEBP_SUPPORT')."</span>";
+								}
 								?>
 							</td>
 						</tr>

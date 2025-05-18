@@ -490,8 +490,8 @@ class JemModelImport extends BaseDatabaseModel
 		$db = $this->_db;
 		$query = $db->getQuery('true');
 		$query->select('manifest_cache')
-		      ->from('#__extensions')
-		      ->where("type='component' AND (name='eventlist' AND element='com_eventlist')");
+			  ->from('#__extensions')
+			  ->where("type='component' AND (name='eventlist' AND element='com_eventlist')");
 
 		$db->setQuery($query);
 		$result = $db->loadObject();
@@ -624,7 +624,7 @@ class JemModelImport extends BaseDatabaseModel
 		$query = $db->getQuery('true');
 
 		$query->select('*')
-		      ->from($this->elprefix.$tablename);
+			  ->from($this->elprefix.$tablename);
 
 		if ($limitStart !== null && $limit !== null) {
 			$db->setQuery($query, $limitStart, $limit);
@@ -783,7 +783,7 @@ class JemModelImport extends BaseDatabaseModel
 				if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
 					if (isset($row->catsid)) {
 						$row->access = (empty($row->catsid) || !array_key_exists($row->catsid, $cat_levels))
-						               ? $default_view_level : $cat_levels[$row->catsid];
+									   ? $default_view_level : $cat_levels[$row->catsid];
 					} else {
 						// no catsid field, so we should have cats_event_relations table
 						// try to find unique level
@@ -872,8 +872,8 @@ class JemModelImport extends BaseDatabaseModel
 	{
 		$replace = true;
 		if ((strcasecmp($tablename, 'jem_groupmembers') === 0) ||
-		    (strcasecmp($tablename, 'jem_cats_event_relations') === 0) ||
-		    (strcasecmp($tablename, 'jem_attachments') === 0)) {
+			(strcasecmp($tablename, 'jem_cats_event_relations') === 0) ||
+			(strcasecmp($tablename, 'jem_attachments') === 0)) {
 			$replace = false;
 		}
 
@@ -1023,8 +1023,8 @@ class JemModelImport extends BaseDatabaseModel
 			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('a.id')
-			      ->from($db->quoteName('#__users') . ' AS a')
-			      ->order('a.id');
+				  ->from($db->quoteName('#__users') . ' AS a')
+				  ->order('a.id');
 
 			$db->setQuery($query);
 			static::$_user_ids = $db->loadColumn();
@@ -1045,8 +1045,8 @@ class JemModelImport extends BaseDatabaseModel
 			$db = Factory::getContainer()->get('DatabaseDriver');
 			$query = $db->getQuery(true);
 			$query->select('a.id')
-			      ->from($db->quoteName('#__viewlevels') . ' AS a')
-			      ->order('a.id');
+				  ->from($db->quoteName('#__viewlevels') . ' AS a')
+				  ->order('a.id');
 
 			$db->setQuery($query);
 			static::$_view_levels = $db->loadColumn();
@@ -1065,8 +1065,8 @@ class JemModelImport extends BaseDatabaseModel
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('a.id, a.access')
-		      ->from($db->quoteName('#__jem_categories') . ' AS a')
-		      ->order('a.id');
+			  ->from($db->quoteName('#__jem_categories') . ' AS a')
+			  ->order('a.id');
 
 		$db->setQuery($query);
 		return $db->loadAssocList('id', 'access');
@@ -1089,9 +1089,9 @@ class JemModelImport extends BaseDatabaseModel
 		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select('c.access')
-		      ->from($db->quoteName($this->elprefix.'eventlist_categories') . ' AS c')
-		      ->from($db->quoteName($this->elprefix.'eventlist_cats_event_relations') . ' AS rel')
-		      ->where(array('rel.itemid = '.(int)$eventId, 'rel.catid = c.id'));
+			  ->from($db->quoteName($this->elprefix.'eventlist_categories') . ' AS c')
+			  ->from($db->quoteName($this->elprefix.'eventlist_cats_event_relations') . ' AS rel')
+			  ->where(array('rel.itemid = '.(int)$eventId, 'rel.catid = c.id'));
 		$db->setQuery($query);
 		$result = $db->loadColumn();
 

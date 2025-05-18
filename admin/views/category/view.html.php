@@ -33,9 +33,9 @@ class JemViewCategory extends JemAdminView
 		$this->state	= $this->get('State');
 		$this->canDo	= JemHelperBackend::getActions($this->state->get('category.component'));
 
-        $app = Factory::getApplication();
-        $this->document = $app->getDocument();
-        $uri = Uri::getInstance();
+		$app = Factory::getApplication();
+		$this->document = $app->getDocument();
+		$uri = Uri::getInstance();
 
 		// Check for errors.
 		$errors = $this->get('Errors');

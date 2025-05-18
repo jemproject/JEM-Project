@@ -44,9 +44,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<th class="title"><?php echo Text::_( 'COM_JEM_EMAIL' ); ?></th>
 			<?php endif; ?>
-            <th class="title"><?php echo Text::_( 'COM_JEM_REGDATE' ); ?></th>
+			<th class="title"><?php echo Text::_( 'COM_JEM_REGDATE' ); ?></th>
 			<th class="title"><?php echo Text::_('COM_JEM_STATUS' ); ?></th>
-            <th class="title"><?php echo Text::_('COM_JEM_PLACES' ); ?></th>
+			<th class="title"><?php echo Text::_('COM_JEM_PLACES' ); ?></th>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
 			<?php endif; ?>
@@ -57,7 +57,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 		<?php
 		$regname = $this->settings->get('global_regname', '1');
 		$k = 0;
-    $i = 0;
+	$i = 0;
 		foreach ($this->rows as $row) :
 		?>
 		<tr class="<?php echo "row$k"; ?>">
@@ -82,8 +82,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 				$text = 'COM_JEM_ATTENDEES_STATUS_UNKNOWN';
 				break;
 			endswitch; ?>
-            <td><?php echo Text::_($text); ?></td>
-            <td><?php echo $row->places; ?></td>
+			<td><?php echo Text::_($text); ?></td>
+			<td><?php echo $row->places; ?></td>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
 			<?php endif; ?>

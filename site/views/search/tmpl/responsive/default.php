@@ -25,9 +25,9 @@ use Joomla\CMS\Language\Text;
 		<?php echo $this->params->get('introtext'); ?>
 	</div>
 	<?php endif; ?>
-  
+
   <h2>
-    <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
+	<?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
   </h2>
 	<!--table-->
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">

@@ -7,7 +7,7 @@
  *
  * @todo make custom colorfield so it can be used within xml
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
@@ -92,16 +92,16 @@ $wa = $this->document->getWebAssetManager();
 							</fieldset>
 						</div>
 
-                        <div class="accordion-body">
-                            <fieldset class="panelform">
-                                <ul class="adminformlist">
-                                    <li>
-                                       <div class="label-form"><?php echo $this->form->renderfield('emailacljl'); ?></div>
-                                    </li>
-                                </ul>
-                            </fieldset>
-                        </div>
-                    </div>
+						<div class="accordion-body">
+							<fieldset class="panelform">
+								<ul class="adminformlist">
+									<li>
+									   <div class="label-form"><?php echo $this->form->renderfield('emailacljl'); ?></div>
+									</li>
+								</ul>
+							</fieldset>
+						</div>
+					</div>
 				</div>
 				<div class="accordion-item">
 					<h2 class="accordion-header" id="group-header">

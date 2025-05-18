@@ -30,7 +30,7 @@ $params		= $this->params;
 			$(".sbmit-btn").prop('disabled',true);
 			$(".sbmit-btn .spinner-border").removeClass('d-none');
 			Joomla.submitform(task);
-		} 
+		}
 	}
 </script>
 

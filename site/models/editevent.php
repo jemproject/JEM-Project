@@ -132,7 +132,7 @@ class JemModelEditevent extends JemModelEvent
 		//$asset = 'com_jem.event.' . $value->id;
 		//$asset = 'com_jem';
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('count(id)'));
 		$query->from('#__jem_register');
@@ -245,7 +245,7 @@ class JemModelEditevent extends JemModelEvent
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
 		$query->from('#__jem_venues as l');
@@ -291,9 +291,9 @@ class JemModelEditevent extends JemModelEvent
 		return $query;
 	}
 
-    /**
-     * venues-Pagination
-     **/
+	/**
+	 * venues-Pagination
+	 **/
 	public function getVenuesPagination()
 	{
 		$jemsettings = JemHelper::config();
@@ -369,7 +369,7 @@ class JemModelEditevent extends JemModelEvent
 		$search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
 		// Query
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('con.*'));
 		$query->from('#__contact_details As con');
@@ -433,7 +433,7 @@ class JemModelEditevent extends JemModelEvent
 
 		// Add registration status if available
 		$itemId     = (int)$this->getState('event.id');
-        $db         = Factory::getContainer()->get('DatabaseDriver');
+		$db         = Factory::getContainer()->get('DatabaseDriver');
 		$qry        = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$qry->select(array('reg.uid, reg.status, reg.waiting, reg.places'));
@@ -496,7 +496,7 @@ class JemModelEditevent extends JemModelEvent
 		$search           = '';
 
 		// Query
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		$query->select(array('usr.id, usr.name'));
 		$query->from('#__users As usr');
@@ -542,7 +542,7 @@ class JemModelEditevent extends JemModelEvent
 	public function getInvitedUsers()
 	{
 		$itemId = (int)$this->getState('event.id');
-        $db = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
 		$query->select(array('reg.uid'));

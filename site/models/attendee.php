@@ -90,10 +90,10 @@ class JemModelAttendee extends BaseDatabaseModel
 		if (empty($this->_data))
 		{
 			$query = 'SELECT r.*, ' . ($this->regname ? 'u.name' : 'u.username') . ' AS username '
-			       . ' FROM #__jem_register AS r '
-			       . ' LEFT JOIN #__users AS u ON u.id = r.uid '
-			       . ' WHERE r.id = '.$this->_db->quote($this->_id)
-			       ;
+				   . ' FROM #__jem_register AS r '
+				   . ' LEFT JOIN #__users AS u ON u.id = r.uid '
+				   . ' WHERE r.id = '.$this->_db->quote($this->_id)
+				   ;
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();
 
@@ -163,11 +163,11 @@ class JemModelAttendee extends BaseDatabaseModel
 			$row->uregdate = gmdate('Y-m-d H:i:s');
 
 			$query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked '
-			       . ' FROM #__jem_events AS e '
-			       . ' INNER JOIN #__jem_register AS r ON r.event = e.id '
-			       . ' WHERE e.id = ' . $this->_db->Quote($eventid)
-			       . '   AND r.status = 1 AND r.waiting = 0 '
-			       . ' GROUP BY e.id ';
+				   . ' FROM #__jem_events AS e '
+				   . ' INNER JOIN #__jem_register AS r ON r.event = e.id '
+				   . ' WHERE e.id = ' . $this->_db->Quote($eventid)
+				   . '   AND r.status = 1 AND r.waiting = 0 '
+				   . ' GROUP BY e.id ';
 			$this->_db->setQuery($query);
 			$details = $this->_db->loadObject();
 

@@ -134,14 +134,14 @@ class JemModelEventelement extends BaseDatabaseModel
 		$orderby = $this->_buildContentOrderBy();
 
 		$query = 'SELECT a.*, loc.venue, loc.city,c.catname'
-		       . ' FROM #__jem_events AS a'
-		       . ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-		       . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-		       . $where
-		       . ' GROUP BY a.id'
-		       . $orderby
-		       ;
+			   . ' FROM #__jem_events AS a'
+			   . ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+			   . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+			   . $where
+			   . ' GROUP BY a.id'
+			   . $orderby
+			   ;
 
 		return $query;
 	}
@@ -222,10 +222,10 @@ class JemModelEventelement extends BaseDatabaseModel
 	public function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
-		       . ' FROM #__jem_categories AS c'
-		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-		       . ' WHERE rel.itemid = '.(int)$id
-		       ;
+			   . ' FROM #__jem_categories AS c'
+			   . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+			   . ' WHERE rel.itemid = '.(int)$id
+			   ;
 
 		$this->_db->setQuery( $query );
 		$cats = $this->_db->loadObjectList();
