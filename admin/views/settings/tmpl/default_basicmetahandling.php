@@ -27,7 +27,7 @@ use Joomla\CMS\Language\Text;
     <fieldset class="options-form">
 		<legend><?php echo Text::_( 'COM_JEM_META_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
-			<li><label id="jform_meta_keywords-lbl" <?php echo JEMOutput::tooltip(Text::_('COM_JEM_META_KEYWORDS'), Text::_('COM_JEM_META_KEYWORDS_DESC')); ?>>
+			<li><label id="jform_meta_keywords-lbl">
 					<?php echo Text::_( 'COM_JEM_META_KEYWORDS' ); ?>
 				</label>
 				<div style="display: block;">
@@ -53,7 +53,9 @@ use Joomla\CMS\Language\Text;
 					</select>
 				</div>
 			</li>
-
+<div id="jform_storeip-desc" class="hide-aware-inline-help d-none">
+                <small class="form-text"><?php echo Text::_( 'COM_JEM_META_KEYWORDS_DESC' ); ?></small>
+            </div>
 			<li><?php echo $this->form->getLabel('meta_description'); ?>
 				<div style="display: block;">
 					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_( 'COM_JEM_EVENT_TITLE' ); ?>" />

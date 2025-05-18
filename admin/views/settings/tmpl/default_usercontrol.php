@@ -9,17 +9,16 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-
 ?>
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_USER_CONTROL'); ?></legend>
             <ul class="adminformlist">
-				<?php foreach ($this->form->getFieldset('usercontrol') as $field): ?>
-					<li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
-				<?php endforeach; ?>
-			</ul>	
+                <?php foreach ($this->form->getFieldset('usercontrol') as $field): ?>
+                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <?php endforeach; ?>
+            </ul>
         </fieldset>
     </div>
     <div class="width-100" style="padding: 10px 1vw;">
@@ -27,8 +26,7 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_AC_EVENTS'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrolacevent') as $field): ?>
-
-					<li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
+					              <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -50,8 +48,8 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_AC_VENUES'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrolacvenue') as $field): ?>
-					<li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
-                <?php endforeach; ?>
+                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+				<?php endforeach; ?>
             </ul>
         </fieldset>
     </div>

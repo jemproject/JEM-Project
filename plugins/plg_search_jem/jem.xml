@@ -4,10 +4,10 @@
     <author>JEM Community</author>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <creationDate>February 2025</creationDate>
+    <creationDate>May 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.2</version>
+    <version>4.3.3</version>
     <description>PLG_SEARCH_JEM_XML_DESCRIPTION</description>
 
     <files>
