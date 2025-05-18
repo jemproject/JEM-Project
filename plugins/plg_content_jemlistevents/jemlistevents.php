@@ -104,8 +104,9 @@ class PlgContentJemlistevents extends CMSPlugin
      *
      * @return  boolean  True on success.
      */
-    public function onContentPrepare(string $context, &$row, &$params, int $page = 0): bool
+    public function onContentPrepare(string $context, &$row, &$params, $page = 0): bool
     {
+        $page = (int)$page;
         // Don't run this plugin when the content is being indexed
         if ($context === 'com_finder.indexer') {
             return true;
