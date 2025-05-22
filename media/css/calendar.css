@@ -296,7 +296,7 @@ div#jem td {
 
 .weeknum {
     text-align: center;
-    /*	vertical-align:middle;*/
+    /*    vertical-align:middle;*/
     font-size: 12px;
     font-weight: bold;
     padding: 2px 3px;
@@ -357,7 +357,7 @@ div#jem td {
 
 
 .calendarButton {
-    /* 	background-image: linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+    /*     background-image: linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
         box-shadow: 0px 0px 2px 0px rgba(0,0,0,1);
         border: solid 2px rgba(31,31,31,1);
         border-radius: 6px;

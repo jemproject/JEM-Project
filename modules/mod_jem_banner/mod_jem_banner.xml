@@ -1,305 +1,305 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="2.5" client="site" method="upgrade">
-	<name>mod_jem_banner</name>
-	<author>JEM Community</author>
-	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>May 2025</creationDate>
-	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.3.3</version>
-	<description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
+    <name>mod_jem_banner</name>
+    <author>JEM Community</author>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <creationDate>May 2025</creationDate>
+    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <version>4.3.3</version>
+    <description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
-	<scriptfile>script.php</scriptfile>
+    <scriptfile>script.php</scriptfile>
 
-	<files>
-		<filename module="mod_jem_banner">mod_jem_banner.php</filename>
-		<filename>helper.php</filename>
-		<filename>script.php</filename>
-		<filename>index.html</filename>
-		<folder>tmpl</folder>
-		<folder>language</folder>
-	</files>
-	<languages>
-		<language tag="en-GB">language/en-GB/mod_jem_banner.ini</language>
-		<language tag="en-GB">language/en-GB/mod_jem_banner.sys.ini</language>
-	</languages>
-	<help key="Modules" />
-	<config>
-		<fields name="params">
-			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-				<field name="type" type="list"
-					default="1"
-					label="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT"
-					description="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
-				>
-					<option value="0">MOD_JEM_BANNER_UPCOMING_EVENTS</option>
-					<option value="1">MOD_JEM_BANNER_UNFINISHED_EVENTS</option>
-					<option value="2">MOD_JEM_BANNER_ARCHIVED_EVENTS</option>
-					<option value="3">MOD_JEM_BANNER_CURRENT_EVENTS</option>
-					<option value="5">MOD_JEM_BANNER_OPENDATE_EVENTS</option>
-				</field>
-				<field name="count" type="text"
-					default="5"
-					label="MOD_JEM_BANNER_EVENTS_IN_MODULE"
-					description="MOD_JEM_BANNER_EVENTS_IN_MODULE_DESC"
-				/>
-				<field name="show_no_events" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_SHOW_NO_EVENTS"
-					description="MOD_JEM_BANNER_SHOW_NO_EVENTS_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="max_days" type="text"
-					default=""
-					label="MOD_JEM_BANNER_MAX_DAYS"
-					description="MOD_JEM_BANNER_MAX_DAYS_DESC"
-				/>
-				<field name="offset_hours" type="text"
-					default=""
-					label="MOD_JEM_BANNER_OFFSET_HOURS"
-					description="MOD_JEM_BANNER_OFFSET_HOURS_DESC"
-				/>
-				<field name="shuffle" type="radio"
-					default="0"
-					label="MOD_JEM_BANNER_SHUFFLE"
-					description="MOD_JEM_BANNER_SHUFFLE_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="shuffle_count" type="text"
-					default=""
-					label="MOD_JEM_BANNER_SHUFFLE_COUNT"
-					description="MOD_JEM_BANNER_SHUFFLE_COUNT_DESC"
-				/>
+    <files>
+        <filename module="mod_jem_banner">mod_jem_banner.php</filename>
+        <filename>helper.php</filename>
+        <filename>script.php</filename>
+        <filename>index.html</filename>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.sys.ini</language>
+    </languages>
+    <help key="Modules" />
+    <config>
+        <fields name="params">
+            <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+                <field name="type" type="list"
+                    default="1"
+                    label="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT"
+                    description="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
+                >
+                    <option value="0">MOD_JEM_BANNER_UPCOMING_EVENTS</option>
+                    <option value="1">MOD_JEM_BANNER_UNFINISHED_EVENTS</option>
+                    <option value="2">MOD_JEM_BANNER_ARCHIVED_EVENTS</option>
+                    <option value="3">MOD_JEM_BANNER_CURRENT_EVENTS</option>
+                    <option value="5">MOD_JEM_BANNER_OPENDATE_EVENTS</option>
+                </field>
+                <field name="count" type="text"
+                    default="5"
+                    label="MOD_JEM_BANNER_EVENTS_IN_MODULE"
+                    description="MOD_JEM_BANNER_EVENTS_IN_MODULE_DESC"
+                />
+                <field name="show_no_events" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_SHOW_NO_EVENTS"
+                    description="MOD_JEM_BANNER_SHOW_NO_EVENTS_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="max_days" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_MAX_DAYS"
+                    description="MOD_JEM_BANNER_MAX_DAYS_DESC"
+                />
+                <field name="offset_hours" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_OFFSET_HOURS"
+                    description="MOD_JEM_BANNER_OFFSET_HOURS_DESC"
+                />
+                <field name="shuffle" type="radio"
+                    default="0"
+                    label="MOD_JEM_BANNER_SHUFFLE"
+                    description="MOD_JEM_BANNER_SHUFFLE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="shuffle_count" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_SHUFFLE_COUNT"
+                    description="MOD_JEM_BANNER_SHUFFLE_COUNT_DESC"
+                />
 
-				<field name="cuttitle" type="text"
-					default="25"
-					label="MOD_JEM_BANNER_MAX_TITLE_LENGTH"
-					description="MOD_JEM_BANNER_MAX_TITLE_LENGTH_DESC"
-				/>
-				<field name="linkevent" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_LINK_TO_DETAILS"
-					description="MOD_JEM_BANNER_LINK_TO_DETAILS_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
+                <field name="cuttitle" type="text"
+                    default="25"
+                    label="MOD_JEM_BANNER_MAX_TITLE_LENGTH"
+                    description="MOD_JEM_BANNER_MAX_TITLE_LENGTH_DESC"
+                />
+                <field name="linkevent" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_LINK_TO_DETAILS"
+                    description="MOD_JEM_BANNER_LINK_TO_DETAILS_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
 
-				<field name="showcalendar" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_SHOWCALENDAR"
-					description="MOD_JEM_BANNER_SHOWCALENDAR_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="color" type="list"
-					default="1"
-					label="MOD_JEM_BANNER_COLOR"
-					description="MOD_JEM_BANNER_COLOR_DESC"
-				>
-					<option value="red">MOD_JEM_BANNER_RED</option>
-					<option value="blue">MOD_JEM_BANNER_BLUE</option>
-					<option value="green">MOD_JEM_BANNER_GREEN</option>
-					<option value="orange">MOD_JEM_BANNER_ORANGE</option>
-					<option value="category">MOD_JEM_BANNER_CATEGORY</option>
-					<option value="alpha">MOD_JEM_BANNER_USER</option>
-				</field>
-				<field name="fallbackcolor" type="color"
-					class="inputbox"
-					default="#EEEEEE"
-					size="8"
-					label="MOD_JEM_BANNER_FALLBACK_COLOR"
-					description="MOD_JEM_BANNER_FALLBACK_COLOR_DESC"
-				/>
-				<field name="imagewidthmax" type="text"
-					   class="inputbox"
-					   default=""
-					   size="8"
-					   label="MOD_JEM_BANNER_IMAGE_WIDTH_MAX"
-					   description="MOD_JEM_BANNER_IMAGE_WIDTH_MAX_DESC"
-				/>
-				<field name="showflyer" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_SHOWFLYER"
-					description="MOD_JEM_BANNER_SHOWFLYER_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="flyer_link_type" type="list"
-					default="0"
-					label="MOD_JEM_BANNER_FLYER_LINKS_TO"
-					description="MOD_JEM_BANNER_FLYER_LINKS_TO_DESC"
-				>
-					<option value="0">MOD_JEM_BANNER_FLYER_LINK_IMAGE_PAGE</option>
-					<option value="1">MOD_JEM_BANNER_FLYER_LINK_IMAGE_MODAL</option>
-					<option value="2">MOD_JEM_BANNER_FLYER_LINK_EVENT_DETAILS</option>
-					<option value="3">COM_JEM_NO_LINK</option>
-				</field>
+                <field name="showcalendar" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_SHOWCALENDAR"
+                    description="MOD_JEM_BANNER_SHOWCALENDAR_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="color" type="list"
+                    default="1"
+                    label="MOD_JEM_BANNER_COLOR"
+                    description="MOD_JEM_BANNER_COLOR_DESC"
+                >
+                    <option value="red">MOD_JEM_BANNER_RED</option>
+                    <option value="blue">MOD_JEM_BANNER_BLUE</option>
+                    <option value="green">MOD_JEM_BANNER_GREEN</option>
+                    <option value="orange">MOD_JEM_BANNER_ORANGE</option>
+                    <option value="category">MOD_JEM_BANNER_CATEGORY</option>
+                    <option value="alpha">MOD_JEM_BANNER_USER</option>
+                </field>
+                <field name="fallbackcolor" type="color"
+                    class="inputbox"
+                    default="#EEEEEE"
+                    size="8"
+                    label="MOD_JEM_BANNER_FALLBACK_COLOR"
+                    description="MOD_JEM_BANNER_FALLBACK_COLOR_DESC"
+                />
+                <field name="imagewidthmax" type="text"
+                       class="inputbox"
+                       default=""
+                       size="8"
+                       label="MOD_JEM_BANNER_IMAGE_WIDTH_MAX"
+                       description="MOD_JEM_BANNER_IMAGE_WIDTH_MAX_DESC"
+                />
+                <field name="showflyer" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_SHOWFLYER"
+                    description="MOD_JEM_BANNER_SHOWFLYER_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="flyer_link_type" type="list"
+                    default="0"
+                    label="MOD_JEM_BANNER_FLYER_LINKS_TO"
+                    description="MOD_JEM_BANNER_FLYER_LINKS_TO_DESC"
+                >
+                    <option value="0">MOD_JEM_BANNER_FLYER_LINK_IMAGE_PAGE</option>
+                    <option value="1">MOD_JEM_BANNER_FLYER_LINK_IMAGE_MODAL</option>
+                    <option value="2">MOD_JEM_BANNER_FLYER_LINK_EVENT_DETAILS</option>
+                    <option value="3">COM_JEM_NO_LINK</option>
+                </field>
 
-				<field name="showdesc" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_SHOWDESC"
-					description="MOD_JEM_BANNER_SHOWDESC_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="descriptionlength" type="text"
-					default="300"
-					label="MOD_JEM_BANNER_MAX_DESCRIPTION_LENGTH"
-					description="MOD_JEM_BANNER_MAX_DESCRIPTION_LENGTH_DESC"
-				/>
-				<field name="br" type="radio"
-					default="0"
-					label="MOD_JEM_BANNER_ALLOW_LINEBREAK"
-					description="MOD_JEM_BANNER_ALLOW_LINEBREAK_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="readmore" type="radio"
-					default="0"
-					label="MOD_JEM_BANNER_FIELD_READMORE_LABEL"
-					description="MOD_JEM_BANNER_FIELD_READMORE_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
+                <field name="showdesc" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_SHOWDESC"
+                    description="MOD_JEM_BANNER_SHOWDESC_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="descriptionlength" type="text"
+                    default="300"
+                    label="MOD_JEM_BANNER_MAX_DESCRIPTION_LENGTH"
+                    description="MOD_JEM_BANNER_MAX_DESCRIPTION_LENGTH_DESC"
+                />
+                <field name="br" type="radio"
+                    default="0"
+                    label="MOD_JEM_BANNER_ALLOW_LINEBREAK"
+                    description="MOD_JEM_BANNER_ALLOW_LINEBREAK_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="readmore" type="radio"
+                    default="0"
+                    label="MOD_JEM_BANNER_FIELD_READMORE_LABEL"
+                    description="MOD_JEM_BANNER_FIELD_READMORE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
 
-				<field name="datemethod" type="list"
-					default="1"
-					label="MOD_JEM_BANNER_SHOW_DATE_OR_DAY_DIFFERENCE"
-					description="MOD_JEM_BANNER_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
-				>
-					<option value="1">MOD_JEM_BANNER_SHOW_DATE</option>
-					<option value="2">MOD_JEM_BANNER_SHOW_DAY_DIFFERENCE</option>
-				</field>
-				<field name="formatdate" type="text"
-					default=""
-					label="MOD_JEM_BANNER_DATE_FORMAT"
-					description="MOD_JEM_BANNER_DATE_FORMAT_DESC"
-				/>
-				<field name="formattime" type="text"
-					default=""
-					label="MOD_JEM_BANNER_TIME_FORMAT"
-					description="MOD_JEM_BANNER_TIME_FORMAT_DESC"
-				/>
+                <field name="datemethod" type="list"
+                    default="1"
+                    label="MOD_JEM_BANNER_SHOW_DATE_OR_DAY_DIFFERENCE"
+                    description="MOD_JEM_BANNER_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
+                >
+                    <option value="1">MOD_JEM_BANNER_SHOW_DATE</option>
+                    <option value="2">MOD_JEM_BANNER_SHOW_DAY_DIFFERENCE</option>
+                </field>
+                <field name="formatdate" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_DATE_FORMAT"
+                    description="MOD_JEM_BANNER_DATE_FORMAT_DESC"
+                />
+                <field name="formattime" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_TIME_FORMAT"
+                    description="MOD_JEM_BANNER_TIME_FORMAT_DESC"
+                />
 
-				<field name="showcategory" type="radio"
-					default="0"
-					label="MOD_JEM_BANNER_SHOWCATEGORY"
-					description="MOD_JEM_BANNER_SHOWCATEGORY_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="linkcategory" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_LINK_TO_CATEGORY"
-					description="MOD_JEM_BANNER_LINK_TO_CATEGORY_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="showvenue" type="radio"
-					default="0"
-					label="MOD_JEM_BANNER_SHOWVENUE"
-					description="MOD_JEM_BANNER_SHOWVENUE_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="linkvenue" type="radio"
-					default="1"
-					label="MOD_JEM_BANNER_LINK_TO_VENUE"
-					description="MOD_JEM_BANNER_LINK_TO_VENUE_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
+                <field name="showcategory" type="radio"
+                    default="0"
+                    label="MOD_JEM_BANNER_SHOWCATEGORY"
+                    description="MOD_JEM_BANNER_SHOWCATEGORY_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="linkcategory" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_LINK_TO_CATEGORY"
+                    description="MOD_JEM_BANNER_LINK_TO_CATEGORY_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showvenue" type="radio"
+                    default="0"
+                    label="MOD_JEM_BANNER_SHOWVENUE"
+                    description="MOD_JEM_BANNER_SHOWVENUE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="linkvenue" type="radio"
+                    default="1"
+                    label="MOD_JEM_BANNER_LINK_TO_VENUE"
+                    description="MOD_JEM_BANNER_LINK_TO_VENUE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
 
-				<field name="featured_only" type="radio"
-					default="0"
-					label="MOD_JEM_BANNER_FEATURED_ONLY"
-					description="MOD_JEM_BANNER_FEATURED_ONLY_DESC"
-					class="btn-group btn-group-yesno"
-				>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="catid" type="categoryedit"
-					default=""
-					multiple="true"
-					removeroot="true"
-					label="MOD_JEM_BANNER_CATEGORY_ID"
-					description="MOD_JEM_BANNER_CATEGORY_ID_DESC"
-				/>
-				<field name="venid" type="venueoptions"
-					default=""
-					multiple="true"
-					label="MOD_JEM_BANNER_VENUE_ID"
-					description="MOD_JEM_BANNER_VENUE_ID_DESC"
-				/>
-				<field name="eventid" type="text"
-					default=""
-					label="MOD_JEM_BANNER_EVENT_ID"
-					description="MOD_JEM_BANNER_EVENT_ID_DESC"
-				/>
-				<field name="stateloc" type="text"
-					default=""
-					label="MOD_JEM_BANNER_STATE"
-					description="MOD_JEM_BANNER_STATE_DESC"
-				/>
-				<field name="stateloc_mode" type="list"
-					default="0"
-					label="MOD_JEM_BANNER_STATE_MODE"
-					description="MOD_JEM_BANNER_STATE_MODE_DESC"
-				>
-					<option value="0">MOD_JEM_BANNER_STATE_MODE_EXACTMATCH</option>
-					<option value="1">MOD_JEM_BANNER_STATE_MODE_CONTAINS</option>
-				</field>
+                <field name="featured_only" type="radio"
+                    default="0"
+                    label="MOD_JEM_BANNER_FEATURED_ONLY"
+                    description="MOD_JEM_BANNER_FEATURED_ONLY_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="catid" type="categoryedit"
+                    default=""
+                    multiple="true"
+                    removeroot="true"
+                    label="MOD_JEM_BANNER_CATEGORY_ID"
+                    description="MOD_JEM_BANNER_CATEGORY_ID_DESC"
+                />
+                <field name="venid" type="venueoptions"
+                    default=""
+                    multiple="true"
+                    label="MOD_JEM_BANNER_VENUE_ID"
+                    description="MOD_JEM_BANNER_VENUE_ID_DESC"
+                />
+                <field name="eventid" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_EVENT_ID"
+                    description="MOD_JEM_BANNER_EVENT_ID_DESC"
+                />
+                <field name="stateloc" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_STATE"
+                    description="MOD_JEM_BANNER_STATE_DESC"
+                />
+                <field name="stateloc_mode" type="list"
+                    default="0"
+                    label="MOD_JEM_BANNER_STATE_MODE"
+                    description="MOD_JEM_BANNER_STATE_MODE_DESC"
+                >
+                    <option value="0">MOD_JEM_BANNER_STATE_MODE_EXACTMATCH</option>
+                    <option value="1">MOD_JEM_BANNER_STATE_MODE_CONTAINS</option>
+                </field>
 
-				<field name="moduleclass_sfx" type="text"
-					default=""
-					label="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX"
-					description="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX_DESC"
-				/>
-			</fieldset>
+                <field name="moduleclass_sfx" type="text"
+                    default=""
+                    label="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX"
+                    description="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX_DESC"
+                />
+            </fieldset>
 
-			<fieldset name="advanced">
-				<field name="cache" type="list"
-					default="1"
-					label="MOD_JEM_BANNER_CACHING"
-					description="MOD_JEM_BANNER_CACHING_DESC"
-				>
-					<option value="1">MOD_JEM_BANNER_USE_GLOBAL</option>
-					<option value="0">MOD_JEM_BANNER_NO_CACHING</option>
-				</field>
-				<field name="cache_time" type="text"
-					default="900"
-					label="MOD_JEM_BANNER_CACHE_TIME"
-					description="MOD_JEM_BANNER_CACHE_TIME_DESC"
-				/>
-			</fieldset>
-		</fields>
-	</config>
+            <fieldset name="advanced">
+                <field name="cache" type="list"
+                    default="1"
+                    label="MOD_JEM_BANNER_CACHING"
+                    description="MOD_JEM_BANNER_CACHING_DESC"
+                >
+                    <option value="1">MOD_JEM_BANNER_USE_GLOBAL</option>
+                    <option value="0">MOD_JEM_BANNER_NO_CACHING</option>
+                </field>
+                <field name="cache_time" type="text"
+                    default="900"
+                    label="MOD_JEM_BANNER_CACHE_TIME"
+                    description="MOD_JEM_BANNER_CACHE_TIME_DESC"
+                />
+            </fieldset>
+        </fields>
+    </config>
 </extension>

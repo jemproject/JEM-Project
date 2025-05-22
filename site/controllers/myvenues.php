@@ -21,77 +21,77 @@ use Joomla\CMS\Session\Session;
  */
 class JemControllerMyvenues extends BaseController
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Logic to publish venues
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function publish()
-	{
-		$this->setStatus(1, 'COM_JEM_VENUE_PUBLISHED');
-	}
+    /**
+     * Logic to publish venues
+     *
+     * @access public
+     * @return void
+     */
+    public function publish()
+    {
+        $this->setStatus(1, 'COM_JEM_VENUE_PUBLISHED');
+    }
 
-	/**
-	 * Logic unpublish venues
-	 */
-	public function unpublish()
-	{
-		$this->setStatus(0, 'COM_JEM_VENUE_UNPUBLISHED');
-	}
+    /**
+     * Logic unpublish venues
+     */
+    public function unpublish()
+    {
+        $this->setStatus(0, 'COM_JEM_VENUE_UNPUBLISHED');
+    }
 
-	/**
-	 * Logic to trash venues - NOT SUPPORTED YET
-	 *
-	 * @access public
-	 * @return void
-	 */
-	/*
-	public function trash()
-	{
-		$this->setStatus(-2, 'COM_JEM_VENUE_TRASHED');
-	}
-	*/
+    /**
+     * Logic to trash venues - NOT SUPPORTED YET
+     *
+     * @access public
+     * @return void
+     */
+    /*
+    public function trash()
+    {
+        $this->setStatus(-2, 'COM_JEM_VENUE_TRASHED');
+    }
+    */
 
-	/**
-	 * Logic to publish/unpublish/trash venues
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function setStatus($status, $message)
-	{
-		// Check for request forgeries
-		Session::checkToken() or jexit('Invalid Token');
+    /**
+     * Logic to publish/unpublish/trash venues
+     *
+     * @access protected
+     * @return void
+     */
+    protected function setStatus($status, $message)
+    {
+        // Check for request forgeries
+        Session::checkToken() or jexit('Invalid Token');
 
-		$app = Factory::getApplication();
-		$input = $app->input;
+        $app = Factory::getApplication();
+        $input = $app->input;
 
-		$cid = $input->get('cid', array(), 'array');
+        $cid = $input->get('cid', array(), 'array');
 
-		if (empty($cid)) {
-			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
-			$this->setRedirect(JemHelperRoute::getMyVenuesRoute());
-			return;
-		}
+        if (empty($cid)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'), 'notice');
+            $this->setRedirect(JemHelperRoute::getMyVenuesRoute());
+            return;
+        }
 
-		$model = $this->getModel('myvenues');
-		if (!$model->publish($cid, $status)) {
-			echo "<script> alert('" . $model->getError() . "'); window.history.go(-1); </script>\n";
-		}
+        $model = $this->getModel('myvenues');
+        if (!$model->publish($cid, $status)) {
+            echo "<script> alert('" . $model->getError() . "'); window.history.go(-1); </script>\n";
+        }
 
-		$total = count($cid);
-		$msg   = $total . ' ' . Text::_($message);
+        $total = count($cid);
+        $msg   = $total . ' ' . Text::_($message);
 
-		$this->setRedirect(JemHelperRoute::getMyVenuesRoute(), $msg);
-	}
+        $this->setRedirect(JemHelperRoute::getMyVenuesRoute(), $msg);
+    }
 }
 ?>

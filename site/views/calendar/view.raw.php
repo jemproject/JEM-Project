@@ -16,40 +16,40 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class JemViewCalendar extends HtmlView
 {
-	/**
-	 * Creates the output for the Calendar view
-	 */
-	public function display($tpl = null)
-	{
-		$settings  = JemHelper::config();
-		$settings2 = JemHelper::globalattribs();
-		$app       = Factory::getApplication();
-		$jinput    = $app->input;
+    /**
+     * Creates the output for the Calendar view
+     */
+    public function display($tpl = null)
+    {
+        $settings  = JemHelper::config();
+        $settings2 = JemHelper::globalattribs();
+        $app       = Factory::getApplication();
+        $jinput    = $app->input;
 
-		$year  = (int)$jinput->getInt('yearID', date("Y"));
-		$month = (int)$jinput->getInt('monthID', date("m"));
+        $year  = (int)$jinput->getInt('yearID', date("Y"));
+        $month = (int)$jinput->getInt('monthID', date("m"));
 
-		if ($settings2->get('global_show_ical_icon','0')==1) {
-			// Get data from the model
-			$model = $this->getModel();
-			$model->setState('list.start',0);
-			$model->setState('list.limit',$settings->ical_max_items);
-			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
+        if ($settings2->get('global_show_ical_icon','0')==1) {
+            // Get data from the model
+            $model = $this->getModel();
+            $model->setState('list.start',0);
+            $model->setState('list.limit',$settings->ical_max_items);
+            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
-			$rows = $model->getItems();
+            $rows = $model->getItems();
 
-			// initiate new CALENDAR
-			$vcal = JemHelper::getCalendarTool();
-			$vcal->setConfig("filename", "events_month_". $year . $month . ".ics");
+            // initiate new CALENDAR
+            $vcal = JemHelper::getCalendarTool();
+            $vcal->setConfig("filename", "events_month_". $year . $month . ".ics");
 
-			if (!empty($rows)) {
-				foreach ($rows as $row) {
-					JemHelper::icalAddEvent($vcal, $row);
-				}
-			}
+            if (!empty($rows)) {
+                foreach ($rows as $row) {
+                    JemHelper::icalAddEvent($vcal, $row);
+                }
+            }
 
-			// generate and redirect output to user browser
-			$vcal->returnCalendar();
-		}
-	}
+            // generate and redirect output to user browser
+            $vcal->returnCalendar();
+        }
+    }
 }

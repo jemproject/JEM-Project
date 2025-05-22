@@ -21,15 +21,15 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 class JemSidebarHelper extends Sidebar
 
 {
-	public static function render()
-	{
-		/* Do nothing */
-	}
+    public static function render()
+    {
+        /* Do nothing */
+    }
 
-	public static function getEntries()
-	{
-		return array();
-	}
+    public static function getEntries()
+    {
+        return array();
+    }
 }
 
 
@@ -39,131 +39,131 @@ class JemSidebarHelper extends Sidebar
 class JemHelperBackend
 {
 
-	public static $extension = 'com_jem';
+    public static $extension = 'com_jem';
 
-	/**
-	 * Configure the Linkbar.
-	 *
-	 * @param	string	The name of the active view.
-	 *
-	 * @return	void
-	 *
-	 */
-	public static function addSubmenu($vName)
-	{
-		JemSidebarHelper::addEntry(
-			Text::_('COM_JEM_SUBMENU_MAIN'),
-			'index.php?option=com_jem&view=main',
-			$vName == 'main'
-		);
+    /**
+     * Configure the Linkbar.
+     *
+     * @param    string    The name of the active view.
+     *
+     * @return    void
+     *
+     */
+    public static function addSubmenu($vName)
+    {
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_SUBMENU_MAIN'),
+            'index.php?option=com_jem&view=main',
+            $vName == 'main'
+        );
 
-		JemSidebarHelper::addEntry(
-			Text::_('COM_JEM_EVENTS'),
-			'index.php?option=com_jem&view=events',
-			$vName == 'events'
-		);
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_EVENTS'),
+            'index.php?option=com_jem&view=events',
+            $vName == 'events'
+        );
 
-		JemSidebarHelper::addEntry(
-			Text::_('COM_JEM_VENUES'),
-			'index.php?option=com_jem&view=venues',
-			$vName == 'venues'
-		);
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_VENUES'),
+            'index.php?option=com_jem&view=venues',
+            $vName == 'venues'
+        );
 
-		JemSidebarHelper::addEntry(
-			Text::_('COM_JEM_CATEGORIES'),
-			'index.php?option=com_jem&view=categories',
-			$vName == 'categories'
-		);
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_CATEGORIES'),
+            'index.php?option=com_jem&view=categories',
+            $vName == 'categories'
+        );
 
-		JemSidebarHelper::addEntry(
-			Text::_('COM_JEM_GROUPS'),
-			'index.php?option=com_jem&view=groups',
-			$vName == 'groups'
-		);
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_GROUPS'),
+            'index.php?option=com_jem&view=groups',
+            $vName == 'groups'
+        );
 
-		if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			JemSidebarHelper::addEntry(
-				Text::_('COM_JEM_SETTINGS_TITLE'),
-				'index.php?option=com_jem&view=settings',
-				$vName == 'settings'
-			);
+        if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_SETTINGS_TITLE'),
+                'index.php?option=com_jem&view=settings',
+                $vName == 'settings'
+            );
 
-			JemSidebarHelper::addEntry(
-				Text::_('COM_JEM_HOUSEKEEPING'),
-				'index.php?option=com_jem&amp;view=housekeeping',
-				$vName == 'housekeeping'
-			);
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_HOUSEKEEPING'),
+                'index.php?option=com_jem&amp;view=housekeeping',
+                $vName == 'housekeeping'
+            );
 
-			JemSidebarHelper::addEntry(
-				Text::_('COM_JEM_UPDATECHECK_TITLE'),
-				'index.php?option=com_jem&amp;view=updatecheck',
-				$vName == 'updatecheck'
-			);
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_UPDATECHECK_TITLE'),
+                'index.php?option=com_jem&amp;view=updatecheck',
+                $vName == 'updatecheck'
+            );
 
-			JemSidebarHelper::addEntry(
-				Text::_('COM_JEM_IMPORT_DATA'),
-				'index.php?option=com_jem&amp;view=import',
-				$vName == 'import'
-			);
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_IMPORT_DATA'),
+                'index.php?option=com_jem&amp;view=import',
+                $vName == 'import'
+            );
 
-			JemSidebarHelper::addEntry(
-				Text::_('COM_JEM_EXPORT_DATA'),
-				'index.php?option=com_jem&amp;view=export',
-				$vName == 'export'
-			);
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_EXPORT_DATA'),
+                'index.php?option=com_jem&amp;view=export',
+                $vName == 'export'
+            );
 
-			JemSidebarHelper::addEntry(
-				Text::_('COM_JEM_CSSMANAGER_TITLE'),
-				'index.php?option=com_jem&amp;view=cssmanager',
-				$vName == 'cssmanager'
-			);
-		}
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_CSSMANAGER_TITLE'),
+                'index.php?option=com_jem&amp;view=cssmanager',
+                $vName == 'cssmanager'
+            );
+        }
 
-		JemSidebarHelper::addEntry(
-			Text::_('COM_JEM_HELP'),
-			'index.php?option=com_jem&view=help',
-			$vName == 'help'
-		);
-	}
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_HELP'),
+            'index.php?option=com_jem&view=help',
+            $vName == 'help'
+        );
+    }
 
-	/**
-	 * Gets a list of the actions that can be performed.
-	 *
-	 * @param	int		The category ID.
-	 *
-	 * @return	CMSObject
-	 */
-	public static function getActions($categoryId = 0)
-	{
-		$user	= JemFactory::getUser();
-		$result	= new CMSObject;;
+    /**
+     * Gets a list of the actions that can be performed.
+     *
+     * @param    int        The category ID.
+     *
+     * @return    CMSObject
+     */
+    public static function getActions($categoryId = 0)
+    {
+        $user    = JemFactory::getUser();
+        $result    = new CMSObject;;
 
-		if (empty($categoryId)) {
-			$assetName = 'com_jem';
-			$level = 'component';
-		} else {
-			$assetName = 'com_jem.category.'.(int) $categoryId;
-			$level = 'category';
-		}
+        if (empty($categoryId)) {
+            $assetName = 'com_jem';
+            $level = 'component';
+        } else {
+            $assetName = 'com_jem.category.'.(int) $categoryId;
+            $level = 'category';
+        }
 
-		// $actions = Access::getActions('com_jem', $level);
-		$actions = Access::getActionsFromFile(JPATH_ADMINISTRATOR.'/components/com_jem/access.xml',"/access/section[@name='".$level."']/");
+        // $actions = Access::getActions('com_jem', $level);
+        $actions = Access::getActionsFromFile(JPATH_ADMINISTRATOR.'/components/com_jem/access.xml',"/access/section[@name='".$level."']/");
 
-		foreach ($actions as $action) {
-			$result->set($action->name,	$user->authorise($action->name, $assetName));
-		}
+        foreach ($actions as $action) {
+            $result->set($action->name,    $user->authorise($action->name, $assetName));
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
-	public static function getCountryOptions()
-	{
-		$options = array();
-		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
+    public static function getCountryOptions()
+    {
+        $options = array();
+        $options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
 
-		array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('COM_JEM_SELECT_COUNTRY')));
+        array_unshift($options, HTMLHelper::_('select.option', '0', Text::_('COM_JEM_SELECT_COUNTRY')));
 
-		return $options;
-	}
+        return $options;
+    }
 
 }

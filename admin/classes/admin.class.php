@@ -16,40 +16,40 @@ use Joomla\CMS\HTML\HTMLHelper;
  */
 class JemAdmin
 {
-	/**
-	 * Writes footer.
-	 *
-	 */
-	static public function footer()
-	{
+    /**
+     * Writes footer.
+     *
+     */
+    static public function footer()
+    {
 
-	}
+    }
 
-	/**
-	 * Retrieves settings.
-	 *
-	 */
-	static public function config()
-	{
-		$jemConfig = JemConfig::getInstance();
+    /**
+     * Retrieves settings.
+     *
+     */
+    static public function config()
+    {
+        $jemConfig = JemConfig::getInstance();
 
-		return $jemConfig->toObject();
-	}
+        return $jemConfig->toObject();
+    }
 
-	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
-	{
-		$timelist = array();
-		$timelist[0] = HTMLHelper::_('select.option', '', '');
+    static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
+    {
+        $timelist = array();
+        $timelist[0] = HTMLHelper::_('select.option', '', '');
 
-		foreach(range(0, $max) as $value) {
-			if($value >= 10) {
-				$timelist[] = HTMLHelper::_('select.option', $value, $value);
-			} else {
-				$timelist[] = HTMLHelper::_('select.option', '0'.$value, '0'.$value);
-			}
-		}
-		return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
-	}
+        foreach(range(0, $max) as $value) {
+            if($value >= 10) {
+                $timelist[] = HTMLHelper::_('select.option', $value, $value);
+            } else {
+                $timelist[] = HTMLHelper::_('select.option', '0'.$value, '0'.$value);
+            }
+        }
+        return HTMLHelper::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+    }
 }
 
 ?>

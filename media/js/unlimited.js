@@ -10,7 +10,7 @@ function unlimited_starter() {
 }
 
 function include_unlimited($unlimited_name) {
-    document.getElementById("recurrence_limit_date").value = $unlimited_name;	// write the word "unlimited" in the textbox
+    document.getElementById("recurrence_limit_date").value = $unlimited_name;    // write the word "unlimited" in the textbox
     return false;
 }
 

@@ -17,46 +17,46 @@ use Joomla\CMS\Form\FormField;
  */
 class JFormFieldCustomColor extends FormField
 {
-	/**
-	 * The form field type.
-	 */
-	protected $type = 'CustomColor';
+    /**
+     * The form field type.
+     */
+    protected $type = 'CustomColor';
 
-	/**
-	 * Method to get the field input markup.
-	 */
-	protected function getInput()
-	{
-		// Initialize field attributes.
-		$size = $this->element['size'] ? ' size="' . (int) $this->element['size'] . '"' : '';
-		$classes = (string) $this->element['class'];
-		$disabled = ((string) $this->element['disabled'] == 'true') ? ' disabled="disabled"' : '';
+    /**
+     * Method to get the field input markup.
+     */
+    protected function getInput()
+    {
+        // Initialize field attributes.
+        $size = $this->element['size'] ? ' size="' . (int) $this->element['size'] . '"' : '';
+        $classes = (string) $this->element['class'];
+        $disabled = ((string) $this->element['disabled'] == 'true') ? ' disabled="disabled"' : '';
 
-		if (!$disabled)
-		{
-			$classes .= ' colorpicker';
-		}
+        if (!$disabled)
+        {
+            $classes .= ' colorpicker';
+        }
 
-		// load script.
-		$script = array();
-		
-		$script[] = '	function jClearColor(id) {';
-		$script[] = '		document.getElementById(id).value = "";';
-		$script[] = '		document.getElementById(id).style.background = "";';
-		$script[] = '	}';
-			
-		// Add the script to the document head.
-		Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
+        // load script.
+        $script = array();
+        
+        $script[] = '    function jClearColor(id) {';
+        $script[] = '        document.getElementById(id).value = "";';
+        $script[] = '        document.getElementById(id).style.background = "";';
+        $script[] = '    }';
+            
+        // Add the script to the document head.
+        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 
-		// Initialize JavaScript field attributes.
-		$onclick = ' onclick="openPicker(\''.$this->id.'\', -200, 20)"';
-		$class = $classes ? ' class="' . trim($classes) . '"' : '';
+        // Initialize JavaScript field attributes.
+        $onclick = ' onclick="openPicker(\''.$this->id.'\', -200, 20)"';
+        $class = $classes ? ' class="' . trim($classes) . '"' : '';
 
-		$html	= array();
-		$html[] = '<input style="background:'.$this->value.'" type="text" name="' . $this->name . '" id="' . $this->id . '"' . ' value="'
-			. htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8') . '"' . $class . $size .$onclick. '/>';
-		$html[] = '<input title="'.Text::_('JCLEAR').'" type="text" class="button" size="1" value="" id="clear" onclick="return jClearColor(\''.$this->id.'\')">';
-		
-		return implode("\n", $html);
-	}
+        $html    = array();
+        $html[] = '<input style="background:'.$this->value.'" type="text" name="' . $this->name . '" id="' . $this->id . '"' . ' value="'
+            . htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8') . '"' . $class . $size .$onclick. '/>';
+        $html[] = '<input title="'.Text::_('JCLEAR').'" type="text" class="button" size="1" value="" id="clear" onclick="return jClearColor(\''.$this->id.'\')">';
+        
+        return implode("\n", $html);
+    }
 }

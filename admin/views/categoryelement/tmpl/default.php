@@ -18,62 +18,62 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 <form action="index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
-	<tr>
-		<td style="width: 100%;">
-			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-			<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo Text::_('COM_JEM_GLOBAL_NOCATEGORY')?></button>
-		</td>
-		<td nowrap="nowrap">
-			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
-			<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
-			<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
-			</select>
-		</td>
-	</tr>
+    <tr>
+        <td style="width: 100%;">
+            <input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+            <button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo Text::_('COM_JEM_GLOBAL_NOCATEGORY')?></button>
+        </td>
+        <td nowrap="nowrap">
+            <select name="filter_state" class="inputbox" onchange="this.form.submit()">
+            <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
+            <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
+            </select>
+        </td>
+    </tr>
 </table>
 
 <table class="table table-striped" id="articleList">
-	<thead>
-		<tr>
-			<th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-			<th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
-			<th style="width: 1%" nowrap="nowrap"><?php echo Text::_('COM_JEM_ACCESS'); ?></th>
-			<th style="width: 1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+            <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
+            <th style="width: 1%" nowrap="nowrap"><?php echo Text::_('COM_JEM_ACCESS'); ?></th>
+            <th style="width: 1%" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
+        </tr>
+    </thead>
 
-	<tfoot>
-		<tr>
-			<td colspan="4">
-				<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
-			</td>
-		</tr>
-	</tfoot>
+    <tfoot>
+        <tr>
+            <td colspan="4">
+                <?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
+            </td>
+        </tr>
+    </tfoot>
 
-	<tbody>
-		<?php
-		foreach ($this->rows as $i => $row) :
-			$access = $row->groupname;
-   		?>
-		 <tr class="row<?php echo $i % 2; ?>">
-			<td class="center" style="width: 7px;"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-			<td style="text-align: left;">
-				<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo htmlspecialchars_decode($this->escape($row->treename)); ?></a>
-			</td>
-			<td class="center"><?php echo $access; ?></td>
-			<td class="center">
-				<?php echo HTMLHelper::_('jgrid.published', $row->published, $i,'',false); ?>
-			</td>
-		</tr>
-		<?php endforeach; ?>
-	</tbody>
+    <tbody>
+        <?php
+        foreach ($this->rows as $i => $row) :
+            $access = $row->groupname;
+           ?>
+         <tr class="row<?php echo $i % 2; ?>">
+            <td class="center" style="width: 7px;"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+            <td style="text-align: left;">
+                <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo htmlspecialchars_decode($this->escape($row->treename)); ?></a>
+            </td>
+            <td class="center"><?php echo $access; ?></td>
+            <td class="center">
+                <?php echo HTMLHelper::_('jgrid.published', $row->published, $i,'',false); ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
 
 </table>
 
 <div class="copyright">
-	<?php echo JemAdmin::footer( ); ?>
+    <?php echo JemAdmin::footer( ); ?>
 </div>
 
 <input type="hidden" name="task" value="">

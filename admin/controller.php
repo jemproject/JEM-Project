@@ -17,67 +17,67 @@ use Joomla\CMS\Session\Session;
  */
 class JemController extends BaseController
 {
-	/**
-	 * @var    string The default view.
-	 */
-	protected $default_view = 'main';
+    /**
+     * @var    string The default view.
+     */
+    protected $default_view = 'main';
 
 
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Display the view
-	 */
-	public function display($cachable = false, $urlparams = false)
-	{
-		// Load the submenu - but not on edit views.
-		// if no view found then refert to main
-		$jinput = Factory::getApplication()->input;
-		$view = $jinput->getCmd('view', 'main');
-		// add all views you won't see the submenu / sidebar
-		//  - on J! 2.5 param 'hidemainmenu' let's not show the submenu
-		//    but on J! 3.x the submenu (sidebar) is shown with non-clickable entries.
-		//    The alternative would be to move the addSubmenu call to all views the sidebar should be shown.
-		static $views_without_submenu = array('attendee', 'category', 'event', 'group', 'source', 'venue');
+    /**
+     * Display the view
+     */
+    public function display($cachable = false, $urlparams = false)
+    {
+        // Load the submenu - but not on edit views.
+        // if no view found then refert to main
+        $jinput = Factory::getApplication()->input;
+        $view = $jinput->getCmd('view', 'main');
+        // add all views you won't see the submenu / sidebar
+        //  - on J! 2.5 param 'hidemainmenu' let's not show the submenu
+        //    but on J! 3.x the submenu (sidebar) is shown with non-clickable entries.
+        //    The alternative would be to move the addSubmenu call to all views the sidebar should be shown.
+        static $views_without_submenu = array('attendee', 'category', 'event', 'group', 'source', 'venue');
 
-		if (!in_array($view, $views_without_submenu)) {
-			JemHelperBackend::addSubmenu($view);
-		}
+        if (!in_array($view, $views_without_submenu)) {
+            JemHelperBackend::addSubmenu($view);
+        }
 
-		parent::display();
-		return $this;
-	}
+        parent::display();
+        return $this;
+    }
 
-	/**
-	 * Delete attachment
-	 *
-	 * Views: event, venue
-	 * Reference to the task is located in the attachments.js
-	 *
-	 * @return true on sucess
-	 * @access public
-	 */
-	public function ajaxattachremove()
-	{
-		// Check for request forgeries
-		Session::checkToken('request') or jexit('Invalid Token');
+    /**
+     * Delete attachment
+     *
+     * Views: event, venue
+     * Reference to the task is located in the attachments.js
+     *
+     * @return true on sucess
+     * @access public
+     */
+    public function ajaxattachremove()
+    {
+        // Check for request forgeries
+        Session::checkToken('request') or jexit('Invalid Token');
 
-		$id = Factory::getApplication()->input->request->getInt('id', 0);
+        $id = Factory::getApplication()->input->request->getInt('id', 0);
 
-		$res = JemAttachment::remove($id);
-		if (!$res) {
-			echo 0;
-			jexit();
-		}
+        $res = JemAttachment::remove($id);
+        if (!$res) {
+            echo 0;
+            jexit();
+        }
 
-		$cache = Factory::getCache('com_jem');
-		$cache->clean();
+        $cache = Factory::getCache('com_jem');
+        $cache->clean();
 
-		echo 1;
-		jexit();
-	}
+        echo 1;
+        jexit();
+    }
 }
 ?>

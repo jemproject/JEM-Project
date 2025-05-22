@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cbinstall version="1.9" type="plugin" group="user">
-	<name>JEM MyEvents</name>
-	<author>JEM Community</author>
-	<creationDate>May 2025</creationDate>
-	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<version>4.3.3</version>
-	<description>This plugin will show events submitted by the user in their profile.</description>
-	<files>
-		<filename plugin="jemmyevents_cb">jemmyevents_cb.php</filename>
-		<filename>index.html</filename>
-		<filename>jemmyevents_cb.css</filename>
-		<filename>language/english.php</filename>
-		<filename>language/index.html</filename>
-		<filename>install.php</filename>
-	</files>
-	<installfile>install.php</installfile>
-	<params>
-	</params>
-	<tabs>
-		<tab name="My Events" description="Created Events" class="jemmyeventsTab" fields="0" position="cb_tabmain" displaytype="tab">
-		<params>
-			<param name="start_date" type="yesno" default="1" label="Startdate" description="Show/Hide the start date/time" yes="Enable" no="Disable"/>
-			<param name="end_date" type="yesno" default="0" label="Enddate" description="Show/Hide the end date/time" yes="Enable" no="Disable"/>
-			<param name="date_combi" type="yesno" default="0" label="Combine Date Columns" description="Use two columns or combine start and end date/time in a single column" yes="Enable" no="Disable"/>
-			<param name="event_image" type="yesno" default="0" label="Image" description="Show/Hide the image" yes="Enable" no="Disable"/>
-			<param name="event_categories" type="yesno" default="0" label="Category" description="Show/Hide the category" yes="Enable" no="Disable"/>
-			<param name="event_place" type="yesno" default="0" label="Venue" description="Show/Hide venue" yes="Enable" no="Disable"/>
-			<param name="event_attending" type="yesno" default="0" label="Attending" description="Show/Hide number of attendees" yes="Enable" no="Disable"/>
-		</params>
-			<fields>
-			</fields>
-		</tab>
-	</tabs>
-	<install>
-		<queries>
-		</queries>
-	</install>
-	<uninstall>
-	</uninstall>
+    <name>JEM MyEvents</name>
+    <author>JEM Community</author>
+    <creationDate>May 2025</creationDate>
+    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.3.3</version>
+    <description>This plugin will show events submitted by the user in their profile.</description>
+    <files>
+        <filename plugin="jemmyevents_cb">jemmyevents_cb.php</filename>
+        <filename>index.html</filename>
+        <filename>jemmyevents_cb.css</filename>
+        <filename>language/english.php</filename>
+        <filename>language/index.html</filename>
+        <filename>install.php</filename>
+    </files>
+    <installfile>install.php</installfile>
+    <params>
+    </params>
+    <tabs>
+        <tab name="My Events" description="Created Events" class="jemmyeventsTab" fields="0" position="cb_tabmain" displaytype="tab">
+        <params>
+            <param name="start_date" type="yesno" default="1" label="Startdate" description="Show/Hide the start date/time" yes="Enable" no="Disable"/>
+            <param name="end_date" type="yesno" default="0" label="Enddate" description="Show/Hide the end date/time" yes="Enable" no="Disable"/>
+            <param name="date_combi" type="yesno" default="0" label="Combine Date Columns" description="Use two columns or combine start and end date/time in a single column" yes="Enable" no="Disable"/>
+            <param name="event_image" type="yesno" default="0" label="Image" description="Show/Hide the image" yes="Enable" no="Disable"/>
+            <param name="event_categories" type="yesno" default="0" label="Category" description="Show/Hide the category" yes="Enable" no="Disable"/>
+            <param name="event_place" type="yesno" default="0" label="Venue" description="Show/Hide venue" yes="Enable" no="Disable"/>
+            <param name="event_attending" type="yesno" default="0" label="Attending" description="Show/Hide number of attendees" yes="Enable" no="Disable"/>
+        </params>
+            <fields>
+            </fields>
+        </tab>
+    </tabs>
+    <install>
+        <queries>
+        </queries>
+    </install>
+    <uninstall>
+    </uninstall>
 </cbinstall>

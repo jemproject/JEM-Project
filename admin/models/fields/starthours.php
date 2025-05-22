@@ -21,23 +21,23 @@ jimport('joomla.html.html');
  */
 class JFormFieldStarthours extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 */
-	protected $type = 'Starthours';
+    /**
+     * The form field type.
+     *
+     */
+    protected $type = 'Starthours';
 
-	
-	public function getInput()
-	{
-	
-		$starthours = JEMAdmin::buildtimeselect(23, 'starthours', substr( $this->name, 0, 2 ));
-		$startminutes = JEMAdmin::buildtimeselect(59, 'startminutes', substr( $this->name, 3, 2 ));
-		
-		$var2 = $starthours.$startminutes;
-	
-		return $var2;
-		
-	}
-	
+    
+    public function getInput()
+    {
+    
+        $starthours = JEMAdmin::buildtimeselect(23, 'starthours', substr( $this->name, 0, 2 ));
+        $startminutes = JEMAdmin::buildtimeselect(59, 'startminutes', substr( $this->name, 3, 2 ));
+        
+        $var2 = $starthours.$startminutes;
+    
+        return $var2;
+        
+    }
+    
 }

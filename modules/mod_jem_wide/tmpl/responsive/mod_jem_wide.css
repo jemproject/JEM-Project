@@ -48,7 +48,7 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-dl:after {
-	clear: both;
+    clear: both;
 }
 
 #jemmodulewide .jem-dl {
@@ -56,20 +56,20 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-dl dt {
-	float: left;
-	width: 160px;
-	overflow: hidden;
-	clear: left;
-	text-align: left;
+    float: left;
+    width: 160px;
+    overflow: hidden;
+    clear: left;
+    text-align: left;
   font-weight: bold;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   padding-top: 5px;
   padding-bottom: 5px;
 }
 
 #jemmodulewide .jem-dl dd {
-	margin-left: 170px;
+    margin-left: 170px;
   padding-top: 5px;
   padding-bottom: 5px;
 }

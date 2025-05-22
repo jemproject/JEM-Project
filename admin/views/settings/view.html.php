@@ -21,99 +21,99 @@ use Joomla\CMS\Factory;
  */
 class JemViewSettings extends JemAdminView
 {
-	protected $form;
-	protected $data;
-	protected $state;
+    protected $form;
+    protected $data;
+    protected $state;
 
-	public function display($tpl = null)
-	{
-		$app         = Factory::getApplication();
-		$document    = $app->getDocument();
-		$form        = $this->get('Form');
-		$data        = $this->get('Data');
-		$state       = $this->get('State');
-		$config      = $this->get('ConfigInfo');
-		$jemsettings = $this->get('Data');
-		$settings    = JemHelper::globalattribs();
-		$this->document = $document;
+    public function display($tpl = null)
+    {
+        $app         = Factory::getApplication();
+        $document    = $app->getDocument();
+        $form        = $this->get('Form');
+        $data        = $this->get('Data');
+        $state       = $this->get('State');
+        $config      = $this->get('ConfigInfo');
+        $jemsettings = $this->get('Data');
+        $settings    = JemHelper::globalattribs();
+        $this->document = $document;
 
-		// Load css
-		$wa = $document->getWebAssetManager();
-	
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		$wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
+        // Load css
+        $wa = $document->getWebAssetManager();
+    
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        $wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
 
-		$style = '
-			div.current fieldset.radio input {
-				cursor: pointer;
-			}';
-		$document->addStyleDeclaration($style);
+        $style = '
+            div.current fieldset.radio input {
+                cursor: pointer;
+            }';
+        $document->addStyleDeclaration($style);
 
-		// Check for model errors.
-		if ($errors = $this->get('Errors')) {
-			$app->enqueueMessage(implode('<br />', $errors), 'error');
-			return false;
-		}
+        // Check for model errors.
+        if ($errors = $this->get('Errors')) {
+            $app->enqueueMessage(implode('<br />', $errors), 'error');
+            return false;
+        }
 
-		// Bind the form to the data.
-		if ($form && $data) {
-			$form->bind($data);
-		}
+        // Bind the form to the data.
+        if ($form && $data) {
+            $form->bind($data);
+        }
 
-		// Check for errors.
-		$errors = $this->get('Errors');
-		if (is_array($errors) && count($errors)) {
-			$app->enqueueMessage(implode("\n", $errors), 'error');
-			return false;
-		}
+        // Check for errors.
+        $errors = $this->get('Errors');
+        if (is_array($errors) && count($errors)) {
+            $app->enqueueMessage(implode("\n", $errors), 'error');
+            return false;
+        }
 
-		// Load Script
-		$wa = $app->getDocument()->getWebAssetManager();
-		$wa->useScript('jquery');
-		$wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
+        // Load Script
+        $wa = $app->getDocument()->getWebAssetManager();
+        $wa->useScript('jquery');
+        $wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
 
-		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-			$app->redirect('index.php?option=com_jem&view=main');
-		}
+        if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+            $app->redirect('index.php?option=com_jem&view=main');
+        }
 
-		// mapping variables
-		$this->form        = $form;
-		$this->data        = $data;
-		$this->state       = $state;
-		$this->jemsettings = $jemsettings;
-		$this->config      = $config;
-		$this->settings	   = $settings;
+        // mapping variables
+        $this->form        = $form;
+        $this->data        = $data;
+        $this->state       = $state;
+        $this->jemsettings = $jemsettings;
+        $this->config      = $config;
+        $this->settings       = $settings;
 
-		// add toolbar
-		$this->addToolbar();
+        // add toolbar
+        $this->addToolbar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 
-	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @since  1.6
-	 */
-	protected function addToolbar()
-	{
-		ToolbarHelper::title(Text::_('COM_JEM_SETTINGS_TITLE'), 'settings');
-		ToolbarHelper::apply('settings.apply');
-		ToolbarHelper::save('settings.save');
-		ToolbarHelper::cancel('settings.cancel');
+    /**
+     * Add the page title and toolbar.
+     *
+     * @since  1.6
+     */
+    protected function addToolbar()
+    {
+        ToolbarHelper::title(Text::_('COM_JEM_SETTINGS_TITLE'), 'settings');
+        ToolbarHelper::apply('settings.apply');
+        ToolbarHelper::save('settings.save');
+        ToolbarHelper::cancel('settings.cancel');
 
-		ToolbarHelper::divider();
-		ToolbarHelper::inlinehelp();
-		ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/settings');
-	}
+        ToolbarHelper::divider();
+        ToolbarHelper::inlinehelp();
+        ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/settings');
+    }
 
-	protected function WarningIcon()
-	{
-		$url = Uri::root();
-		// $tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
-		$tip = '<span class="icon-info-circle" aria-hidden="true"></span>';
+    protected function WarningIcon()
+    {
+        $url = Uri::root();
+        // $tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
+        $tip = '<span class="icon-info-circle" aria-hidden="true"></span>';
 
-		return $tip;
-	}
+        return $tip;
+    }
 }

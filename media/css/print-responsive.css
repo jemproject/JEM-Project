@@ -27,20 +27,20 @@ a[href]:after {
 }
 
 div#jem #jem_filter {
-	background-color: transparent;
-	float:right;
+    background-color: transparent;
+    float:right;
 }
 
 div#jem #jem_filter div.jem-limit-smallist {
-	display:block;
+    display:block;
 }
 
 div#jem #jem_filter div, div#jem #jem_filter div label  {
-	display: none;
+    display: none;
 }
 
 div#jem a {
-	text-decoration: none !important;
+    text-decoration: none !important;
 }
 
 #jem .eventlist li {
@@ -85,6 +85,6 @@ div#jem a {
     }
 
     div#jem #jem_filter {
-	display: none;
-	}
+    display: none;
+    }
 }
