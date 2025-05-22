@@ -112,15 +112,12 @@ class com_jemInstallerScript
 
         if($error['summary']) {
             ?>
-            <p style='color: red;'>
-                <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></b>
-            </p>
+            <p style='color: red;font-weight:bold;'><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></p>
             <?php
         } else {
             ?>
-            <p style='color: green;'>
-                <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></b>
-            </p> <?php
+            <p style='color: green;font-weight:bold;'><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></p>
+            <?php
         }
 
         $param_array = array(

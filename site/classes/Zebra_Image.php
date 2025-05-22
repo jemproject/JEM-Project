@@ -36,8 +36,8 @@ class Zebra_Image {
      *  If set to `true`, JPEG images will be auto-rotated according to the {@link https://keyj.emphy.de/exif-orientation-rant/ Exif Orientation Tag}
      *  so that they are always shown correctly.
      *
-     *  >   If set to `true` you must also enable exif-support with `--enable-exif`.<br>
-     *      Windows users must enable both the `php_mbstring.dll` and `php_exif.dll` DLL's in `php.ini`.<br>
+     *  >   If set to `true` you must also enable exif-support with `--enable-exif`.<br />
+     *      Windows users must enable both the `php_mbstring.dll` and `php_exif.dll` DLL's in `php.ini`.<br />
      *      `php_mbstring.dll` must be loaded before `php_exif.dll`, so adjust your php.ini accordingly.
      *      See {@link https://www.php.net/manual/en/exif.installation.php the manual}.
      *
@@ -204,10 +204,10 @@ class Zebra_Image {
      *
      *  Supported file types are `BMP`, `GIF`, `JPEG`, `PNG` and `WEBP`.
      *
-     *  >   `WEBP` support is available for PHP version `7.0.0+`.<br><br>
+     *  >   `WEBP` support is available for PHP version `7.0.0+`.<br /><br />
      *      Note that even though `WEBP` support was added to PHP in version `5.5.0`, it only started working with version
      *      `5.5.1`, while support for transparency was added with version `7.0.0`. As a result, I decided to make it
-     *      available only if PHP version is at least `7.0.0`<br><br>
+     *      available only if PHP version is at least `7.0.0`<br /><br />
      *      Animated `WEBP` images are not currently supported by GD.
      *      See {@link https://github.com/libgd/libgd/issues/648 here} and {@link https://bugs.php.net/bug.php?id=79809&thanks=4 here}.
      *
@@ -223,10 +223,10 @@ class Zebra_Image {
      *  >   Can be a different format than the file at {@link source_path}. The format of the transformed image will be
      *      determined by the file's extension. Supported file types are `BMP`, `GIF`, `JPEG`, `PNG` and `WEBP`.
      *
-     *  >   `WEBP` support is available for PHP version `7.0.0+`.<br><br>
+     *  >   `WEBP` support is available for PHP version `7.0.0+`.<br /><br />
      *      Note that even though `WEBP` support was added to PHP in version `5.5.0`, it only started working with version
      *      `5.5.1`, while support for transparency was added with version `7.0.0`. As a result, I decided to make it
-     *      available only if PHP version is at least `7.0.0`<br><br>
+     *      available only if PHP version is at least `7.0.0`<br /><br />
      *      Animated `WEBP` images are not currently supported by GD.
      *      See {@link https://github.com/libgd/libgd/issues/648 here} and {@link https://bugs.php.net/bug.php?id=79809&thanks=4 here}.
      *
