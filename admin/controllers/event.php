@@ -45,14 +45,9 @@ class JemControllerEvent extends JemControllerForm
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.
      *
-     * @param   JModel(Legacy)  $model      The data model object.
      * @param   array           $validData  The validated data.
      *
      * @return  void
-     *
-     * @note    On J! 2.5 first param is 'JModel &$model' but
-     *          on J! 3.x it's 'JModelLegacy $model'
-     *          one of the bad things making extension developer's life hard.
      */
     protected function _postSaveHook($model, $validData = array())
     {
