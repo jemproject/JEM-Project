@@ -180,7 +180,7 @@ $params = $params->toArray();
             </div>
             <div class="floattext" style="margin-left:36px;">
                 <strong><?php echo Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
-                <br>
+                <br />
                 <?php
                 if (!empty($recurr->recurrence_type) && empty($recurr->recurrence_first_id)) {
                     echo nl2br(Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
@@ -413,7 +413,7 @@ $params = $params->toArray();
                                 ?>
                                 <li id="counter_row" style="display: none;">
                                     <div class="label-form"><?php echo $this->form->renderfield('recurrence_limit_date', null, $recurr->recurrence_limit_date ?? $recurr->recurrence_limit_date); ?></div>
-                                    <br><div><small>
+                                    <br /><div><small>
                                             <?php
                                             echo Text::sprintf(Text::_('COM_JEM_EVENT_NOTICE_GENSHIELD'),$limitdate);
                                             ?></small></div>

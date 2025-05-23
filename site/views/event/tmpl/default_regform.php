@@ -98,7 +98,7 @@ if ($this->showRegForm && empty($this->print)) :
                             if ($this->allowAnnulation) {
                                 echo Text::_('COM_JEM_YOU_ARE_ATTENDING');
                             } else {
-                                echo substr(Text::_('COM_JEM_YOU_ARE_ATTENDING'), 0,strpos(Text::_('COM_JEM_YOU_ARE_ATTENDING'), "<br>"));
+                                echo substr(Text::_('COM_JEM_YOU_ARE_ATTENDING'), 0,strpos(Text::_('COM_JEM_YOU_ARE_ATTENDING'), "<br />"));
                             }
                             break;
                         case  2:
