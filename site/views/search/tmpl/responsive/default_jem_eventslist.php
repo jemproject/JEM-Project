@@ -71,7 +71,7 @@ $uri = Uri::getInstance();
     return;
   }
 </script>
-<div id="jem_filter" class="floattext">            
+<div id="jem_filter" class="floattext">
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>

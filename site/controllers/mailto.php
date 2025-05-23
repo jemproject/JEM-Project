@@ -152,7 +152,7 @@ class JemControllerMailto extends JemControllerForm
                 return false;
             }
         }catch(Exception $e){
-            $app->enqueueMessage($e->getMessage(), 'notice');            
+            $app->enqueueMessage($e->getMessage(), 'notice');
             $this->setRedirect($currentUri);
             return false;
         }

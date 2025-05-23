@@ -155,9 +155,9 @@ function jemBuildRoute(&$query)
 }
 
 function jemParseRoute($segments)
-{    
+{
     $app    = Factory::getApplication();
     $router = new JemRouter($app, $app->getMenu());
-    return $router->parse($segments);    
+    return $router->parse($segments);
 }
 ?>

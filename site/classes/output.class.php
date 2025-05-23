@@ -276,7 +276,7 @@ static public function lightbox() {
             $output= HTMLHelper::_(
                 'bootstrap.renderModal',
                 'adduser-modal',
-                array(        
+                array(
                     'url'    => $url,
                     'title'  => Text::_('COM_JEM_SELECT'),
                     'width'  => '800px',
@@ -679,7 +679,7 @@ static public function lightbox() {
             $new_html.= HTMLHelper::_(
                 'bootstrap.renderModal',
                 'mailto-modal',
-                array(        
+                array(
                     'url'    => $url.'&amp;'.Session::getFormToken().'=1',
                     'title'  => Text::_('COM_JEM_SELECT'),
                     'width'  => '800px',
@@ -934,7 +934,7 @@ static public function lightbox() {
         {
             case 1:
                 // google map link
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {    
+                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
                     $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
                 } else {
                 $url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')'; }
@@ -946,7 +946,7 @@ static public function lightbox() {
 
             case 2:
                 // include iframe
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {    
+                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
                     $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
                 }
                 else {
@@ -1231,7 +1231,7 @@ static public function lightbox() {
             return;
         } else if(!$settings->flyer){
             list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
-            list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];        
+            list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];
         }
 
         // Does a thumbnail exist?
@@ -1260,9 +1260,9 @@ static public function lightbox() {
 
                 }
                 // If there is no thumbnail, then take the values for the original image specified in the settings
-            } else {                
-                $output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';                
-            }            
+            } else {
+                $output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+            }
         }else{
             $output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" style="width:auto;height:200px;" alt="'.$info.'" />';
         }

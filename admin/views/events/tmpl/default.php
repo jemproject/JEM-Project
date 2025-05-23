@@ -47,7 +47,7 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-1">                
+                <div class="col-md-1">
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="input-group">
@@ -56,7 +56,7 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-                <div class="col-md-10">        
+                <div class="col-md-10">
                     <div class="row mb-12">
                         <div class="col-md-3">
                             <div class="input-group">
@@ -89,7 +89,7 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">                
+                <div class="col-md-1">
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class=" float-end">

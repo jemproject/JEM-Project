@@ -61,10 +61,10 @@ function jem_common_show_filter(&$obj) {
     <table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
         <colgroup>
             <col style="width: 20%" class="jem_col_city" />
-    <?php if ($this->params->get('showstate')) : ?>            
+    <?php if ($this->params->get('showstate')) : ?>
             <col style="width: 20%" class="jem_col_state" />
-    <?php endif; ?>    
-            <?php if ($this->jemsettings->showlocate == 1) : ?>                                                    
+    <?php endif; ?>
+            <?php if ($this->jemsettings->showlocate == 1) : ?>
             <col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
             <?php endif; ?>
         </colgroup>
@@ -73,7 +73,7 @@ function jem_common_show_filter(&$obj) {
                 <th id="jem_city" class="sectiontableheader" style="text-align: left;"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
     <?php if ($this->params->get('showstate')) : ?>
                 <th id="jem_state" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-    <?php endif; ?>    
+    <?php endif; ?>
 
 
 
@@ -96,8 +96,8 @@ function jem_common_show_filter(&$obj) {
                 <?php if ($this->params->get('showstate')) : ?>
                     <td headers="jem_state" style="text-align: left; vertical-align: top;">
                         <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
-                    </td>    
-                <?php endif; ?>        
+                    </td>
+                <?php endif; ?>
 
                     <td headers="jem_location" style="text-align: left; vertical-align: top;">
                         <?php

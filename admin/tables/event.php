@@ -234,7 +234,7 @@ class JemTableEvent extends Table
                 }
 
                 if (!empty($file['name'])) {
-                    // only on first event, skip on recurrence events                    
+                    // only on first event, skip on recurrence events
                     //if (empty($this->recurrence_first_id)) {
                         //check the image
                         $check = JemImage::check($file, $jemsettings);
@@ -407,7 +407,7 @@ class JemTableEvent extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

@@ -344,7 +344,7 @@ class JemTableVenue extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

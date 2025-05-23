@@ -88,7 +88,7 @@ function jem_common_show_filter(&$obj) {
     <div class="jem-list-row jem-small-list">
         <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
 
-        <?php if ($this->params->get('showstate')) : ?>            
+        <?php if ($this->params->get('showstate')) : ?>
         <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
         <?php endif; ?>
 
@@ -124,7 +124,7 @@ function jem_common_show_filter(&$obj) {
                   <div class="jem-event-info-small jem-event-city">-</div>
                 <?php endif; ?>
 
-                <?php if ($this->params->get('showstate')) : ?>    
+                <?php if ($this->params->get('showstate')) : ?>
                     <?php if (!empty($row->state)) : ?>
                     <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
                         <?php echo $this->escape($row->state); ?>
@@ -144,7 +144,7 @@ function jem_common_show_filter(&$obj) {
                             echo $row->id ? $this->escape($row->venue) : '-';
                          endif; ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
-                    </div>            
+                    </div>
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-venue">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
@@ -153,10 +153,10 @@ function jem_common_show_filter(&$obj) {
                             echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
                         else :
                             echo $row->id ? $this->escape($row->venue) : '-';
-                         endif; ?>                                         
+                         endif; ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
                   </div>
-                <?php endif; ?>             
+                <?php endif; ?>
 
 
               <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />

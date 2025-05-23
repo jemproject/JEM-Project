@@ -92,7 +92,7 @@ use Joomla\CMS\Router\Route;
         <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>&nbsp;
         <?php echo $this->pagination->getLimitBox(); ?>
         </div>
-        <?php endif; ?>        
+        <?php endif; ?>
         </div>
         <?php endif; ?>
   <?php endif; ?>
@@ -146,7 +146,7 @@ use Joomla\CMS\Router\Route;
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
                   <?php endif; ?>
-                    <?php echo JemOutput::publishstateicon($row); ?>                
+                    <?php echo JemOutput::publishstateicon($row); ?>
                 </div>
             <?php endif; ?>
 

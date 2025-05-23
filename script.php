@@ -600,10 +600,10 @@ class com_jemInstallerScript
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.ini',
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
             '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
-            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',    
+            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
-            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',        
+            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
@@ -841,7 +841,7 @@ class com_jemInstallerScript
                 // simply continue with next table
             }
         }
-    }    
+    }
 
     /**
      * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
@@ -850,7 +850,7 @@ class com_jemInstallerScript
      */
     private function checkUnregistraUntil()
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');              
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
         try {
 

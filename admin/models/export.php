@@ -322,7 +322,7 @@ class JemModelExport extends ListModel
             $mitems = $db->loadObjectList();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

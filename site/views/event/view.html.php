@@ -244,7 +244,7 @@ class JemViewEvent extends JemView
         //$permissions->canEditAttendees = $isAuthor;
         //new logic: user can edit events, suggested by jojo12
         $permissions->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
-        //suggestion by M59S to allow groupmembers too see line 230/231 too 
+        //suggestion by M59S to allow groupmembers too see line 230/231 too
         $edit_att->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
         $this->permissions    = $permissions;
