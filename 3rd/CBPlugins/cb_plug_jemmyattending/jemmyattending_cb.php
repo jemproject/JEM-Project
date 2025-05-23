@@ -449,7 +449,7 @@ class jemmyattendingTab extends cbTabHandler {
                     $return .= "\n\t\t\t</td>";           
                 }
 
-               
+
 
                 /* Comment field */
                 if ($reg_comment) {

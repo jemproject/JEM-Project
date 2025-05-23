@@ -408,7 +408,7 @@ class jemmyeventsTab extends cbTabHandler {
                         $return .= "<small style='font-style:italic;'> - {$result->city}</small>";
                     }
 
-                                                 
+
                     $return .= "\n\t\t\t</td>";
                 }
                 /* Attendees field */
