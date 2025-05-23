@@ -90,7 +90,7 @@ class JFormFieldCategoryParent extends ListField
         // Get the options.
         $db->setQuery($query);
 
-        
+
 
         // Check for a database error.
         // if ($db->getErrorNum()) {

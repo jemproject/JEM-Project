@@ -52,7 +52,7 @@ class JemRouter extends RouterView
      */
     public function __construct($app = null, $menu = null)
     {
-        
+
         // calendar route
         $calendar = new RouterViewConfiguration('calendar');
         $calendar->setKey('id');
@@ -62,7 +62,7 @@ class JemRouter extends RouterView
         $eventslist = new RouterViewConfiguration('eventslist');
         $eventslist->setKey('id');
         $this->registerView($eventslist);
-    
+
         // event route
         $event = new RouterViewConfiguration('event');
         $event->setKey('id');
@@ -137,7 +137,7 @@ class JemRouter extends RouterView
         $weekcal = new RouterViewConfiguration('weekcal');
         $weekcal->setKey('id');
         $this->registerView($weekcal);
-        
+
         parent::__construct($app, $menu);
 
         $this->attachRule(new MenuRules($this));
@@ -148,16 +148,16 @@ class JemRouter extends RouterView
 function jemBuildRoute(&$query)
 {
     $app    = Factory::getApplication();
-    
+
     $router = new JemRouter($app, $app->getMenu());
 
     return $router->build($query);
 }
 
 function jemParseRoute($segments)
-{    
+{
     $app    = Factory::getApplication();
     $router = new JemRouter($app, $app->getMenu());
-    return $router->parse($segments);    
+    return $router->parse($segments);
 }
 ?>

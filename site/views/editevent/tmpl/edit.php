@@ -122,7 +122,7 @@ $params        = $this->params;
                 document.getElementById('jform_unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until2').style.display = '';
             } else {
-                document.getElementById('unregistra_until').style.display = 'none';            
+                document.getElementById('unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until2').style.display = 'none';
             }

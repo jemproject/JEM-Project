@@ -43,13 +43,13 @@ use Joomla\CMS\HTML\HTMLHelper;
       flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
     }
   </style>
-    
+
   <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
   <div class="jem-catimg">
     <?php    echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
   </div>
   <?php endif; ?>
-    
+
   <div class="description">
     <p><?php echo $this->description; ?></p>
   </div>

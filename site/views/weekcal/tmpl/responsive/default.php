@@ -370,7 +370,7 @@ use Joomla\CMS\Router\Route;
                     <?php echo Text::_('COM_JEM_HIDEALL'); ?>
                 </button>
         </div>
-    
+
     <!-- Calendar Legend -->
         <div class="calendarLegends jem-row jem-justify-start">
             <?php

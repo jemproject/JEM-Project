@@ -247,7 +247,7 @@ class com_jemInstallerScript
             $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'warning');
             return false;
         }
-        
+
         // abort if the release being installed is not newer than the currently installed version
         if (strtolower($type) == 'update') {
             // Installed component version
@@ -264,7 +264,7 @@ class com_jemInstallerScript
 
             // Check columns in database
             $this->checkColumnsIntoDatabase();
-            
+
             // Verify the data type of 'unregistra_until' in the database
             if($this->oldRelease < '4.3.1'){
                 $this->checkUnregistraUntil();
@@ -600,10 +600,10 @@ class com_jemInstallerScript
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.ini',
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
             '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
-            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',    
+            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
-            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',        
+            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
@@ -624,7 +624,7 @@ class com_jemInstallerScript
             }
         }
     }
-    
+
     /**
      * Ensure some columns exist into JEM tables (database)
      *
@@ -684,7 +684,7 @@ class com_jemInstallerScript
         // write changed datetime entry '0000-00-00 ...' to null into DB
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        
+
         //Categories table
         $query = $db->getQuery(true);
         $query->update('#__jem_categories');
@@ -841,8 +841,8 @@ class com_jemInstallerScript
                 // simply continue with next table
             }
         }
-    }    
-    
+    }
+
     /**
      * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
      *
@@ -850,10 +850,10 @@ class com_jemInstallerScript
      */
     private function checkUnregistraUntil()
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');              
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
         try {
-            
+
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
             $db->setQuery($query);
             $db->execute();
@@ -861,7 +861,7 @@ class com_jemInstallerScript
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
             $db->setQuery($query);
             $db->execute();
-            
+
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
             $db->setQuery($query);
             $db->execute();
@@ -869,7 +869,7 @@ class com_jemInstallerScript
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
             $db->setQuery($query);
             $db->execute();
-            
+
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = DATE_FORMAT(DATE_SUB(CONCAT(`dates`, ' ', `times`), INTERVAL `unregistra_until` HOUR),'%Y-%m-%d %H:%i:%s') WHERE `unregistra_until` != 0 AND `times` IS NOT NULL AND `dates` IS NOT NULL";
             $db->setQuery($query);
             $db->execute();

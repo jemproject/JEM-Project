@@ -28,16 +28,16 @@ class JFormFieldStartminutes extends FormField
     protected $type = 'Startminutes';
 
 
-    
-    
+
+
     public function getInput()
     {
 
-    
+
         $startminutes = JEMAdmin::buildtimeselect(59, 'startminutes', substr( $this->name, 3, 2 ), array('class'=>'form-select','class'=>'select-time'));
-    
+
         return $startminutes;
-        
+
     }
-    
+
 }
