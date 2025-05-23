@@ -22,7 +22,6 @@ include_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 class plgAcymailingTagjem extends CMSPlugin
 {
-
     protected $searchFields = array('a.id', 'a.title', 'a.alias', 'a.introtext', 'l.venue');
     protected $selectedFields = array('a.*', 'l.venue');
 
@@ -57,7 +56,6 @@ class plgAcymailingTagjem extends CMSPlugin
 
     //public function acymailingtagjem_show()
     function onAcymailingtagjem_show(){
-
         return $this->acymailingtagjem_show();
     }
 

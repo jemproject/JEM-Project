@@ -53,7 +53,7 @@
         <changes>JEM 2.3.6 released on May 11 2023. First JEM version offering PHP8 compatibility. Please refer to the
             change log for details.; If you use template overrides please note that all views have been changed and
             there is a good chance that your overrides won't work as expected. So please check the changes and adapt
-            your files. Versions previous to 2.3.2 will not install correctly on Joomla 3.10.1!; This versi            not yet compatible with Joomla!4. You will have to upgrade to JEM 4.x for that!;
+            your files. Versions previous to 2.3.2 will not install correctly on Joomla 3.10.1!; This version is not yet compatible with Joomla!4. You will have to upgrade to JEM 4.x for that!;
             Please update to Joomla 4/5 and JEM 4.x!
         </changes>
     </update>

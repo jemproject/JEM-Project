@@ -145,22 +145,21 @@ class JemViewVenueslist extends JemView
         // Create the pagination object
         // $pagination = $this->get('Pagination');
 
-
-        $this->action             = $uri->toString();
-        $this->rows                  = $rows;
-        $this->task               = $task;
-        $this->print              = $print;
-        $this->params             = $params;
-        $this->pagination           = $pagination;
-        $this->jemsettings        = $jemsettings;
-        $this->settings           = $settings;
-        $this->pagetitle          = $pagetitle;
-        $this->lists              = $lists;
-        $this->novenues           = $novenues;
-        $this->permissions          = $permissions;
-        $this->show_status          = $permissions->canEditPublishVenue;
-        $this->print_link          = $print_link;
-        $this->pageclass_sfx      = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+        $this->action         = $uri->toString();
+        $this->rows           = $rows;
+        $this->task           = $task;
+        $this->print          = $print;
+        $this->params         = $params;
+        $this->pagination     = $pagination;
+        $this->jemsettings    = $jemsettings;
+        $this->settings       = $settings;
+        $this->pagetitle      = $pagetitle;
+        $this->lists          = $lists;
+        $this->novenues       = $novenues;
+        $this->permissions    = $permissions;
+        $this->show_status    = $permissions->canEditPublishVenue;
+        $this->print_link     = $print_link;
+        $this->pageclass_sfx  = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
         parent::display($tpl);
     }

@@ -24,8 +24,8 @@ class JemViewVenue extends HtmlView
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
 
-        $app          = Factory::getApplication();
-        $jinput       = $app->input;
+        $app       = Factory::getApplication();
+        $jinput    = $app->input;
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));

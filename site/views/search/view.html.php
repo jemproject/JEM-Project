@@ -33,9 +33,9 @@ class JemViewSearch extends JemView
         $params       = $app->getParams();
         $uri          = Uri::getInstance();
         $pathway      = $app->getPathWay();
-        $url           = Uri::root();
+        $url          = Uri::root();
         $model        = $this->getModel('search');
-        //    $user     = JemFactory::getUser();
+     // $user         = JemFactory::getUser();
 
         // Decide which parameters should take priority
         $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'

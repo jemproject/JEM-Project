@@ -18,10 +18,8 @@ $link = JemHelperRoute::getEventRoute($event->slug);
 $result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 $result .= '<p>';
-$result .= JemOutput::formatShortDateTime($event->dates, $event->times,
-                                          $event->enddates, $event->endtimes);
-//$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times,
-//                                              $event->enddates, $event->endtimes);
+$result .= JemOutput::formatShortDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
+//$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
 $result .= '</p>';
 //$result .= '<p>';
 //$result .=  '<strong>Art der Veranstaltung:</strong> '.$event->custom1;

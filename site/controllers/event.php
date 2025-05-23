@@ -250,7 +250,6 @@ class JemControllerEvent extends JemControllerForm
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.
      *
-     * @param  JModel(Legacy)  $model      The data model object.
      * @param  array           $validData  The validated data.
      *
      * @return void

@@ -54,10 +54,7 @@ use Joomla\CMS\Router\Route;
             <?php } ?>
             <div class="description cat<?php echo $row->id; ?>">
                 <?php echo $row->description; ?>
-                <p>
-                    <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $row->linktext); ?>
-                    (<?php echo $row->assignedevents ? $row->assignedevents : '0'; ?>)
-                </p>
+                    <p><?php echo HTMLHelper::_('link', Route::_($row->linktarget), $row->linktext); ?> (<?php echo $row->assignedevents ? $row->assignedevents : '0'; ?>)</p>
             </div>
         </div>
 
