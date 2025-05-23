@@ -23,64 +23,64 @@ use Joomla\CMS\Factory;
 
 class JemViewGroups extends JemAdminView
 {
-	protected $items;
-	protected $pagination;
-	protected $state;
+    protected $items;
+    protected $pagination;
+    protected $state;
 
-	public function display($tpl = null)
-	{
-		$user        = JemFactory::getUser();
-		$jemsettings = JEMAdmin::config();
+    public function display($tpl = null)
+    {
+        $user        = JemFactory::getUser();
+        $jemsettings = JEMAdmin::config();
 
-		// Initialise variables.
-		$this->items      = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state      = $this->get('State');
+        // Initialise variables.
+        $this->items      = $this->get('Items');
+        $this->pagination = $this->get('Pagination');
+        $this->state      = $this->get('State');
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		// assign data to template
-		$this->user			= $user;
-		$this->jemsettings  = $jemsettings;
+        // assign data to template
+        $this->user            = $user;
+        $this->jemsettings  = $jemsettings;
 
-		// add toolbar
-		$this->addToolbar();
+        // add toolbar
+        $this->addToolbar();
 
-		parent::display($tpl);
-		}
+        parent::display($tpl);
+        }
 
 
-	/**
-	 * Add Toolbar
-	 */
-	protected function addToolbar()
-	{
-		ToolbarHelper::title(Text::_('COM_JEM_GROUPS'), 'groups');
+    /**
+     * Add Toolbar
+     */
+    protected function addToolbar()
+    {
+        ToolbarHelper::title(Text::_('COM_JEM_GROUPS'), 'groups');
 
-		/* retrieving the allowed actions for the user */
-		$canDo = JEMHelperBackend::getActions(0);
+        /* retrieving the allowed actions for the user */
+        $canDo = JEMHelperBackend::getActions(0);
 
-		/* create */
-		if (($canDo->get('core.create'))) {
-			ToolbarHelper::addNew('group.add');
-		}
+        /* create */
+        if (($canDo->get('core.create'))) {
+            ToolbarHelper::addNew('group.add');
+        }
 
-		/* edit */
-		if (($canDo->get('core.edit'))) {
-			ToolbarHelper::editList('group.edit');
-			ToolbarHelper::divider();
-		}
+        /* edit */
+        if (($canDo->get('core.edit'))) {
+            ToolbarHelper::editList('group.edit');
+            ToolbarHelper::divider();
+        }
 
-		if ($canDo->get('core.edit.state')) {
-			ToolbarHelper::checkin('groups.checkin');
-		}
+        if ($canDo->get('core.edit.state')) {
+            ToolbarHelper::checkin('groups.checkin');
+        }
 
-		ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
+        ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
 
-		ToolbarHelper::divider();
-		ToolBarHelper::help('listgroups', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/groups');
-	}
+        ToolbarHelper::divider();
+        ToolBarHelper::help('listgroups', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/groups');
+    }
 }
 ?>

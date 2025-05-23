@@ -20,29 +20,29 @@ use Joomla\CMS\Toolbar\ToolbarButton;
 class JButtonFrontend extends ToolbarButton {
 
 
-	/**
-	 * Button type
-	 *
-	 * @var    string
-	 */
-	protected $_name = 'Standard';
+    /**
+     * Button type
+     *
+     * @var    string
+     */
+    protected $_name = 'Standard';
 
 
 
 //Goes inside JButtonFrontend class definition.
 public function fetchButton($type = 'Standard', $name = '', $text = '', $task = '', $list = true)
 {
-	$i18n_text = Text::_($text);
-	$class = $this->fetchIconClass($name);
-	$doTask = $this->_getCommand($text, $task, $list);
+    $i18n_text = Text::_($text);
+    $class = $this->fetchIconClass($name);
+    $doTask = $this->_getCommand($text, $task, $list);
 
-	$html = "<a href=\"javascript: void( $doTask);\" onclick=\"$doTask\" class=\"toolbar\">\n";
-	$html .= "<span class=\"$class\">\n";
-	$html .= "</span>\n";
-	$html .= "$i18n_text\n";
-	$html .= "</a>\n";
+    $html = "<a href=\"javascript: void( $doTask);\" onclick=\"$doTask\" class=\"toolbar\">\n";
+    $html .= "<span class=\"$class\">\n";
+    $html .= "</span>\n";
+    $html .= "$i18n_text\n";
+    $html .= "</a>\n";
 
-	return $html;
+    return $html;
 }
 
 /**
@@ -61,7 +61,7 @@ public function fetchButton($type = 'Standard', $name = '', $text = '', $task = 
  */
 public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', $list = true, $hideMenu = false)
 {
-	return $this->_parent->getName() . '-' . $name;
+    return $this->_parent->getName() . '-' . $name;
 }
 
 /**
@@ -73,24 +73,24 @@ public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', 
  *
  * @return  string   JavaScript command string
  *
- * 
+ *
  */
 protected function _getCommand($name, $task, $list)
 {
-	HTMLHelper::_('behavior.framework');
-	$message = Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
-	$message = addslashes($message);
+    HTMLHelper::_('behavior.framework');
+    $message = Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
+    $message = addslashes($message);
 
-	if ($list)
-	{
-		$cmd = "if (document.adminForm.boxchecked.value==0){alert('$message');}else{ Joomla.submitbutton('$task')}";
-	}
-	else
-	{
-		$cmd = "Joomla.submitbutton('$task')";
-	}
+    if ($list)
+    {
+        $cmd = "if (document.adminForm.boxchecked.value==0){alert('$message');}else{ Joomla.submitbutton('$task')}";
+    }
+    else
+    {
+        $cmd = "Joomla.submitbutton('$task')";
+    }
 
-	return $cmd;
+    return $cmd;
 }
 
 }

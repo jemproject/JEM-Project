@@ -19,53 +19,53 @@ use Joomla\CMS\Session\Session;
  */
 class JemControllerGroups extends AdminController
 {
-	/**
-	 * @var    string  The prefix to use with controller messages.
-	 *
-	 */
-	protected $text_prefix = 'COM_JEM_GROUPS';
+    /**
+     * @var    string  The prefix to use with controller messages.
+     *
+     */
+    protected $text_prefix = 'COM_JEM_GROUPS';
 
 
-	/**
-	 * Proxy for getModel.
-	 *
-	 */
-	public function getModel($name = 'Group', $prefix = 'JemModel', $config = array('ignore_request' => true))
-	{
-		$model = parent::getModel($name, $prefix, $config);
-		return $model;
-	}
+    /**
+     * Proxy for getModel.
+     *
+     */
+    public function getModel($name = 'Group', $prefix = 'JemModel', $config = array('ignore_request' => true))
+    {
+        $model = parent::getModel($name, $prefix, $config);
+        return $model;
+    }
 
-	/**
-	 * logic to remove a group
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	public function remove()
-	{
-		// Check for request forgeries
-		Session::checkToken() or jexit('Invalid Token');
+    /**
+     * logic to remove a group
+     *
+     * @access public
+     * @return void
+     *
+     */
+    public function remove()
+    {
+        // Check for request forgeries
+        Session::checkToken() or jexit('Invalid Token');
 
-		$jinput = Factory::getApplication()->input;
-		$cid = $jinput->get('cid',  0, 'array');
+        $jinput = Factory::getApplication()->input;
+        $cid = $jinput->get('cid',  0, 'array');
 
-		if (!is_array($cid) || count($cid) < 1) {
-			throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
-		}
+        if (!is_array($cid) || count($cid) < 1) {
+            throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
+        }
 
-		$total = count($cid);
+        $total = count($cid);
 
-		$model = $this->getModel('groups');
+        $model = $this->getModel('groups');
 
-		if(!$model->delete($cid)) {
-			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
-		}
+        if(!$model->delete($cid)) {
+            echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+        }
 
-		$msg = $total.' '.Text::_('COM_JEM_GROUPS_DELETED');
+        $msg = $total.' '.Text::_('COM_JEM_GROUPS_DELETED');
 
-		$this->setRedirect('index.php?option=com_jem&view=groups', $msg);
-	}
+        $this->setRedirect('index.php?option=com_jem&view=groups', $msg);
+    }
 }
 ?>

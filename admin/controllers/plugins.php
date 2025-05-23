@@ -22,43 +22,43 @@ use Joomla\CMS\MVC\Controller\BaseController;
 
 class JemControllerPlugins extends BaseController
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Handles Plugin screen
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function plugins()
-	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
+    /**
+     * Handles Plugin screen
+     *
+     * @access public
+     * @return void
+     */
+    public function plugins()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
-		$query = $db->getQuery(true);
-		$query->select(array('count(*)'));
-		$query->from('#__extensions AS p');
-		$query->where(array('p.name LIKE '.$db->quote("%jem%"), 'p.type = '.$db->quote("plugin")));
+        $query = $db->getQuery(true);
+        $query->select(array('count(*)'));
+        $query->from('#__extensions AS p');
+        $query->where(array('p.name LIKE '.$db->quote("%jem%"), 'p.type = '.$db->quote("plugin")));
 
-		$db->setQuery($query);
+        $db->setQuery($query);
 
-		$total = $db->loadResult();
+        $total = $db->loadResult();
 
-		//any plugins installed? if not redirect to installation screen
-		if ($total > 0){
-			// $link = 'index.php?option=com_plugins&filter_search=jem';
-			$link = 'index.php?option=com_plugins&filter[search]=jem';
-			$msg = "";
-		} else {
-			$link = 'index.php?option=com_installer';
-			$msg = Text::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
-		}
-		$this->setRedirect($link, $msg);
-	}
+        //any plugins installed? if not redirect to installation screen
+        if ($total > 0){
+            // $link = 'index.php?option=com_plugins&filter_search=jem';
+            $link = 'index.php?option=com_plugins&filter[search]=jem';
+            $msg = "";
+        } else {
+            $link = 'index.php?option=com_installer';
+            $msg = Text::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
+        }
+        $this->setRedirect($link, $msg);
+    }
 }
 ?>

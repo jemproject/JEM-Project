@@ -16,15 +16,15 @@ use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Button\PublishedButton;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-$user		= JemFactory::getUser();
-$userId		= $user->get('id');
-$listOrder	= $this->escape($this->state->get('list.ordering'));
-$listDirn	= $this->escape($this->state->get('list.direction'));
-$canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder	= $listOrder=='a.ordering';
+$user        = JemFactory::getUser();
+$userId        = $user->get('id');
+$listOrder    = $this->escape($this->state->get('list.ordering'));
+$listDirn    = $this->escape($this->state->get('list.direction'));
+$canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
+$saveOrder    = $listOrder=='a.ordering';
 
-$params		= (isset($this->state->params)) ? $this->state->params : new CMSObject();
-$settings	= $this->settings;
+$params        = (isset($this->state->params)) ? $this->state->params : new CMSObject();
+$settings    = $this->settings;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns');
 ?>
@@ -47,17 +47,17 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-				<div class="col-md-1">				
+                <div class="col-md-1">                
                     <div class="row">
-	                    <div class="wauto-minwmax">
+                        <div class="wauto-minwmax">
                             <div class="input-group">
                                 <?php echo $this->lists['filter']; ?>
                             </div>
                         </div>
                     </div>
                 </div>
-				<div class="col-md-10">		
-                    <div class="row mb-12">    
+                <div class="col-md-10">        
+                    <div class="row mb-12">
                         <div class="col-md-3">
                             <div class="input-group">
                                 <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
@@ -89,7 +89,7 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-				<div class="col-md-1">				
+                <div class="col-md-1">                
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class=" float-end">
@@ -136,14 +136,14 @@ $wa->useScript('table.columns');
                         $displaytime = JemOutput::formattime($row->times);
                     }
 
-                    $ordering	= ($listOrder == 'ordering');
-                    $canCreate	= $user->authorise('core.create');
-                    $canEdit	= $user->authorise('core.edit');
-                    $canCheckin	= $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
-                    $canChange	= $user->authorise('core.edit.state') && $canCheckin;
+                    $ordering    = ($listOrder == 'ordering');
+                    $canCreate    = $user->authorise('core.create');
+                    $canEdit    = $user->authorise('core.edit');
+                    $canCheckin    = $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+                    $canChange    = $user->authorise('core.edit.state') && $canCheckin;
 
-                    $venuelink 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
-                    $published 		= HTMLHelper::_('jgrid.published', $row->published, $i, 'events.');
+                    $venuelink         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
+                    $published         = HTMLHelper::_('jgrid.published', $row->published, $i, 'events.');
                     ?>
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
@@ -181,10 +181,10 @@ $wa->useScript('table.columns');
                                     <?php echo $this->escape($row->venue); ?>
                                 <?php else : ?>
                                     <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EDIT_VENUE'), $row->venue, 'editlinktip'); ?>>
-										<a href="<?php echo $venuelink; ?>">
-											<?php echo $this->escape($row->venue); ?>
-										</a>
-									</span>
+                                        <a href="<?php echo $venuelink; ?>">
+                                            <?php echo $this->escape($row->venue); ?>
+                                        </a>
+                                    </span>
                                 <?php endif; ?>
                             <?php else : ?>
                                 <?php echo '-'; ?>
@@ -215,16 +215,16 @@ $wa->useScript('table.columns');
                         </td>
                         <td>
                             <?php
-                            $created	 	= HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));
-                            $image 			= HTMLHelper::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
-                            $overlib 		= Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
-                            $overlib 		.= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br />';
-                            $overlib 		.= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br />';
+                            $created         = HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));
+                            $image             = HTMLHelper::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
+                            $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
+                            $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br />';
+                            $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br />';
                             if ($row->author_ip != '') {
-                                $overlib		.= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
+                                $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
                             }
                             if (!empty($row->modified)) {
-                                $overlib 	.= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
+                                $overlib     .= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
                             }
                             ?>
                             <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>
@@ -238,7 +238,7 @@ $wa->useScript('table.columns');
                         <td class="center">
                             <?php
                             if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
-                                $linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
+                                $linkreg     = 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
                                 $count = $row->regCount+$row->reserved;
                                 if ($row->maxplaces)
                                 {
@@ -265,15 +265,15 @@ $wa->useScript('table.columns');
                             <?php echo $this->escape($row->access_level); ?>
                         </td>
                         <td class="center">
-							<?php echo (int) $row->id; ?>
-						</td>
+                            <?php echo (int) $row->id; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
-			
-			<div class="ms-auto mb-4 me-0">
-                <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
+            
+            <div class="ms-auto mb-4 me-0">
+                <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
             </div>
         </div>
     </div>
@@ -281,11 +281,11 @@ $wa->useScript('table.columns');
     <?php //endif; ?>
 
     <div>
-	    <input type="hidden" name="task" value="" />
-	    <input type="hidden" name="boxchecked" value="0" />
-	    <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-	    <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="boxchecked" value="0" />
+        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 
-	    <?php echo HTMLHelper::_('form.token'); ?>
-	</div>
+        <?php echo HTMLHelper::_('form.token'); ?>
+    </div>
 </form>

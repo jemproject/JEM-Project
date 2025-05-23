@@ -90,9 +90,9 @@ if (empty($this->catrow->events)) { return; }
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_DATE'); ?></div>
-    <?php if ($this->jemsettings->showtitle == 1) : ?>              
+    <?php if ($this->jemsettings->showtitle == 1) : ?>
       <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
-    <?php endif; ?> 
+    <?php endif; ?>
     <?php if ($this->jemsettings->showlocate == 1) : ?>
       <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
     <?php endif; ?>
@@ -104,8 +104,8 @@ if (empty($this->catrow->events)) { return; }
     <?php endif; ?>
     <?php if ($this->jemsettings->showcat == 1) : ?>
       <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
-    <?php endif; ?> 
-  </div>    
+    <?php endif; ?>
+  </div>
 </div>
 
 <ul class="eventlist">
@@ -215,7 +215,7 @@ if (empty($this->catrow->events)) { return; }
               }
               if (!empty($microadress)) {
                 $microadress .= ', ';
-              }                
+              }
               if (!empty($row->state)) {
                 $microadress .= $this->escape($row->state);
               }
@@ -225,7 +225,7 @@ if (empty($this->catrow->events)) { return; }
               ?>
               <meta itemprop="address" content="<?php echo $microadress; ?>" />
             </div>
-      
+    
       </li>
     <?php endforeach; ?>
   <?php endif; ?>

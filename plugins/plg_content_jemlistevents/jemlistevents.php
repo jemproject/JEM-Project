@@ -39,7 +39,7 @@ class PlgContentJemlistevents extends CMSPlugin
         'show_date'         => 'on',
         'date_format'       => '',
         'show_time'         => 'on',
-    	'time_format'       => '',
+        'time_format'       => '',
         'show_enddatetime'  => 'off', // for backward compatibility
         'catids'            => '',
         'show_category'     => 'off',

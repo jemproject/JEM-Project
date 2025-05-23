@@ -7,11 +7,11 @@
  */
 
 div#jemmodulebanner {
-	width: 100%;
+    width: 100%;
 }
 
 div#jemmodulebanner.banner-jem {
-	font-size: smaller;
+    font-size: smaller;
 }
 
 
@@ -57,64 +57,64 @@ div#jemmodulebanner.banner-jem {
 }
 
 #jemmodulebanner span.share {
-	margin-left:95px;
+    margin-left:95px;
 }
 
 #jemmodulebanner [class|="calendar"] .yearbanner {
-	font-size: 6px;
-	height:5px;
-	color: #e1e1e1;
+    font-size: 6px;
+    height:5px;
+    color: #e1e1e1;
 }
 
 div#jemmodulebanner .eventset {
-	margin-bottom: 10px;
-	padding: 5px;
-	border: 1px dotted silver;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px dotted silver;
     text-align: left;
 }
 
 div#jemmodulebanner .event-title {
-	padding-left: 0;
-	font-size: x-large;
-	margin: 0 0 5px;
+    padding-left: 0;
+    font-size: x-large;
+    margin: 0 0 5px;
 }
 
 .highlight_featured{
-	font-weight: bold;
+    font-weight: bold;
 }
 
 div#jemmodulebanner .desc {
-	padding-left: 0;
-	padding-top: 2px;
-	font-size: small;
+    padding-left: 0;
+    padding-top: 2px;
+    font-size: small;
 }
 
 div#jemmodulebanner .time {
-	padding-top: 2px;
-	font-weight: normal;
-	font-size: smaller;
-	float: left;
+    padding-top: 2px;
+    font-weight: normal;
+    font-size: smaller;
+    float: left;
 }
 
 div#jemmodulebanner div.date {
-	padding-top: 2px;
-	font-weight: normal;
-	font-size: smaller;
-	float: left;
-	margin-right: 4px;
+    padding-top: 2px;
+    font-weight: normal;
+    font-size: smaller;
+    float: left;
+    margin-right: 4px;
 }
 
 div#jemmodulebanner .category {
-	position: relative;
-	font-size: smaller;
-	float: left;
+    position: relative;
+    font-size: smaller;
+    float: left;
 }
 
 div#jemmodulebanner .venue-title {
-	position: relative;
-	font-size: smaller;
-	float: left;
-	margin-right: 8px;
+    position: relative;
+    font-size: smaller;
+    float: left;
+    margin-right: 8px;
 }
 
 div#jemmodulebanner .event-image-cell {
@@ -124,24 +124,24 @@ div#jemmodulebanner .venue-image-cell {
 }
 
 div#jemmodulebanner .image-preview {
-	border: 0 solid #ccc;
-	padding: 3px;
-	background-color: white;
-	margin: 2px;
+    border: 0 solid #ccc;
+    padding: 3px;
+    background-color: white;
+    margin: 2px;
 }
 
 div#jemmodulebanner .image-preview2 {
-	border: 0 solid #ccc;
-	padding: 3px;
-	background-color: white;
-	margin: 2px;
+    border: 0 solid #ccc;
+    padding: 3px;
+    background-color: white;
+    margin: 2px;
 }
 
 div#jemmodulebanner .hr {
-	color: silver;
-	height: 12px;
+    color: silver;
+    height: 12px;
 }
 
 div#jemmodulebanner .clr {
-	clear: both;
+    clear: both;
 }

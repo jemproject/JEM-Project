@@ -509,7 +509,7 @@ class JemViewEvent extends JemView
                 // add date to browser title
                 if (!empty($this->item->dates)) {
                     $startDate = JemOutput::formatdate($this->item->dates);
-                    $title .= ' - ' . $startDate;
+                    $title .= ', ' . $startDate;
     
                     // add end date to browser title, if availaböe
                     if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
@@ -517,7 +517,7 @@ class JemViewEvent extends JemView
                         $title .= ' - ' . $endDate;
                     }
                 } else {
-                    $title .= ' - ' . Text::_('COM_JEM_OPEN_DATE');
+                    $title .= ', ' . Text::_('COM_JEM_OPEN_DATE');
                 }
             }
         $this->document->setTitle($title);

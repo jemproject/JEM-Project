@@ -24,26 +24,26 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
 switch($params->get('color')) {
-	case 'red':
-	case 'blue':
-	case 'green':
-	case 'orange':
-	case 'category':
-	case 'alpha':			  
-		$color = $params->get('color');
-		break;
-	default:
-		$color = "red";
-		// ensure getList() always gets a valid 'color' setting
-		$params->set('color', $color);
-		break;
+    case 'red':
+    case 'blue':
+    case 'green':
+    case 'orange':
+    case 'category':
+    case 'alpha':            
+        $color = $params->get('color');
+        break;
+    default:
+        $color = "red";
+        // ensure getList() always gets a valid 'color' setting
+        $params->set('color', $color);
+        break;
 }
 
 $list = ModJemTeaserHelper::getList($params);
 
 // check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {
-	return;
+    return;
 }
 
 $mod_name = 'mod_jem_teaser';

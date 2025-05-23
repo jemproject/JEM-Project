@@ -44,18 +44,18 @@ $document->addStyleDeclaration($css);
         <?php if ($i > 0) : ?>
         <?php foreach ($list as $item) : ?>
         <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
-        	<h2 class="event-title" itemprop="name">
-        		<?php if ($item->eventlink) : ?>
+            <h2 class="event-title" itemprop="name">
+                <?php if ($item->eventlink) : ?>
                                 <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
                 <?php else : ?>
                     <?php echo $item->title; ?>
                 <?php endif; ?>
             </h2>
-				<div class="jem-row-banner <?php echo $banneralignment; ?>">
-				      
+                <div class="jem-row-banner <?php echo $banneralignment; ?>">
+                    
                 <?php if ($showcalendar == 1) :?>
-		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
-			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+        <?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+            <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
                <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
@@ -117,11 +117,11 @@ $document->addStyleDeclaration($css);
                 <div class="clr"></div>
 
                 <?php /* Datum und Zeitangabe:
-				       *  showcalendar 1, datemethod 1 : date inside calendar image + time
-				       *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
-				       *  showcalendar 0, datemethod 1 : no calendar image, date + time
-				       *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
-			    	   */
+                       *  showcalendar 1, datemethod 1 : date inside calendar image + time
+                       *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
+                       *  showcalendar 0, datemethod 1 : no calendar image, date + time
+                       *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
+                       */
                 ?>
 
                 <?php /* if no calendar sheet is displayed */ ?>
@@ -182,14 +182,14 @@ $document->addStyleDeclaration($css);
                     </div>
                 <?php endif; ?>
                 <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                                    		<meta itemprop="name" content="<?php echo $item->venue; ?>" />
-                                    		<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                                    			<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-                                    			<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-                                    			<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-                                    			<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-                                    		</div>
-                                    	</div>
+                                            <meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                                                <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                                                <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                                                <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                                                <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                                            </div>
+                                        </div>
 
                 <div class="clr"></div>
 

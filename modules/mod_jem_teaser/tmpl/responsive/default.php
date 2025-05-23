@@ -14,10 +14,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 if ($params->get('use_modal', 0)) {
-	echo JemOutput::lightbox();
-	$modal = 'lightbox';
+    echo JemOutput::lightbox();
+    $modal = 'lightbox';
 } else {
-	$modal = 'notmodal';
+    $modal = 'notmodal';
 }
 
  $imagewidth = 'inherit';
@@ -70,15 +70,15 @@ $document->addStyleDeclaration($css);
 ?>
 
 <div class="jemmoduleteaser<?php echo $params->get('moduleclass_sfx')?>" id="jemmoduleteaser">
-	<div class="eventset">
-	<?php if (count($list)) : ?>
+    <div class="eventset">
+    <?php if (count($list)) : ?>
     <?php
       $titletag = '<h2 class="event-title" itemprop="name">';
       $titleendtag = '</h2>';
       if ($module->showtitle) {
         $titletag = '<h3 class="event-title" itemprop="name">';
         $titleendtag = '</h3>';
-      } 
+      }
     ?>
     <?php foreach ($list as $item) : ?>
     <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
@@ -89,29 +89,29 @@ $document->addStyleDeclaration($css);
           <?php echo $item->title; ?>
         <?php endif; ?>
       <?php echo $titleendtag; ?>
-      
+    
       <div class="jem-row-teaser jem-teaser-event">
-		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
-			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+        <?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+            <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
                <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
-          	<?php else : ?>
-    		<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>"<?php if (!empty($item->color)): ?> style="background-color: <?php echo $item->color; ?>"<?php endif; ?>>
+              <?php else : ?>
+            <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>"<?php if (!empty($item->color)): ?> style="background-color: <?php echo $item->color; ?>"<?php endif; ?>>
         <?php endif; ?>
     
-         <div class="monthteaser<?php 
-    echo isset($item->color_is_dark) 
-        ? ($item->color_is_dark === 1 
-            ? ' monthcolor-light">' 
-            : ($item->color_is_dark === 0 
-                ? ' monthcolor-dark">' 
+         <div class="monthteaser<?php
+    echo isset($item->color_is_dark)
+        ? ($item->color_is_dark === 1
+            ? ' monthcolor-light">'
+            : ($item->color_is_dark === 0
+                ? ' monthcolor-dark">'
                 : '">'))
         : '">';
-    	echo $item->startdate['month']; ?>
+        echo $item->startdate['month']; ?>
           </div>
           <div class="dayteaser">
-            <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
+            <?php echo empty($item->dayname) ? '<br />' : $item->dayname; ?>
           </div>
           <div class="daynumteaser">
             <?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
@@ -161,21 +161,21 @@ $document->addStyleDeclaration($css);
                     <?php if(!empty($item->eventimage)) : ?>
                       <div class="jem-eventimg-teaser">
                        <?php if ($params->get('use_modal')) : ?>
-                       	<?php if ($item->eventimageorig) {
-						$image = $item->eventimageorig;
-						$document = Factory::getDocument();
-						$document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
-						$document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
-						echo '<script>lightbox.option({
-							\'showImageNumberLabel\': false,
-							})
-							</script>';
-					} else {
-						$image = '';
-					} ?>
-					
-					<a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
-					<?php endif; ?>
+                           <?php if ($item->eventimageorig) {
+                        $image = $item->eventimageorig;
+                        $document = Factory::getDocument();
+                        $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+                        $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
+                        echo '<script>lightbox.option({
+                            \'showImageNumberLabel\': false,
+                            })
+                            </script>';
+                    } else {
+                        $image = '';
+                    } ?>
+                    
+                    <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
+                    <?php endif; ?>
                         <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                     <?php if ($params->get('use_modal')) : ?>
                       </a>
@@ -193,13 +193,13 @@ $document->addStyleDeclaration($css);
                           <div class="jem-eventimg-teaser">
                     
                      <?php if ($params->get('use_modal')) : ?>
-					<?php if ($item->venueimageorig) {
-						$image = $item->venueimageorig;
-					} ?>
-					<a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
-					<?php endif; ?>
+                    <?php if ($item->venueimageorig) {
+                        $image = $item->venueimageorig;
+                    } ?>
+                    <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
+                    <?php endif; ?>
                             <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
-						<?php if ($params->get('use_modal')) : ?>
+                        <?php if ($params->get('use_modal')) : ?>
                           </a>
                         <?php endif; ?>
                           </div>
@@ -211,8 +211,8 @@ $document->addStyleDeclaration($css);
             <?php if($item->showdescriptionevent): ?>
               <div class="jem-description-teaser" itemprop="description">
                                             <?php
-					echo $item->eventdescription;
-					if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
+                    echo $item->eventdescription;
+                    if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
                     <div class="jem-readmore">
                       <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
                       <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
@@ -222,27 +222,27 @@ $document->addStyleDeclaration($css);
               </div>
             <?php endif;
             echo $item->dateschema; ?>
-      			<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-      				<meta itemprop="name" content="<?php echo $item->venue; ?>" />
-      				<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-      					<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-      					<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-      					<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-      					<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-      				</div>
-          		</div>
-        	</div>
+                  <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                      <meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                      <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                          <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                          <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                          <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                          <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                      </div>
+                  </div>
+            </div>
         </div>
       </div>
       </div>
-      <?php 
+      <?php
       if ($item !== end($list)) :
           echo '<hr class="jem-hr">';
       endif;
       ?>
     <?php endforeach; ?>
-	<?php else : ?>
-		<?php echo Text::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
-	<?php endif; ?>
-	</div>
+    <?php else : ?>
+        <?php echo Text::_('MOD_JEM_TEASER_NO_EVENTS'); ?>
+    <?php endif; ?>
+    </div>
 </div>

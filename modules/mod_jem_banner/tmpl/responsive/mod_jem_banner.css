@@ -41,7 +41,7 @@ body.body-overlayed {
   flex: 1;
 }
 
-#jemmodulebanner .event-title, 
+#jemmodulebanner .event-title,
 #jemmodulebanner .jem-banner-datecat {
   hyphens: auto;
 }
@@ -65,7 +65,7 @@ body.body-overlayed {
 #jemmodulebanner .time, #jemmodulebanner .date {
   font-weight: bold;
 }
- 
+
 #jemmodulebanner [class|="calendar"] {
     background-repeat: no-repeat;
     width: 81px;

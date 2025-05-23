@@ -38,8 +38,8 @@ use Joomla\CMS\Language\Text;
     <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
         <?php if (isset($this->sidebar)) : ?>
             <!-- <div id="j-sidebar-container" class="span2">
-			<?php //echo $this->sidebar; ?>
-		</div> -->
+            <?php //echo $this->sidebar; ?>
+        </div> -->
         <?php endif; ?>
         <div id="j-main-container" class="j-main-container">
             <div class="row">

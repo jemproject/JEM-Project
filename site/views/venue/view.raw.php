@@ -16,41 +16,41 @@ use Joomla\CMS\Factory;
  */
 class JemViewVenue extends HtmlView
 {
-	/**
-	 * Creates the output for the Venue view
-	 */
-	public function display($tpl = null)
-	{
+    /**
+     * Creates the output for the Venue view
+     */
+    public function display($tpl = null)
+    {
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
 
-        $app          = Factory::getApplication();
-        $jinput       = $app->input;
+        $app       = Factory::getApplication();
+        $jinput    = $app->input;
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));
 
-		if ($settings2->get('global_show_ical_icon','0')==1) {
-			// Get data from the model
-			$model = $this->getModel('VenueCal');
-			$model->setState('list.start',0);
-			$model->setState('list.limit',$settings->ical_max_items);
+        if ($settings2->get('global_show_ical_icon','0')==1) {
+            // Get data from the model
+            $model = $this->getModel('VenueCal');
+            $model->setState('list.start',0);
+            $model->setState('list.limit',$settings->ical_max_items);
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
-			$rows = $model->getItems();
-			$venueid = $jinput->getInt('id');
+            $rows = $model->getItems();
+            $venueid = $jinput->getInt('id');
 
-			// initiate new CALENDAR
-			$vcal = JemHelper::getCalendarTool();
-			$vcal->setConfig("filename", "events_venue_" . $venueid . "_" . $year . $month . "ics");
+            // initiate new CALENDAR
+            $vcal = JemHelper::getCalendarTool();
+            $vcal->setConfig("filename", "events_venue_" . $venueid . "_" . $year . $month . "ics");
 
-			if (!empty($rows)) {
-				foreach ($rows as $row) {
-					JemHelper::icalAddEvent($vcal, $row);
-				}
-			}
+            if (!empty($rows)) {
+                foreach ($rows as $row) {
+                    JemHelper::icalAddEvent($vcal, $row);
+                }
+            }
 
-			// generate and redirect output to user browser
-			$vcal->returnCalendar();
-		}
-	}
+            // generate and redirect output to user browser
+            $vcal->returnCalendar();
+        }
+    }
 }

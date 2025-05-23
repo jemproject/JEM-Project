@@ -44,28 +44,28 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-horizonta
 $imagewidth = '100%';
 $imagewidthstring = 'jem-imagewidth';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imagewidthstring)) {
-	$pageclass_sfx = $params->get('moduleclass_sfx');
-	$imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
-	$spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
-	if ($spacepos === false) {
-		$spacepos = strlen($pageclass_sfx);
-	}
-	$startpos = $imagewidthpos + strlen($imagewidthstring);
-	$endpos = $spacepos - $startpos;
-	$imagewidth = substr($pageclass_sfx, $startpos, $endpos);
+    $pageclass_sfx = $params->get('moduleclass_sfx');
+    $imagewidthpos = strpos($pageclass_sfx, $imagewidthstring);
+    $spacepos = strpos($pageclass_sfx, ' ', $imagewidthpos);
+    if ($spacepos === false) {
+        $spacepos = strlen($pageclass_sfx);
+    }
+    $startpos = $imagewidthpos + strlen($imagewidthstring);
+    $endpos = $spacepos - $startpos;
+    $imagewidth = substr($pageclass_sfx, $startpos, $endpos);
 }
 $imageheight = 'auto';
 $imageheigthstring = 'jem-imageheight';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthstring)) {
-	$pageclass_sfx = $params->get('moduleclass_sfx');
-	$imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
-	$spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
-	if ($spacepos === false) {
-		$spacepos = strlen($pageclass_sfx);
-	}
-	$startpos = $imageheightpos + strlen($imageheigthstring);
-	$endpos = $spacepos - $startpos;
-	$imageheight = substr($pageclass_sfx, $startpos, $endpos);
+    $pageclass_sfx = $params->get('moduleclass_sfx');
+    $imageheightpos = strpos($pageclass_sfx, $imageheigthstring);
+    $spacepos = strpos($pageclass_sfx, ' ', $imageheightpos);
+    if ($spacepos === false) {
+        $spacepos = strlen($pageclass_sfx);
+    }
+    $startpos = $imageheightpos + strlen($imageheigthstring);
+    $endpos = $spacepos - $startpos;
+    $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
         
 $document = Factory::getDocument();
@@ -88,12 +88,12 @@ $css = '
     }
 
     @media not print {
-    	@media only all and (max-width: 47.938rem) {
+        @media only all and (max-width: 47.938rem) {
             #jemmodulebanner .jem-eventimg-banner {
             }
             #jemmodulebanner .jem-eventimg-banner img {
-       			width: ' . $imagewidth . ';
-        		height: ' . $imageheight . ';
+                   width: ' . $imagewidth . ';
+                height: ' . $imageheight . ';
             }
         }
     }';
@@ -116,8 +116,8 @@ $document->addStyleDeclaration($css);
 
                         <div class="jem-row-banner <?php echo $banneralignment; ?>">
                             <?php if ($showcalendar == 1) :?>
-		<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
-			<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+        <?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+            <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
                <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
             <div class="lower-background"></div>
                <div class="background-image"></div>
@@ -131,10 +131,10 @@ $document->addStyleDeclaration($css);
     
           <?php if (isset($item->color_is_dark)) : ?>
         <div class="monthbanner monthcolor-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
-          	<?php else : ?>
+              <?php else : ?>
                                     <div class="monthbanner">
     <?php endif;
-    	echo $item->startdate['month']; ?>
+        echo $item->startdate['month']; ?>
                                     </div>
                                     <div class="daybanner">
                                         <?php echo $item->startdate['weekday']; ?>
@@ -142,7 +142,7 @@ $document->addStyleDeclaration($css);
                                     <div class="daynumbanner">
                                         <?php echo $item->startdate['day']; ?>
                                     </div>
-                                    	<?php echo $item->dateschema; ?>
+                                        <?php echo $item->dateschema; ?>
                                 </div>
                             <?php endif; ?>
                             <div class="jem-event-details-banner jem-row-banner">
@@ -198,7 +198,7 @@ $document->addStyleDeclaration($css);
                                             <?php else : ?>
                                                 <?php echo $item->venue; ?>
                                             <?php endif; ?>
-                                    	</div>
+                                        </div>
                                     <?php endif;
 
                 // category
@@ -207,15 +207,15 @@ $document->addStyleDeclaration($css);
                                             <?php echo $item->catname; ?>
                                         </div>
                                     <?php endif; ?>
-                                    	<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                                    		<meta itemprop="name" content="<?php echo $item->venue; ?>" />
-                                    		<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                                    			<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-                                    			<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-                                    			<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-                                    			<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-                                    		</div>
-                                    	</div>
+                                        <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                                            <meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                                                <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                                                <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                                                <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                                                <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                                            </div>
+                                        </div>
                                     </div>
 
                                 <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>

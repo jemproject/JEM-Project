@@ -6,7 +6,7 @@
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -112,15 +112,12 @@ class com_jemInstallerScript
 
         if($error['summary']) {
             ?>
-            <p style='color: red;'>
-                <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></b>
-            </p>
+            <p style='color: red;font-weight:bold;'><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></p>
             <?php
         } else {
             ?>
-            <p style='color: green;'>
-                <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></b>
-            </p> <?php
+            <p style='color: green;font-weight:bold;'><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></p>
+            <?php
         }
 
         $param_array = array(
@@ -151,9 +148,9 @@ class com_jemInstallerScript
             "editevent_show_attachment_tab"=>"0",
             "editevent_show_other_tab"=>"0",
             "global_display"=>"1",
-			"global_editevent_starttime_limit"=>"0",
-			"global_editevent_endtime_limit"=>"23",
-			"global_editevent_minutes_block"=>"1",
+            "global_editevent_starttime_limit"=>"0",
+            "global_editevent_endtime_limit"=>"23",
+            "global_editevent_minutes_block"=>"1",
             "global_regname"=>"1",
             "global_show_archive_icon"=>"1",
             "global_show_filter"=>"1",
@@ -265,13 +262,13 @@ class com_jemInstallerScript
             // Remove obsolete files and folder
             $this->deleteObsoleteFiles();
 
-			// Check columns in database
-			$this->checkColumnsIntoDatabase();
-			
-			// Verify the data type of 'unregistra_until' in the database
-			if($this->oldRelease < '4.3.1'){
-				$this->checkUnregistraUntil();
-			}
+            // Check columns in database
+            $this->checkColumnsIntoDatabase();
+            
+            // Verify the data type of 'unregistra_until' in the database
+            if($this->oldRelease < '4.3.1'){
+                $this->checkUnregistraUntil();
+            }
 
             // Ensure css files are (over)writable
             $this->makeFilesWritable();
@@ -316,7 +313,7 @@ class com_jemInstallerScript
      */
     public function getParam($name)
     {
-		$db = Factory::getContainer()->get('DatabaseDriver');
+        $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
         $db->setQuery($query);
@@ -544,73 +541,73 @@ class com_jemInstallerScript
         $files = array(
 
             // obsolete since JEM 4.0.0
-			'/administrator/components/com_jem/sql/updates/1.9.1.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.2.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.3.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.4.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.5.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.6.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.7.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.8.sql',
-			'/administrator/components/com_jem/sql/updates/1.9.sql',
-			'/administrator/components/com_jem/sql/updates/2.0.0.sql',
-			'/administrator/components/com_jem/sql/updates/2.0.1.sql',
-			'/administrator/components/com_jem/sql/updates/2.0.2.sql',
-			'/administrator/components/com_jem/sql/updates/2.0.3.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.0.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.1.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.2.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.3.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.4.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.5.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.7-dev1.sql',
-			'/administrator/components/com_jem/sql/updates/2.1.7-dev5.sql',
-			'/administrator/components/com_jem/sql/updates/2.2.0-p1.sql',
-			'/administrator/components/com_jem/sql/updates/2.2.1-dev2.sql',
-			'/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
-			'/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
-			'/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
-			'/administrator/components/com_jem/sql/updates/2.3.1.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.1.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.2.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.3.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.4.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.5.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.6.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.7.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.8.sql',
+            '/administrator/components/com_jem/sql/updates/1.9.sql',
+            '/administrator/components/com_jem/sql/updates/2.0.0.sql',
+            '/administrator/components/com_jem/sql/updates/2.0.1.sql',
+            '/administrator/components/com_jem/sql/updates/2.0.2.sql',
+            '/administrator/components/com_jem/sql/updates/2.0.3.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.0.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.1.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.2.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.3.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.4.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.5.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.7-dev1.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.7-dev5.sql',
+            '/administrator/components/com_jem/sql/updates/2.2.0-p1.sql',
+            '/administrator/components/com_jem/sql/updates/2.2.1-dev2.sql',
+            '/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
+            '/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
+            '/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
+            '/administrator/components/com_jem/sql/updates/2.3.1.sql',
             // remove old langage files with lang prefix
-			'/language/en-GB/en-GB.pkg_jem.sys.ini',
-			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
-			'/administrator/components/com_jem/language/en-GB/en-GB.com_jem.sys.ini',
-			'/components/com_jem/language/en-GB/en-GB.com_jem.ini',
-			'/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.ini',
-			'/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.sys.ini',
-			'/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.ini',
-			'/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.sys.ini',
-			'/modules/mod_jem_jubilee/language/en-GB/en-GB.mod_jem_jubilee.ini',
-			'/modules/mod_jem_jubilee/language/en-GB/en-GB.mod_jem_jubilee.sys.ini',
-			'/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.ini',
-			'/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.sys.ini',
-			'/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.ini',
-			'/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.sys.ini',
-			'/modules/mod_jem/language/en-GB/en-GB.mod_jem.ini',
-			'/modules/mod_jem/language/en-GB/en-GB.mod_jem.sys.ini',
-			'/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.ini',
-			'/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.sys.ini',
-			'/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.ini',
-			'/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.sys.ini',
-			'/plugins/finder/jem/language/en-GB/en-GB.plg_finder_jem.ini',
-			'/plugins/finder/jem/language/en-GB/en-GB.plg_finder_jem.sys.ini',
-			'/plugins/jem/comments/language/en-GB/en-GB.plg_jem_comments.ini',
-			'/plugins/jem/comments/language/en-GB/en-GB.plg_jem_comments.sys.ini',
-			'/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.ini',
-			'/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
-			'/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
-			'/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',	
-			'/administrator/language/en-GB/en-GB.plg_content_jem.ini',
-			'/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
-			'/administrator/language/en-GB/en-GB.plg_finder_jem.ini',		
+            '/language/en-GB/en-GB.pkg_jem.sys.ini',
+            '/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
+            '/administrator/components/com_jem/language/en-GB/en-GB.com_jem.sys.ini',
+            '/components/com_jem/language/en-GB/en-GB.com_jem.ini',
+            '/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.ini',
+            '/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.sys.ini',
+            '/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.ini',
+            '/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.sys.ini',
+            '/modules/mod_jem_jubilee/language/en-GB/en-GB.mod_jem_jubilee.ini',
+            '/modules/mod_jem_jubilee/language/en-GB/en-GB.mod_jem_jubilee.sys.ini',
+            '/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.ini',
+            '/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.sys.ini',
+            '/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.ini',
+            '/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.sys.ini',
+            '/modules/mod_jem/language/en-GB/en-GB.mod_jem.ini',
+            '/modules/mod_jem/language/en-GB/en-GB.mod_jem.sys.ini',
+            '/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.ini',
+            '/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.sys.ini',
+            '/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.ini',
+            '/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.sys.ini',
+            '/plugins/finder/jem/language/en-GB/en-GB.plg_finder_jem.ini',
+            '/plugins/finder/jem/language/en-GB/en-GB.plg_finder_jem.sys.ini',
+            '/plugins/jem/comments/language/en-GB/en-GB.plg_jem_comments.ini',
+            '/plugins/jem/comments/language/en-GB/en-GB.plg_jem_comments.sys.ini',
+            '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.ini',
+            '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
+            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
+            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',    
+            '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
+            '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
+            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',        
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
-        $folders = array(            
+        $folders = array(
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
         );
@@ -629,37 +626,37 @@ class com_jemInstallerScript
     }
     
     /**
-	 * Ensure some columns exist into JEM tables (database)
-	 *
-	 * @return void
-	 */
-	private function checkColumnsIntoDatabase()
-	{
-		$db = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true);
+     * Ensure some columns exist into JEM tables (database)
+     *
+     * @return void
+     */
+    private function checkColumnsIntoDatabase()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
 
         // Array the columns to check
-		$columnsToCheck = [
-			['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
-			['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
-			['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"]
-		];
+        $columnsToCheck = [
+            ['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
+            ['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
+            ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"]
+        ];
 
-		// check if the each column exists
-		foreach ($columnsToCheck as $data) {
-			$query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field ='" . $data['column'] . "'";
-			$db->setQuery($query);
-			$result = $db->loadResult();
-			if (!$result) {
-				// The column does not exist, so add it
-				$alterQuery = "ALTER TABLE " . $data['table'] . " ADD COLUMN " . $data['column'] . " " . $data['definition'];
-				$db->setQuery($alterQuery);
-				$db->execute();
-			}
-		}
-	}
+        // check if the each column exists
+        foreach ($columnsToCheck as $data) {
+            $query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field ='" . $data['column'] . "'";
+            $db->setQuery($query);
+            $result = $db->loadResult();
+            if (!$result) {
+                // The column does not exist, so add it
+                $alterQuery = "ALTER TABLE " . $data['table'] . " ADD COLUMN " . $data['column'] . " " . $data['definition'];
+                $db->setQuery($alterQuery);
+                $db->execute();
+            }
+        }
+    }
 
-	/**
+    /**
      * Ensure css files are writable.
      * (they maybe read-only caused by CSS Manager)
      *
@@ -685,9 +682,9 @@ class com_jemInstallerScript
     private function updateJem2315()
     {
         // write changed datetime entry '0000-00-00 ...' to null into DB
-		$db = Factory::getContainer()->get('DatabaseDriver');
+        $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-		
+        
         //Categories table
         $query = $db->getQuery(true);
         $query->update('#__jem_categories');
@@ -704,7 +701,7 @@ class com_jemInstallerScript
         $db->execute();
 
         $query = $db->getQuery(true);
-		$query->update('#__jem_categories');
+        $query->update('#__jem_categories');
         $query->set("created_time = now()");
         $query->where(array("created_time LIKE '%0000-00-00%'"));
         $db->setQuery($query);
@@ -844,46 +841,46 @@ class com_jemInstallerScript
                 // simply continue with next table
             }
         }
-    }	
-	
-	/**
-	 * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
+    }    
+    
+    /**
+     * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
      *
      * @return void
      */
     private function checkUnregistraUntil()
     {
-		$db = Factory::getContainer()->get('DatabaseDriver');      		
+        $db = Factory::getContainer()->get('DatabaseDriver');              
 
-    	try {
-			
-	        $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
-	        $db->setQuery($query);
-	        $db->execute();
+        try {
+            
+            $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
+            $db->setQuery($query);
+            $db->execute();
 
-	        $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
-	        $db->setQuery($query);
-	        $db->execute();       
-			
-	        $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
-	        $db->setQuery($query);
-	        $db->execute();       
+            $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
+            $db->setQuery($query);
+            $db->execute();
+            
+            $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
+            $db->setQuery($query);
+            $db->execute();
 
-	        $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
-	        $db->setQuery($query);
-	        $db->execute();
-			
-			$query = "UPDATE `#__jem_events` SET `unregistra_until` = DATE_FORMAT(DATE_SUB(CONCAT(`dates`, ' ', `times`), INTERVAL `unregistra_until` HOUR),'%Y-%m-%d %H:%i:%s') WHERE `unregistra_until` != 0 AND `times` IS NOT NULL AND `dates` IS NOT NULL";
-	        $db->setQuery($query);
-    	    $db->execute();
+            $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
+            $db->setQuery($query);
+            $db->execute();
+            
+            $query = "UPDATE `#__jem_events` SET `unregistra_until` = DATE_FORMAT(DATE_SUB(CONCAT(`dates`, ' ', `times`), INTERVAL `unregistra_until` HOUR),'%Y-%m-%d %H:%i:%s') WHERE `unregistra_until` != 0 AND `times` IS NOT NULL AND `dates` IS NOT NULL";
+            $db->setQuery($query);
+            $db->execute();
 
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` DATETIME DEFAULT NULL";
-			$db->setQuery($query);
-			$db->execute();
+            $db->setQuery($query);
+            $db->execute();
 
-	    } catch (\Exception $e) {    
-	        echo "Error updating `unregistra_until`: " . $e->getMessage();
-    	}
+        } catch (\Exception $e) {
+            echo "Error updating `unregistra_until`: " . $e->getMessage();
+        }
 
 }
 

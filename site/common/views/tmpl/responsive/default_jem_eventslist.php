@@ -75,8 +75,8 @@ $css = '
             }
 
             #jem .jem-list-img img {
-            	width: ' . $imagewidth . ';
-            	height: ' . $imageheight . ';
+                width: ' . $imagewidth . ';
+                height: ' . $imageheight . ';
             }
         }
     }';
