@@ -79,7 +79,7 @@ class JFormFieldModal_Contact extends FormField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'contact-modal',
-            array(        
+            array(       
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',

@@ -99,10 +99,10 @@ class JemViewAttendees extends JemView
       //$pathway->setItemName(1, $menuitem->title);
         }
         $pathway->addItem('Att:'.$event->title);
-        
+       
         // Emailaddress
         $enableemailaddress = $params->get('enableemailaddress', 0);
-        
+       
         $print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
         $backlink = 'attendees';
 

@@ -45,4 +45,4 @@ if (isset($this->attachments) && is_array($this->attachments) && (count($this->a
             <?php endforeach; ?>
         </dl>
     </div>
-<?php endif; ?>    
+<?php endif; ?>   

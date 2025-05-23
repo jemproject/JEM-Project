@@ -32,7 +32,7 @@ class JemTableEvent extends Table
     public function bind($array, $ignore = '')
     {
         // in here we are checking for the empty value of the checkbox
-        
+       
         if (!isset($array['registra'])) {
             $array['registra'] = 0 ;
         }
@@ -177,7 +177,7 @@ class JemTableEvent extends Table
      */
     public function store($updateNulls = true)
     {
-        
+       
         $date        = Factory::getDate();
         $user        = JemFactory::getUser();
         $userid      = $user->get('id');
@@ -234,7 +234,7 @@ class JemTableEvent extends Table
                 }
 
                 if (!empty($file['name'])) {
-                    // only on first event, skip on recurrence events                    
+                    // only on first event, skip on recurrence events                   
                     //if (empty($this->recurrence_first_id)) {
                         //check the image
                         $check = JemImage::check($file, $jemsettings);
@@ -278,7 +278,7 @@ class JemTableEvent extends Table
                 $this->published = 0;
             }
         }
-        
+       
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
         if ($ret && $image_to_delete) {
@@ -393,7 +393,7 @@ class JemTableEvent extends Table
         $query->update($this->_db->quoteName($this->_tbl));
         $query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
         $query->where($where);
-        
+       
 
         // Check for a database error.
         // TODO: use exception handling
@@ -407,7 +407,7 @@ class JemTableEvent extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {            
+        {           
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

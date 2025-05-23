@@ -250,13 +250,13 @@ class JemModelCategory extends AdminModel
         $data['language'] = $data['language'] ?? '';
         $data['path'] = $data['path'] ?? '';
         $data['metadata'] = $data['metadata'] ?? '';
-        
+       
         // Alter the title for save as copy
         if ($jinput->get('task', '') == 'save2copy') {
             list ($title, $alias) = $this->generateNewTitle($data['parent_id'], $data['alias'], $data['title']);
             $data['title'] = $title;
             $data['alias'] = $alias;
-            
+           
             // also reset creation date, modification fields, hit counter, version
             unset($data['created_time']);
             unset($data['modified_time']);
@@ -272,7 +272,7 @@ class JemModelCategory extends AdminModel
             $color = '';
         }
         $table->color = $color;
-        
+       
         // Bind the data.
         if (!$table->bind($data)) {
             $this->setError($table->getError());
@@ -294,7 +294,7 @@ class JemModelCategory extends AdminModel
         // Trigger the onContentBeforeSave event.
         // $result = $dispatcher->triggerEvent($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew));
         $result = $dispatcher->triggerEvent($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew,''));
-        
+       
         if (in_array(false, $result, true)) {
             $this->setError($table->getError());
             return false;
@@ -302,11 +302,11 @@ class JemModelCategory extends AdminModel
 
         // Store the data.
         if (!$table->store()) {
-            
+           
             $this->setError($table->getError());
             return false;
         }
-        
+       
         // Trigger the onContentAfterSave event.
         $dispatcher->triggerEvent($this->event_after_save, array($this->option . '.' . $this->name, &$table, $isNew));
 
@@ -859,20 +859,20 @@ class JemModelCategory extends AdminModel
                . ' FROM #__jem_categories'
                . ' WHERE ' . $source . ' = ' . (int)$id;
         $this->_db->setQuery( $query );
-        
+       
 
         // Make sure there aren't any errors
         // if ($this->_db->getErrorNum()) {
         //     $this->setError($this->_db->getErrorMsg());
         //     return false;
         // }
-        try 
+        try
         {
             $rows = $this->_db->loadObjectList();
-        } 
+        }
         catch (\InvalidArgumentException $e)
         {
-            $this->setError($e->getMessage());            
+            $this->setError($e->getMessage());           
             return false;
         }
 

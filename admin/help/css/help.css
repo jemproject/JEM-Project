@@ -217,7 +217,7 @@ table.help td {
 }
 .icon-32-options {
     background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-config.png");
-}    
+}   
 .icon-32-print {
     background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-print.png");
 }
@@ -255,14 +255,14 @@ table.help td {
         background-color: #171C24;
         color: #fff;
     }
-    
+   
     table.help {
         background-color: #000;
     }
     h1, h2, h3 {
     color: #8BB2ED;
     }
-    
+   
     .hint, .attentionheader, .attention, table.help {
     color: #fff;
     background-color: #465584;
@@ -282,7 +282,7 @@ a:hover {
     text-decoration: none;
 }
 
-    
-}    
-    
+   
+}   
+   
     

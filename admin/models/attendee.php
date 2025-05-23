@@ -287,7 +287,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
                 $row_aux= clone $row;
                 $row_aux->event = $e->id;
-                
+               
                 // Get register information of the event
                 $query = $db->getQuery(true);
                 $query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));

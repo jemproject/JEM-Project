@@ -111,7 +111,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
                 // . ' ORDER BY c.parent_id, c.ordering';
                 . $orderby;
 
-        
+       
 
         // Check for a database error.
         // if ($db->getErrorNum()) {
@@ -123,7 +123,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
             $mitems = $db->loadObjectList();
         }
         catch (RuntimeException $e)
-        {            
+        {           
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

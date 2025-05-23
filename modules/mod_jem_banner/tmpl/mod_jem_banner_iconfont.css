@@ -16,7 +16,7 @@ div#jemmodulebanner .venue-title:before {
 
 div#jemmodulebanner .time:before {
     content:"\f017";
-} 
+}
 
 div#jemmodulebanner div.date:before {
     content:"\f133";

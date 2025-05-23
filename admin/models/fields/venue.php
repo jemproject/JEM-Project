@@ -60,14 +60,14 @@ class JFormFieldVenue extends ListField
             ' FROM #__jem_venues' .
             ' WHERE id = '.(int) $this->value
         );
-        
+       
 
         try
         {
             $title = $db->loadResult();
         }
         catch (RuntimeException $e)
-        {            
+        {           
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
         }
 
@@ -89,7 +89,7 @@ class JFormFieldVenue extends ListField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'venue-modal',
-            array(        
+            array(       
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT_VENUE'),
                 'width'  => '800px',

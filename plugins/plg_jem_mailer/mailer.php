@@ -25,8 +25,8 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Filter\OutputFilter;    
-use Joomla\CMS\HTML\HTMLHelper;    
+use Joomla\CMS\Filter\OutputFilter;   
+use Joomla\CMS\HTML\HTMLHelper;   
 // Import library dependencies
 jimport('joomla.utilities.mail');
 

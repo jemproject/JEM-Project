@@ -67,7 +67,7 @@ $settings = JemHelper::config();
         endif; ?>
             </span>
         <?php echo $item->dateschema; ?>
-        <meta itemprop="name" content="<?php echo $item->title; ?>" />        
+        <meta itemprop="name" content="<?php echo $item->title; ?>" />       
        <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
            <meta itemprop="name" content="<?php echo $item->venue; ?>" />
            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
@@ -77,7 +77,7 @@ $settings = JemHelper::config();
             <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
         </div>
         </div>
-        
+       
         </li>
         <?php endforeach; ?>
     </ul>

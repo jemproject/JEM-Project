@@ -137,14 +137,14 @@
                 />
             </fieldset>
             <fieldset name="advanced">
-                <field 
+                <field
                     name="layout"
                     type="modulelayout"
                     label="JFIELD_ALT_LAYOUT_LABEL"
                     class="form-select"
                     validate="moduleLayout"
                 />
-                <field 
+                <field
                     name="moduleclass_sfx"
                     type="textarea"
                     label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
@@ -163,8 +163,8 @@
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>
-                <field 
-                    name="cache_time" 
+                <field
+                    name="cache_time"
                     type="number"
                     label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
                     description="MOD_JEM_CACHE_TIME_DESC"

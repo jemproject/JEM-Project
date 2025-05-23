@@ -76,7 +76,7 @@ class jem_register extends Table
      */
     public function insertIgnore($updateNulls = false)
     {
-        
+       
         try {
             $ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
         } catch (RuntimeException $e){

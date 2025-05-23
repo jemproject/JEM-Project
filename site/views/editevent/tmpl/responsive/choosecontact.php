@@ -65,7 +65,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
     </div>
 
     <hr class="jem-hr"/>
-    
+   
     <div class="jem-sort jem-sort-small">
       <div class="jem-list-row jem-small-list">
         <div class="sectiontableheader jem-contact-number"><?php echo Text::_('COM_JEM_NUM'); ?></div>
@@ -74,7 +74,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
         <div class="sectiontableheader jem-contact-state"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></div>
       </div>
     </div>
-    
+   
     <ul class="eventlist eventtable">
       <?php if (empty($this->rows)) : ?>
         <li class="jem-event jem-list-row jem-small-list"><?php echo Text::_('COM_JEM_NOCONTACTS'); ?></li>
@@ -84,17 +84,17 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
             <div class="jem-event-info-small jem-contact-number">
               <?php echo $this->pagination->getRowOffset( $i ); ?>
             </div>
-            
+           
             <div class="jem-event-info-small jem-contact-name">
               <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip selectcontact'); ?>>
                                  <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
                             </span>
             </div>
-            
+           
             <div class="jem-event-info-small jem-contact-city">
               <?php echo $this->escape($row->suburb); ?>
             </div>
-            
+           
             <div class="jem-event-info-small jem-contact-state">
               <?php echo $this->escape($row->state); ?>
             </div>
@@ -102,7 +102,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
         <?php endforeach; ?>
       <?php endif; ?>
     </ul>
-    
+   
         <input type="hidden" name="task" value="selectcontact" />
         <input type="hidden" name="option" value="com_jem" />
         <input type="hidden" name="tmpl" value="component" />

@@ -419,7 +419,7 @@ function registraoff()
                     <?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'settings-basic', 'recall' => true, 'breakpoint' => 768]); ?>
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'settings-basic', Text::_('COM_JEM_BASIC_SETTINGS')); ?>
                         <fieldset class="adminform">
-                              
+                             
                                 <div class="w-50 fltlft">
                                     <?php echo $this->loadTemplate('basicdisplay'); ?>
                                     <?php echo $this->loadTemplate('basiclayout'); ?>
@@ -455,7 +455,7 @@ function registraoff()
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
 
-                
+               
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'layout', Text::_('COM_JEM_LAYOUT')); ?>
                         <fieldset class="adminform">
                            <?php echo $this->loadTemplate('layout'); ?>
@@ -463,7 +463,7 @@ function registraoff()
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
 
-                    
+                   
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'parameters', Text::_('COM_JEM_GLOBAL_PARAMETERS')); ?>
                         <fieldset class="adminform">
                             <?php echo $this->loadTemplate('parameters'); ?>
@@ -486,10 +486,10 @@ function registraoff()
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
-                    
+                   
                 </div>
             </div>
-  
+ 
     </div>
 
     <input type="hidden" name="task" value="">

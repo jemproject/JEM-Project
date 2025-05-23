@@ -262,7 +262,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 $editicon .= '</div>';
             }
         }
-        
+       
         //get border for featured event
         $usefeaturedborder = $this->params->get('usefeaturedborder', 0);
         $featuredbordercolor = $this->params->get('featuredbordercolor', 0);
@@ -275,7 +275,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' .  $featuredclass . '" style="' . $featuredstyle; 
+        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' .  $featuredclass . '" style="' . $featuredstyle;
         if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
             $content .= '; background-color:'.array_pop($catcolor).'">';
         } else {

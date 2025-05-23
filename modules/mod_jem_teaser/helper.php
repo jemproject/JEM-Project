@@ -162,7 +162,7 @@ abstract class ModJemTeaserHelper
 
         $color = $params->get('color');
         $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
-        $fallback_color_is_dark = self::_is_dark($fallback_color);    
+        $fallback_color_is_dark = self::_is_dark($fallback_color);   
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -267,7 +267,7 @@ abstract class ModJemTeaserHelper
         if (empty($description)) {
           $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
         } else {
-          $lists[$i]->eventdescription = $description;          
+          $lists[$i]->eventdescription = $description;         
         }
       }
 

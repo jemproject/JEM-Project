@@ -25,7 +25,7 @@ $uri = Uri::getInstance();
         form.filter_order_Dir.value    = dir;
         form.submit(view);
     }
-  
+ 
   function clearForm() {
     var node = null;
     node = document.getElementById('filter_type');
@@ -142,7 +142,7 @@ $uri = Uri::getInstance();
     <?php endif; ?>
   }
 </style>
-<div id="jem_filter" class="floattext">        
+<div id="jem_filter" class="floattext">       
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
@@ -204,9 +204,9 @@ $uri = Uri::getInstance();
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-    <?php if ($this->jemsettings->showtitle == 1) : ?>              
+    <?php if ($this->jemsettings->showtitle == 1) : ?>             
       <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-    <?php endif; ?> 
+    <?php endif; ?>
     <?php if ($this->jemsettings->showlocate == 1) : ?>
       <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
     <?php endif; ?>
@@ -218,8 +218,8 @@ $uri = Uri::getInstance();
     <?php endif; ?>
     <?php if ($this->jemsettings->showcat == 1) : ?>
       <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-    <?php endif; ?> 
-  </div>    
+    <?php endif; ?>
+  </div>   
 </div>
 
 <ul class="eventlist">
@@ -241,7 +241,7 @@ $uri = Uri::getInstance();
       <?php else : ?>
         <li class="jem-event jem-list-row jem-small-list event_id<?php echo $row->id . ' jem-odd' . ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
       <?php endif; ?>
-                    
+                   
             <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
               <i class="far fa-clock" aria-hidden="true"></i>
               <?php
@@ -258,7 +258,7 @@ $uri = Uri::getInstance();
                 <?php endif; ?>
                <?php endif; ?>
             </div>
-            
+           
             <?php if ($this->jemsettings->showtitle == 1) : ?>
               <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <i class="fa fa-comment" aria-hidden="true"></i>
@@ -269,7 +269,7 @@ $uri = Uri::getInstance();
                 <?php endif; ?>
               </div>
             <?php endif; ?>
-            
+           
             <?php if ($this->jemsettings->showlocate == 1) : ?>
               <?php if (!empty($row->venue)) : ?>
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
@@ -278,13 +278,13 @@ $uri = Uri::getInstance();
                     <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
-                  <?php endif; ?>                  
+                  <?php endif; ?>                 
                 </div>
               <?php else : ?>
                 <div class="jem-event-info-small jem-event-venue">
                   <i class="fa fa-map-marker" aria-hidden="true"></i> -
                 </div>
-              <?php endif; ?>                
+              <?php endif; ?>               
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcity == 1) : ?>
@@ -297,7 +297,7 @@ $uri = Uri::getInstance();
                 <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
               <?php endif; ?>
             <?php endif; ?>
-            
+           
             <?php if ($this->jemsettings->showstate == 1) : ?>
               <?php if (!empty($row->state)) : ?>
                 <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
@@ -308,14 +308,14 @@ $uri = Uri::getInstance();
                 <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
               <?php endif; ?>
             <?php endif; ?>
-            
+           
             <?php if ($this->jemsettings->showcat == 1) : ?>
               <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
               </div>
             <?php endif; ?>
-            
+           
             <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -332,7 +332,7 @@ $uri = Uri::getInstance();
               }
               if (!empty($microadress)) {
                 $microadress .= ', ';
-              }                
+              }               
               if (!empty($row->state)) {
                 $microadress .= $this->escape($row->state);
               }
@@ -341,8 +341,8 @@ $uri = Uri::getInstance();
               }
               ?>
               <meta itemprop="address" content="<?php echo $microadress; ?>" />
-            </div>     
-      
+            </div>    
+     
       </li>
     <?php endforeach; ?>
   <?php endif; ?>

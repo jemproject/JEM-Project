@@ -41,7 +41,7 @@ class JFormFieldImageselect extends ListField
     {
         // ImageType
         $imagetype = $this->element['imagetype'];
-        
+       
         // Build the script.
         $script = array();
         $script[] = '    function SelectImage(image, imagename) {';
@@ -51,7 +51,7 @@ class JFormFieldImageselect extends ListField
         // $script[] = '        window.parent.SqueezeBox.close()';
         $script[] = '        $(".btn-close").trigger("click");';
         $script[] = '    }';
-        
+       
         switch ($imagetype)
         {
             case 'categories':
@@ -61,13 +61,13 @@ class JFormFieldImageselect extends ListField
             case 'events':
                 $task         = 'eventimg';
                 $taskselect = 'selecteventimg';
-                break;    
+                break;   
             case 'venues':
                 $task         = 'venueimg';
                 $taskselect = 'selectvenueimg';
-                break;    
+                break;   
         }
-        
+       
         // Add the script to the document head.
         Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 
@@ -84,7 +84,7 @@ class JFormFieldImageselect extends ListField
             $html[] = HTMLHelper::_(
                 'bootstrap.renderModal',
                 'imageupload-modal',
-                array(        
+                array(       
                     'url'    => $link,
                     'title'  => Text::_('COM_JEM_UPLOAD'),
                     'width'  => '650px',
@@ -100,7 +100,7 @@ class JFormFieldImageselect extends ListField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'imageselect-modal',
-            array(        
+            array(       
                 'url'    => $link2,
                 'title'  => Text::_('COM_JEM_SELECTIMAGE'),
                 'width'  => '650px',

@@ -234,7 +234,7 @@ class JemTableVenue extends Table
      */
     public function insertIgnore($updateNulls = false)
     {
-        
+       
         try {
             $ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
         } catch (RuntimeException $e){
@@ -329,7 +329,7 @@ class JemTableVenue extends Table
         $query->update($this->_db->quoteName($this->_tbl));
         $query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
         $query->where($where);
-        
+       
 
         // Check for a database error.
         // TODO: use exception handling
@@ -344,7 +344,7 @@ class JemTableVenue extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {            
+        {           
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 
