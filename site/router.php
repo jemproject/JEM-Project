@@ -28,7 +28,7 @@ class JemRouter extends RouterView
      * Router segments.
      *
      * @var  array
-     * 
+     *
      * @since  1.0.0
      */
     protected $_segments = array();
@@ -155,9 +155,9 @@ function jemBuildRoute(&$query)
 }
 
 function jemParseRoute($segments)
-{   
+{
     $app    = Factory::getApplication();
     $router = new JemRouter($app, $app->getMenu());
-    return $router->parse($segments);   
+    return $router->parse($segments);
 }
 ?>

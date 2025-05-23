@@ -278,7 +278,7 @@
                 >
                     <option value="static"></option>
                 </field>
-            </fieldset>   
+            </fieldset>
         </fields>
     </config>
 </extension>

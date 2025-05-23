@@ -142,7 +142,7 @@ $uri = Uri::getInstance();
     <?php endif; ?>
   }
 </style>
-<div id="jem_filter" class="floattext">       
+<div id="jem_filter" class="floattext">
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
@@ -204,7 +204,7 @@ $uri = Uri::getInstance();
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-    <?php if ($this->jemsettings->showtitle == 1) : ?>             
+    <?php if ($this->jemsettings->showtitle == 1) : ?>
       <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
     <?php endif; ?>
     <?php if ($this->jemsettings->showlocate == 1) : ?>
@@ -219,7 +219,7 @@ $uri = Uri::getInstance();
     <?php if ($this->jemsettings->showcat == 1) : ?>
       <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
     <?php endif; ?>
-  </div>   
+  </div>
 </div>
 
 <ul class="eventlist">
@@ -278,13 +278,13 @@ $uri = Uri::getInstance();
                     <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
-                  <?php endif; ?>                 
+                  <?php endif; ?>
                 </div>
               <?php else : ?>
                 <div class="jem-event-info-small jem-event-venue">
                   <i class="fa fa-map-marker" aria-hidden="true"></i> -
                 </div>
-              <?php endif; ?>               
+              <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcity == 1) : ?>
@@ -332,7 +332,7 @@ $uri = Uri::getInstance();
               }
               if (!empty($microadress)) {
                 $microadress .= ', ';
-              }               
+              }
               if (!empty($row->state)) {
                 $microadress .= $this->escape($row->state);
               }
@@ -341,7 +341,7 @@ $uri = Uri::getInstance();
               }
               ?>
               <meta itemprop="address" content="<?php echo $microadress; ?>" />
-            </div>    
+            </div>
 
       </li>
     <?php endforeach; ?>

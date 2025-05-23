@@ -443,10 +443,10 @@ class jemmyattendingTab extends cbTabHandler {
                     $places = strip_tags($result->reg_places);
                     if (strlen($places) > 10) {
                         $places = substr($places, 0, 10) . '...';
-                    }               
+                    }
                     $return .= "\n\t\t\t<td class='jemmyattendingCBTabTablePlaces'>";
                     $return .= "\n\t\t\t\t{$places}";
-                    $return .= "\n\t\t\t</td>";           
+                    $return .= "\n\t\t\t</td>";
                 }
 
 

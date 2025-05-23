@@ -53,7 +53,7 @@ use Joomla\CMS\Router\Route;
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>
-    <?php endif; ?>                                             
+    <?php endif; ?>
     <!--footer-->
     <div class="copyright">
         <?php echo JEMOutput::footer( ); ?>

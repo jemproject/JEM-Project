@@ -60,7 +60,7 @@ if (empty($this->catrow->events)) { return; }
   }
 
   @media not print {
-    @media only all and (max-width: 47.938rem) {   
+    @media only all and (max-width: 47.938rem) {
       #jem .jem-list-img {
         width: 100%;
       }
@@ -135,7 +135,7 @@ if (empty($this->catrow->events)) { return; }
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
-            </h4> 
+            </h4>
 
             <?php else : // Display date as title of jem-event without link ?>
             <h4>
@@ -150,11 +150,11 @@ if (empty($this->catrow->events)) { return; }
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
-            </h4> 
+            </h4>
             <?php endif; ?>
 
             <?php // Display other information below in a row ?>
-            <div class="jem-list-row"> 
+            <div class="jem-list-row">
               <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" >
                   <i class="far fa-clock" aria-hidden="true"></i>
@@ -212,7 +212,7 @@ if (empty($this->catrow->events)) { return; }
                   <?php echo $this->escape($row->regCount); ?>
                 </div>
               <?php endif; ?>
-            </div>           
+            </div>
           </div>
 
           <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
@@ -231,7 +231,7 @@ if (empty($this->catrow->events)) { return; }
             }
             if (!empty($microadress)) {
               $microadress .= ', ';
-            }               
+            }
             if (!empty($row->state)) {
               $microadress .= $this->escape($row->state);
             }

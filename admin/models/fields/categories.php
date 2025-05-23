@@ -92,7 +92,7 @@ class JFormFieldCategories extends ListField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'categories-modal',
-            array(       
+            array(
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT_CATEGORY'),
                 'width'  => '800px',

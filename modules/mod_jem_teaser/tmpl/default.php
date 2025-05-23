@@ -65,7 +65,7 @@ if ($params->get('use_modal', 0)) {
               <?php echo $item->startdate['day']; ?>
             </div>
           </div>
-        <?php endif; ?>                       
+        <?php endif; ?>
                     </td>
                     <td class="event-info">
                         <div class="teaser-jem">

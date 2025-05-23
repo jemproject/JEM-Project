@@ -872,7 +872,7 @@ class JemModelCategory extends AdminModel
         }
         catch (\InvalidArgumentException $e)
         {
-            $this->setError($e->getMessage());           
+            $this->setError($e->getMessage());
             return false;
         }
 

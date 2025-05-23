@@ -484,7 +484,7 @@ body.com_jem.body-overlayed {
 #jem div.jem-map {
     padding-top: 15px;
     padding-bottom: 5px;
-    animation: blendin .5s ease-out forwards;  
+    animation: blendin .5s ease-out forwards;
 }
 
 /* prevent osm maps from flickering */

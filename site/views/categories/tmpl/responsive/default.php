@@ -86,7 +86,7 @@ use Joomla\CMS\Router\Route;
         </button>
       </a>
     </div>
-    </div>   
+    </div>
 
     <?php
     if ($row !== end($this->rows)) :

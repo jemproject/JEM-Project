@@ -1171,7 +1171,7 @@ class JemModelImport extends BaseDatabaseModel
             return $key;
         }
         catch (RuntimeException $e)
-        {           
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
         }
     }

@@ -603,14 +603,14 @@ class com_jemInstallerScript
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.ini',
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
             '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
-            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',   
+            '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
-            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',       
+            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
         );
 
         // TODO There is an issue while deleting folders using the ftp mode
-        $folders = array(           
+        $folders = array(
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
         );
@@ -844,7 +844,7 @@ class com_jemInstallerScript
                 // simply continue with next table
             }
         }
-    }   
+    }
 
     /**
      * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
@@ -853,7 +853,7 @@ class com_jemInstallerScript
      */
     private function checkUnregistraUntil()
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');             
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
         try {
 
@@ -863,11 +863,11 @@ class com_jemInstallerScript
 
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
             $db->setQuery($query);
-            $db->execute();      
+            $db->execute();
 
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
             $db->setQuery($query);
-            $db->execute();      
+            $db->execute();
 
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
             $db->setQuery($query);
@@ -881,7 +881,7 @@ class com_jemInstallerScript
             $db->setQuery($query);
             $db->execute();
 
-        } catch (\Exception $e) {   
+        } catch (\Exception $e) {
             echo "Error updating `unregistra_until`: " . $e->getMessage();
         }
 

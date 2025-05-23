@@ -144,7 +144,7 @@ use Joomla\CMS\Language\Text;
     </style>
     <div class="jem-img">
       <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
-    </div> 
+    </div>
   </div>
     <?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
     <!-- PUBLISHING STATE -->

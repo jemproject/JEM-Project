@@ -19,7 +19,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Helper\ModuleHelper;   
+use Joomla\CMS\Helper\ModuleHelper;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 

@@ -92,8 +92,8 @@ use Joomla\CMS\Router\Route;
         <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>&nbsp;
         <?php echo $this->pagination->getLimitBox(); ?>
         </div>
-        <?php endif; ?>       
-        </div>  
+        <?php endif; ?>
+        </div>
         <?php endif; ?>
   <?php endif; ?>
 
@@ -114,7 +114,7 @@ use Joomla\CMS\Router\Route;
         <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <div class="jem-myvenues-status" ><?php echo Text::_('JSTATUS'); ?></div>
-    </div>   
+    </div>
   </div>
 
     <ul class="eventlist">
@@ -126,7 +126,7 @@ use Joomla\CMS\Router\Route;
           <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php else : ?>
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
-                <?php endif; ?> 
+                <?php endif; ?>
 
             <?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
             <div class="jem-event-info-small jem-myevents-check" >
@@ -145,9 +145,9 @@ use Joomla\CMS\Router\Route;
                     <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
-                  <?php endif; ?>                 
-                    <?php echo JemOutput::publishstateicon($row); ?>                 
-                </div>              
+                  <?php endif; ?>
+                    <?php echo JemOutput::publishstateicon($row); ?>
+                </div>
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcity == 1) : ?>

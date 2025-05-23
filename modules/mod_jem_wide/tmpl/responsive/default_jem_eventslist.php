@@ -58,7 +58,7 @@ $css = '
   }
 
   @media not print {
-    @media only all and (max-width: 47.938rem) { 
+    @media only all and (max-width: 47.938rem) {
       #jemmodulewide .jem-event-details {
         flex-basis: 100%;
       }

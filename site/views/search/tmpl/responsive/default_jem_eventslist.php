@@ -71,7 +71,7 @@ $uri = Uri::getInstance();
     return;
   }
 </script>
-<div id="jem_filter" class="floattext">           
+<div id="jem_filter" class="floattext">
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
@@ -151,7 +151,7 @@ $uri = Uri::getInstance();
       <?php if ($this->jemsettings->showatte == 1) : ?>
                 <div id="jem_atte" class="sectiontableheader"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
-    </div>   
+    </div>
   </div>
 
 </div>
@@ -200,7 +200,7 @@ $uri = Uri::getInstance();
   }
 
   @media not print {
-    @media only all and (max-width: 47.938rem) { 
+    @media only all and (max-width: 47.938rem) {
       #jem .jem-list-img {
         width: 100%;
       }
@@ -267,7 +267,7 @@ $uri = Uri::getInstance();
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
-            </h4> 
+            </h4>
 
             <?php else : // Display date as title of jem-event without link ?>
             <h4>
@@ -282,11 +282,11 @@ $uri = Uri::getInstance();
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
-            </h4> 
+            </h4>
             <?php endif; ?>
 
             <?php // Display other information below in a row ?>
-            <div class="jem-list-row"> 
+            <div class="jem-list-row">
               <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
                   <i class="far fa-clock" aria-hidden="true"></i>
@@ -344,7 +344,7 @@ $uri = Uri::getInstance();
                   <?php echo $this->escape($row->regCount); ?>
                 </div>
               <?php endif; ?>
-            </div>           
+            </div>
           </div>
 
           <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
@@ -363,7 +363,7 @@ $uri = Uri::getInstance();
             }
             if (!empty($microadress)) {
               $microadress .= ', ';
-            }               
+            }
             if (!empty($row->state)) {
               $microadress .= $this->escape($row->state);
             }
@@ -372,7 +372,7 @@ $uri = Uri::getInstance();
             }
             ?>
             <meta itemprop="address" content="<?php echo $microadress; ?>" />
-          </div>    
+          </div>
 
         </li>
             <?php endforeach; ?>

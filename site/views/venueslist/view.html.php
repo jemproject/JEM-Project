@@ -27,7 +27,7 @@ class JemViewVenueslist extends JemView
 
         // additional path for common templates + corresponding override path
         $this->addCommonTemplatePath();
-    }   
+    }
 
     /**
      * Creates the Venueslist View
@@ -92,7 +92,7 @@ class JemViewVenueslist extends JemView
         if ($jemsettings->showlocate == 1) {
             $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         }
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));           
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
         $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter);
 

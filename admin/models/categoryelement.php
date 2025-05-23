@@ -123,7 +123,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
             $mitems = $db->loadObjectList();
         }
         catch (RuntimeException $e)
-        {           
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

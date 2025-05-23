@@ -35,7 +35,7 @@ defined('_JEXEC') or die;
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
         </div>
-    <?php endif; ?>   
+    <?php endif; ?>
 
     <!--table-->
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
@@ -52,7 +52,7 @@ defined('_JEXEC') or die;
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>
-    <?php endif; ?>                                                    
+    <?php endif; ?>
 
     <!--footer-->
     <div class="pagination">
