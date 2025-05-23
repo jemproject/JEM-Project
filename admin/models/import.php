@@ -280,7 +280,7 @@ class JemModelImport extends BaseDatabaseModel
                 }
             } // if 'JemTableCategory'
 
-            
+
             // Bind the data
             $object->reset(); // clear old data first - which does NOT reset 'id' !
             $object->bind($values);

@@ -79,7 +79,7 @@ class JemModelVenueslist extends ListModel
          parent::populateState('a.venue', 'ASC');
     }
 
-    
+
     /**
      * Method to get a store id based on model configuration state.
      */

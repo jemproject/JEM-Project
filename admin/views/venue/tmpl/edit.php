@@ -111,7 +111,7 @@ $location = JemHelper::defineCenterMap($this->form);
     // jQuery(function() {
     jQuery(document).ready(function() {
 
-            
+
         jQuery("#geocomplete").geocomplete({
             map: ".map_canvas",
             <?php echo $location; ?>

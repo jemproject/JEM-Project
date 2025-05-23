@@ -136,7 +136,7 @@ use Joomla\CMS\Language\Text;
       ?>
     </div>
 
-    
+
     <style>
       .jem-img {
         flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
