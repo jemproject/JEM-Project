@@ -80,7 +80,7 @@
             readonly="true"
         />
     </fieldset>
-    
+
     <field name="access" type="accesslevel"
         label="JFIELD_ACCESS_LABEL"
         description="JFIELD_ACCESS_DESC"
@@ -96,7 +96,7 @@
             description="JGLOBAL_FIELD_ID_DESC"
         />
     </fieldset>
-    
+
     <field name="rules" type="rules"
         id="rules"
         label="JFIELD_RULES_LABEL"
@@ -107,7 +107,7 @@
         component="com_jem"
         section="category"
     />
-    
+
     <fieldset name="request"
         addfieldpath="/administrator/components/com_jem/models/fields"
     >
@@ -167,7 +167,7 @@
             description="COM_JEM_FIELD_METADESCRIPTION_DESC"
         />
     </fieldset>
-    
+
     <field name="metadesc" type="textarea"
         label="JFIELD_META_DESCRIPTION_LABEL"
         description="JFIELD_META_DESCRIPTION_DESC"

@@ -116,7 +116,7 @@ class JemModelSampledata extends BaseDatabaseModel
         $archive = Path::clean($archive);
 
         // extract archive
-    
+
         try {
             $archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
             $result = $archiveObj->extract($archive, $extractdir);
@@ -145,7 +145,7 @@ class JemModelSampledata extends BaseDatabaseModel
         }
         $filelist['files'] = $files;
         $filelist['folder'] = $extractdir;
-        
+
         return $filelist;
     }
 

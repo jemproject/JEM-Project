@@ -20,9 +20,9 @@ use Joomla\CMS\Router\Route;
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
-    
-        
-    
+
+
+
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
         <h1 class="componentheading">
             <?php echo $this->escape($this->params->get('page_heading')); ?>
@@ -40,7 +40,7 @@ use Joomla\CMS\Router\Route;
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
     <?php echo $this->loadTemplate('venues');?>
 
-                                                                                                                            
+
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
     <input type="hidden" name="boxchecked" value="0" />
@@ -48,12 +48,12 @@ use Joomla\CMS\Router\Route;
     <input type="hidden" name="option" value="com_jem" />
     <?php echo HTMLHelper::_('form.token'); ?>
     </form>
-                                                                                    
+
     <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>
-    <?php endif; ?>                                            
+    <?php endif; ?>
     <!--footer-->
     <div class="copyright">
         <?php echo JEMOutput::footer( ); ?>

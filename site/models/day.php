@@ -133,9 +133,9 @@ class JemModelDay extends JemModelEventslist
 ################################
         ## EXCLUDE/INCLUDE CATEGORIES ##
         ################################
-        
+
         $catswitch = $params->get('categoryswitch', '');
-        
+
         # set included categories
         if ($catswitch) {
             $included_cats = trim($params->get('categoryswitchcats', ''));
@@ -145,7 +145,7 @@ class JemModelDay extends JemModelEventslist
                 $this->setState('filter.category_id.include', true);
             }
         }
-        
+
         # set excluded categories
         if (!$catswitch) {
             $excluded_cats = trim($params->get('categoryswitchcats', ''));

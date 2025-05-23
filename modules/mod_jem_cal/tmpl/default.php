@@ -31,7 +31,7 @@ jQuery(document).ready(function(){
 });
 function mod_jem_cal_click_<?php print $module->id; ?>(url) {
     jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});        
+        jQuery(".hasTooltip").tooltip({'html':true});
     });
 }
 </script>

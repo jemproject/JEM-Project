@@ -1117,7 +1117,7 @@
                    default="0"
                    required="false"
             >
-                <option value="1">JYES</option>            
+                <option value="1">JYES</option>
                 <option value="0">JNO</option>
 
             </field>
@@ -1221,7 +1221,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            
+
             <field name="event_show_locdescription" type="radio"
                    label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
                    description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"

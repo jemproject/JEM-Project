@@ -67,7 +67,7 @@ class JFormFieldModal_Users extends FormField
             $query->where('id IN ('.$idlist.')');
             $db->setQuery($query);
 
-            
+
 
             // if ($error = $db->getErrorMsg()) {
             //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
@@ -77,7 +77,7 @@ class JFormFieldModal_Users extends FormField
                 $count = (int)$db->loadResult();
             }
             catch (RuntimeException $e)
-            {            
+            {
                 \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
             }
         } else {
@@ -98,7 +98,7 @@ class JFormFieldModal_Users extends FormField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'user-modal',
-            array(        
+            array(
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',

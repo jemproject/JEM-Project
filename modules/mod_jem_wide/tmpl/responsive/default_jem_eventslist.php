@@ -62,7 +62,7 @@ $css = '
       #jemmodulewide .jem-event-details {
         flex-basis: 100%;
       }
-    
+
       #jemmodulewide .jem-list-img img {
           width: ' . $imagewidth . ';
           height: ' . $imageheight . ';

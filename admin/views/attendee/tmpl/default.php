@@ -27,7 +27,7 @@ $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&t
 echo HTMLHelper::_(
     'bootstrap.renderModal',
     'user-modal',
-    array(        
+    array(
         'url'    => $selectuser_link.'&amp;'.Session::getFormToken().'=1',
         'title'  => Text::_('COM_JEM_SELECT'),
         'width'  => '800px',
@@ -44,7 +44,7 @@ function modalSelectUser(id, username)
         jQuery('#username').val(username);
         // window.parent.SqueezeBox.close();
         jQuery("#user-modal").modal("hide");
-}    
+}
 Joomla.submitbutton = function(task)
     {
         if (task == 'attendee.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {

@@ -315,14 +315,14 @@ class JemModelExport extends ListModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $where = ' WHERE c.published = 1';
         $query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
-        
+
         try
         {
             $db->setQuery($query);
             $mitems = $db->loadObjectList();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 
