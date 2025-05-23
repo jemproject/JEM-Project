@@ -31,14 +31,14 @@ use Joomla\CMS\Router\Route;
         <h2>
             <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
         </h2>
-   
+
     <?php if (($this->jemsettings->discatheader) && (!empty($row->image))) : ?>
       <div class="jem-catimg">
         <?php $cimage = JemImage::flyercreator($row->image, 'category'); ?>
         <?php    echo JemOutput::flyer($row, $cimage, 'category'); ?>
       </div>
     <?php endif; ?>
-   
+
     <div class="description">
       <?php echo $row->description; ?>
       <?php if ($i = count($row->subcats)) : ?>
@@ -55,10 +55,10 @@ use Joomla\CMS\Router\Route;
         </div>
       <?php endif; ?>
     </div>
-   
+
     <div class="jem-clear">
     </div>
-   
+
         <!--table-->
         <?php
             if ($this->params->get('detcat_nr', 0) > 0) {
@@ -87,12 +87,12 @@ use Joomla\CMS\Router\Route;
       </a>
     </div>
     </div>   
-   
+
     <?php
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;
-  
+
    endforeach; ?>
 
     <!--pagination-->

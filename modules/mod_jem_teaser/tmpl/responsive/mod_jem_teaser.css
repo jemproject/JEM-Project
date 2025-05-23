@@ -120,18 +120,18 @@ body.body-overlayed {
       display: block !important;
       margin-bottom: 10px;
     }
-   
+
     #jemmoduleteaser [class|="calendar"] {
       margin-bottom: 10px;
     }
-   
+
     .jem-eventimg-teaser {
       display: block;
       float: none;
       margin-left: 0;
       margin-bottom: 10px;
     }
-   
+
     #jemmoduleteaser img {
       display: block;
       float: none !important;

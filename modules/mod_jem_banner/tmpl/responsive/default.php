@@ -67,7 +67,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $endpos = $spacepos - $startpos;
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
-       
+
 $document = Factory::getDocument();
 $additionalCSS = '';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
@@ -128,7 +128,7 @@ $document->addStyleDeclaration($css);
                                         style="background-color: <?php echo $item->color; ?>"
             <?php endif; ?>>
                                     <?php endif; ?>
-   
+
           <?php if (isset($item->color_is_dark)) : ?>
         <div class="monthbanner monthcolor-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
               <?php else : ?>

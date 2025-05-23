@@ -60,7 +60,7 @@ if ($flyer_link_type == 1) {
             </div>
           </div>
         <?php endif; ?>
-           
+
         <?php if (!empty($introtext)) :?>
         <div class="intro">
             <?php echo $introtext; ?>
@@ -112,7 +112,7 @@ if ($flyer_link_type == 1) {
                     endif;?>
                 </div>
                 <?php endif;
-                
+
                  echo $item->dateschema; ?>
                   <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
                       <meta itemprop="name" content="<?php echo $item->venue; ?>" />

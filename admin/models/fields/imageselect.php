@@ -41,7 +41,7 @@ class JFormFieldImageselect extends ListField
     {
         // ImageType
         $imagetype = $this->element['imagetype'];
-       
+
         // Build the script.
         $script = array();
         $script[] = '    function SelectImage(image, imagename) {';
@@ -51,7 +51,7 @@ class JFormFieldImageselect extends ListField
         // $script[] = '        window.parent.SqueezeBox.close()';
         $script[] = '        $(".btn-close").trigger("click");';
         $script[] = '    }';
-       
+
         switch ($imagetype)
         {
             case 'categories':
@@ -67,7 +67,7 @@ class JFormFieldImageselect extends ListField
                 $taskselect = 'selectvenueimg';
                 break;   
         }
-       
+
         // Add the script to the document head.
         Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 

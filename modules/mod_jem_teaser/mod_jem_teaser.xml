@@ -21,12 +21,12 @@
         <folder>tmpl</folder>
         <folder>language</folder>
     </files>
-   
+
     <languages>
         <language tag="en-GB">language/en-GB/mod_jem_teaser.ini</language>
         <language tag="en-GB">language/en-GB/mod_jem_teaser.sys.ini</language>
     </languages>
-   
+
     <help key="Modules" />
     <config>
         <fields name="params">

@@ -51,7 +51,7 @@ use Joomla\CMS\Router\Route;
       flex: 1;
     <?php endif; ?>
   }
- 
+
   #jem.jem_myvenues .jem-myvenues-check {
     flex: 0 1%;
   }
@@ -184,7 +184,7 @@ use Joomla\CMS\Router\Route;
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
-  
+
    
 
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

@@ -30,7 +30,7 @@ use Joomla\CMS\Language\Text;
       flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
     }
   </style>
- 
+
     <!--Venue-->
     <?php foreach($this->rows as $row) : ?>
         <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
@@ -38,7 +38,7 @@ use Joomla\CMS\Language\Text;
                 <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
                 <?php echo JemOutput::publishstateicon($row); ?>
             </h2>
-   
+
       <div class="jem-row">
         <div class="jem-info">
           <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
@@ -92,7 +92,7 @@ use Joomla\CMS\Language\Text;
             <?php endif; ?>
           </dl>
         </div>
-       
+
         <!-- FLYER -->
         <div class="jem-img">
           <?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
@@ -109,7 +109,7 @@ use Joomla\CMS\Language\Text;
             <?php else : ?>
             <div class="clr"> </div>
             <?php endif; */?>
-     
+
       <div class="jem-readmore">
         <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
           <button class="buttonfilter btn">
@@ -117,7 +117,7 @@ use Joomla\CMS\Language\Text;
           </button>
         </a>
       </div>
-     
+
         </div>
     <?php
     if ($row !== end($this->rows)) :

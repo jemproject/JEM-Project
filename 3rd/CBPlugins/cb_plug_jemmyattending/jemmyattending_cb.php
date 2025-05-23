@@ -437,7 +437,7 @@ class jemmyattendingTab extends cbTabHandler {
                 $return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
                 $return .= "\n\t\t\t\t<img src='$img' alt='$tip' title='$tip'>";
                 $return .= "\n\t\t\t</td>";
-               
+
                 /* Places field */
                 if ($reg_places) {
                     $places = strip_tags($result->reg_places);
@@ -448,7 +448,7 @@ class jemmyattendingTab extends cbTabHandler {
                     $return .= "\n\t\t\t\t{$places}";
                     $return .= "\n\t\t\t</td>";           
                 }
-   
+
                
 
                 /* Comment field */

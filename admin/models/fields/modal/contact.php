@@ -51,7 +51,7 @@ class JFormFieldModal_Contact extends FormField
         $query->select('name');
         $query->from('#__contact_details');
         $query->where(array('id='.(int)$this->value));
-       
+
 
         // if ($error = $db->getErrorMsg()) {
         //     Factory::getApplication()->enqueueMessage($error, 'warning');

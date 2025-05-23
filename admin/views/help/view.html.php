@@ -39,7 +39,7 @@ class JemViewHelp extends JemAdminView
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-       
+
         // Check for files in the actual language
         $langTag = $lang->getTag();
 

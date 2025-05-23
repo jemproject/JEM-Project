@@ -374,7 +374,7 @@ td.today div.daynum::after {
                     <?php echo Text::_('COM_JEM_HIDEALL'); ?>
                 </button>
         </div>
-   
+
     <!-- Calendar Legend -->
         <div class="calendarLegends jem-row jem-justify-start">
             <?php

@@ -67,7 +67,7 @@ class JFormFieldModal_Users extends FormField
             $query->where('id IN ('.$idlist.')');
             $db->setQuery($query);
 
-           
+
 
             // if ($error = $db->getErrorMsg()) {
             //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');

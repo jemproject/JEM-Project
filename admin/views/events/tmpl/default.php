@@ -271,7 +271,7 @@ $wa->useScript('table.columns');
                 <?php endforeach; ?>
                 </tbody>
             </table>
-           
+
             <div class="ms-auto mb-4 me-0">
                 <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>          
             </div>

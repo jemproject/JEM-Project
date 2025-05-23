@@ -65,7 +65,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
     </div>
 
     <hr class="jem-hr"/>
-   
+
     <div class="jem-sort jem-sort-small">
       <div class="jem-list-row jem-small-list">
         <div class="sectiontableheader jem-venue-number"><?php echo Text::_('COM_JEM_NUM'); ?></div>
@@ -75,7 +75,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
         <div class="sectiontableheader jem-venue-country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></div>
       </div>
     </div>
-   
+
     <ul class="eventlist eventtable">
       <?php if (empty($this->rows)) : ?>
         <li class="jem-event jem-list-row jem-small-list"><?php echo Text::_('COM_JEM_NOVENUES'); ?></li>
@@ -85,21 +85,21 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
             <div class="jem-event-info-small jem-venue-number">
               <?php echo $this->pagination->getRowOffset( $i ); ?>
             </div>
-           
+
             <div class="jem-event-info-small jem-venue-name">
               <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->venue, 'editlinktip selectvenue'); ?>>
                                 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
                             </span>
             </div>
-           
+
             <div class="jem-event-info-small jem-venue-city">
               <?php echo $this->escape($row->city); ?>
             </div>
-           
+
             <div class="jem-event-info-small jem-venue-state">
               <?php echo $this->escape($row->state); ?>
             </div>
-           
+
             <div class="jem-event-info-small jem-venue-country">
               <?php echo !empty($row->country) ? $this->escape($row->country) : '-'; ?>
             </div>

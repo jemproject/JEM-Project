@@ -211,11 +211,11 @@ body.body-overlayed {
       margin-top: 10px;
       margin-left: 0;
     }
-   
+
     #jemmodulewide .jem-sort-small .jem-small-list div {
       flex-basis: 30%;
     }
-   
+
     #jemmodulewide .jem-event-info-small {
       flex-basis: 100% !important;
     }

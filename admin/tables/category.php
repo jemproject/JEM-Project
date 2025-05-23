@@ -71,7 +71,7 @@ class JemTableCategory extends Nested
         ->columns($db->quoteName($columns))
         ->values(implode(',', $values));
         $db->setQuery($query);
-       
+
         $db->execute();
 
         return $db->insertid();
@@ -216,11 +216,11 @@ class JemTableCategory extends Nested
 
         if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
             && ($table->id != $this->id || $this->id == 0)) {
-           
+
             $this->setError(Text::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
             return false;
         }
-   
+
         return parent::store($updateNulls);
     }
 

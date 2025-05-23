@@ -56,7 +56,7 @@ function initialize() {
                     escapeHTML(street) + "<br />" +
                     escapeHTML(postalCode) + "<br />" +
                     escapeHTML(city);
-       
+
         var myOptions = {
             content: boxText
             , disableAutoPan: false

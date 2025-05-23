@@ -52,7 +52,7 @@ $tooltips_max_events = $params->get('tooltips_max_events', 0);
 $Itemid              = $app->input->request->getInt('Itemid', 0);
 
 if($Itemid ==0){
-   
+
     $Itemid = $app->getMenu()->getActive()->id;
 }
 

@@ -234,7 +234,7 @@ abstract class ModJemBannerHelper
             } else {
                 $title = $fulltitle;
             }
-           
+
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
@@ -381,7 +381,7 @@ abstract class ModJemBannerHelper
         $today           = date('Y-m-d');
         $tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
         $tomorrow        = date("Y-m-d", $tomorrow_stamp);
-       
+
         $dates_stamp     = strtotime($row->dates);
         $enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 

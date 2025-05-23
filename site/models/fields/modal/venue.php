@@ -59,7 +59,7 @@ class JFormFieldModal_Venue extends FormField
         $query->where(array('id='.(int)$this->value));
         $db->setQuery($query);
 
-       
+
 
         // if ($error = $db->getErrorMsg()) {
         //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');

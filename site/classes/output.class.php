@@ -42,7 +42,7 @@ class JemOutput
             echo 'Powered by <a href="https://www.joomlaeventmanager.net" target="_blank" title="Joomla Event Manager">JEM</a>';
         }
     }
-   
+
 /**
  * Load stylesheet and JS for lightbox.
  */
@@ -63,7 +63,7 @@ static public function lightbox() {
           return;
     }
 }
-   
+
     /**
      * Creates the button bar shown on frontend view's top right corner.
      *
@@ -955,7 +955,7 @@ static public function lightbox() {
 
                 $output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
                 break;
-                   
+
             case 3:
                 // include Google map with API3
                 // NOT WORKING YET 2023-05
@@ -971,7 +971,7 @@ static public function lightbox() {
                     $api = trim($api);
                     $clientid = trim($clientid);
                 }
-               
+
                 $document   = $app->getDocument();
 
                 # do we have a client-ID?
@@ -987,7 +987,7 @@ static public function lightbox() {
                 }
 
                 JemHelper::loadCss('googlemap');
-               
+
                  $wa = $app->getDocument()->getWebAssetManager();
                  $wa->registerScript('jem.infobox', 'com_jem/infobox.js')->useScript('jem.infobox');
                  $wa->registerScript('jem.googlemap', 'com_jem/googlemap.js')->useScript('jem.googlemap');
@@ -1025,7 +1025,7 @@ static public function lightbox() {
                 } else {
                     $url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
                 }
-                               
+
                 $message = Text::_('COM_JEM_MAP') . ':';
                 $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '">' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
 
@@ -1041,7 +1041,7 @@ static public function lightbox() {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                  $search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
                  $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-                
+
                  $httpOptions = [
                      "http" => [
                          "method" => "GET",
@@ -1056,10 +1056,10 @@ static public function lightbox() {
                  $lat = $decoded[0]["lat"] ?? null;
                  $lng = $decoded[0]["lon"] ?? null;
                  }
-                
+
                  $wa = $app->getDocument()->getWebAssetManager();
                  $wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
-                
+
                  if ($lat && $lng) {
                     $zoom = 15; // Adjust the zoom level as per your requirement
                     $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
@@ -1233,17 +1233,17 @@ static public function lightbox() {
             list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
             list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];       
         }
-               
+
         // Does a thumbnail exist?
         if (!$settings->flyer){
             if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-           
+
                 // if "Enable Pop Up Thumbnail" is disabled
                 if (($settings->gddisabled == 0) && ($settings->lightbox == 0))    {
                     $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
                     $output = '<div class="flyerimage">'.$icon.'</div>';
                 }
-           
+
                 // if "Enable Pop Up Thumbnail" is enabled and lightbox disabled
                 elseif (($settings->gddisabled == 1) && ($settings->lightbox == 0)) {
                     $attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='. $imagewidth.',height='.$imageheight.',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
@@ -1257,7 +1257,7 @@ static public function lightbox() {
                     $attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
                     $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
                     $output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
-               
+
                 }
                 // If there is no thumbnail, then take the values for the original image specified in the settings
             } else {               

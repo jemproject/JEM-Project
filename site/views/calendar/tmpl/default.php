@@ -260,7 +260,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 $editicon .= '</div>';
             }
         }
-       
+
         //get border for featured event
         $usefeaturedborder = $this->params->get('usefeaturedborder', 0);
         $featuredbordercolor = $this->params->get('featuredbordercolor', 0);

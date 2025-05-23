@@ -121,7 +121,7 @@ use Joomla\CMS\Router\Route;
       display: none;
     <?php endif; ?>
   }
- 
+
   #jem .jem-event .jem-myevents-check {
     flex: 0 1%;
   }
@@ -186,7 +186,7 @@ use Joomla\CMS\Router\Route;
       <div class="jem-myevents-status" ><?php echo Text::_('JSTATUS'); ?></div>
     </div>   
   </div>
- 
+
     <ul class="eventlist jem-myevents">
         <?php if (count((array)$this->events) == 0) : ?>
             <li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
