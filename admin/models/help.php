@@ -18,12 +18,12 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
  */
 class JemModelHelp extends BaseDatabaseModel
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }
 ?>

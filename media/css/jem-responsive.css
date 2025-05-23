@@ -476,9 +476,9 @@ body.com_jem.body-overlayed {
 }
 
 #jem #addplaces, #jem #cancelplaces {
-	text-align: center;
-	display:inline;
-	max-width: 100px;
+    text-align: center;
+    display:inline;
+    max-width: 100px;
 }
 
 #jem div.jem-map {

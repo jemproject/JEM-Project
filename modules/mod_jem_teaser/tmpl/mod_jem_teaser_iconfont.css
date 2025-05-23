@@ -10,22 +10,22 @@ div#jemmoduleteaser .time:before,
 div#jemmoduleteaser div.date:before,
 div#jemmoduleteaser .category:before,
 div#jemmoduleteaser .venue-title:before {
-	font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
-	font-weight:var(--fa-style,900);
+    font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
+    font-weight:var(--fa-style,900);
 }
 
 div#jemmoduleteaser .time:before {
-	content:"\f017";
+    content:"\f017";
 }
 
 div#jemmoduleteaser div.date:before {
-	content:"\f133";
+    content:"\f133";
 }
 
 div#jemmoduleteaser .category:before {
-	content:"\f02b";
+    content:"\f02b";
 }
 
 div#jemmoduleteaser .venue-title:before {
-	content:"\f041";
+    content:"\f041";
 }

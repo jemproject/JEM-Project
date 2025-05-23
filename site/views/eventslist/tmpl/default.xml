@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_EVENTSLIST_VIEW_DEFAULT_TITLE">
-		<message>
-			<![CDATA[COM_JEM_EVENTSLIST_VIEW_DEFAULT_DESC]]>
-		</message>
-	</layout>
+    <layout title="COM_JEM_EVENTSLIST_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_EVENTSLIST_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
 
-	<fields name="params">
-		<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-			<field name="onlyfeatured" type="radio"
-				default="0"
-				label="COM_JEM_DISPLAY_FEATUREDONLY"
-				description="COM_JEM_DISPLAY_FEATUREDONLY_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="show_introtext_events" type="radio"
-				   default="0"
-				   label="COM_JEM_SHOW_INTROTEXT_EVENTS"
-				   description="COM_JEM_SHOW_INTROTEXT_EVENTS_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
+    <fields name="params">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="onlyfeatured" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_FEATUREDONLY"
+                description="COM_JEM_DISPLAY_FEATUREDONLY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_introtext_events" type="radio"
+                   default="0"
+                   label="COM_JEM_SHOW_INTROTEXT_EVENTS"
+                   description="COM_JEM_SHOW_INTROTEXT_EVENTS_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="show_archived_events" type="radio"
                    default="0"
                    label="COM_JEM_SHOW_ARCHIVED_EVENTS"
@@ -35,55 +35,55 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-			<field name="showiconsinorder" type="radio"
-				   default="1"
-				   label="COM_JEM_SHOW_ICONS_IN_ORDER"
-				   description="COM_JEM_SHOW_ICONS_IN_ORDER_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="showiconsineventtitle" type="radio"
-				   default="1"
-				   label="COM_JEM_SHOW_ICONS_IN_EVENT_TITLE"
-				   description="COM_JEM_SHOW_ICONS_IN_EVENT_TITLE_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="showiconsineventdata" type="radio"
-				   default="1"
-				   label="COM_JEM_SHOW_ICONS_IN_EVENT_DATA"
-				   description="COM_JEM_SHOW_ICONS_IN_EVENT_DATA_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="tableorderby" type="radio"
-				   default="0"
-				   label="COM_JEM_TABLE_ORDER_BY"
-				   description="COM_JEM_TABLE_ORDER_BY_DESC"
-				   class="btn-group"
-			>
-				<option value="0">COM_JEM_DATE</option>
-				<option value="1">COM_JEM_TITLE</option>
-				<option value="2">COM_JEM_VENUE</option>
-				<option value="3">COM_JEM_CITY</option>
-				<option value="4">COM_JEM_STATE</option>
-				<option value="5">COM_JEM_CATEGORY</option>
-			</field>
-		<field name="tabledirectionorder" type="radio"
-			   default="ASC"
-			   label="COM_JEM_TABLE_DIRECTION_ORDER"
-			   description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
-			   class="btn-group "
-		>
-			<option value="ASC">COM_JEM_ORDER_ASCENDING</option>
-			<option value="DESC">COM_JEM_ORDER_DESCENDING</option>
-		</field>
+            <field name="showiconsinorder" type="radio"
+                   default="1"
+                   label="COM_JEM_SHOW_ICONS_IN_ORDER"
+                   description="COM_JEM_SHOW_ICONS_IN_ORDER_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="showiconsineventtitle" type="radio"
+                   default="1"
+                   label="COM_JEM_SHOW_ICONS_IN_EVENT_TITLE"
+                   description="COM_JEM_SHOW_ICONS_IN_EVENT_TITLE_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="showiconsineventdata" type="radio"
+                   default="1"
+                   label="COM_JEM_SHOW_ICONS_IN_EVENT_DATA"
+                   description="COM_JEM_SHOW_ICONS_IN_EVENT_DATA_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="tableorderby" type="radio"
+                   default="0"
+                   label="COM_JEM_TABLE_ORDER_BY"
+                   description="COM_JEM_TABLE_ORDER_BY_DESC"
+                   class="btn-group"
+            >
+                <option value="0">COM_JEM_DATE</option>
+                <option value="1">COM_JEM_TITLE</option>
+                <option value="2">COM_JEM_VENUE</option>
+                <option value="3">COM_JEM_CITY</option>
+                <option value="4">COM_JEM_STATE</option>
+                <option value="5">COM_JEM_CATEGORY</option>
+            </field>
+        <field name="tabledirectionorder" type="radio"
+               default="ASC"
+               label="COM_JEM_TABLE_DIRECTION_ORDER"
+               description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
+               class="btn-group "
+        >
+            <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
+            <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
+        </field>
             <field name="tablefiltereventfrom" type="number"
                    default="0"
                    filter="integer"
@@ -92,7 +92,7 @@
                    validate="number"
                    label="COM_JEM_FILTER_EVENT_FROM"
                    description="COM_JEM_FILTER_EVENT_FROM_DESC"
-  		   class="w-auto" />
+             class="w-auto" />
             <field name="tablefiltereventuntil" type="number"
                    default="0"
                    filter="integer"
@@ -101,98 +101,98 @@
                    validate="number"
                    label="COM_JEM_FILTER_EVENT_UNTIL"
                    description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
-   		   class="w-auto" />
-			<field name="showmonthrow" type="radio"
-				   default="0"
-				   label="COM_JEM_DISPLAY_MONTH_ROW"
-				   description="COM_JEM_DISPLAY_MONTH_ROW_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="tabledirectionorder" type="radio"
-				   default="ASC"
-				   label="COM_JEM_TABLE_DIRECTION_ORDER"
-				   description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
-				   class="btn-group "
-			>
-				<option value="ASC">COM_JEM_ORDER_ASCENDING</option>
-				<option value="DESC">COM_JEM_ORDER_DESCENDING</option>
-			</field>
+              class="w-auto" />
+            <field name="showmonthrow" type="radio"
+                   default="0"
+                   label="COM_JEM_DISPLAY_MONTH_ROW"
+                   description="COM_JEM_DISPLAY_MONTH_ROW_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="tabledirectionorder" type="radio"
+                   default="ASC"
+                   label="COM_JEM_TABLE_DIRECTION_ORDER"
+                   description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
+                   class="btn-group "
+            >
+                <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
+                <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
+            </field>
       <field type="spacer" name="spacer1" hr="true" />
       <field name="introtext" type="editor"
-				filter="safehtml"
-				hide="readmore,pagebreak,module,menu,fields,contact,article"
-				default=""
-				rows="8"
-				cols="30"
-				height="300px"
-				label="COM_JEM_INTROTEXT_FIELD"
-				description="COM_JEM_INTROTEXT_FIELD_DESC"
-			/>
-			<field name="showintrotext" type="radio"
-				default="0"
-				label="COM_JEM_DISPLAY_INTROTEXT"
-				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field type="spacer" name="spacer2" hr="true" />
-			<field name="categoryswitch" type="radio"
-				default="0"
-				label="COM_JEM_CATEGORYSWITCH"
-				description="COM_JEM_CATEGORYSWITCH_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">COM_JEM_INCLUDE</option>
-				<option value="0">COM_JEM_EXCLUDE</option>
-			</field>
-			<field name="categoryswitchcats" type="text"
-				default=""
-				label="COM_JEM_CATEGORYSWITCHCATS"
-				description="COM_JEM_CATEGORYSWITCHCATS_DESC"
-			/>
-			<field name="includesubcategories" type="radio"
-				   default="0"
-				   label="COM_JEM_INCLUDE_SUBCATEGORIES"
-				   description="COM_JEM_INCLUDE_SUBCATEGORIES_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="showopendates" type="list"
-				default="0"
-				label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
-				description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
-			>
-				<option value="0">JNO</option>
-				<option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>
-				<option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
-			</field>
-			<field type="spacer" name="spacer3" hr="true" />
-			<field name="footertext" type="editor"
-				filter="safehtml"
-				hide="readmore,pagebreak,module,menu,fields,contact,article"
-				default=""
-				rows="8"
-				cols="30"
-				height="300px"
-				label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
-				description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
-			/>
-			<field name="showfootertext" type="radio"
-				default="0"
-				label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
-				description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-		</fieldset>
-	</fields>
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field type="spacer" name="spacer2" hr="true" />
+            <field name="categoryswitch" type="radio"
+                default="0"
+                label="COM_JEM_CATEGORYSWITCH"
+                description="COM_JEM_CATEGORYSWITCH_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">COM_JEM_INCLUDE</option>
+                <option value="0">COM_JEM_EXCLUDE</option>
+            </field>
+            <field name="categoryswitchcats" type="text"
+                default=""
+                label="COM_JEM_CATEGORYSWITCHCATS"
+                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+            />
+            <field name="includesubcategories" type="radio"
+                   default="0"
+                   label="COM_JEM_INCLUDE_SUBCATEGORIES"
+                   description="COM_JEM_INCLUDE_SUBCATEGORIES_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="showopendates" type="list"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
+            >
+                <option value="0">JNO</option>
+                <option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>
+                <option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
+            </field>
+            <field type="spacer" name="spacer3" hr="true" />
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+    </fields>
 </metadata>

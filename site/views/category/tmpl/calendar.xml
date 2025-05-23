@@ -1,155 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_TITLE">
-		<message>
-			<![CDATA[COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_DESC]]>
-		</message>
-	</layout>
+    <layout title="COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
 
-	<fields name="request">
-		<fieldset name="request"
-			addfieldpath="/administrator/components/com_jem/models/fields"
-		>
-			<field name="id" type="categories"
-				default=""
-				label="COM_JEM_SELECT_CATEGORY"
-				description="COM_JEM_SELECT_CATEGORY_DESC"
-				required="true"
-			/>
-		</fieldset>
-	</fields>
+    <fields name="request">
+        <fieldset name="request"
+            addfieldpath="/administrator/components/com_jem/models/fields"
+        >
+            <field name="id" type="categories"
+                default=""
+                label="COM_JEM_SELECT_CATEGORY"
+                description="COM_JEM_SELECT_CATEGORY_DESC"
+                required="true"
+            />
+        </fieldset>
+    </fields>
 
-	<fields name="params">
-		<fieldset name="basic">
-			<field name="introtext" type="textarea"
-				filter="safehtml"
-				default=""
-				rows="8"
-				cols="30"
-				label="COM_JEM_INTROTEXT_FIELD"
-				description="COM_JEM_INTROTEXT_FIELD_DESC"
-			/>
-			<field name="showintrotext" type="radio"
-				default="0"
-				label="COM_JEM_DISPLAY_INTROTEXT"
-				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">COM_JEM_SHOW</option>
-				<option value="0">COM_JEM_HIDE</option>
-			</field>
-			<field type="spacer" name="myspacer2" hr="true" />
-			<field name="show_archived_events" type="radio"
-				   default="0"
-				   label="COM_JEM_SHOW_ARCHIVED_EVENTS"
-				   description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="displayLegend" type="list"
-				default="1"
-				label="COM_JEM_DISPLAY_LEGEND"
-				description="COM_JEM_DISPLAY_LEGEND_DESC"
-			>
-				<option value="0">JNO</option>
-				<option value="2">COM_JEM_ABOVE</option>
-				<option value="1">COM_JEM_BELOW</option>
-			</field>
-			<field name="show_only_start" type="radio"
-				default="0"
-				label="COM_JEM_SHOWONLYSTARTDAY"
-				description="COM_JEM_SHOWONLYSTARTDAY_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="firstweekday" type="list"
-				default="1"
-				label="COM_JEM_SELECTFIRSTWEEKDAY"
-				description="COM_JEM_SELECTFIRSTWEEKDAYDESC"
-			>
-				<option value="0">COM_JEM_SUNDAY</option>
-				<option value="1">COM_JEM_MONDAY</option>
-			</field>
-			<field name="daylimit" type="text"
-				default="10"
-				label="COM_JEM_MAX_EVENTS_PER_DAY"
-				description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
-			/>
-			<field name="show_addevent_icon" type="radio"
-				default="0"
-				label="COM_JEM_SHOWADDEVENTICON"
-				description="COM_JEM_SHOWADDEVENTICON_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="show_editevent_icon" type="radio"
-				default="0"
-				label="COM_JEM_SHOWEDITEVENTICON"
-				description="COM_JEM_SHOWEDITEVENTICON_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="show_copyevent_icon" type="radio"
-				default="0"
-				label="COM_JEM_SHOWCOPYEVENTICON"
-				description="COM_JEM_SHOWCOPYEVENTICON_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field type="spacer" name="myspacer3" hr="true" />
-			<field name="eventlinkcolor" type="color"
-				default="#000000"
-				label="COM_JEM_CALENDAR_EVENTLINKCOLOR"
-				description="COM_JEM_CALENDAR_EVENTLINKCOLOR_DESC"
-			/>
-			<field name="eventbackgroundcolor" type="color"
-				default="#FFFF00"
-				label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
-				description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
-			/>
-			<field name="eventbg_usecatcolor" type="radio"
-				default="0"
-				label="COM_JEM_CALENDAR_USECATCOLOR"
-				description="COM_JEM_CALENDAR_USECATCOLOR_DESC"
-				class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="currentdaycolor" type="color"
-				default="#CCCC99"
-				label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
-				description="COM_JEM_CALENDAR_CURRENTDAYCOLOR_DESC"
-			/>
-			<field name="eventandmorecolor" type="color"
-				default="#FFFF00"
-				label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"
-				description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
-			/>
-			<field name="usefeaturedborder" type="radio"
-				   default="0"
-				   label="COM_JEM_CALENDAR_USEFEATUREDBORDER"
-				   description="COM_JEM_CALENDAR_USEFEATUREDBORDER_DESC"
-				   class="btn-group btn-group-yesno"
-			>
-				<option value="1">JYES</option>
-				<option value="0">JNO</option>
-			</field>
-			<field name="featuredbordercolor" type="color"
-				   default="#000080"
-				   label="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR"
-				   description="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR_DESC"
-			/>
-		</fieldset>
-	</fields>
+    <fields name="params">
+        <fieldset name="basic">
+            <field name="introtext" type="textarea"
+                filter="safehtml"
+                default=""
+                rows="8"
+                cols="30"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">COM_JEM_SHOW</option>
+                <option value="0">COM_JEM_HIDE</option>
+            </field>
+            <field type="spacer" name="myspacer2" hr="true" />
+            <field name="show_archived_events" type="radio"
+                   default="0"
+                   label="COM_JEM_SHOW_ARCHIVED_EVENTS"
+                   description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="displayLegend" type="list"
+                default="1"
+                label="COM_JEM_DISPLAY_LEGEND"
+                description="COM_JEM_DISPLAY_LEGEND_DESC"
+            >
+                <option value="0">JNO</option>
+                <option value="2">COM_JEM_ABOVE</option>
+                <option value="1">COM_JEM_BELOW</option>
+            </field>
+            <field name="show_only_start" type="radio"
+                default="0"
+                label="COM_JEM_SHOWONLYSTARTDAY"
+                description="COM_JEM_SHOWONLYSTARTDAY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="firstweekday" type="list"
+                default="1"
+                label="COM_JEM_SELECTFIRSTWEEKDAY"
+                description="COM_JEM_SELECTFIRSTWEEKDAYDESC"
+            >
+                <option value="0">COM_JEM_SUNDAY</option>
+                <option value="1">COM_JEM_MONDAY</option>
+            </field>
+            <field name="daylimit" type="text"
+                default="10"
+                label="COM_JEM_MAX_EVENTS_PER_DAY"
+                description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
+            />
+            <field name="show_addevent_icon" type="radio"
+                default="0"
+                label="COM_JEM_SHOWADDEVENTICON"
+                description="COM_JEM_SHOWADDEVENTICON_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_editevent_icon" type="radio"
+                default="0"
+                label="COM_JEM_SHOWEDITEVENTICON"
+                description="COM_JEM_SHOWEDITEVENTICON_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_copyevent_icon" type="radio"
+                default="0"
+                label="COM_JEM_SHOWCOPYEVENTICON"
+                description="COM_JEM_SHOWCOPYEVENTICON_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field type="spacer" name="myspacer3" hr="true" />
+            <field name="eventlinkcolor" type="color"
+                default="#000000"
+                label="COM_JEM_CALENDAR_EVENTLINKCOLOR"
+                description="COM_JEM_CALENDAR_EVENTLINKCOLOR_DESC"
+            />
+            <field name="eventbackgroundcolor" type="color"
+                default="#FFFF00"
+                label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
+                description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
+            />
+            <field name="eventbg_usecatcolor" type="radio"
+                default="0"
+                label="COM_JEM_CALENDAR_USECATCOLOR"
+                description="COM_JEM_CALENDAR_USECATCOLOR_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="currentdaycolor" type="color"
+                default="#CCCC99"
+                label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
+                description="COM_JEM_CALENDAR_CURRENTDAYCOLOR_DESC"
+            />
+            <field name="eventandmorecolor" type="color"
+                default="#FFFF00"
+                label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"
+                description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
+            />
+            <field name="usefeaturedborder" type="radio"
+                   default="0"
+                   label="COM_JEM_CALENDAR_USEFEATUREDBORDER"
+                   description="COM_JEM_CALENDAR_USEFEATUREDBORDER_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="featuredbordercolor" type="color"
+                   default="#000080"
+                   label="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR"
+                   description="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR_DESC"
+            />
+        </fieldset>
+    </fields>
 </metadata>

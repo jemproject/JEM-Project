@@ -27,108 +27,108 @@ use Joomla\CMS\Object\CMSObject;
 class JemViewImagehandler extends HtmlView
 {
 
-	/**
-	 * Image selection List
-	 */
-	public function display($tpl = null)
-	{
-		$app    = Factory::getApplication();
-		$option = $app->input->getString('option', 'com_jem');
+    /**
+     * Image selection List
+     */
+    public function display($tpl = null)
+    {
+        $app    = Factory::getApplication();
+        $option = $app->input->getString('option', 'com_jem');
 
-		if ($this->getLayout() == 'uploadimage') {
-			$this->_displayuploadimage($tpl);
-			return;
-		}
+        if ($this->getLayout() == 'uploadimage') {
+            $this->_displayuploadimage($tpl);
+            return;
+        }
 
-		//get vars
-		$task   = $app->input->get('task', '');
-		$search = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
-		$search = trim(\Joomla\String\StringHelper::strtolower($search));
+        //get vars
+        $task   = $app->input->get('task', '');
+        $search = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
+        $search = trim(\Joomla\String\StringHelper::strtolower($search));
 
-		//set variables
-		if ($task == 'selecteventimg') {
-			$folder = 'events';
-			$task   = 'eventimg';
-			$redi   = 'selecteventimg';
-		} elseif ($task == 'selectvenueimg') {
-			$folder = 'venues';
-			$task   = 'venueimg';
-			$redi   = 'selectvenueimg';
-		} elseif ($task == 'selectcategoriesimg') {
-			$folder = 'categories';
-			$task   = 'categoriesimg';
-			$redi   = 'selectcategoriesimg';
-		}
+        //set variables
+        if ($task == 'selecteventimg') {
+            $folder = 'events';
+            $task   = 'eventimg';
+            $redi   = 'selecteventimg';
+        } elseif ($task == 'selectvenueimg') {
+            $folder = 'venues';
+            $task   = 'venueimg';
+            $redi   = 'selectvenueimg';
+        } elseif ($task == 'selectcategoriesimg') {
+            $folder = 'categories';
+            $task   = 'categoriesimg';
+            $redi   = 'selectcategoriesimg';
+        }
 
-		$app->input->set('folder', $folder);
+        $app->input->set('folder', $folder);
 
-		// Do not allow cache
-		$app->allowCache(false);
+        // Do not allow cache
+        $app->allowCache(false);
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		
-		// Get images
-		$images = $this->get('images');
-		$pagination = $this->get('Pagination');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        
+        // Get images
+        $images = $this->get('images');
+        $pagination = $this->get('Pagination');
 
-		if ($search || (is_array($images) && (count($images) > 0))) {
-			$this->images     = $images;
-			$this->folder     = $folder;
-			$this->task       = $redi;
-			$this->search     = $search;
-			$this->state      = $this->get('state');
-			$this->pagination = $pagination;
-			parent::display($tpl);
-		} else {
-			//no images in the folder, redirect to uploadscreen and raise notice
-			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
-			$this->setLayout('uploadimage');
-			$app->input->set('task', $task);
-			$this->_displayuploadimage($tpl);
-			return;
-		}
-	}
+        if ($search || (is_array($images) && (count($images) > 0))) {
+            $this->images     = $images;
+            $this->folder     = $folder;
+            $this->task       = $redi;
+            $this->search     = $search;
+            $this->state      = $this->get('state');
+            $this->pagination = $pagination;
+            parent::display($tpl);
+        } else {
+            //no images in the folder, redirect to uploadscreen and raise notice
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
+            $this->setLayout('uploadimage');
+            $app->input->set('task', $task);
+            $this->_displayuploadimage($tpl);
+            return;
+        }
+    }
 
-	public function setImage($index = 0)
-	{
-		if (isset($this->images[$index])) {
-			$this->_tmp_img = $this->images[$index];
-		} else {
-			$this->_tmp_img = new CMSObject;
-		}
-	}
+    public function setImage($index = 0)
+    {
+        if (isset($this->images[$index])) {
+            $this->_tmp_img = $this->images[$index];
+        } else {
+            $this->_tmp_img = new CMSObject;
+        }
+    }
 
-	/**
-	 * Prepares the upload image screen
-	 *
-	 * @param  $tpl
-	 *
-	 */
-	protected function _displayuploadimage($tpl = null)
-	{
-		//initialise variables
-		$uri         =Uri::getInstance();
-		$uri         = $uri->toString();
-		$jemsettings = JemAdmin::config();
+    /**
+     * Prepares the upload image screen
+     *
+     * @param  $tpl
+     *
+     */
+    protected function _displayuploadimage($tpl = null)
+    {
+        //initialise variables
+        $uri         =Uri::getInstance();
+        $uri         = $uri->toString();
+        $jemsettings = JemAdmin::config();
 
-		//get vars
-		$task = Factory::getApplication()->input->get('task', '');
+        //get vars
+        $task = Factory::getApplication()->input->get('task', '');
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();	
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();    
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		$ftp = ClientHelper::setCredentialsFromRequest('ftp');
+        $ftp = ClientHelper::setCredentialsFromRequest('ftp');
 
-		//assign data to template
-		$this->task        = $task;
-		$this->jemsettings = $jemsettings;
-		$this->request_url = $uri;
-		$this->ftp         = $ftp;
+        //assign data to template
+        $this->task        = $task;
+        $this->jemsettings = $jemsettings;
+        $this->request_url = $uri;
+        $this->ftp         = $ftp;
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }
 ?>

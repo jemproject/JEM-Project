@@ -21,8 +21,8 @@ $uri = Uri::getInstance();
     {
         var form = document.getElementById("adminForm");
 
-        form.filter_order.value 	= order;
-        form.filter_order_Dir.value	= dir;
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value    = dir;
         form.submit(view);
     }
 </script>
@@ -235,7 +235,7 @@ function jem_common_show_filter(&$obj) {
 
             <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <div class="jem-event-info-small jem-event-title">
-                    <h4	title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+                    <h4    title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                         <?php if ($this->jemsettings->showdetails == 1) : ?>
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
                             <?php endif; ?>
@@ -271,7 +271,7 @@ function jem_common_show_filter(&$obj) {
 
             <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <div class="jem-event-info-small jem-event-title">
-                    <h4	title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
+                    <h4    title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                         <?php if ($this->jemsettings->showdetails == 1) : ?>
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
                         <?php else : ?>

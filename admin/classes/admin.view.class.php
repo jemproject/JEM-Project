@@ -16,15 +16,15 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class JemAdminView extends HtmlView
 {
-	/**
-	 * Display the view
-	 */
-	public function display($tpl = null)
-	{
-		if (JemSidebarHelper::getEntries()) {
-			$this->sidebar = JemSidebarHelper::render();
-		}
+    /**
+     * Display the view
+     */
+    public function display($tpl = null)
+    {
+        if (JemSidebarHelper::getEntries()) {
+            $this->sidebar = JemSidebarHelper::render();
+        }
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }

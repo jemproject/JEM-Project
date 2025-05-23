@@ -1,8 +1,8 @@
 /*
- *	Gchats color picker by Majid Khosravi
- *	Copyright (c) 2006 - 2008 Gchat Design Studio
- *	URL: https://www.gchats.com
- *	Last Updated: August 29 2009
+ *    Gchats color picker by Majid Khosravi
+ *    Copyright (c) 2006 - 2008 Gchat Design Studio
+ *    URL: https://www.gchats.com
+ *    Last Updated: August 29 2009
  *  Gchats color picker is freely distributable under the terms of GPL license.
  *  Please visit: https://www.gchats.com for updates
  *  @Version 1.2
@@ -235,4 +235,4 @@ function testcolor(color) {
     var sColorText = x < 130 ? '#FFFFFF' : '#000000';
 
     return sColorText;
-}	
+}    

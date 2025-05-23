@@ -25,7 +25,7 @@ Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/component
 $list = ModJemHelper::getList($params);
 // check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {
-	return;
+    return;
 }
 
 // load icon font if needed

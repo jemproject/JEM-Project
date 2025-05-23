@@ -62,19 +62,19 @@ use Joomla\CMS\Router\Route;
 </style>
 
 <script>
-	function tableOrdering(order, dir, view)
-	{
-		var form = document.getElementById("adminForm");
+    function tableOrdering(order, dir, view)
+    {
+        var form = document.getElementById("adminForm");
 
-		form.filter_order.value     = order;
-		form.filter_order_Dir.value = dir;
-		form.submit(view);
-	}
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value = dir;
+        form.submit(view);
+    }
 </script>
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
   <?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
-		<?php if ($this->settings->get('global_show_filter',1)) : ?>
+        <?php if ($this->settings->get('global_show_filter',1)) : ?>
       <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div>
           <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
@@ -87,20 +87,20 @@ use Joomla\CMS\Router\Route;
           <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
           <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
-		<?php if ($this->settings->get('global_display',1)) : ?>
-		<div class="jem-row jem-justify-start jem-nowrap">
-		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>&nbsp;
-		<?php echo $this->pagination->getLimitBox(); ?>
-		</div>
-		<?php endif; ?>		
-		</div>   
-		<?php endif; ?>
+        <?php if ($this->settings->get('global_display',1)) : ?>
+        <div class="jem-row jem-justify-start jem-nowrap">
+        <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>&nbsp;
+        <?php echo $this->pagination->getLimitBox(); ?>
+        </div>
+        <?php endif; ?>        
+        </div>   
+        <?php endif; ?>
   <?php endif; ?>
 
-	<div class="jem-sort jem-sort-small">
+    <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
       <?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
-				<div class="sectiontableheader jem-myvenues-check">
+                <div class="sectiontableheader jem-myvenues-check">
           <input type="checkbox" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </div>
       <?php endif; ?>
@@ -117,16 +117,16 @@ use Joomla\CMS\Router\Route;
     </div>    
   </div>
 
-	<ul class="eventlist">
-		<?php if (count((array)$this->venues) == 0) : ?>
-			<li class="jem-event"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></li>
-		<?php else :?>
-			<?php foreach ($this->venues as $i => $row) : ?>
+    <ul class="eventlist">
+        <?php if (count((array)$this->venues) == 0) : ?>
+            <li class="jem-event"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></li>
+        <?php else :?>
+            <?php foreach ($this->venues as $i => $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
           <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
-				<?php else : ?>
+                <?php else : ?>
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
-				<?php endif; ?>  
+                <?php endif; ?>  
 
             <?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
             <div class="jem-event-info-small jem-myevents-check" >
@@ -146,7 +146,7 @@ use Joomla\CMS\Router\Route;
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
                   <?php endif; ?>                  
-					<?php echo JemOutput::publishstateicon($row); ?>				  
+                    <?php echo JemOutput::publishstateicon($row); ?>                  
                 </div>               
             <?php endif; ?>
 
@@ -172,31 +172,31 @@ use Joomla\CMS\Router\Route;
               <?php endif; ?>
             <?php endif; ?>
 
-					<div class="jem-event-info-small jem-myvenues-status">
-						<?php // Ensure icon is not clickable if user isn't allowed to change state!
-						$enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
-						echo HTMLHelper::_('jgrid.published', $row->published, $i, 'myvenues.', $enabled);
-						?>
-					</div>
+                    <div class="jem-event-info-small jem-myvenues-status">
+                        <?php // Ensure icon is not clickable if user isn't allowed to change state!
+                        $enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
+                        echo HTMLHelper::_('jgrid.published', $row->published, $i, 'myvenues.', $enabled);
+                        ?>
+                    </div>
             </li>
 
-				<?php $i = 1 - $i; ?>
-			<?php endforeach; ?>
-		<?php endif; ?>
-	</ul>
+                <?php $i = 1 - $i; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </ul>
    
     
 
-	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
-	<input type="hidden" name="option" value="com_jem" />
-	<?php echo HTMLHelper::_('form.token'); ?>
+    <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+    <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+    <input type="hidden" name="boxchecked" value="0" />
+    <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
+    <input type="hidden" name="option" value="com_jem" />
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 
 
 <div class="pagination">
-	<?php echo $this->pagination->getPagesLinks(); ?>
+    <?php echo $this->pagination->getPagesLinks(); ?>
 </div>

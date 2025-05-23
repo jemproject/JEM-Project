@@ -52,8 +52,8 @@ $tooltips_max_events = $params->get('tooltips_max_events', 0);
 $Itemid              = $app->input->request->getInt('Itemid', 0);
 
 if($Itemid ==0){
-	
-	$Itemid = $app->getMenu()->getActive()->id;
+    
+    $Itemid = $app->getMenu()->getActive()->id;
 }
 
 # AJAX requires at least J! 3.2.7 (because we use com_ajax)
@@ -62,21 +62,21 @@ $use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');
 # Get switch trigger
 $req_modid = $app->input->getInt('modjemcal_id');
 if ((int)$module->id === $req_modid) {
-	$req_month = $app->input->request->getInt('modjemcal_month');
-	$req_year  = $app->input->request->getInt('modjemcal_year');
+    $req_month = $app->input->request->getInt('modjemcal_month');
+    $req_year  = $app->input->request->getInt('modjemcal_year');
 } else {
-	$req_month = $req_year = 0;
+    $req_month = $req_year = 0;
 }
 
 # Remember which month / year is selected. Don't jump back to today on page change
 if ($Remember == 1) {
-	if ($req_month == 0) {
-		$req_month = $app->getUserState("modjemcal.month.".$module->id);
-		$req_year  = $app->getUserState("modjemcal.year.".$module->id);
-	} else {
-		$app->setUserState("modjemcal.month.".$module->id, $req_month);
-		$app->setUserState("modjemcal.year.".$module->id, $req_year);
-	}
+    if ($req_month == 0) {
+        $req_month = $app->getUserState("modjemcal.month.".$module->id);
+        $req_year  = $app->getUserState("modjemcal.year.".$module->id);
+    } else {
+        $app->setUserState("modjemcal.month.".$module->id, $req_month);
+        $app->setUserState("modjemcal.year.".$module->id, $req_year);
+    }
 }
 
 # Set today
@@ -94,13 +94,13 @@ $offset_month = $req_month + $Month_offset;
 $offset_year  = $req_year;
 
 if ($offset_month < 1) {
-	$offset_month += 12; // Roll over year start
-	--$offset_year;
+    $offset_month += 12; // Roll over year start
+    --$offset_year;
 }
 
 if ($offset_month > 12) {
-	$offset_month -= 12; // Roll over year end
-	++$offset_year;
+    $offset_month -= 12; // Roll over year end
+    ++$offset_year;
 }
 
 # Setting the previous and next month numbers
@@ -109,14 +109,14 @@ $next_month_year = $req_year;
 
 $prev_month = $req_month - 1;
 if ($prev_month < 1) {
-	$prev_month = 12;
-	--$prev_month_year;
+    $prev_month = 12;
+    --$prev_month_year;
 }
 
 $next_month = $req_month + 1;
 if ($next_month > 12) {
-	$next_month = 1;
-	++$next_month_year;
+    $next_month = 1;
+    ++$next_month_year;
 }
 
 $prev_year = $req_year - 1;
@@ -128,11 +128,11 @@ $myurl = $uri->toString(array('query'));
 
 //08/09/09 - Added Fix for sh404sef
 if (empty($myurl)) {
-	$request_link = $uri->toString(array('path')).'?';
+    $request_link = $uri->toString(array('path')).'?';
 } else {
-	# Remove modjemcal params from url
-	$request_link = $uri->toString(array('path')).$myurl;
-	$request_link = preg_replace('/&modjemcal_(month|year|id)=\d+/i', '', $request_link);
+    # Remove modjemcal params from url
+    $request_link = $uri->toString(array('path')).$myurl;
+    $request_link = preg_replace('/&modjemcal_(month|year|id)=\d+/i', '', $request_link);
 }
 
 $ajax_link = Uri::base().'?option=com_ajax&module=jem_cal&format=raw'.'&Itemid='.$Itemid;
@@ -157,10 +157,10 @@ $mod_name = 'mod_jem_cal';
 
 # Add css
 if ($Default_Stylesheet == 1) {
-	JemHelper::loadModuleStyleSheet($mod_name, $mod_name);
+    JemHelper::loadModuleStyleSheet($mod_name, $mod_name);
 } else {
-	$document = $app->getDocument();
-	$document->addStyleSheet(Uri::base() . $User_stylesheet);
+    $document = $app->getDocument();
+    $document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
 

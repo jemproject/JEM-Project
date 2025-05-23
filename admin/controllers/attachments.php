@@ -18,13 +18,13 @@ use Joomla\CMS\MVC\Controller\BaseController;
  */
 class JemControllerAttachments extends BaseController
 {
-	/**
-	 * Constructor
-	 *
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     *
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }
 ?>
