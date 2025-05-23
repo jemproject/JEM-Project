@@ -6,7 +6,7 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  *
- * Country list: https://erikastokes.com/mysql-help/mysql-country-table.php
+ * Country list: https://www.html-code-generator.com/mysql/country-name-table
  * Api country checker: https://api.worldbank.org/countries/ss
  *
  * Lat+long finder: https://www.findlatitudeandlongitude.com/?loc=
