@@ -52,7 +52,7 @@ class JFormFieldModal_Venue extends FormField
         $query->select('venue');
         $query->from('#__jem_venues');
         $query->where(array('id='.(int)$this->value));
-        
+
 
         // if ($error = $db->getErrorMsg()) {
         //  Factory::getApplication()->enqueueMessage($error, 'warning');

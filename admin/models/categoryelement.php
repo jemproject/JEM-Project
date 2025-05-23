@@ -111,7 +111,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
                 // . ' ORDER BY c.parent_id, c.ordering';
                 . $orderby;
 
-        
+
 
         // Check for a database error.
         // if ($db->getErrorNum()) {

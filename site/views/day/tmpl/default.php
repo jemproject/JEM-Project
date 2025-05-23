@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
         <?php echo $this->daydate; ?>
     </h2>
     <?php endif; ?>
-    
+
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>

@@ -1393,7 +1393,7 @@ class JemHelper
                     }
                 }
             }
-            
+
             if ($is_file) {
                 # we do have a valid file so we will use it.
                 // $css = HTMLHelper::_('stylesheet', $file, array(), false);

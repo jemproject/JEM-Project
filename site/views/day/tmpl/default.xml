@@ -59,7 +59,7 @@
                     label="COM_JEM_CATEGORYSWITCHCATS"
                     description="COM_JEM_CATEGORYSWITCHCATS_DESC"
                 />
-                
+
                 <field type="spacer" name="spacer3" hr="true" />
                 <field name="footertext" type="editor"
                     filter="safehtml"

@@ -60,7 +60,7 @@ class JFormFieldVenue extends ListField
             ' FROM #__jem_venues' .
             ' WHERE id = '.(int) $this->value
         );
-        
+
 
         try
         {

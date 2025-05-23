@@ -110,7 +110,7 @@ $location = JemHelper::defineCenterMap($this->form);
 
     // jQuery(function() {
     jQuery(document).ready(function() {
-        
+
             
         jQuery("#geocomplete").geocomplete({
             map: ".map_canvas",
@@ -125,13 +125,13 @@ $location = JemHelper::defineCenterMap($this->form);
             markerOptions: {
                 draggable: true
             }
-            
+
         });
 
         jQuery("#geocomplete").bind('geocode:result', function(){
                 var street = jQuery("#tmp_form_street").val();
                 var route  = jQuery("#tmp_form_route").val();
-                
+
                 if (route) {
                     /* something to add */
                 } else {

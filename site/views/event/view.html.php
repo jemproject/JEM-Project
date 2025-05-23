@@ -503,14 +503,14 @@ class JemViewEvent extends JemView
         if (empty($title)) {
             $title = $this->item->title;
         }
-        
+
         $showDateInTitle = $this->item->params->get('show_date_in_title', $this->jemsettings->show_date_in_title ?? 0);
             if ($showDateInTitle) {
                 // add date to browser title
                 if (!empty($this->item->dates)) {
                     $startDate = JemOutput::formatdate($this->item->dates);
                     $title .= ', ' . $startDate;
-    
+
                     // add end date to browser title, if availaböe
                     if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
                         $endDate = JemOutput::formatdate($this->item->enddates);

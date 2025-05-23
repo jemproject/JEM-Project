@@ -52,7 +52,7 @@ $document->addStyleDeclaration($css);
                 <?php endif; ?>
             </h2>
                 <div class="jem-row-banner <?php echo $banneralignment; ?>">
-                    
+
                 <?php if ($showcalendar == 1) :?>
         <?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
             <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
@@ -66,7 +66,7 @@ $document->addStyleDeclaration($css);
                             style="background-color: <?php echo $item->color; ?>"
             <?php endif; ?>>
                         <?php endif; ?>
-    
+
                         <?php if (isset($item->color_is_dark)) : ?>
         <div class="monthbanner monthcolor-<?php echo !empty($item->color_is_dark) ? 'light' : 'dark'; ?>">
                             <?php else : ?>

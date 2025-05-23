@@ -18,7 +18,7 @@ use Joomla\CMS\Router\Route;
  * View: Venueslist
  */
 
-    
+
 class JemViewVenueslist extends JemView
 {
     public function __construct($config = array())
@@ -28,7 +28,7 @@ class JemViewVenueslist extends JemView
         // additional path for common templates + corresponding override path
         $this->addCommonTemplatePath();
     }    
-    
+
     /**
      * Creates the Venueslist View
      */
@@ -88,7 +88,7 @@ class JemViewVenueslist extends JemView
         $jemsettings->showlocate = 1;
 
         //$filters[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_CHOOSE'));
-        
+
         if ($jemsettings->showlocate == 1) {
             $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         }
@@ -144,7 +144,7 @@ class JemViewVenueslist extends JemView
 
         // Create the pagination object
         // $pagination = $this->get('Pagination');
-        
+
 
         $this->action         = $uri->toString();
         $this->rows           = $rows;

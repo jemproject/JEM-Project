@@ -46,7 +46,7 @@ class JFormFieldCategories extends ListField
         $script[] = '        document.getElementById("'.$this->id.'_name").value = category;';
         // $script[] = '        SqueezeBox.close();';
         $script[] = '        $("#categories-modal").modal("hide");';
-        
+
         $script[] = '    };';
 
         // Add the script to the document head.
@@ -61,7 +61,7 @@ class JFormFieldCategories extends ListField
         $query->select('catname');
         $query->from('#__jem_categories');
         $query->where('id='.(int)$this->value);
-        
+
 
         try
         {

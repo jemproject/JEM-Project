@@ -115,7 +115,7 @@ function jem_common_show_filter(&$obj) {
                 <?php else : ?>
                     <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
                 <?php endif; ?>
-                                                                  
+
                 <?php if (!empty($row->city)) : ?>
                   <div class="jem-event-info-small jem-event-city venue-big" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
                     <?php echo $this->escape($row->city); ?>
@@ -123,7 +123,7 @@ function jem_common_show_filter(&$obj) {
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-city">-</div>
                 <?php endif; ?>
-        
+
                 <?php if ($this->params->get('showstate')) : ?>    
                     <?php if (!empty($row->state)) : ?>
                     <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
@@ -157,7 +157,7 @@ function jem_common_show_filter(&$obj) {
                         <?php echo JemOutput::publishstateicon($row); ?>
                   </div>
                 <?php endif; ?>             
-                
+
 
               <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
               <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />

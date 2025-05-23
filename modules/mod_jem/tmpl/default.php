@@ -77,7 +77,7 @@ $settings = JemHelper::config();
             <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
         </div>
         </div>
-        
+
         </li>
         <?php endforeach; ?>
     </ul>

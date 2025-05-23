@@ -41,7 +41,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php endif; ?>
     </fieldset>
     <?php endif; ?>
-    
+
     <!-- URL -->    
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_URL_LEGEND'); ?></legend>
@@ -49,5 +49,5 @@ use Joomla\CMS\HTML\HTMLHelper;
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
                 </ul>
             </fieldset>    
-    
+
 
