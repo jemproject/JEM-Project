@@ -17,30 +17,30 @@ use Joomla\CMS\Language\Text;
  */
 class JemControllerSampledata extends BaseController
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Process sampledata
-	 */
-	public function load()
-	{
-		$model = $this->getModel('sampledata');
+    /**
+     * Process sampledata
+     */
+    public function load()
+    {
+        $model = $this->getModel('sampledata');
 
-		if (!$model->loadData()) {
-			$msg = Text::_('COM_JEM_SAMPLEDATA_FAILED');
-		} else {
-			$msg = Text::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
-		}
+        if (!$model->loadData()) {
+            $msg = Text::_('COM_JEM_SAMPLEDATA_FAILED');
+        } else {
+            $msg = Text::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
+        }
 
-		$link = 'index.php?option=com_jem&view=main';
+        $link = 'index.php?option=com_jem&view=main';
 
-		$this->setRedirect($link, $msg);
- 	}
+        $this->setRedirect($link, $msg);
+     }
 }
 ?>

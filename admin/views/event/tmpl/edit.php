@@ -180,7 +180,7 @@ $params = $params->toArray();
             </div>
             <div class="floattext" style="margin-left:36px;">
                 <strong><?php echo Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
-                <br>
+                <br />
                 <?php
                 if (!empty($recurr->recurrence_type) && empty($recurr->recurrence_first_id)) {
                     echo nl2br(Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
@@ -319,7 +319,7 @@ $params = $params->toArray();
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('unregistra_until'); ?></div></li>
                                 <?php if($this->jemsettings->regallowinvitation) { ?>
-                                	<li><div class="label-form"><?php echo $this->form->renderfield('reginvitedonly'); ?></div></li>
+                                    <li><div class="label-form"><?php echo $this->form->renderfield('reginvitedonly'); ?></div></li>
                                 <?php } ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('maxplaces'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('minbookeduser'); ?></div></li>
@@ -384,25 +384,25 @@ $params = $params->toArray();
                                 <?php
                                 switch ($recurr->recurrence_type) {
                                     case 1:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                         break;
                                     case 2:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_week;
                                         break;
                                     case 3:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_month;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_month;
                                         break;
                                     case 4:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_week;
                                         break;
                                     case 5:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_year;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_year;
                                         break;
                                     case 6:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_lastday;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_lastday;
                                         break;
                                     default:
-                                        $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+                                        $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                         break;
 
                                 }
@@ -413,7 +413,7 @@ $params = $params->toArray();
                                 ?>
                                 <li id="counter_row" style="display: none;">
                                     <div class="label-form"><?php echo $this->form->renderfield('recurrence_limit_date', null, $recurr->recurrence_limit_date ?? $recurr->recurrence_limit_date); ?></div>
-                                    <br><div><small>
+                                    <br /><div><small>
                                             <?php
                                             echo Text::sprintf(Text::_('COM_JEM_EVENT_NOTICE_GENSHIELD'),$limitdate);
                                             ?></small></div>
@@ -569,9 +569,9 @@ $params = $params->toArray();
                     <div id="meta-event" class="accordion-collapse collapse" aria-labelledby="meta-event-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
                             <fieldset class="panelform">
-                                <input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_EVENT_TITLE' );	?>" />
-                                <input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo Text::_ ( 'COM_JEM_VENUE' );?>" />
-                                <input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
+                                <input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_EVENT_TITLE' );    ?>" />
+                                <input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php    echo Text::_ ( 'COM_JEM_VENUE' );?>" />
+                                <input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php    echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
                                 <input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_STARTDATE' );?>" />
 
                                 <p>
@@ -604,7 +604,7 @@ $params = $params->toArray();
                                     $meta_description = $this->jemsettings->meta_description;
                                 }
                                 ?>
-                                <textarea class="inputbox form-control" name="meta_description" id="meta_description" rows="6" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
+                                <textarea class="inputbox form-control" name="meta_description" id="meta_description" rows="6" cols="40" maxlength="200"    onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
                             </fieldset>
 
                             <fieldset class="panelform">
@@ -624,7 +624,7 @@ $params = $params->toArray();
                                 <!--
                                 starter("<?php
                                     echo Text::_ ( 'COM_JEM_META_ERROR' );
-                                    ?>");	// window.onload is already in use, call the function manualy instead
+                                    ?>");    // window.onload is already in use, call the function manualy instead
                                 -->
                             </script>
                         </div>

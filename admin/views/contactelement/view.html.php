@@ -20,52 +20,52 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class JEMViewContactelement extends HtmlView {
 
-	public function display($tpl = null)
-	{
-		//initialise variables
-		$app = Factory::getApplication();
-		$db			= Factory::getContainer()->get('DatabaseDriver');
-		$document   = $app->getDocument();
+    public function display($tpl = null)
+    {
+        //initialise variables
+        $app = Factory::getApplication();
+        $db            = Factory::getContainer()->get('DatabaseDriver');
+        $document   = $app->getDocument();
 
-		//get vars
-		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter_type 		= $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', 0, 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        //get vars
+        $filter_order        = $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
+        $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+        $filter_type         = $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', 0, 'int');
+        $search             = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
+        $search             = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
-		//prepare document
-		$document->setTitle(Text::_('COM_JEM_SELECTVENUE'));
+        //prepare document
+        $document->setTitle(Text::_('COM_JEM_SELECTVENUE'));
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		// Get data from the model
-		$rows 		= $this->get('Data');
-		$pagination = $this->get('Pagination');
+        // Get data from the model
+        $rows         = $this->get('Data');
+        $pagination = $this->get('Pagination');
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order'] = $filter_order;
 
-		//Build search filter
-		$filters = array();
-		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
-		$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS'));
-		$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
-		$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
-		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+        //Build search filter
+        $filters = array();
+        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_NAME'));
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS'));
+        $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
+        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
+        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
-		// search filter
-		$lists['search']= $search;
+        // search filter
+        $lists['search']= $search;
 
-		//assign data to template
-		$this->lists		= $lists;
-		$this->rows			= $rows;
-		$this->pagination	= $pagination;
+        //assign data to template
+        $this->lists        = $lists;
+        $this->rows            = $rows;
+        $this->pagination    = $pagination;
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }
 ?>

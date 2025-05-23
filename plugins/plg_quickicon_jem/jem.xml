@@ -10,7 +10,7 @@
     <version>4.3.3</version>
     <description>PLG_QUICKICON_JEM_XML_DESCRIPTION</description>
     <namespace path="src">Joomla\Plugin\Quickicon\Jem</namespace>
-	<scriptfile>script.php</scriptfile>
+    <scriptfile>script.php</scriptfile>
     <files>
         <filename plugin="jem">jem.php</filename>
         <filename>script.php</filename>

@@ -15,10 +15,10 @@ use Joomla\CMS\Categories\Categories;
  */
 class JEM2Categories extends Categories
 {
-	public function __construct($options = array())
-	{
-		$options['table'] = '#__jem_categories';
-		$options['extension'] = 'com_jem';
-		parent::__construct($options);
-	}
+    public function __construct($options = array())
+    {
+        $options['table'] = '#__jem_categories';
+        $options['extension'] = 'com_jem';
+        parent::__construct($options);
+    }
 }

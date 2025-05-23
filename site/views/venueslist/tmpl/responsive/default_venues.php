@@ -17,14 +17,14 @@ $uri = Uri::getInstance();
 ?>
 
 <script>
-	function tableOrdering(order, dir, view)
-	{
-		var form = document.getElementById("adminForm");
+    function tableOrdering(order, dir, view)
+    {
+        var form = document.getElementById("adminForm");
 
-		form.filter_order.value 	= order;
-		form.filter_order_Dir.value	= dir;
-		form.submit(view);
-	}
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value    = dir;
+        form.submit(view);
+    }
 </script>
 <style>
 
@@ -72,28 +72,28 @@ function jem_common_show_filter(&$obj) {
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button> 
+      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
-	  	<?php if ($this->settings->get('global_display',1)) : ?>
-	<div class="jem-row jem-justify-start jem-nowrap">
-		<label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
-		<?php echo $this->pagination->getLimitBox(); ?>
-	</div>
-	<?php endif; ?>
+          <?php if ($this->settings->get('global_display',1)) : ?>
+    <div class="jem-row jem-justify-start jem-nowrap">
+        <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
+        <?php echo $this->pagination->getLimitBox(); ?>
+    </div>
+    <?php endif; ?>
   </div>
 
 <?php endif; ?>
 
 <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
-		<div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
 
-		<?php if ($this->params->get('showstate')) : ?>			
+        <?php if ($this->params->get('showstate')) : ?>            
         <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-		<?php endif; ?>
+        <?php endif; ?>
 
         <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-    </div>    
+    </div>
 </div>
 
 <ul class="eventlist">
@@ -108,14 +108,14 @@ function jem_common_show_filter(&$obj) {
         $isSafari = true;
       }
       ?>
-			<?php $this->rows = $this->getRows(); ?>
-			<?php foreach ($this->rows as $row) : ?>
-				<?php if (!empty($row->featured)) :   ?>
-		          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
-				<?php else : ?>
-					<li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
-				<?php endif; ?>  
-  																 
+            <?php $this->rows = $this->getRows(); ?>
+            <?php foreach ($this->rows as $row) : ?>
+                <?php if (!empty($row->featured)) :   ?>
+                  <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
+                <?php else : ?>
+                    <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
+                <?php endif; ?>
+                                                                  
                 <?php if (!empty($row->city)) : ?>
                   <div class="jem-event-info-small jem-event-city venue-big" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
                     <?php echo $this->escape($row->city); ?>
@@ -123,41 +123,41 @@ function jem_common_show_filter(&$obj) {
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-city">-</div>
                 <?php endif; ?>
-		
-				<?php if ($this->params->get('showstate')) : ?>	
-					<?php if (!empty($row->state)) : ?>
-					<div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-						<?php echo $this->escape($row->state); ?>
-					</div>
-					<?php else : ?>
-					<div class="jem-event-info-small jem-event-state">-</div>
-					<?php endif; ?>
+        
+                <?php if ($this->params->get('showstate')) : ?>    
+                    <?php if (!empty($row->state)) : ?>
+                    <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
+                        <?php echo $this->escape($row->state); ?>
+                    </div>
+                    <?php else : ?>
+                    <div class="jem-event-info-small jem-event-state">-</div>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <?php if (!empty($row->locid)) : ?>
                   <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
-  						<?php
-						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-						else :
-							echo $row->id ? $this->escape($row->venue) : '-';
-						 endif; ?> 
-						<?php echo JemOutput::publishstateicon($row); ?>
-					</div>			
+                          <?php
+                        if ($this->jemsettings->showlinkvenue == 1) :
+                            echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+                        else :
+                            echo $row->id ? $this->escape($row->venue) : '-';
+                         endif; ?>
+                        <?php echo JemOutput::publishstateicon($row); ?>
+                    </div>            
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-venue">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
-					  	<?php
-						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-						else :
-							echo $row->id ? $this->escape($row->venue) : '-';
-						 endif; ?> 										 
-						<?php echo JemOutput::publishstateicon($row); ?>
+                          <?php
+                        if ($this->jemsettings->showlinkvenue == 1) :
+                            echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+                        else :
+                            echo $row->id ? $this->escape($row->venue) : '-';
+                         endif; ?>                                         
+                        <?php echo JemOutput::publishstateicon($row); ?>
                   </div>
-                <?php endif; ?> 			  
-				 
+                <?php endif; ?>             
+                
 
               <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
               <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -175,7 +175,7 @@ function jem_common_show_filter(&$obj) {
                 }
                 if (!empty($microadress)) {
                   $microadress .= ', ';
-                }                
+                }
                 if (!empty($row->state)) {
                   $microadress .= $this->escape($row->state);
                 }
@@ -184,12 +184,12 @@ function jem_common_show_filter(&$obj) {
                 }
                 ?>
                 <meta itemprop="address" content="<?php echo $microadress; ?>" />
-              </div>               
+            </div>
         </li>
-			<?php endforeach; ?>
+            <?php endforeach; ?>
   <?php endif; ?>
 </ul>
 
 <div class="pagination">
-	<?php echo $this->pagination->getPagesLinks(); ?>
+    <?php echo $this->pagination->getPagesLinks(); ?>
 </div>

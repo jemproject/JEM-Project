@@ -7,11 +7,11 @@
  */
 
 div#jemmodulejubilee {
-	width: 100%;
+    width: 100%;
 }
 
 div#jemmodulejubilee .jubilee-jem {
-	font-size: smaller;
+    font-size: smaller;
 }
 
 #jemmodulejubilee [class|="calendar"] {
@@ -26,7 +26,7 @@ div#jemmodulejubilee .jubilee-jem {
 }
 
 #jemmodulejubilee span.share {
-	margin-left:95px;
+    margin-left:95px;
 }
 
 #jemmodulejubilee [class|="calendar"] .yearjubilee,
@@ -60,13 +60,13 @@ div#jemmodulejubilee .jubilee-jem {
 }
 
 #jemmodulejubilee span.share {
-	margin-left:95px;
+    margin-left:95px;
 }
 
 #jemmodulejubilee [class|="calendar"] .yearjubilee {
-	font-size: 6px;
-	height:5px;
-	color: #e1e1e1;
+    font-size: 6px;
+    height:5px;
+    color: #e1e1e1;
 }
 
 
@@ -77,50 +77,50 @@ div#jemmodulejubilee .jubilee-jem {
 
 
 div#jemmodulejubilee .eventset {
-	margin-bottom: 10px;
-	padding: 5px;
-	border: 1px dotted silver;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px dotted silver;
     text-align: left;
 }
 
 div#jemmodulejubilee .event-title {
-	padding-left: 0;
-	font-size: x-large;
-	margin: 0 0 5px;
+    padding-left: 0;
+    font-size: x-large;
+    margin: 0 0 5px;
 }
 
 div#jemmodulejubilee .desc {
-	padding-left: 0;
-	padding-top: 2px;
-	font-size: small;
+    padding-left: 0;
+    padding-top: 2px;
+    font-size: small;
 }
 
 div#jemmodulejubilee .time {
-	padding-top: 2px;
-	font-weight: normal;
-	font-size: smaller;
-	float: left;
+    padding-top: 2px;
+    font-weight: normal;
+    font-size: smaller;
+    float: left;
 }
 
 div#jemmodulejubilee div.date {
-	padding-top: 2px;
-	font-weight: normal;
-	font-size: smaller;
-	float: left;
-	margin-right: 4px;
+    padding-top: 2px;
+    font-weight: normal;
+    font-size: smaller;
+    float: left;
+    margin-right: 4px;
 }
 
 div#jemmodulejubilee .category {
-	position: relative;
-	font-size: smaller;
-	float: left;
+    position: relative;
+    font-size: smaller;
+    float: left;
 }
 
 div#jemmodulejubilee .venue-title {
-	position: relative;
-	font-size: smaller;
-	float: left;
-	margin-right: 8px;
+    position: relative;
+    font-size: smaller;
+    float: left;
+    margin-right: 8px;
 }
 
 div#jemmodulejubilee .event-image-cell {
@@ -130,26 +130,26 @@ div#jemmodulejubilee .venue-image-cell {
 }
 
 div#jemmodulejubilee .image-preview {
-	max-width: 110px;
-	border: 0 solid #CCCCCC;
-	padding: 3px;
-	background-color: white;
-	margin: 2px;
+    max-width: 110px;
+    border: 0 solid #CCCCCC;
+    padding: 3px;
+    background-color: white;
+    margin: 2px;
 }
 
 div#jemmodulejubilee .image-preview2 {
-	max-width: 200px;
-	border: 0 solid #CCCCCC;
-	padding: 3px;
-	background-color: white;
-	margin: 2px;
+    max-width: 200px;
+    border: 0 solid #CCCCCC;
+    padding: 3px;
+    background-color: white;
+    margin: 2px;
 }
 
 div#jemmodulejubilee .hr {
-	color: silver;
-	height: 12px;
+    color: silver;
+    height: 12px;
 }
 
 div#jemmodulejubilee .clr {
-	clear: both;
+    clear: both;
 }

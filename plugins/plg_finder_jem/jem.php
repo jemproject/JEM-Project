@@ -318,7 +318,7 @@ class plgFinderJEM extends Adapter
      */
     protected function setup()
     {
-		require_once JPATH_SITE . '/components/com_jem/helpers/route.php';
+        require_once JPATH_SITE . '/components/com_jem/helpers/route.php';
 
         return true;
     }
@@ -337,12 +337,12 @@ class plgFinderJEM extends Adapter
         // Check if we can use the supplied SQL query.
         $sql = $sql instanceof JDatabaseQuery ? $sql : $db->getQuery(true);
 
-// 		$sql->select('a.id, a.title, a.alias, a.introtext AS summary, a.fulltext AS body');
-// 		$sql->select('a.state, a.catid, a.created AS start_date, a.created_by');
-// 		$sql->select('a.created_by_alias, a.modified, a.modified_by, a.attribs AS params');
-// 		$sql->select('a.metakey, a.metadesc, a.metadata, a.language, a.access, a.version, a.ordering');
-// 		$sql->select('a.publish_up AS publish_start_date, a.publish_down AS publish_end_date');
-// 		$sql->select('c.title AS category, c.published AS cat_state, c.access AS cat_access');
+//         $sql->select('a.id, a.title, a.alias, a.introtext AS summary, a.fulltext AS body');
+//         $sql->select('a.state, a.catid, a.created AS start_date, a.created_by');
+//         $sql->select('a.created_by_alias, a.modified, a.modified_by, a.attribs AS params');
+//         $sql->select('a.metakey, a.metadesc, a.metadata, a.language, a.access, a.version, a.ordering');
+//         $sql->select('a.publish_up AS publish_start_date, a.publish_down AS publish_end_date');
+//         $sql->select('c.title AS category, c.published AS cat_state, c.access AS cat_access');
 
         $sql->select('a.id, a.access, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
         $sql->select('a.created AS publish_start_date, a.dates AS start_date, a.enddates AS end_date');

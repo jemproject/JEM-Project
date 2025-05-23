@@ -16,22 +16,22 @@ use Joomla\CMS\MVC\Controller\FormController;
 */
 class JemControllerGroup extends FormController
 {
-	/**
-	 * @var    string  The prefix to use with controller messages.
-	 *
-	 */
-	protected $text_prefix = 'COM_JEM_GROUP';
+    /**
+     * @var    string  The prefix to use with controller messages.
+     *
+     */
+    protected $text_prefix = 'COM_JEM_GROUP';
 
 
-	/**
-	 * Constructor.
-	 *
-	 * @param  array  An optional associative array of configuration settings.
-	 * @see    JController
-	 *
-	 */
-	public function __construct($config = array())
-	{
-		parent::__construct($config);
-	}
+    /**
+     * Constructor.
+     *
+     * @param  array  An optional associative array of configuration settings.
+     * @see    JController
+     *
+     */
+    public function __construct($config = array())
+    {
+        parent::__construct($config);
+    }
 }

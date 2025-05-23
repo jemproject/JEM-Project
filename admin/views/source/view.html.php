@@ -21,56 +21,56 @@ use Joomla\CMS\Client\ClientHelper;
  */
 class JemViewSource extends JemAdminView
 {
-	protected $form;
-	protected $ftp;
-	protected $source;
-	protected $state;
-	protected $template;
+    protected $form;
+    protected $ftp;
+    protected $source;
+    protected $state;
+    protected $template;
 
-	/**
-	 * Display the view
-	 */
-	public function display($tpl = null)
-	{
-		// Initialise variables.
-		$this->form     = $this->get('Form');
-		$this->ftp      = ClientHelper::setCredentialsFromRequest('ftp');
-		$this->source   = $this->get('Source');
-		$this->state    = $this->get('State');
-		$this->template = $this->get('Template');
+    /**
+     * Display the view
+     */
+    public function display($tpl = null)
+    {
+        // Initialise variables.
+        $this->form     = $this->get('Form');
+        $this->ftp      = ClientHelper::setCredentialsFromRequest('ftp');
+        $this->source   = $this->get('Source');
+        $this->state    = $this->get('State');
+        $this->template = $this->get('Template');
 
-		// Check for errors.
-		$errors = $this->get('Errors');
-		if (is_array($errors) && count($errors)) {
-			\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
-			return false;
-		}
+        // Check for errors.
+        $errors = $this->get('Errors');
+        if (is_array($errors) && count($errors)) {
+            \Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+            return false;
+        }
 
-		$this->addToolbar();
-		parent::display($tpl);
-	}
+        $this->addToolbar();
+        parent::display($tpl);
+    }
 
-	/**
-	 * Add the page title and toolbar.
-	 *
-	 */
-	protected function addToolbar()
-	{
-		Factory::getApplication()->input->set('hidemainmenu', true);
+    /**
+     * Add the page title and toolbar.
+     *
+     */
+    protected function addToolbar()
+    {
+        Factory::getApplication()->input->set('hidemainmenu', true);
 
-		$user  = JemFactory::getUser();
-		$canDo = JemHelperBackend::getActions(0);
+        $user  = JemFactory::getUser();
+        $canDo = JemHelperBackend::getActions(0);
 
-		ToolbarHelper::title(Text::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
+        ToolbarHelper::title(Text::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
 
-		// Can save the item.
-		if ($canDo->get('core.edit')) {
-			ToolbarHelper::apply('source.apply');
-			ToolbarHelper::save('source.save');
-		}
+        // Can save the item.
+        if ($canDo->get('core.edit')) {
+            ToolbarHelper::apply('source.apply');
+            ToolbarHelper::save('source.save');
+        }
 
-		ToolbarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
-		ToolbarHelper::divider();
-		ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/css-manager/edit-file');
-	}
+        ToolbarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
+        ToolbarHelper::divider();
+        ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/css-manager/edit-file');
+    }
 }

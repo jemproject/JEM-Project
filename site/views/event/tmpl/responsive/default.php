@@ -127,18 +127,18 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     </dt>
                     <dd class="jem-category">
                         <?php
-                	foreach ((array)$this->categories as $i => $category) {
-        				if ($i > 0) {
-                        		echo ', ';
-        				}
-       					if ($params->get('event_link_category') == 1) {
-            				echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
-        				} else {
-            				echo $this->escape($category->catname);
-            			}
-            		}
-            		echo '</dd>';
-                        	endif;
+                    foreach ((array)$this->categories as $i => $category) {
+                        if ($i > 0) {
+                                echo ', ';
+                        }
+                           if ($params->get('event_link_category') == 1) {
+                            echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+                        } else {
+                            echo $this->escape($category->catname);
+                        }
+                    }
+                    echo '</dd>';
+                            endif;
 
                     for ($cr = 1; $cr <= 10; $cr++) {
                         $currentRow = $this->item->{'custom'.$cr};
@@ -222,22 +222,19 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
                         $link1 = Route::_('index.php?option=com_users&view=login');
                         $link = new Uri($link1);
-                        echo '<p class="readmore">';
-                        echo '<a href="'.$link.'">';
+                        echo '<p class="readmore"><a href="'.$link.'">';
                         if ($params->get('event_alternative_readmore') == false) {
                             echo Text::_('COM_JEM_EVENT_REGISTER_TO_READ_MORE');
                         } elseif ($readmore = $params->get('alternative_readmore')) {
                             echo $readmore;
                         }
-
                         if ($params->get('event_show_readmore_title', 0) != 0) {
                             echo HTMLHelper::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
                         } elseif ($params->get('event_show_readmore_title', 0) == 0) {
                         } else {
                             echo HTMLHelper::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
                         } ?>
-                        </a>
-                        </p>
+                        </a></p>
                         <?php
                     }
                 } /* access_view / show_noauth */

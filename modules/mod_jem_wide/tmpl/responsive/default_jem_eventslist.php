@@ -51,21 +51,21 @@ $css = '
   #jemmodulewide .jem-list-img {
     width: ' . $imagewidth . ';
   }
-  
+
   #jemmodulewide .jem-list-img img {
     width: ' . $imagewidth . ';
     height: ' . $imageheight . ';
   }
-  
+
   @media not print {
-    @media only all and (max-width: 47.938rem) {  
+    @media only all and (max-width: 47.938rem) {
       #jemmodulewide .jem-event-details {
         flex-basis: 100%;
       }
-      
+    
       #jemmodulewide .jem-list-img img {
-      	width: ' . $imagewidth . ';
-      	height: ' . $imageheight . ';
+          width: ' . $imagewidth . ';
+          height: ' . $imageheight . ';
       }
     }
   }';
@@ -172,9 +172,9 @@ $document->addStyleDeclaration($css);
                 $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                 $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                 echo '<script>lightbox.option({
-							\'showImageNumberLabel\': false,
-							})
-							</script>';
+                            \'showImageNumberLabel\': false,
+                            })
+                            </script>';
             } else {
                 $image = '';
             } ?>

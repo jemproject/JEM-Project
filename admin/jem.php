@@ -19,7 +19,7 @@ require_once (JPATH_COMPONENT_SITE.'/factory.php');
 
 
 if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
-	Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+    Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
 }
 
 // Require classes

@@ -12,32 +12,32 @@ use Joomla\CMS\Language\Text;
 ?>
 
 <fieldset class="adminform" title="<?php echo Text::_('COM_JEM_CSSMANAGER_FTP_TITLE'); ?>">
-	<legend><?php echo Text::_('COM_JEM_CSSMANAGER_FTP_TITLE'); ?></legend>
+    <legend><?php echo Text::_('COM_JEM_CSSMANAGER_FTP_TITLE'); ?></legend>
 
-	<?php echo Text::_('COM_JEM_CSSMANAGER_FTP_DESC'); ?>
+    <?php echo Text::_('COM_JEM_CSSMANAGER_FTP_DESC'); ?>
 
-	<?php if ($this->ftp instanceof Exception): ?>
-		<p class="error"><?php echo Text::_($this->ftp->message); ?></p>
-	<?php endif; ?>
+    <?php if ($this->ftp instanceof Exception): ?>
+        <p class="error"><?php echo Text::_($this->ftp->message); ?></p>
+    <?php endif; ?>
 
-	<table class="adminform">
-		<tbody>
-			<tr>
+    <table class="adminform">
+        <tbody>
+            <tr>
                 <td style="width:120px">
-					<label for="username"><?php echo Text::_('JGLOBAL_USERNAME'); ?></label>
-				</td>
-				<td>
-					<input type="text" id="username" name="username" class="inputbox" size="70" value="" />
-				</td>
-			</tr>
-			<tr>
+                    <label for="username"><?php echo Text::_('JGLOBAL_USERNAME'); ?></label>
+                </td>
+                <td>
+                    <input type="text" id="username" name="username" class="inputbox" size="70" value="" />
+                </td>
+            </tr>
+            <tr>
                 <td style="width:120px">
-					<label for="password"><?php echo Text::_('JGLOBAL_PASSWORD'); ?></label>
-				</td>
-				<td>
-					<input type="password" id="password" name="password" class="inputbox" size="70" value="" />
-				</td>
-			</tr>
-		</tbody>
-	</table>
+                    <label for="password"><?php echo Text::_('JGLOBAL_PASSWORD'); ?></label>
+                </td>
+                <td>
+                    <input type="password" id="password" name="password" class="inputbox" size="70" value="" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </fieldset>

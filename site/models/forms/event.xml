@@ -2,12 +2,12 @@
 <form>
     <fieldset name="details">
         <field name="articletext" type="editor"
-		class="inputbox"
-		label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION"
-		description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
-		filter="\Joomla\CMS\Component\ComponentHelper::filterText"
-		hide="pagebreak"
-	/>
+        class="inputbox"
+        label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION"
+        description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
+        filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+        hide="pagebreak"
+    />
         <field name="featured" class="inputbox" type="list"
                label="JFEATURED"
                description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
@@ -155,7 +155,7 @@
                 description="JFIELD_ACCESS_DESC"
                 class="inputbox"
                 size="1"
-	/>
+    />
     </fieldset>
 
     <fieldset name="request">

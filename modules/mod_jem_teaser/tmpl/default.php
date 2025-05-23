@@ -37,26 +37,26 @@ if ($params->get('use_modal', 0)) {
             <table>
                 <tr>
                     <td class="event-calendar">
-        				<?php if ($showcalendar == 1) :?>
-							<?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
-								<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-               						<div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
-               						<div class="lower-background"></div>
-               						<div class="background-image"></div>
-               					<?php else: ?>
+                        <?php if ($showcalendar == 1) :?>
+                            <?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
+                                <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+                                       <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+                                       <div class="lower-background"></div>
+                                       <div class="background-image"></div>
+                                   <?php else: ?>
         <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar"
              title="<?php echo strip_tags($item->dateinfo); ?>">
     <?php endif; ?>
 
-          <div class="monthteaser<?php 
-    echo isset($item->color_is_dark) 
-        ? ($item->color_is_dark === 1 
-            ? ' monthcolor-light">' 
-            : ($item->color_is_dark === 0 
-                ? ' monthcolor-dark">' 
+          <div class="monthteaser<?php
+    echo isset($item->color_is_dark)
+        ? ($item->color_is_dark === 1
+            ? ' monthcolor-light">'
+            : ($item->color_is_dark === 0
+                ? ' monthcolor-dark">'
                 : '">'))
         : '">';
-    	echo $item->startdate['month']; ?>
+        echo $item->startdate['month']; ?>
             </div>
             <div class="dayteaser">
               <?php echo $item->startdate['weekday']; ?>
@@ -65,7 +65,7 @@ if ($params->get('use_modal', 0)) {
               <?php echo $item->startdate['day']; ?>
             </div>
           </div>
-        <?php endif; ?>                        
+        <?php endif; ?>
                     </td>
                     <td class="event-info">
                         <div class="teaser-jem">
@@ -88,14 +88,14 @@ if ($params->get('use_modal', 0)) {
             <div>
             <?php if($item->showdescriptionevent): ?>
               <div class="jem-description-teaser" itemprop="description">
-              	<?php echo $item->eventdescription;
-              		if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-              		echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
+                  <?php echo $item->eventdescription;
+                      if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+                      echo '<a class="readmore" style="padding-left: 10px;" href="'.$item->link.'">'.$item->linkText.'</a>';
                 endif; ?>
             </div>
             <?php endif; ?>
         </div>
-	</div>
+    </div>
                     </td>
                 </tr>
                 <tr>
@@ -111,15 +111,15 @@ if ($params->get('use_modal', 0)) {
                             </div>
                         <?php endif;
                         echo $item->dateschema; ?>
-      			<div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-      				<meta itemprop="name" content="<?php echo $item->venue; ?>" />
-      				<div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-      					<meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-      					<meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-      					<meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-      					<meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-      				</div>
-          		</div>
+                  <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                      <meta itemprop="name" content="<?php echo $item->venue; ?>" />
+                      <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
+                          <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                          <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                          <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                          <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                      </div>
+                  </div>
                     </td>
                     <td class="event-vencat">
                         <?php if (!empty($item->venue)) : ?>

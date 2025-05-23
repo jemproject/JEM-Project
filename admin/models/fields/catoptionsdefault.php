@@ -56,7 +56,7 @@ class JFormFieldCatOptionsDefault extends ListField
         $currentid = $jinput->getInt('id');
 
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query	= $db->getQuery(true);
+        $query    = $db->getQuery(true);
         $query = 'SELECT value FROM #__jem_config WHERE keyname = "defaultCategory"';
         $db->setQuery($query);
         $selectedcats = $db->loadColumn();

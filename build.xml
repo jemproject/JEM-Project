@@ -1,160 +1,160 @@
 <!DOCTYPE project> <!-- For Eclipse -->
 <project name="JEM" default="build" basedir=".">
-	<description>Ant Build File for JEM by diesl. Based on Ant build file by Evan Fillman (mole84)</description>
+    <description>Ant Build File for JEM by diesl. Based on Ant build file by Evan Fillman (mole84)</description>
 
-	<!-- load variables from config file -->
-	<property name="cfg.configFile" location="build.config" />
-	<loadproperties srcfile="${cfg.configFile}" />
-	
-	<!-- load variables from package xml file -->
-	<buildnumber file ="build.number" />
-	<xmlproperty file="package/pkg_${cfg.name}.xml" prefix="pkg" keepRoot="false" />
+    <!-- load variables from config file -->
+    <property name="cfg.configFile" location="build.config" />
+    <loadproperties srcfile="${cfg.configFile}" />
+    
+    <!-- load variables from package xml file -->
+    <buildnumber file ="build.number" />
+    <xmlproperty file="package/pkg_${cfg.name}.xml" prefix="pkg" keepRoot="false" />
 
-	<!-- auto values but should be checked -->
-	<property name="cfg.comName" value="com_${cfg.name}" />
-	<property name="cfg.comDir" value="${basedir}" /><!-- /${cfg.versionDir}/${cfg.comName} -->
-	<property name="cfg.buildVersionDir" value="${cfg.buildDir}" /><!-- /${cfg.versionDir} -->
-	<property name="cfg.adminFilesDir" location="${cfg.comDir}/admin" />
-	<property name="cfg.siteFilesDir" location="${cfg.comDir}/site" />
-	<property name="cfg.version" value="${pkg.version}.${build.number}" />
+    <!-- auto values but should be checked -->
+    <property name="cfg.comName" value="com_${cfg.name}" />
+    <property name="cfg.comDir" value="${basedir}" /><!-- /${cfg.versionDir}/${cfg.comName} -->
+    <property name="cfg.buildVersionDir" value="${cfg.buildDir}" /><!-- /${cfg.versionDir} -->
+    <property name="cfg.adminFilesDir" location="${cfg.comDir}/admin" />
+    <property name="cfg.siteFilesDir" location="${cfg.comDir}/site" />
+    <property name="cfg.version" value="${pkg.version}.${build.number}" />
 
-	<target name="build" depends="clean, init, build_package, info" />
+    <target name="build" depends="clean, init, build_package, info" />
 
-	<target name="init" description="creates nessecary directory to build with">
-		<mkdir dir="${cfg.buildVersionDir}" />
-		<mkdir dir="${cfg.buildVersionDir}/plugins" />
-		<mkdir dir="${cfg.buildVersionDir}/modules" />
-		<mkdir dir="${cfg.buildVersionDir}/components" />
-		<mkdir dir="${cfg.buildVersionDir}/3rd" />
-	</target>
+    <target name="init" description="creates nessecary directory to build with">
+        <mkdir dir="${cfg.buildVersionDir}" />
+        <mkdir dir="${cfg.buildVersionDir}/plugins" />
+        <mkdir dir="${cfg.buildVersionDir}/modules" />
+        <mkdir dir="${cfg.buildVersionDir}/components" />
+        <mkdir dir="${cfg.buildVersionDir}/3rd" />
+    </target>
 
-	<target name="build_package" depends="build_plugins, build_modules, build_component" description="packages the final package file">
-		<zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip">
-			<zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
-			<zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages">
-				<exclude name="plg_quickicon_${cfg.name}.zip" />
-			</zipfileset>
-			<zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages">
-				<exclude name="mod_${cfg.name}_calajax.zip" />
-			</zipfileset>
-			<zipfileset dir="package" />
-		</zip>
-	</target>
+    <target name="build_package" depends="build_plugins, build_modules, build_component" description="packages the final package file">
+        <zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip">
+            <zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
+            <zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages">
+                <exclude name="plg_quickicon_${cfg.name}.zip" />
+            </zipfileset>
+            <zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages">
+                <exclude name="mod_${cfg.name}_calajax.zip" />
+            </zipfileset>
+            <zipfileset dir="package" />
+        </zip>
+    </target>
 
-	<target name="build_component" description="packages the final component file">
-		<zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
-			<exclude name="${cfg.buildDir}/**" />
-			<exclude name=".settings/**" />
-			<exclude name=".*" />
-			<exclude name="build.*" />
-			<exclude name="3rd/**" />
-			<exclude name="modules/**" />
-			<exclude name="package/**" />
-			<exclude name="plugins/**" />
-		</zip>
-	</target>
+    <target name="build_component" description="packages the final component file">
+        <zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
+            <exclude name="${cfg.buildDir}/**" />
+            <exclude name=".settings/**" />
+            <exclude name=".*" />
+            <exclude name="build.*" />
+            <exclude name="3rd/**" />
+            <exclude name="modules/**" />
+            <exclude name="package/**" />
+            <exclude name="plugins/**" />
+        </zip>
+    </target>
 
-	<target name="build_plugins" description="packages any plugins">
-		<!-- add all plugin directories here -->
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_search_${cfg.name}.zip" basedir="plugins/plg_search_${cfg.name}" />
-	</target>
+    <target name="build_plugins" description="packages any plugins">
+        <!-- add all plugin directories here -->
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_search_${cfg.name}.zip" basedir="plugins/plg_search_${cfg.name}" />
+    </target>
 
-	<target name="build_modules" description="packages any modules">
-		<!-- add all module directories here -->
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner" />
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_calajax.zip" basedir="modules/mod_${cfg.name}_calajax" />
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee" />
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
-		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
-	</target>
+    <target name="build_modules" description="packages any modules">
+        <!-- add all module directories here -->
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_calajax.zip" basedir="modules/mod_${cfg.name}_calajax" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
+    </target>
 
-	<target name="build_3rd" description="packages any 3rd party plugins">
-		<!-- add all 3rd party plugins directories here -->
-		<zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}" />
-		<zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending" />
-		<zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents" />
-		<zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/" />
-	</target>
+    <target name="build_3rd" description="packages any 3rd party plugins">
+        <!-- add all 3rd party plugins directories here -->
+        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending" />
+        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents" />
+        <zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/" />
+    </target>
 
-	<!--
-	<target name="build_debug" description="builds any debug plugins or code">
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_toolbox.zip" basedir="${cfg.versionDir}/billets_plugin_toolbox" />
-		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_debug.zip" basedir="${cfg.versionDir}/billets_plugin_debug" />
-	</target>
-	-->
+    <!--
+    <target name="build_debug" description="builds any debug plugins or code">
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_toolbox.zip" basedir="${cfg.versionDir}/billets_plugin_toolbox" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_debug.zip" basedir="${cfg.versionDir}/billets_plugin_debug" />
+    </target>
+    -->
 
-	<target name="info" description="prints information">
-		<echo message="Project:			${cfg.name}" />
-		<echo message="Version:			${cfg.version}" />
-		<tstamp>
-			<format property="buildtime" pattern="yyyy-MM-dd'T'HH:mm:ss" />
-		</tstamp>
-		<echo message="Buildtime:	${buildtime}" />
-	</target>
+    <target name="info" description="prints information">
+        <echo message="Project:            ${cfg.name}" />
+        <echo message="Version:            ${cfg.version}" />
+        <tstamp>
+            <format property="buildtime" pattern="yyyy-MM-dd'T'HH:mm:ss" />
+        </tstamp>
+        <echo message="Buildtime:    ${buildtime}" />
+    </target>
 
-	<target name="clean" description="Destroys all generated files and dirs.">
-		<delete dir="${cfg.buildVersionDir}" />
-		<delete dir="${cfg.buildDir}" />
-		<delete file="${cfg.xmlfile}" />
-	</target>
+    <target name="clean" description="Destroys all generated files and dirs.">
+        <delete dir="${cfg.buildVersionDir}" />
+        <delete dir="${cfg.buildDir}" />
+        <delete file="${cfg.xmlfile}" />
+    </target>
 
-	<target name="update_localhost" depends="info" description="attemps to update files on localhost server with files from working directory">
-		<copy todir="${cfg.localhostRoot}/administrator/components/${cfg.comName}" overwrite="true">
-			<fileset dir="${cfg.adminFilesDir}" />
-			<fileset file="${cfg.comDir}/${cfg.name}.xml" />
-			<fileset file="${cfg.comDir}/script.php" />
-		</copy>
-		<copy todir="${cfg.localhostRoot}/components/${cfg.comName}" overwrite="true">
-			<fileset dir="${cfg.siteFilesDir}" />
-		</copy>
-		<copy todir="${cfg.localhostRoot}/media/${cfg.comName}">
-			<fileset dir="${cfg.comDir}/media/" />
-		</copy>
-	</target>
+    <target name="update_localhost" depends="info" description="attemps to update files on localhost server with files from working directory">
+        <copy todir="${cfg.localhostRoot}/administrator/components/${cfg.comName}" overwrite="true">
+            <fileset dir="${cfg.adminFilesDir}" />
+            <fileset file="${cfg.comDir}/${cfg.name}.xml" />
+            <fileset file="${cfg.comDir}/script.php" />
+        </copy>
+        <copy todir="${cfg.localhostRoot}/components/${cfg.comName}" overwrite="true">
+            <fileset dir="${cfg.siteFilesDir}" />
+        </copy>
+        <copy todir="${cfg.localhostRoot}/media/${cfg.comName}">
+            <fileset dir="${cfg.comDir}/media/" />
+        </copy>
+    </target>
 
-	<target name="upload" description="attempts to upload build file to ftp server">
-		<fileset id="ftp.upload.fileset" dir="${cfg.buildVersionDir}">
-			<include name="*.zip" />
-		</fileset>
+    <target name="upload" description="attempts to upload build file to ftp server">
+        <fileset id="ftp.upload.fileset" dir="${cfg.buildVersionDir}">
+            <include name="*.zip" />
+        </fileset>
 
-		<echo>FTP target is ${ftp.server}</echo>
-		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" action="put" remotedir="${ftp.dir}" passive="yes">
-			<fileset refid="ftp.upload.fileset" />
-		</ftp>
-	</target>
+        <echo>FTP target is ${ftp.server}</echo>
+        <ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" action="put" remotedir="${ftp.dir}" passive="yes">
+            <fileset refid="ftp.upload.fileset" />
+        </ftp>
+    </target>
 
-	<target name="build_xml" description="builds an xml listing of all the files in the working copy">
-		<fileset id="site" dir="${cfg.siteFilesDir}" />
-		<echo message="${line.separator}&lt;files folder=&quot;site&quot;&gt;${line.separator}&lt;filename&gt;" file="${cfg.xmlfile}" append="false" />
-		<echo-fileset filesetref="site" />
-		<echo message="&lt;/filename&gt;${line.separator}&lt;/files&gt;${line.separator}" file="${cfg.xmlfile}" append="true" />
+    <target name="build_xml" description="builds an xml listing of all the files in the working copy">
+        <fileset id="site" dir="${cfg.siteFilesDir}" />
+        <echo message="${line.separator}&lt;files folder=&quot;site&quot;&gt;${line.separator}&lt;filename&gt;" file="${cfg.xmlfile}" append="false" />
+        <echo-fileset filesetref="site" />
+        <echo message="&lt;/filename&gt;${line.separator}&lt;/files&gt;${line.separator}" file="${cfg.xmlfile}" append="true" />
 
-		<fileset id="admin" dir="${cfg.adminFilesDir}" />
-		<echo message="${line.separator}&lt;files folder=&quot;admin&quot;&gt;${line.separator}&lt;filename&gt;" file="${cfg.xmlfile}" append="true" />
-		<echo-fileset filesetref="admin" />
-		<echo message="&lt;/filename&gt;${line.separator}&lt;/files&gt;${line.separator}" file="${cfg.xmlfile}" append="true" />
+        <fileset id="admin" dir="${cfg.adminFilesDir}" />
+        <echo message="${line.separator}&lt;files folder=&quot;admin&quot;&gt;${line.separator}&lt;filename&gt;" file="${cfg.xmlfile}" append="true" />
+        <echo-fileset filesetref="admin" />
+        <echo message="&lt;/filename&gt;${line.separator}&lt;/files&gt;${line.separator}" file="${cfg.xmlfile}" append="true" />
 
-		<replace file="${cfg.xmlfile}" token="${cfg.siteFilesDir}/" value="" />
-		<replace file="${cfg.xmlfile}" token="${cfg.adminFilesDir}/" value="" />
-	</target>
+        <replace file="${cfg.xmlfile}" token="${cfg.siteFilesDir}/" value="" />
+        <replace file="${cfg.xmlfile}" token="${cfg.adminFilesDir}/" value="" />
+    </target>
 
-	<macrodef name="echo-fileset" description="creates a printable directory listing">
-		<attribute name="filesetref" />
-		<sequential>
-			<pathconvert pathsep="&lt;/filename&gt;${line.separator}&lt;filename&gt;" property="@{filesetref}.echopath">
-				<path>
-					<fileset refid="@{filesetref}" />
-				</path>
-			</pathconvert>
-			<echo message="${@{filesetref}.echopath}" file="${cfg.xmlfile}" append="true" />
-		</sequential>
-	</macrodef>
+    <macrodef name="echo-fileset" description="creates a printable directory listing">
+        <attribute name="filesetref" />
+        <sequential>
+            <pathconvert pathsep="&lt;/filename&gt;${line.separator}&lt;filename&gt;" property="@{filesetref}.echopath">
+                <path>
+                    <fileset refid="@{filesetref}" />
+                </path>
+            </pathconvert>
+            <echo message="${@{filesetref}.echopath}" file="${cfg.xmlfile}" append="true" />
+        </sequential>
+    </macrodef>
 </project>

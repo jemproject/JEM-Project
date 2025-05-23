@@ -18,63 +18,63 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class JemViewEventelement extends Htmlview {
 
-	public function display($tpl = null)
-	{
-		$app = Factory::getApplication();
+    public function display($tpl = null)
+    {
+        $app = Factory::getApplication();
 
-		//initialise variables
-		$user        = JemFactory::getUser();
-		$db          = Factory::getContainer()->get('DatabaseDriver');
-		$jemsettings = JEMAdmin::config();
-		$document    = $app->getDocument();
-		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+        //initialise variables
+        $user        = JemFactory::getUser();
+        $db          = Factory::getContainer()->get('DatabaseDriver');
+        $jemsettings = JEMAdmin::config();
+        $document    = $app->getDocument();
+        $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		//get var
-		$filter_order     = $app->getUserStateFromRequest('com_jem.eventelement.filter_order',     'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter_type      = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_type',   'filter_type', 0, 'int');
-		$filter_state     = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state',  'filter_state', '', 'string');
-		$filter_search    = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
+        //get var
+        $filter_order     = $app->getUserStateFromRequest('com_jem.eventelement.filter_order',     'filter_order', 'a.dates', 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+        $filter_type      = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_type',   'filter_type', 0, 'int');
+        $filter_state     = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state',  'filter_state', '', 'string');
+        $filter_search    = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+        $filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
 
-		//prepare the document
-		$document->setTitle(Text::_('COM_JEM_SELECTEVENT'));
+        //prepare the document
+        $document->setTitle(Text::_('COM_JEM_SELECTEVENT'));
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		//Get data from the model
-		$rows = $this->get('Data');
-		$pagination = $this->get('Pagination');
+        //Get data from the model
+        $rows = $this->get('Data');
+        $pagination = $this->get('Pagination');
 
-		//publish unpublished filter
-		//$lists['state']	= HTMLHelper::_('grid.state', $filter_state);
+        //publish unpublished filter
+        //$lists['state']    = HTMLHelper::_('grid.state', $filter_state);
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order'] = $filter_order;
 
-		//Create the filter selectlist
-		$filters = array();
-		$filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_EVENT_TITLE'));
-		$filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
-		$filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
-		//$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
-		$lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+        //Create the filter selectlist
+        $filters = array();
+        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_EVENT_TITLE'));
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
+        $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
+        //$filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
+        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
-		// search filter
-		$lists['search']= $filter_search;
+        // search filter
+        $lists['search']= $filter_search;
 
-		//assign data to template
-		$this->lists 		= $lists;
-		$this->filter_state = $filter_state;
-		$this->rows 		= $rows;
-		$this->pagination 	= $pagination;
-		$this->jemsettings 	= $jemsettings;
-		$this->user 		= $user;
+        //assign data to template
+        $this->lists         = $lists;
+        $this->filter_state = $filter_state;
+        $this->rows         = $rows;
+        $this->pagination     = $pagination;
+        $this->jemsettings     = $jemsettings;
+        $this->user         = $user;
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }
 ?>

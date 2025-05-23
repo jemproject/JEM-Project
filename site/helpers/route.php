@@ -20,299 +20,299 @@ require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
  * based on Joomla ContentHelperRoute
  *
  * @static
- * @package		JEM
+ * @package        JEM
  *
  */
 abstract class JEMHelperRoute
 {
-	protected static $lookup;
-	const ARTIFICALID = 0;
+    protected static $lookup;
+    const ARTIFICALID = 0;
 
-	/**
-	 * Determines an JEM Link
-	 *
-	 * @param int The id of an JEM item
-	 * @param string The view
-	 * @param string The category of the item
-	 * @deprecated Use specific Route methods instead!
-	 *
-	 * @return string determined Link
-	 */
-	public static function getRoute($id, $view = 'event', $category = null)
-	{
-		
-		// Deprecation warning.
-		Log::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', Log::WARNING, 'deprecated');
+    /**
+     * Determines an JEM Link
+     *
+     * @param int The id of an JEM item
+     * @param string The view
+     * @param string The category of the item
+     * @deprecated Use specific Route methods instead!
+     *
+     * @return string determined Link
+     */
+    public static function getRoute($id, $view = 'event', $category = null)
+    {
+        
+        // Deprecation warning.
+        Log::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', Log::WARNING, 'deprecated');
 
-		$needles = array(
-			$view => array((int) $id)
-		);
+        $needles = array(
+            $view => array((int) $id)
+        );
 
-		if ($item = self::_findItem($needles)) {
-			$link = 'index.php?Itemid='.$item;
-		}
-		else {
-			// Create the link
-			$link = 'index.php?option=com_jem&view='.$view.'&id='. $id;
+        if ($item = self::_findItem($needles)) {
+            $link = 'index.php?Itemid='.$item;
+        }
+        else {
+            // Create the link
+            $link = 'index.php?option=com_jem&view='.$view.'&id='. $id;
 
-			// Add category, if available
-			if(!is_null($category)) {
-				$link .= '&catid='.$category;
-			}
+            // Add category, if available
+            if(!is_null($category)) {
+                $link .= '&catid='.$category;
+            }
 
-			if ($item = self::_findItem($needles)) {
-				$link .= '&Itemid='.$item;
-			}
-			elseif ($item = self::_findItem()) {
-				$link .= '&Itemid='.$item;
-			}
-		}
+            if ($item = self::_findItem($needles)) {
+                $link .= '&Itemid='.$item;
+            }
+            elseif ($item = self::_findItem()) {
+                $link .= '&Itemid='.$item;
+            }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 
-	public static function getCategoryRoute($id, $task = '')
-	{
-		$settings 		= JEMHelper::globalattribs();
-		$defaultItemid 	= $settings->get('default_Itemid');
+    public static function getCategoryRoute($id, $task = '')
+    {
+        $settings         = JEMHelper::globalattribs();
+        $defaultItemid     = $settings->get('default_Itemid');
 
-		$needles = array(
-			'category' => array((int) $id)
-		);
+        $needles = array(
+            'category' => array((int) $id)
+        );
 
-		// Create the link
-		$link = 'index.php?option=com_jem&view=category&id='. $id;
+        // Create the link
+        $link = 'index.php?option=com_jem&view=category&id='. $id;
 
-		// If no category view works try categories
-		$needles['categories'] = array(self::ARTIFICALID);
+        // If no category view works try categories
+        $needles['categories'] = array(self::ARTIFICALID);
 
-		$category = new JEMCategories($id);
-		if($category) {
-			$needles['categories'] = array_reverse($category->getPath());
-		}
+        $category = new JEMCategories($id);
+        if($category) {
+            $needles['categories'] = array_reverse($category->getPath());
+        }
 
-		if (!empty($task)) {
-			$link .= '&task='.$task;
-		}
+        if (!empty($task)) {
+            $link .= '&task='.$task;
+        }
 
-		if ($item = self::_findItem($needles)) {
-			$link .= '&Itemid='.$item;
-		}
-		elseif ($item = self::_findItem()) {
-			if (isset($defaultItemid))
-				{
-					$link .= '&Itemid='.$defaultItemid;
-				}
-		}
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid='.$item;
+        }
+        elseif ($item = self::_findItem()) {
+            if (isset($defaultItemid))
+                {
+                    $link .= '&Itemid='.$defaultItemid;
+                }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 
-	public static function getEventRoute($id, $catid = null)
-	{
-		$settings 		= JEMHelper::globalattribs();
-		$defaultItemid 	= $settings->get('default_Itemid');
+    public static function getEventRoute($id, $catid = null)
+    {
+        $settings         = JEMHelper::globalattribs();
+        $defaultItemid     = $settings->get('default_Itemid');
 
-		$needles = array(
-			'event' => array((int) $id)
-		);
+        $needles = array(
+            'event' => array((int) $id)
+        );
 
-		// Create the link
-		$link = 'index.php?option=com_jem&view=event&id='. $id;
+        // Create the link
+        $link = 'index.php?option=com_jem&view=event&id='. $id;
 
-		// Add category, if available
-		if(!is_null($catid)) {
-			// TODO
-			//$needles['categories'] = $needles['category'];
-			$link .= '&catid='.$catid;
-		}
+        // Add category, if available
+        if(!is_null($catid)) {
+            // TODO
+            //$needles['categories'] = $needles['category'];
+            $link .= '&catid='.$catid;
+        }
 
-		if ($item = self::_findItem($needles)) {
-			$link .= '&Itemid='.$item;
-		}
-		elseif ($item = self::_findItem()) {
-			// $link .= '&Itemid='.$item;
-			if (isset($defaultItemid))
-				{
-					$link .= '&Itemid='.$defaultItemid;
-				}
-		}
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid='.$item;
+        }
+        elseif ($item = self::_findItem()) {
+            // $link .= '&Itemid='.$item;
+            if (isset($defaultItemid))
+                {
+                    $link .= '&Itemid='.$defaultItemid;
+                }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 
-	public static function getVenueRoute($id)
-	{
-		$settings 		= JEMHelper::globalattribs();
-		$defaultItemid 	= $settings->get('default_Itemid');
+    public static function getVenueRoute($id)
+    {
+        $settings         = JEMHelper::globalattribs();
+        $defaultItemid     = $settings->get('default_Itemid');
 
-		$needles = array(
-			'venue' => array((int) $id)
-		);
+        $needles = array(
+            'venue' => array((int) $id)
+        );
 
-		// Create the link
-		$link = 'index.php?option=com_jem&view=venue&id='. $id;
+        // Create the link
+        $link = 'index.php?option=com_jem&view=venue&id='. $id;
 
-		// If no venue view works try venues
-		$needles['venues'] = array(self::ARTIFICALID);
+        // If no venue view works try venues
+        $needles['venues'] = array(self::ARTIFICALID);
 
-		if ($item = self::_findItem($needles)) {
-			$link .= '&Itemid='.$item;
-		}
-		elseif ($item = self::_findItem()) {
-			if (isset($defaultItemid))
-				{
-					$link .= '&Itemid='.$defaultItemid;
-				}
-		}
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid='.$item;
+        }
+        elseif ($item = self::_findItem()) {
+            if (isset($defaultItemid))
+                {
+                    $link .= '&Itemid='.$defaultItemid;
+                }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 
-	protected static function getRouteWithoutId($my)
-	{
-		$settings 		= JEMHelper::globalattribs();
-		$defaultItemid 	= $settings->get('default_Itemid');
+    protected static function getRouteWithoutId($my)
+    {
+        $settings         = JEMHelper::globalattribs();
+        $defaultItemid     = $settings->get('default_Itemid');
 
-		$needles = array();
-		$needles[$my] = array(self::ARTIFICALID);
+        $needles = array();
+        $needles[$my] = array(self::ARTIFICALID);
 
-		// Create the link
-		$link = 'index.php?option=com_jem&view='.$my;
+        // Create the link
+        $link = 'index.php?option=com_jem&view='.$my;
 
-		if ($item = self::_findItem($needles)) {
-			$link .= '&Itemid='.$item;
-		}
-		elseif ($item = self::_findItem()) {
-			if (isset($defaultItemid))
-				{
-					$link .= '&Itemid='.$defaultItemid;
-				} else {
-					$link .= '&Itemid='.$item;
-				}
-		}
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid='.$item;
+        }
+        elseif ($item = self::_findItem()) {
+            if (isset($defaultItemid))
+                {
+                    $link .= '&Itemid='.$defaultItemid;
+                } else {
+                    $link .= '&Itemid='.$item;
+                }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 
-	public static function getMyAttendancesRoute()
-	{
-		return self::getRouteWithoutId('myattendances');
-	}
+    public static function getMyAttendancesRoute()
+    {
+        return self::getRouteWithoutId('myattendances');
+    }
 
-	public static function getMyEventsRoute()
-	{
-		return self::getRouteWithoutId('myevents');
-	}
+    public static function getMyEventsRoute()
+    {
+        return self::getRouteWithoutId('myevents');
+    }
 
-	public static function getMyVenuesRoute()
-	{
-		return self::getRouteWithoutId('myvenues');
-	}
+    public static function getMyVenuesRoute()
+    {
+        return self::getRouteWithoutId('myvenues');
+    }
 
 
-	/**
-	 * Determines the Itemid
-	 *
-	 * searches if a menuitem for this item exists
-	 * if not the active menuitem will be returned
-	 *
-	 * @param array The id and view
-	 *
-	 *
-	 * @return int Itemid
-	 */
-	protected static function _findItem($needles = null)
-	{
-		$app = Factory::getApplication();
-		$menus = $app->getMenu('site');
+    /**
+     * Determines the Itemid
+     *
+     * searches if a menuitem for this item exists
+     * if not the active menuitem will be returned
+     *
+     * @param array The id and view
+     *
+     *
+     * @return int Itemid
+     */
+    protected static function _findItem($needles = null)
+    {
+        $app = Factory::getApplication();
+        $menus = $app->getMenu('site');
 
-		// Prepare the reverse lookup array.
-		if (self::$lookup === null) {
-			self::$lookup = array();
+        // Prepare the reverse lookup array.
+        if (self::$lookup === null) {
+            self::$lookup = array();
 
-			$component = ComponentHelper::getComponent('com_jem');
-			$items = $menus->getItems('component_id', $component->id);
+            $component = ComponentHelper::getComponent('com_jem');
+            $items = $menus->getItems('component_id', $component->id);
 
-			if ($items) {
-				foreach ($items as $item)
-				{
-					if (isset($item->query) && isset($item->query['view'])) {
-						if (isset($item->query['layout']) && ($item->query['layout'] == 'calendar')) {
-							continue; // skip calendars
-						}
+            if ($items) {
+                foreach ($items as $item)
+                {
+                    if (isset($item->query) && isset($item->query['view'])) {
+                        if (isset($item->query['layout']) && ($item->query['layout'] == 'calendar')) {
+                            continue; // skip calendars
+                        }
 
-						$view = $item->query['view'];
+                        $view = $item->query['view'];
 
-						if (!isset(self::$lookup[$view])) {
-							self::$lookup[$view] = array();
-						}
+                        if (!isset(self::$lookup[$view])) {
+                            self::$lookup[$view] = array();
+                        }
 
-						if (isset($item->query['id'])) {
-							self::$lookup[$view][$item->query['id']] = $item->id;
-						}
-						// Some views have no ID, but we have to set one
-						else {
-							self::$lookup[$view][self::ARTIFICALID] = $item->id;
-						}
-					}
-				}
-			}
-		}
+                        if (isset($item->query['id'])) {
+                            self::$lookup[$view][$item->query['id']] = $item->id;
+                        }
+                        // Some views have no ID, but we have to set one
+                        else {
+                            self::$lookup[$view][self::ARTIFICALID] = $item->id;
+                        }
+                    }
+                }
+            }
+        }
 
-		if ($needles) {
-			foreach ($needles as $view => $ids)
-			{
-				if (isset(self::$lookup[$view])) {
-					foreach($ids as $id)
-					{
-						if (isset(self::$lookup[$view][(int)$id])) {
-							// TODO: Check on access. See commented code below
-							return self::$lookup[$view][(int)$id];
-						}
-					}
-				}
-			}
-		}
-		else {
-			$active = $menus->getActive();
-			if ($active) {
-				return $active->id;
-			}
-		}
+        if ($needles) {
+            foreach ($needles as $view => $ids)
+            {
+                if (isset(self::$lookup[$view])) {
+                    foreach($ids as $id)
+                    {
+                        if (isset(self::$lookup[$view][(int)$id])) {
+                            // TODO: Check on access. See commented code below
+                            return self::$lookup[$view][(int)$id];
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            $active = $menus->getActive();
+            if ($active) {
+                return $active->id;
+            }
+        }
 
-		return null;
+        return null;
 
-// 		$user = JemFactory::getUser();
+//         $user = JemFactory::getUser();
 
-// 		//false if there exists no menu item at all
-// 		if (!$items) {
-// 			return false;
-// 		} else {
-// 			//Not needed currently but kept because of a possible hierarchic link structure in future
-// 			foreach($needles as $needle => $id)
-// 			{
-// 				foreach($items as $item)
-// 				{
-// 					if (($item->query['view'] == $needle) && ($item->query['id'] == $id)) {
-// 						return $item;
-// 					}
-// 				}
+//         //false if there exists no menu item at all
+//         if (!$items) {
+//             return false;
+//         } else {
+//             //Not needed currently but kept because of a possible hierarchic link structure in future
+//             foreach($needles as $needle => $id)
+//             {
+//                 foreach($items as $item)
+//                 {
+//                     if (($item->query['view'] == $needle) && ($item->query['id'] == $id)) {
+//                         return $item;
+//                     }
+//                 }
 
-// 				/*
-// 				//no menuitem exists -> return first possible match
-// 				foreach($items as $item)
-// 				{
-// 					if ($item->published == 1 && $item->access <= $gid) {
-// 						return $item;
-// 					}
-// 				}
-// 				*/
-// 			}
-// 		}
+//                 /*
+//                 //no menuitem exists -> return first possible match
+//                 foreach($items as $item)
+//                 {
+//                     if ($item->published == 1 && $item->access <= $gid) {
+//                         return $item;
+//                     }
+//                 }
+//                 */
+//             }
+//         }
 
-// 		return false;
-	}
+//         return false;
+    }
 }
 ?>
 

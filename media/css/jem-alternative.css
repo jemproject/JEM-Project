@@ -69,7 +69,7 @@ div#jem fieldset {
 }
 
 /* -------------------
-	GENERAL
+    GENERAL
 --------------------- */
 div#jem {
     overflow: hidden;
@@ -447,7 +447,7 @@ div#jem table.eventtable td {
 
 div#jem table.eventtable td a {
     background-color: transparent;
-    /*	color:#095197; */
+    /*    color:#095197; */
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {
@@ -464,21 +464,21 @@ div#jem table.eventtable tr.featured td {
 
 /* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
 div#jem table.eventtable tr td span.jem_date-2 {
-	font-weight: bold;
+    font-weight: bold;
 }
 /**/
 
 /* activate these two rules to replace the linebreak by a space * /
 div#jem table.eventtable tr td br.jem_break-2 {
-	display: none;
+    display: none;
 }
 div#jem table.eventtable tr td span.jem_date-2::after {
-	content: " ";
+    content: " ";
 }
 /**/
 
 /* -------------------
-	FILTER
+    FILTER
 --------------------- */
 div#jem #jem_filter {
     margin: 1em 0 0.5em 0;

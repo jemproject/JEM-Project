@@ -28,30 +28,30 @@ use Joomla\CMS\Date\Date;
             <div id="counter_row" style="display: none;">
                 <?php echo $this->form->getLabel('recurrence_limit_date'); ?>
                 <?php echo $this->form->getInput('recurrence_limit_date', null, $this->item->recurrence_limit_date); ?>
-                <br>
+                <br />
                 <div class="recurrence_notice"><small>
                         <?php
                         switch ($this->item->recurrence_type) {
                             case 1:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                 break;
                             case 2:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_week;
                                 break;
                             case 3:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_month;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_month;
                                 break;
                             case 4:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_week;
                                 break;
                             case 5:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_year;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_year;
                                 break;
                             case 6:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_lastday;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_lastday;
                                 break;
                             default:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                 break;
 
                         }
@@ -242,7 +242,7 @@ use Joomla\CMS\Date\Date;
                 <dd><?php echo $this->form->getInput('minbookeduser'); ?></dd>
                 <dt><?php echo $this->form->getLabel('maxbookeduser'); ?></dt>
                 <dd><?php echo $this->form->getInput('maxbookeduser'); ?></dd>
-                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br></dt>
+                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br /></dt>
                 <dd><?php echo $this->form->getInput('reservedplaces'); ?></dd>
                 <dt><?php echo $this->form->getLabel('waitinglist'); ?></dt>
                 <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
@@ -257,7 +257,7 @@ use Joomla\CMS\Date\Date;
                     <dt><?php echo $this->form->getLabel('invited'); ?></dt>
                     <dd><?php echo $this->form->getInput('invited'); ?></dd>
                 <?php endif; ?>
-                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br></dt>
+                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br /></dt>
                 <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
                 <?php if ($this->item->maxplaces) : ?>
                     <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>

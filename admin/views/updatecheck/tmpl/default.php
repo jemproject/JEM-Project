@@ -111,7 +111,7 @@ use Joomla\CMS\Router\Route;
         <br />
         <?php if (isset($this->sidebar)) : ?>
     </div>
-		<?php endif; ?>
+        <?php endif; ?>
 
     <input type="hidden" name="task" value="" />
     <?php echo HTMLHelper::_('form.token'); ?>

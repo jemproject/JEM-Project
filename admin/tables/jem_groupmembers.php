@@ -18,20 +18,20 @@ use Joomla\CMS\Table\Table;
  */
 class jem_groupmembers extends Table
 {
-	/**
-	 * Primary Key
-	 * @var int
-	 */
-	public $id = null;
-	/** @var int */
-	public $group_id = null;
-	/** @var int */
-	public $member = null;
+    /**
+     * Primary Key
+     * @var int
+     */
+    public $id = null;
+    /** @var int */
+    public $group_id = null;
+    /** @var int */
+    public $member = null;
 
 
-	public function __construct(& $db)
-	{
-		parent::__construct('#__jem_groupmembers', 'id', $db);
-	}
+    public function __construct(& $db)
+    {
+        parent::__construct('#__jem_groupmembers', 'id', $db);
+    }
 }
 ?>

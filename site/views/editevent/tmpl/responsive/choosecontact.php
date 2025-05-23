@@ -18,25 +18,25 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
 ?>
 
 <script>
-	function tableOrdering( order, dir, view )
-	{
-		var form = document.getElementById("adminForm");
+    function tableOrdering( order, dir, view )
+    {
+        var form = document.getElementById("adminForm");
 
-		form.filter_order.value 	= order;
-		form.filter_order_Dir.value	= dir;
-		form.submit( view );
-	}
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value    = dir;
+        form.submit( view );
+    }
 </script>
 
 <div id="jem" class="jem_select_contact">
-	<h1 class='componentheading'>
-		<?php echo Text::_('COM_JEM_SELECT_CONTACT'); ?>
-	</h1>
+    <h1 class='componentheading'>
+        <?php echo Text::_('COM_JEM_SELECT_CONTACT'); ?>
+    </h1>
 
-	<div class="clr"></div>
+    <div class="clr"></div>
 
-	<form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
-		<div class="jem-row valign-baseline">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+        <div class="jem-row valign-baseline">
       <div id="jem_filter" class="jem-form jem-row jem-justify-start">
         <div>
           <?php
@@ -87,8 +87,8 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
             
             <div class="jem-event-info-small jem-contact-name">
               <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip selectcontact'); ?>>
-								 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
-							</span>
+                                 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
+                            </span>
             </div>
             
             <div class="jem-event-info-small jem-contact-city">
@@ -103,15 +103,15 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectContact
       <?php endif; ?>
     </ul>
     
-		<input type="hidden" name="task" value="selectcontact" />
-		<input type="hidden" name="option" value="com_jem" />
-		<input type="hidden" name="tmpl" value="component" />
-		<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
-		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-	</form>
+        <input type="hidden" name="task" value="selectcontact" />
+        <input type="hidden" name="option" value="com_jem" />
+        <input type="hidden" name="tmpl" value="component" />
+        <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
+        <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+    </form>
 
-	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
+    <div class="pagination">
+        <?php echo $this->pagination->getPagesLinks(); ?>
+    </div>
 </div>

@@ -27,7 +27,7 @@ $list = ModJemWideHelper::getList($params);
 
 // check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {
-	return;
+    return;
 }
 
 $mod_name = 'mod_jem_wide';

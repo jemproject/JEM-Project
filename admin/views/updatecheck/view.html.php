@@ -22,34 +22,34 @@ use Joomla\CMS\Factory;
 class JemViewUpdatecheck extends JemAdminView
 {
 
-	public function display($tpl = null)
-	{
-		//Get data from the model
-		$updatedata      	= $this->get('Updatedata');
+    public function display($tpl = null)
+    {
+        //Get data from the model
+        $updatedata          = $this->get('Updatedata');
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();	
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();    
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		//assign data to template
-		$this->updatedata	= $updatedata;
+        //assign data to template
+        $this->updatedata    = $updatedata;
 
-		// add toolbar
-		$this->addToolbar();
+        // add toolbar
+        $this->addToolbar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 
 
-	/**
-	 * Add Toolbar
-	 */
-	protected function addToolbar()
-	{
-		ToolbarHelper::title(Text::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
+    /**
+     * Add Toolbar
+     */
+    protected function addToolbar()
+    {
+        ToolbarHelper::title(Text::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
 
-		ToolbarHelper::back();
-		ToolbarHelper::divider();
+        ToolbarHelper::back();
+        ToolbarHelper::divider();
         ToolBarHelper::help('update', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/check-update');
-	}
+    }
 }

@@ -21,25 +21,25 @@ use Joomla\CMS\Uri\Uri;
                 type="button"><?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?></button>
 
     <?php } else { ?>
-	<div class="buttons">
-		<?php
-		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
-		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
-		?>
-	</div>
+    <div class="buttons">
+        <?php
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        ?>
+    </div>
 
-	<?php if ($this->params->get('show_page_heading', 1)) : ?>
-		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_heading')); ?>
-		</h1>
-	<?php endif; ?>
+    <?php if ($this->params->get('show_page_heading', 1)) : ?>
+        <h1 class="componentheading">
+            <?php echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
+    <?php endif; ?>
 
-	<!--table-->
-	<?php echo $this->loadTemplate('venues');?>
+    <!--table-->
+    <?php echo $this->loadTemplate('venues');?>
 
-	<!--footer-->
-	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
-	</div>
+    <!--footer-->
+    <div class="copyright">
+        <?php echo JEMOutput::footer( ); ?>
+    </div>
     <?php } ?>
 </div>

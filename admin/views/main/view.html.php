@@ -21,82 +21,82 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 class JemViewMain extends JemAdminView
 {
 
-	public function display($tpl = null)
-	{
-		//Load pane behavior
-		jimport('joomla.html.pane');
+    public function display($tpl = null)
+    {
+        //Load pane behavior
+        jimport('joomla.html.pane');
 
-		//initialise variables
+        //initialise variables
         $app = Factory::getApplication();
         $document = $app->getDocument();
-		$user     = JemFactory::getUser();
+        $user     = JemFactory::getUser();
 
-		// Get data from the model
-		$events   = $this->get('EventsData');
-		$venue    = $this->get('VenuesData');
-		$category = $this->get('CategoriesData');
+        // Get data from the model
+        $events   = $this->get('EventsData');
+        $venue    = $this->get('VenuesData');
+        $category = $this->get('CategoriesData');
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		//assign vars to the template
-		$this->events   = $events;
-		$this->venue    = $venue;
-		$this->category = $category;
-		$this->user     = $user;
+        //assign vars to the template
+        $this->events   = $events;
+        $this->venue    = $venue;
+        $this->category = $category;
+        $this->user     = $user;
 
-		// add toolbar
-		$this->addToolbar();
+        // add toolbar
+        $this->addToolbar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 
-	/**
-	 * Add Toolbar
-	 */
-	protected function addToolbar()
-	{
-		ToolbarHelper::title(Text::_('COM_JEM_MAIN_TITLE'), 'home');
+    /**
+     * Add Toolbar
+     */
+    protected function addToolbar()
+    {
+        ToolbarHelper::title(Text::_('COM_JEM_MAIN_TITLE'), 'home');
 
-		if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-			ToolbarHelper::preferences('com_jem');
-		}
+        if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+            ToolbarHelper::preferences('com_jem');
+        }
 
         ToolBarHelper::divider();
         ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
-	}
+    }
 
-	/**
-	 * Creates the buttons view
-	 *
-	 * @param  string  $link  targeturl
-	 * @param  string  $image path to image
-	 * @param  string  $text  image description
-	 * @param  boolean $modal 1 for loading in modal
-	 */
-	protected function quickiconButton($link, $image, $text, $modal = 0)
-	{
-		// Initialise variables
-		$lang = Factory::getApplication()->getLanguage();
-		?>
-		<div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
-			<div class="icon">
-				<?php if ($modal == 1) : ?>
-					<a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
-							rel="{handler: 'iframe', size: {x: 650, y: 400}}">
-						<?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
-						<span><?php echo $text; ?></span>
-					</a>
-				<?php else : ?>
-					<a href="<?php echo $link; ?>">
-						<?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
-						<span><?php echo $text; ?></span>
-					</a>
-				<?php endif; ?>
-			</div>
-		</div>
-		<?php
-	}
+    /**
+     * Creates the buttons view
+     *
+     * @param  string  $link  targeturl
+     * @param  string  $image path to image
+     * @param  string  $text  image description
+     * @param  boolean $modal 1 for loading in modal
+     */
+    protected function quickiconButton($link, $image, $text, $modal = 0)
+    {
+        // Initialise variables
+        $lang = Factory::getApplication()->getLanguage();
+        ?>
+        <div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
+            <div class="icon">
+                <?php if ($modal == 1) : ?>
+                    <a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
+                            rel="{handler: 'iframe', size: {x: 650, y: 400}}">
+                        <?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
+                        <span><?php echo $text; ?></span>
+                    </a>
+                <?php else : ?>
+                    <a href="<?php echo $link; ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
+                        <span><?php echo $text; ?></span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
+    }
 }
 ?>

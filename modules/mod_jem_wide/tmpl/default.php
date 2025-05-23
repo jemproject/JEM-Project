@@ -34,12 +34,12 @@ use Joomla\CMS\Uri\Uri;
                     <td style="vertical-align: top;">
                         <?php if ($item->eventlink) : ?>
                             <span class="event-title" itemprop="name">
-					<a href="<?php echo $item->eventlink; ?>" itemprop="url" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
-				</span>
+                    <a href="<?php echo $item->eventlink; ?>" itemprop="url" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
+                </span>
                         <?php else : ?>
                             <span class="event-title" itemprop="name">
-					<?php echo $item->title; ?>
-				</span>
+                    <?php echo $item->title; ?>
+                </span>
                         <?php endif; ?>
                         <br />
                         <span class="date" title="<?php echo strip_tags($item->dateinfo); ?>"><?php echo $item->date; ?></span>
@@ -80,9 +80,9 @@ use Joomla\CMS\Uri\Uri;
                         $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                         echo '<script>lightbox.option({
-							\'showImageNumberLabel\': false,
-							})
-							</script>';
+                            \'showImageNumberLabel\': false,
+                            })
+                            </script>';
                     } else {
                         $image = '';
                     } ?>

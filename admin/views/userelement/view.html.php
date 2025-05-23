@@ -22,47 +22,47 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class JEMViewUserElement extends HtmlView {
 
-	public function display($tpl = null)
-	{
-		$app = Factory::getApplication();
+    public function display($tpl = null)
+    {
+        $app = Factory::getApplication();
 
-		// initialise variables
-		$app = Factory::getApplication();
-		$document = $app->getDocument();
-		$jemsettings = JEMAdmin::config();
-		$db = Factory::getContainer()->get('DatabaseDriver');
+        // initialise variables
+        $app = Factory::getApplication();
+        $document = $app->getDocument();
+        $jemsettings = JEMAdmin::config();
+        $db = Factory::getContainer()->get('DatabaseDriver');
 
-		// get var
-		$filter_order		= $app->getUserStateFromRequest('com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$search 			= $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        // get var
+        $filter_order        = $app->getUserStateFromRequest('com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd');
+        $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+        $search             = $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string');
+        $search             = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
-		// prepare the document
-		$document->setTitle(Text::_('COM_JEM_SELECTATTENDEE'));
-		
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-		// Get data from the model
-		$users			= $this->get('Data');
-		$pagination 	= $this->get('Pagination');
+        // prepare the document
+        $document->setTitle(Text::_('COM_JEM_SELECTATTENDEE'));
+        
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Get data from the model
+        $users            = $this->get('Data');
+        $pagination     = $this->get('Pagination');
 
-		// build selectlists
-		$lists = array();
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
-		// search filter
-		$lists['search']= $search;
+        // build selectlists
+        $lists = array();
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order'] = $filter_order;
+        // search filter
+        $lists['search']= $search;
 
-		// assign data to template
-		$this->lists		= $lists;
-		$this->rows			= $users;
-		$this->jemsettings	= $jemsettings;
-		$this->pagination	= $pagination;
+        // assign data to template
+        $this->lists        = $lists;
+        $this->rows            = $users;
+        $this->jemsettings    = $jemsettings;
+        $this->pagination    = $pagination;
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }
 ?>

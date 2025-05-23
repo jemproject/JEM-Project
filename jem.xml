@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
-	<name>com_jem</name>
-	<creationDate>May 2025</creationDate>
-	<author>JEM Community</author>
-	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-	<version>4.3.3</version>
-	<description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
+    <name>com_jem</name>
+    <creationDate>May 2025</creationDate>
+    <author>JEM Community</author>
+    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.3.3</version>
+    <description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
-	<scriptfile>script.php</scriptfile>
+    <scriptfile>script.php</scriptfile>
 
-	<files folder="site">
-		<filename>jem.php</filename>
-		<filename>controller.php</filename>
-		<filename>factory.php</filename>
-		<filename>router.php</filename>
-		<filename>index.html</filename>
+    <files folder="site">
+        <filename>jem.php</filename>
+        <filename>controller.php</filename>
+        <filename>factory.php</filename>
+        <filename>router.php</filename>
+        <filename>index.html</filename>
 
-		<folder>services</folder>
-		<folder>classes</folder>
-		<folder>common</folder>
-		<folder>controllers</folder>
-		<folder>helpers</folder>
-		<folder>models</folder>
-		<folder>views</folder>
-		<folder>language</folder>
-	</files>
+        <folder>services</folder>
+        <folder>classes</folder>
+        <folder>common</folder>
+        <folder>controllers</folder>
+        <folder>helpers</folder>
+        <folder>models</folder>
+        <folder>views</folder>
+        <folder>language</folder>
+    </files>
 
-	<media folder="media" destination="com_jem">
-		<filename>index.html</filename>
-		<folder>images</folder>
-		<folder>css</folder>
-		<folder>js</folder>
-	</media>
+    <media folder="media" destination="com_jem">
+        <filename>index.html</filename>
+        <folder>images</folder>
+        <folder>css</folder>
+        <folder>js</folder>
+    </media>
 
-	<install>
-		<sql>
-			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
-		</sql>
-	</install>
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
 
-	<uninstall>
-		<sql>
-			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
-		</sql>
-	</uninstall>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
 
-	<update>
-		<schemas>
-			<schemapath type="mysql">sql/updates/mysql</schemapath>
-		</schemas>
-	</update>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
 
-	<administration>
-		<menu img="../media/com_jem/images/jem.png" link="option=com_jem">COM_JEM</menu>
+    <administration>
+        <menu img="../media/com_jem/images/jem.png" link="option=com_jem">COM_JEM</menu>
 
-		<submenu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=main">COM_JEM_MENU_MAINMENU</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=events">COM_JEM_MENU_EVENTS</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=venues">COM_JEM_MENU_VENUES</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
-		</submenu>
+        <submenu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=main">COM_JEM_MENU_MAINMENU</menu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=events">COM_JEM_MENU_EVENTS</menu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=venues">COM_JEM_MENU_VENUES</menu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
+            <menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
+        </submenu>
 
-		<files folder="admin">
-			<filename>jem.php</filename>
-			<filename>controller.php</filename>
-			<filename>access.xml</filename>
-			<filename>config.xml</filename>
-			<filename>index.html</filename>
+        <files folder="admin">
+            <filename>jem.php</filename>
+            <filename>controller.php</filename>
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <filename>index.html</filename>
 
-			<folder>assets</folder>
-			<folder>classes</folder>
-			<folder>help</folder>
-			<folder>helpers</folder>
-			<folder>views</folder>
-			<folder>models</folder>
-			<folder>controllers</folder>
-			<folder>sql</folder>
-			<folder>tables</folder>
-			<folder>language</folder>
-		</files>
-	</administration>
-	
+            <folder>assets</folder>
+            <folder>classes</folder>
+            <folder>help</folder>
+            <folder>helpers</folder>
+            <folder>views</folder>
+            <folder>models</folder>
+            <folder>controllers</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>language</folder>
+        </files>
+    </administration>
+    
 </extension>

@@ -19,40 +19,40 @@ use Joomla\CMS\Factory;
 class JemViewHousekeeping extends JemAdminView
 {
 
-	public function display($tpl = null) {
+    public function display($tpl = null) {
 
-		$app = Factory::getApplication();
-		$user = $app->getIdentity();
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
 
-		$this->totalcats = $this->get('Countcats');
+        $this->totalcats = $this->get('Countcats');
 
-		//only admins have access to this view
-		if (!$user->authorise('core.manage', 'com_jem')) {
-			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-			$app->redirect('index.php?option=com_jem&view=main');
-		}
+        //only admins have access to this view
+        if (!$user->authorise('core.manage', 'com_jem')) {
+            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+            $app->redirect('index.php?option=com_jem&view=main');
+        }
 
-		// Load css
-		$wa = $app->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = $app->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		// add toolbar
-		$this->addToolbar();
+        // add toolbar
+        $this->addToolbar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 
 
-	/**
-	 * Add Toolbar
-	 */
-	protected function addToolbar()
-	{
-		ToolbarHelper::title(Text::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
+    /**
+     * Add Toolbar
+     */
+    protected function addToolbar()
+    {
+        ToolbarHelper::title(Text::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
 
-		ToolbarHelper::back();
-		ToolbarHelper::divider();
-		ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/housekeeping');
-	}
+        ToolbarHelper::back();
+        ToolbarHelper::divider();
+        ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/housekeeping');
+    }
 }
 ?>

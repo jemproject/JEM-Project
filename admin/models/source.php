@@ -25,7 +25,7 @@ class JemModelSource extends AdminModel
     /**
      * Cache for the template information.
      *
-     * @var		object
+     * @var        object
      */
     private $_template = null;
 
@@ -47,13 +47,13 @@ class JemModelSource extends AdminModel
 
         if(!empty($fileName))
         {
-	        $this->setState('filename', $fileName);
+            $this->setState('filename', $fileName);
 
-	        // Save the syntax for later use
-	        $app->setUserState('editor.source.syntax', File::getExt($fileName));
+            // Save the syntax for later use
+            $app->setUserState('editor.source.syntax', File::getExt($fileName));
         }
         // Load the parameters.
-        $params	= ComponentHelper::getParams('com_jem');
+        $params    = ComponentHelper::getParams('com_jem');
         $this->setState('params', $params);
     }
 
@@ -129,15 +129,15 @@ class JemModelSource extends AdminModel
 
         $item = new stdClass;
         if(file_exists($filePath)){
-			if ($file) {
-		        $item->custom   = $custom !== false;
-		        $item->filename = $file;
-		        $item->source   = file_get_contents($filePath);
-	        } else {
-		        $item->custom   = false;
-		        $item->filename = false;
-		        $item->source   = false;
-	        }
+            if ($file) {
+                $item->custom   = $custom !== false;
+                $item->filename = $file;
+                $item->source   = file_get_contents($filePath);
+            } else {
+                $item->custom   = false;
+                $item->filename = false;
+                $item->source   = false;
+            }
         }else{
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
         }

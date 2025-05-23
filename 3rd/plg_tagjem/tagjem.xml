@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="4.0" type="plugin" group="acymailing" method="upgrade">
-	<name>AcyMailing 5.x Tag: insert events from JEM 4</name>
-	<creationDate>May 2025</creationDate>
-	<version>4.3.3</version>
-	<author>Acyba, JEM Community</author>
-	<authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>https://www.acymailing.com, https://www.joomlaeventmanager.net</authorUrl>
-	<copyright>Copyright (C) 2009 - 2023 ACYBA SARL - All rights reserved., copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
-	<description>This plugin enables you to insert events from JEM into any email sent by AcyMailing 5.x</description>
+    <name>AcyMailing 5.x Tag: insert events from JEM 4</name>
+    <creationDate>May 2025</creationDate>
+    <version>4.3.3</version>
+    <author>Acyba, JEM Community</author>
+    <authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.acymailing.com, https://www.joomlaeventmanager.net</authorUrl>
+    <copyright>Copyright (C) 2009 - 2023 ACYBA SARL - All rights reserved., copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+    <description>This plugin enables you to insert events from JEM into any email sent by AcyMailing 5.x</description>
 
-	<files>
-		<filename plugin="tagjem">tagjem.php</filename>
-		<filename>index.html</filename>
-		<folder>language</folder>
-	</files>
-	<languages>
+    <files>
+        <filename plugin="tagjem">tagjem.php</filename>
+        <filename>index.html</filename>
+        <folder>language</folder>
+    </files>
+    <languages>
         <language tag="en-GB">language/en-GB/plg_acymailing_tagjem.ini</language>
     </languages>
 
-	<media folder="media/com_acymailing/plugins" destination="com_acymailing/plugins">
-		<filename>index.html</filename>
-		<filename>tagjem_event.php</filename>
-		<filename>tagjem_list.php</filename>
-		<filename>tagjem_summary.php</filename>
-	</media>
+    <media folder="media/com_acymailing/plugins" destination="com_acymailing/plugins">
+        <filename>index.html</filename>
+        <filename>tagjem_event.php</filename>
+        <filename>tagjem_list.php</filename>
+        <filename>tagjem_summary.php</filename>
+    </media>
 
-	<config>
-		<fields name="params" addfieldpath="/components/com_acymailing/params">
-			<fieldset name="basic">
-				<field name="help" type="help"
-				       label="PLG_TAGJEM_HELP"
-				       description="PLG_TAGJEM_HELP_DESC"
-				       default="plugin-tagjem"
-				/>
-				<field name="hide_past_events" type="radio"
-				       class="btn-group btn-group-yesno"
-				       default="1"
-				       label="PLG_TAGJEM_HIDE_PAST_EVENTS"
-				       description="PLG_TAGJEM_HIDE_PAST_EVENTS_DESC"
-				>
-					<option value="1">JYES</option>
-					<option value="0">PLG_TAGJEM_OPTION_NO_SHOW_ALL</option>
-				</field>
-				<field name="show_featured" type="radio"
-				       class="btn-group btn-group-yesno"
-				       default="0"
-				       label="PLG_TAGJEM_FEATURED_EVENTS"
-				       description="PLG_TAGJEM_FEATURED_EVENTS_DESC"
-				>
-					<option value="1">PLG_TAGJEM_OPTION_YES_FETURED_ONLY</option>
-					<option value="0">PLG_TAGJEM_OPTION_NO_SHOW_ALL</option>
-				</field>
-				<field name="show_images" type="radio"
-				       class="btn-group btn-group-yesno"
-				       default="1"
-				       label="PLG_TAGJEM_SHOW_IMAGES"
-				       description="PLG_TAGJEM_SHOW_IMAGES_DESC"
-				>
-					<option value="1">JYES</option>
-					<option value="resized">PLG_TAGJEM_OPTION_RESIZED</option>
-					<option value="0">JNO</option>
-				</field>
-				<field name="img_width" type="text"
-				       size="10"
-				       default="160"
-				       label="PLG_TAGJEM_IMAGE_WIDTH"
-				       description="PLG_TAGJEM_IMAGE_WIDTH_DESC"
-				/>
-				<field name="img_height" type="text"
-				       size="10"
-				       default="160"
-				       label="PLG_TAGJEM_IMAGE_HEIGHT"
-				       description="PLG_TAGJEM_IMAGE_HEIGHT_DESC"
-				/>
-				<field name="itemid" type="text"
-				       size="10"
-				       default=""
-				       label="PLG_TAGJEM_DEFAULT_ITEM_ID"
-				       description="PLG_TAGJEM_DEFAULT_ITEM_ID_DESC"
-				/>
-			</fieldset>
-		</fields>
-	</config>
+    <config>
+        <fields name="params" addfieldpath="/components/com_acymailing/params">
+            <fieldset name="basic">
+                <field name="help" type="help"
+                       label="PLG_TAGJEM_HELP"
+                       description="PLG_TAGJEM_HELP_DESC"
+                       default="plugin-tagjem"
+                />
+                <field name="hide_past_events" type="radio"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="PLG_TAGJEM_HIDE_PAST_EVENTS"
+                       description="PLG_TAGJEM_HIDE_PAST_EVENTS_DESC"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">PLG_TAGJEM_OPTION_NO_SHOW_ALL</option>
+                </field>
+                <field name="show_featured" type="radio"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="PLG_TAGJEM_FEATURED_EVENTS"
+                       description="PLG_TAGJEM_FEATURED_EVENTS_DESC"
+                >
+                    <option value="1">PLG_TAGJEM_OPTION_YES_FETURED_ONLY</option>
+                    <option value="0">PLG_TAGJEM_OPTION_NO_SHOW_ALL</option>
+                </field>
+                <field name="show_images" type="radio"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="PLG_TAGJEM_SHOW_IMAGES"
+                       description="PLG_TAGJEM_SHOW_IMAGES_DESC"
+                >
+                    <option value="1">JYES</option>
+                    <option value="resized">PLG_TAGJEM_OPTION_RESIZED</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="img_width" type="text"
+                       size="10"
+                       default="160"
+                       label="PLG_TAGJEM_IMAGE_WIDTH"
+                       description="PLG_TAGJEM_IMAGE_WIDTH_DESC"
+                />
+                <field name="img_height" type="text"
+                       size="10"
+                       default="160"
+                       label="PLG_TAGJEM_IMAGE_HEIGHT"
+                       description="PLG_TAGJEM_IMAGE_HEIGHT_DESC"
+                />
+                <field name="itemid" type="text"
+                       size="10"
+                       default=""
+                       label="PLG_TAGJEM_DEFAULT_ITEM_ID"
+                       description="PLG_TAGJEM_DEFAULT_ITEM_ID_DESC"
+                />
+            </fieldset>
+        </fields>
+    </config>
 
-	<updateservers>
-		<server type="extension" name="JEM Update Site">https://www.joomlaeventmanager.net/updatecheck/update_plg_acymailing_tagjem.xml</server>
-	</updateservers>
+    <updateservers>
+        <server type="extension" name="JEM Update Site">https://www.joomlaeventmanager.net/updatecheck/update_plg_acymailing_tagjem.xml</server>
+    </updateservers>
 </extension>

@@ -19,49 +19,49 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class JemViewCategoryelement extends HtmlView {
 
-	public function display($tpl = null)
-	{
-		//initialise variables
-		$app 		= Factory::getApplication();
-		$document   = $app->getDocument();
-		$db			= Factory::getContainer()->get('DatabaseDriver');
-		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+    public function display($tpl = null)
+    {
+        //initialise variables
+        $app         = Factory::getApplication();
+        $document   = $app->getDocument();
+        $db            = Factory::getContainer()->get('DatabaseDriver');
+        $itemid     = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		//get vars
-		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word');
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
-		$search 			= $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        //get vars
+        $filter_order        = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');
+        $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir',    'filter_order_Dir',    '', 'word');
+        $filter_state         = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
+        $search             = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+        $search             = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
-		//prepare document
-		$document->setTitle(Text::_('COM_JEM_SELECT_CATEGORY'));
+        //prepare document
+        $document->setTitle(Text::_('COM_JEM_SELECT_CATEGORY'));
 
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		// Get data from the model
-		$rows = $this->get('Data');
-		$pagination = $this->get('Pagination');
+        // Get data from the model
+        $rows = $this->get('Data');
+        $pagination = $this->get('Pagination');
 
-		//publish unpublished filter
-		$lists['state'] = HTMLHelper::_('grid.state', $filter_state);
+        //publish unpublished filter
+        $lists['state'] = HTMLHelper::_('grid.state', $filter_state);
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order'] = $filter_order;
 
-		// search filter
-		$lists['search']= $search;
+        // search filter
+        $lists['search']= $search;
 
-		//assign data to template
-		$this->lists 		= $lists;
-		$this->filter_state = $filter_state;
-		$this->rows 		= $rows;
-		$this->pagination 	= $pagination;
+        //assign data to template
+        $this->lists         = $lists;
+        $this->filter_state = $filter_state;
+        $this->rows         = $rows;
+        $this->pagination     = $pagination;
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }
 ?>

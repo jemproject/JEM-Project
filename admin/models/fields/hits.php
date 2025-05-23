@@ -16,21 +16,21 @@ use Joomla\CMS\Form\FormField;
  */
 class JFormFieldHits extends FormField
 {
-	/**
-	 * The form field type.
-	 * @var		string
-	 */
-	protected $type = 'Hits';
+    /**
+     * The form field type.
+     * @var        string
+     */
+    protected $type = 'Hits';
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return	string	The field input markup.
-	 */
-	protected function getInput()
-	{
-		$onclick	= ' onclick="document.getElementById(\''.$this->id.'\').value=\'0\';"';
+    /**
+     * Method to get the field input markup.
+     *
+     * @return    string    The field input markup.
+     */
+    protected function getInput()
+    {
+        $onclick    = ' onclick="document.getElementById(\''.$this->id.'\').value=\'0\';"';
 
-		return '<input type="text" name="'.$this->name.'" id="'.$this->id.'" class="form-control field-user-input-name valid form-control-success w-20" value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'" readonly="readonly" style="display:inline-block;" /><input type="button"'.$onclick.' value="'.Text::_('COM_JEM_RESET_HITS').'" class="btn btn-primary selectcat" />';
-	}
+        return '<input type="text" name="'.$this->name.'" id="'.$this->id.'" class="form-control field-user-input-name valid form-control-success w-20" value="'.htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8').'" readonly="readonly" style="display:inline-block;" /><input type="button"'.$onclick.' value="'.Text::_('COM_JEM_RESET_HITS').'" class="btn btn-primary selectcat" />';
+    }
 }

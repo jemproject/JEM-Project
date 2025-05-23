@@ -420,10 +420,10 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
-		// Set publish_down to null if they are empty (publish_up must have a datetime)
-		if (empty($data['publish_down'])) {
-		    $data['publish_down'] = null;
-		}
+        // Set publish_down to null if they are empty (publish_up must have a datetime)
+        if (empty($data['publish_down'])) {
+            $data['publish_down'] = null;
+        }
 
         // if the 'registra' field does not exist or is null, set it to the value from jem settings
         if(!isset($data['registra'])) {
@@ -544,7 +544,7 @@ class JemModelEvent extends JemModelAdmin
 
                 // Store cats
                 if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
-                    //	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, Log::ERROR);
+                    //    JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, Log::ERROR);
                     $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
                     $saved = false;
                 }
@@ -552,7 +552,7 @@ class JemModelEvent extends JemModelAdmin
                 // Store invited users (frontend only, on backend no attendees on editevent view)
                 if (!$backend && ($jemsettings->regallowinvitation == 1)) {
                     if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
-                        //	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, Log::ERROR);
+                        //    JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, Log::ERROR);
                         $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
                         $saved = false;
                     }
@@ -660,7 +660,7 @@ class JemModelEvent extends JemModelAdmin
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))	;
+                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             $dateFrom = date('Y-m-d', $datetimeFrom);

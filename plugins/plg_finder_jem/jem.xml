@@ -17,6 +17,6 @@
     </files>
    <languages>
         <language tag="en-GB">language/en-GB/plg_finder_jem.ini</language>
-		 <language tag="en-GB">language/en-GB/plg_finder_jem.sys.ini</language>
+         <language tag="en-GB">language/en-GB/plg_finder_jem.sys.ini</language>
     </languages>
 </extension>
