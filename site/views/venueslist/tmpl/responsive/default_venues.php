@@ -158,29 +158,28 @@ function jem_common_show_filter(&$obj) {
                   </div>
                 <?php endif; ?>
 
-
-              <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-              <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-              <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-              <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
+                <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
+                <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
                 <?php if (!empty($row->locid)) : ?>
-                  <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
+                    <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
                 <?php else : ?>
-                  <meta itemprop="name" content="None" />
-                <?php endif; ?>
-                <?php
+                    <meta itemprop="name" content="None" />
+                <?php endif;
+                
                 $microadress = '';
                 if (!empty($row->city)) {
-                  $microadress .= $this->escape($row->city);
+                    $microadress .= $this->escape($row->city);
                 }
                 if (!empty($microadress)) {
-                  $microadress .= ', ';
+                    $microadress .= ', ';
                 }
                 if (!empty($row->state)) {
-                  $microadress .= $this->escape($row->state);
+                    $microadress .= $this->escape($row->state);
                 }
                 if (empty($microadress)) {
-                  $microadress .= '-';
+                    $microadress .= '-';
                 }
                 ?>
                 <meta itemprop="address" content="<?php echo $microadress; ?>" />

@@ -56,4 +56,4 @@ JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 // load icon font if needed
 JemHelper::loadIconFont();
 
-require ModuleHelper::getLayoutPath('mod_jem_jubilee', $params->get('layout', 'default'));
+require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));

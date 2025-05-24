@@ -168,4 +168,4 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript(
 JemHelper::loadIconFont();
 
 # Render
-require ModuleHelper::getLayoutPath('mod_jem_cal', $params->get('layout', 'default'));
+require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
