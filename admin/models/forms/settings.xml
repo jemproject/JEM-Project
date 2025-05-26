@@ -98,7 +98,7 @@
                label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
                description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
                class="inputbox"
-               default="media/com_jem/images/flags/w20-png/"
+               default="media/com_jem/images/flags/w20-webp/"
                size="40"
                required="true"
         />

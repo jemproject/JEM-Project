@@ -1,0 +1,1 @@
+REPLACE INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('flagicons_path', 'media/com_jem/images/flags/w20-webp/', '0');
