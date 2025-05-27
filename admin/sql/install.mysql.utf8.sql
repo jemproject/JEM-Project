@@ -301,7 +301,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('ical_tz', '1'),
 ('attachments_path', 'media/com_jem/attachments'),
 ('attachments_maxsize', '1000'),
-('attachments_types', 'txt,pdf,jpg,jpeg,gif,png,zip,tar.gz'),
+('attachments_types', 'txt,pdf,jpg,jpeg,gif,png,webp,zip,tar.gz'),
 ('recurrence_anticipation_day', '3'),
 ('recurrence_anticipation_week', '12'),
 ('recurrence_anticipation_month', '60'),
