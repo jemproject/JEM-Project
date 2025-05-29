@@ -255,6 +255,23 @@ table.help td {
     background-size: 32px 32px;
 }
 
+img.hw48, img.hw32, img.hw16 {
+    width: 48px;
+    height: 48;
+    object-fit: contain;
+    display: inline-block;
+}
+
+img.hw32 {
+    width: 32px;
+    height: 32px;
+}
+
+img.hw16 {
+    width: 16px;
+    height: 16px;
+}
+
 @media (prefers-color-scheme: dark) {
     body
     {
