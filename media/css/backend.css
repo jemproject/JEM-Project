@@ -7,75 +7,75 @@
 
 /** header icons **/
 .icon-48-archive {
-    background-image: url(../images/icon-48-archive.png);
+    background-image: url(../images/icon-48-archive.webp);
 }
 
 .icon-48-elcategories {
-    background-image: url(../images/icon-48-categories.png);
+    background-image: url(../images/icon-48-categories.webp);
 }
 
 .icon-48-categoriesedit {
-    background-image: url(../images/icon-48-categoriesedit.png);
+    background-image: url(../images/icon-48-categoriesedit.webp);
 }
 
 .icon-48-eventedit {
-    background-image: url(../images/icon-48-eventedit.png);
+    background-image: url(../images/icon-48-eventedit.webp);
 }
 
 .icon-48-events {
-    background-image: url(../images/icon-48-events.png);
+    background-image: url(../images/icon-48-events.webp);
 }
 
 .icon-48-groups {
-    background-image: url(../images/icon-48-groups.png);
+    background-image: url(../images/icon-48-groups.webp);
 }
 
 .icon-48-groupedit {
-    background-image: url(../images/icon-48-groupedit.png);
+    background-image: url(../images/icon-48-groupedit.webp);
 }
 
 .icon-48-help {
-    background-image: url(../images/icon-48-help.png);
+    background-image: url(../images/icon-48-help.webp);
 }
 
 .icon-48-home {
-    background-image: url(../images/icon-48-home.png);
+    background-image: url(../images/icon-48-home.webp);
 }
 
 .icon-48-settings {
-    background-image: url(../images/icon-48-settings.png);
+    background-image: url(../images/icon-48-settings.webp);
 }
 
 .icon-48-tableexport {
-    background-image: url(../images/icon-48-tableexport.png);
+    background-image: url(../images/icon-48-tableexport.webp);
 }
 
 .icon-48-tableimport {
-    background-image: url(../images/icon-48-tableimport.png);
+    background-image: url(../images/icon-48-tableimport.webp);
 }
 
 .icon-48-update {
-    background-image: url(../images/icon-48-update.png);
+    background-image: url(../images/icon-48-update.webp);
 }
 
 .icon-48-users {
-    background-image: url(../images/icon-48-users.png);
+    background-image: url(../images/icon-48-users.webp);
 }
 
 .icon-48-venues {
-    background-image: url(../images/icon-48-venues.png);
+    background-image: url(../images/icon-48-venues.webp);
 }
 
 .icon-48-venuesedit {
-    background-image: url(../images/icon-48-venuesedit.png);
+    background-image: url(../images/icon-48-venuesedit.webp);
 }
 
 .icon-48-housekeeping {
-    background-image: url(../images/icon-48-housekeeping.png);
+    background-image: url(../images/icon-48-housekeeping.webp);
 }
 
 .icon-48-plugins {
-    background-image: url(../images/icon-48-plugins.png);
+    background-image: url(../images/icon-48-plugins.webp);
 }
 
 /** linkicons **/
@@ -96,7 +96,7 @@ input.button:focus { /*background-color:#......; */
 }
 
 input#clear {
-    background: url('../images/clear.png') no-repeat scroll left center;
+    background: url('../images/clear.webp') no-repeat scroll left center;
     border: none;
     cursor: pointer;
     caret-color: transparent;
@@ -880,7 +880,7 @@ input.selectcat {
 }
 
 input#csvexport {
-    background-image: url('../images/export_excel.png');
+    background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;
     padding-left: 30px;

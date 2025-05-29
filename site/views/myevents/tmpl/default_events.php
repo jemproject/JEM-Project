@@ -206,7 +206,7 @@ use Joomla\CMS\Router\Route;
                                         echo $count;
                                     }
                                 } else {
-                                    echo HTMLHelper::_('image', 'com_jem/publish_r.png',NULL,NULL,true);
+                                    echo HTMLHelper::_('image', 'com_jem/publish_r.webp',NULL,NULL,true);
                                 }
                                 ?>
                             </td>

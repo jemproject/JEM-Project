@@ -156,7 +156,7 @@ $document->addStyleDeclaration($css);
         <div class="jem-event-image-teaser">
           <div class="jem-row-image-teaser">
             <?php if($item->showimageevent): ?>
-                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
                       <div class="jem-eventimg-teaser">
@@ -187,7 +187,7 @@ $document->addStyleDeclaration($css);
             <?php endif; ?>
 
             <?php if($item->showimagevenue): ?>
-              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
                           <div class="jem-eventimg-teaser">

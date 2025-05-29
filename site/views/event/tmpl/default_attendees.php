@@ -96,8 +96,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                                 //$cparams = ComponentHelper::getParams('com_media');
                                 //$imgpath = $cparams->get('image_path'); // mostly 'images'
                                 $imgpath = 'images'; // CB does NOT respect path set in Media Manager, so we have to ignore this too
-                                if (File::exists(JPATH_ROOT . '/components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.png')) {
-                                    $noimg = 'components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.png';
+                                if (File::exists(JPATH_ROOT . '/components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.webp')) {
+                                    $noimg = 'components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.webp';
                                 } elseif (File::exists(JPATH_ROOT . '/components/com_comprofiler/images/english/tnnophoto.jpg')) {
                                     $noimg = 'components/com_comprofiler/images/english/tnnophoto.jpg';
                                 } else {

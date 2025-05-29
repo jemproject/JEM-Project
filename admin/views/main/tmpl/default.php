@@ -41,6 +41,10 @@ $options = array(
         flex-direction: column;
         align-items: center;
     }
+    .jem-wei-menus .icon a img {
+        height; 48px;
+        width; 48px;
+    }
 </style>
 <form action="<?php echo Route::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">
     <div id="j-main-container" class="j-main-container">
@@ -53,58 +57,58 @@ $options = array(
                                 <div class="cpanel jem-wei-menus">
                                     <?php
                                         $link = 'index.php?option=com_jem&amp;view=events';
-                                        $this->quickiconButton($link, 'icon-48-events.png', Text::_('COM_JEM_EVENTS'));
+                                        $this->quickiconButton($link, 'icon-48-events.webp', Text::_('COM_JEM_EVENTS'));
 
                                         $link = 'index.php?option=com_jem&amp;task=event.add';
-                                        $this->quickiconButton($link, 'icon-48-eventedit.png', Text::_('COM_JEM_ADD_EVENT'));
+                                        $this->quickiconButton($link, 'icon-48-eventedit.webp', Text::_('COM_JEM_ADD_EVENT'));
 
                                         $link = 'index.php?option=com_jem&amp;view=venues';
-                                        $this->quickiconButton($link, 'icon-48-venues.png', Text::_('COM_JEM_VENUES'));
+                                        $this->quickiconButton($link, 'icon-48-venues.webp', Text::_('COM_JEM_VENUES'));
 
                                         $link = 'index.php?option=com_jem&task=venue.add';
-                                        $this->quickiconButton($link, 'icon-48-venuesedit.png', Text::_('COM_JEM_ADD_VENUE'));
+                                        $this->quickiconButton($link, 'icon-48-venuesedit.webp', Text::_('COM_JEM_ADD_VENUE'));
 
                                         $link = 'index.php?option=com_jem&amp;view=categories';
-                                        $this->quickiconButton($link, 'icon-48-categories.png', Text::_('COM_JEM_CATEGORIES'));
+                                        $this->quickiconButton($link, 'icon-48-categories.webp', Text::_('COM_JEM_CATEGORIES'));
 
                                         $link = 'index.php?option=com_jem&amp;task=category.add';
-                                        $this->quickiconButton($link, 'icon-48-categoriesedit.png', Text::_('COM_JEM_ADD_CATEGORY'));
+                                        $this->quickiconButton($link, 'icon-48-categoriesedit.webp', Text::_('COM_JEM_ADD_CATEGORY'));
 
                                         $link = 'index.php?option=com_jem&amp;view=groups';
-                                        $this->quickiconButton($link, 'icon-48-groups.png', Text::_('COM_JEM_GROUPS'));
+                                        $this->quickiconButton($link, 'icon-48-groups.webp', Text::_('COM_JEM_GROUPS'));
 
                                         $link = 'index.php?option=com_jem&amp;task=group.add';
-                                        $this->quickiconButton($link, 'icon-48-groupedit.png', Text::_('COM_JEM_GROUP_ADD'));
+                                        $this->quickiconButton($link, 'icon-48-groupedit.webp', Text::_('COM_JEM_GROUP_ADD'));
 
                                         $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
-                                        $this->quickiconButton($link, 'icon-48-plugins.png', Text::_('COM_JEM_MANAGE_PLUGINS'));
+                                        $this->quickiconButton($link, 'icon-48-plugins.webp', Text::_('COM_JEM_MANAGE_PLUGINS'));
 
                                         //only admins should be able to see these items
                                         if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
                                             $link = 'index.php?option=com_jem&amp;view=settings';
-                                            $this->quickiconButton($link, 'icon-48-settings.png', Text::_('COM_JEM_SETTINGS_TITLE'));
+                                            $this->quickiconButton($link, 'icon-48-settings.webp', Text::_('COM_JEM_SETTINGS_TITLE'));
 
                                             $link = 'index.php?option=com_jem&amp;view=housekeeping';
-                                            $this->quickiconButton($link, 'icon-48-housekeeping.png', Text::_('COM_JEM_HOUSEKEEPING'));
+                                            $this->quickiconButton($link, 'icon-48-housekeeping.webp', Text::_('COM_JEM_HOUSEKEEPING'));
 
                                             $link = 'index.php?option=com_jem&amp;task=sampledata.load';
-                                            $this->quickiconButton($link, 'icon-48-sampledata.png', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
+                                            $this->quickiconButton($link, 'icon-48-sampledata.webp', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
 
                                             $link = 'index.php?option=com_jem&amp;view=updatecheck';
-                                            $this->quickiconButton($link, 'icon-48-update.png', Text::_('COM_JEM_UPDATECHECK_TITLE'));
+                                            $this->quickiconButton($link, 'icon-48-update.webp', Text::_('COM_JEM_UPDATECHECK_TITLE'));
 
                                             $link = 'index.php?option=com_jem&amp;view=import';
-                                            $this->quickiconButton($link, 'icon-48-tableimport.png', Text::_('COM_JEM_IMPORT_DATA'));
+                                            $this->quickiconButton($link, 'icon-48-tableimport.webp', Text::_('COM_JEM_IMPORT_DATA'));
 
                                             $link = 'index.php?option=com_jem&amp;view=export';
-                                            $this->quickiconButton($link, 'icon-48-tableexport.png', Text::_('COM_JEM_EXPORT_DATA'));
+                                            $this->quickiconButton($link, 'icon-48-tableexport.webp', Text::_('COM_JEM_EXPORT_DATA'));
 
                                             $link = 'index.php?option=com_jem&amp;view=cssmanager';
-                                            $this->quickiconButton( $link, 'icon-48-cssmanager.png', Text::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
+                                            $this->quickiconButton( $link, 'icon-48-cssmanager.webp', Text::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
                                         }
 
                                         $link = 'index.php?option=com_jem&amp;view=help';
-                                        $this->quickiconButton($link, 'icon-48-help.png', Text::_('COM_JEM_HELP'));
+                                        $this->quickiconButton($link, 'icon-48-help.webp', Text::_('COM_JEM_HELP'));
                                     ?>
                                 </div>
                             </td>
@@ -215,7 +219,7 @@ $options = array(
                         <?php echo Text::_('COM_JEM_MAIN_DONATE_TEXT'); ?> <br /><br />
                         <div class="center">
                             <a href="https://www.joomlaeventmanager.net/project/donate" target="_blank">
-                                <?php echo HTMLHelper::_('image', 'com_jem/PayPal_DonateButton.png', Text::_('COM_JEM_MAIN_DONATE'), NULL, true); ?>
+                                <?php echo HTMLHelper::_('image', 'com_jem/PayPal_DonateButton.webp', Text::_('COM_JEM_MAIN_DONATE'), NULL, true); ?>
                             </a>
                         </div>
                     </div>

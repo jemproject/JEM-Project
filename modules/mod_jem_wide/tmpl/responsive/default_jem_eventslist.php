@@ -163,7 +163,7 @@ $document->addStyleDeclaration($css);
             </div>
         </div>
 
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent') && (strpos($item->eventimage, 'blank.png') === false)) : ?>
+        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent') && (strpos($item->eventimage, 'blank.webp') === false)) : ?>
             <div class="jem-list-img" >
                 <?php if ($params->get('use_modal')) : ?>
             <?php if ($item->eventimageorig) {
@@ -188,7 +188,7 @@ $document->addStyleDeclaration($css);
             </div>
         <?php endif; ?>
 
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.png') === false)) : ?>
+        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.webp') === false)) : ?>
             <div class="jem-list-img" >
                 <?php if ($params->get('use_modal')) : ?>
                 <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">

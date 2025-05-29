@@ -111,7 +111,7 @@ class JemViewCategories extends JemAdminView
 
         if ($canDo->get('core.admin')) {
             ToolbarHelper::divider();
-            ToolbarHelper::custom('categories.rebuild', 'refresh.png', 'refresh_f2.png', 'JTOOLBAR_REBUILD', false);
+            ToolbarHelper::custom('categories.rebuild', 'refresh.webp', 'refresh_f2.webp', 'JTOOLBAR_REBUILD', false);
         }
 
         ToolbarHelper::divider();

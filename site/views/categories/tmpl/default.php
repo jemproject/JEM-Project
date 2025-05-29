@@ -44,7 +44,7 @@ use Joomla\CMS\Router\Route;
                             $imgattribs['width'] = $jemsettings->imagewidth;
                             $imgattribs['height'] = $jemsettings->imagehight;
 
-                            echo HTMLHelper::_('image', 'com_jem/noimage.png', $row->catname, $imgattribs, true);
+                            echo HTMLHelper::_('image', 'com_jem/noimage.webp', $row->catname, $imgattribs, true);
                         } else {
                             $cimage = JemImage::flyercreator($row->image, 'category');
                             echo JemOutput::flyer($row, $cimage, 'category');

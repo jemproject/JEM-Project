@@ -32,7 +32,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <button type="button" class="button3 btn-sm btn-secondary" onclick="document.getElementById('jform_userfile').value = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button>
                 <?php
                 if ($this->item->locimage) :
-                    echo HTMLHelper::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => Text::_('COM_JEM_REMOVE_IMAGE')));
+                    echo HTMLHelper::image('media/com_jem/images/publish_r.webp', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => Text::_('COM_JEM_REMOVE_IMAGE')));
                 endif;
                 ?>
             </li>

@@ -8,25 +8,25 @@
 
 div#jemmodulewide span.event-title {
     padding-left: 20px;
-    background: url(img/flag_red.png) no-repeat;
+    background: url(img/flag_red.webp) no-repeat;
 }
 
 div#jemmodulewide span.time {
     padding-left: 20px;
-    background: url(img/time.png) no-repeat;
+    background: url(img/time.webp) no-repeat;
 }
 
 div#jemmodulewide span.date {
     padding-left: 20px;
-    background: url(img/date.png) no-repeat;
+    background: url(img/date.webp) no-repeat;
 }
 
 div#jemmodulewide span.category {
     padding-left: 20px;
-    background: url(img/category.png) no-repeat;
+    background: url(img/category.webp) no-repeat;
 }
 
 div#jemmodulewide span.venue-title {
     padding-left: 20px;
-    background: url(img/building.png) no-repeat;
+    background: url(img/building.webp) no-repeat;
 }

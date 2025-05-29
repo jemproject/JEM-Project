@@ -29,7 +29,7 @@ class JemImage
         // create a new instance of the class
         $image = new Zebra_Image();
 
-        // indicate a source image (a GIF, PNG or JPEG file)
+        // indicate a source image (a GIF,.webp or JPEG file)
         $image->source_path = $name;
 
         // indicate a target image
@@ -235,7 +235,7 @@ class JemImage
     {
         $sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
         $imagesize = $file['size'];
-        $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
+        $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif.webp,webp';
 
         //check if the upload is an image...getimagesize will return false if not
         if (!getimagesize($file['tmp_name'])) {

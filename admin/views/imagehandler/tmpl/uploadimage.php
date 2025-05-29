@@ -92,10 +92,10 @@ use Joomla\CMS\HTML\HTMLHelper;
                                 <b><?php echo Text::_('COM_JEM_IMAGE_FILESIZE').':'; ?></b> <?php echo $this->jemsettings->sizelimit; ?> kb<br />
 
                                 <?php
-                                if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_PNG)) {
-                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM_PNG_SUPPORT')."</span>";
+                                if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG.webp)) {
+                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM.webp_SUPPORT')."</span>";
                                 } else {
-                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_PNG_SUPPORT')."</span>";
+                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO.webp_SUPPORT')."</span>";
                                 }
                                 if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_JPEG)) {
                                     echo "<br /><span style='color:green'>".Text::_('COM_JEM_JPG_SUPPORT')."</span>";
