@@ -88,7 +88,7 @@ class Zebra_Image {
 
     /**
      *  If set to `false`, images having both width and height smaller than the required width and height will be left
-     *  untouched. {@link jpeg_quality} and {@link.webp_compression} will still apply!
+     *  untouched. {@link jpeg_quality} and {@link png_compression} will still apply!
      *
      *  Available only for the {@link resize()} method.
      *
@@ -148,7 +148,7 @@ class Zebra_Image {
     /**
      *  Indicates the compression level of the output image (lower compression means bigger file size).
      *
-     *  >   Used only if PHP version is `5.1.2+` and the file at {@link target_path} is a .webp` image, or it will be
+     *  >   Used only if PHP version is `5.1.2+` and the file at {@link target_path} is a `PNG` image, or it will be
      *      ignored otherwise.
      *
      *  Range is `0` - `9`.
@@ -159,7 +159,7 @@ class Zebra_Image {
      *
      *  @var integer
      */
-    public .webp_compression;
+    public $png_compression;
 
     /**
      *  Specifies whether upon resizing images should preserve their aspect ratio.
@@ -202,7 +202,7 @@ class Zebra_Image {
     /**
      *  Path to an image file to apply the transformations to.
      *
-     *  Supported file types are `BMP`, `GIF`, `JPEG`, .webp` and `WEBP`.
+     *  Supported file types are `BMP`, `GIF`, `JPEG`, `PNG` and `WEBP`.
      *
      *  >   `WEBP` support is available for PHP version `7.0.0+`.<br /><br />
      *      Note that even though `WEBP` support was added to PHP in version `5.5.0`, it only started working with version
@@ -221,7 +221,7 @@ class Zebra_Image {
      *  Path (including file name) to where to save the transformed image.
      *
      *  >   Can be a different format than the file at {@link source_path}. The format of the transformed image will be
-     *      determined by the file's extension. Supported file types are `BMP`, `GIF`, `JPEG`, .webp` and `WEBP`.
+     *      determined by the file's extension. Supported file types are `BMP`, `GIF`, `JPEG`, `PNG` and `WEBP`.
      *
      *  >   `WEBP` support is available for PHP version `7.0.0+`.<br /><br />
      *      Note that even though `WEBP` support was added to PHP in version `5.5.0`, it only started working with version
@@ -308,7 +308,7 @@ class Zebra_Image {
 
         $this->jpeg_quality = 85;
 
-        $this-.webp_compression = 9;
+        $this->png_compression = 9;
 
         $this->webp_quality = 80;
 
@@ -561,7 +561,7 @@ class Zebra_Image {
      *                                          greater than the image's size) to fill the remaining space.
      *
      *                                          When set to `-1` the script will preserve transparency for transparent `GIF`
-     *                                          and .webp` images. For non-transparent images the background will be black
+     *                                          and `PNG` images. For non-transparent images the background will be black
      *                                          (`#000000`) in this case.
      *
      *                                          Default is `-1`
@@ -820,7 +820,7 @@ class Zebra_Image {
      *                                          resized to the required width and the aspect ratio will be ignored.
      *
      *                                          If both `width` and `height` are set to `0`, a copy of the source image
-     *                                          will be created. {@link jpeg_quality} and {@link.webp_compression} will
+     *                                          will be created. {@link jpeg_quality} and {@link png_compression} will
      *                                          still apply!
      *
      *                                          If either `width` or `height` are set to `0`, the script will consider
@@ -843,7 +843,7 @@ class Zebra_Image {
      *                                          resized to the required height and the aspect ratio will be ignored.
      *
      *                                          If both `width` and `height` are set to `0`, a copy of the source image
-     *                                          will be created. {@link jpeg_quality} and {@link.webp_compression} will
+     *                                          will be created. {@link jpeg_quality} and {@link png_compression} will
      *
      *                                          If either `width` or `height` are set to `0`, the script will consider
      *                                          the value of {@link preserve_aspect_ratio} to bet set to `true` regardless
@@ -890,7 +890,7 @@ class Zebra_Image {
      *                                          area. See the `method` argument.
      *
      *                                          When set to `-1` the script will preserve transparency for transparent `GIF`
-     *                                          and .webp` images. For non-transparent images the background will be white
+     *                                          and `PNG` images. For non-transparent images the background will be white
      *                                          (`#FFFFFF`) in this case.
      *
      *                                          Default is `-1`
@@ -1282,7 +1282,7 @@ class Zebra_Image {
      *                                          uncovered zone after the rotation.
      *
      *                                          When set to `-1` the script will preserve transparency for transparent `GIF`
-     *                                          and .webp` images. For non-transparent images the background will be white
+     *                                          and `PNG` images. For non-transparent images the background will be white
      *                                          (`#FFFFFF`) in this case.
      *
      *                                          Default is `-1`.
@@ -1320,8 +1320,8 @@ class Zebra_Image {
             // if the uncovered zone after the rotation is to be transparent
             if ($background_color == -1) {
 
-                // if target image is a.webp or an WEBP
-                if ($this->target_type === .webp' || $this->target_type === 'webp') {
+                // if target image is a PNG or an WEBP
+                if ($this->target_type === 'png' || $this->target_type === 'webp') {
 
                     // allocate a transparent color
                     $background_color = imagecolorallocatealpha($this->source_identifier, 0, 0, 0, 127);
@@ -1540,11 +1540,11 @@ class Zebra_Image {
 
                     break;
 
-                // if.webp
-                case IMAGETYPE.webp:
+                // if PNG
+                case IMAGETYPE_PNG:
 
                     // create an image from file
-                    $identifier = imagecreatefro.webp($this->source_path);
+                    $identifier = imagecreatefrompng($this->source_path);
 
                     // disable blending
                     imagealphablending($identifier, false);
@@ -1622,7 +1622,7 @@ class Zebra_Image {
                 default:
 
                     // if unsupported file type
-                    // note that we call this if the file is not BMP, GIF, JPG,.webp or WEBP even though the getimagesize function
+                    // note that we call this if the file is not BMP, GIF, JPG, PNG or WEBP even though the getimagesize function
                     // might handle more image types
                     $this->error = 4;
 
@@ -2029,11 +2029,11 @@ class Zebra_Image {
 
                 break;
 
-            // if.webp
-            case .webp':
+            // if PNG
+            case 'png':
 
                 // if GD support for this file type is not available
-                if (!function_exists('imag.webp')) {
+                if (!function_exists('imagepng')) {
 
                     // save the error level and stop the execution of the script
                     $this->error = 6;
@@ -2041,7 +2041,7 @@ class Zebra_Image {
                     return false;
 
                 // if, for some reason, file could not be created
-                } elseif (@!imag.webp($identifier, $this->target_path, $this-.webp_compression)) {
+                } elseif (@!imagepng($identifier, $this->target_path, $this->png_compression)) {
 
                     // save the error level and stop the execution of the script
                     $this->error = 3;

@@ -199,7 +199,7 @@ class JemHelperCountries
         $country["PLW"] = array("iso2" => "PW", "name" => "Palau, Republic of");
         $country["PSE"] = array("iso2" => "PS", "name" => "Palestine, State of Palestine (or Occupied Palestinian Territory)");
         $country["PAN"] = array("iso2" => "PA", "name" => "Panama, Republic of");
-        $country[.webp"] = array("iso2" => "PG", "name" => "Papua New Guinea, Independent State of");
+        $country["PNG"] = array("iso2" => "PG", "name" => "Papua New Guinea, Independent State of");
         $country["PRY"] = array("iso2" => "PY", "name" => "Paraguay, Republic of");
         $country["PER"] = array("iso2" => "PE", "name" => "Peru, Republic of");
         $country["PHL"] = array("iso2" => "PH", "name" => "Philippines, Republic of the");
@@ -715,7 +715,7 @@ class JemHelperCountries
         $convert2to3["PW"] = "PLW";
         $convert2to3["PS"] = "PSE";
         $convert2to3["PA"] = "PAN";
-        $convert2to3["PG"] = .webp";
+        $convert2to3["PG"] = "PNG";
         $convert2to3["PY"] = "PRY";
         $convert2to3["PE"] = "PER";
         $convert2to3["PH"] = "PHL";
@@ -978,7 +978,7 @@ class JemHelperCountries
         $convert3to2["PLW"] = "PW";
         $convert3to2["PSE"] = "PS";
         $convert3to2["PAN"] = "PA";
-        $convert3to2[.webp"] = "PG";
+        $convert3to2["PNG"] = "PG";
         $convert3to2["PRY"] = "PY";
         $convert3to2["PER"] = "PE";
         $convert3to2["PHL"] = "PH";

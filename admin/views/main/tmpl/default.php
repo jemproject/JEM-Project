@@ -42,8 +42,7 @@ $options = array(
         align-items: center;
     }
     .jem-wei-menus .icon a img {
-        height; 48px;
-        width; 48px;
+        width: 48px;
     }
 </style>
 <form action="<?php echo Route::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">

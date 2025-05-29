@@ -821,7 +821,7 @@ class JemHelper
                 'flv' => 'video/x-flv',
 
                 // images
-                .webp' => 'image.webp',
+                'webp' => 'image/webp',
                 'jpe' => 'image/jpeg',
                 'jpeg' => 'image/jpeg',
                 'jpg' => 'image/jpeg',
