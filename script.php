@@ -23,7 +23,7 @@ use Joomla\CMS\Version;
 /**
  * Script file of JEM component
  */
-class com_jemInstallerScript
+class com_jemInstallerScript extends InstallerScript
 {
     private $oldRelease = "";
     private $newRelease = "";
