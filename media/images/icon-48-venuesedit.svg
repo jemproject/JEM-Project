@@ -1,14 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
-    <g id="Venueedit">
-        <path d="M70.014,88L13.178,88L13.178,43.4L3.603,50.729L0.493,46.597L47.534,10.7L94.575,46.668L91.465,50.729L81.89,43.4L81.89,68.345L76.692,69.237L76.692,39.453L47.534,17.218L18.376,39.453L18.376,82.802L68.445,82.802L70.014,88Z" style="fill:rgb(114,149,177);"/>
-        <circle cx="47.534" cy="55.35" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.2px;"/>
-        <g>
-            <path d="M81.663,68.196C89.067,68.196 95.078,74.207 95.078,81.611C95.078,89.015 89.067,95.026 81.663,95.026C74.26,95.026 68.249,89.015 68.249,81.611C68.249,74.207 74.26,68.196 81.663,68.196ZM81.663,72.196C76.467,72.196 72.249,76.415 72.249,81.611C72.249,86.807 76.467,91.026 81.663,91.026C86.86,91.026 91.078,86.807 91.078,81.611C91.078,76.415 86.86,72.196 81.663,72.196Z" style="fill:rgb(0,185,0);"/>
-            <g transform="matrix(27,0,0,27,89.5051,91.1059)">
-            </g>
-            <text x="73.737px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
-        </g>
-    </g>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="96px" height="96px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"><g id="v1"></g><g id="final"><g id="Venueedit-v2" serif:id="Venueedit v2"><circle cx="47.534" cy="55.35" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;"/><path d="M80.4,70.159L80.4,38.603M91.5,48L48,12.288L4.481,48M14.678,40.929L14.678,85.75L70.429,85.75" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2;"/><g><circle cx="81.166" cy="81.611" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;"/><g transform="matrix(27,0,0,27,89.0077,91.1059)"></g><text x="73.24px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text></g></g></g></svg>

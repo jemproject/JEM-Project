@@ -1,8 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
-    <g id="Venue">
-        <path d="M13.178,88L13.178,43.4L3.603,50.729L0.493,46.597L47.534,10.7L94.575,46.668L91.465,50.729L81.89,43.4L81.89,88L13.178,88ZM18.376,82.802L76.692,82.802L76.692,39.453L47.534,17.218L18.376,39.453L18.376,82.802ZM18.376,82.802L76.692,82.802L18.376,82.802Z" style="fill:rgb(114,149,177);fill-rule:nonzero;"/>
-        <circle cx="47.534" cy="55.35" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.2px;"/>
-    </g>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="96px" height="96px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"><g id="v1"></g><g id="final"><g id="Venue-v2" serif:id="Venue v2"><circle cx="47.534" cy="55.35" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;"/><path d="M14.678,40.929L14.678,85.75L80.4,85.75L80.4,38.603M91.5,48L48,12.288L4.481,48" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2;"/></g></g></svg>
