@@ -273,6 +273,8 @@ window.onload = (event) => {
 					<dt><?php echo $this->form->getLabel('map'); ?></dt>
 					<dd><?php echo $this->form->getInput('map'); ?></dd>
 				</dl>
+				<?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
+
 				<div style="clear: both;"></div>
 
 				<div id="mapdiv">
