@@ -1,1 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="96px" height="96px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;"><g id="v1"></g><g id="final"><g id="Settings-v2" serif:id="Settings v2"><path d="M18.28,28.113L30.039,33.027C32.871,30.414 36.273,28.41 40.037,27.224L41.638,14.604L54.198,14.604L55.802,27.246C59.51,28.393 62.973,30.351 65.9,33.04L77.638,28.113L83.918,38.99L73.749,46.718C74.6,50.485 74.635,54.442 73.777,58.303L83.918,66.01L77.638,76.887L65.867,71.946C63.019,74.582 59.591,76.601 55.797,77.789L54.198,90.396L41.638,90.396L40.032,77.74C36.346,76.593 32.903,74.645 29.99,71.972L18.28,76.887L12,66.01L22.135,58.308C21.275,54.525 21.24,50.548 22.106,46.67L12,38.99L18.28,28.113Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/><circle cx="48" cy="52.505" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Settings-v2" serif:id="Settings v2">
+            <path d="M18.28,28.113L30.039,33.027C32.871,30.414 36.273,28.41 40.037,27.224L41.638,14.604L54.198,14.604L55.802,27.246C59.51,28.393 62.973,30.351 65.9,33.04L77.638,28.113L83.918,38.99L73.749,46.718C74.6,50.485 74.635,54.442 73.777,58.303L83.918,66.01L77.638,76.887L65.867,71.946C63.019,74.582 59.591,76.601 55.797,77.789L54.198,90.396L41.638,90.396L40.032,77.74C36.346,76.593 32.903,74.645 29.99,71.972L18.28,76.887L12,66.01L22.135,58.308C21.275,54.525 21.24,50.548 22.106,46.67L12,38.99L18.28,28.113Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+            <circle cx="48" cy="52.505" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+        </g>
+    </g>
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+    </g>
+</svg>
