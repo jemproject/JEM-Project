@@ -423,7 +423,7 @@ class com_jemInstallerScript
     private function getHeader()
     {
         ?>
-        <img src="../media/com_jem/images/jemlogo.png" alt="" style="float:left; padding-right:20px;" />
+        <img src="../media/com_jem/images/jemlogo.png" alt="JEM" style="float:left; padding-right:20px;" />
         <h1><?php echo Text::_('COM_JEM'); ?></h1>
         <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
         <?php

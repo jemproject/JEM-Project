@@ -66,6 +66,7 @@ ul li:not(:last-child) {
 img.left {
     float: left;
     padding-right: 10px;
+    width: 48px;
 }
 
 .box {

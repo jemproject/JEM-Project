@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Group-v2" serif:id="Group v2">
+            <path d="M67.778,65.475L67.778,85.75L14.678,85.75L14.678,65.475M14.678,63.376C14.662,56.904 28.45,52.197 41.228,52.196C53.963,52.196 67.707,56.88 67.778,63.582" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            <path id="Pers-2" serif:id="Pers 2" d="M52.1,18.349C52.985,18.132 52.909,18.017 53.86,18.017C60.245,18.017 65.429,23.201 65.429,29.586C65.429,35.971 60.245,41.155 53.86,41.155C52.909,41.155 52.985,41.04 52.1,40.823C55.475,37.898 57.547,33.94 57.547,29.586C57.547,25.232 55.475,21.274 52.1,18.349Z" style="fill:rgb(114,149,177);"/>
+            <path d="M73.598,58.108C71.655,55.424 71.186,54.126 66.578,51.17L71.953,52.604C75.9,53.953 79.142,55.786 81.137,57.892C82.674,59.514 83.531,61.32 83.639,63.225L83.65,63.225L83.65,63.558L83.673,65.808L83.65,65.808L83.65,88.05L75,88L75.126,64.988C75.13,64.383 75.139,63.768 75.126,63.173C75.078,60.94 74.343,59.136 73.598,58.108Z" style="fill:rgb(114,149,177);"/>
+            <circle cx="41.4" cy="29.575" r="9.5" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linecap:round;"/>
+        </g>
+    </g>
+</svg>

@@ -7,75 +7,75 @@
 
 /** header icons **/
 .icon-48-archive {
-    background-image: url(../images/icon-48-archive.png);
+    background-image: url(../images/icon-48-archive.svg);
 }
 
 .icon-48-elcategories {
-    background-image: url(../images/icon-48-categories.png);
+    background-image: url(../images/icon-48-categories.svg);
 }
 
 .icon-48-categoriesedit {
-    background-image: url(../images/icon-48-categoriesedit.png);
+    background-image: url(../images/icon-48-categoriesedit.svg);
 }
 
 .icon-48-eventedit {
-    background-image: url(../images/icon-48-eventedit.png);
+    background-image: url(../images/icon-48-eventedit.svg);
 }
 
 .icon-48-events {
-    background-image: url(../images/icon-48-events.png);
+    background-image: url(../images/icon-48-events.svg);
 }
 
 .icon-48-groups {
-    background-image: url(../images/icon-48-groups.png);
+    background-image: url(../images/icon-48-groups.svg);
 }
 
 .icon-48-groupedit {
-    background-image: url(../images/icon-48-groupedit.png);
+    background-image: url(../images/icon-48-groupedit.svg);
 }
 
 .icon-48-help {
-    background-image: url(../images/icon-48-help.png);
+    background-image: url(../images/icon-48-help.svg);
 }
 
 .icon-48-home {
-    background-image: url(../images/icon-48-home.png);
+    background-image: url(../images/icon-48-home.svg);
 }
 
 .icon-48-settings {
-    background-image: url(../images/icon-48-settings.png);
+    background-image: url(../images/icon-48-settings.svg);
 }
 
 .icon-48-tableexport {
-    background-image: url(../images/icon-48-tableexport.png);
+    background-image: url(../images/icon-48-tableexport.svg);
 }
 
 .icon-48-tableimport {
-    background-image: url(../images/icon-48-tableimport.png);
+    background-image: url(../images/icon-48-tableimport.svg);
 }
 
 .icon-48-update {
-    background-image: url(../images/icon-48-update.png);
+    background-image: url(../images/icon-48-update.svg);
 }
 
 .icon-48-users {
-    background-image: url(../images/icon-48-users.png);
+    background-image: url(../images/icon-48-users.svg);
 }
 
 .icon-48-venues {
-    background-image: url(../images/icon-48-venues.png);
+    background-image: url(../images/icon-48-venues.svg);
 }
 
 .icon-48-venuesedit {
-    background-image: url(../images/icon-48-venuesedit.png);
+    background-image: url(../images/icon-48-venuesedit.svg);
 }
 
 .icon-48-housekeeping {
-    background-image: url(../images/icon-48-housekeeping.png);
+    background-image: url(../images/icon-48-housekeeping.svg);
 }
 
 .icon-48-plugins {
-    background-image: url(../images/icon-48-plugins.png);
+    background-image: url(../images/icon-48-plugins.svg);
 }
 
 /** linkicons **/
@@ -113,8 +113,8 @@ input#clear:focus {
 div.linkicon a {
     display: block;
     border: 1px solid #F0F0F0;
-    height: 76px;
-    width: 76px;
+    height: 65px;
+    width: 65px;
     vertical-align: middle;
     text-decoration: none;
 }
@@ -128,7 +128,7 @@ div.linkicon a:hover {
 }
 
 div.linkicon img {
-    padding: 10px 0;
+    padding: 0;
     margin: 0 auto;
 }
 
