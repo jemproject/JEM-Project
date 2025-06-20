@@ -82,7 +82,7 @@ use Joomla\CMS\Session\Session;
                     <td style="width: 60px;">
                         <div class="linkicon">
                             <a href="index.php?option=com_jem&amp;task=housekeeping.cleanupCatsEventRelations&amp;<?php echo Session::getFormToken(); ?>=1">
-                                <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancategoryimg.svg', Text::_('COM_JEM_HOUSEKEEPING_CATSEVENT_RELS'), NULL, true); ?>
+                                <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancatseventrels.svg', Text::_('COM_JEM_HOUSEKEEPING_CATSEVENT_RELS'), NULL, true); ?>
                             </a>
                         </div>
                     </td>

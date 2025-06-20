@@ -825,6 +825,8 @@ table.adminlist {
 
 .update-info img {
     margin-right: 1rem;
+    float: left;
+    width: 64px;
 }
 
 .update-info p {
