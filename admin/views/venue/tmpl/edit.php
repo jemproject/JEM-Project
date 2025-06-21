@@ -357,6 +357,7 @@ $location = JemHelper::defineCenterMap($this->form);
 										<li><?php echo $this->form->getLabel('map'); ?>
 											<?php echo $this->form->getInput('map'); ?></li>
 									</ul>
+									<?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
 									<div class="clr"></div>
 									<div id="mapdiv">
 										<input id="geocomplete" class="readonly form-control valid" type="text" size="55" placeholder="<?php echo Text::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
