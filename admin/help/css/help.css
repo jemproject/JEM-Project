@@ -112,7 +112,8 @@ img.left {
     padding: 6px 6px 20px 54px;
     margin: 0 auto 8px;
     color: #465584;
-    background: #fff url(../images/icon-32-attention.png) no-repeat 6px 6px;
+    background: #fff url(../images/icon-32-attention.svg) no-repeat 6px 6px;
+    background-size: 32px 32px;
 }
 
 table.help {

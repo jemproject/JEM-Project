@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;">
     <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
         <g id="Delete-zombie-Cat-Event-references" serif:id="Delete zombie Cat/Event references">
             <g>
-                <path d="M21.12,20.433L30.653,20.433" style="fill:none;stroke:rgb(225,0,26);stroke-width:1.17px;"/>
-                <path d="M23.798,19.854L27.975,19.854" style="fill:none;stroke:rgb(225,0,26);stroke-width:1.17px;"/>
-                <path d="M22.405,20.433L22.405,28.1C22.405,28.63 22.616,29.139 22.991,29.514C23.367,29.889 23.876,30.1 24.406,30.1C25.262,30.099 26.259,30.099 27.115,30.098C28.219,30.098 29.114,29.202 29.114,28.098C29.114,25.268 29.114,20.433 29.114,20.433" style="fill:none;stroke:rgb(225,0,26);stroke-width:1.17px;"/>
-                <path d="M23.649,23.144L27.854,27.349M23.649,27.349L27.854,23.144" style="fill:none;stroke:rgb(225,0,26);stroke-width:1.17px;"/>
+                <path d="M63.359,61.298L91.959,61.298" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;"/>
+                <path d="M71.394,59.563L83.925,59.563" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;"/>
+                <path d="M67.215,61.298L67.215,88.301C67.215,88.832 67.426,89.341 67.801,89.716C68.177,90.091 68.686,90.302 69.216,90.301C73.072,90.299 81.489,90.294 85.343,90.292C86.447,90.291 87.342,89.396 87.342,88.292C87.342,81.735 87.342,61.298 87.342,61.298" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;"/>
+                <path d="M70.947,69.432L83.561,82.046M70.947,82.046L83.561,69.432" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;"/>
             </g>
             <g>
                 <g>
-                    <circle cx="11.764" cy="24.455" r="4.312" style="fill:none;stroke:rgb(114,149,177);stroke-width:1.66px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
-                    <circle cx="11.764" cy="24.455" r="1.658" style="fill:rgb(246,157,0);"/>
+                    <ellipse cx="33.745" cy="67.234" rx="13.29" ry="13.811" style="fill:none;stroke:rgb(114,149,177);stroke-width:5.21px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                    <ellipse cx="33.745" cy="67.234" rx="5.111" ry="5.311" style="fill:rgb(246,157,0);"/>
                 </g>
                 <g>
-                    <circle cx="9.11" cy="9.427" r="4.312" style="fill:none;stroke:rgb(0,185,0);stroke-width:1.66px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
-                    <circle cx="9.11" cy="9.427" r="1.658" style="fill:rgb(200,0,0);"/>
+                    <ellipse cx="27.565" cy="26.102" rx="13.29" ry="13.811" style="fill:none;stroke:rgb(0,185,0);stroke-width:5.21px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                    <ellipse cx="27.565" cy="26.102" rx="5.111" ry="5.311" style="fill:rgb(200,0,0);"/>
                 </g>
                 <g>
-                    <circle cx="22.282" cy="12.063" r="4.255" style="fill:none;stroke:rgb(249,159,0);stroke-width:1.64px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
-                    <circle cx="22.282" cy="12.063" r="1.636" style="fill:rgb(114,149,177);"/>
+                    <ellipse cx="68.16" cy="34.545" rx="13.112" ry="13.626" style="fill:none;stroke:rgb(249,159,0);stroke-width:5.14px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                    <ellipse cx="68.16" cy="34.545" rx="5.042" ry="5.24" style="fill:rgb(114,149,177);"/>
                 </g>
             </g>
         </g>
