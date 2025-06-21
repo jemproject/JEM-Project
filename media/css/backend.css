@@ -78,6 +78,10 @@
     background-image: url(../images/icon-48-plugins.svg);
 }
 
+img[src^="icon-48"] {
+    width: 48px;
+}
+
 /** linkicons **/
 div.linkicon {
     text-align: center;

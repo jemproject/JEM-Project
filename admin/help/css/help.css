@@ -66,7 +66,6 @@ ul li:not(:last-child) {
 img.left {
     float: left;
     padding-right: 10px;
-    width: 48px;
 }
 
 .box {
@@ -250,6 +249,21 @@ table.help td {
     background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-unpublish.png");
 }
 
+img[src*="icon-16"] {
+    width: 16px;
+    height: 16px;
+}
+
+img[src*="icon-32"] {
+    width: 32px;
+    height: 32px;
+}
+
+img[src*="icon-48"] {
+    width: 48px;
+    height: 48px;
+}
+
 @media (prefers-color-scheme: dark) {
     body
     {
@@ -261,12 +275,12 @@ table.help td {
         background-color: #000;
     }
     h1, h2, h3 {
-    color: #8BB2ED;
+        color: #8BB2ED;
     }
 
     .hint, .attentionheader, .attention, table.help {
-    color: #fff;
-    background-color: #465584;
+        color: #fff;
+        background-color: #465584;
 }
 
 a:link {

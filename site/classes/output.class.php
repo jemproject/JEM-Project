@@ -1102,7 +1102,7 @@ static public function lightbox() {
         }
 
         $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
-        $image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
+        $image = $first ? 'com_jem/icon-32-recurrence-first.svg' : 'com_jem/icon-32-recurrence.svg';
         /* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
         $icon  = $first ? $iconRecurrenceFirst : $iconRecurrence;
         $showinline &= !($settings2->useiconfont == 1 && $app->isClient('site'));
