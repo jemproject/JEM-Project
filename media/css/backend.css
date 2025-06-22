@@ -131,11 +131,18 @@ input#clear:focus {
 
 div.linkicon a {
     display: block;
-    border: 1px solid #f0f0f0;
-    height: 65px;
-    width: 65px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 85px;
+    width: 85px;
+    padding: 10px;
     vertical-align: middle;
     text-decoration: none;
+}
+
+[data-bs-theme="dark"] div.linkicon a {
+    background-color: #00000055;
+    border-color: #7295B166;
 }
 
 div.linkicon a:hover {
@@ -144,6 +151,11 @@ div.linkicon a:hover {
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     background-color: #f9f9f9;
+}
+
+[data-bs-theme="dark"] div.linkicon a:hover {
+    border-color: #F69D0099;
+    background-color: #000;
 }
 
 div.linkicon img {
@@ -480,6 +492,8 @@ img#imagelib {
     background-color: var(--table-bg);
 }
 
+.table-striped.housekeeping tbody tr td:nth-child(1) {padding: 6px 0 6px 6px; width: 60px;}
+
 /* ---------- TABLE, J3 Isis template -------------------------- */
 table {
     max-width: 100%;
@@ -500,6 +514,11 @@ table {
     text-align: left;
     vertical-align: top;
     border-top: 1px solid #ddd;
+}
+
+[data-bs-theme="dark"] .table th,
+[data-bs-theme="dark"] .table td {
+    border: #d4e1f1;
 }
 
 .table th {
