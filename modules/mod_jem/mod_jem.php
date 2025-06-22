@@ -33,4 +33,4 @@ if (empty($list) && !$params->get('show_no_events')) {
 // load icon font if needed
 JemHelper::loadIconFont();
 
-require ModuleHelper::getLayoutPath(($mod_name, $params->get('layout', 'default'));
+require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
