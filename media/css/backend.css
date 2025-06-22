@@ -414,7 +414,7 @@ div.pagination ul li {
 [data-bs-theme="dark"] #cpanel div.icon a {
     background-color: #00000055;
     color: #fff;
-    border: 1px solid #7295B1; }
+    border: 1px solid #7295B166; }
 
 #cpanel div.icon a:hover,
 #cpanel div.icon a:focus,
@@ -437,7 +437,7 @@ div.pagination ul li {
 [data-bs-theme="dark"] .cpanel div.icon a:active {
     box-shadow: none;
     background-color: #000;
-    border-color: #F69D00;
+    border-color: #F69D0099;
 }
 
 #cpanel img,
