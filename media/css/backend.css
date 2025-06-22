@@ -406,14 +406,15 @@ div.pagination ul li {
     text-decoration: none;
     border: 1px solid #ccc;
     border-radius: 5px;
-    transition-property: background-position, border-bottom-left-radius, box-shadow;
+    transition-property: background-position, border-bottom-left-radius, box-shadow, background, border-color;
     transition-duration: 0.8s;
 }
 
 [data-bs-theme="dark"] .cpanel div.icon a,
 [data-bs-theme="dark"] #cpanel div.icon a {
-    background-color: transparent;
-    color: #fff; }
+    background-color: #00000055;
+    color: #fff;
+    border: 1px solid #7295B1; }
 
 #cpanel div.icon a:hover,
 #cpanel div.icon a:focus,
@@ -435,8 +436,8 @@ div.pagination ul li {
 [data-bs-theme="dark"] .cpanel div.icon a:focus,
 [data-bs-theme="dark"] .cpanel div.icon a:active {
     box-shadow: none;
-    background-color: #ffffff11;
-    border-color: #fcf8e3;
+    background-color: #000;
+    border-color: #F69D00;
 }
 
 #cpanel img,
