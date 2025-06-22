@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Groupedit-v2" serif:id="Groupedit v2">
+            <circle cx="41.4" cy="29.575" r="9.5" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            <path d="M67.778,65.475L67.778,85.75L14.678,85.75L14.678,65.475M14.678,63.376C14.662,56.904 28.45,52.197 41.228,52.196C53.963,52.196 67.707,56.88 67.778,63.582" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linecap:square;"/>
+            <path id="Pers-2" serif:id="Pers 2" d="M52.131,18.349C53.015,18.132 52.94,18.017 53.891,18.017C60.276,18.017 65.46,23.201 65.46,29.586C65.46,35.971 60.276,41.155 53.891,41.155C52.94,41.155 53.015,41.04 52.131,40.823C55.505,37.898 57.578,33.94 57.578,29.586C57.578,25.232 55.505,21.274 52.131,18.349Z" style="fill:rgb(114,149,177);"/>
+            <path d="M73.598,58.108C71.655,55.424 71.186,54.126 66.578,51.17L71.953,52.604C75.9,53.953 79.142,55.786 81.137,57.892C82.674,59.514 83.531,61.32 83.639,63.225L83.65,63.225L83.65,63.558L83.673,65.808L83.65,65.808L83.65,71.525L75,71.476L75.126,64.988C75.13,64.383 75.139,63.768 75.126,63.173C75.078,60.94 74.343,59.136 73.598,58.108Z" style="fill:rgb(114,149,177);"/>
+            <g>
+                <circle cx="81.166" cy="81.611" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                <g transform="matrix(27,0,0,27,89.0077,91.1059)">
+                </g>
+                <text x="73.24px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
+            </g>
+        </g>
+    </g>
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+    </g>
+</svg>

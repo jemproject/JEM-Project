@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:10;">
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+        <g id="Cleanup-Category-images" serif:id="Cleanup Category images">
+            <g>
+                <path d="M56.479,71.424L35.023,45.479L15.222,69.77" style="fill:none;fill-rule:nonzero;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+                <circle cx="57.133" cy="43.5" r="5.5" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            </g>
+            <path d="M22.943,71.986L22.943,80.75C22.943,83.511 25.182,85.75 27.943,85.75L61.244,85.75" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+            <path d="M60.656,70.986L19.678,70.986C18.352,70.986 17.081,70.459 16.143,69.522C15.205,68.584 14.678,67.312 14.678,65.986L14.678,24.972C14.678,23.645 15.205,22.374 16.143,21.436C17.081,20.498 18.353,19.971 19.679,19.972L39.198,19.975L48,27.777L75.4,27.777C78.161,27.777 80.4,30.015 80.4,32.777L80.4,53.651" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+            <g>
+                <path d="M63.359,61.298L91.959,61.298" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+                <path d="M71.394,59.563L83.925,59.563" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+                <path d="M67.215,61.298L67.215,88.301C67.215,88.832 67.426,89.341 67.801,89.716C68.177,90.091 68.686,90.302 69.216,90.301C73.072,90.299 81.489,90.294 85.343,90.292C86.447,90.291 87.342,89.396 87.342,88.292C87.342,81.735 87.342,61.298 87.342,61.298" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+                <path d="M70.947,69.432L83.561,82.046M70.947,82.046L83.561,69.432" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+            </g>
+        </g>
+    </g>
+</svg>

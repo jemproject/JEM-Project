@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="Trigger-autoarchive" serif:id="Trigger autoarchive">
+        <circle cx="48" cy="64.505" r="11.35" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;"/>
+        <circle cx="48" cy="64.505" r="4.5" style="fill:rgb(246,157,0);"/>
+        <path d="M19.732,34.721C18.386,34.721 17.095,35.248 16.144,36.185C15.192,37.123 14.657,38.395 14.657,39.721C14.657,49.661 14.657,70.797 14.657,80.736C14.657,82.062 15.192,83.333 16.143,84.271C17.095,85.209 18.385,85.736 19.731,85.736C32.131,85.736 63.869,85.736 76.269,85.736C79.071,85.736 81.343,83.497 81.343,80.736C81.343,72.42 81.343,55.842 81.343,47.526C81.343,44.765 79.071,42.526 76.269,42.526C67.045,42.526 48.468,42.526 48.468,42.526L39.537,34.725C39.537,34.725 27.007,34.723 19.732,34.721Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+        <path d="M83.702,33.526C74.477,33.526 56.468,33.526 56.468,33.526L47.537,25.725C47.537,25.725 35.007,25.723 27.732,25.721C26.386,25.721 25.095,26.248 24.144,27.185C23.192,28.123 22.657,29.395 22.657,30.721C22.657,31.659 22.657,32.696 22.657,33.814" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+        <path d="M83.702,24.526C74.313,24.526 64.468,24.526 64.468,24.526L55.537,16.725C55.537,16.725 43.007,16.723 35.732,16.721C34.386,16.721 33.095,17.248 32.144,18.185C31.192,19.123 30.657,20.395 30.657,21.721C30.657,22.528 30.657,23.408 30.657,24.35" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+    </g>
+</svg>
