@@ -599,16 +599,16 @@ class JemCategories
 		$orderBy = $jemsettings->categories_order;
 		switch ($orderBy){
 			case 3:
-				$order = 'catname DESC, parent_id, lft';
+				$order = 'level ASC, parent_id ASC, catname DESC';
 				break;
 			case 2:
-				$order = 'catname ASC, parent_id, lft';
+				$order = 'level ASC, parent_id ASC, catname ASC';
 				break;
 			case 1:
-				$order = 'id DESC, parent_id ASC, lft';
+				$order = 'level ASC, parent_id ASC, id DESC';
 				break;
 			case 0:
-				$order = 'id ASC, parent_id ASC, lft';
+				$order = 'level ASC, parent_id ASC, id ASC';
 				break;
 		}
 
