@@ -959,7 +959,7 @@ class JemModelImport extends BaseDatabaseModel
                 $files = Folder::files($fromFolder, null, false, false);
 
                 foreach ($files as $file) {
-                    if (!File::exists($toFolder.$file)) {
+                    if (!is_file($toFolder.$file)) {
                         File::copy($fromFolder.$file, $toFolder.$file);
                     }
                 }
@@ -987,7 +987,7 @@ class JemModelImport extends BaseDatabaseModel
         if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
             $files = Folder::files($fromFolder, null, false, false);
             foreach ($files as $file) {
-                if (!File::exists($toFolder.$file)) {
+                if (!is_file($toFolder.$file)) {
                     File::copy($fromFolder.$file, $toFolder.$file);
                 }
             }

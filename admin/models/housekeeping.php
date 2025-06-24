@@ -81,8 +81,8 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
             if (is_file($fullPath)) {
                 File::delete($fullPath);
-                if (File::exists($fullPaththumb)) {
-                    File::delete($fullPaththumb);
+                if (is_file($fullPaththumb)) {
+                    is_file($fullPaththumb);
                 }
             }
         }
