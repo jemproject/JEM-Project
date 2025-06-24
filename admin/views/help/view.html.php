@@ -13,10 +13,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Filesystem\Folder;
-
-jimport('joomla.html.pane');
-
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 
 /**
  * View class for the JEM Help screen
@@ -43,7 +41,7 @@ class JemViewHelp extends JemAdminView
         // Check for files in the actual language
         $langTag = $lang->getTag();
 
-        if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+        if (!is_dir(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
             $langTag = 'en-GB';        // use english as fallback
         }
 
@@ -74,7 +72,7 @@ class JemViewHelp extends JemAdminView
         // Check for files in the actual language
         $langTag = $lang->getTag();
 
-        if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+        if (!is_dir(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
             $langTag = 'en-GB';        // use english as fallback
         }
         $files = Folder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');

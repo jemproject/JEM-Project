@@ -9,8 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\File;
-
+use Joomla\CMS\Factory;
+use Joomla\Filesystem\File;
 
 /**
  * Model-Updatecheck
@@ -22,9 +22,14 @@ class JemModelUpdatecheck extends BaseDatabaseModel
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($config = array(), $factory = null)
     {
-        parent::__construct();
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 5/6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
     }
 
     /**

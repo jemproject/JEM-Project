@@ -21,6 +21,19 @@ use Joomla\CMS\Component\ComponentHelper;
 class JemModelSettings extends AdminModel
 {
     /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 5/6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
+    /**
      * Method to get the record form.
      *
      * @param  array   $data     Data for the form.
