@@ -218,7 +218,7 @@ class JemImage
                 $dimage['height'] = $iminfo[1];
             }
 
-            if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
+            if (is_file(JPATH_SITE.'/'.$img_thumb)) {
                 //get imagesize of the thumbnail
                 $thumbiminfo = @getimagesize($img_thumb);
                 $dimage['thumbwidth']  = $thumbiminfo[0];
@@ -305,7 +305,7 @@ class JemImage
 
         $now = rand();
 
-        while (File::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+        while (is_file($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
             $now++;
         }
 
