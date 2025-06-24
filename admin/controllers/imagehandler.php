@@ -10,12 +10,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 
 /**
  * JEM Component Imagehandler Controller
