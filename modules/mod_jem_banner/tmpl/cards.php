@@ -163,14 +163,9 @@ $wa->addInlineStyle($css);
                     <?php endif; ?>
                     
                     <div class="event-actions">
-                        <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
-                        <a href="<?php echo $item->link; ?>" class="btn btn-primary">
-                            Más información
-                        </a>
+                        <?php if (isset($item->link) && ($item->readmore != 0 || $params->get('readmore'))) : ?>
+                        <a href="<?php echo $item->link; ?>" class="btn btn-primary"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
                         <?php endif; ?>
-                        <button class="btn btn-secondary">
-                            <i class="far fa-calendar-plus"></i> Recordar
-                        </button>
                     </div>
                 </div>
             </div>
