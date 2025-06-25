@@ -123,6 +123,7 @@
 		<field name="defaultCountry" type="countryoptions"
 			   label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
 			   description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
+			   default="0"
 		/>
 		<field name="spacer3" type="spacer"
 			   hr="true"

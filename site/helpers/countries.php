@@ -279,7 +279,7 @@ class JemHelperCountries
 		$country["SXM"] = array("iso2" => "SX", "name" => "Sint Maarten");
 		$country["SSD"] = array("iso2" => "SS", "name" => "South Sudan, Republic of");
 		$country["XKX"] = array("iso2" => "XK", "name" => "Kosov, Republic of");
-		$country["0"] = array("iso2" => "0", "name" => "NO VALID COUNTRY");
+		$country["000"] = array("iso2" => "00", "name" => "NO VALID COUNTRY");
 		return $country;
 	}
 
