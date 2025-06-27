@@ -17,14 +17,14 @@ $uri = Uri::getInstance();
 ?>
 
 <script>
-	function tableOrdering(order, dir, view)
-	{
-		var form = document.getElementById("adminForm");
+    function tableOrdering(order, dir, view)
+    {
+        var form = document.getElementById("adminForm");
 
-		form.filter_order.value 	= order;
-		form.filter_order_Dir.value	= dir;
-		form.submit(view);
-	}
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value    = dir;
+        form.submit(view);
+    }
   
   function clearForm() {
     var node = null;
@@ -71,7 +71,7 @@ $uri = Uri::getInstance();
     return;
   }
 </script>
-<div id="jem_filter" class="floattext">			
+<div id="jem_filter" class="floattext">            
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
@@ -149,7 +149,7 @@ $uri = Uri::getInstance();
         <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?> 
       <?php if ($this->jemsettings->showatte == 1) : ?>
-				<div id="jem_atte" class="sectiontableheader"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
+                <div id="jem_atte" class="sectiontableheader"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
     </div>    
   </div>
@@ -225,13 +225,13 @@ $uri = Uri::getInstance();
         $isSafari = true;
       }
       ?>
-			<?php $this->rows = $this->getRows(); ?>
-			<?php foreach ($this->rows as $row) : ?>
+            <?php $this->rows = $this->getRows(); ?>
+            <?php foreach ($this->rows as $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
           <li class="jem-event jem-row jem-justify-start jem-nowrap jem-featured event_id<?php echo $row->id . ' ' . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
-				<?php else : ?>
+                <?php else : ?>
           <li class="jem-event jem-row jem-justify-start jem-nowrap event_id<?php echo $row->id . ' jem-odd' . ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
-				<?php endif; ?>
+                <?php endif; ?>
         
           <div class="jem-event-details" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
@@ -375,6 +375,6 @@ $uri = Uri::getInstance();
           </div>     
         
         </li>
-			<?php endforeach; ?>
+            <?php endforeach; ?>
   <?php endif; ?>
 </ul>

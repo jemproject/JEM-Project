@@ -121,11 +121,11 @@ $wa->addInlineStyle($css);
                     <div class="clr"></div>
 
                     <?php /* Datum und Zeitangabe:
-				       *  showcalendar 1, datemethod 1 : date inside calendar image + time
-				       *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
-				       *  showcalendar 0, datemethod 1 : no calendar image, date + time
-				       *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
-			    	   */
+                       *  showcalendar 1, datemethod 1 : date inside calendar image + time
+                       *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
+                       *  showcalendar 0, datemethod 1 : no calendar image, date + time
+                       *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
+                       */
                     ?>
 
                     <?php /* if no calendar sheet is displayed */ ?>

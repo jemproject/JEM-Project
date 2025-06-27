@@ -12,18 +12,18 @@ use Joomla\CMS\Language\Text;
 
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx; ?>">
-	<div class="buttons">
-		<?php
-		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
-		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
-		?>
-	</div>
+    <div class="buttons">
+        <?php
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        ?>
+    </div>
 
-	<?php if ($this->params->get('show_page_heading', 1)) : ?>
-	<h1 class='componentheading'>
-		<?php echo $this->escape($this->params->get('page_heading')); ?>
-	</h1>
-	<?php endif; ?>
+    <?php if ($this->params->get('show_page_heading', 1)) : ?>
+    <h1 class='componentheading'>
+        <?php echo $this->escape($this->params->get('page_heading')); ?>
+    </h1>
+    <?php endif; ?>
 
   <style>
     .jem-img {
@@ -31,13 +31,13 @@ use Joomla\CMS\Language\Text;
     }
   </style>
   
-	<!--Venue-->
-	<?php foreach($this->rows as $row) : ?>
-		<div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
-			<h2 class="jem">
-				<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
-				<?php echo JemOutput::publishstateicon($row); ?>
-			</h2>
+    <!--Venue-->
+    <?php foreach($this->rows as $row) : ?>
+        <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
+            <h2 class="jem">
+                <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
+                <?php echo JemOutput::publishstateicon($row); ?>
+            </h2>
     
       <div class="jem-row">
         <div class="jem-info">
@@ -99,16 +99,16 @@ use Joomla\CMS\Language\Text;
         </div> 
       </div>
 
-			<?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
-			<h3 class="description">
-				<?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
-			</h3>
-			<div class="description" itemprop="description">
-				<?php echo $row->locdescription; ?>
-			</div>
-			<?php else : ?>
-			<div class="clr"> </div>
-			<?php endif; */?>
+            <?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+            <h3 class="description">
+                <?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
+            </h3>
+            <div class="description" itemprop="description">
+                <?php echo $row->locdescription; ?>
+            </div>
+            <?php else : ?>
+            <div class="clr"> </div>
+            <?php endif; */?>
       
       <div class="jem-readmore">
         <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
@@ -118,22 +118,22 @@ use Joomla\CMS\Language\Text;
         </a>
       </div>
       
-		</div>
+        </div>
     <?php 
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;
     ?>
-	<?php endforeach; ?>
+    <?php endforeach; ?>
 
-	<!--pagination-->
-	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
+    <!--pagination-->
+    <div class="pagination">
+        <?php echo $this->pagination->getPagesLinks(); ?>
+    </div>
 
-	<!--copyright-->
-	<div class="copyright">
-		<?php echo JemOutput::footer( ); ?>
-	</div>
+    <!--copyright-->
+    <div class="copyright">
+        <?php echo JemOutput::footer( ); ?>
+    </div>
 </div>
 <?php echo JemOutput::lightbox(); ?>

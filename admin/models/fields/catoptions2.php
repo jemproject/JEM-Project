@@ -23,52 +23,52 @@ jimport('joomla.html.html');
  */
 class JFormFieldCatOptions2 extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 */
-	protected $type = 'CatOptions2';
+    /**
+     * The form field type.
+     *
+     */
+    protected $type = 'CatOptions2';
 
-	public function getInput()
-	{
-		$attr = '';
+    public function getInput()
+    {
+        $attr = '';
 
-		// Initialize some field attributes.
-		$attr .= $this->element['class'] ? ' class="'.(string) $this->element['class'].'"' : '';
+        // Initialize some field attributes.
+        $attr .= $this->element['class'] ? ' class="'.(string) $this->element['class'].'"' : '';
 
-		// To avoid user's confusion, readonly="true" should imply disabled="true".
-		if ((string) $this->element['readonly'] == 'true' || (string) $this->element['disabled'] == 'true') {
-			$attr .= ' disabled="disabled"';
-		}
+        // To avoid user's confusion, readonly="true" should imply disabled="true".
+        if ((string) $this->element['readonly'] == 'true' || (string) $this->element['disabled'] == 'true') {
+            $attr .= ' disabled="disabled"';
+        }
 
-		//$attr .= $this->element['size'] ? ' size="'.(int) $this->element['size'].'"' : '';
-		$attr .= $this->multiple ? ' multiple="multiple"' : '';
+        //$attr .= $this->element['size'] ? ' size="'.(int) $this->element['size'].'"' : '';
+        $attr .= $this->multiple ? ' multiple="multiple"' : '';
 
-		// Initialize JavaScript field attributes.
-		$attr .= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
+        // Initialize JavaScript field attributes.
+        $attr .= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
 
 
-		//$attr .= $this->element['required'] ? ' class="required modal-value"' : "";
+        //$attr .= $this->element['required'] ? ' class="required modal-value"' : "";
 
-// 		if ($this->required) {
-// 			$class = ' class="required modal-value"';
-// 		}
+//         if ($this->required) {
+//             $class = ' class="required modal-value"';
+//         }
 
-		// Output
+        // Output
 
-		//$categories = JEMCategories::getCategoriesTree(0);
-		//$Lists['parent_id'] 		= JEMCategories::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
+        //$categories = JEMCategories::getCategoriesTree(0);
+        //$Lists['parent_id']         = JEMCategories::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
 
-		$currentid = Factory::getApplication()->input->getInt('id');
-		$categories = JEMCategories::getCategoriesTree(0);
+        $currentid = Factory::getApplication()->input->getInt('id');
+        $categories = JEMCategories::getCategoriesTree(0);
 
         $db = Factory::getContainer()->get('DatabaseDriver');
-		$query	= $db->getQuery(true);
-		$query = 'SELECT DISTINCT parent_id FROM #__jem_categories WHERE id = '. $db->quote($currentid);
+        $query    = $db->getQuery(true);
+        $query = 'SELECT DISTINCT parent_id FROM #__jem_categories WHERE id = '. $db->quote($currentid);
 
-		$db->setQuery($query);
-		$currentparent_id = $db->loadColumn();
+        $db->setQuery($query);
+        $currentparent_id = $db->loadColumn();
 
-		return JEMCategories::buildcatselect($categories, 'parent_id', $currentparent_id, 1);
-	}
+        return JEMCategories::buildcatselect($categories, 'parent_id', $currentparent_id, 1);
+    }
 }

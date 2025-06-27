@@ -34,15 +34,15 @@ if (isset($this->attachments) && is_array($this->attachments) && (count($this->a
                     }
                     ?>
                     <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_DOWNLOAD'), $overlib, 'jem-files'); ?>>
-					<?php
-                    $filename	= $this->escape($file->name ? $file->name : $file->file);
-                    $image		= $filename.'&nbsp;<i class="fa fa-download"></i>';
-                    $attribs	= array('class'=>'jem-files');
+                    <?php
+                    $filename    = $this->escape($file->name ? $file->name : $file->file);
+                    $image        = $filename.'&nbsp;<i class="fa fa-download"></i>';
+                    $attribs    = array('class'=>'jem-files');
                     echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.Session::getFormToken().'=1',$image, $attribs);
                     ?>
-					</span>
+                    </span>
                 </dd>
             <?php endforeach; ?>
         </dl>
     </div>
-<?php endif; ?>	
+<?php endif; ?>    

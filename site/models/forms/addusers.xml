@@ -2,12 +2,12 @@
 <form>
     <fieldset name="details">
         <field name="status" type="list"
-               label="COM_JEM_STATUS"
-               description="COM_JEM_STATUS_DESC"
-               class="inputbox"
-               filter="intval"
-               size="1"
-               default="1"
+            label="COM_JEM_STATUS"
+            description="COM_JEM_STATUS_DESC"
+            class="inputbox"
+            filter="intval"
+            size="1"
+            default="1"
         >
             <option value="0">COM_JEM_ATTENDEES_INVITED</option>
             <option value="-1">COM_JEM_ATTENDEES_NOT_ATTENDING</option>

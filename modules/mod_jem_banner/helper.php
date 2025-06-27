@@ -115,9 +115,9 @@ abstract class ModJemBannerHelper
                 $opendates = 2;
                 break;
 
-            //	case 4: # featured events
-            //		$model->setState('filter.featured', 1);
-            //		# fall through
+            //    case 4: # featured events
+            //        $model->setState('filter.featured', 1);
+            //        # fall through
             case 0: # upcoming events
             default:
                 $cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";

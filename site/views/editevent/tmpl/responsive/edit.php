@@ -20,8 +20,8 @@ $wa->useScript('keepalive')
     ->useScript('form.validate');
 
 // Create shortcut to parameters.
-$params		= $this->params;
-// $settings	= json_decode($this->item->attribs);
+$params        = $this->params;
+// $settings    = json_decode($this->item->attribs);
 ?>
 
 <script>

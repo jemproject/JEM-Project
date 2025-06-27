@@ -19,8 +19,8 @@ $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 // Create shortcut to parameters.
-$params		= $this->params;
-// $settings	= json_decode($this->item->attribs);
+$params        = $this->params;
+// $settings    = json_decode($this->item->attribs);
 ?>
 
 <script>
@@ -118,11 +118,11 @@ $params		= $this->params;
             var unregistramode = unregistra.val();
 
             if (unregistramode == 2) {
-	            document.getElementById('unregistra_until').style.display = '';
+                document.getElementById('unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until2').style.display = '';
             } else {
-	            document.getElementById('unregistra_until').style.display = 'none';			
+                document.getElementById('unregistra_until').style.display = 'none';            
                 document.getElementById('jform_unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until2').style.display = 'none';
             }

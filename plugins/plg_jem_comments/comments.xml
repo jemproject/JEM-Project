@@ -23,9 +23,9 @@
         <fields name="params">
             <fieldset name="basic">
                 <field type="list" name="commentsystem"
-                       label="PLG_JEM_COMMENTS_COMMENTSYSTEM"
-                       default="0"
-                       description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
+                    label="PLG_JEM_COMMENTS_COMMENTSYSTEM"
+                    default="0"
+                    description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
                 >
                     <option value="0">PLG_JEM_COMMENTS_NONE</option>
                     <option value="2">PLG_JEM_COMMENTS_JCOMMENTS</option>

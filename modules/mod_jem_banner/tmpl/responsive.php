@@ -87,12 +87,12 @@ $css = '
     }
 
     @media not print {
-    	@media only all and (max-width: 47.938rem) {
+        @media only all and (max-width: 47.938rem) {
             #jemmodulebanner .jem-eventimg-banner {
             }
             #jemmodulebanner .jem-eventimg-banner img {
-       			width: ' . $imagewidth . ';
-        		height: ' . $imageheight . ';
+                   width: ' . $imagewidth . ';
+                height: ' . $imageheight . ';
             }
         }
     }';

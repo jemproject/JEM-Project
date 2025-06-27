@@ -24,25 +24,25 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
 switch($params->get('color')) {
-	case 'red':
-	case 'blue':
-	case 'green':
-	case 'orange':
-	case 'alpha':
-		$color = $params->get('color');
-		break;
-	default:
-		$color = "red";
-		// ensure getList() always gets a valid 'color' setting
-		$params->set('color', $color);
-		break;
+    case 'red':
+    case 'blue':
+    case 'green':
+    case 'orange':
+    case 'alpha':
+        $color = $params->get('color');
+        break;
+    default:
+        $color = "red";
+        // ensure getList() always gets a valid 'color' setting
+        $params->set('color', $color);
+        break;
 }
 
 $list = ModJemJubileeHelper::getList($params);
 
 // check if any results returned
 if (empty($list)) {
-//	return;
+//    return;
 }
 
 $mod_name = 'mod_jem_jubilee';
