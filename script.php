@@ -622,13 +622,13 @@ class com_jemInstallerScript
         }
 
         foreach ($folders as $folder) {
-    		if (is_dir(JPATH_ROOT . $folder)) {
-        		$filesystem = new \Joomla\Filesystem\Folder();
-        		if (!$filesystem->delete(JPATH_ROOT . $folder)) {
-            		echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
-        		}
-    		}
-		}
+            if (is_dir(JPATH_ROOT . $folder)) {
+                $filesystem = new \Joomla\Filesystem\Folder();
+                if (!$filesystem->delete(JPATH_ROOT . $folder)) {
+                    echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+                }
+            }
+        }
     }
 
     /**
@@ -887,5 +887,5 @@ class com_jemInstallerScript
         } catch (\Exception $e) {
             echo "Error updating `unregistra_until`: " . $e->getMessage();
         }
-	}
+    }
 }
