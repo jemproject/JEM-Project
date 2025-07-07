@@ -136,7 +136,7 @@ $wa->addInlineStyle($css);
                         </div>
                         <div class="date-time">
                             <div class="date-weekday"><?php echo $item->startdate['weekday']; ?></div>
-                            <div class="date-hours"><?php echo $item->time ?: 'Todo el día'; ?></div>
+                            <div class="date-hours"><?php echo $item->time ?: Text::_('MOD_JEM_BANNER_ALL_DAY'); ?></div>
                         </div>
                     </div>
                     
