@@ -676,6 +676,7 @@
                 size="10"
                 maxlength="10"
                 required="false"
+                showon="event_show_mapserv:1,2,3"
             />
             <field name="event_lg" type="text"
                 label="COM_JEM_GOOGLE_MAP_LG"
@@ -684,6 +685,7 @@
                 size="10"
                 maxlength="10"
                 required="false"
+                showon="event_show_mapserv:1,2,3"
             />
         </fieldset>
         <fieldset name="evregistration"
