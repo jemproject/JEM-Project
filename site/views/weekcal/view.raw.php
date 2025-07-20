@@ -39,7 +39,7 @@ class JemViewWeekcal extends HtmlView
             // initiate new CALENDAR
             $vcal = JemHelper::getCalendarTool();
 
-            $vcal->setConfig("filename", "events_week_" . $year . $week . ".ics");
+            $vcal->setConfig("filename", "events_week_" . $year . str_pad($week, 2, '0', STR_PAD_LEFT) . ".ics");
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
