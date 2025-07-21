@@ -466,14 +466,15 @@ class JemModelEventslist extends ListModel
 
             $cal_from = $this->getState('filter.calendar_from');
             $cal_to   = $this->getState('filter.calendar_to');
-        }
 
-        if ($cal_from) {
-            $query->where($cal_from);
-        }
 
-        if ($cal_to) {
-            $query->where($cal_to);
+            if ($cal_from) {
+                $query->where($cal_from);
+            }
+
+            if ($cal_to) {
+                $query->where($cal_to);
+            }
         }
 
         #############################
