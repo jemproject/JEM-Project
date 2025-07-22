@@ -25,66 +25,66 @@ jimport('joomla.html.pane');
 class JemViewImport extends JemAdminView
 {
 
-	public function display($tpl = null) {
-		// Load css
-		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+    public function display($tpl = null) {
+        // Load css
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
-		// Get data from the model
-		$eventfields = $this->get('EventFields');
-		$catfields   = $this->get('CategoryFields');
-		$venuefields = $this->get('VenueFields');
-		$cateventsfields = $this->get('CateventsFields');
+        // Get data from the model
+        $eventfields = $this->get('EventFields');
+        $catfields   = $this->get('CategoryFields');
+        $venuefields = $this->get('VenueFields');
+        $cateventsfields = $this->get('CateventsFields');
 
-		//assign vars to the template
-		$this->eventfields 		= $eventfields;
-		$this->catfields 		= $catfields;
-		$this->venuefields 		= $venuefields;
-		$this->cateventsfields 	= $cateventsfields;
+        //assign vars to the template
+        $this->eventfields         = $eventfields;
+        $this->catfields         = $catfields;
+        $this->venuefields         = $venuefields;
+        $this->cateventsfields     = $cateventsfields;
 
-		$this->eventlistVersion = $this->get('EventlistVersion');
-		$this->eventlistTables 	= $this->get('EventlistTablesCount');
-		$this->jemTables 		= $this->get('JemTablesCount');
-		$this->existingJemData 	= $this->get('ExistingJemData');
+        $this->eventlistVersion = $this->get('EventlistVersion');
+        $this->eventlistTables     = $this->get('EventlistTablesCount');
+        $this->jemTables         = $this->get('JemTablesCount');
+        $this->existingJemData     = $this->get('ExistingJemData');
 
-		$app = Factory::getApplication();
-		$jinput = $app->input;
-		$progress = new stdClass();
-		$progress->step 	= $jinput->get('step', 0, 'INT');
-		$progress->current 	= $jinput->get('current', 0, 'INT');
-		$progress->total 	= $jinput->get('total', 0, 'INT');
-		$progress->table 	= $jinput->get('table', '', 'INT');
-		$progress->prefix 	= $jinput->get('prefix', null, 'CMD');
-		$progress->copyImages = $jinput->get('copyImages', null, 'INT');
-		$progress->copyAttachments = $jinput->get('copyAttachments', null, 'INT');
-		$progress->fromJ15 = $jinput->get('fromJ15', null, 'INT');
-		$this->progress = $progress;
-		$this->attachmentsPossible = !empty($this->eventlistTables['eventlist_attachments']);
+        $app = Factory::getApplication();
+        $jinput = $app->input;
+        $progress = new stdClass();
+        $progress->step     = $jinput->get('step', 0, 'INT');
+        $progress->current     = $jinput->get('current', 0, 'INT');
+        $progress->total     = $jinput->get('total', 0, 'INT');
+        $progress->table     = $jinput->get('table', '', 'INT');
+        $progress->prefix     = $jinput->get('prefix', null, 'CMD');
+        $progress->copyImages = $jinput->get('copyImages', null, 'INT');
+        $progress->copyAttachments = $jinput->get('copyAttachments', null, 'INT');
+        $progress->fromJ15 = $jinput->get('fromJ15', null, 'INT');
+        $this->progress = $progress;
+        $this->attachmentsPossible = !empty($this->eventlistTables['eventlist_attachments']);
 
-		// Do not show default prefix #__ but its replacement value
-		$this->prefixToShow = $progress->prefix;
-		if (empty($this->prefixToShow) || $this->prefixToShow == "#__") {
-			$this->prefixToShow = $app->get('dbprefix');
-		}
+        // Do not show default prefix #__ but its replacement value
+        $this->prefixToShow = $progress->prefix;
+        if (empty($this->prefixToShow) || $this->prefixToShow == "#__") {
+            $this->prefixToShow = $app->get('dbprefix');
+        }
 
-		// add toolbar
-		$this->addToolbar();
+        // add toolbar
+        $this->addToolbar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 
 
-	/**
-	 * Add Toolbar
-	 */
-	protected function addToolbar()
-	{
-		ToolbarHelper::title(Text::_('COM_JEM_IMPORT'), 'tableimport');
+    /**
+     * Add Toolbar
+     */
+    protected function addToolbar()
+    {
+        ToolbarHelper::title(Text::_('COM_JEM_IMPORT'), 'tableimport');
 
-		ToolbarHelper::back();
-		ToolbarHelper::divider();
-		ToolbarHelper::inlinehelp();
-		ToolBarHelper::help('import', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/import-data');
-	}
+        ToolbarHelper::back();
+        ToolbarHelper::divider();
+        ToolbarHelper::inlinehelp();
+        ToolBarHelper::help('import', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/import-data');
+    }
 }
 ?>

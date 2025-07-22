@@ -17,14 +17,14 @@ $uri = Uri::getInstance();
 ?>
 
 <script>
-	function tableOrdering(order, dir, view)
-	{
-		var form = document.getElementById("adminForm");
+    function tableOrdering(order, dir, view)
+    {
+        var form = document.getElementById("adminForm");
 
-		form.filter_order.value 	= order;
-		form.filter_order_Dir.value	= dir;
-		form.submit(view);
-	}
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value    = dir;
+        form.submit(view);
+    }
   
   function clearForm() {
     var node = null;
@@ -142,7 +142,7 @@ $uri = Uri::getInstance();
     <?php endif; ?>
   }
 </style>
-<div id="jem_filter" class="floattext">		
+<div id="jem_filter" class="floattext">        
 <dl class="jem-dl">
   <dt>
     <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
@@ -234,8 +234,8 @@ $uri = Uri::getInstance();
         $isSafari = true;
       }
       ?>
-			<?php $this->rows = $this->getRows(); ?>
-			<?php foreach ($this->rows as $row) : ?>
+            <?php $this->rows = $this->getRows(); ?>
+            <?php foreach ($this->rows as $row) : ?>
       <?php if (!empty($row->featured)) :   ?>
         <li class="jem-event jem-list-row jem-small-list jem-featured event_id<?php echo $row->id . ' ' . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
       <?php else : ?>

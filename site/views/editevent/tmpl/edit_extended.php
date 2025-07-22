@@ -27,25 +27,25 @@ use Joomla\CMS\Date\Date;
                         <?php
                         switch ($this->item->recurrence_type) {
                             case 1:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                 break;
                             case 2:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_week;
                                 break;
                             case 3:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_month;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_month;
                                 break;
                             case 4:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_week;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_week;
                                 break;
                             case 5:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_year;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_year;
                                 break;
                             case 6:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_lastday;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_lastday;
                                 break;
                             default:
-                                $anticipation	= $this->jemsettings->recurrence_anticipation_day;
+                                $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                 break;
                         }
 

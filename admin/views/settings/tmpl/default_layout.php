@@ -101,42 +101,42 @@ use Joomla\CMS\Language\Text;
 <div class="width-50 fltrt">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS'); ?></legend>
-		<ul class="adminformlist">
-			<?php foreach ($this->form->getFieldset('stylesheet') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-			<?php endforeach; ?>
-		</ul>
-	</fieldset>
+        <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS'); ?></legend>
+        <ul class="adminformlist">
+            <?php foreach ($this->form->getFieldset('stylesheet') as $field): ?>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </fieldset>
 </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BACKGROUND'); ?></legend>
-		<ul class="adminformlist label-button-line">
-			<?php foreach ($this->form->getFieldset('css_color') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-			<?php endforeach; ?>
-		</ul>
-	</fieldset>
+        <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BACKGROUND'); ?></legend>
+        <ul class="adminformlist label-button-line">
+            <?php foreach ($this->form->getFieldset('css_color') as $field): ?>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </fieldset>
 </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BORDER'); ?></legend>
-		<ul class="adminformlist label-button-line">
-			<?php foreach ($this->form->getFieldset('css_color_border') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-			<?php endforeach; ?>
-		</ul>
-	</fieldset>
+        <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BORDER'); ?></legend>
+        <ul class="adminformlist label-button-line">
+            <?php foreach ($this->form->getFieldset('css_color_border') as $field): ?>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </fieldset>
 </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-		<legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_FONT'); ?></legend>
-		<ul class="adminformlist label-button-line">
-			<?php foreach ($this->form->getFieldset('css_color_font') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-			<?php endforeach; ?>
-		</ul>
-	</fieldset>
+        <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_FONT'); ?></legend>
+        <ul class="adminformlist label-button-line">
+            <?php foreach ($this->form->getFieldset('css_color_font') as $field): ?>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </fieldset>
 </div>
 </div><div class="clr"></div>

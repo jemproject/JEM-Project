@@ -85,13 +85,13 @@ if (empty($this->catrow->events)) { return; }
         $isSafari = true;
       }
       ?>
-			<?php foreach ($this->catrow->events as $row) : ?>
+            <?php foreach ($this->catrow->events as $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
           <li class="jem-event jem-row jem-justify-start jem-featured event_id<?php echo $row->id . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
-				<?php else : ?>
+                <?php else : ?>
               <?php $odd = 0; ?>
           <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($odd +1) . ' event_id' . $row->id . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
-				<?php endif; ?>
+                <?php endif; ?>
           
           <?php if (($this->jemsettings->showeventimage == 1) && (!empty($row->datimage))): ?>
             <div headers="jem_eventimage" class="jem-list-img" >
@@ -243,7 +243,7 @@ if (empty($this->catrow->events)) { return; }
           </div>
         
         </li>
-			<?php endforeach; ?>
+            <?php endforeach; ?>
   <?php endif; ?>
 </ul>
 <?php echo JemOutput::lightbox(); ?>

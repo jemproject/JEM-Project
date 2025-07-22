@@ -25,47 +25,47 @@ Form::addFormPath(JPATH_COMPONENT . '/models/forms');
 $form = Form::getInstance('com_jem.addusers', 'addusers');
 
 if (empty($form)) {
-	return false;
+    return false;
 }
 ?>
 
 <script>
-	function tableOrdering( order, dir, view )
-	{
-		var form = document.getElementById("adminForm");
+    function tableOrdering( order, dir, view )
+    {
+        var form = document.getElementById("adminForm");
 
-		form.filter_order.value 	= order;
-		form.filter_order_Dir.value	= dir;
-		form.submit( view );
-	}
+        form.filter_order.value     = order;
+        form.filter_order_Dir.value    = dir;
+        form.submit( view );
+    }
 </script>
 <script>
-	function checkList(form)
-	{
-		var r='', i, n, e;
-		for (i=0, n=form.elements.length; i<n; i++)
-		{
-			e = form.elements[i];
-			if (e.type == 'checkbox' && e.id.indexOf('cb') === 0 && e.checked)
-			{
-				if (r) { r += ','; }
-				r += e.value;
-			}
-		}
-		return r;
-	}
+    function checkList(form)
+    {
+        var r='', i, n, e;
+        for (i=0, n=form.elements.length; i<n; i++)
+        {
+            e = form.elements[i];
+            if (e.type == 'checkbox' && e.id.indexOf('cb') === 0 && e.checked)
+            {
+                if (r) { r += ','; }
+                r += e.value;
+            }
+        }
+        return r;
+    }
 </script>
 
 <div id="jem" class="jem_select_users">
-	<h1 class='componentheading'>
-		<?php echo Text::_('COM_JEM_SELECT_USERS_AND_STATUS'); ?>
-	</h1>
+    <h1 class='componentheading'>
+        <?php echo Text::_('COM_JEM_SELECT_USERS_AND_STATUS'); ?>
+    </h1>
 
-	<div class="clr"></div>
+    <div class="clr"></div>
 
-	<form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
 
-		<?php if(1) : ?>
+        <?php if(1) : ?>
     <div class="jem-row valign-baseline">
       <div id="jem_filter" class="jem-form jem-row jem-justify-start">
         <div>
@@ -93,7 +93,7 @@ if (empty($form)) {
  </div>
 
     </div>
-		<?php endif; ?>
+        <?php endif; ?>
 
     <hr class="jem-hr"/>
 
@@ -130,7 +130,7 @@ if (empty($form)) {
             </div>
 
             <div class="jem-event-info-small jem-users-places">
-				<?php echo $this->escape($row->places); ?>
+                <?php echo $this->escape($row->places); ?>
             </div>
           </li>
         <?php endforeach; ?>
@@ -139,21 +139,21 @@ if (empty($form)) {
 
         <hr class="jem-hr"/>
 
-		<?php
-		if($this->event->maxbookeduser!=0)
-		{
-			$placesavailableuser = $this->event->maxbookeduser;
-		}else{
-			$placesavailableuser= null;
-		}
-		?>
+        <?php
+        if($this->event->maxbookeduser!=0)
+        {
+            $placesavailableuser = $this->event->maxbookeduser;
+        }else{
+            $placesavailableuser= null;
+        }
+        ?>
 
         <div class="jem-row jem-justify-start valign-baseline">
             <div class="choose-status">
-				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo $form->getLabel('status'); ?> <?php echo $form->getInput('status'); ?>
+                <?php echo Text::_('COM_JEM_SELECT');?> <?php echo $form->getLabel('status'); ?> <?php echo $form->getInput('status'); ?>
             </div>
             <div class="choose-places">
-				<?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?> <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ? $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
+                <?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?> <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ? $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
             </div>
             <?php if ($this->event->recurrence_type && $this->event->seriesbooking): ?>
                 <div class="choose-places">
@@ -165,17 +165,17 @@ if (empty($form)) {
             <?php endif; ?>
         </div>
 
-		<input type="hidden" name="task" value="selectusers" />
-		<input type="hidden" name="option" value="com_jem" />
-		<input type="hidden" name="tmpl" value="component" />
-		<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
-		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-		<input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
+        <input type="hidden" name="task" value="selectusers" />
+        <input type="hidden" name="option" value="com_jem" />
+        <input type="hidden" name="tmpl" value="component" />
+        <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
+        <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+        <input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
 
-	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
+    <div class="pagination">
+        <?php echo $this->pagination->getPagesLinks(); ?>
+    </div>
 
     <div class="jem-row jem-justify-end">
         <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm),document.adminForm.boxchecked.value,document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, document.adminForm.seriesbooking.value, '<?php echo Session::getFormToken(); ?>');">

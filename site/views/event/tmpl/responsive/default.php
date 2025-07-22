@@ -127,18 +127,18 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     </dt>
                     <dd class="jem-category">
                         <?php
-                	foreach ((array)$this->categories as $i => $category) {
-        				if ($i > 0) {
-                        		echo ', ';
-        				}
-       					if ($params->get('event_link_category') == 1) {
-            				echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
-        				} else {
-            				echo $this->escape($category->catname);
-            			}
-            		}
-            		echo '</dd>';
-                        	endif;
+                    foreach ((array)$this->categories as $i => $category) {
+                        if ($i > 0) {
+                                echo ', ';
+                        }
+                           if ($params->get('event_link_category') == 1) {
+                            echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+                        } else {
+                            echo $this->escape($category->catname);
+                        }
+                    }
+                    echo '</dd>';
+                            endif;
 
                     for ($cr = 1; $cr <= 10; $cr++) {
                         $currentRow = $this->item->{'custom'.$cr};

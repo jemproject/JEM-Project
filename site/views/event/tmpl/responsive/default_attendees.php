@@ -254,8 +254,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                         case 2:
                             if ($this->item->requestanswer) { ?>
                                 <span class="badge rounded-pill text-light bg-secondary">
-									<?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
-								</span>
+                                    <?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
+                                </span>
                             <?php } ?>
 
                             <button class="btn btn-sm btn-warning text-white px-4 py-2" style="border: none; cursor: pointer; transition: background-color 0.3s;"

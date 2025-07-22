@@ -64,8 +64,8 @@ $css = '
       }
       
       #jemmodulewide .jem-list-img img {
-      	width: ' . $imagewidth . ';
-      	height: ' . $imageheight . ';
+          width: ' . $imagewidth . ';
+          height: ' . $imageheight . ';
       }
     }
   }';
@@ -172,9 +172,9 @@ $document->addStyleDeclaration($css);
                 $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                 $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                 echo '<script>lightbox.option({
-							\'showImageNumberLabel\': false,
-							})
-							</script>';
+                            \'showImageNumberLabel\': false,
+                            })
+                            </script>';
             } else {
                 $image = '';
             } ?>

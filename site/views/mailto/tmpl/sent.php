@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 
 ?>
 <div style="padding: 10px;">
-	<h2>
-		<?php echo Text::_('COM_JEM_MAILTO_EMAIL_SENT'); ?>
-	</h2>
+    <h2>
+        <?php echo Text::_('COM_JEM_MAILTO_EMAIL_SENT'); ?>
+    </h2>
 </div>

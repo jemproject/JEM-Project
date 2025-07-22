@@ -35,17 +35,17 @@ $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 //
 //$result .= '<br/>'.$event->introtext.'</p>';
 //if ( $event->locid ) {
-//	$result .= '<div class="venue" style="display:block;float:left;width:200px;">';
-//	$result .= '<p>';
-//	$result .= '<br/><strong>Venue:</strong> ';
-//	$result .='&nbsp;';
-//	$link = JemHelperRoute::getVenueRoute($event->venueslug);
-//	$result .= $event->locid != 0 ? "<a href='".acymailing_frontendLink($link)."'>".$event->venue."</a>" : '';
-//	$result .= !empty($event->street) ? '<br/>'.$event->street : '';
-//	$result .= !empty($event->city) ? '<br/>'. $event->city : '';
-//	$result .= !empty($event->postalcode) ? '<br/>'. $event->postalcode : '';
-//	$result .= '</p>';
-//	$result .= '</div>';
+//    $result .= '<div class="venue" style="display:block;float:left;width:200px;">';
+//    $result .= '<p>';
+//    $result .= '<br/><strong>Venue:</strong> ';
+//    $result .='&nbsp;';
+//    $link = JemHelperRoute::getVenueRoute($event->venueslug);
+//    $result .= $event->locid != 0 ? "<a href='".acymailing_frontendLink($link)."'>".$event->venue."</a>" : '';
+//    $result .= !empty($event->street) ? '<br/>'.$event->street : '';
+//    $result .= !empty($event->city) ? '<br/>'. $event->city : '';
+//    $result .= !empty($event->postalcode) ? '<br/>'. $event->postalcode : '';
+//    $result .= '</p>';
+//    $result .= '</div>';
 //}
 //$result .= '<div class="contact" style="display:block;float:left;">';
 //$result .= '<p>';
@@ -57,13 +57,13 @@ $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 //
 //$result .= '<br/><strong>Contact: </strong><a href="'.$cntlink2.'">'.$contact.'</a>';
 //if (!empty($event->conemail_to)) {
-//	$result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
+//    $result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 //}
 //if (!empty($event->contelephone)) {
-//	$result .= '<br/>tel:'.$event->contelephone;
+//    $result .= '<br/>tel:'.$event->contelephone;
 //}
 //if (!empty($event->conmobile)) {
-//	$result .= '<br/>mob:'.$event->conmobile;
+//    $result .= '<br/>mob:'.$event->conmobile;
 //}
 //$result .= '</p>';
 //$result .= '</div>';
