@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 FormHelper::loadFieldClass('list');
 
@@ -57,6 +58,20 @@ class JFormFieldCatOptions extends ListField
         // Initialize JavaScript field attributes.
         $attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 
+        $attr2  = '';
+        $attr2 .= $this->multiple ? ' multiple' : '';
+        $attr2 .= $this->required ? ' required aria-required="true"' : '';
+        $attr2 .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '" ';
+
+        // To avoid user's confusion, readonly="true" should imply disabled="true".
+        if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
+        {
+            $attr2 .= ' disabled="disabled"';
+        }
+
+        // Initialize JavaScript field attributes.
+        $attr2 .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
+
         // Get the field options.
         $options = (array) $this->getOptions();
 
@@ -90,7 +105,11 @@ class JFormFieldCatOptions extends ListField
             $html[] = HTMLHelper::_('select.genericlist', $options, $this->name, trim($attr), 'value', 'text', $selectedcats,$this->id);
         }
 
-        return implode($html);
+        Factory::getApplication()->getDocument()->getWebAssetManager()
+            ->usePreset('choicesjs')
+            ->useScript('webcomponent.field-fancy-select');
+
+        return '<joomla-field-fancy-select ' . $attr2 . '>' . implode($html) . '</joomla-field-fancy-select>';
     }
 
     /**
