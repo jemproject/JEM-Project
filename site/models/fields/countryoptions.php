@@ -19,16 +19,16 @@ FormHelper::loadFieldClass('list');
  */
 class JFormFieldCountryOptions extends ListField
 {
-	/**
-	 * The form field type.
-	 */
-	protected $type = 'CountryOptions';
+    /**
+     * The form field type.
+     */
+    protected $type = 'CountryOptions';
 
-	/**
-	 * Method to get the Country options.
-	 */
-	public function getOptions()
-	{
-		return JemHelper::getCountryOptions();
-	}
+    /**
+     * Method to get the Country options.
+     */
+    public function getOptions()
+    {
+        return JemHelper::getCountryOptions();
+    }
 }

@@ -35,9 +35,9 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 <fieldset class="">
     <legend><?php echo Text::_('COM_JEM_META_HANDLING'); ?></legend>
     <div class="formelm-area">
-        <input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_TITLE' );	?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo Text::_ ( 'COM_JEM_VENUE' );?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
+        <input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_TITLE' );    ?>" />
+        <input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php    echo Text::_ ( 'COM_JEM_VENUE' );?>" />
+        <input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php    echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
         <input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_DATE' );?>" />
         <input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_ ( 'COM_JEM_TIME' );?>" />
         <input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_ ( 'COM_JEM_ENDDATE' );?>" />
@@ -66,7 +66,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
             $meta_description = $this->jemsettings->meta_description;
         }
         ?>
-        <textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
+        <textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"    onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
     </div>
     <!-- include the metatags end-->
 
@@ -74,7 +74,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
         <!--
         starter("<?php
             echo Text::_ ( 'COM_JEM_META_ERROR' );
-            ?>");	// window.onload is already in use, call the function manualy instead
+            ?>");    // window.onload is already in use, call the function manualy instead
         -->
     </script>
 </fieldset>

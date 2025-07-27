@@ -75,8 +75,8 @@ $css = '
             }
 
             #jem .jem-list-img img {
-            	width: ' . $imagewidth . ';
-            	height: ' . $imageheight . ';
+                width: ' . $imagewidth . ';
+                height: ' . $imageheight . ';
             }
         }
     }';
@@ -292,30 +292,30 @@ function jem_common_show_filter(&$obj)
                         </div>
                     <?php endif; ?>
                     <?php if($row->user_has_access_venue) : ?>
-                        <?php if (($this->jemsettings->showlocate == 1) && (!empty($row->locid))) : ?>
-                            <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
-                                <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
-                                <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-                                    <?php echo "<a href='" . Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) . "'>" . $this->escape($row->venue) . "</a>"; ?>
-                                <?php else : ?>
-                                    <?php echo $this->escape($row->venue); ?>
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
+                    <?php if (($this->jemsettings->showlocate == 1) && (!empty($row->locid))) : ?>
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
+                            <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
+                            <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
+                                <?php echo "<a href='" . Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) . "'>" . $this->escape($row->venue) . "</a>"; ?>
+                            <?php else : ?>
+                                <?php echo $this->escape($row->venue); ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
 
-                        <?php if (($this->jemsettings->showcity == 1) && (!empty($row->city))) : ?>
-                            <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                                <?php echo ($showiconsineventdata? '<i class="fa fa-building" aria-hidden="true"></i>':''); ?>
-                                <?php echo $this->escape($row->city); ?>
-                            </div>
-                        <?php endif; ?>
+                    <?php if (($this->jemsettings->showcity == 1) && (!empty($row->city))) : ?>
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
+                            <?php echo ($showiconsineventdata? '<i class="fa fa-building" aria-hidden="true"></i>':''); ?>
+                            <?php echo $this->escape($row->city); ?>
+                        </div>
+                    <?php endif; ?>
 
-                        <?php if (($this->jemsettings->showstate == 1) && (!empty($row->state))): ?>
-                            <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                                <?php echo ($showiconsineventdata? '<i class="fa fa-map" aria-hidden="true"></i>':''); ?>
-                                <?php echo $this->escape($row->state); ?>
-                            </div>
-                        <?php endif; ?>
+                    <?php if (($this->jemsettings->showstate == 1) && (!empty($row->state))): ?>
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
+                            <?php echo ($showiconsineventdata? '<i class="fa fa-map" aria-hidden="true"></i>':''); ?>
+                            <?php echo $this->escape($row->state); ?>
+                        </div>
+                    <?php endif; ?>
                     <?php endif; ?>
 
                     <?php if ($this->jemsettings->showcat == 1) : ?>

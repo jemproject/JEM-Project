@@ -18,24 +18,24 @@ use Joomla\CMS\Form\FormField;
  */
 class JFormFieldStarttime extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 */
-	protected $type = 'Starttime';
+    /**
+     * The form field type.
+     *
+     */
+    protected $type = 'Starttime';
 
-	
-	public function getInput()
-	{
-	
-		
-		$starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ));
-		$startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ));
-		
-		$var2 = $starthours.$startminutes;
-	
-		return $var2;
-		
-	}
-	
+    
+    public function getInput()
+    {
+    
+        
+        $starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ));
+        $startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ));
+        
+        $var2 = $starthours.$startminutes;
+    
+        return $var2;
+        
+    }
+    
 }

@@ -17,130 +17,130 @@ require_once __DIR__ . '/eventslist.php';
  **/
 class JemModelVenueCal extends JemModelEventslist
 {
-	/**
-	 * Venue id
-	 *
-	 * @var int
-	 */
-	protected $_venue = null;
+    /**
+     * Venue id
+     *
+     * @var int
+     */
+    protected $_venue = null;
 
-	/**
-	 * Date as timestamp useable for strftime()
-	 *
-	 * @var int
-	 */
-	protected $_date = null;
+    /**
+     * Date as timestamp useable for strftime()
+     *
+     * @var int
+     */
+    protected $_date = null;
 
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		$app         = Factory::getApplication();
-	//	$jemsettings = JemHelper::config();
-		$jinput      = $app->input;
-		$params      = $app->getParams();
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $app         = Factory::getApplication();
+    //    $jemsettings = JemHelper::config();
+        $jinput      = $app->input;
+        $params      = $app->getParams();
 
-		$id = $jinput->getInt('id', 0);
-		if (empty($id)) {
-			$id = $params->get('id', 0);
-		}
+        $id = $jinput->getInt('id', 0);
+        if (empty($id)) {
+            $id = $params->get('id', 0);
+        }
 
-		$this->setdate(time());
-		$this->setId((int)$id);
+        $this->setdate(time());
+        $this->setId((int)$id);
 
-		parent::__construct();
-	}
+        parent::__construct();
+    }
 
-	public function setdate($date)
-	{
-		$this->_date = $date;
-	}
+    public function setdate($date)
+    {
+        $this->_date = $date;
+    }
 
-	/**
-	 * Method to set the venue id
-	 */
-	public function setId($id)
-	{
-		// Set new venue ID and wipe data
-		$this->_id = $id;
-	}
+    /**
+     * Method to set the venue id
+     */
+    public function setId($id)
+    {
+        // Set new venue ID and wipe data
+        $this->_id = $id;
+    }
 
-	/**
-	 * Method to auto-populate the model state.
-	 */
-	protected function populateState($ordering = null, $direction = null)
-	{
-		$app          = Factory::getApplication();
-		$params       = $app->getParams();
-		$itemid       = $app->input->getInt('Itemid', 0);
-		$task         = $app->input->getCmd('task', '');
-		$startdayonly = $params->get('show_only_start', false);
-		$show_archived_events = $params->get('show_archived_events', 0);
+    /**
+     * Method to auto-populate the model state.
+     */
+    protected function populateState($ordering = null, $direction = null)
+    {
+        $app          = Factory::getApplication();
+        $params       = $app->getParams();
+        $itemid       = $app->input->getInt('Itemid', 0);
+        $task         = $app->input->getCmd('task', '');
+        $startdayonly = $params->get('show_only_start', false);
+        $show_archived_events = $params->get('show_archived_events', 0);
 
-		# params
-		$this->setState('params', $params);
+        # params
+        $this->setState('params', $params);
 
-		# publish state
-		$this->_populatePublishState($task);
+        # publish state
+        $this->_populatePublishState($task);
 
-		###########
-		## DATES ##
-		###########
+        ###########
+        ## DATES ##
+        ###########
 
-		#only select events within specified dates. (chosen month)
+        #only select events within specified dates. (chosen month)
 
-		$monthstart = mktime(0, 0,  1, date('m', $this->_date),   1, date('Y', $this->_date));
-		$monthend   = mktime(0, 0, -1, date('m', $this->_date)+1, 1, date('Y', $this->_date));
+        $monthstart = mktime(0, 0,  1, date('m', $this->_date),   1, date('Y', $this->_date));
+        $monthend   = mktime(0, 0, -1, date('m', $this->_date)+1, 1, date('Y', $this->_date));
 
-		$filter_date_from = date('Y-m-d', $monthstart);
-		$filter_date_to   = date('Y-m-d', $monthend);
+        $filter_date_from = date('Y-m-d', $monthstart);
+        $filter_date_to   = date('Y-m-d', $monthend);
 
-		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $this->_db->Quote($filter_date_from) .') >= 0';
-		$this->setState('filter.calendar_from', $where);
+        $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $this->_db->Quote($filter_date_from) .') >= 0';
+        $this->setState('filter.calendar_from', $where);
 
-		$where = ' DATEDIFF(a.dates, '. $this->_db->Quote($filter_date_to) .') <= 0';
-		$this->setState('filter.calendar_to', $where);
+        $where = ' DATEDIFF(a.dates, '. $this->_db->Quote($filter_date_to) .') <= 0';
+        $this->setState('filter.calendar_to', $where);
 
-		# set filter
-		$this->setState('filter.calendar_multiday', true);
-		$this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
-		$this->setState('filter.filter_locid', $this->_id);
-		$this->setState('filter.show_archived_events',(bool)$show_archived_events);
+        # set filter
+        $this->setState('filter.calendar_multiday', true);
+        $this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
+        $this->setState('filter.filter_locid', $this->_id);
+        $this->setState('filter.show_archived_events',(bool)$show_archived_events);
 
-		$app->setUserState('com_jem.venuecal.locid'.$itemid, $this->_id);
+        $app->setUserState('com_jem.venuecal.locid'.$itemid, $this->_id);
 
-		# groupby
-		$this->setState('filter.groupby', array('a.id'));
-	}
+        # groupby
+        $this->setState('filter.groupby', array('a.id'));
+    }
 
-	/**
-	 * Method to get a list of events.
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
+    /**
+     * Method to get a list of events.
+     */
+    public function getItems()
+    {
+        $items = parent::getItems();
 
-		if ($items) {
-			return $items;
-		}
+        if ($items) {
+            return $items;
+        }
 
-		return array();
-	}
+        return array();
+    }
 
-	/**
-	 * @return	JDatabaseQuery
-	 */
-	protected function getListQuery()
-	{
-		// Let parent create a new query object.
-		$query = parent::getListQuery();
+    /**
+     * @return    JDatabaseQuery
+     */
+    protected function getListQuery()
+    {
+        // Let parent create a new query object.
+        $query = parent::getListQuery();
 
-		// here we can extend the query of the Eventslist model
-		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
-		//$query->where('a.locid = '.$this->_id);
+        // here we can extend the query of the Eventslist model
+        $query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
+        //$query->where('a.locid = '.$this->_id);
 
-		return $query;
-	}
+        return $query;
+    }
 }
 ?>

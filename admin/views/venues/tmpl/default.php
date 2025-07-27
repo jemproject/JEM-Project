@@ -14,12 +14,12 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Object\CMSObject;
 
-$user		= JemFactory::getUser();
-$userId		= $user->get('id');
-$listOrder	= $this->escape($this->state->get('list.ordering'));
-$listDirn	= $this->escape($this->state->get('list.direction'));
-$canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder	= $listOrder=='a.ordering';
+$user        = JemFactory::getUser();
+$userId        = $user->get('id');
+$listOrder    = $this->escape($this->state->get('list.ordering'));
+$listDirn    = $this->escape($this->state->get('list.direction'));
+$canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
+$saveOrder    = $listOrder=='a.ordering';
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
 ?>
@@ -28,7 +28,7 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-				<div class="col-md-11">		
+                <div class="col-md-11">        
                     <div class="row mb-12">
                         <div class="col-md-4">
                             <div class="input-group">
@@ -47,8 +47,8 @@ $wa->useScript('table.columns');
                             </select>                        
                         </div>
                     </div>
-				</div>
-			    <div class="col-md-1">				
+                </div>
+                <div class="col-md-1">                
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="float-end">
@@ -113,14 +113,14 @@ $wa->useScript('table.columns');
             <?php
             $countItems = count($this->items);
             foreach ($this->items as $i => $item) :
-                $ordering	= ($listOrder == 'a.ordering');
-                $canCreate	= $user->authorise('core.create');
-                $canEdit	= $user->authorise('core.edit');
-                $canCheckin	= $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-                $canEditOwn	= $user->authorise('core.edit.own') && $item->created_by == $userId;
-                $canChange	= $user->authorise('core.edit.state') && $canCheckin;
-                $link 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $item->id;
-                $published 	= HTMLHelper::_('jgrid.published', $item->published, $i, 'venues.', $canChange, 'cb', $item->publish_up, $item->publish_down);
+                $ordering    = ($listOrder == 'a.ordering');
+                $canCreate    = $user->authorise('core.create');
+                $canEdit    = $user->authorise('core.edit');
+                $canCheckin    = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
+                $canEditOwn    = $user->authorise('core.edit.own') && $item->created_by == $userId;
+                $canChange    = $user->authorise('core.edit.state') && $canCheckin;
+                $link         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $item->id;
+                $published     = HTMLHelper::_('jgrid.published', $item->published, $i, 'venues.', $canChange, 'cb', $item->publish_up, $item->publish_down);
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
                     <td class="center">
@@ -164,16 +164,16 @@ $wa->useScript('table.columns');
                     <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php
-                        $created	 	= HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
-                        $image 			= HTMLHelper::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
-                        $overlib 		= Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
-                        $overlib 		.= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br />';
-                        $overlib 		.= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br />';
+                        $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
+                        $image             = HTMLHelper::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
+                        $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
+                        $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br />';
+                        $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br />';
                         if ($item->author_ip != '') {
-                            $overlib		.= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br />';
+                            $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br />';
                         }
                         if (!empty($item->modified)) {
-                            $overlib 	.= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
+                            $overlib     .= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
                         }
                         ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
@@ -223,18 +223,18 @@ $wa->useScript('table.columns');
             <?php endforeach; ?>
             </tbody>
         </table>
-			
-		<div class="ms-auto mb-4 me-0">
+            
+        <div class="ms-auto mb-4 me-0">
             <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
         </div>
-	</div>
+    </div>
 
     <div>
-	    <input type="hidden" name="task" value="" />
-	    <input type="hidden" name="boxchecked" value="0" />
-	    <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-	    <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="boxchecked" value="0" />
+        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 
-	    <?php echo HTMLHelper::_('form.token'); ?>
-	</div>
+        <?php echo HTMLHelper::_('form.token'); ?>
+    </div>
 </form>

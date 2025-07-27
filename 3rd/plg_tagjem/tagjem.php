@@ -37,7 +37,7 @@ class plgAcymailingTagjem extends CMSPlugin
             //$this->params = new JRegistry($plugin->params);
             $this->params = new acyParameter($plugin->params);
         }
-		$this->loadLanguage();
+        $this->loadLanguage();
         $this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
     }
 
@@ -208,7 +208,7 @@ class plgAcymailingTagjem extends CMSPlugin
                         resizeinfo += '| images: ' + document.adminForm.pict[i].value;
                         if(document.adminForm.pict[i].value == 'resized'){
                             document.getElementById('pictsize').style.display = '';
-                            //	resizeinfo += '|images: ' + document.adminForm.pictwidth.value + 'x' + document.adminForm.pictheight.value;
+                            //    resizeinfo += '|images: ' + document.adminForm.pictwidth.value + 'x' + document.adminForm.pictheight.value;
                             if(document.adminForm.pictwidth.value) resizeinfo += '| imgwidth:' + document.adminForm.pictwidth.value;
                             if(document.adminForm.pictheight.value) resizeinfo += '| imgheight:' + document.adminForm.pictheight.value;
                         }else{
@@ -242,11 +242,11 @@ class plgAcymailingTagjem extends CMSPlugin
                     <td style="vertical-align: baseline; width:25%;"><?php echo JHtml::_('acyselect.radiolist', $picts, 'pict', 'size="1" onclick="updateTag();"', 'value', 'text', $pageInfo->pict); ?>
                     </td>
                     <td style="vertical-align: baseline; width:50%;" colspan="2">
-						<span id="pictsize" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><!--br/--><?php echo Text::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
-							<input name="pictwidth" type="text" onchange="updateTag();" value="<?php echo $pageInfo->pictwidth; ?>" style="width:30px;"/>
-							x <?php echo Text::_('PLG_TAGJEM_IMAGE_HEIGHT') ?>
-							<input name="pictheight" type="text" onchange="updateTag();" value="<?php echo $pageInfo->pictheight; ?>" style="width:30px;"/>
-						</span>
+                        <span id="pictsize" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><!--br/--><?php echo Text::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
+                            <input name="pictwidth" type="text" onchange="updateTag();" value="<?php echo $pageInfo->pictwidth; ?>" style="width:30px;"/>
+                            x <?php echo Text::_('PLG_TAGJEM_IMAGE_HEIGHT') ?>
+                            <input name="pictheight" type="text" onchange="updateTag();" value="<?php echo $pageInfo->pictheight; ?>" style="width:30px;"/>
+                        </span>
                     </td>
                 </tr>
                 <tr>
@@ -418,34 +418,34 @@ class plgAcymailingTagjem extends CMSPlugin
                     <td style="vertical-align: baseline; width:25%;"><?php echo JHtml::_('acyselect.radiolist', $picts, 'pictauto', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->pict); ?>
                     </td>
                     <td style="vertical-align: baseline; width:50%;" colspan="2">
-						<span id="pictsizeauto" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><?php echo Text::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
-							<input name="pictwidthauto" type="text" onchange="updateAutoTag();" value="<?php echo $pageInfo->pictwidth; ?>" style="width:30px;"/>
-							x <?php echo Text::_('PLG_TAGJEM_IMAGE_HEIGHT') ?>
-							<input name="pictheightauto" type="text" onchange="updateAutoTag();" value="<?php echo $pageInfo->pictheight; ?>" style="width:30px;"/>
-						</span>
+                        <span id="pictsizeauto" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><?php echo Text::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
+                            <input name="pictwidthauto" type="text" onchange="updateAutoTag();" value="<?php echo $pageInfo->pictwidth; ?>" style="width:30px;"/>
+                            x <?php echo Text::_('PLG_TAGJEM_IMAGE_HEIGHT') ?>
+                            <input name="pictheightauto" type="text" onchange="updateAutoTag();" value="<?php echo $pageInfo->pictheight; ?>" style="width:30px;"/>
+                        </span>
                     </td>
                 </tr>
                 <tr>
                     <td style="vertical-align: baseline; width:25%;">
-						<span title='<?php echo Text::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC'); ?>'>
-							<?php echo Text::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES'); ?>
-						</span>
+                        <span title='<?php echo Text::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC'); ?>'>
+                            <?php echo Text::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES'); ?>
+                        </span>
                     </td>
                     <td style="vertical-align: baseline; width:25%;">
                         <?php echo JHtml::_('acyselect.radiolist', $opendates, 'opendates', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->opendates); ?>
                         <!--select name="opendates" size="1" onchange="updateAutoTag();">
-							<option value="no"><?php echo Text::_('JNo');?></option>
-							<option value="also"><?php echo Text::_('COM_JEM_SHOW_OPENDATES_TOO');?></option>
-							<option value="only"><?php echo Text::_('COM_JEM_SHOW_OPENDATES_ONLY');?></option>
-						</select-->
+                            <option value="no"><?php echo Text::_('JNo');?></option>
+                            <option value="also"><?php echo Text::_('COM_JEM_SHOW_OPENDATES_TOO');?></option>
+                            <option value="only"><?php echo Text::_('COM_JEM_SHOW_OPENDATES_ONLY');?></option>
+                        </select-->
                     </td>
                     <td style="vertical-align: baseline; width:25%;"><?php echo Text::_('PLG_TAGJEM_FEATURED_EVENTS'); ?></td>
                     <td style="vertical-align: baseline; width:25%;">
                         <?php echo JHtml::_('acyselect.radiolist', $yesno, 'featured', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->featured); ?>
                         <!--select name="featured" size="1" onchange="updateAutoTag();">
-							<option value="0"><?php echo Text::_('JNo');?></option>
-							<option value="1"><?php echo Text::_('JYes');?></option>
-						</select-->
+                            <option value="0"><?php echo Text::_('JNo');?></option>
+                            <option value="1"><?php echo Text::_('JYes');?></option>
+                        </select-->
                     </td>
                 </tr>
                 <tr>

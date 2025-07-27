@@ -18,33 +18,33 @@ defined('_JEXEC') or die;
     </div>
 
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
-        <h1 class="componentheading">
-            <?php echo $this->escape($this->params->get('page_heading')); ?>
-        </h1>
+    <h1 class="componentheading">
+        <?php echo $this->escape($this->params->get('page_heading')); ?>
+    </h1>
     <?php endif; ?>
 
     <div class="clr"> </div>
 
     <?php if (isset($this->showdaydate)) : ?>
-        <h2 class="jem">
-            <?php echo $this->daydate; ?>
-        </h2>
+    <h2 class="jem">
+        <?php echo $this->daydate; ?>
+    </h2>
     <?php endif; ?>
-
+    
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
         </div>
-    <?php endif; ?>
+    <?php endif; ?>    
 
     <!--table-->
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
         <?php echo $this->loadTemplate('table'); ?>
         <p>
-            <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-            <input type="hidden" name="filter_order_Dir" value="" />
-            <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
-            <input type="hidden" name="view" value="day" />
+        <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="" />
+        <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
+        <input type="hidden" name="view" value="day" />
         </p>
     </form>
 
@@ -52,7 +52,7 @@ defined('_JEXEC') or die;
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>
-    <?php endif; ?>
+    <?php endif; ?>                                                     
 
     <!--footer-->
     <div class="pagination">

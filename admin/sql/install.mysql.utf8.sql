@@ -326,7 +326,6 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('defaultCategory', '0'),
 ('defaultVenue', '0');
 
-
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan'),
 (2, 'EU', 'AX', 'ALA', 248, 'Aland Islands'),

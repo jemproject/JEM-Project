@@ -18,12 +18,12 @@ use Joomla\CMS\MVC\Controller\BaseController;
  */
 class JemControllerUpdatecheck extends BaseController
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }
 ?>

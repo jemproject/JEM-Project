@@ -264,7 +264,7 @@ if ($this->showRegForm && empty($this->print)) :
                 }
                 ?>
             </p>
-            <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser || $this->allowAnnulation	) {?>
+            <?php if ($this->item->requestanswer || $placesRegisteredUser || $waitingPlacesUser || $this->allowAnnulation    ) {?>
                 <p>
 
                     <?php if ($this->allowAnnulation || ($this->isregistered != 1) || $waitingPlacesUser) : ?>

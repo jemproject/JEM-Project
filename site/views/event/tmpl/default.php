@@ -114,32 +114,32 @@ if ($jemsettings->oldevent > 0) {
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
-                <dt class="category"><?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:</dt>
-                <dd class="category">
+            <dt class="category"><?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:</dt>
+            <dd class="category">
                 <?php
-                foreach ((array)$this->categories as $i => $category) {
-                    if ($i > 0) {
+                    foreach ((array)$this->categories as $i => $category) {
+                        if ($i > 0) {
                         echo ', ';
+                        }
+                           if ($params->get('event_link_category') == 1) {
+                            echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+                        } else {
+                            echo $this->escape($category->catname);
+                        }
                     }
-                    if ($params->get('event_link_category') == 1) {
-                        echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
-                    } else {
-                        echo $this->escape($category->catname);
-                    }
-                }
                 echo '</dd>';
-            endif;
-
+                    endif;
+            
             for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
                     $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
                 }
                 if ($currentRow) {
-                ?>
+                    ?>
                     <dt class="custom<?php echo $cr; ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
                     <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                <?php
+                    <?php
                 }
             }
             ?>
@@ -259,7 +259,7 @@ if ($jemsettings->oldevent > 0) {
         <?php $this->attachments = $this->item->attachments; ?>
         <?php echo $this->loadTemplate('attachments'); ?>
 
-        <!--  	Venue  -->
+        <!--      Venue  -->
         <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr />
@@ -272,35 +272,35 @@ if ($jemsettings->oldevent > 0) {
             }
             ?>
 
-        <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
-            <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
-            <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
-            <h2 class="location">
-                <?php
-                echo Text::_('COM_JEM_VENUE') ;
-                $itemid = $this->item ? $this->item->id : 0 ;
-                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
-                echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
-                ?>
-            </h2>
-            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
-
-            <dl class="location">
-                <dt class="venue"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
-                <dd class="venue">
+            <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+                <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+                <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
+                <h2 class="location">
                     <?php
-                    if (!empty($this->item->venueslug)) :
-                        echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                    else :
-                        echo $this->escape($this->item->venue);
-                    endif;
-                    if (!empty($this->item->url)) :
-                        echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
-                    endif;
-                    echo $venueaccess;
+                    echo Text::_('COM_JEM_VENUE') ;
+                    $itemid = $this->item ? $this->item->id : 0 ;
+                    echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
+                    echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
                     ?>
-                </dd>
-            </dl>
+                </h2>
+                <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+
+                <dl class="location">
+                    <dt class="venue"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
+                    <dd class="venue">
+                        <?php
+                        if (!empty($this->item->venueslug)) :
+                            echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+                        else :
+                            echo $this->escape($this->item->venue);
+                        endif;
+                        if (!empty($this->item->url)) :
+                            echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+                        endif;
+                    echo $venueaccess;
+                        ?>
+                    </dd>
+                </dl>
             <?php if($this->item->user_has_access_venue) : ?>
                 <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext" itemprop="address" itemscope
@@ -404,14 +404,14 @@ if ($jemsettings->oldevent > 0) {
                 <?php $this->attachments = $this->item->vattachments; ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
 
-                </div>
-            <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <?php endif; ?>
 
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '0')) : ?>
             <hr class="jem-hr">
-
+           
             <?php
             $timeNow = time();
 
@@ -421,7 +421,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 1:
                     //Event with registration (YES with or witout UNTIL)
-                    echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                         echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     echo $this->loadTemplate('attendees');
                     if($this->dateUnregistationUntil) {
                         echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2'));
@@ -429,7 +429,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 2:
                     //Event with date starting registration (FROM with or witout UNTIL)
-                    echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     if($this->dateRegistationFrom > $timeNow) {
                         echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                     }else if ($this->allowRegistration) {
