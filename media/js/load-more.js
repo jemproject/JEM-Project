@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
     let isLoading = false;
 
     // Funktion für das animierte Einblenden der Events
-    function animateEvents($newEvents, delay = 50) {
+    function animateEvents($newEvents, delay = 20) {
         $newEvents.each(function(index) {
             const $event = $(this);
             // Events initial verstecken
