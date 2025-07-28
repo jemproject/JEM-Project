@@ -56,6 +56,34 @@ class JemModelEventslist extends ListModel
     }
 
     /**
+     * Get events for AJAX load more functionality
+     */
+    public function getEventsAjax($offset = 0, $limit = 10)
+    {
+        // Keep current filters and sorting
+        $currentStart = $this->getState('list.start', 0);
+        $currentLimit = $this->getState('list.limit', 10);
+        
+        // set temporary new values
+        $this->setState('list.start', $offset);
+        $this->setState('list.limit', $limit);
+        
+        // load items
+        $items = $this->getItems();
+        $total = $this->getTotal();
+        
+        // Restore original values
+        $this->setState('list.start', $currentStart);
+        $this->setState('list.limit', $currentLimit);
+        
+        return [
+            'items' => $items,
+            'hasMore' => ($offset + $limit) < $total,
+            'total' => $total
+        ];
+    }
+
+    /**
      * Method to auto-populate the model state.
      */
     protected function populateState($ordering = null, $direction = null)
@@ -221,7 +249,6 @@ class JemModelEventslist extends ListModel
             }
         }
         $this->setState('filter.groupby',array('a.id'));
-
     }
 
     /**
@@ -276,6 +303,21 @@ class JemModelEventslist extends ListModel
     public function setLimitStart($value)
     {
         $this->setState('list.start', (int) $value);
+    }
+
+    /**
+     * set limits for infinite scroll
+     */
+    public function getMoreEvents($limitstart)
+    {
+        $this->setLimitStart($limitstart);
+
+        // make sure a limit is set
+        if (!$this->getState('list.limit')) {
+            $this->setLimit(10);
+        }
+
+        return $this->getItems();
     }
 
     /**
