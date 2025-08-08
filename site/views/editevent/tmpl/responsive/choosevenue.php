@@ -45,7 +45,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->searchfilter; ?>
-          <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->filter;?>" class="inputbox" onchange="document.adminForm.submit();" />
+          <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->filter, ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
