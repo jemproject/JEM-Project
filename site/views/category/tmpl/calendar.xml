@@ -21,13 +21,15 @@
 
     <fields name="params">
         <fieldset name="basic">
-            <field name="introtext" type="textarea"
-                filter="safehtml"
-                default=""
-                rows="8"
-                cols="30"
-                label="COM_JEM_INTROTEXT_FIELD"
-                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            <field name="introtext" type="editor"
+                   filter="safehtml"
+                   hide="readmore,pagebreak,module,menu,fields,contact,article"
+                   default=""
+                   rows="8"
+                   cols="30"
+                   height="300px"
+                   label="COM_JEM_INTROTEXT_FIELD"
+                   description="COM_JEM_INTROTEXT_FIELD_DESC"
             />
             <field name="showintrotext" type="radio"
                 default="0"

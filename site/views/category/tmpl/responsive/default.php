@@ -25,6 +25,13 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php echo $this->escape($this->params->get('page_heading')); ?>
     </h1>
     <?php endif; ?>
+
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+        <p> </p>
+    <?php endif; ?>
   
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
