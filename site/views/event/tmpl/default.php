@@ -409,7 +409,7 @@ if ($jemsettings->oldevent > 0) {
         <?php endif; ?>
 
         <!-- Registration -->
-        <?php if ($this->showAttendees && $params->get('event_show_registration', '0')) : ?>
+        <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
             <hr class="jem-hr">
            
             <?php

@@ -296,7 +296,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
                 <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
                 <h2 class="jem-location">
-                    <?php echo Text::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue'); ?>
+                    <?php
+                    echo Text::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
+                    ?>
                 </h2>
 
                 <div class="jem-row jem-wrap-reverse">
@@ -318,7 +320,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     ?>
                                 </dd>
                                 <?php if($this->item->user_has_access_venue) : ?>
-                                    <?php if ($this->item->street) : ?>
+                                <?php if ($this->item->street) : ?>
                                     <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
                                     <dd class="venue_street" itemprop="streetAddress">
                                         <?php echo $this->escape($this->item->street); ?>

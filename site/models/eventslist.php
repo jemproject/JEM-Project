@@ -430,7 +430,7 @@ class JemModelEventslist extends ListModel
 		# Filter by access level - public or with access_level_locked_events active.
 		if($jemsettings->access_level_locked_events != "[\"1\"]") {
 			$accessLevels = json_decode($jemsettings->access_level_locked_events, true);
-			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
 			$query->where('a.access IN ('.implode(',', $newlevels).')');
 		} else {
         $query->where('a.access IN ('.implode(',', $levels).')');
@@ -491,7 +491,7 @@ class JemModelEventslist extends ListModel
 
             $cal_from = $this->getState('filter.calendar_from');
             $cal_to   = $this->getState('filter.calendar_to');
-		}
+
 
             if ($cal_from) {
                 $query->where($cal_from);
@@ -499,6 +499,7 @@ class JemModelEventslist extends ListModel
 
             if ($cal_to) {
                 $query->where($cal_to);
+            }
         }
 
         #############################
@@ -732,7 +733,7 @@ class JemModelEventslist extends ListModel
 		# Filter by access level - public or with access_level_locked_categories active.
 		if($jemsettings->access_level_locked_categories != "[\"1\"]") {
 			$accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
-			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
 			$query->where('c.access IN ('.implode(',', $newlevels).')');
 		} else {
 			$query->where('c.access IN ('.implode(',', $levels).')');

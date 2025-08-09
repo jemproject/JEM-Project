@@ -146,12 +146,12 @@ class JemCategories
         $levels = $user->getAuthorisedViewLevels();
 		$jemsettings = JemHelper::config();
 
-		$this->_checkedCategories[$id] = true;
+        $this->_checkedCategories[$id] = true;
 
-		$query = $db->getQuery(true);
+        $query = $db->getQuery(true);
 
-		$case_when_c = ' CASE WHEN ';
-		$case_when_c .= $query->charLength('c.alias');
+        $case_when_c = ' CASE WHEN ';
+        $case_when_c .= $query->charLength('c.alias');
 		$case_when_c .= ' THEN ';
 		$id_c = $query->castAsChar('c.id');
 		$case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');

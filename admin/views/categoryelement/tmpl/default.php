@@ -20,7 +20,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
 <table class="adminform">
     <tr>
         <td style="width: 100%;">
-            <input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+            <input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" onChange="document.adminForm.submit();" />
             <button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
             <button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             <button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo Text::_('COM_JEM_GLOBAL_NOCATEGORY')?></button>

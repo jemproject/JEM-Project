@@ -54,7 +54,6 @@ use Joomla\CMS\HTML\HTMLHelper;
             // show a closed lock icon
             $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
         }
-
         //get event date
         $year = date('Y', strtotime($row->dates));
         $month = date('m', strtotime($row->dates));

@@ -234,9 +234,9 @@ class JemModelVenue extends JemModelEventslist
 			return false;
 		}
 
-		$_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
+        $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 
-		return $_venue;
-	}
+        return $_venue;
+    }
 }
 ?>

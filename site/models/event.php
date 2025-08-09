@@ -267,7 +267,7 @@ class JemModelEvent extends ItemModel
         $query->where(array('event = ' . $db->quote($this->_item[$pk]->did), 'waiting = 0', 'status = 1'));
         $db->setQuery($query);
         try {
-            $res = $db->loadResult();
+            $res = (int)$db->loadResult();
         }
         catch (Exception $e) {
             $res = 0;
@@ -443,7 +443,7 @@ class JemModelEvent extends ItemModel
         $query->where(array('event = ' . $db->quote($this->_item[$id]->did), 'waiting = 0', 'status = 1'));
         $db->setQuery($query);
         try {
-            $res = $db->loadObject();
+            $res = (int)$db->loadObject();
         }
         catch (Exception $e) {
             $res = 0;
