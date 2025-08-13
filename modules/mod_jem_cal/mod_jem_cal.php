@@ -16,6 +16,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
@@ -166,6 +167,6 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript(
 JemHelper::loadIconFont();
 
 # Render
-require(JemHelper::getModuleLayoutPath($mod_name));
+require ModuleHelper::getLayoutPath('mod_jem_cal', $params->get('layout', 'default'));
 
 ?>

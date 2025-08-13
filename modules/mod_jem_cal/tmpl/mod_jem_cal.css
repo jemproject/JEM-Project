@@ -190,6 +190,10 @@
 	margin: 0;
 	color: #000000;
 }
+
+.tooltip-inner a {
+	color: #fff;
+}
 /* prevent problems with some site templates */
 .eventcalq table.mod_jemcalq_calendar span.hasTip {
 	margin: 0;
