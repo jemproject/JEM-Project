@@ -279,7 +279,7 @@ abstract class ModJemCalHelper extends ModuleHelper
             }
             // End of Toni modification
             else {
-                JemHelper::addLogEntry("mod_jem_cal[$params->module_id] : Skip event $event->title on $event->dates - $event->enddates");
+                JemHelper::addLogEntry("mod_jem_cal[" . $params->get('module_id','0') . "]: Skip event $event->title on $event->dates - $event->enddates");
             }
 
             # Check if the item-categories is empty, if so the user has no access to that event at all.

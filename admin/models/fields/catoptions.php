@@ -67,7 +67,7 @@ class JFormFieldCatOptions extends ListField
 
         // Initialize JavaScript field attributes.
         $attr2 .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
-
+      
         // Get the field options.
         $options = (array) $this->getOptions();
 
@@ -96,7 +96,12 @@ class JFormFieldCatOptions extends ListField
         {
             $html[] = HTMLHelper::_('select.genericlist', $options, $this->name, trim($attr), 'value', 'text', $selectedcats,$this->id);
         }
-        return implode($html);
+
+        Factory::getApplication()->getDocument()->getWebAssetManager()
+            ->usePreset('choicesjs')
+            ->useScript('webcomponent.field-fancy-select');
+
+        return '<joomla-field-fancy-select ' . $attr2 . '>' . implode($html) . '</joomla-field-fancy-select>';
     }
 
 

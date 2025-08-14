@@ -36,7 +36,7 @@ $options = array(
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <div class="input-group">  
-                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->helpsearch;?>"  inputmode="search" onChange="document.adminForm.submit();" >                                            
+                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo htmlspecialchars($this->helpsearch, ENT_QUOTES, 'UTF-8'); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
                                 
                                 <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
                                     <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>

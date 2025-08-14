@@ -99,7 +99,7 @@ function jem_common_show_filter(&$obj)
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" onchange="document.adminForm.submit();" />
+            <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
@@ -377,7 +377,7 @@ function jem_common_show_filter(&$obj)
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
