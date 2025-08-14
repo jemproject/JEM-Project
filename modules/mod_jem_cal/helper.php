@@ -233,8 +233,6 @@ abstract class ModJemCalHelper extends ModuleHelper
                             $title .= ' @' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
                         }
 
-                        $title = '<a href="' . Route::_(JemHelperRoute::getEventRoute($event->slug)) . '">' . date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ' . $title . '</a>';
-
                         $stod = 1;
                     } else {
                         // Other events on the same day
@@ -246,8 +244,6 @@ abstract class ModJemCalHelper extends ModuleHelper
                         if ($DisplayVenue == 1 && isset($event->venue)) {
                             $newTitle .= ' @' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
                         }
-
-                        $newTitle = '<a href="' . Route::_(JemHelperRoute::getEventRoute($event->slug)) . '">' . date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ' . $newTitle . '</a>';
 
                         $title = $days[$count][1] . '+%+%+' . $newTitle;
                         $stod = 0;
