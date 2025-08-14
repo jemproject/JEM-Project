@@ -19,7 +19,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
-JemHelper::loadModuleStyleSheet('mod_jem');
+JemHelper::loadModuleStyleSheet('mod_jem_cal', 'mod_jem_cal_darkblue');
 
 # Ensure $use_ajax is defined and boolean
 $use_ajax = !empty($use_ajax);
