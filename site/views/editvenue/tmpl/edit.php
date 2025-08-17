@@ -253,6 +253,7 @@ window.onload = (event) => {
                     <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
                     <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+                    <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
                 </ul>
             </fieldset>
             <p>&nbsp;</p>

@@ -48,6 +48,12 @@ use Joomla\CMS\HTML\HTMLHelper;
             continue; // skip, open date !
         }
 
+        // has user access
+        $eventaccess = '';
+        if (!$row->user_has_access_event) {
+            // show a closed lock icon
+            $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+        }
         //get event date
         $year = date('Y', strtotime($row->dates));
         $month = date('m', strtotime($row->dates));
@@ -283,7 +289,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         }
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $contentend . '</div>';
+        $content .= $eventaccess . $contentend . '</div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;

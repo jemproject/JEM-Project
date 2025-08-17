@@ -33,13 +33,23 @@ use Joomla\CMS\Language\Text;
   
     <!--Venue-->
     <?php foreach($this->rows as $row) : ?>
-        <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
-            <h2 class="jem">
-                <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
-                <?php echo JemOutput::publishstateicon($row); ?>
-            </h2>
-    
-      <div class="jem-row">
+            <?php
+
+            // has user access
+            $venueaccess = '';
+            if (!$row->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            } ?>
+            <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
+                <h2 class="jem">
+                    <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
+					<?php echo JemOutput::publishstateicon($row); ?>
+                    <?php echo $venueaccess;?>
+                </h2>
+
+                <?php if ($row->user_has_access_venue) : ?>
+                    <div class="jem-row">
         <div class="jem-info">
           <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
             <?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
@@ -117,7 +127,7 @@ use Joomla\CMS\Language\Text;
           </button>
         </a>
       </div>
-      
+                <?php endif; ?>
         </div>
     <?php 
     if ($row !== end($this->rows)) :

@@ -326,6 +326,7 @@ class JemModelEventslist extends ListModel
 
         $params    = $app->getParams();
         $settings  = JemHelper::globalattribs();
+		$jemsettings = JemHelper::config();
         $user      = JemFactory::getUser();
         $levels    = $user->getAuthorisedViewLevels();
 
@@ -376,7 +377,25 @@ class JemModelEventslist extends ListModel
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';
 
-        $query->select(array($case_when_e, $case_when_l));
+		$case_when_a  = ' CASE WHEN ';
+		$case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
+		$case_when_a .= ' THEN 1 ';
+		$case_when_a .= ' ELSE 0 ';
+		$case_when_a .= ' END as user_has_access_event';
+
+		$case_when_v  = ' CASE WHEN ';
+		$case_when_v .= " l.access IN (" . implode(',',$levels) . ")";
+		$case_when_v .= ' THEN 1 ';
+		$case_when_v .= ' ELSE 0 ';
+		$case_when_v .= ' END as user_has_access_venue';
+
+		$case_when_c  = ' CASE WHEN ';
+		$case_when_c .= " c.access IN (" . implode(',',$levels) . ")";
+		$case_when_c .= ' THEN 1 ';
+		$case_when_c .= ' ELSE 0 ';
+		$case_when_c .= ' END as user_has_access_category';
+
+		$query->select(array($case_when_e, $case_when_l, $case_when_a, $case_when_v, $case_when_c));
 
         # join over the category-tables
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -408,8 +427,14 @@ class JemModelEventslist extends ListModel
         ## FILTER-ACCESS ##
         ###################
 
-        # Filter by access level - always.
+		# Filter by access level - public or with access_level_locked_events active.
+		if($jemsettings->access_level_locked_events != "[\"1\"]") {
+			$accessLevels = json_decode($jemsettings->access_level_locked_events, true);
+			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
+			$query->where('a.access IN ('.implode(',', $newlevels).')');
+		} else {
         $query->where('a.access IN ('.implode(',', $levels).')');
+		}
 
         ####################
         ## FILTER-PUBLISH ##
@@ -669,6 +694,7 @@ class JemModelEventslist extends ListModel
         $user     = JemFactory::getUser();
         $levels   = $user->getAuthorisedViewLevels();
         $settings = JemHelper::globalattribs();
+		$jemsettings = JemHelper::config();
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -682,7 +708,12 @@ class JemModelEventslist extends ListModel
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';
 
-        $query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
+		$case_when_a  = ' CASE WHEN ';
+		$case_when_a .= " c.access IN (" . implode(',',$levels) . ")";
+		$case_when_a .= ' THEN 1 ';
+		$case_when_a .= ' ELSE 0 ';
+		$case_when_a .= ' END as user_has_access_category';
+		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c,$case_when_a));
         $query->from('#__jem_categories as c');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 
@@ -699,7 +730,14 @@ class JemModelEventslist extends ListModel
         ## FILTER-ACCESS ##
         ###################
 
-        # Filter by access level.
+		# Filter by access level - public or with access_level_locked_categories active.
+		if($jemsettings->access_level_locked_categories != "[\"1\"]") {
+			$accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
+			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
+			$query->where('c.access IN ('.implode(',', $newlevels).')');
+		} else {
+			$query->where('c.access IN ('.implode(',', $levels).')');
+		}
 
         ###################################
         ## FILTER - MAINTAINER/JEM GROUP ##
@@ -725,7 +763,7 @@ class JemModelEventslist extends ListModel
         //    if ($jemgroups) {
         //        $query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
         //    } else {
-        $query->where('(c.access IN ('.implode(',', $levels).'))');
+		//	$query->where('(c.access IN ('.implode(',', $levels).'))');
         //    }
 
         #######################

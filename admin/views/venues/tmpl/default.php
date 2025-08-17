@@ -88,6 +88,9 @@ $wa->useScript('table.columns');
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo Text::_('JSTATUS'); ?>
                 </th>
+                <th style="width:5%" class="center" nowrap="nowrap">
+                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+                </th>
                 <th>
                     <?php echo Text::_('COM_JEM_CREATION'); ?>
                 </th>
@@ -158,6 +161,7 @@ $wa->useScript('table.columns');
                     <td class="center state"><?php echo $item->state ? $this->escape($item->state) : '-'; ?></td>
                     <td class="center country"><?php echo $item->country ? $this->escape($item->country) : '-'; ?></td>
                     <td class="center"><?php echo $published; ?></td>
+                    <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php
                         $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
