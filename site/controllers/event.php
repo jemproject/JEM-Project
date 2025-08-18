@@ -250,6 +250,7 @@ class JemControllerEvent extends JemControllerForm
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.
      *
+     * @param  JModel(Legacy)  $model      The data model object.
      * @param  array           $validData  The validated data.
      *
      * @return void
@@ -286,7 +287,7 @@ class JemControllerEvent extends JemControllerForm
     // echo "<pre/>";print_R($_POST);die;
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
-
+        
         $result = parent::save($key, $urlVar);
 
         // If ok, redirect to the return page.

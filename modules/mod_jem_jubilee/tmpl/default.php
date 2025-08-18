@@ -59,7 +59,7 @@ if ($flyer_link_type == 1) {
                     <?php echo $date['day']; ?>
                 </div>
             </div>
-        <?php endif; ?>
+        <?php endif; ?>        
         <?php if (!empty($introtext)) :?>
         <div class="intro">
             <?php echo $introtext; ?>

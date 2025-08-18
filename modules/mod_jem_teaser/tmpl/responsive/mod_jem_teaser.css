@@ -64,11 +64,11 @@ body.body-overlayed {
   min-width: 100px;
 }
 
-#jemmoduleteaser .event-title,
+#jemmoduleteaser .event-title, 
 #jemmoduleteaser .jem-teaser-datecat {
   hyphens: auto;
 }
-
+ 
 #jemmoduleteaser [class|="calendar"] {
     background-repeat: no-repeat;
     width: 81px;
@@ -98,7 +98,7 @@ body.body-overlayed {
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser {
-    padding-top: 2px;
+	padding-top: 2px;
 }
 
 #jemmoduleteaser .time, #jemmoduleteaser .date {
@@ -113,25 +113,25 @@ body.body-overlayed {
 #jemmoduleteaser [class|="calendar"] .daynumteaser {
     font-size: 150%;
 }
-
+ 
 @media not print {
   @media only all and (max-width: 47.938rem) {
     .jem-teaser-event {
       display: block !important;
       margin-bottom: 10px;
     }
-
+    
     #jemmoduleteaser [class|="calendar"] {
       margin-bottom: 10px;
     }
-
+    
     .jem-eventimg-teaser {
       display: block;
       float: none;
       margin-left: 0;
       margin-bottom: 10px;
     }
-
+    
     #jemmoduleteaser img {
       display: block;
       float: none !important;

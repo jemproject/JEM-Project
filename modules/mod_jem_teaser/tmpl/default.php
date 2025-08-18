@@ -48,12 +48,12 @@ if ($params->get('use_modal', 0)) {
              title="<?php echo strip_tags($item->dateinfo); ?>">
     <?php endif; ?>
 
-          <div class="monthteaser<?php
-    echo isset($item->color_is_dark)
-        ? ($item->color_is_dark === 1
-            ? ' monthcolor-light">'
-            : ($item->color_is_dark === 0
-                ? ' monthcolor-dark">'
+          <div class="monthteaser<?php 
+    echo isset($item->color_is_dark) 
+        ? ($item->color_is_dark === 1 
+            ? ' monthcolor-light">' 
+            : ($item->color_is_dark === 0 
+                ? ' monthcolor-dark">' 
                 : '">'))
         : '">';
         echo $item->startdate['month']; ?>
@@ -65,7 +65,7 @@ if ($params->get('use_modal', 0)) {
               <?php echo $item->startdate['day']; ?>
             </div>
           </div>
-        <?php endif; ?>
+        <?php endif; ?>                        
                     </td>
                     <td class="event-info">
                         <div class="teaser-jem">

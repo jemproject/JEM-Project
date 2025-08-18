@@ -27,38 +27,56 @@ use Joomla\CMS\Router\Route;
     <?php endif; ?>
 
     <?php foreach ($this->rows as $row) : ?>
+        <?php
+        // has user access
+        $categoriesaccess = '';
+        if (!$row->user_has_access_category) {
+            // show a closed lock icon
+            $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+        } ?>
     <div class="jem cat_id<?php echo $row->id; ?>">
         <h2>
             <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
+                <?php echo $categoriesaccess; ?>
         </h2>
-
+    
+            <?php if ($row->user_has_access_category) : ?>
     <?php if (($this->jemsettings->discatheader) && (!empty($row->image))) : ?>
       <div class="jem-catimg">
         <?php $cimage = JemImage::flyercreator($row->image, 'category'); ?>
         <?php    echo JemOutput::flyer($row, $cimage, 'category'); ?>
       </div>
     <?php endif; ?>
-
+    
     <div class="description">
       <?php echo $row->description; ?>
       <?php if ($i = count($row->subcats)) : ?>
         <h3 class="subcategories">
           <?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
+                            <?php echo $categoriesaccess; ?>
         </h3>
         <div class="subcategorieslist">
           <?php foreach ($row->subcats as $sub) : ?>
+                                <?php
+                                // has user access
+                                $subcategoriesaccess = '';
+                                if (!$sub->user_has_access_category) {
+                                    // show a closed lock icon
+                                    $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                                } ?>
             <strong>
               <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
                 <?php echo $this->escape($sub->catname); ?></a>
             </strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
+                                <?php echo $subcategoriesaccess; ?>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
     </div>
-
+    
     <div class="jem-clear">
     </div>
-
+    
         <!--table-->
         <?php
             if ($this->params->get('detcat_nr', 0) > 0) {
@@ -79,20 +97,21 @@ use Joomla\CMS\Router\Route;
               echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENTS');
             elseif ($row->assignedevents == 1) :
               echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENT');
-            else :
+            else : 
               echo '- 0 '.TEXT::_('COM_JEM_EVENTS');
             endif;
           ?>
         </button>
       </a>
     </div>
-    </div>
-
-    <?php
+            <?php endif; ?>
+    </div>    
+    
+    <?php 
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;
-
+   
    endforeach; ?>
 
     <!--pagination-->

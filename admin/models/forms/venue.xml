@@ -1,116 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <config>
-        <inlinehelp button="show"/>
-    </config>
-    <fieldset name="details"
-        addfieldpath="/administrator/components/com_jem/models/fields"
-    >
-        <field name="id" type="text"
-            default="0"
-            readonly="true"
-            class="readonly"
-            label="JGLOBAL_FIELD_ID_LABEL"
-            description ="JGLOBAL_FIELD_ID_DESC"
-        />
-        <field name="venue" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_VENUE"
-            description="COM_JEM_VENUE"
-            required="true"
-        />
-        <field name="alias" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_ALIAS"
-            description="COM_JEM_ALIAS"
-            hint="JFIELD_ALIAS_PLACEHOLDER"
-        />
-        <field name="url" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_WEBSITE"
-            description="COM_JEM_WEBSITE_DESC"
-        />
-        <field name="street" type="text"
-            id="street"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_STREET"
-            description="COM_JEM_STREET"
-        />
-        <field name="locdescription" type="editor"
-            filter="\Joomla\CMS\Component\ComponentHelper::filterText"
-            hide="pagebreak,readmore,image"
-            class="inputbox"
-            rows="3" cols="20"
-            width="100%"
-            label="COM_JEM_VENUE_FIELD_DESCRIPTION"
-            description="COM_JEM_VENUE_FIELD_DESCRIPTION_DESC"
-        />
-        <field name="latitude" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_LATITUDE"
-            description="COM_JEM_LATITUDE_DESC"
-        />
-        <field name="longitude" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_LONGITUDE"
-            description="COM_JEM_LONGITUDE_DESC"
-        />
-        <field name="postalCode" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_ZIP"
-            description="COM_JEM_ZIP"
-        />
-        <field name="city" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_CITY"
-            description="COM_JEM_CITY"
-        />
-        <field name="state" type="text"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_STATE"
-            description="COM_JEM_STATE"
-        />
-        <field name="map" type="checkbox"
-            class="inputbox"
-            size="40"
-            label="COM_JEM_ENABLE_MAP"
-            description="COM_JEM_ENABLE_MAP"
-            value="1"
-            checked="1"
-        />
-        <field name="locimage" type="imageselect"
-            class="inputbox"
-            size="40"
-            imagetype="venues"
-            label="COM_JEM_IMAGESELECT"
-            description="COM_JEM_IMAGESELECT"
-        />
-        <field name="published" type="list"
-            label="JSTATUS"
-            description="JFIELD_PUBLISHED_DESC"
-            class="inputbox m-0"
-            filter="intval"
-            size="1"
-            default="1"
-        >
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-        </field>
-        <field name="country" type="countryoptions"
-            label="COM_JEM_GLOBAL_FIELD_COUNTRY"
-            description="COM_JEM_GLOBAL_FIELD_COUNTRY_DESC"
-            class="select_country m-0"
-        />
-    </fieldset>
+	<config>
+		<inlinehelp button="show"/>
+	</config>
+	<fieldset name="details"
+		addfieldpath="/administrator/components/com_jem/models/fields"
+	>
+		<field name="id" type="text"
+			default="0"
+			readonly="true"
+			class="readonly"
+			label="JGLOBAL_FIELD_ID_LABEL"
+			description ="JGLOBAL_FIELD_ID_DESC"
+		/>
+		<field name="venue" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_VENUE"
+			description="COM_JEM_VENUE"
+			required="true"
+		/>
+		<field name="alias" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_ALIAS"
+			description="COM_JEM_ALIAS"
+			hint="JFIELD_ALIAS_PLACEHOLDER"
+		/>
+		<field name="url" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_WEBSITE"
+			description="COM_JEM_WEBSITE_DESC"
+		/>
+		<field name="street" type="text"
+			id="street"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_STREET"
+			description="COM_JEM_STREET"
+		/>
+		<field name="locdescription" type="editor"
+			filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+			hide="pagebreak,readmore,image"
+			class="inputbox"
+			rows="3" cols="20"
+			width="100%"
+			label="COM_JEM_VENUE_FIELD_DESCRIPTION"
+			description="COM_JEM_VENUE_FIELD_DESCRIPTION_DESC"
+		/>
+		<field name="latitude" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_LATITUDE"
+			description="COM_JEM_LATITUDE_DESC"
+		/>
+		<field name="longitude" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_LONGITUDE"
+			description="COM_JEM_LONGITUDE_DESC"
+		/>
+		<field name="postalCode" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_ZIP"
+			description="COM_JEM_ZIP"
+		/>
+		<field name="city" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_CITY"
+			description="COM_JEM_CITY"
+		/>
+		<field name="state" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_STATE"
+			description="COM_JEM_STATE"
+		/>
+		<field name="map" type="checkbox"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_ENABLE_MAP"
+			description="COM_JEM_ENABLE_MAP"
+			value="1"
+			checked="0"
+		/>
+		<field name="locimage" type="imageselect"
+			class="inputbox"
+			size="40"
+			imagetype="venues"
+			label="COM_JEM_IMAGESELECT"
+			description="COM_JEM_IMAGESELECT"
+		/>
+		<field name="published" type="list"
+			label="JSTATUS"
+			description="JFIELD_PUBLISHED_DESC"
+			class="inputbox m-0"
+			filter="intval"
+			size="1"
+			default="1"
+		>
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+		</field>
+		<field name="access" type="accesslevel"
+			   label="JFIELD_ACCESS_LABEL"
+			   description="JFIELD_ACCESS_DESC"
+			   class="inputbox"
+		/>
+		<field name="country" type="countryoptions"
+			label="COM_JEM_GLOBAL_FIELD_COUNTRY"
+			description="COM_JEM_GLOBAL_FIELD_COUNTRY_DESC"
+			class="select_country m-0"
+		/>
+	</fieldset>
 
     <fieldset name="custom">
         <field name="custom1" type="text"
@@ -201,29 +206,29 @@
             readonly="true"
             format="%Y-%m-%d %H:%M:%S"
             translateformat="false"
-               filter="user_utc"
-               showtime="true"
-               filterformat="Y-m-d H:i:s"
+            filter="user_utc"
+            showtime="true"
+            filterformat="Y-m-d H:i:s"
         />
         <field name="version" type="text"
-               class="readonly"
-               label="COM_JEM_FIELD_VERSION_LABEL"
-               description="COM_JEM_FIELD_VERSION_DESC"
-               size="6"
-               readonly="true"
-               filter="unset"
+            class="readonly"
+            label="COM_JEM_FIELD_VERSION_LABEL"
+            description="COM_JEM_FIELD_VERSION_DESC"
+            size="6"
+            readonly="true"
+            filter="unset"
         />
         <field name="modified" type="calendar"
-               class="readonly"
-               label="JGLOBAL_FIELD_MODIFIED_LABEL"
-               description="COM_JEM_FIELD_MODIFIED_DESC"
-               size="22"
-               readonly="true"
-               format="%Y-%m-%d %H:%M:%S"
-               translateformat="false"
-               filter="user_utc"
-               showtime="true"
-               filterformat="Y-m-d H:i:s"
+            class="readonly"
+            label="JGLOBAL_FIELD_MODIFIED_LABEL"
+            description="COM_JEM_FIELD_MODIFIED_DESC"
+            size="22"
+            readonly="true"
+            format="%Y-%m-%d %H:%M:%S"
+            translateformat="false"
+            filter="user_utc"
+            showtime="true"
+            filterformat="Y-m-d H:i:s"
         />
         <field name="modified_by" type="user"
             label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"

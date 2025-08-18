@@ -30,16 +30,26 @@ use Joomla\CMS\HTML\HTMLHelper;
     <!--Venue-->
 
     <?php foreach($this->rows as $row) : ?>
+        <?php
+        // has user access
+        $venueaccess = '';
+        if (!$row->user_has_access_venue) {
+            // show a closed lock icon
+            $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+        } ?>
+
         <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
             <h2 class="jem">
                 <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
                 <?php echo JemOutput::publishstateicon($row); ?>
+                <?php echo $venueaccess;?>
             </h2>
 
             <!-- FLYER -->
             <?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
 
             <!--  -->
+            <?php if ($row->user_has_access_venue) : ?>
             <dl class="location">
                 <?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
                 <dt class="venue_website">
@@ -190,6 +200,7 @@ use Joomla\CMS\HTML\HTMLHelper;
             </div>
             <?php else : ?>
             <div class="clr"> </div>
+            <?php endif; ?>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>

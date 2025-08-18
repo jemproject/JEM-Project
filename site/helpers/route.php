@@ -40,7 +40,7 @@ abstract class JEMHelperRoute
      */
     public static function getRoute($id, $view = 'event', $category = null)
     {
-
+        
         // Deprecation warning.
         Log::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', Log::WARNING, 'deprecated');
 

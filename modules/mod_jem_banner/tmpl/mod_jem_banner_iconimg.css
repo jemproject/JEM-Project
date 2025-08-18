@@ -7,21 +7,21 @@
  */
 
 div#jemmodulebanner .time {
-    padding-left: 20px;
-    background: url(img/time.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/time.png) 0 center no-repeat;
 }
 
 div#jemmodulebanner div.date {
-    padding-left: 20px;
-    background: url(img/date.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/date.png) 0 center no-repeat;
 }
 
 div#jemmodulebanner .category {
-    padding-left: 20px;
-    background: url(img/category.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/category.png) 0 center no-repeat;
 }
 
 div#jemmodulebanner .venue-title {
-    padding-left: 20px;
-    background: url(img/building.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/building.png) 0 center no-repeat;
 }

@@ -416,7 +416,7 @@ class JemModelSearch extends BaseDatabaseModel
                . $where
                . ' ORDER BY c.lft'
                ;
-
+        
 
         try
         {
@@ -424,7 +424,7 @@ class JemModelSearch extends BaseDatabaseModel
             $mitems = $db->loadObjectList();
         }
         catch (RuntimeException $e)
-        {
+        {            
             \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

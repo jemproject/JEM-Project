@@ -6,7 +6,7 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  *
- * Country list: https://www.html-code-generator.com/mysql/country-name-table
+ * Country list: https://erikastokes.com/mysql-help/mysql-country-table.php
  * Api country checker: https://api.worldbank.org/countries/ss
  *
  * Lat+long finder: https://www.findlatitudeandlongitude.com/?loc=
@@ -279,7 +279,7 @@ class JemHelperCountries
         $country["SXM"] = array("iso2" => "SX", "name" => "Sint Maarten");
         $country["SSD"] = array("iso2" => "SS", "name" => "South Sudan, Republic of");
         $country["XKX"] = array("iso2" => "XK", "name" => "Kosov, Republic of");
-        $country["0"] = array("iso2" => "0", "name" => "NO VALID COUNTRY");
+        $country["000"] = array("iso2" => "00", "name" => "NO VALID COUNTRY");
         return $country;
     }
 

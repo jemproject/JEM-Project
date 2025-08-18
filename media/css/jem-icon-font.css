@@ -105,13 +105,13 @@ jem-featuredicon
 
 /*
 #jem .jem-recurrencefirsticon {
-    margin-left: 0.4em;
+	margin-left: 0.4em;
 }
 #jem .jem-recurrencefirsticon:after {
-    content:"\f12a";
-    color: #f30000;
-    margin-left: -0.6em;
-    vertical-align: 0.2em;
-    margin-right: 0.6em;
+	content:"\f12a";
+	color: #f30000;
+	margin-left: -0.6em;
+	vertical-align: 0.2em;
+	margin-right: 0.6em;
 }
 */

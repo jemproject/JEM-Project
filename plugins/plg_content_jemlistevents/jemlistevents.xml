@@ -39,7 +39,7 @@
                     <option value="archived"  >PLG_CONTENT_JEMLISTEVENTS_ARCHIVED_EVENTS</option>
                     <option value="newest"    >PLG_CONTENT_JEMLISTEVENTS_NEWEST_EVENTS</option>
                     <option value="open"      >PLG_CONTENT_JEMLISTEVENTS_OPEN_EVENTS</option>
-                    <option value="all"       >PLG_CONTENT_JEMLISTEVENTS_ALL_EVENTS</option>
+                    <option value="all"    >PLG_CONTENT_JEMLISTEVENTS_ALL_EVENTS</option>
                 </field>
                 <field name="show_featured" type="list"
                     size="1"

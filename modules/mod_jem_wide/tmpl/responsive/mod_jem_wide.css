@@ -23,7 +23,7 @@ body.body-overlayed {
   overflow: auto;
 }
 /* ----- */
-
+ 
 #jemmodulewide .jem-row {
   display: flex;
   flex-direction: row;
@@ -48,7 +48,7 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-dl:after {
-    clear: both;
+	clear: both;
 }
 
 #jemmodulewide .jem-dl {
@@ -56,20 +56,20 @@ body.body-overlayed {
 }
 
 #jemmodulewide .jem-dl dt {
-    float: left;
-    width: 160px;
-    overflow: hidden;
-    clear: left;
-    text-align: left;
+	float: left;
+	width: 160px;
+	overflow: hidden;
+	clear: left;
+	text-align: left;
   font-weight: bold;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+	text-overflow: ellipsis;
+	white-space: nowrap;
   padding-top: 5px;
   padding-bottom: 5px;
 }
 
 #jemmodulewide .jem-dl dd {
-    margin-left: 170px;
+	margin-left: 170px;
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -116,7 +116,7 @@ body.body-overlayed {
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
   align-items: center;
-}
+} 
 
 #jemmodulewide .jem-event:first-child {
   border-top: 1px solid #ddd;
@@ -145,7 +145,7 @@ body.body-overlayed {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: flex-start;  
 }
 
 #jemmodulewide .jem-small-list {
@@ -205,17 +205,17 @@ body.body-overlayed {
 }
 
 @media not print {
-  @media only all and (max-width: 47.938rem) {
+  @media only all and (max-width: 47.938rem) {    
     #jemmodulewide .jem-list-img {
       margin-right: 10px;
       margin-top: 10px;
       margin-left: 0;
     }
-
+    
     #jemmodulewide .jem-sort-small .jem-small-list div {
       flex-basis: 30%;
     }
-
+    
     #jemmodulewide .jem-event-info-small {
       flex-basis: 100% !important;
     }

@@ -7,26 +7,26 @@
  */
 
 div#jemmodulewide span.event-title {
-    padding-left: 20px;
-    background: url(img/flag_red.png) no-repeat;
+	padding-left: 20px;
+	background: url(img/flag_red.png) no-repeat;
 }
 
 div#jemmodulewide span.time {
-    padding-left: 20px;
-    background: url(img/time.png) no-repeat;
+	padding-left: 20px;
+	background: url(img/time.png) no-repeat;
 }
 
 div#jemmodulewide span.date {
-    padding-left: 20px;
-    background: url(img/date.png) no-repeat;
+	padding-left: 20px;
+	background: url(img/date.png) no-repeat;
 }
 
 div#jemmodulewide span.category {
-    padding-left: 20px;
-    background: url(img/category.png) no-repeat;
+	padding-left: 20px;
+	background: url(img/category.png) no-repeat;
 }
 
 div#jemmodulewide span.venue-title {
-    padding-left: 20px;
-    background: url(img/building.png) no-repeat;
+	padding-left: 20px;
+	background: url(img/building.png) no-repeat;
 }

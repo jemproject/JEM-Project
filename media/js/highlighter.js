@@ -12,13 +12,13 @@ Johann Burkard
 <mailto:jb@eaio.com>
 
 To highlight all occurrances of "bla" (case insensitive) in all li elements, use the following code:
-    $('li').highlight('bla');
+	$('li').highlight('bla');
 
 Remove highlighting
-    The highlight can be removed from any element with the removeHighlight function.
-    In this example, all highlights under the element with the ID highlight-plugin are removed.
+	The highlight can be removed from any element with the removeHighlight function.
+	In this example, all highlights under the element with the ID highlight-plugin are removed.
 
-    $('#highlight-plugin').removeHighlight();
+	$('#highlight-plugin').removeHighlight();
 */
 
 $.fn.highlight = function (pat) {

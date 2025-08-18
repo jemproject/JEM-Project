@@ -243,7 +243,7 @@ body.com_jem.body-overlayed {
     --btn-padding-y: 0.4rem;
 }
 
-#jem_filter #filter_continent,
+#jem_filter #filter_continent, 
 #jem_filter #filter_country,
 #jem_filter #filter_city {min-width: 250px;}
 
@@ -476,15 +476,15 @@ body.com_jem.body-overlayed {
 }
 
 #jem #addplaces, #jem #cancelplaces {
-    text-align: center;
-    display:inline;
-    max-width: 100px;
+	text-align: center;
+	display:inline;
+	max-width: 100px;
 }
 
 #jem div.jem-map {
     padding-top: 15px;
     padding-bottom: 5px;
-    animation: blendin .5s ease-out forwards;
+    animation: blendin .5s ease-out forwards;   
 }
 
 /* prevent osm maps from flickering */

@@ -7,20 +7,20 @@
  */
 
 div#jemmoduleteaser .time {
-    padding-left: 20px;
-    background: url(img/time.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/time.png) 0 center no-repeat;
 }
 
 div#jemmoduleteaser div.date {
-    padding-left: 0;
+	padding-left: 0;
 }
 
 div#jemmoduleteaser .category {
-    padding-left: 20px;
-    background: url(img/category.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/category.png) 0 center no-repeat;
 }
 
 div#jemmoduleteaser .venue-title {
-    padding-left: 20px;
-    background: url(img/building.png) 0 center no-repeat;
+	padding-left: 20px;
+	background: url(img/building.png) 0 center no-repeat;
 }

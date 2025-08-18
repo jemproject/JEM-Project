@@ -61,8 +61,6 @@ class jem_settings extends Table
     /** @var string */
     public $timename = null;
     /** @var int */
-    public $show_date_in_title = '1';
-    /** @var int */
     public $showdetails = '1';
     /** @var int */
     public $showtimedetails = '1';

@@ -17,6 +17,7 @@
         <filename>helper.php</filename>
         <filename>script.php</filename>
         <filename>index.html</filename>
+
         <folder>tmpl</folder>
         <folder>language</folder>
     </files>
@@ -122,11 +123,11 @@
                     description="MOD_JEM_BANNER_FALLBACK_COLOR_DESC"
                 />
                 <field name="imagewidthmax" type="text"
-                       class="inputbox"
-                       default=""
-                       size="8"
-                       label="MOD_JEM_BANNER_IMAGE_WIDTH_MAX"
-                       description="MOD_JEM_BANNER_IMAGE_WIDTH_MAX_DESC"
+                    class="inputbox"
+                    default=""
+                    size="8"
+                    label="MOD_JEM_BANNER_IMAGE_WIDTH_MAX"
+                    description="MOD_JEM_BANNER_IMAGE_WIDTH_MAX_DESC"
                 />
                 <field name="showflyer" type="radio"
                     default="1"
@@ -286,19 +287,37 @@
             </fieldset>
 
             <fieldset name="advanced">
+                <field name="layout" type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="form-select"
+                    validate="moduleLayout"
+                />
+                <field name="moduleclass_sfx" type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
                 <field name="cache" type="list"
-                    default="1"
                     label="MOD_JEM_BANNER_CACHING"
                     description="MOD_JEM_BANNER_CACHING_DESC"
+                    default="1"
+                    filter="integer"
+                    validate="options"
                 >
                     <option value="1">MOD_JEM_BANNER_USE_GLOBAL</option>
                     <option value="0">MOD_JEM_BANNER_NO_CACHING</option>
                 </field>
-                <field name="cache_time" type="text"
-                    default="900"
+                <field name="cache_time" type="number"
                     label="MOD_JEM_BANNER_CACHE_TIME"
                     description="MOD_JEM_BANNER_CACHE_TIME_DESC"
+                    default="900"
+                    filter="integer"
                 />
+                <field name="cachemode" type="hidden"
+                    default="static"
+                >
+                    <option value="static"></option>
+                </field>
             </fieldset>
         </fields>
     </config>

@@ -7,23 +7,23 @@
  */
 
 div#jemmoduleteaser {
-    width: 100%;
+	width: 100%;
 }
 
 div#jemmoduleteaser [class^="event_id"]:not(:last-of-type) {
-    padding-bottom:0.5em;
-    margin-bottom: 0.5em;
-    border-bottom: 1px silver solid;
+	padding-bottom:0.5em;
+	margin-bottom: 0.5em;
+	border-bottom: 1px silver solid;
 }
 
 div#jemmoduleteaser .teaser-jem a,
 div#jemmoduleteaser .venue-title a {
-    background-color: transparent;
-    /*color:#095197;*/
+	background-color: transparent;
+	/*color:#095197;*/
 }
 
 #jemmoduleteaser td.event-calendar {
-    width: 1%; /* keep it as small as possible */
+	width: 1%; /* keep it as small as possible */
 }
 
 #jemmoduleteaser [class|="calendar"] {
@@ -68,45 +68,45 @@ div#jemmoduleteaser .venue-title a {
 }
 
 #jemmoduleteaser span.share {
-    margin-left:95px;
+	margin-left:95px;
 }
 
 #jemmoduleteaser [class|="calendar"] .yearteaser {
-    font-size: 6px;
-    height:5px;
-    color: #e1e1e1;
+	font-size: 6px;
+	height:5px;
+	color: #e1e1e1;
 }
 
 div#jemmoduleteaser .eventset {
-    width: 100%;
-    padding: 5px;
-    text-align: left;
+	width: 100%;
+	padding: 5px;
+	text-align: left;
 }
 
 div#jemmoduleteaser .event-datetime {vertical-align: top;}
 
 div#jemmoduleteaser .event-title {
-    font-size: medium;
+	font-size: medium;
 }
 
 div#jemmoduleteaser .time {
-    padding-top: 2px;
+	padding-top: 2px;
 }
 
 div#jemmoduleteaser div.date {
-    padding-top: 2px;
+	padding-top: 2px;
 }
 
 div#jemmoduleteaser .category {
-    position: relative;
-    font-size: smaller;
-    padding-top: 4px;
+	position: relative;
+	font-size: smaller;
+	padding-top: 4px;
 }
 
 div#jemmoduleteaser .venue-title {
-    position: relative;
-    font-size: smaller;
-    padding-top: 4px;
+	position: relative;
+	font-size: smaller;
+	padding-top: 4px;
 }
 
 div#jemmoduleteaser .event-image-cell {
@@ -116,9 +116,9 @@ div#jemmoduleteaser .venue-image-cell {
 }
 
 div#jemmoduleteaser .image-preview {
-    height: 35px;
-    border: 1px solid #CCCCCC;
-    padding: 3px;
-    background-color: white;
-    margin: 3px;
+	height: 35px;
+	border: 1px solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 3px;
 }

@@ -19,6 +19,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
+JemHelper::loadModuleStyleSheet('mod_jem');
+
 # Ensure $use_ajax is defined and boolean
 $use_ajax = !empty($use_ajax);
 
@@ -31,7 +33,7 @@ jQuery(document).ready(function(){
 });
 function mod_jem_cal_click_<?php print $module->id; ?>(url) {
     jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});
+        jQuery(".hasTooltip").tooltip({'html':true});        
     });
 }
 </script>

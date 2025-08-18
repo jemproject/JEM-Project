@@ -28,7 +28,7 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-11">
+                <div class="col-md-11">        
                     <div class="row mb-12">
                         <div class="col-md-4">
                             <div class="input-group">
@@ -44,11 +44,11 @@ $wa->useScript('table.columns');
                             <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                                 <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
                                 <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true);?>
-                            </select>
+                            </select>                        
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1">                
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="float-end">
@@ -87,6 +87,9 @@ $wa->useScript('table.columns');
                 </th>
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo Text::_('JSTATUS'); ?>
+                </th>
+                <th style="width:5%" class="center" nowrap="nowrap">
+                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
                 <th>
                     <?php echo Text::_('COM_JEM_CREATION'); ?>
@@ -158,6 +161,7 @@ $wa->useScript('table.columns');
                     <td class="center state"><?php echo $item->state ? $this->escape($item->state) : '-'; ?></td>
                     <td class="center country"><?php echo $item->country ? $this->escape($item->country) : '-'; ?></td>
                     <td class="center"><?php echo $published; ?></td>
+                    <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php
                         $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
@@ -219,9 +223,9 @@ $wa->useScript('table.columns');
             <?php endforeach; ?>
             </tbody>
         </table>
-
+            
         <div class="ms-auto mb-4 me-0">
-            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
+            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
         </div>
     </div>
 
