@@ -60,7 +60,7 @@ use Joomla\CMS\Router\Route;
             <?php else : ?>
                 <?php $odd = 0; ?>
                 <?php foreach ($this->catrow->events as $row) : ?>
-				<?php
+                <?php
                 // has user access
                 $eventaccess = '';
                 if (!$row->user_has_access_category) {
@@ -85,14 +85,14 @@ use Joomla\CMS\Router\Route;
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
                                 <span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
                             </a><?php echo JemOutput::publishstateicon($row); ?>
-						<?php echo $eventaccess; ?>
+                        <?php echo $eventaccess; ?>
                         </td>
                         <?php endif; ?>
 
                         <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
                         <td headers="jem_title_cat<?php echo $this->catrow->id; ?>" style="text-align: left; vertical-align: top;" itemprop="name">
                             <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
-						<?php echo $eventaccess; ?>
+                        <?php echo $eventaccess; ?>
                         </td>
                         <?php endif; ?>
 

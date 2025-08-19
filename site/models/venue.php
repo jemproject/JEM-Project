@@ -179,60 +179,60 @@ class JemModelVenue extends JemModelEventslist
     public function getVenue()
     {
         $user   = JemFactory::getUser();
-		$levels = $user->getAuthorisedViewLevels();
-		$jemsettings = JemHelper::config();
+        $levels = $user->getAuthorisedViewLevels();
+        $jemsettings = JemHelper::config();
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query  = $db->getQuery(true);
 
         $query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
-		               ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, access, '.
+                       ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, access, '.
                        ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
                        ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
-		$query->from($db->quoteName('#__jem_venues'));
+        $query->from($db->quoteName('#__jem_venues'));
 
-		$case_when_a  = ' CASE WHEN ';
-		$case_when_a .= " access IN (" . implode(',',$levels) . ")";
-		$case_when_a .= ' THEN 1 ';
-		$case_when_a .= ' ELSE 0 ';
-		$case_when_a .= ' END as user_has_access_venue';
+        $case_when_a  = ' CASE WHEN ';
+        $case_when_a .= " access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= ' THEN 1 ';
+        $case_when_a .= ' ELSE 0 ';
+        $case_when_a .= ' END as user_has_access_venue';
 
-		$query->select(array($case_when_a));
+        $query->select(array($case_when_a));
 
-		# Filter by access level - public or with access_level_locked_venues active.
-		if($jemsettings->access_level_locked_venues != "[\"1\"]") {
-			$accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
-			$newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
-			$query->where('access IN ('.implode(',', $newlevels).')');
-		} else {
-			$query->where('access IN ('.implode(',', $levels).')');
-		}
+        # Filter by access level - public or with access_level_locked_venues active.
+        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $query->where('access IN ('.implode(',', $newlevels).')');
+        } else {
+            $query->where('access IN ('.implode(',', $levels).')');
+        }
 
-		$query->where('id = '.(int)$this->_id);
+        $query->where('id = '.(int)$this->_id);
 
-		// all together: if published or the user is creator of the venue or allowed to edit or publish venues
-		if (empty($user->id)) {
-			$query->where('published = 1');
-		}
-		// no limit if user can publish or edit foreign venues
-		elseif ($user->can(array('edit', 'publish'), 'venue')) {
-			$query->where('published IN (0,1)');
-		}
-		// user maybe creator
-		else {
-			$query->where('(published = 1 OR (published = 0 AND created_by = ' . $this->_db->Quote($user->id) . '))');
-		}
+        // all together: if published or the user is creator of the venue or allowed to edit or publish venues
+        if (empty($user->id)) {
+            $query->where('published = 1');
+        }
+        // no limit if user can publish or edit foreign venues
+        elseif ($user->can(array('edit', 'publish'), 'venue')) {
+            $query->where('published IN (0,1)');
+        }
+        // user maybe creator
+        else {
+            $query->where('(published = 1 OR (published = 0 AND created_by = ' . $this->_db->Quote($user->id) . '))');
+        }
 
-		$db->setQuery($query);
-		$_venue = $db->loadObject();
+        $db->setQuery($query);
+        $_venue = $db->loadObject();
 
-		if (empty($_venue)) {
-			Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
-			return false;
-		}else if(!$_venue->user_has_access_venue) {
-			Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-			return false;
-		}
+        if (empty($_venue)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+            return false;
+        }else if(!$_venue->user_has_access_venue) {
+            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+            return false;
+        }
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 
