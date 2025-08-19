@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="plugin" group="jem" method="upgrade">
+<extension type="plugin" group="content" method="upgrade">
     <name>plg_jem_mailer</name>
-    <creationDate>May 2025</creationDate>
     <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <creationDate>August 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.3</version>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.3.4</version>
     <description>PLG_JEM_MAILER_XML_DESCRIPTION</description>
 
     <files>
