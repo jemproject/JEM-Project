@@ -74,7 +74,7 @@
         </tags>
         <maintainer>JEM Team</maintainer>
         <maintainerurl>http://www.joomlaeventmanager.net</maintainerurl>
-    <targetplatform name="joomla" version="(4\.[01234]|5\.[0123])"/>
+    <targetplatform name="joomla" version="(4\.[01234]|5\.[01234])"/>
         <php_minimum>8.0</php_minimum>
     <sha256>76a5d596aba263b603f574e704a53cc7cf6961923bc797b8c132a34d7486d3e1</sha256>
     <sha384>904ed3b6ea3cab05b4c6310b187007aa3a5a5bae9718bff4c53d594879c39c59f22a26e12e1743c6d1da3819732619b3</sha384>
