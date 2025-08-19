@@ -112,7 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
       '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
       . $city . '<br>'
       . '<img src="/media/com_jem/images/flags/w20-png/' . strtolower($country) . '.png" alt="' . $country . '"/><br>'
-      . '<a href="https://maps.google.com/?daddr=' . (float)$v->latitude . ',' . (float)$v->longitude . '">Navigeren</a>';
+      . '<a href="https://maps.google.com/?daddr=' . (float)$v->latitude . ',' . (float)$v->longitude . '">'
+      . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
   ?>
   L.marker([<?= (float)$v->latitude ?>, <?= (float)$v->longitude ?>], {
     icon: L.icon({
