@@ -144,6 +144,7 @@ class JemCategories
         $app = Factory::getApplication();
         $user = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
+        $jemsettings = JemHelper::config();
 
         $this->_checkedCategories[$id] = true;
 
@@ -157,11 +158,32 @@ class JemCategories
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as slug';
 
-        $query->select(array('c.*',$case_when_c));
+        $case_when_a  = ' CASE WHEN ';
+        $case_when_a .= " c.access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= ' THEN 1 ';
+        $case_when_a .= ' ELSE 0 ';
+        $case_when_a .= ' END as user_has_access_category';
+
+        $query->select(array($case_when_a));
+
+        $query->select(array('c.*',$case_when_c,$case_when_a));
         $query->from('#__jem_categories as c');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 
         $query->where('c.published = 1');
+
+        ###################
+        ## FILTER-ACCESS ##
+        ###################
+
+        # Filter by access level - public or with access_level_locked_events active.
+        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $query->where('c.access IN ('.implode(',', $newlevels).')');
+        } else {
+            $query->where('c.access IN ('.implode(',', $levels).')');
+        }
 
         ###################################
         ## FILTER - MAINTAINER/JEM GROUP ##
@@ -191,7 +213,6 @@ class JemCategories
             $query->where('(c.access IN ('.$groups.'))');
         }
         */
-        $query->where('(c.access IN ('.implode(',', $levels).'))');
 
         #####################
         ### FILTER - BYCAT ##

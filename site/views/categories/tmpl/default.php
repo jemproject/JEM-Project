@@ -30,11 +30,19 @@ use Joomla\CMS\Router\Route;
     <div class="clr"></div>
 
     <?php foreach ($this->rows as $row) : ?>
+            <?php
+            // has user access
+            $categoriesaccess = '';
+            if (!$row->user_has_access_category) {
+                // show a closed lock icon
+                $categoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            } ?>
     <div class="jem cat_id<?php echo $row->id; ?>">
         <h2>
             <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
+                    <?php echo $categoriesaccess; ?>
         </h2>
-
+                <?php if ($row->user_has_access_category) : ?>
         <div class="floattext">
             <?php if ($this->jemsettings->discatheader) { ?>
                 <div class="catimg">
@@ -62,15 +70,31 @@ use Joomla\CMS\Router\Route;
         </div>
 
         <?php if ($i = count($row->subcats)) : ?>
+                        <?php
+                        // has user access
+                        $subcategoriesaccess = '';
+                        if (!$row->user_has_access_category) {
+                            // show a closed lock icon
+                            $subcategoriesaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                        } ?>
             <div class="subcategories">
                 <?php echo Text::_('COM_JEM_SUBCATEGORIES'); ?>
+                            <?php echo $categoriesaccess; ?>
             </div>
             <div class="subcategorieslist">
                 <?php foreach ($row->subcats as $sub) : ?>
+                                <?php
+                                // has user access
+                                $eventsaccess = '';
+                                if (!$sub->user_has_access_category ) {
+                                    // show a closed lock icon
+                                    $eventsaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                                } ?>
                     <strong>
                         <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
                             <?php echo $this->escape($sub->catname); ?></a>
                     </strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
+                                <?php echo $eventsaccess; ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
@@ -82,6 +106,7 @@ use Joomla\CMS\Router\Route;
                 echo $this->loadTemplate('table');
             }
         ?>
+                <?php endif; ?>
         </div>
     <?php endforeach; ?>
 

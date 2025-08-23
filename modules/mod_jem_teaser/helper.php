@@ -295,6 +295,11 @@ abstract class ModJemTeaserHelper
                 }
             }
 
+            # user has access
+            $lists[$i]->user_has_access_category = $row->user_has_access_category;
+            $lists[$i]->user_has_access_event = $row->user_has_access_event;
+            $lists[$i]->user_has_access_venue = $row->user_has_access_venue;
+
             # provide custom fields
             for ($n = 1; $n <= 10; ++$n) {
                 $var = 'custom'.$n;

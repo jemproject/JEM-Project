@@ -9,23 +9,23 @@
 div#jemmodulejubilee .time:before,
 div#jemmodulejubilee div.date:before,
 div#jemmodulejubilee .category:before,
-div#jemmodulejubilee .venue-title:before {												 
-	font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
-	font-weight:var(--fa-style,900);
+div#jemmodulejubilee .venue-title:before {                                                 
+    font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
+    font-weight:var(--fa-style,900);
 }
 
 div#jemmodulejubilee .time:before {
-	content:"\f017";
+    content:"\f017";
 }
 
 div#jemmodulejubilee div.date:before {
-	content:"\f133";
+    content:"\f133";
 }
 
 div#jemmodulejubilee .category:before {
-	content:"\f02b";
+    content:"\f02b";
 }
 
 div#jemmodulejubilee .venue-title:before {
-	content:"\f041";
+    content:"\f041";
 }

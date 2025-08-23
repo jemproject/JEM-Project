@@ -222,6 +222,14 @@ use Joomla\CMS\HTML\HTMLHelper;
             $eventstate  = '';
         }
 
+        // has user access
+        $eventaccess = "";
+        if(!$row->user_has_access_event){
+            // show a closed lock icon
+            $statusicon  = JemOutput::publishstateicon($row);
+            $eventaccess  = '<span class="icon-lock" style="margin-left:5px;" aria-hidden="true"></span>';
+        }
+
         //date in tooltip
         $multidaydate = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_DATE').': </span>';
         switch ($multi_mode) {
@@ -281,7 +289,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         }
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $contentend . '</div>';
+        $content .= $eventaccess . $contentend . '</div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;

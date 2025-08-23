@@ -263,6 +263,14 @@ if ($jemsettings->oldevent > 0) {
         <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr />
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$this->item->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
 
             <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
@@ -289,9 +297,11 @@ if ($jemsettings->oldevent > 0) {
                         if (!empty($this->item->url)) :
                             echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
                         endif;
+                    echo $venueaccess;
                         ?>
                     </dd>
                 </dl>
+            <?php if($this->item->user_has_access_venue) : ?>
                 <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext" itemprop="address" itemscope
                         itemtype="https://schema.org/PostalAddress">
@@ -395,6 +405,7 @@ if ($jemsettings->oldevent > 0) {
                 <?php echo $this->loadTemplate('attachments'); ?>
 
             </div>
+        <?php endif; ?>
         <?php endif; ?>
 
         <!-- Registration -->

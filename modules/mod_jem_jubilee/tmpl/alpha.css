@@ -39,16 +39,16 @@
 }
 
 #jemmodulejubilee [class|="calendar"] .monthjubilee.monthcolor-dark {
-	color: black;
-	text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
+    color: black;
+    text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
     1px -1px 0 rgba(255,255,255,0.2),
     -1px 1px 0 rgba(255,255,255,0.2),
     1px 1px 0 rgba(255,255,255,0.2);
 }
 
 #jemmodulejubilee [class|="calendar"] .monthjubilee.monthcolor-light {
-	color: #FFF;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    color: #FFF;
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
     1px -1px 0 rgba(0,0,0,0.2),
     -1px 1px 0 rgba(0,0,0,0.2),
     1px 1px 0 rgba(0,0,0,0.2);

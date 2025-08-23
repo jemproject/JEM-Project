@@ -6,8 +6,8 @@
  */
 
 #jem .jem-removebutton  {
-	cursor: pointer;
-	color: red;
+    cursor: pointer;
+    color: red;
 }
 
 #jem .jem-row {
@@ -107,7 +107,7 @@ div#jem fieldset {
 }
 
 /* -------------------
-	GENERAL
+    GENERAL
 --------------------- */
 div#jem {
     overflow: hidden;
@@ -448,7 +448,7 @@ div#jem .cat-children ul li {
 --------------------- */
 div#jem table.eventtable {
     background: #DEDEDE;
-	margin:1em 0px;
+    margin:1em 0px;
     width: 100%;
     font-size: 1em;
     border-collapse: collapse;
@@ -485,7 +485,7 @@ div#jem table.eventtable td {
 
 div#jem table.eventtable td a {
     background-color: transparent;
-    /*	color:#095197; */
+    /*    color:#095197; */
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {
@@ -513,16 +513,16 @@ div#jem table.eventtable td.header-td {
 
 /* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
 div#jem table.eventtable tr td span.jem_date-2 {
-	font-weight: bold;
+    font-weight: bold;
 }
 /**/
 
 /* activate these two rules to replace the linebreak by a space * /
 div#jem table.eventtable tr td br.jem_break-2 {
-	display: none;
+    display: none;
 }
 div#jem table.eventtable tr td span.jem_date-2::after {
-	content: " ";
+    content: " ";
 }
 /**/
 
@@ -537,7 +537,7 @@ div#jem table.eventtable tr td span.jem_date-2::after {
 }
 
 /* -------------------
-	FILTER
+    FILTER
 --------------------- */
 div#jem #jem_filter {
     margin: 1em 0 0.5em 0;
@@ -603,7 +603,7 @@ div#jem .jem_fright {
 
 /* 
 #jem .edit .current dd.tabs {
-	border: none;
+    border: none;
 }
 */
 div.jem_editevent ul.adminformlist label {
