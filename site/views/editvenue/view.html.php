@@ -185,7 +185,7 @@ class JemViewEditvenue extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
-        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
+        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
         $this->user          = $user;
 
         if (!$publisher) {

@@ -192,7 +192,7 @@ static public function lightbox() {
             }
 
             if ($settings->get('global_show_icons',1)) {
-                $image = jemhtml::icon( 'com_jem/submitevent.png', 'fa fa-fw fa-lg fa-calendar-plus jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
+                $image = jemhtml::icon( 'com_jem/submitevent.webp', 'fa fa-fw fa-lg fa-calendar-plus jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
             } else {
                 $image = Text::_('COM_JEM_DELIVER_NEW_EVENT');
             }
@@ -227,7 +227,7 @@ static public function lightbox() {
             }
 
             if ($settings->get('global_show_icons',1)) {
-                $image = jemhtml::icon( 'com_jem/addvenue.png', 'fa fa-fw fa-lg fa-plus-square jem-addvenuebutton', Text::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isClient('site'));
+                $image = jemhtml::icon( 'com_jem/addvenue.webp', 'fa fa-fw fa-lg fa-plus-square jem-addvenuebutton', Text::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, !$app->isClient('site'));
             } else {
                 $image = Text::_('COM_JEM_DELIVER_NEW_VENUE');
             }
@@ -263,7 +263,7 @@ static public function lightbox() {
             }
 
             if ($settings->get('global_show_icons',1)) {
-                $image = jemhtml::icon( 'com_jem/icon-16-new.png', 'fa fa-fw fa-lg fa-user-plus jem-addusersbutton', Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, !$app->isClient('site'));
+                $image = jemhtml::icon( 'com_jem/icon-16-new.webp', 'fa fa-fw fa-lg fa-user-plus jem-addusersbutton', Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, !$app->isClient('site'));
             } else {
                 $image = Text::_('COM_JEM_ADD_USER_REGISTRATIONS');
             }
@@ -304,7 +304,7 @@ static public function lightbox() {
     {
         $app      = Factory::getApplication();
 
-        $output = jemhtml::icon( 'com_jem/publish_r.png', 'fa fa-lg fa-times-circle jem-removebutton', $text, $attributes, !$app->isClient('site'));
+        $output = jemhtml::icon( 'com_jem/publish_r.webp', 'fa fa-lg fa-times-circle jem-removebutton', $text, $attributes, !$app->isClient('site'));
 
         return $output;
     }
@@ -320,7 +320,7 @@ static public function lightbox() {
     static public function prepareAddEventButton($urlparams = '')
     {
         $uri   = Uri::getInstance();
-        $image = HTMLHelper::_('image', 'com_jem/icon-16-new.png', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
+        $image = HTMLHelper::_('image', 'com_jem/icon-16-new.webp', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
         $url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
         if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
             $url .= '&'.$urlparams;
@@ -363,7 +363,7 @@ static public function lightbox() {
 
             if ($task == 'archive') {
                 if ($settings->get('global_show_icons',1)) {
-                    $image = jemhtml::icon( 'com_jem/el.png', 'fa fa-fw fa-lg fa-calendar jem-archivebutton-return', Text::_('COM_JEM_SHOW_EVENTS'), NULL, !$app->isClient('site'));
+                    $image = jemhtml::icon( 'com_jem/el.webp', 'fa fa-fw fa-lg fa-calendar jem-archivebutton-return', Text::_('COM_JEM_SHOW_EVENTS'), NULL, !$app->isClient('site'));
                 } else {
                     $image = Text::_('COM_JEM_SHOW_EVENTS');
                 }
@@ -379,7 +379,7 @@ static public function lightbox() {
                 }
             } else {
                 if ($settings->get('global_show_icons',1)) {
-                       $image = jemhtml::icon( 'com_jem/archive_front.png', 'fa fa-fw fa-lg fa-archive jem-archivebutton', Text::_('COM_JEM_SHOW_ARCHIVE'), NULL, !$app->isClient('site'));
+                       $image = jemhtml::icon( 'com_jem/archive_front.webp', 'fa fa-fw fa-lg fa-archive jem-archivebutton', Text::_('COM_JEM_SHOW_ARCHIVE'), NULL, !$app->isClient('site'));
                 } else {
                     $image = Text::_('COM_JEM_SHOW_ARCHIVE');
                 }
@@ -448,18 +448,18 @@ static public function lightbox() {
                 case 'editevent':
                     if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $userId) {
                         $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
-                        $button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
+                        $button = HTMLHelper::_('image', 'system/checked_out.webp', NULL, NULL, true);
                         $date = HTMLHelper::_('date', $item->checked_out_time);
                         return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
                     }
 
                     if ($showIcon) {
                         if($item->recurrence_type && !$item->recurrence_first_id){
-                            $image = jemhtml::icon('com_jem/calendar_edit_root.png', $iconEditEventRoot, Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
+                            $image = jemhtml::icon('com_jem/calendar_edit_root.webp', $iconEditEventRoot, Text::_('COM_JEM_EDIT_EVENT_ROOT'), NULL, !$app->isClient('site'));
                             $overlib = Text::_('COM_JEM_EDIT_EVENT_ROOT_DESC');
                             $text = Text::_('COM_JEM_EDIT_EVENT_ROOT');
                         }else {
-                            $image = jemhtml::icon('com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
+                            $image = jemhtml::icon('com_jem/calendar_edit.webp', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_EVENT'), NULL, !$app->isClient('site'));
                             $overlib = Text::_('COM_JEM_EDIT_EVENT_DESC');
                             $text = Text::_('COM_JEM_EDIT_EVENT');
                         }
@@ -475,13 +475,13 @@ static public function lightbox() {
                 case 'editvenue':
                     if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
                         $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
-                        $button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
+                        $button = HTMLHelper::_('image', 'system/checked_out.webp', NULL, NULL, true);
                         $date = HTMLHelper::_('date', $item->vChecked_out_time);
                         return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
                     }
 
                     if ($showIcon) {
-                        $image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
+                        $image = jemhtml::icon( 'com_jem/calendar_edit.webp', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
                     } else {
                         $image = Text::_('COM_JEM_EDIT_VENUE');
                     }
@@ -494,13 +494,13 @@ static public function lightbox() {
                 case 'venue':
                     if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
                         $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
-                        $button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
+                        $button = HTMLHelper::_('image', 'system/checked_out.webp', NULL, NULL, true);
                         $date = HTMLHelper::_('date', $item->vChecked_out_time);
                         return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
                     }
 
                     if ($showIcon) {
-                        $image = jemhtml::icon( 'com_jem/calendar_edit.png', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
+                        $image = jemhtml::icon( 'com_jem/calendar_edit.webp', 'fa fa-fw fa-pen-square jem-editbutton', Text::_('COM_JEM_EDIT_VENUE'), NULL, !$app->isClient('site'));
                     } else {
                         $image = Text::_('COM_JEM_EDIT_VENUE');
                     }
@@ -554,7 +554,7 @@ static public function lightbox() {
             {
                 case 'editevent':
                     if ($showIcon) {
-                        $image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_EVENT'), NULL, !$app->isClient('site'));
+                        $image = jemhtml::icon( 'com_jem/calendar_copy.webp', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_EVENT'), NULL, !$app->isClient('site'));
                     } else {
                         $image = Text::_('COM_JEM_COPY_EVENT');
                     }
@@ -566,7 +566,7 @@ static public function lightbox() {
 
                 case 'editvenue':
                     if ($showIcon) {
-                        $image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
+                        $image = jemhtml::icon( 'com_jem/calendar_copy.webp', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
                     } else {
                         $image = Text::_('COM_JEM_COPY_VENUE');
                     }
@@ -578,7 +578,7 @@ static public function lightbox() {
 
                 case 'venue':
                     if ($showIcon) {
-                        $image = jemhtml::icon( 'com_jem/calendar_copy.png', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
+                        $image = jemhtml::icon( 'com_jem/calendar_copy.webp', 'fas fa-fw fa-copy jem-copybutton', Text::_('COM_JEM_COPY_VENUE'), NULL, !$app->isClient('site'));
                     } else {
                         $image = Text::_('COM_JEM_COPY_VENUE');
                     }
@@ -615,7 +615,7 @@ static public function lightbox() {
             $status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
             if ($settings->get('global_show_icons',1)) {
-                $image = jemhtml::icon( 'com_jem/printButton.png', 'fa fa-fw fa-lg fa-print jem-printbutton', Text::_('JGLOBAL_PRINT'), NULL, !$app->isClient('site'));
+                $image = jemhtml::icon( 'com_jem/printButton.webp', 'fa fa-fw fa-lg fa-print jem-printbutton', Text::_('JGLOBAL_PRINT'), NULL, !$app->isClient('site'));
             } else {
                 $image = Text::_('COM_JEM_PRINT');
             }
@@ -667,7 +667,7 @@ static public function lightbox() {
             $status = 'width=400,height=350,menubar=yes,resizable=yes';
 
             if ($settings->get('global_show_icons')) {
-                $image = jemhtml::icon( 'com_jem/emailButton.png', 'fa fa-fw fa-lg fa-envelope jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
+                $image = jemhtml::icon( 'com_jem/emailButton.webp', 'fa fa-fw fa-lg fa-envelope jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
             } else {
                 $image = Text::_('COM_JEM_EMAIL');
             }
@@ -710,7 +710,7 @@ static public function lightbox() {
             }
 
             if ($settings->get('global_show_icons','0')==1) {
-                $image = jemhtml::icon( 'com_jem/iCal2.0.png', 'fa fa-fw fa-lg fa-calendar-check jem-icalbutton', Text::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isClient('site'));
+                $image = jemhtml::icon( 'com_jem/iCal2.0.webp', 'fa fa-fw fa-lg fa-calendar-check jem-icalbutton', Text::_('COM_JEM_EXPORT_ICS'), NULL, !$app->isClient('site'));
             } else {
                 $image = Text::_('COM_JEM_EXPORT_ICS');
             }
@@ -740,7 +740,7 @@ static public function lightbox() {
             $output = '';
         } else {
             // button in view
-            $image = jemhtml::icon( 'com_jem/publish.png', 'fa fa-fw fa-lg fa-check-circle jem-publishbutton', Text::_('COM_JEM_PUBLISH'), NULL, !$app->isClient('site'));
+            $image = jemhtml::icon( 'com_jem/publish.webp', 'fa fa-fw fa-lg fa-check-circle jem-publishbutton', Text::_('COM_JEM_PUBLISH'), NULL, !$app->isClient('site'));
             $overlib = Text::_('COM_JEM_PUBLISH_DESC');
             $text = Text::_('COM_JEM_PUBLISH');
 
@@ -766,7 +766,7 @@ static public function lightbox() {
             $output = '';
         } else {
             // button in view
-            $image = jemhtml::icon( 'com_jem/trash.png', 'fa fa-fw fa-lg fa-trash jem-trashbutton', Text::_('COM_JEM_TRASH'), NULL, !$app->isClient('site'));
+            $image = jemhtml::icon( 'com_jem/trash.webp', 'fa fa-fw fa-lg fa-trash jem-trashbutton', Text::_('COM_JEM_TRASH'), NULL, !$app->isClient('site'));
             $overlib = Text::_('COM_JEM_TRASH_DESC');
             $text = Text::_('COM_JEM_TRASH');
 
@@ -792,7 +792,7 @@ static public function lightbox() {
             $output = '';
         } else {
             // button in view
-            $image = jemhtml::icon( 'com_jem/unpublish.png', 'fa fa-fw fa-lg fa-eye-slash jem-unpublishbutton', Text::_('COM_JEM_UNPUBLISH'), NULL, !$app->isClient('site'));
+            $image = jemhtml::icon( 'com_jem/unpublish.webp', 'fa fa-fw fa-lg fa-eye-slash jem-unpublishbutton', Text::_('COM_JEM_UNPUBLISH'), NULL, !$app->isClient('site'));
             $overlib = Text::_('COM_JEM_UNPUBLISH_DESC');
             $text = Text::_('COM_JEM_UNPUBLISH');
 
@@ -813,7 +813,7 @@ static public function lightbox() {
     {
         $app = Factory::getApplication();
 
-        $image = jemhtml::icon( 'com_jem/export_excel.png', 'fa fa-fw fa-lg fa-download jem-exportbutton', Text::_('COM_JEM_EXPORT'), NULL, !$app->isClient('site'));
+        $image = jemhtml::icon( 'com_jem/export_excel.webp', 'fa fa-fw fa-lg fa-download jem-exportbutton', Text::_('COM_JEM_EXPORT'), NULL, !$app->isClient('site'));
 
         if ($app->input->get('print','','int')) {
             //button in popup
@@ -842,7 +842,7 @@ static public function lightbox() {
         $id  = $app->input->getInt('id');
         $fid = $app->input->getInt('Itemid');
 
-        $image = jemhtml::icon( 'com_jem/icon-16-back.png', 'fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton', Text::_('COM_JEM_BACK'), NULL, !$app->isClient('site'));
+        $image = jemhtml::icon( 'com_jem/icon-16-back.webp', 'fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton', Text::_('COM_JEM_BACK'), NULL, !$app->isClient('site'));
 
         if ($app->input->get('print','','int')) {
             //button in popup
@@ -912,7 +912,7 @@ static public function lightbox() {
         }
 
         //Link to map
-        $mapimage = jemhtml::icon( 'com_jem/map_icon.png', 'fa fa-map', Text::_('COM_JEM_MAP'), 'class="jem-mapicon"');
+        $mapimage = jemhtml::icon( 'com_jem/map_icon.webp', 'fa fa-map', Text::_('COM_JEM_MAP'), 'class="jem-mapicon"');
 
         //set var
         $output = null;
@@ -1140,22 +1140,22 @@ static public function lightbox() {
         $published = is_object($item) ? $item->published : $item;
         switch ($published) {
         case -2: // trashed
-            $image = 'com_jem/trash.png';
+            $image = 'com_jem/trash.webp';
             $icon = 'fa fa-fw fa-lg fa-trash jem-publishstateicon-trashed';
             $alt   = Text::_('JTRASHED');
             break;
         case  0: // unpublished F10C: fa-circle-o F070: fa-eye-slash, F192: fa-dot-circle-o
-            $image = 'com_jem/publish_x.png';
+            $image = 'com_jem/publish_x.webp';
             $icon = 'fa fa-fw fa-lg fa-eye-slash jem-publishstateicon-unpublished';
             $alt   = Text::_('JUNPUBLISHED');
             break;
         case  1: // published F06E: fa-eye
-            $image = 'com_jem/publish.png';
+            $image = 'com_jem/publish.webp';
             $icon = 'fa fa-fw fa-lg fa-check-circle jem-publishstateicon-published';
             $alt   = Text::_('JPUBLISHED');
             break;
         case  2: // archived
-            $image = 'com_jem/archive_front.png';
+            $image = 'com_jem/archive_front.webp';
             $icon = 'fa fa-fw fa-lg fa-archive jem-publishstateicon-archived';
             $alt   = Text::_('JARCHIVED');
             break;

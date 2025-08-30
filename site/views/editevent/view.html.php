@@ -196,7 +196,7 @@ class JemViewEditevent extends JemView
         $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
-        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
+        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
 
         $this->user = $user;
         $permissions = new stdClass();

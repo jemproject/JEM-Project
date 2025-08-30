@@ -822,6 +822,7 @@ class JemHelper
 
                 // images
                 'png' => 'image/png',
+                'webp' => 'image/webp',
                 'jpe' => 'image/jpeg',
                 'jpeg' => 'image/jpeg',
                 'jpg' => 'image/jpeg',
