@@ -96,7 +96,7 @@ input.button:focus { /*background-color:#......; */
 }
 
 input#clear {
-    background: url('../images/clear.png') no-repeat scroll left center;
+    background: url('../images/clear.webp') no-repeat scroll left center;
     border: none;
     cursor: pointer;
     caret-color: transparent;
@@ -862,7 +862,7 @@ input.selectcat {
 }
 
 input#csvexport {
-    background-image: url('../images/export_excel.png');
+    background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;
     padding-left: 30px;
