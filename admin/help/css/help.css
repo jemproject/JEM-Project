@@ -91,7 +91,8 @@ img.left {
     padding: 12px 12px 20px 54px;
     margin: 0 auto 8px;
     color: #465584;
-    background: #fff url(../images/icon-32-hint.png) no-repeat 4px 15px;
+    background: #fff url(../images/icon-32-hint.webp) no-repeat 4px 15px;
+    background-size: 32px;
 }
 
 .attentionheader {
@@ -175,79 +176,79 @@ table.help td {
 }
 
 .icon-32-alert {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.webp");
 }
 .icon-32-apply {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-apply.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-apply.webp");
 }
 .icon-32-archive {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-archive.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-archive.webp");
 }
 .icon-32-back {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-back.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-back.webp");
 }
 .icon-32-cancel {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-cancel.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-cancel.webp");
 }
 .icon-32-checkin {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-checkin.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-checkin.webp");
 }
 .icon-32-delete {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-delete.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-delete.webp");
 }
 .icon-32-edit {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-edit.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-edit.webp");
 }
 .icon-32-export {
-    background-image: url("../../../../../media/com_jem/images/icon-32-tableexport.png");
+    background-image: url("../../../../../media/com_jem/images/icon-32-tableexport.svg");
 }
 .icon-32-featured {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-featured.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-featured.webp");
 }
 .icon-32-forward {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-forward.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-forward.webp");
 }
 .icon-32-help {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-help.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-help.webp");
 }
 .icon-32-move {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-move.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-move.webp");
 }
 .icon-32-new {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-new.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-new.webp");
 }
 .icon-32-options {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-config.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-config.webp");
 }
 .icon-32-print {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-print.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-print.webp");
 }
 .icon-32-publish {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-publish.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-publish.webp");
 }
 .icon-32-purge {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-purge.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-purge.webp");
 }
 .icon-32-refresh {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-refresh.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-refresh.webp");
 }
 .icon-32-save {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save.webp");
 }
 .icon-32-save-new {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-new.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-new.webp");
 }
 .icon-32-save-copy {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-copy.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-copy.webp");
 }
 .icon-32-trash {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-trash.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-trash.webp");
 }
 .icon-32-upload {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-upload.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-upload.webp");
 }
 .icon-32-unpublish {
-    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-unpublish.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-unpublish.webp");
 }
 
 img[src*="icon-16"] {
