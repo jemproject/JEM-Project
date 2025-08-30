@@ -96,9 +96,6 @@ $wa->useScript('table.columns');
                 </th>
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder ); ?>
-                    <?php if ($saveOrder) :?>
-                        <?php //echo HTMLHelper::_('grid.order',  $this->items, 'filesave.png', 'venues.saveorder'); ?>
-                    <?php endif; ?>
                 </th>
                 <th style="width:1%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?>
@@ -161,7 +158,7 @@ $wa->useScript('table.columns');
                     <td>
                         <?php
                         $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
-                        $image             = HTMLHelper::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
+                        $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp', NULL,NULL,true);
                         $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
                         $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br />';
                         $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br />';

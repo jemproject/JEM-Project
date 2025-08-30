@@ -218,7 +218,7 @@ $options = array(
                         <?php echo Text::_('COM_JEM_MAIN_DONATE_TEXT'); ?> <br /><br />
                         <div class="center">
                             <a href="https://www.joomlaeventmanager.net/project/donate" target="_blank">
-                                <?php echo HTMLHelper::_('image', 'com_jem/PayPal_DonateButton.png', Text::_('COM_JEM_MAIN_DONATE'), NULL, true); ?>
+                                <?php echo HTMLHelper::_('image', 'com_jem/PayPal_DonateButton.webp', Text::_('COM_JEM_MAIN_DONATE'), NULL, true); ?>
                             </a>
                         </div>
                     </div>

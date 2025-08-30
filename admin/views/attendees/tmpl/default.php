@@ -137,7 +137,7 @@ $wa->addInlineScript('
                     <?php endif; ?>
                     <td class="center">
                         <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">
-                            <?php echo HTMLHelper::_('image','com_jem/publish_r.png',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
+                            <?php echo HTMLHelper::_('image','com_jem/publish_r.webp',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
                         </a>
                     </td>
                     <td class="center">

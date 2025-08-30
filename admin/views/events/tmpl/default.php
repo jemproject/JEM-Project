@@ -216,7 +216,7 @@ $wa->useScript('table.columns');
                         <td>
                             <?php
                             $created         = HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));
-                            $image             = HTMLHelper::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
+                            $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp',NULL,NULL,true );
                             $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
                             $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br />';
                             $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br />';
@@ -258,7 +258,7 @@ $wa->useScript('table.columns');
                                     <?php echo $count; ?>
                                 </a>
                             <?php } else { ?>
-                                <?php echo HTMLHelper::_('image', 'com_jem/publish_r.png', NULL, NULL, true); ?>
+                                <?php echo HTMLHelper::_('image', 'com_jem/publish_r.webp', NULL, NULL, true); ?>
                             <?php } ?>
                         </td>
                         <td class="center">
