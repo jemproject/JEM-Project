@@ -228,16 +228,16 @@ abstract class ModJemTeaserHelper
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
             if ($dimage == null) {
-                $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.png';
-                $lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
+                $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.webp';
             } else {
                 $lists[$i]->eventimage     = Uri::base(true).'/'.$dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true).'/'.$dimage['original'];
             }
 
             if ($limage == null) {
-                $lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.png';
-                $lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
+                $lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.webp';
+                $lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.webp';
             } else {
                 $lists[$i]->venueimage     = Uri::base(true).'/'.$limage['thumb'];
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
