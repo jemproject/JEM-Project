@@ -418,19 +418,19 @@ class jemmyattendingTab extends cbTabHandler {
                  */
                 switch ($result->reg_state) {
                 case -1: // explicitely unregistered
-                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.png');
+                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.webp');
                     $tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNREGISTERED', 'Not attending' );
                     break;
                 case  0: // invited, not answered yet
-                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.png');
+                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.webp');
                     $tip = CBTxt::T( 'JEMMYATTENDING_STATUS_INVITED', 'Invited' );
                     break;
                 case  1: // registered
-                    $img = Route::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
+                    $img = Route::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.webp' : '/media/com_jem/images/tick.webp'));
                     $tip = $result->waiting ? CBTxt::T( 'JEMMYATTENDING_STATUS_WAITINGLIST', 'On Waitinglist' ) : CBTxt::T( 'JEMMYATTENDING_STATUS_REGISTERED', 'Attending' );
                     break;
                 default: // ? - shouldn't happen...
-                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.png');
+                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.webp');
                     $tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNKNOWN', 'Status unknown' );
                     break;
                 }
