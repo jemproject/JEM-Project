@@ -81,8 +81,10 @@ class JemViewEditevent extends JemView
         }
 
         if (empty($item->id)) {
+            // Check if the user has access to the form
             $authorised = (bool)$user->can('add', 'event');
         } else {
+            // Check if user can edit
             $authorised = (bool)$item->params->get('access-edit');
         }
 
@@ -95,7 +97,7 @@ class JemViewEditevent extends JemView
         }
 
         // Decide which parameters should take priority
-        $useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
+        $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
             && ($menuitem->query['view']   == 'editevent')
             && (0 == $item->id) && (!isset($_GET['from_id']))); // menu item is always for new event
 
@@ -217,7 +219,7 @@ class JemViewEditevent extends JemView
         // configure image field: show max. file size, and possibly mark field as required
         $tip = Text::_('COM_JEM_UPLOAD_IMAGE');
         if ((int)$jemsettings->sizelimit > 0) {
-            $tip .= ' <br />' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+            $tip .= ' <br/>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
         $this->form->setFieldAttribute('userfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {

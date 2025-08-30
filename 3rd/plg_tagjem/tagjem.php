@@ -22,6 +22,7 @@ include_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 class plgAcymailingTagjem extends CMSPlugin
 {
+
     protected $searchFields = array('a.id', 'a.title', 'a.alias', 'a.introtext', 'l.venue');
     protected $selectedFields = array('a.*', 'l.venue');
 
@@ -56,6 +57,7 @@ class plgAcymailingTagjem extends CMSPlugin
 
     //public function acymailingtagjem_show()
     function onAcymailingtagjem_show(){
+
         return $this->acymailingtagjem_show();
     }
 
@@ -669,7 +671,7 @@ class plgAcymailingTagjem extends CMSPlugin
                 }
                 $result .= '<a style="text-decoration:none;" title="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;
                 if (!empty($event->custom1)) {
-                    $result .= '<br /><em>'.$event->custom1.'</em>';
+                    $result .= '<br/><em>'.$event->custom1.'</em>';
                 }
                 $result .= '</h2></a>';
                 $result .= '<p><span class="eventdate">'.$date.'</span></p>';

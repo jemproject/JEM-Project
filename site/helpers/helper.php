@@ -1394,7 +1394,7 @@ class JemHelper
                     }
                 }
             }
-
+            
             if ($is_file) {
                 # we do have a valid file so we will use it.
                 // $css = HTMLHelper::_('stylesheet', $file, array(), false);
@@ -1459,7 +1459,11 @@ class JemHelper
         }
 
         //Search for template overrides
-        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/css/'. $module . '/' . $filestyle);
+        }
+        //Search for template overrides
+        else if (file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
             $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
         }
         //Search in media folder

@@ -23,7 +23,7 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(to top, #ddd 0%, #fff 50%);
-  }
+}
 
 .jem-banner-calendar .background-image {
   position: absolute;
@@ -39,17 +39,17 @@
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner.monthcolor-dark {
-    color: black;
-    text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
-    1px -1px 0 rgba(255,255,255,0.2),
-    -1px 1px 0 rgba(255,255,255,0.2),
-    1px 1px 0 rgba(255,255,255,0.2);
+  color: black;
+  text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
+  1px -1px 0 rgba(255,255,255,0.2),
+  -1px 1px 0 rgba(255,255,255,0.2),
+  1px 1px 0 rgba(255,255,255,0.2);
 }
 
 #jemmodulebanner [class|="calendar"] .monthbanner.monthcolor-light {
-    color: #FFF;
-    text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
-    1px -1px 0 rgba(0,0,0,0.2),
-    -1px 1px 0 rgba(0,0,0,0.2),
-    1px 1px 0 rgba(0,0,0,0.2);
+  color: #FFF;
+  text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+  1px -1px 0 rgba(0,0,0,0.2),
+  -1px 1px 0 rgba(0,0,0,0.2),
+  1px 1px 0 rgba(0,0,0,0.2);
 }

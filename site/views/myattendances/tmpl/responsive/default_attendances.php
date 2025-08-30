@@ -145,7 +145,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->lists['filter']; ?>
-          <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
+          <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -270,7 +270,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
             <div class="jem-event-info-small jem-myattendances-places" title="<?php echo Text::_('COM_JEM_TABLE_PLACES').': '.$this->escape($row->places); ?>">
                 <?php echo $this->escape($row->places); ?>
-            </div>
+            </div>            
 
                     <div class="jem-event-info-small jem-myattendances-status">
                         <?php

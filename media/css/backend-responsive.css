@@ -850,7 +850,7 @@ table.adminlist {
     .update-details .detail-item {
         flex-direction: column;
     }
-
+        
     .update-details .detail-item strong {
         margin-bottom: 0.25rem;
         flex: 0;

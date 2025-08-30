@@ -1,6 +1,5 @@
 <?php
 /**
- * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Module
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
@@ -21,7 +20,7 @@ $linkdet = $params->get('linkdet');
 $showiconcountry = $params->get('showiconcountry');
 $settings = JemHelper::config();
 
-HTMLHelper::_('stylesheet', 'modules/mod_jem/tmpl/mod_jem_table-advanced.css');
+JemHelper::loadModuleStyleSheet('mod_jem', 'mod_jem_table-advanced');
 
 ?>
 

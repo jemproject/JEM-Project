@@ -43,7 +43,7 @@ class JemControllerVenues extends AdminController
     {
         // Check for token
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
-
+        
         $app = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();
         $jinput = $app->input;
@@ -70,9 +70,9 @@ class JemControllerVenues extends AdminController
                 {
                     $html = array();
                     $html[] = '<span class="label label-info">'.$error[0].'</span>';
-                    $html[] = '<br />';
+                    $html[] = '<br>';
                     unset($error[0]);
-                    $html[] = implode('<br />', $error);
+                    $html[] = implode('<br>', $error);
                     $app->enqueueMessage(implode("\n",$html),'warning');
                 }
             }

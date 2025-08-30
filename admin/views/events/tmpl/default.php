@@ -47,7 +47,7 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-1">
+                <div class="col-md-1">                
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="input-group">
@@ -56,8 +56,8 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-                <div class="col-md-10">
-                    <div class="row mb-12">
+                <div class="col-md-10">        
+                    <div class="row mb-12">    
                         <div class="col-md-3">
                             <div class="input-group">
                                 <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
@@ -89,7 +89,7 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1">                
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class=" float-end">
@@ -271,9 +271,9 @@ $wa->useScript('table.columns');
                 <?php endforeach; ?>
                 </tbody>
             </table>
-
+            
             <div class="ms-auto mb-4 me-0">
-                <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
+                <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
             </div>
         </div>
     </div>

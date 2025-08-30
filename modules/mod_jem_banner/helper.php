@@ -1,11 +1,11 @@
 <?php
 /**
-* @package JEM
-* @subpackage JEM Banner Module
-* @copyright (C) 2013-2025 joomlaeventmanager.net
-* @copyright (C) 2005-2009 Christoph Lukes
-* @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
-*/
+ * @package JEM
+ * @subpackage JEM Banner Module
+ * @copyright (C) 2013-2025 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
@@ -18,8 +18,8 @@ use Joomla\CMS\Date\Date;
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 /**
-* Module-Banner
-*/
+ * Module-Banner
+ */
 abstract class ModJemBannerHelper
 {
     /**
@@ -95,34 +95,34 @@ abstract class ModJemBannerHelper
 
         # create type dependent filter rules
         switch ($type) {
-        case 1: # unfinished events
-            $cal_from  = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= "  OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
-            $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
-            break;
+            case 1: # unfinished events
+                $cal_from  = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+                $cal_from .= "  OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
+                $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
+                break;
 
-        case 2: # archived events
-            $published = 2;
-            $orderdir = 'DESC';
-            break;
+            case 2: # archived events
+                $published = 2;
+                $orderdir = 'DESC';
+                break;
 
-        case 3: # running events (one day)
-            $cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days) ";
-            $cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
-            break;
+            case 3: # running events (one day)
+                $cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days) ";
+                $cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
+                break;
 
-        case 5: # open date (only)
-            $opendates = 2;
-            break;
+            case 5: # open date (only)
+                $opendates = 2;
+                break;
 
-    //    case 4: # featured events
-    //        $model->setState('filter.featured', 1);
-    //        # fall through
-        case 0: # upcoming events
-        default:
-            $cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
-            $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
-            break;
+            //    case 4: # featured events
+            //        $model->setState('filter.featured', 1);
+            //        # fall through
+            case 0: # upcoming events
+            default:
+                $cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
+                $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
+                break;
         }
 
         $model->setState('filter.published', $published);
@@ -257,7 +257,7 @@ abstract class ModJemBannerHelper
             $lists[$i]->startdate   = empty($row->dates)    ? $defaults : self::_format_date_fields($row->dates,    $formats);
             $lists[$i]->enddate     = empty($row->enddates) ? $defaults : self::_format_date_fields($row->enddates, $formats);
             list($lists[$i]->date,
-                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
+                $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
@@ -281,7 +281,7 @@ abstract class ModJemBannerHelper
             $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
 
             # strip html tags but leave <br /> tags
-            $description = strip_tags($description, "<br />");
+            $description = strip_tags($description, "<br>");
 
             # switch <br /> tags to space character
             if ($params->get('br') == 0) {
@@ -351,15 +351,15 @@ abstract class ModJemBannerHelper
             $scan = sscanf($color, '#%1x%1x%1x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = (17 * $scan[0] *  77) / 255
-                      + (17 * $scan[1] * 150) / 255
-                      + (17 * $scan[2] *  28) / 255;
+                    + (17 * $scan[1] * 150) / 255
+                    + (17 * $scan[2] *  28) / 255;
             }
         } else {
             $scan = sscanf($color, '#%2x%2x%2x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = ($scan[0] *  77) / 255
-                      + ($scan[1] * 150) / 255
-                      + ($scan[2] *  28) / 255;
+                    + ($scan[1] * 150) / 255
+                    + ($scan[2] *  28) / 255;
             }
         }
 
@@ -416,18 +416,18 @@ abstract class ModJemBannerHelper
                     $days = round( ($today_stamp - $enddates_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_BANNER_ENDED_DAYS_AGO', $days);
 
-                //the event has an enddate and it's later than today but the startdate is today or earlier than today
-                //means a currently running event with startdate = today
+                    //the event has an enddate and it's later than today but the startdate is today or earlier than today
+                    //means a currently running event with startdate = today
                 } elseif ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp <= $today_stamp)) {
                     $days = round( ($enddates_stamp - $today_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_BANNER_DAYS_LEFT', $days);
 
-                //the events date is earlier than yesterday
+                    //the events date is earlier than yesterday
                 } elseif ($dates_stamp < $yesterday_stamp) {
                     $days = round( ($today_stamp - $dates_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_BANNER_DAYS_AGO', $days );
 
-                //the events date is later than tomorrow
+                    //the events date is later than tomorrow
                 } elseif ($dates_stamp > $tomorrow_stamp) {
                     $days = round( ($dates_stamp - $today_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_BANNER_DAYS_AHEAD', $days);
@@ -515,7 +515,7 @@ abstract class ModJemBannerHelper
             }
             # datemethod show date
             else {
-            ///@todo check date+time to be more acurate
+                ///@todo check date+time to be more acurate
                 # Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
                 if (($dates_stamp >= $today_stamp) && ($enddates_stamp > $dates_stamp)) {
                     $startdate = JemOutput::formatdate($row->dates, $dateFormat);

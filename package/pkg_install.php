@@ -10,7 +10,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link https://www.kunena.org
  **/
-
+ 
 defined ('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -32,13 +32,13 @@ class Pkg_JemInstallerScript
             '0' => '8.0' // Preferred version
             ),
         'MySQL' => array (
-            '8.0' => '8.0',
+            '8.0' => '8.0', 
             '5.6' => '5.6',
             '0' => '5.6' // Preferred version
             ),
         'Joomla!' => array (
-            '4.2' => '4.2',
-            '4.0' => '',
+            '4.2' => '4.2', 
+            '4.0' => '', 
             '0' => '4.2' // Preferred version
             )
         );

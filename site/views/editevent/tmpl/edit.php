@@ -122,7 +122,7 @@ $params        = $this->params;
                 document.getElementById('jform_unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until2').style.display = '';
             } else {
-                document.getElementById('unregistra_until').style.display = 'none';
+                document.getElementById('unregistra_until').style.display = 'none';            
                 document.getElementById('jform_unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until2').style.display = 'none';
             }
@@ -173,7 +173,7 @@ $params        = $this->params;
             <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
             <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
 
-            <br />
+            <br>
             <?php if ($this->item->recurrence_type > 0) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
                     <div style="float:left;">
@@ -181,7 +181,7 @@ $params        = $this->params;
                     </div>
                     <div class="floattext" style="margin-left:36px;">
                         <strong><?php echo Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
-                        <br />
+                        <br>
                         <?php
                         if (!empty($this->item->recurrence_type) && empty($this->item->recurrence_first_id)) {
                             echo nl2br(Text::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
@@ -234,7 +234,7 @@ $params        = $this->params;
 
                 <div class="clr"></div>
                 <?php echo $this->form->getLabel('articletext'); ?>
-                <div class="clr"><br /></div>
+                <div class="clr"><br></div>
                 <?php echo $this->form->getInput('articletext'); ?>
             </fieldset>
 

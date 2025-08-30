@@ -18,7 +18,7 @@ $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
         $wa->useScript('keepalive')
             ->useScript('form.validate');
-
+            
 jimport('joomla.html.html.tabs');
 
 // Create shortcut to parameters.
@@ -221,7 +221,7 @@ window.onload = (event) => {
                 <button type="submit" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
 
-        <br />
+        <br>
             <?php if ($this->params->get('showintrotext')) : ?>
             <div class="description no_space floattext">
                 <?php echo $this->params->get('introtext'); ?>
@@ -273,6 +273,8 @@ window.onload = (event) => {
                     <dt><?php echo $this->form->getLabel('map'); ?></dt>
                     <dd><?php echo $this->form->getInput('map'); ?></dd>
                 </dl>
+                <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
+
                 <div style="clear: both;"></div>
 
                 <div id="mapdiv">

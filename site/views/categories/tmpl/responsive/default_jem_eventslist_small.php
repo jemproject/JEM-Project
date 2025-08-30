@@ -90,9 +90,9 @@ if (empty($this->catrow->events)) { return; }
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_DATE'); ?></div>
-    <?php if ($this->jemsettings->showtitle == 1) : ?>
+    <?php if ($this->jemsettings->showtitle == 1) : ?>              
       <div id="jem_title" class="sectiontableheader"><i class="fa fa-comment" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
-    <?php endif; ?>
+    <?php endif; ?> 
     <?php if ($this->jemsettings->showlocate == 1) : ?>
       <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
     <?php endif; ?>
@@ -104,8 +104,8 @@ if (empty($this->catrow->events)) { return; }
     <?php endif; ?>
     <?php if ($this->jemsettings->showcat == 1) : ?>
       <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
-    <?php endif; ?>
-  </div>
+    <?php endif; ?> 
+  </div>    
 </div>
 
 <ul class="eventlist">
@@ -121,13 +121,21 @@ if (empty($this->catrow->events)) { return; }
     }
     ?>
     <?php foreach ($this->catrow->events as $row) : ?>
+            <?php
+            // has user access
+            $eventaccess = '';
+            if (!$row->user_has_access_event) {
+                // show a closed lock icon
+                $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            } ?>
       <?php if (!empty($row->featured)) :   ?>
         <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
       <?php else : ?>
         <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
       <?php endif; ?>
-
-            <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
+                    
+            <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"';
+            endif; ?>>
               <i class="far fa-clock" aria-hidden="true"></i>
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
@@ -141,9 +149,10 @@ if (empty($this->catrow->events)) { return; }
                 <?php if (!empty($row->featured)) :?>
                   <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                 <?php endif; ?>
+                    <?php echo $eventaccess; ?>
                <?php endif; ?>
             </div>
-
+            
             <?php if ($this->jemsettings->showtitle == 1) : ?>
               <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <i class="fa fa-comment" aria-hidden="true"></i>
@@ -154,7 +163,7 @@ if (empty($this->catrow->events)) { return; }
                 <?php endif; ?>
               </div>
             <?php endif; ?>
-
+            <?php if (!$row->user_has_access_venue) : ?>
             <?php if ($this->jemsettings->showlocate == 1) : ?>
               <?php if (!empty($row->locid)) : ?>
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
@@ -180,7 +189,7 @@ if (empty($this->catrow->events)) { return; }
                 <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
               <?php endif; ?>
             <?php endif; ?>
-
+            
             <?php if ($this->jemsettings->showstate == 1) : ?>
               <?php if (!empty($row->state)) : ?>
                 <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
@@ -191,14 +200,14 @@ if (empty($this->catrow->events)) { return; }
                 <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
               <?php endif; ?>
             <?php endif; ?>
-
+            <?php endif; ?>
             <?php if ($this->jemsettings->showcat == 1) : ?>
               <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
               </div>
             <?php endif; ?>
-
+            
             <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -215,7 +224,7 @@ if (empty($this->catrow->events)) { return; }
               }
               if (!empty($microadress)) {
                 $microadress .= ', ';
-              }
+              }                
               if (!empty($row->state)) {
                 $microadress .= $this->escape($row->state);
               }
@@ -225,7 +234,7 @@ if (empty($this->catrow->events)) { return; }
               ?>
               <meta itemprop="address" content="<?php echo $microadress; ?>" />
             </div>
-
+      
       </li>
     <?php endforeach; ?>
   <?php endif; ?>
