@@ -111,7 +111,7 @@ class JemModelVenueslist extends ListModel
         $user      = JemFactory::getUser();
         $levels    = $user->getAuthorisedViewLevels();
         $jemsettings = JemHelper::config();
-		
+        
         # Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
@@ -161,7 +161,7 @@ class JemModelVenueslist extends ListModel
         } else {
             $query->where('a.access IN ('.implode(',', $levels).')');
         }
-		
+        
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
                 $query->where('a.id = '.(int) substr($search, 3));

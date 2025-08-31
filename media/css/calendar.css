@@ -296,7 +296,7 @@ div#jem td {
 
 .weeknum {
     text-align: center;
-    /*	vertical-align:middle;*/
+    /* vertical-align:middle; */
     font-size: 12px;
     font-weight: bold;
     padding: 2px 3px;
@@ -355,16 +355,15 @@ div#jem td {
 
 /* *** CALENDAR WEEK ADDITIONS END *** */
 
-
 .calendarButton {
-    /* 	background-image: linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
-        box-shadow: 0px 0px 2px 0px rgba(0,0,0,1);
-        border: solid 2px rgba(31,31,31,1);
-        border-radius: 6px;
-        width: 48px;
-        height: 20px;
-        margin: 1px;
-        padding: 1px; */
+    /* background-image: linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+    box-shadow: 0px 0px 2px 0px rgba(0,0,0,1);
+    border: solid 2px rgba(31,31,31,1);
+    border-radius: 6px;
+    width: 48px;
+    height: 20px;
+    margin: 1px;
+    padding: 1px; */
     display: inline-block;
     text-align: center;
     color: rgba(0, 0, 0, 1);
