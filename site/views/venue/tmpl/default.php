@@ -183,14 +183,11 @@ use Joomla\CMS\Language\Text;
         <!--table-->
         <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
             <?php echo $this->loadTemplate('events_table'); ?>
-
-            <p>
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="view" value="venue" />
-            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
-            </p>
+            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />            
         </form>
 
         <!--pagination-->
@@ -198,7 +195,10 @@ use Joomla\CMS\Language\Text;
             <?php echo $this->pagination->getPagesLinks(); ?>
         </div>
 
-        <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+		<!--iCal-->
+	    <div id="iCal" class="iCal">
+    	    <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+		 </div>
     <?php endif; ?>
 
     <!--copyright-->
