@@ -178,7 +178,7 @@ class JemModelEventelement extends BaseDatabaseModel
         $app    = Factory::getApplication();
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
-        $itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+        $itemid = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
 
         $published     = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state',  'filter_state',  '', 'string');
         $filter_type   = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_type',   'filter_type',    0, 'int');

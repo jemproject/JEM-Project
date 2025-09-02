@@ -62,15 +62,15 @@ class JemModelEventslist extends ListModel
     {
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
-        $task        = $app->input->getCmd('task','');
-        $format      = $app->input->getCmd('format',false);
-        $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+        $task        = $app->getInput()->getCmd('task','');
+        $format      = $app->getInput()->getCmd('format',false);
+        $itemid      = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
         $params      = $app->getParams();
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
             /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-            if ($app->input->get('limitstart', null, 'int') === null) {
+            if ($app->getInput()->get('limitstart', null, 'int') === null) {
                 $app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
             }
 
@@ -129,7 +129,7 @@ class JemModelEventslist extends ListModel
         if ($task == 'archive' && $filter_order == 'a.dates') {
             $filter_order_DirDefault = 'DESC';
         }
-        $filter_reset = $app->input->getInt('filter_reset', 0);
+        $filter_reset = $app->getInput()->getInt('filter_reset', 0);
         if ($filter_reset && $filter_order == 'a.dates') {
             $app->setUserState('com_jem.eventslist.'.$itemid.'.filter_order_Dir', $filter_order_DirDefault);
         }
@@ -321,8 +321,8 @@ class JemModelEventslist extends ListModel
     protected function getListQuery()
     {
         $app       = Factory::getApplication();
-        $task      = $app->input->getCmd('task', '');
-        $itemid    = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+        $task      = $app->getInput()->getCmd('task', '');
+        $itemid    = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
 
         $params    = $app->getParams();
         $settings  = JemHelper::globalattribs();
@@ -364,7 +364,7 @@ class JemModelEventslist extends ListModel
         $case_when_e  = ' CASE WHEN ';
         $case_when_e .= $query->charLength('a.alias','!=', '0');
         $case_when_e .= ' THEN ';
-        $id_e = $query->castAsChar('a.id');
+        $id_e = 'CAST(a.id AS CHAR)';
         $case_when_e .= $query->concatenate(array($id_e, 'a.alias'), ':');
         $case_when_e .= ' ELSE ';
         $case_when_e .= $id_e.' END as slug';
@@ -372,7 +372,7 @@ class JemModelEventslist extends ListModel
         $case_when_l  = ' CASE WHEN ';
         $case_when_l .= $query->charLength('l.alias', '!=', '0');
         $case_when_l .= ' THEN ';
-        $id_l = $query->castAsChar('a.locid');
+        $id_l = 'CAST(a.locid AS CHAR)';
         $case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';
@@ -703,7 +703,7 @@ class JemModelEventslist extends ListModel
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = 'CAST(c.id AS CHAR)';
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';
@@ -920,7 +920,7 @@ class JemModelEventslist extends ListModel
         $userId      = $user->id ?? null;
 
         # publish state
-        $format = $app->input->getCmd('format', '');
+        $format = $app->getInput()->getCmd('format', '');
 
         if ($task == 'archive') {
             $this->setState('filter.published', 2);

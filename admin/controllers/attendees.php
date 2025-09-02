@@ -51,7 +51,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $cid = $jinput->get('cid',  0, 'array');
         $eventid = $jinput->getInt('eventid');
 
@@ -129,7 +129,7 @@ class JemControllerAttendees extends BaseController
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $app  = Factory::getApplication();
-        $pks  = $app->input->get('cid', array(), 'array');
+        $pks  = $app->getInput()->get('cid', array(), 'array');
         $task = $this->getTask();
 
         if (empty($pks)) {
@@ -189,7 +189,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $jinput->set('view', 'attendee');
         // 'attendee' expects event id as 'event' not 'id'
         $jinput->set('event', $jinput->getInt('eventid'));
@@ -212,8 +212,8 @@ class JemControllerAttendees extends BaseController
         $app = Factory::getApplication();
         $user = $app->getIdentity();
 
-        $eventid = $app->input->getInt('eventid');
-        $ids     = $app->input->get('cid', array(), 'array');
+        $eventid = $app->getInput()->getInt('eventid');
+        $ids     = $app->getInput()->get('cid', array(), 'array');
         $values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);
         $task    = $this->getTask();
         $value   = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');

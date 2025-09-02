@@ -43,7 +43,7 @@ class JemViewEventslist extends JemView
         $document    = $app->getDocument();
         $params      = $app->getParams();
         $uri         = Uri::getInstance();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
         $task        = $jinput->getCmd('task', '');
         $print       = $jinput->getBool('print', false);
         $pathway     = $app->getPathWay();

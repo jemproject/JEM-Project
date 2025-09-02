@@ -346,7 +346,7 @@ class plgAcymailingTagjem extends CMSPlugin
         echo $tabs->endPanel();
 
         echo $tabs->startPanel(Text::_('UPCOMING_EVENTS'), 'jem_auto');
-        $type = $app->input->request->getString('type');
+        $type = $app->getInput()->getString('type');
         ?>
         <script>
             <!--

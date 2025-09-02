@@ -24,7 +24,7 @@ class JemViewCalendar extends HtmlView
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
         $app       = Factory::getApplication();
-        $jinput    = $app->input;
+        $jinput    = $app->getInput();
 
         $year  = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));

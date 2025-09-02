@@ -46,7 +46,7 @@ class JemModelAttendee extends BaseDatabaseModel
         $settings = JemHelper::globalattribs();
         $this->regname = $settings->get('global_regname','1');
 
-        $array = Factory::getApplication()->input->get('cid', array(0), 'array');
+        $array = Factory::getApplication()->getInput()->get('cid', array(0), 'array');
         $this->setId((int)$array[0]);
     }
 

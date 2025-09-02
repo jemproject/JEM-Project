@@ -40,7 +40,7 @@ class JemViewVenue extends JemAdminView
         $this->document = $app->getDocument();
         $this->settings = JemAdmin::config();
         $globalregistry = JemHelper::globalattribs();
-        $task           = $app->input->get('task', '');
+        $task           = $app->getInput()->get('task', '');
         $this->task     = $task;
         $wa = $app->getDocument()->getWebAssetManager();
     
@@ -86,7 +86,7 @@ class JemViewVenue extends JemAdminView
      */
     protected function addToolbar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->getInput()->set('hidemainmenu', true);
 
         $user       = JemFactory::getUser();
         $isNew      = ($this->item->id == 0);

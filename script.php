@@ -10,15 +10,17 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Installer\InstallerScript;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Version;
+
+// For Joomla 6 - new file system classes
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 /**
  * Script file of JEM component
@@ -62,7 +64,7 @@ class com_jemInstallerScript
         );
 
         // Check for existance of /images/jem directory
-        if (Folder::exists(JPATH_SITE.$createDirs[0])) {
+        if (is_dir(JPATH_SITE.$createDirs[0])) {
             echo "<p><span style='color:green;'>".Text::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
                 Text::sprintf('COM_JEM_INSTALL_DIRECTORY_EXISTS_SKIP', $createDirs[0])."</p>";
         } else {
@@ -73,7 +75,7 @@ class com_jemInstallerScript
             echo "<ul>";
             // Folder creation
             foreach($createDirs as $directory) {
-                if (Folder::create(JPATH_SITE.$directory)) {
+                if (mkdir(JPATH_SITE.$directory, 0755, true)) {
                     echo "<li><span style='color:green;'>".Text::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
                         Text::sprintf('COM_JEM_INSTALL_DIRECTORY_CREATED', $directory)."</li>";
                 } else {
@@ -195,8 +197,9 @@ class com_jemInstallerScript
             $this->removeJemMenuItems();
             $this->removeAllJemTables();
             $imageDir = JPATH_SITE.'/images/jem';
-            if (Folder::exists($imageDir)) {
-                Folder::delete($imageDir);
+            if (is_dir($imageDir)) {
+                array_map('unlink', glob("$imageDir/*"));
+                rmdir($imageDir);
             }
         } else {
             // prevent dead links on frontend
@@ -616,14 +619,17 @@ class com_jemInstallerScript
         );
 
         foreach ($files as $file) {
-            if (File::exists(JPATH_ROOT . $file) && !File::delete(JPATH_ROOT . $file)) {
+            if (is_file(JPATH_ROOT . $file) && !unlink(JPATH_ROOT . $file)) {
                 echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br />';
             }
         }
 
         foreach ($folders as $folder) {
-            if (Folder::exists(JPATH_ROOT . $folder) && !Folder::delete(JPATH_ROOT . $folder)) {
-                echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+            if (is_dir(JPATH_ROOT . $folder)) {
+                $filesystem = new \Joomla\Filesystem\Folder();
+                if (!$filesystem->delete(JPATH_ROOT . $folder)) {
+                    echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+                }
             }
         }
     }
@@ -667,11 +673,11 @@ class com_jemInstallerScript
      */
     private function makeFilesWritable()
     {
-        $path = Path::clean(JPATH_ROOT.'/media/com_jem/css');
-        $files = Folder::files($path, '.*\.css', false, true); // all css files, full path
+        $path = JPATH_ROOT.'/media/com_jem/css';
+        $files = glob($path . '/*.css');
         foreach ($files as $fullpath) {
             if (is_file($fullpath)) {
-                Path::setPermissions($fullpath);
+                chmod($fullpath, 0644); // macht Dateien beschreibbar
             }
         }
     }
@@ -884,7 +890,5 @@ class com_jemInstallerScript
         } catch (\Exception $e) {    
             echo "Error updating `unregistra_until`: " . $e->getMessage();
         }
-
-}
-
+    }
 }

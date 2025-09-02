@@ -81,13 +81,13 @@ class JemModelAttendees extends BaseDatabaseModel
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
 
-        $id = $app->input->getInt('id', 0);
+        $id = $app->getInput()->getInt('id', 0);
         $this->setId((int)$id);
 
         $this->_reguser = $settings->get('global_regname', '1');
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->input->getInt('limitstart', null) === null) {
+        if ($app->getInput()->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.attendees.limitstart', 0);
         }
 
@@ -100,7 +100,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $this->setState('limitstart', $limitstart);
 
         //set unlimited if export or print action | task=export or task=print
-        $task = $app->input->getCmd('task', '');
+        $task = $app->getInput()->getCmd('task', '');
         $this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
     }
 
@@ -414,7 +414,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
         $limit       = $app->getUserStateFromRequest('com_jem.addusers.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
+        $limitstart  = $app->getInput()->getInt('limitstart', 0);
         // correct start value if required
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 

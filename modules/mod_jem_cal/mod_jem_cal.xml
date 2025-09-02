@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>toni@qivva.com, info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.3.4</version>
+    <version>5.0.0a</version>
     <description>MOD_JEM_CAL_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>

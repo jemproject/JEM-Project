@@ -11,9 +11,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
 
@@ -959,7 +959,7 @@ class JemModelImport extends BaseDatabaseModel
                 $files = Folder::files($fromFolder, null, false, false);
 
                 foreach ($files as $file) {
-                    if (!File::exists($toFolder.$file)) {
+                    if (!is_file($toFolder.$file)) {
                         File::copy($fromFolder.$file, $toFolder.$file);
                     }
                 }
@@ -987,7 +987,7 @@ class JemModelImport extends BaseDatabaseModel
         if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
             $files = Folder::files($fromFolder, null, false, false);
             foreach ($files as $file) {
-                if (!File::exists($toFolder.$file)) {
+                if (!is_file($toFolder.$file)) {
                     File::copy($fromFolder.$file, $toFolder.$file);
                 }
             }
@@ -1003,7 +1003,7 @@ class JemModelImport extends BaseDatabaseModel
                 $files = Folder::files($fromFolder.$folder, null, false, false);
                 $folder .= '/';
                 foreach ($files as $file) {
-                    if (!File::exists($toFolder.$folder.$file)) {
+                    if (!is_file($toFolder.$folder.$file)) {
                         File::copy($fromFolder.$folder.$file, $toFolder.$folder.$file);
                     }
                 }

@@ -43,7 +43,7 @@ class JemViewEvent extends JemAdminView
         $this->document = $app->getDocument();
         $user             = JemFactory::getUser();
         $this->settings    = JemAdmin::config();
-        $task            = $app->input->get('task', '');
+        $task            = $app->getInput()->get('task', '');
         $this->task     = $task;
         $uri            = Uri::getInstance();
         $url             = $uri->root();
@@ -86,7 +86,7 @@ class JemViewEvent extends JemAdminView
      */
     protected function addToolbar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        Factory::getApplication()->getInput()->set('hidemainmenu', true);
 
         $user        = JemFactory::getUser();
         $isNew        = ($this->item->id == 0);

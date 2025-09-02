@@ -9,12 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 
 /**
  * JEM Component Imagehandler Model
@@ -45,8 +45,8 @@ class JemModelImagehandler extends BaseDatabaseModel
         parent::__construct();
 
         $app        = Factory::getApplication();
-        $option     = $app->input->getString('option', 'com_jem');
-        $task       = $app->input->getVar('task', '');
+        $option     = $app->getInput()->getString('option', 'com_jem');
+        $task       = $app->getInput()->getVar('task', '');
         $limit      = $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->get('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -63,7 +63,7 @@ class JemModelImagehandler extends BaseDatabaseModel
         static $set = false;
 
         if (!$set) {
-            $folder = Factory::getApplication()->input->get('folder', '');
+            $folder = Factory::getApplication()->getInput()->get('folder', '');
             $this->setState('folder', $folder);
 
             $set = true;

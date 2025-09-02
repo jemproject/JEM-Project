@@ -41,7 +41,7 @@ class JemViewAttendees extends JemView
         }
 
         if ($this->getLayout() == 'addusers') {
-            $this->returnto = base64_decode($app->input->get('return', '', 'base64'));
+            $this->returnto = base64_decode($app->getInput()->get('return', '', 'base64'));
             $this->_displayaddusers($tpl);
             return;
         }
@@ -189,7 +189,7 @@ class JemViewAttendees extends JemView
     {
         $app         = Factory::getApplication();
         $document    = $app->getDocument();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
     //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $model       = $this->getModel();
         $event       = $this->get('Event');

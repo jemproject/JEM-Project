@@ -50,7 +50,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput  = Factory::getApplication()->input;
+        $jinput  = Factory::getApplication()->getInput();
         $eventid = $jinput->getInt('id', 0);
         $status  = $jinput->getInt('status', 0);
         $checkseries  = $jinput->getString('series', '');
@@ -64,15 +64,15 @@ class JemControllerAttendees extends BaseController
         $msg     = '';
         
         if ($jinput->get('task', 0,'string')=="attendeeadd") {
-            $places = $jinput->input->getInt('places', 0);
+            $places = $jinput->getInput()->getInt('places', 0);
         } else {
             if ($status == 1)
             {
-                $places = $jinput->input->getInt('addplaces', 0);
+                $places = $jinput->getInput()->getInt('addplaces', 0);
             }
             else
             {
-                $places = $jinput->input->getInt('cancelplaces', 0);
+                $places = $jinput->getInput()->getInt('cancelplaces', 0);
             }
         }
 
@@ -184,7 +184,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $cid    = $jinput->get('cid', array(), 'array');
         $id     = $jinput->getInt('id', 0);
         $fid    = $jinput->getInt('Itemid', 0);
@@ -234,7 +234,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $id     = $jinput->getInt('id', 0);
         $fid    = $jinput->getInt('Itemid', 0);
 

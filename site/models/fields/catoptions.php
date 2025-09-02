@@ -35,7 +35,7 @@ class JFormFieldCatOptions extends ListField
      */
     public function getInput()
     {
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $currentid = $jinput->getInt('a_id');
         if (!$currentid) { // special case: new event as copy of another one
             $currentid = $jinput->getInt('from_id');
@@ -115,7 +115,7 @@ class JFormFieldCatOptions extends ListField
      */
     protected function getOptions()
     {
-        $currentid = Factory::getApplication()->input->getInt('a_id');
+        $currentid = Factory::getApplication()->getInput()->getInt('a_id');
         $options = self::getCategories($currentid);
         $options = array_values($options);
 

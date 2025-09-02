@@ -55,7 +55,7 @@ class JemViewCategory extends JemView
             $params      = $app->getParams();
             $uri         = Uri::getInstance();
             $pathway     = $app->getPathWay();
-            $print       = $app->input->getBool('print', false);
+            $print       = $app->getInput()->getBool('print', false);
             $url          = Uri::root();
             // Load css
             JemHelper::loadCss('jem');
@@ -85,10 +85,10 @@ class JemViewCategory extends JemView
             $document->addScript($url.'media/com_jem/js/calendar.js');
 
             // Retrieve date variables
-            $year  = (int)$app->input->getInt('yearID', date("Y"));
-            $month = (int)$app->input->getInt('monthID', date("m"));
+            $year  = (int)$app->getInput()->getInt('yearID', date("Y"));
+            $month = (int)$app->getInput()->getInt('monthID', date("m"));
 
-            $catid = $app->input->getInt('id', 0);
+            $catid = $app->getInput()->getInt('id', 0);
             if (empty($catid)) {
                 $catid = $params->get('id');
             }
@@ -121,7 +121,7 @@ class JemViewCategory extends JemView
             $permissions->canAddEvent = $user->can('add', 'event', false, false, $catid);
             $permissions->canAddVenue = $user->can('add', 'venue', false, false, $catid);
 
-            $itemid = $app->input->getInt('Itemid', 0);
+            $itemid = $app->getInput()->getInt('Itemid', 0);
             $partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
             $partCatid = ($catid > 0) ? '&id=' . $catid : '';
             $url_base = 'index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid;
@@ -162,7 +162,7 @@ class JemViewCategory extends JemView
             $jemsettings = JemHelper::config();
             $settings    = JemHelper::globalattribs();
             $user        = JemFactory::getUser();
-            $print       = $app->input->getBool('print', false);
+            $print       = $app->getInput()->getBool('print', false);
 
             // get menu information
             $uri      = Uri::getInstance();
@@ -206,7 +206,7 @@ class JemViewCategory extends JemView
                                             && $menuitem->query['id']     == $category->id);
 
             // get variables
-            $itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+            $itemid = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
 
             $this->showsubcats      = (bool)$params->get('usecat', 1);
             $this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
@@ -216,7 +216,7 @@ class JemViewCategory extends JemView
             $filter_type      = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', 0, 'int');
             $search           = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
             $search_month     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
-            $task             = $app->input->get('task', '');
+            $task             = $app->getInput()->get('task', '');
 
             // table ordering
             $lists['order_Dir'] = $filter_order_Dir;

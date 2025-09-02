@@ -357,7 +357,7 @@ class plgFinderJEM extends Adapter
         $case_when_item_alias = ' CASE WHEN ';
         $case_when_item_alias .= $sql->charLength('a.alias');
         $case_when_item_alias .= ' THEN ';
-        $a_id                 = $sql->castAsChar('a.id');
+        $a_id                 = 'CAST(a.id AS CHAR)';
         $case_when_item_alias .= $sql->concatenate(array($a_id, 'a.alias'), ':');
         $case_when_item_alias .= ' ELSE ';
         $case_when_item_alias .= $a_id . ' END as slug';
@@ -366,7 +366,7 @@ class plgFinderJEM extends Adapter
         $case_when_category_alias = ' CASE WHEN ';
         $case_when_category_alias .= $sql->charLength('c.alias');
         $case_when_category_alias .= ' THEN ';
-        $c_id                     = $sql->castAsChar('c.id');
+        $c_id                     = 'CAST(c.id AS CHAR)';
         $case_when_category_alias .= $sql->concatenate(array($c_id, 'c.alias'), ':');
         $case_when_category_alias .= ' ELSE ';
         $case_when_category_alias .= $c_id . ' END as catslug';
@@ -375,7 +375,7 @@ class plgFinderJEM extends Adapter
         $case_when_venue_alias = ' CASE WHEN ';
         $case_when_venue_alias .= $sql->charLength('l.alias');
         $case_when_venue_alias .= ' THEN ';
-        $l_id                  = $sql->castAsChar('l.id');
+        $l_id                  = 'CAST(l.id AS CHAR)';
         $case_when_venue_alias .= $sql->concatenate(array($l_id, 'l.alias'), ':');
         $case_when_venue_alias .= ' ELSE ';
         $case_when_venue_alias .= $l_id . ' END as venueslug';

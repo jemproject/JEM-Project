@@ -77,7 +77,7 @@ class JemControllerSettings extends BaseController
 
         // Initialise variables.
         $app = Factory::getApplication();
-        $data = $app->input->get('jform', array(), 'array');
+        $data = $app->getInput()->get('jform', array(), 'array');
 
         $task = $this->getTask();
         $model = $this->getModel();

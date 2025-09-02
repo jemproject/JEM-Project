@@ -55,7 +55,7 @@ class JemViewEvent extends JemView
         $edit_att            = new \stdClass();
         $this->params      = $app->getParams('com_jem');
         $this->item        = $this->get('Item');
-        $this->print       = $app->input->getBool('print', false);
+        $this->print       = $app->getInput()->getBool('print', false);
         $this->state       = $this->get('State');
         $this->user        = $user;
         $this->jemsettings = $jemsettings;

@@ -61,7 +61,7 @@ class JemControllerImport extends BaseController
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
+        $replace = Factory::getApplication()->getInput()->post->getInt('replace_'.$type, 0);
         $object = Table::getInstance('jem_'.$dbname, '');
         $object_fields = get_object_vars($object);
         $jemconfig = JemConfig::getInstance()->toRegistry();
@@ -74,7 +74,7 @@ class JemControllerImport extends BaseController
         }
 
         $msg = '';
-        $file = Factory::getApplication()->input->files->get('File'.$type, array(), 'array');
+        $file = Factory::getApplication()->getInput()->files->get('File'.$type, array(), 'array');
 
         if (empty($file['name']))
         {
@@ -247,7 +247,7 @@ class JemControllerImport extends BaseController
         $tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
 
         $app = Factory::getApplication();
-        $jinput = $app->input;
+        $jinput = $app->getInput();
         $step = $jinput->get('step', 0, 'INT');
         $current = $jinput->get->get('current', 0, 'INT');
         $total = $jinput->get->get('total', 0, 'INT');

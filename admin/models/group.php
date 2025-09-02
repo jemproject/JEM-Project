@@ -20,6 +20,19 @@ require_once __DIR__ . '/admin.php';
 class JemModelGroup extends JemModelAdmin
 {
     /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 5/6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
+    /**
      * Method to test whether a record can be deleted.
      *
      * @param  object  A record object.
@@ -142,7 +155,7 @@ class JemModelGroup extends JemModelAdmin
             throw new Exception($table->getError(), 500);
         }
 
-        $members = $app->input->get('maintainers', array(), 'array');
+        $members = $app->getInput()->get('maintainers', array(), 'array');
 
         // Updating group references
         $query = $db->getQuery(true);

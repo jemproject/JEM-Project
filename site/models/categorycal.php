@@ -41,7 +41,7 @@ class JemModelCategoryCal extends JemModelEventslist
         $app    = Factory::getApplication();
         $params = $app->getParams();
 
-        $id = $app->input->getInt('id', 0);
+        $id = $app->getInput()->getInt('id', 0);
         if (empty($id)) {
             $id = $params->get('id', 0);
         }
@@ -77,8 +77,8 @@ class JemModelCategoryCal extends JemModelEventslist
     {
         $app          = Factory::getApplication();
         $params       = $app->getParams();
-        $itemid       = $app->input->getInt('Itemid', 0);
-        $task         = $app->input->getCmd('task', '');
+        $itemid       = $app->getInput()->getInt('Itemid', 0);
+        $task         = $app->getInput()->getCmd('task', '');
         $startdayonly = $params->get('show_only_start', false);
         $show_archived_events = $params->get('show_archived_events', 0);
 

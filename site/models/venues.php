@@ -26,12 +26,12 @@ class JemModelVenues extends JemModelEventslist
 
         $app    = Factory::getApplication();
         $params = $app->getParams();
-        $task   = $app->input->getCmd('task','');
+        $task   = $app->getInput()->getCmd('task','');
 
         // List state information
-        $limit  = $app->input->getInt('limit', $params->get('display_venues_num'));
+        $limit  = $app->getInput()->getInt('limit', $params->get('display_venues_num'));
         $this->setState('list.limit', $limit);
-        $limitstart = $app->input->getInt('limitstart', 0);
+        $limitstart = $app->getInput()->getInt('limitstart', 0);
         // correct start value if required
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
         $this->setState('list.start', $limitstart);
@@ -64,7 +64,7 @@ class JemModelVenues extends JemModelEventslist
         $case_when_l  = ' CASE WHEN ';
         $case_when_l .= $query->charLength('l.alias');
         $case_when_l .= ' THEN ';
-        $id_l = $query->castAsChar('l.id');
+        $id_l = 'CAST(l.id AS CHAR)';
         $case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';
@@ -238,7 +238,7 @@ class JemModelVenues extends JemModelEventslist
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = 'CAST(c.id AS CHAR)';
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';

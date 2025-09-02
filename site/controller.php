@@ -39,7 +39,7 @@ class JemController extends BaseController
         $user       = JemFactory::getUser();
 
         // Set the default view name and format from the Request.
-        $jinput     = $app->input;
+        $jinput     = $app->getInput();
         $id         = $jinput->getInt('a_id', 0);
         $viewName   = $jinput->getCmd('view', 'eventslist');
         $viewFormat = $document->getType();
@@ -117,7 +117,7 @@ class JemController extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $id = Factory::getApplication()->input->getInt('file', 0);
+        $id = Factory::getApplication()->getInput()->getInt('file', 0);
         $path = JemAttachment::getAttachmentPath($id);
 
         header("Content-Type: application/application/octet-stream\n");
@@ -143,7 +143,7 @@ class JemController extends BaseController
         $res = 0;
 
         if ($jemsettings->attachmentenabled > 0) {
-            $id     = Factory::getApplication()->input->getInt('id', 0);
+            $id     = Factory::getApplication()->getInput()->getInt('id', 0);
             $res = JemAttachment::remove($id);
         } // else don't delete anything
 

@@ -23,6 +23,19 @@ require_once __DIR__ . '/admin.php';
 class JemModelEvent extends JemModelAdmin
 {
     /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 5/6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
+    /**
      * Method to change the published state of one or more records.
      *
      * @param  array   &$pks  A list of the primary keys to change.
@@ -189,7 +202,7 @@ class JemModelEvent extends JemModelAdmin
      */
     protected function _prepareTable($table)
     {
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
@@ -239,7 +252,7 @@ class JemModelEvent extends JemModelAdmin
     {
         // Variables
         $app         = Factory::getApplication();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
         $jemsettings = JemHelper::config();
         $table       = $this->getTable();
 

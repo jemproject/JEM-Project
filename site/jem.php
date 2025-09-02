@@ -45,7 +45,7 @@ JemHelper::cleanup();
 $controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
-$input = Factory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 $controller->execute($input->getCmd('task'));
 
 // Redirect if set by the controller

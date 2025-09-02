@@ -28,9 +28,9 @@ class JemViewCategories extends JemView
         $document    = $app->getDocument();
         $jemsettings = JemHelper::config();
         $user        = JemFactory::getUser();
-        $print       = $app->input->getBool('print', false);
-        $task        = $app->input->getCmd('task', '');
-        $id          = $app->input->getInt('id', 1);
+        $print       = $app->getInput()->getBool('print', false);
+        $task        = $app->getInput()->getCmd('task', '');
+        $id          = $app->getInput()->getInt('id', 1);
         $model       = $this->getModel();
         $uri         = Uri::getInstance();
         $rows        = $this->get('Data');

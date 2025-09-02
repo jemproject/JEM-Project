@@ -50,7 +50,7 @@ class JemControllerEvent extends JemControllerForm
     {
         // Initialise variables.
         $user       = JemFactory::getUser();
-        $categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', Factory::getApplication()->input->getInt('catid', 0), 'int');
+        $categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', Factory::getApplication()->getInput()->getInt('catid', 0), 'int');
 
         if ($user->can('add', 'event', false, $categoryId ? $categoryId : false)) {
             return true;
@@ -173,7 +173,7 @@ class JemControllerEvent extends JemControllerForm
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
     {
         // Need to override the parent method completely.
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $tmpl   = $jinput->getCmd('tmpl', '');
         $layout = $jinput->getCmd('layout', 'edit');
         $task   = $jinput->getCmd('task', '');
@@ -232,7 +232,7 @@ class JemControllerEvent extends JemControllerForm
     protected function getReturnPage()
     {
         $uri    = Uri::getInstance();
-        $return = Factory::getApplication()->input->get('return', null, 'base64');
+        $return = Factory::getApplication()->getInput()->get('return', null, 'base64');
 
         if (empty($return) || !Uri::isInternal(base64_decode($return))) {
             if (!empty($this->_id)) {
@@ -306,8 +306,9 @@ class JemControllerEvent extends JemControllerForm
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $id  = Factory::getApplication()->input->getInt('rdid', 0);
-        $rid = Factory::getApplication()->input->getInt('regid', 0);
+        $input = Factory::getApplication()->getInput();
+        $id  = $input->getInt('rdid', 0);
+        $rid = $input->getInt('regid', 0);
 
         // Get the model
         $model = $this->getModel('Event', 'JemModel');
@@ -353,7 +354,7 @@ class JemControllerEvent extends JemControllerForm
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $id = Factory::getApplication()->input->getInt('rdid', 0);
+        $id = Factory::getApplication()->getInput()->getInt('rdid', 0);
 
         // Get/Create the model
         $model = $this->getModel('Event', 'JemModel');

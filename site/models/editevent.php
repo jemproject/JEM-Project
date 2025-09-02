@@ -32,29 +32,29 @@ class JemModelEditevent extends JemModelEvent
         $app = Factory::getApplication();
 
         // Load state from the request.
-        $pk = $app->input->getInt('a_id', 0);
+        $pk = $app->getInput()->getInt('a_id', 0);
         $this->setState('event.id', $pk);
 
-        $fromId = $app->input->getInt('from_id', 0);
+        $fromId = $app->getInput()->getInt('from_id', 0);
         $this->setState('event.from_id', $fromId);
 
-        $catid = $app->input->getInt('catid', 0);
+        $catid = $app->getInput()->getInt('catid', 0);
         $this->setState('event.catid', $catid);
 
-        $locid = $app->input->getInt('locid', 0);
+        $locid = $app->getInput()->getInt('locid', 0);
         $this->setState('event.locid', $locid);
 
-        $date = $app->input->getCmd('date', '');
+        $date = $app->getInput()->getCmd('date', '');
         $this->setState('event.date', $date);
 
-        $return = $app->input->get('return', '', 'base64');
+        $return = $app->getInput()->get('return', '', 'base64');
         $this->setState('return_page', base64_decode($return));
 
         // Load the parameters.
         $params = $app->getParams();
         $this->setState('params', $params);
 
-        $this->setState('layout', $app->input->getCmd('layout', ''));
+        $this->setState('layout', $app->getInput()->getCmd('layout', ''));
     }
 
     /**
@@ -299,7 +299,7 @@ class JemModelEditevent extends JemModelEvent
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
         $limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
+        $limitstart  = $app->getInput()->getInt('limitstart', 0);
         // correct start value if required
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -337,7 +337,7 @@ class JemModelEditevent extends JemModelEvent
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
         $limit       = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
+        $limitstart  = $app->getInput()->getInt('limitstart', 0);
         // correct start value if required
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -468,7 +468,7 @@ class JemModelEditevent extends JemModelEvent
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
         $limit       = 0;//$app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = 0;//$app->input->getInt('limitstart', 0);
+        $limitstart  = 0;//$app->getInput()->getInt('limitstart', 0);
         // correct start value if required
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 

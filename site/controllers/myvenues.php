@@ -73,7 +73,7 @@ class JemControllerMyvenues extends BaseController
         Session::checkToken() or jexit('Invalid Token');
 
         $app = Factory::getApplication();
-        $input = $app->input;
+        $input = $app->getInput();
 
         $cid = $input->get('cid', array(), 'array');
 

@@ -12,9 +12,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
@@ -534,7 +534,7 @@ class JemHelper
             }
             if (empty($usage)) {
                 File::delete($fullPath);
-                if (File::exists($fullPaththumb)) {
+                if (is_file($fullPaththumb)) {
                     File::delete($fullPaththumb);
                 }
 
@@ -556,7 +556,7 @@ class JemHelper
                 {
                     if (is_file($fullPath.$file) && substr($file, 0, 1) != '.' && !isset($used[$file])) {
                         File::delete($fullPath.$file);
-                        if (File::exists($fullPaththumb.$file)) {
+                        if (is_file($fullPaththumb.$file)) {
                             File::delete($fullPaththumb.$file);
                         }
                     }
@@ -1383,7 +1383,7 @@ class JemHelper
             # something was filled, now check if we've a valid file
             if ($file) {
                 $file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
-                $is_file = File::exists(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
+                $is_file = is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
 
                 if ($is_file) {
                     # at this point we do have a valid file but let's check the extension too.

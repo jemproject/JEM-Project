@@ -91,7 +91,7 @@ class JemModelCategories extends BaseDatabaseModel
         // Get the parameters of the active menu item
         $params = $app->getParams('com_jem');
 
-        $id = $app->input->getInt('id', 0);
+        $id = $app->getInput()->getInt('id', 0);
         if (empty($id)) {
             $id = $params->get('id', 1);
         }
@@ -103,8 +103,8 @@ class JemModelCategories extends BaseDatabaseModel
         $this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
 
         //get the number of events from database
-        $limit      = $app->input->getInt('limit', $params->get('cat_num'));
-        $limitstart = $app->input->getInt('limitstart', 0);
+        $limit      = $app->getInput()->getInt('limit', $params->get('cat_num'));
+        $limitstart = $app->getInput()->getInt('limitstart', 0);
         // correct start value if required
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -161,7 +161,7 @@ class JemModelCategories extends BaseDatabaseModel
 
                 //create target link
                 // TODO: Move to view?
-                $task = $app->input->getCmd('task', '');
+                $task = $app->getInput()->getCmd('task', '');
                 if ($task == 'archive') {
                     $category->linktext   = Text::_('COM_JEM_SHOW_ARCHIVE');
                     $category->linktarget = Route::_(JemHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
@@ -232,7 +232,7 @@ class JemModelCategories extends BaseDatabaseModel
     {
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
-        $task   = Factory::getApplication()->input->getCmd('task', '');
+        $task   = Factory::getApplication()->getInput()->getCmd('task', '');
         $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
         $jemsettings = JemHelper::config();
 
@@ -359,7 +359,7 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $app    = Factory::getApplication();
-        $jinput = $app->input;
+        $jinput = $app->getInput();
         $user   = JemFactory::getUser();
         $userId = $user->get('id');
         // Support Joomla access levels instead of single group id
@@ -500,7 +500,7 @@ class JemModelCategories extends BaseDatabaseModel
         if (!$this->_showemptycats) {
             $query .= ' AND e.access IN (' . implode(',', $levels) . ')';
 
-            $task = Factory::getApplication()->input->getCmd('task', '');
+            $task = Factory::getApplication()->getInput()->getCmd('task', '');
             if($task == 'archive') {
                 $query .= ' AND e.published = 2';
             } else {

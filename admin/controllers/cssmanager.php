@@ -56,7 +56,7 @@ class JemControllerCssmanager extends AdminController
      */
     public function linenumber()
     {
-        $task  = Factory::getApplication()->input->get('task', '');
+        $task  = Factory::getApplication()->getInput()->get('task', '');
         $model = $this->getModel();
 
         switch ($task)

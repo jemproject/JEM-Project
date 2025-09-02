@@ -9,7 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
@@ -218,7 +218,7 @@ class JemImage
                 $dimage['height'] = $iminfo[1];
             }
 
-            if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
+            if (is_file(JPATH_SITE.'/'.$img_thumb)) {
                 //get imagesize of the thumbnail
                 $thumbiminfo = @getimagesize($img_thumb);
                 $dimage['thumbwidth']  = $thumbiminfo[0];
@@ -305,7 +305,7 @@ class JemImage
 
         $now = rand();
 
-        while (File::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+        while (is_file($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
             $now++;
         }
 

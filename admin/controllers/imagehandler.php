@@ -10,12 +10,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 
 /**
  * JEM Component Imagehandler Controller
@@ -52,8 +52,9 @@ class JemControllerImagehandler extends BaseController
         $app = Factory::getApplication();
         $jemsettings = JemAdmin::config();
 
-        $file = Factory::getApplication()->input->files->get('userfile', array(), 'array');
-        $task = Factory::getApplication()->input->get('task', '');
+        $input = Factory::getApplication()->getInput();
+        $file = $input->files->get('userfile', [], 'array');
+        $task = $input->get('task', '');
 
         // Set FTP credentials, if given
 
@@ -112,8 +113,9 @@ class JemControllerImagehandler extends BaseController
         ClientHelper::setCredentialsFromRequest('ftp');
 
         // Get some data from the request
-        $images = Factory::getApplication()->input->get('rm', array(), 'array');
-        $folder = Factory::getApplication()->input->get('folder', '');
+        $input = Factory::getApplication()->getInput();
+        $images = $input->get('rm', array(), 'array');
+        $folder = $input->get('folder', '');
 
         if (count($images)) {
             foreach ($images as $image) {
@@ -126,8 +128,8 @@ class JemControllerImagehandler extends BaseController
                 $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
                 if (is_file($fullPath)) {
                     File::delete($fullPath);
-                    if (File::exists($fullPaththumb)) {
-                        File::delete($fullPaththumb);
+                    if (is_file($fullPaththumb)) {
+                        is_file($fullPaththumb);
                     }
                 }
             }

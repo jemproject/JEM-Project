@@ -12,7 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
 
 /**
  * JEM Event Table
@@ -93,7 +94,7 @@ class JemTableEvent extends Table
      */
     public function check()
     {
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
 
         if (trim($this->title) == '') {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_NAME'));
@@ -182,7 +183,7 @@ class JemTableEvent extends Table
         $user        = JemFactory::getUser();
         $userid      = $user->get('id');
         $app         = Factory::getApplication();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
         $jemsettings = JemHelper::config();
 
         // Check if we're in the front or back
@@ -212,7 +213,6 @@ class JemTableEvent extends Table
         }
 
         // Check if image was selected
-        jimport('joomla.filesystem.file');
         $image_dir = JPATH_SITE.'/images/jem/events/';
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));
@@ -244,7 +244,7 @@ class JemTableEvent extends Table
                             $filename = JemImage::sanitize($image_dir, $file['name']);
                             $filepath = $image_dir . $filename;
 
-                            if (File::upload($file['tmp_name'], $filepath)) {
+                            if (move_uploaded_file($file['tmp_name'], $filepath)) {
                                 $image_to_delete = $this->datimage; // delete previous image
                                 $this->datimage = $filename;
                             }
@@ -257,7 +257,7 @@ class JemTableEvent extends Table
                     $this->datimage = '';
                 } elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
                     // event is a copy so copy datimage too
-                    if (File::exists($image_dir . $datimage)) {
+                    if (is_file($image_dir . $datimage)) {
                         // if it's already within image folder it's safe
                         $this->datimage = $datimage;
                     }
@@ -265,8 +265,8 @@ class JemTableEvent extends Table
             } // end image if
         } // if (!backend)
 
-        $format = File::getExt($image_dir . $this->datimage);
-        if (!in_array($format, $allowable))
+        $format = pathinfo($image_dir . $this->datimage, PATHINFO_EXTENSION);
+        if (!in_array(strtolower($format), $allowable))
         {
             $this->datimage = '';
         }

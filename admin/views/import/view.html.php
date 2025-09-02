@@ -48,7 +48,7 @@ class JemViewImport extends JemAdminView
         $this->existingJemData     = $this->get('ExistingJemData');
 
         $app = Factory::getApplication();
-        $jinput = $app->input;
+        $jinput = $app->getInput();
         $progress = new stdClass();
         $progress->step     = $jinput->get('step', 0, 'INT');
         $progress->current     = $jinput->get('current', 0, 'INT');

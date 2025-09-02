@@ -21,6 +21,19 @@ require_once __DIR__ . '/admin.php';
 class JemModelVenue extends JemModelAdmin
 {
     /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 5/6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
+    /**
      * Method to change the published state of one or more records.
      *
      * @param  array   &$pks  A list of the primary keys to change.
@@ -238,7 +251,7 @@ class JemModelVenue extends JemModelAdmin
     {
         // Variables
         $app         = Factory::getApplication();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
         $jemsettings = JemHelper::config();
         $task        = $jinput->get('task', '', 'cmd');
 

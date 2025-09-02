@@ -49,7 +49,7 @@ require_once (JPATH_BASE.'/components/com_jem/controller.php');
 $controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
-$input = Factory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 $controller->execute($input->getCmd('task'));
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 

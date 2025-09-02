@@ -40,12 +40,12 @@ class JemModelVenueslist extends ListModel
     {
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
         $task        = $jinput->getCmd('task');
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
         
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->input->getInt('limitstart', null) === null) {
+        if ($app->getInput()->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.venueslist.limitstart', 0);
         }
         
@@ -102,7 +102,7 @@ class JemModelVenueslist extends ListModel
     protected function getListQuery()
     {
         $app       = Factory::getApplication();
-        $jinput    = Factory::getApplication()->input;
+        $jinput    = Factory::getApplication()->getInput();
         $task      = $jinput->getCmd('task', '');
         $itemid    = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
     
@@ -119,7 +119,7 @@ class JemModelVenueslist extends ListModel
         $case_when_l = ' CASE WHEN ';
         $case_when_l .= $query->charLength('a.alias','!=', '0');
         $case_when_l .= ' THEN ';
-        $id_l = $query->castAsChar('a.id');
+        $id_l = 'CAST(a.id AS CHAR)';
         $case_when_l .= $query->concatenate(array($id_l, 'a.alias'), ':');
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';

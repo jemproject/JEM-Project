@@ -130,7 +130,7 @@ class JemModelUserelement extends BaseDatabaseModel
         $jemsettings = JemHelper::config();
 
         $limit       = $app->getUserStateFromRequest('com_jem.userelement.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
+        $limitstart  = $app->getInput()->getInt('limitstart', 0);
 
         $query = $this->buildQuery();
         $total = $this->_getListCount($query);

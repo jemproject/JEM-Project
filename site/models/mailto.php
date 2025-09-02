@@ -40,7 +40,7 @@ class JemModelMailto extends FormModel
         $params = $app->getParams();
         $this->setState('params', $params);
 
-        $this->setState('layout', $app->input->getCmd('layout', ''));
+        $this->setState('layout', $app->getInput()->getCmd('layout', ''));
     }
     public function getForm($data = array(), $loadData = true)
     {
@@ -71,7 +71,7 @@ class JemModelMailto extends FormModel
       
         $data = $app->getUserState('jem.mailto.form.data', array());
         
-        $data['link'] = urldecode($app->input->get('link', '', 'BASE64'));
+        $data['link'] = urldecode($app->getInput()->get('link', '', 'BASE64'));
 
         if ($data['link'] == '')
         {
@@ -82,10 +82,10 @@ class JemModelMailto extends FormModel
         }
 
         // Load with previous data, if it exists
-        $data['sender']    = $app->input->post->getString('sender', '');
-        $data['subject']   = $app->input->post->getString('subject', '');
-        $data['emailfrom'] = PunycodeHelper::emailToPunycode($app->input->post->getString('emailfrom', ''));
-        $data['emailto']   = PunycodeHelper::emailToPunycode($app->input->post->getString('emailto', ''));
+        $data['sender']    = $app->getInput()->post->getString('sender', '');
+        $data['subject']   = $app->getInput()->post->getString('subject', '');
+        $data['emailfrom'] = PunycodeHelper::emailToPunycode($app->getInput()->post->getString('emailfrom', ''));
+        $data['emailto']   = PunycodeHelper::emailToPunycode($app->getInput()->post->getString('emailto', ''));
 
         if (!$user->guest)
         {
@@ -109,7 +109,7 @@ class JemModelMailto extends FormModel
      */
     public function getData()
     {
-        $input = Factory::getApplication()->input;
+        $input = Factory::getApplication()->getInput();
 
         $data['emailto']    = $input->get('emailto', '', 'string');
         $data['sender']     = $input->get('sender', '', 'string');

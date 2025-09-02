@@ -72,7 +72,7 @@ class JemModelExport extends ListModel
     protected function getListQuery()
     {
         // Retrieve variables
-        $jinput    = Factory::getApplication()->input;
+        $jinput    = Factory::getApplication()->getInput();
         $startdate = $jinput->get('dates', '', 'string');
         $enddate   = $jinput->get('enddates', '', 'string');
         $cats      = $jinput->get('cid', array(), 'array');
@@ -118,7 +118,7 @@ class JemModelExport extends ListModel
     {
         $this->populateState();
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $includecategories = $jinput->get('categorycolumn', 0, 'int');
 
         $db  = Factory::getContainer()->get('DatabaseDriver');

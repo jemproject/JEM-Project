@@ -50,7 +50,7 @@ class JemControllerEvents extends AdminController
 
         // Initialise variables.
         $user   = JemFactory::getUser();
-        $ids    = Factory::getApplication()->input->get('cid', array(), 'array');
+        $ids    = Factory::getApplication()->getInput()->get('cid', array(), 'array');
         $values = array('featured' => 1, 'unfeatured' => 0);
         $task   = $this->getTask();
         $value  = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');

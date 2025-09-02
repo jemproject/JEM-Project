@@ -52,7 +52,7 @@ class JFormFieldCatOptionsDefault extends ListField
         // Get the field options.
         $options = (array) $this->getOptions();
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $currentid = $jinput->getInt('id');
 
         $db = Factory::getContainer()->get('DatabaseDriver');

@@ -42,7 +42,7 @@ class JemModelAttendee extends BaseDatabaseModel
     {
         parent::__construct();
 
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
         $array = $jinput->get('id',  0, 'array');
 
         if(is_array($array))
@@ -126,7 +126,7 @@ class JemModelAttendee extends BaseDatabaseModel
             $data = Table::getInstance('jem_register', '');
             $data->username = null;
             if (empty($data->eventtitle)) {
-                $jinput = Factory::getApplication()->input;
+                $jinput = Factory::getApplication()->getInput();
                 $eventid = $jinput->getInt('eventid', 0);
                 $table = $this->getTable('Event', 'JemTable');
                 $table->load($eventid);

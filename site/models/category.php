@@ -42,7 +42,7 @@ class JemModelCategory extends JemModelEventslist
         // Get the parameters of the active menu item
         $params = $app->getParams();
 
-        $id = $app->input->getInt('id', 0);
+        $id = $app->getInput()->getInt('id', 0);
         if (empty($id)) {
             $id = $params->get('id', 1);
         }
@@ -97,10 +97,10 @@ class JemModelCategory extends JemModelEventslist
         // Initiliase variables.
         $app         = Factory::getApplication('site');
         $jemsettings = JemHelper::config();
-        $task        = $app->input->getCmd('task','');
-        $format      = $app->input->getCmd('format',false);
-        $pk          = $app->input->getInt('id', 0);
-        $itemid      = $pk . ':' . $app->input->getInt('Itemid', 0);
+        $task        = $app->getInput()->getCmd('task','');
+        $format      = $app->getInput()->getCmd('format',false);
+        $pk          = $app->getInput()->getInt('id', 0);
+        $itemid      = $pk . ':' . $app->getInput()->getInt('Itemid', 0);
 
         $this->setState('category.id', $pk);
         $this->setState('filter.req_catid', $pk);
@@ -123,7 +123,7 @@ class JemModelCategory extends JemModelEventslist
         # limit/start
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->input->getInt('limitstart', null) === null) {
+        if ($app->getInput()->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.category.'.$itemid.'.limitstart', 0);
         }
 
@@ -257,7 +257,7 @@ class JemModelCategory extends JemModelEventslist
     protected function getListQuery()
     {
         //$params  = $this->state->params;
-        //$jinput  = Factory::getApplication()->input;
+        //$jinput  = Factory::getApplication()->getInput();
         //$task    = $jinput->getCmd('task','','cmd');
 
         // Create a new query object.

@@ -23,6 +23,19 @@ use Joomla\CMS\Date\Date;
 class JemModelCategory extends AdminModel
 {
     /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 5/6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
+    /**
      * The prefix to use with controller messages.
      * @var string
      */
@@ -84,11 +97,11 @@ class JemModelCategory extends AdminModel
     {
         $app = Factory::getApplication('administrator');
 
-        $parentId = $app->input->getInt('parent_id', 0);
+        $parentId = $app->getInput()->getInt('parent_id', 0);
         $this->setState('category.parent_id', $parentId);
 
         // Load the User state.
-        $pk = (int) $app->input->getInt('id', 0);
+        $pk = (int) $app->getInput()->getInt('id', 0);
         $this->setState($this->getName() . '.id', $pk);
 
         // Load the parameters.
@@ -226,7 +239,7 @@ class JemModelCategory extends AdminModel
         // Initialise variables;
         $dispatcher = JemFactory::getDispatcher();
         $table = $this->getTable();
-        $jinput = Factory::getApplication()->input;
+        $jinput = Factory::getApplication()->getInput();
 
         $pk = (!empty($data['id'])) ? $data['id'] : (int) $this->getState($this->getName() . '.id');
         $isNew = true;
@@ -343,7 +356,7 @@ class JemModelCategory extends AdminModel
         if (parent::publish($pks, $value)) {
             // Initialise variables.
             $dispatcher = JemFactory::getDispatcher();
-            $extension = Factory::getApplication()->input->getCmd('extension', '');
+            $extension = Factory::getApplication()->getInput()->getCmd('extension', '');
 
             // Include the content plugins for the change of category state
             // event.
@@ -421,7 +434,7 @@ class JemModelCategory extends AdminModel
         $table = $this->getTable();
         $db = Factory::getContainer()->get('DatabaseDriver');
         $user = JemFactory::getUser();
-        $extension = Factory::getApplication()->input->get('extension', '', 'word');
+        $extension = Factory::getApplication()->getInput()->get('extension', '', 'word');
         $i = 0;
 
         // Check that the parent exists
@@ -591,7 +604,7 @@ class JemModelCategory extends AdminModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $user = JemFactory::getUser();
-        $extension = Factory::getApplication()->input->get('extension', '', 'word');
+        $extension = Factory::getApplication()->getInput()->get('extension', '', 'word');
 
         // Check that the parent exists.
         if ($parentId) {
@@ -699,7 +712,7 @@ class JemModelCategory extends AdminModel
      */
     protected function cleanCache($group = null, $client_id = 0)
     {
-        $extension = Factory::getApplication()->input->getCmd('extension', '');
+        $extension = Factory::getApplication()->getInput()->getCmd('extension', '');
         switch ($extension)
         {
             case 'com_content':

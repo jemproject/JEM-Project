@@ -51,7 +51,7 @@ $CalTooltipsTitlePl  = $params->get('cal15q_tooltipspl_title', Text::_('MOD_JEM_
 $Default_Stylesheet  = $params->get('Default_Stylesheet', '1');
 $User_stylesheet     = $params->get('User_stylesheet', 'modules/mod_jem_cal/tmpl/mod_jem_cal.css');
 $tooltips_max_events = $params->get('tooltips_max_events', 0);
-$Itemid              = $app->input->request->getInt('Itemid', 0);
+$Itemid              = $app->getInput()->getInt('Itemid', 0);
 
 if($Itemid ==0){
     
@@ -62,10 +62,10 @@ if($Itemid ==0){
 $use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');
 
 # Get switch trigger
-$req_modid = $app->input->getInt('modjemcal_id');
+$req_modid = $app->getInput()->getInt('modjemcal_id');
 if ((int)$module->id === $req_modid) {
-    $req_month = $app->input->request->getInt('modjemcal_month');
-    $req_year  = $app->input->request->getInt('modjemcal_year');
+    $req_month = $app->getInput()->getInt('modjemcal_month');
+    $req_year  = $app->getInput()->getInt('modjemcal_year');
 } else {
     $req_month = $req_year = 0;
 }

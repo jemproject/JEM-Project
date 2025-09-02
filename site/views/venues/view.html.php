@@ -30,7 +30,7 @@ class JemViewVenues extends JemView
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
         $user        = JemFactory::getUser();
-        $jinput      = $app->input;
+        $jinput      = $app->getInput();
         $print       = $jinput->getBool('print', false);
         $task        = $jinput->getCmd('task', '');
 

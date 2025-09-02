@@ -104,7 +104,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = 'CAST(a.id AS CHAR)';
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -285,7 +285,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = 'CAST(a.id AS CHAR)';
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -388,7 +388,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = 'CAST(a.id AS CHAR)';
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -558,7 +558,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = 'CAST(a.id AS CHAR)';
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -696,7 +696,7 @@ class plgJemMailer extends CMSPlugin
         $case_when = ' CASE WHEN ';
         $case_when .= $query->charLength('alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('id');
+        $id = 'CAST(id AS CHAR)';
         $case_when .= $query->concatenate(array($id, 'alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';

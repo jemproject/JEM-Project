@@ -36,20 +36,20 @@ class JemModelEditvenue extends JemModelVenue
         $app = Factory::getApplication();
 
         // Load state from the request.
-        $pk = $app->input->getInt('a_id', 0);
+        $pk = $app->getInput()->getInt('a_id', 0);
         $this->setState('venue.id', $pk);
 
-        $fromId = $app->input->getInt('from_id', 0);
+        $fromId = $app->getInput()->getInt('from_id', 0);
         $this->setState('venue.from_id', $fromId);
 
-        $return = $app->input->get('return', '', 'base64');
+        $return = $app->getInput()->get('return', '', 'base64');
         $this->setState('return_page', base64_decode($return));
 
         // Load the parameters.
         $params = $app->getParams();
         $this->setState('params', $params);
 
-        $this->setState('layout', $app->input->getCmd('layout', ''));
+        $this->setState('layout', $app->getInput()->getCmd('layout', ''));
     }
 
     /**
