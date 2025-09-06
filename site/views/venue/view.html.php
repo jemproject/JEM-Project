@@ -218,6 +218,7 @@ class JemViewVenue extends JemView
             $filter_order_Dir = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
             $filter_type      = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
             $search           = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+            $search_month     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_month', 'filter_month', '', 'string');
 
             // table ordering
             $lists['order_Dir'] = $filter_order_Dir;
@@ -338,7 +339,12 @@ class JemViewVenue extends JemView
                 $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
             }
             $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+
+            // search filter
             $lists['search'] = $search;
+            if(!empty($search_month)){
+                $lists['month'] = $search_month;
+            }
 
             // don't show venue-related columns on Venue view
             $lists['hide'] = array('venue' => 1);

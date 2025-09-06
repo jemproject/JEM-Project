@@ -6,19 +6,15 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-.jemmodulebasic i {
-  padding-right:10px;
-}
 
-
-.events-grid {
+.jemmodulebanner .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 2rem;
     padding: 1rem;
 }
 
-.event-card {
+.jemmodulebanner .event-card {
     background: white;
     border-radius: 12px;
     overflow: hidden;
@@ -26,12 +22,12 @@
     transition: transform 0.3s ease;
 }
 
-.event-card:hover {
+.jemmodulebanner .event-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
 }
 
-.event-media {
+.jemmodulebanner .event-media {
     position: relative;
     height: 200px;
     overflow: hidden;
@@ -41,7 +37,7 @@
     background: #f0f4f8;
 }
 
-.event-media img {
+.jemmodulebanner .event-media img {
     max-width: 100%;
     max-height: 300px;
     width: auto;
@@ -50,11 +46,11 @@
     transition: transform 0.5s ease;
 }
 
-.event-card:hover .event-media img {
+.jemmodulebanner .event-card:hover .event-media img {
     transform: scale(1.03);
 }
 
-.event-badge {
+.jemmodulebanner .event-badge {
     position: absolute;
     top: 1rem;
     left: 1rem;
@@ -65,7 +61,7 @@
     font-weight: 600;
 }
 
-.event-badge a {
+.jemmodulebanner .event-badge a {
   display: inline-block;
   background: var(--primary);
   color: var(--secundary);
@@ -76,23 +72,23 @@
   border: 1px solid #d0e3ff;
 }
 
-.event-badge a:hover {
+.jemmodulebanner .event-badge a:hover {
   color: #0d5bba;
   background-color: #f0f7ff;
 }
 
-.event-content {
+.jemmodulebanner .event-content {
     padding: 1.5rem;
 }
 
-.event-title {
+.jemmodulebanner .event-title {
     font-size: 1.3rem;
     margin: 0 0 0.5rem;
     color: var(--dark);
     font-weight: 600;
 }
 
-.event-date-container {
+.jemmodulebanner .event-date-container {
     display: flex;
     align-items: center;
     gap: 1.2rem;
@@ -102,8 +98,7 @@
     background-color: #f8fafc;
 }
 
-.date-box {
-    background: var(--primary);
+.jemmodulebanner .date-box {
     padding: 0.8rem;
     border-radius: 8px;
     text-align: center;
@@ -111,13 +106,13 @@
     color: white;
 }
 
-.date-day {
+.jemmodulebanner .date-day {
     font-size: 1.6rem;
     font-weight: 700;
     line-height: 1;
 }
 
-.date-month {
+.jemmodulebanner .date-month {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -125,36 +120,36 @@
     font-weight: 500;
 }
 
-.date-time {
+.jemmodulebanner .date-time {
     flex: 1;
 }
 
-.date-weekday {
+.jemmodulebanner .date-weekday {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--primary);
     margin-bottom: 0.2rem;
 }
 
-.date-hours {
+.jemmodulebanner .date-hours {
     font-size: 0.85rem;
     color: #4a5568;
 }
 
-.event-meta {
+.jemmodulebanner .event-meta {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
     margin-bottom: 1.2rem;
 }
 
-.meta-item {
+.jemmodulebanner .meta-item {
     display: flex;
     align-items: center;
     gap: 0.6rem;
 }
 
-.meta-icon {
+.jemmodulebanner .meta-icon {
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -165,29 +160,29 @@
     flex-shrink: 0;
 }
 
-.meta-icon i {
+.jemmodulebanner .meta-icon i {
     color: var(--accent);
     font-size: 0.9rem;
 }
 
-.meta-text {
+.jemmodulebanner .meta-text {
     font-size: 0.9rem;
     color: #4a5568;
 }
 
-.event-description {
+.jemmodulebanner .event-description {
     font-size: 0.9rem;
     line-height: 1.6;
     color: #4a5568;
     margin-bottom: 1.5rem;
 }
 
-.event-actions {
+.jemmodulebanner .event-actions {
     display: flex;
     gap: 0.8rem;
 }
 
-.btn {
+.jemmodulebanner .btn {
     flex: 1;
     padding: 0.7rem;
     border: none;
@@ -202,20 +197,20 @@
     font-size: 0.85rem;
 }
 
-.btn-primary {
+.jemmodulebanner .btn-primary {
     background: var(--primary);
     color: white;
 }
 
-.btn-primary:hover {
+.jemmodulebanner .btn-primary:hover {
     background: #3a56c4;
 }
 
-.btn-secondary {
+.jemmodulebanner .btn-secondary {
     background: #edf2f7;
     color: var(--dark);
 }
 
-.btn-secondary:hover {
+.jemmodulebanner .btn-secondary:hover {
     background: #e2e8f0;
 }
