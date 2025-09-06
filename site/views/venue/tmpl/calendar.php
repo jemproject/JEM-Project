@@ -46,6 +46,13 @@ use Joomla\CMS\Language\Text;
             continue; // skip, open date !
         }
 
+        // has user access
+        $eventaccess = '';
+        if (!$row->user_has_access_event) {
+            // show a closed lock icon
+            $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+        }
+
         //get event date
         $year = date('Y', strtotime($row->dates));
         $month = date('m', strtotime($row->dates));
@@ -142,15 +149,15 @@ use Joomla\CMS\Language\Text;
             switch ($row->multi) {
             case 'first': // first day
                 $multi_mode = 1;
-                $multi_icon = HTMLHelper::_("image","com_jem/arrow-left.png",'', NULL, true);
+                $multi_icon = HTMLHelper::_("image","com_jem/arrow-left.webp",'', NULL, true);
                 break;
             case 'middle': // middle day
                 $multi_mode = 2;
-                $multi_icon = HTMLHelper::_("image","com_jem/arrow-middle.png",'', NULL, true);
+                $multi_icon = HTMLHelper::_("image","com_jem/arrow-middle.webp",'', NULL, true);
                 break;
             case 'zlast': // last day
                 $multi_mode = 3;
-                $multi_icon = HTMLHelper::_("image","com_jem/arrow-right.png",'', NULL, true);
+                $multi_icon = HTMLHelper::_("image","com_jem/arrow-right.webp",'', NULL, true);
                 break;
             }
         }
@@ -281,7 +288,7 @@ use Joomla\CMS\Language\Text;
         }
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $contentend . '</div>';
+        $content .= $eventaccess . $contentend . '</div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;

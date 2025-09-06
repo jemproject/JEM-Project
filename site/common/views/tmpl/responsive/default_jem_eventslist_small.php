@@ -125,7 +125,7 @@ function jem_common_show_filter(&$obj) {
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" onchange="document.adminForm.submit();" />
+            <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
@@ -199,6 +199,19 @@ function jem_common_show_filter(&$obj) {
 
         <?php foreach ($this->rows as $row) : ?>
             <?php
+            // has user access to category of this event
+            if (!$row->user_has_access_category) {
+                // The user has access to the event but doesn't have access to the category, the event doesn't display.
+                continue;
+            }
+
+            // has user access
+            $eventaccess = '';
+            if (!$row->user_has_access_event) {
+                // show a closed lock icon
+                $statusicon = JemOutput::publishstateicon($row);
+                $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
             if ($paramShowMonthRow && $row->dates) {
                 //get event date
                 $year = date('Y', strtotime($row->dates));
@@ -250,6 +263,7 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
                 </div>
             <?php else : ?>
@@ -265,6 +279,7 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -281,11 +296,12 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
                 </div>
             <?php else : ?>
             <?php endif; ?>
-
+            <?php if($row->user_has_access_venue) : ?>
             <?php if ($this->jemsettings->showlocate == 1) : ?>
                 <?php if (!empty($row->locid)) : ?>
                     <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
@@ -326,6 +342,7 @@ function jem_common_show_filter(&$obj) {
                     <div class="jem-event-info-small jem-event-state">
                         <?php echo ($showiconsineventdata? '<i class="fa fa-map" aria-hidden="true"></i>':''); ?> -
                     </div>
+                <?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
 
@@ -401,7 +418,7 @@ function jem_common_show_filter(&$obj) {
             <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
                 <div class="jem-row jem-justify-start jem-nowrap">
                     <?php echo $this->lists['filter']; ?>
-                    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+                    <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 </div>
                 <div class="jem-row jem-justify-start jem-nowrap">
                     <button class="buttonfilter btn" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>

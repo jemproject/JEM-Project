@@ -110,7 +110,7 @@ class JemTableGroup extends Table
         $query->update($this->_db->quoteName($this->_tbl));
         $query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
         $query->where($where);
-
+    
 
         // Check for a database error.
         // TODO: use exception handling
@@ -124,7 +124,7 @@ class JemTableGroup extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {
+        {            
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

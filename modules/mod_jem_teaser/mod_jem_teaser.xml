@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="2.5" client="site" method="upgrade">
+<extension type="module" client="site" method="upgrade">
     <name>mod_jem_teaser</name>
     <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <creationDate>May 2025</creationDate>
+    <creationDate>August 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.3</version>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.3.4</version>
     <description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -21,12 +21,12 @@
         <folder>tmpl</folder>
         <folder>language</folder>
     </files>
-
+    
     <languages>
         <language tag="en-GB">language/en-GB/mod_jem_teaser.ini</language>
         <language tag="en-GB">language/en-GB/mod_jem_teaser.sys.ini</language>
     </languages>
-
+    
     <help key="Modules" />
     <config>
         <fields name="params">
@@ -77,19 +77,19 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="showimageevent" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_SHOW_IMAGE_EVENT"
-                       description="MOD_JEM_TEASER_SHOW_IMAGE_EVENT_DESC"
-                       class="btn-group btn-group-yesno"
+                    default="1"
+                    label="MOD_JEM_TEASER_SHOW_IMAGE_EVENT"
+                    description="MOD_JEM_TEASER_SHOW_IMAGE_EVENT_DESC"
+                    class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="showimagevenue" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_SHOW_IMAGE_VENUE"
-                       description="MOD_JEM_TEASER_SHOW_IMAGE_VENUE_DESC"
-                       class="btn-group btn-group-yesno"
+                    default="1"
+                    label="MOD_JEM_TEASER_SHOW_IMAGE_VENUE"
+                    description="MOD_JEM_TEASER_SHOW_IMAGE_VENUE_DESC"
+                    class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
@@ -124,10 +124,10 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="showdescriptionevent" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT"
-                       description="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT_DESC"
-                       class="btn-group btn-group-yesno"
+                    default="1"
+                    label="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT"
+                    description="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT_DESC"
+                    class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
@@ -226,11 +226,11 @@
                     <option value="1">MOD_JEM_TEASER_STATE_MODE_CONTAINS</option>
                 </field>
                 <field name="couid" type="list"
-                       default=""
-                       multiple="true"
-                       removeroot="true"
-                       label="MOD_JEM_TEASER_COUNTRIES"
-                       description="MOD_JEM_TEASER_COUNTRIESE_DESC"
+                    default=""
+                    multiple="true"
+                    removeroot="true"
+                    label="MOD_JEM_TEASER_COUNTRIES"
+                    description="MOD_JEM_TEASER_COUNTRIESE_DESC"
                 />
                 <field name="moduleclass_sfx" type="text"
                     default=""

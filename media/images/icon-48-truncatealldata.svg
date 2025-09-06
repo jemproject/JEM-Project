@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;">
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+        <g id="Delete-all-JEM-data-v2" serif:id="Delete all JEM data v2">
+            <g>
+                <g>
+                    <path d="M88.524,36.143L42.652,16.671" style="fill:none;stroke:rgb(225,0,26);stroke-width:4.5px;"/>
+                    <path d="M76.819,27.89L56.72,19.358" style="fill:none;stroke:rgb(225,0,26);stroke-width:4.5px;"/>
+                </g>
+                <path d="M81.806,38.494L81.806,83.68C81.806,84.21 81.595,84.719 81.22,85.094C80.845,85.469 80.336,85.68 79.805,85.68C73.629,85.676 54.909,85.665 48.735,85.662C47.631,85.661 46.737,84.766 46.737,83.662C46.737,74.681 46.737,38.494 46.737,38.494" style="fill:none;stroke:rgb(225,0,26);stroke-width:4.5px;"/>
+                <path d="M75.304,49.314L53.324,71.294M75.304,71.294L53.324,49.314" style="fill:none;stroke:rgb(225,0,26);stroke-width:4.5px;"/>
+            </g>
+            <g id="Home">
+                <path d="M18.275,79.858L12.275,79.858" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:round;"/>
+                <path d="M25.275,62.613L12.275,62.613" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linecap:round;"/>
+                <path d="M32.275,45.458L12.275,45.458" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:round;"/>
+                <path d="M39.275,28.258L12.275,28.258" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linecap:round;"/>
+            </g>
+        </g>
+    </g>
+</svg>

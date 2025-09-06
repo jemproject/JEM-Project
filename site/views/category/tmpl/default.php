@@ -25,6 +25,13 @@ use Joomla\CMS\HTML\HTMLHelper;
     </h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+        <p> </p>
+    <?php endif; ?>
+
     <div class="clr"></div>
 
     <div class="floattext">
@@ -37,7 +44,7 @@ use Joomla\CMS\HTML\HTMLHelper;
             $imgattribs['width'] = $jemsettings->imagewidth;
             $imgattribs['height'] = $jemsettings->imagehight;
 
-            echo HTMLHelper::_('image', 'com_jem/noimage.png', $this->category->catname, $imgattribs, true);
+            echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
         }
         else {
             echo JemOutput::flyer($this->category, $this->cimage, 'category');

@@ -8,7 +8,7 @@
 
 div#jemmoduleteaser .time {
     padding-left: 20px;
-    background: url(img/time.png) 0 center no-repeat;
+    background: url(img/time.webp) 0 center no-repeat;
 }
 
 div#jemmoduleteaser div.date {
@@ -17,10 +17,10 @@ div#jemmoduleteaser div.date {
 
 div#jemmoduleteaser .category {
     padding-left: 20px;
-    background: url(img/category.png) 0 center no-repeat;
+    background: url(img/category.webp) 0 center no-repeat;
 }
 
 div#jemmoduleteaser .venue-title {
     padding-left: 20px;
-    background: url(img/building.png) 0 center no-repeat;
+    background: url(img/building.webp) 0 center no-repeat;
 }

@@ -142,15 +142,15 @@ use Joomla\CMS\HTML\HTMLHelper;
             switch ($row->multi) {
             case 'first': // first day
                 $multi_mode = 1;
-                $multi_icon = HTMLHelper::_("image","com_jem/arrow-left.png",'', NULL, true);
+                $multi_icon = HTMLHelper::_("image","com_jem/arrow-left.webp",'', NULL, true);
                 break;
             case 'middle': // middle day
                 $multi_mode = 2;
-                $multi_icon = HTMLHelper::_("image","com_jem/arrow-middle.png",'', NULL, true);
+                $multi_icon = HTMLHelper::_("image","com_jem/arrow-middle.webp",'', NULL, true);
                 break;
             case 'zlast': // last day
                 $multi_mode = 3;
-                $multi_icon = HTMLHelper::_("image","com_jem/arrow-right.png",'', NULL, true);
+                $multi_icon = HTMLHelper::_("image","com_jem/arrow-right.webp",'', NULL, true);
                 break;
             }
         }
@@ -222,6 +222,14 @@ use Joomla\CMS\HTML\HTMLHelper;
             $eventstate  = '';
         }
 
+        // has user access
+        $eventaccess = "";
+        if(!$row->user_has_access_event){
+            // show a closed lock icon
+            $statusicon  = JemOutput::publishstateicon($row);
+            $eventaccess  = '<span class="icon-lock" style="margin-left:5px;" aria-hidden="true"></span>';
+        }
+
         //date in tooltip
         $multidaydate = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_DATE').': </span>';
         switch ($multi_mode) {
@@ -260,7 +268,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 $editicon .= '</div>';
             }
         }
-
+        
         //get border for featured event
         $usefeaturedborder = $this->params->get('usefeaturedborder', 0);
         $featuredbordercolor = $this->params->get('featuredbordercolor', 0);
@@ -273,7 +281,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle;
+        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle; 
         if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
             $content .= '; background-color:'.array_pop($catcolor).'">';
         } else {
@@ -281,7 +289,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         }
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $contentend . '</div>';
+        $content .= $eventaccess . $contentend . '</div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;

@@ -18,7 +18,7 @@ FormHelper::loadFieldClass('list');
 /**
  * CountryOptions Field class.
  *
- *
+ * 
  */
 class JFormFieldCountryOptions extends ListField
 {

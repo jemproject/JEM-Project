@@ -59,7 +59,7 @@ class JFormFieldModal_Venue extends FormField
         $query->where(array('id='.(int)$this->value));
         $db->setQuery($query);
 
-
+        
 
         // if ($error = $db->getErrorMsg()) {
         //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
@@ -69,7 +69,7 @@ class JFormFieldModal_Venue extends FormField
             $venue = $db->loadResult();
         }
         catch (RuntimeException $e)
-        {
+        {            
             \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
         }
 
@@ -88,7 +88,7 @@ class JFormFieldModal_Venue extends FormField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'venue-modal',
-            array(
+            array(        
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',

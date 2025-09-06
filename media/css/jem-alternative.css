@@ -1057,7 +1057,7 @@ a.jgrid:hover {
 #jem button[id$="_img"] i.icon-calendar,
 #jem button[id$="_img"] span.icon-calendar,
 #jem button[id$="_btn"] span.icon-calendar {
-    background-image: url(../images/el.png);
+    background-image: url(../images/el.webp);
 }
 
 .jgrid span.text {
@@ -1066,88 +1066,88 @@ a.jgrid:hover {
 
 #jem .btn-micro i.icon-publish,
 .jgrid span.publish {
-    background-image: url(../images/tick.png);
+    background-image: url(../images/tick.webp);
 }
 
 #jem .btn-micro i.icon-unpublish,
 .jgrid span.unpublish {
-    background-image: url(../images/publish_x.png);
+    background-image: url(../images/publish_x.webp);
 }
 
 #jem .btn-micro i.icon-archive,
 .jgrid span.archive {
-    background-image: url(../images/menu/icon-16-archive.png);
+    background-image: url(../images/menu/icon-16-archive.webp);
 }
 
 #jem .btn-micro i.icon-trash,
 .jgrid span.trash {
-    background-image: url(../images/icon-16-trash.png);
+    background-image: url(../images/icon-16-trash.webp);
 }
 
 .jgrid span.default {
-    background-image: url(../images/menu/icon-16-default.png);
+    background-image: url(../images/menu/icon-16-default.webp);
 }
 
 .jgrid span.notdefault {
-    background-image: url(../images/menu/icon-16-notdefault.png);
+    background-image: url(../images/menu/icon-16-notdefault.webp);
 }
 
 .jgrid span.checkedout {
-    background-image: url(../images/admin/checked_out.png);
+    background-image: url(../images/admin/checked_out.webp);
 }
 
 .jgrid span.downarrow {
-    background-image: url(../images/admin/downarrow.png);
+    background-image: url(../images/admin/downarrow.webp);
 }
 
 .jgrid span.downarrow_disabled {
-    background-image: url(../images/admin/downarrow0.png);
+    background-image: url(../images/admin/downarrow0.webp);
     background-position: 0 -12px;
 }
 
 .jgrid span.uparrow {
-    background-image: url(../images/admin/uparrow.png);
+    background-image: url(../images/admin/uparrow.webp);
 }
 
 .jgrid span.uparrow_disabled {
-    background-image: url(../images/admin/uparrow0.png);
+    background-image: url(../images/admin/uparrow0.webp);
     background-position: 0 -12px;
 }
 
 .jgrid span.published {
-    background-image: url(../images/admin/publish_g.png);
+    background-image: url(../images/admin/publish_g.webp);
 }
 
 .jgrid span.expired {
-    background-image: url(../images/admin/publish_r.png);
+    background-image: url(../images/admin/publish_r.webp);
 }
 
 .jgrid span.pending {
-    background-image: url(../images/admin/publish_y.png);
+    background-image: url(../images/admin/publish_y.webp);
 }
 
 .jgrid span.warning {
-    background-image: url(../images/admin/publish_y.png);
+    background-image: url(../images/admin/publish_y.webp);
 }
 
 .jgrid span.protected {
-    background-image: url(../images/admin/icon-16-protected.png);
+    background-image: url(../images/admin/icon-16-protected.webp);
 }
 
 #jem .btn-micro span.icon-publish:before {
-    content: url(../images/tick.png);
+    content: url(../images/tick.webp);
 }
 
 #jem .btn-micro span.icon-unpublish:before {
-    content: url(../images/publish_x.png);
+    content: url(../images/publish_x.webp);
 }
 
 #jem .btn-micro span.icon-archive:before {
-    content: url(../images/menu/icon-16-archive.png);
+    content: url(../images/menu/icon-16-archive.webp);
 }
 
 #jem .btn-micro span.icon-trash:before {
-    content: url(../images/icon-16-trash.png);
+    content: url(../images/icon-16-trash.webp);
 }
 
 
@@ -1295,44 +1295,44 @@ div#jem .inline-button-right {
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .category::before {
-        content: url("../images/category.png");
+        content: url("../images/category.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .venue::before {
-        content: url("../images/venue.png");
+        content: url("../images/venue.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .city::before,
     #jem div.eventtable [class*="sectiontableentry"] .state::before,
     #jem div.eventtable [class*="sectiontableentry"] .country::before {
-        content: url("../images/blank.png");
+        content: url("../images/blank.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .users::before {
-        content: url("../images/users.png");
+        content: url("../images/users.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .user::before {
-        content: url("../images/user.png");
+        content: url("../images/user.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .email::before {
-        content: url("../images/emailButton.png");
+        content: url("../images/emailButton.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .date::before {
-        content: url("../images/el.png");
+        content: url("../images/el.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .status::before {
-        content: url("../images/icon-16-info.png");
+        content: url("../images/icon-16-info.webp");
         padding-right: 4px;
     }
 
@@ -1346,12 +1346,12 @@ div#jem .inline-button-right {
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .comment::before {
-        content: url("../images/edit.png");
+        content: url("../images/edit.webp");
         padding-right: 4px;
     }
 
     #jem div.eventtable [class*="sectiontableentry"] .remove::before {
-        content: url("../images/icon-16-warning.png");
+        content: url("../images/icon-16-warning.webp");
         padding-right: 4px;
     }
 
@@ -1466,7 +1466,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .category::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .category::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .category::before {
-        content: url("../images/category.png");
+        content: url("../images/category.webp");
         padding-right: 4px;
     }
 
@@ -1474,7 +1474,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .venue::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .venue::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .venue::before {
-        content: url("../images/venue.png");
+        content: url("../images/venue.webp");
         padding-right: 4px;
     }
 
@@ -1482,7 +1482,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .users::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .users::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .users::before {
-        content: url("../images/users.png");
+        content: url("../images/users.webp");
         padding-right: 4px;
     }
 
@@ -1490,7 +1490,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .user::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .user::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .user::before {
-        content: url("../images/user.png");
+        content: url("../images/user.webp");
         padding-right: 4px;
     }
 
@@ -1498,7 +1498,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .email::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .email::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .email::before {
-        content: url("../images/emailButton.png");
+        content: url("../images/emailButton.webp");
         padding-right: 4px;
     }
 
@@ -1506,7 +1506,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .date::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .date::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .date::before {
-        content: url("../images/el.png");
+        content: url("../images/el.webp");
         padding-right: 4px;
     }
 
@@ -1514,7 +1514,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .status::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .status::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .status::before {
-        content: url("../images/icon-16-info.png");
+        content: url("../images/icon-16-info.webp");
         padding-right: 4px;
     }
 
@@ -1529,7 +1529,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .comment::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .comment::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .comment::before {
-        content: url("../images/edit.png");
+        content: url("../images/edit.webp");
         padding-right: 4px;
     }
 
@@ -1537,7 +1537,7 @@ div#jem .inline-button-right {
     #content.span5 #jem div.eventtable [class*="sectiontableentry"] .remove::before,
     #content.span6 #jem div.eventtable [class*="sectiontableentry"] .remove::before,
     #content.span7 #jem div.eventtable [class*="sectiontableentry"] .remove::before {
-        content: url("../images/icon-16-warning.png");
+        content: url("../images/icon-16-warning.webp");
         padding-right: 4px;
     }
 

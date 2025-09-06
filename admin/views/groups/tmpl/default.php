@@ -27,12 +27,12 @@ $params        = (isset($this->state->params)) ? $this->state->params : new CMSO
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-11">
+                <div class="col-md-11">        
                     <div class="row mb-12">
                         <div class="col-md-4">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
-
+                            <div class="input-group">  
+                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >                                            
+                        
                                 <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
                                     <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
                                 </button>
@@ -41,7 +41,7 @@ $params        = (isset($this->state->params)) ? $this->state->params : new CMSO
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1">                
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="float-end">
@@ -100,9 +100,9 @@ $params        = (isset($this->state->params)) ? $this->state->params : new CMSO
             <?php endforeach; ?>
             </tbody>
         </table>
-
+            
         <div class="ms-auto mb-4 me-0">
-            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
+            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
         </div>
     </div>
 

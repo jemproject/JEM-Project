@@ -106,7 +106,7 @@ class JemModelVenues extends ListModel
                         .'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
                         .'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
                         .'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
-                        .'a.ordering, a.publish_up, a.publish_down'
+                        .'a.ordering, a.publish_up, a.publish_down, a.access'
                 )
         );
         $query->from($db->quoteName('#__jem_venues').' AS a');
@@ -127,6 +127,10 @@ class JemModelVenues extends ListModel
         $query->select('COUNT(e.locid) AS assignedevents');
         $query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
         $query->group('a.id');
+
+        // Join over the asset groups.
+        $query->select('ag.title AS access_level');
+        $query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
 
         // Filter by published state
         $published = $this->getState('filter_state');

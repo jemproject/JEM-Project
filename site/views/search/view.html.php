@@ -33,7 +33,7 @@ class JemViewSearch extends JemView
         $params       = $app->getParams();
         $uri          = Uri::getInstance();
         $pathway      = $app->getPathWay();
-        $url          = Uri::root();
+        $url           = Uri::root();
         $model        = $this->getModel('search');
         //    $user     = JemFactory::getUser();
 

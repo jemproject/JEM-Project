@@ -18,7 +18,7 @@ $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
         $wa->useScript('keepalive')
             ->useScript('form.validate');
-
+        
 
 // Create shortcut to parameters.
 $params        = $this->params;
@@ -30,7 +30,7 @@ $params        = $this->params;
             $(".sbmit-btn").prop('disabled',true);
             $(".sbmit-btn .spinner-border").removeClass('d-none');
             Joomla.submitform(task);
-        }
+        } 
     }
 </script>
 

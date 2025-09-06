@@ -70,7 +70,7 @@ $wa->addInlineScript('
             <tr>
                 <td style="width: 100%;">
                     <?php echo Text::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
-                    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+                    <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" onChange="document.adminForm.submit();" />
                     <button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                     <button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 </td>
@@ -137,7 +137,7 @@ $wa->addInlineScript('
                     <?php endif; ?>
                     <td class="center">
                         <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">
-                            <?php echo HTMLHelper::_('image','com_jem/publish_r.png',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
+                            <?php echo HTMLHelper::_('image','com_jem/publish_r.webp',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
                         </a>
                     </td>
                     <td class="center">

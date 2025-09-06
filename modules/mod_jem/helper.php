@@ -146,7 +146,7 @@ abstract class ModJemHelper
             $lists[$i]->country    = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->venueurl   = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
             $lists[$i]->featured   = $row->featured;
-
+            
             # provide custom fields
             for ($n = 1; $n <= 10; ++$n) {
                 $var = 'custom'.$n;

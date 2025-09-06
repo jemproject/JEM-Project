@@ -12,8 +12,10 @@ include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
 
 $result .= '<div class="acymailing_content">';
 $result .= '<p>';
-$result .= JemOutput::formatShortDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
-$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
+$result .= JemOutput::formatShortDateTime($event->dates, $event->times,
+                                          $event->enddates, $event->endtimes);
+$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times,
+                                              $event->enddates, $event->endtimes);
 $result .= '</p>';
 
 $link = JemHelperRoute::getEventRoute($event->slug);
@@ -31,17 +33,17 @@ $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 //$result .= '</p>';
 //$result .= '<p>';
 //
-//$result .= '<br />'.$event->introtext.'</p>';
+//$result .= '<br/>'.$event->introtext.'</p>';
 //if ( $event->locid ) {
 //    $result .= '<div class="venue" style="display:block;float:left;width:200px;">';
 //    $result .= '<p>';
-//    $result .= '<br /><strong>Venue:</strong> ';
+//    $result .= '<br/><strong>Venue:</strong> ';
 //    $result .='&nbsp;';
 //    $link = JemHelperRoute::getVenueRoute($event->venueslug);
 //    $result .= $event->locid != 0 ? "<a href='".acymailing_frontendLink($link)."'>".$event->venue."</a>" : '';
-//    $result .= !empty($event->street) ? '<br />'.$event->street : '';
-//    $result .= !empty($event->city) ? '<br />'. $event->city : '';
-//    $result .= !empty($event->postalcode) ? '<br />'. $event->postalcode : '';
+//    $result .= !empty($event->street) ? '<br/>'.$event->street : '';
+//    $result .= !empty($event->city) ? '<br/>'. $event->city : '';
+//    $result .= !empty($event->postalcode) ? '<br/>'. $event->postalcode : '';
 //    $result .= '</p>';
 //    $result .= '</div>';
 //}
@@ -53,15 +55,15 @@ $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 //$item = $menu->getItems('link', $needle, true);
 //$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 //
-//$result .= '<br /><strong>Contact: </strong><a href="'.$cntlink2.'">'.$contact.'</a>';
+//$result .= '<br/><strong>Contact: </strong><a href="'.$cntlink2.'">'.$contact.'</a>';
 //if (!empty($event->conemail_to)) {
-//    $result .= '<br /><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
+//    $result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 //}
 //if (!empty($event->contelephone)) {
-//    $result .= '<br />tel:'.$event->contelephone;
+//    $result .= '<br/>tel:'.$event->contelephone;
 //}
 //if (!empty($event->conmobile)) {
-//    $result .= '<br />mob:'.$event->conmobile;
+//    $result .= '<br/>mob:'.$event->conmobile;
 //}
 //$result .= '</p>';
 //$result .= '</div>';
