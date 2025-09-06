@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -84,6 +85,25 @@ use Joomla\CMS\HTML\HTMLHelper;
         $eventname  = '<div class="eventName">'.Text::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
         $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
         $eventid = $this->escape($row->id);
+
+        //Contact
+        $contactname = '';
+        if($row->contactid) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true);
+            $query->select('name');
+            $query->from('#__contact_details');
+            $query->where(array('id='.(int)$row->contactid));
+            $db->setQuery($query);
+            $contactname = $db->loadResult();
+        }
+        if ($contactname) {
+            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
+            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
+            $contact .= '</div>';
+        } else {
+            $contact = '';
+        }
 
         //initialize variables
         $multicatname = '';
@@ -268,7 +288,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 $editicon .= '</div>';
             }
         }
-        
+
         //get border for featured event
         $usefeaturedborder = $this->params->get('usefeaturedborder', 0);
         $featuredbordercolor = $this->params->get('featuredbordercolor', 0);
@@ -281,14 +301,15 @@ use Joomla\CMS\HTML\HTMLHelper;
 
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle; 
+        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle;
         if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
-            $content .= '; background-color:'.array_pop($catcolor).'">';
+            $content .= '; background-color:'.array_pop($catcolor);
+            $content .= '" onclick="location.href=\''.$detaillink.'\'">';
         } else {
-            $content .=  '">' . $colorpic;
+            $content .= '" onclick="location.href=\''.$detaillink.'\'">' . $colorpic;
         }
         $content .= $editicon;
-        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
         $content .= $eventaccess . $contentend . '</div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);

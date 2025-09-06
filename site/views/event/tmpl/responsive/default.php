@@ -248,7 +248,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <!--  Contact -->
         <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT') ; ?></h2>
+            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
 
             <dl class="jem-dl">
                 <dt class="con_name hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_NAME'); ?>"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
