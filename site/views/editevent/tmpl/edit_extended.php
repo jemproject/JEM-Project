@@ -197,7 +197,7 @@ use Joomla\CMS\Date\Date;
 
     <!-- CONTACT START -->
     <fieldset class="adminform">
-        <legend><?php echo Text::_('COM_JEM_CONTACT'); ?></legend>
+        <legend><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></legend>
         <ul class="adminformlist">
             <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
         </ul>
