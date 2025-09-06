@@ -14,7 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 <form action="index.php" method="post" name="adminForm" id="adminForm">
     <div class="imghead">
         <?php echo Text::_('COM_JEM_SEARCH').' '; ?>
-        <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->search; ?>" class="text_area form-control inputbox required valid form-control-success w-50"  style="display:inline-block;" onChange="document.adminForm.submit();" />
+        <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->search, ENT_QUOTES, 'UTF-8'); ?>" class="text_area form-control inputbox required valid form-control-success w-50"  style="display:inline-block;" onChange="document.adminForm.submit();" />
         <button class="buttonfilter btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
         <button class="buttonfilter btn btn-primary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>

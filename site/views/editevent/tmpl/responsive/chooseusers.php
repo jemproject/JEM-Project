@@ -65,7 +65,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
                 </div>
                 <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->searchfilter.'&nbsp;'; ?>
-          <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
+          <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onChange="document.adminForm.submit();" />
         </div>
                 <div class="jem-row jem-justify-start jem-nowrap">
           <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="plugin" group="content" method="upgrade">
+<extension type="plugin" group="content" method="upgrade">
     <name>plg_content_jemlistevents</name>
-    <creationDate>May 2025</creationDate>
     <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>www.joomlaeventmanager.net</authorUrl>
+    <creationDate>August 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.3</version>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.3.4</version>
     <description>PLG_CONTENT_JEMLISTEVENTS_XML_INSTRUCTION</description>
 
     <files>
@@ -39,7 +39,7 @@
                     <option value="archived"  >PLG_CONTENT_JEMLISTEVENTS_ARCHIVED_EVENTS</option>
                     <option value="newest"    >PLG_CONTENT_JEMLISTEVENTS_NEWEST_EVENTS</option>
                     <option value="open"      >PLG_CONTENT_JEMLISTEVENTS_OPEN_EVENTS</option>
-                    <option value="all"       >PLG_CONTENT_JEMLISTEVENTS_ALL_EVENTS</option>
+                    <option value="all"    >PLG_CONTENT_JEMLISTEVENTS_ALL_EVENTS</option>
                 </field>
                 <field name="show_featured" type="list"
                     size="1"

@@ -73,7 +73,7 @@ public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', 
  *
  * @return  string   JavaScript command string
  *
- *
+ * 
  */
 protected function _getCommand($name, $task, $list)
 {

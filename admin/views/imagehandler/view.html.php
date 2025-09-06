@@ -68,7 +68,7 @@ class JemViewImagehandler extends HtmlView
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
+        
         // Get images
         $images = $this->get('images');
         $pagination = $this->get('Pagination');
@@ -117,7 +117,7 @@ class JemViewImagehandler extends HtmlView
         $task = Factory::getApplication()->input->get('task', '');
 
         // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();    
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         $ftp = ClientHelper::setCredentialsFromRequest('ftp');

@@ -188,9 +188,12 @@ class JemViewCategory extends JemView
             $children = $this->get('Children');
             $parent   = $this->get('Parent');
 
-            if ($category == false)
-            {
-                throw new Exception(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
+            if (empty($category)) {
+                $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
+                return false;
+            } else if(!$category->user_has_access_category) {
+                $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
+                return false;
             }
 
             // are events available?

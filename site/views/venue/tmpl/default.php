@@ -30,6 +30,13 @@ use Joomla\CMS\Language\Text;
     </h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+        <p> </p>
+    <?php endif; ?>
+  
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
     <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
       <h2 class="jem-venue-title">
@@ -126,9 +133,9 @@ use Joomla\CMS\Language\Text;
                 echo JemOutput::mapicon($this->venue, null, $this->settings);
             }
             endif; ?>
-
+            
         </dl>
-        <?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?>
+        <?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?> 
             <div class="jem-map">
                 <?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
             </div>

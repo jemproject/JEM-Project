@@ -18,6 +18,8 @@ use Joomla\CMS\Language\Text;
     <dl class="adminformlist jem-dl">
         <dt><?php echo $this->form->getLabel('published'); ?></dt>
         <dd><?php echo $this->form->getInput('published'); ?></dd>
+        <dt><?php echo $this->form->getLabel('access'); ?></dt>
+        <dd><?php echo $this->form->getInput('access'); ?></dd>
     </dl>
 </fieldset>
 

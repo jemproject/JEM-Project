@@ -55,6 +55,7 @@ class JemModelVenues extends JemModelEventslist
     {
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
+        $jemsettings = JemHelper::config();
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -70,7 +71,7 @@ class JemModelVenues extends JemModelEventslist
 
         $query->select(array('l.id AS locid', 'l.locimage', 'l.locdescription', 'l.url', 'l.venue', 'l.created', 'l.created_by',
                              'l.street', 'l.postalCode', 'l.city', 'l.state', 'l.country',
-                             'l.map', 'l.latitude', 'l.longitude', 'l.published',
+                             'l.map', 'l.latitude', 'l.longitude', 'l.published', 'l.access',
                              'l.custom1', 'l.custom2', 'l.custom3', 'l.custom4', 'l.custom5', 'l.custom6', 'l.custom7', 'l.custom8', 'l.custom9', 'l.custom10',
                              'l.meta_keywords', 'l.meta_description', 'l.checked_out', 'l.checked_out_time'));
         $query->select(array($case_when_l));
@@ -79,7 +80,20 @@ class JemModelVenues extends JemModelEventslist
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
         $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
+        $case_when_a  = ' CASE WHEN ';
+        $case_when_a .= " l.access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= ' THEN 1 ';
+        $case_when_a .= ' ELSE 0 ';
+        $case_when_a .= ' END as user_has_access_venue';
+
+        $query->select(array($case_when_a));
+
         // where
+
+        ####################
+        ## FILTER-PUBLISH ##
+        ####################
+
         $where = array();
         // all together: if published or the user is creator of the venue or allowed to edit or publish venues
         if (empty($user->id)) {
@@ -92,6 +106,19 @@ class JemModelVenues extends JemModelEventslist
         // user maybe creator
         else {
             $where[] = ' (l.published = 1 OR (l.published = 0 AND l.created_by = ' . $this->_db->Quote($user->id) . '))';
+        }
+
+        ###################
+        ## FILTER-ACCESS ##
+        ###################
+
+        # Filter by access level - public or with access_level_locked_venues active.
+        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $query->where('l.access IN ('.implode(',', $newlevels).')');
+        } else {
+            $query->where('l.access IN ('.implode(',', $levels).')');
         }
 
         $query->where($where);

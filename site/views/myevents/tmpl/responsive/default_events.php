@@ -121,7 +121,7 @@ use Joomla\CMS\Router\Route;
       display: none;
     <?php endif; ?>
   }
-
+  
   #jem .jem-event .jem-myevents-check {
     flex: 0 1%;
   }
@@ -141,7 +141,7 @@ use Joomla\CMS\Router\Route;
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <?php echo $this->lists['filter']; ?>
-          <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
+          <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
           <button class="buttonfilter btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -153,7 +153,7 @@ use Joomla\CMS\Router\Route;
         <?php echo $this->events_pagination->getLimitBox(); ?>
         </div>
         <?php endif; ?>
-            </div>
+            </div>   
         <?php endif; ?>
   <?php endif; ?>
 
@@ -165,9 +165,9 @@ use Joomla\CMS\Router\Route;
         </div>
       <?php endif; ?>
       <div id="jem_date" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php if ($this->jemsettings->showtitle == 1) : ?>
+      <?php if ($this->jemsettings->showtitle == 1) : ?>              
         <div id="jem_title" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php endif; ?>
+      <?php endif; ?> 
       <?php if ($this->jemsettings->showlocate == 1) : ?>
         <div id="jem_location" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
@@ -179,14 +179,14 @@ use Joomla\CMS\Router\Route;
       <?php endif; ?>
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php endif; ?>
+      <?php endif; ?> 
       <?php if ($this->jemsettings->showatte == 1) : ?>
                 <div id="jem_atte" class="sectiontableheader">&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
       <div class="jem-myevents-status" ><?php echo Text::_('JSTATUS'); ?></div>
-    </div>
+    </div>    
   </div>
-
+  
     <ul class="eventlist jem-myevents">
         <?php if (count((array)$this->events) == 0) : ?>
             <li class="jem-event"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></li>
@@ -196,7 +196,7 @@ use Joomla\CMS\Router\Route;
           <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php else : ?>
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
-                <?php endif; ?>
+                <?php endif; ?>  
             <?php /*<div><?php echo $this->events_pagination->getRowOffset( $i ); ?></div>*/ ?>
 
             <?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
@@ -243,13 +243,13 @@ use Joomla\CMS\Router\Route;
                     <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
                   <?php else : ?>
                     <?php echo $this->escape($row->venue); ?>
-                  <?php endif; ?>
+                  <?php endif; ?>                  
                 </div>
               <?php else : ?>
                 <div class="jem-event-info-small jem-event-venue">
                   <i class="fa fa-map-marker" aria-hidden="true"></i> -
                 </div>
-              <?php endif; ?>
+              <?php endif; ?>                
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcity == 1) : ?>

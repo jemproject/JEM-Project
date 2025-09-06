@@ -27,7 +27,7 @@ use Joomla\CMS\Session\Session;
         <tbody>
         <?php foreach ($this->row->attachments as $file): ?>
             <tr>
-                <td><?php echo wordwrap($file->file, 30, "<br />", true); ?><input style="width:200px" type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
+                <td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input style="width:200px" type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
                 <td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" style="width:100px" /></td>
                 <td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" style="width:100px" /></td>
                 <td><?php echo HTMLHelper::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox','style'=>'width:100px;','size'=>'3'), 'value', 'text', $file->access); ?></td>

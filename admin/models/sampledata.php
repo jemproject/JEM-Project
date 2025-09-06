@@ -5,7 +5,7 @@
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-
+ 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -116,7 +116,7 @@ class JemModelSampledata extends BaseDatabaseModel
         $archive = Path::clean($archive);
 
         // extract archive
-
+    
         try {
             $archiveObj = new Archive(array('tmp_path' => Factory::getApplication()->get('tmp_path')));
             $result = $archiveObj->extract($archive, $extractdir);
@@ -145,7 +145,7 @@ class JemModelSampledata extends BaseDatabaseModel
         }
         $filelist['files'] = $files;
         $filelist['folder'] = $extractdir;
-
+        
         return $filelist;
     }
 
@@ -246,15 +246,40 @@ class JemModelSampledata extends BaseDatabaseModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 
-        $query->select("id");
+        $query->select("id, catname");
         $query->from('#__jem_categories');
         $query->where('alias NOT LIKE "root"');
         $db->setQuery($query);
-        $result = $db->loadResult();
+        $result = $db->loadObjectList();
 
         if ($result == null) {
             return false;
         }
+
+        // Detect if JEM is installed by default (only Uncategorised category without events)
+        if(count($result) == 1 && $result[0]->catname == 'Uncategorised') {
+            // Check if category has any events
+            $query = $db->getQuery(true);
+            $query->select("id");
+            $query->from('#__jem_cats_event_relations');
+            $query->where('catid=' . $db->quote($result[0]->id));
+            $db->setQuery($query);
+            $events = $db->loadObjectList();
+
+            if(empty($events)){
+                //Delete Uncategorised category before load demo data
+                $query = $db->getQuery(true);
+                $query->delete('#__jem_categories');
+                $query->where('catname=' . $db->quote($result[0]->catname));
+                $db->setQuery($query);
+                $db->execute();
+
+                return false;
+            }
+
+            return true;
+        }
+
         return true;
     }
 

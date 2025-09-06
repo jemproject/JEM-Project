@@ -162,7 +162,7 @@ abstract class ModJemTeaserHelper
 
         $color = $params->get('color');
         $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
-        $fallback_color_is_dark = self::_is_dark($fallback_color);
+        $fallback_color_is_dark = self::_is_dark($fallback_color);    
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -228,16 +228,16 @@ abstract class ModJemTeaserHelper
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
             if ($dimage == null) {
-                $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.png';
-                $lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
+                $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.webp';
             } else {
                 $lists[$i]->eventimage     = Uri::base(true).'/'.$dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true).'/'.$dimage['original'];
             }
 
             if ($limage == null) {
-                $lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.png';
-                $lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
+                $lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.webp';
+                $lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.webp';
             } else {
                 $lists[$i]->venueimage     = Uri::base(true).'/'.$limage['thumb'];
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
@@ -248,7 +248,7 @@ abstract class ModJemTeaserHelper
         $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
 
         # strip html tags but leave <br /> tags
-        $description = strip_tags($description, "<br />");
+        $description = strip_tags($description, "<br>");
 
         # switch <br /> tags to space character
         if ($params->get('br') == 0) {
@@ -267,7 +267,7 @@ abstract class ModJemTeaserHelper
         if (empty($description)) {
           $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
         } else {
-          $lists[$i]->eventdescription = $description;
+          $lists[$i]->eventdescription = $description;          
         }
       }
 
@@ -294,6 +294,11 @@ abstract class ModJemTeaserHelper
                     $lists[$i]->color_is_dark = $fallback_color_is_dark;
                 }
             }
+
+            # user has access
+            $lists[$i]->user_has_access_category = $row->user_has_access_category;
+            $lists[$i]->user_has_access_event = $row->user_has_access_event;
+            $lists[$i]->user_has_access_venue = $row->user_has_access_venue;
 
             # provide custom fields
             for ($n = 1; $n <= 10; ++$n) {
