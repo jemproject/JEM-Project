@@ -6,7 +6,7 @@ INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level
 INSERT INTO `#__jem_config` (`keyname`, `value`, `access`) VALUES ('access_level_locked_categories', '[\"1\"]', '0');
 
 -- change values
-UPDATE `#__jem_config` SET `value` = 'media/com_jem/images/flags/w20-webp/' WHERE `keyname` = 'flagicons_path';
+UPDATE `#__jem_config` SET `value` = 'media/com_jem/images/flags/w80-webp/' WHERE `keyname` = 'flagicons_path' AND (`value` = 'media/com_jem/images/flags/w20-png/' OR `value` = 'media/com_jem/images/flags/w20-webp/');
 
 -- update values
 
