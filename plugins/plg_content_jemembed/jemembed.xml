@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="plugin" group="content" method="upgrade">
+<extension type="plugin" group="content" method="upgrade">
 	<name>plg_content_jemembed</name>
 	<creationDate>March 2025</creationDate>
 	<author>JEM Community</author>
@@ -23,10 +23,6 @@
         <language tag="en-GB">language/en-GB/plg_content_jemembed.ini</language>
         <language tag="en-GB">language/en-GB/plg_content_jemembed.sys.ini</language>
     </languages>
-    
-    <media destination="plg_content_jemembed" folder="media">
-        <folder>css</folder>
-    </media>
     
     <config>
         <fields name="params">
