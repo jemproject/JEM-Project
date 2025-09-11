@@ -293,6 +293,11 @@ div#jem .jcomments dd {
     margin-left: 0px;
 }
 
+div#jem dd .venue_country_flag {
+    width: 20px;
+    height: auto;
+}
+
 div#jem div.description {
     margin: 5px 0;
     padding: 0 5px;

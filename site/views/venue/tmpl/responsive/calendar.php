@@ -8,10 +8,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
-
+use Joomla\CMS\Factory;
 ?>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -92,6 +92,25 @@ use Joomla\CMS\Language\Text;
         $eventname  = '<div class="eventName">'.Text::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
         $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
         $eventid = $this->escape($row->id);
+
+        //Contact
+        $contactname = '';
+        if($row->contactid) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true);
+            $query->select('name');
+            $query->from('#__contact_details');
+            $query->where(array('id='.(int)$row->contactid));
+            $db->setQuery($query);
+            $contactname = $db->loadResult();
+        }
+        if ($contactname) {
+            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
+            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
+            $contact .= '</div>';
+        } else {
+            $contact = '';
+        }
 
         //initialize variables
         $multicatname = '';
@@ -289,7 +308,7 @@ use Joomla\CMS\Language\Text;
             $content .= '" onclick="location.href=\''.$detaillink.'\'">' . $colorpic;
         }
         $content .= $editicon;
-        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
         $content .= $eventaccess . $contentend . '</div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);

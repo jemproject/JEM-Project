@@ -521,9 +521,8 @@ class JemModelEventslist extends ListModel
         $cal_to      = $this->getState('filter.calendar_to');
         $cal_month   = $this->getState('filter.filter_month');
         if ($cal_month) {
-            $cal_month = DateTime::createFromFormat('Y-m', $cal_month);
-            $filter_date_from = $cal_month->format('Y-m-01');
-            $filter_date_to = $cal_month->modify('last day of this month')->format('Y-m-d');
+            $filter_date_from = $cal_month . '-01';
+            $filter_date_to = date("Y-m-t", strtotime($filter_date_from));
 
             $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $filter_date_from .'") >= 0';
             $this->setState('filter.calendar_from',$where);
@@ -533,15 +532,14 @@ class JemModelEventslist extends ListModel
 
             $cal_from = $this->getState('filter.calendar_from');
             $cal_to   = $this->getState('filter.calendar_to');
+        }
 
+        if ($cal_from) {
+            $query->where($cal_from);
+        }
 
-            if ($cal_from) {
-                $query->where($cal_from);
-            }
-
-            if ($cal_to) {
-                $query->where($cal_to);
-            }
+        if ($cal_to) {
+            $query->where($cal_to);
         }
 
         #############################
