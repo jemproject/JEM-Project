@@ -41,7 +41,7 @@ class JemController extends BaseController
         $user       = JemFactory::getUser();
         $input      = $app->input;
 
-        // AJAX Request für Load More
+        // AJAX Request for Load More
         if ($input->get('format') === 'json' && $input->server->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') {
             $this->loadMore();
             return;
@@ -130,7 +130,12 @@ class JemController extends BaseController
         $limit = $input->getInt('limit', 10);
         $viewName = $input->getCmd('view', 'eventslist');
         
-        // Model je nach View laden
+        // Get already displayed months from frontend (as array)
+        $displayedMonths = $input->get('displayedMonths', array(), 'array');
+        // Ensure it's an array and decode HTML entities
+        $displayedMonths = array_map('html_entity_decode', (array)$displayedMonths);
+        
+        // Load model according to view
         $model = $this->getModel($viewName);
         if (!$model) {
             $model = $this->getModel('eventslist');
@@ -139,19 +144,21 @@ class JemController extends BaseController
         $result = $model->getEventsAjax($offset, $limit);
         
         if (!empty($result['items'])) {
-            // Template für einzelne Events rendern
-            $html = $this->renderEventItems($result['items']);
+            // Render template for individual events - pass displayedMonths
+            $renderResult = $this->renderEventItems($result['items'], $displayedMonths);
             
             echo json_encode([
-                'html' => $html,
+                'html' => $renderResult['html'],
                 'hasMore' => $result['hasMore'],
-                'total' => $result['total']
+                'total' => $result['total'],
+                'displayedMonths' => $renderResult['displayedMonths'] // Return updated months to frontend
             ]);
         } else {
             echo json_encode([
                 'html' => '',
                 'hasMore' => false,
-                'total' => 0
+                'total' => 0,
+                'displayedMonths' => $displayedMonths
             ]);
         }
         
@@ -161,16 +168,16 @@ class JemController extends BaseController
     /**
      * Render Event Items for AJAX
      */
-    private function renderEventItems($items)
+    private function renderEventItems($items, $displayedMonths = array())
     {
         ob_start();
         
-        // Benötigte Variablen für das Template
+        // Necessary Variables for Template
         $app = Factory::getApplication();
         $params = $app->getParams();
         $jemsettings = JemHelper::config();
         
-        // Parameter für Icons
+        // Parameters for Icons
         $paramShowIconsOrder = $params->get('showiconsinorder', 1);
         $showiconsineventtitle = $params->get('showiconsineventtitle', 1);
         $showiconsineventdata = $params->get('showiconsineventdata', 1);
@@ -183,22 +190,25 @@ class JemController extends BaseController
         }
         
         $showMonthRow = false;
-        $previousYearMonth = '';
         $uri = Uri::getInstance();
         
         foreach ($items as $row) : ?>
             <?php
             if ($paramShowMonthRow && $row->dates) {
-                //get event date
+                // Get event date
                 $year = date('Y', strtotime($row->dates));
                 $month = date('F', strtotime($row->dates));
                 $YearMonth = Text::_('COM_JEM_'.strtoupper ($month)) . ' ' . $year;
 
-                if (!$previousYearMonth || $previousYearMonth != $YearMonth) {
+                // Check if this month was already displayed
+                if (!in_array($YearMonth, $displayedMonths)) {
                     $showMonthRow = $YearMonth;
+                    $displayedMonths[] = $YearMonth; // Add to list
+                } else {
+                    $showMonthRow = false;
                 }
 
-                //Publish month row
+                // Publish month row
                 if ($showMonthRow) { ?>
                     <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><span class="row-month"><?php echo $showMonthRow;?></span></li>
                 <?php }
@@ -351,13 +361,6 @@ class JemController extends BaseController
                 <?php endif; ?>
             </div>
 
-            <?php
-            if ($paramShowMonthRow) {
-                $previousYearMonth = $YearMonth ?? '';
-                $showMonthRow = false;
-            }
-            ?>
-
             <meta itemprop="name" content="<?php echo htmlspecialchars($row->title); ?>"/>
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -388,11 +391,17 @@ class JemController extends BaseController
             </li>
         <?php endforeach;
         
-        return ob_get_clean();
+        $html = ob_get_clean();
+        
+        // Return both HTML and the updated displayedMonths
+        return array(
+            'html' => $html,
+            'displayedMonths' => $displayedMonths
+        );
     }
 
     /**
-     * for attachment downloads
+     * For attachment downloads
      */
     public function getfile()
     {
@@ -413,7 +422,7 @@ class JemController extends BaseController
     /**
      * Delete attachment
      *
-     * @return true on sucess
+     * @return true on success
      * @access public
      */
     public function ajaxattachremove()

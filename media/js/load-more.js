@@ -13,19 +13,35 @@ jQuery(document).ready(function($) {
     const textLoading = $loadMoreBtn.data('text-loading') || 'Loading...';
     const textLoadMore = $loadMoreBtn.data('text-loadmore') || 'Load More';
     let isLoading = false;
+    
+    // Array for already displayed months
+    let displayedMonths = [];
+    
+    // Initialize displayed months by collecting already visible month rows on page load
+    function initDisplayedMonths() {
+        $('.eventlist .row-month').each(function() {
+            const monthText = $(this).text().trim();
+            if (monthText && !displayedMonths.includes(monthText)) {
+                displayedMonths.push(monthText);
+            }
+        });
+    }
+    
+    // Collect already visible months on page start
+    initDisplayedMonths();
 
-    // Funktion für das animierte Einblenden der Events
+    // Function for animated fade-in of events
     function animateEvents($newEvents, delay = 20) {
         $newEvents.each(function(index) {
             const $event = $(this);
-            // Events initial verstecken
+            // Initially hide events
             $event.css({
                 'opacity': '0',
                 'transform': 'translateY(-40px)',
                 'transition': 'opacity 0.3s ease, transform 0.3s ease'
             });
             
-            // Mit Verzögerung einblenden
+            // Fade in with delay
             setTimeout(function() {
                 $event.css({
                     'opacity': '1',
@@ -44,11 +60,16 @@ jQuery(document).ready(function($) {
             isLoading = true;
             $loadMoreBtn.text(textLoading).prop('disabled', true);
 
-            // Aktuelle URL-Parameter beibehalten
+            // Maintain current URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set('format', 'json');
             urlParams.set('offset', currentOffset + limit);
             urlParams.set('limit', limit);
+            
+            // Add already displayed months as parameters
+            displayedMonths.forEach(function(month, index) {
+                urlParams.append('displayedMonths[' + index + ']', month);
+            });
 
             $.ajax({
                 url: window.location.pathname + '?' + urlParams.toString(),
@@ -59,21 +80,26 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.html && response.html.trim()) {
-                        // HTML in jQuery-Objekt umwandeln
+                        // Convert HTML to jQuery object
                         const $newEvents = $(response.html);
                         
-                        // Neue Events zur Liste hinzufügen (initial versteckt)
+                        // Add new events to list (initially hidden)
                         $eventList.append($newEvents);
                         
-                        // Events animiert einblenden
+                        // Animate events fade-in
                         animateEvents($newEvents);
                         
                         currentOffset += limit;
                         $loadMoreBtn.data('offset', currentOffset);
                         
-                        // Button verstecken wenn keine weiteren Events vorhanden
+                        // Update displayedMonths from server response
+                        if (response.displayedMonths) {
+                            displayedMonths = response.displayedMonths;
+                        }
+                        
+                        // Hide button if no more events available
                         if (!response.hasMore) {
-                            // Button erst nach der Animation verstecken
+                            // Hide button only after animation completes
                             setTimeout(function() {
                                 $loadMoreBtn.hide();
                             }, $newEvents.length * 150 + 200);
