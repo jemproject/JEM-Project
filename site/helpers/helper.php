@@ -1265,9 +1265,9 @@ class JemHelper
 
         if ($href) {
             $href = Route::_ ($href);
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
         } else {
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" title="'.$title.$tooltip.'">'.$text.'</span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'">'.$text.'</span>';
         }
 
         return $tip;
