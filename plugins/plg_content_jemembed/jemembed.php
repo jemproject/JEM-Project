@@ -93,13 +93,13 @@ class PlgContentJemembed extends CMSPlugin
         
         // Get the allowed API tokens from plugin parameters
         $allowedTokens = $this->params->get('api_tokens', '');
-        $tokensList = array_map('trim', explode(',', $allowedTokens));
         
-        // Check if the provided token is in the list of allowed tokens
-        if (in_array($token, $tokensList)) {
-            return true;
-        }
-        
+        $tokensList = array_filter(array_map('trim', explode(',', (string) $allowedTokens)));
+
+		// Nur prüfen, wenn wirklich Tokens vorhanden sind
+		if (!empty($tokensList) && in_array($token, $tokensList, true)) {
+    		return true;
+		}
         return false;
     }
 
