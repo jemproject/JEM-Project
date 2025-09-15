@@ -246,18 +246,18 @@
                     validate="CssIdentifier"
                 />
                 <field name="cache" type="list"
-                    label="MOD_JEM_CACHING"
-                    description="MOD_JEM_CACHING_DESC"
+                    label="MOD_JEM_CAL_CACHING"
+                    description="MOD_JEM_CAL_CACHING_DESC"
                     default="1"
                     filter="integer"
                     validate="options"
-                    >
+                >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>
                 <field name="cache_time" type="number"
-                    label="MOD_JEM_CACHE_TIME"
-                    description="MOD_JEM_CACHE_TIME_DESC"
+                    label="MOD_JEM_CAL_CACHE_TIME"
+                    description="MOD_JEM_CAL_CACHE_TIME_DESC"
                     default="900"
                     filter="integer"
                 />

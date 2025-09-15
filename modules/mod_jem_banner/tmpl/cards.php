@@ -130,7 +130,7 @@ $wa->addInlineStyle($css);
                     </h3>
                     
                     <div class="event-date-container">
-                        <div class="date-box">
+                        <div class="date-box" style="<?php echo "background:" . (isset($item->color)? $item->color : $item->colorclass); ?>";">
                             <div class="date-day"><?php echo $item->startdate['day']; ?></div>
                             <div class="date-month"><?php echo substr($item->startdate['month'], 0, 3); ?></div>
                         </div>

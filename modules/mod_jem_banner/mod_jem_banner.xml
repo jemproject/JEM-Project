@@ -285,7 +285,6 @@
                     description="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX_DESC"
                 />
             </fieldset>
-
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"
                     label="JFIELD_ALT_LAYOUT_LABEL"
@@ -303,9 +302,9 @@
                     default="1"
                     filter="integer"
                     validate="options"
-                >
-                    <option value="1">MOD_JEM_BANNER_USE_GLOBAL</option>
-                    <option value="0">MOD_JEM_BANNER_NO_CACHING</option>
+                    >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>
                 <field name="cache_time" type="number"
                     label="MOD_JEM_BANNER_CACHE_TIME"

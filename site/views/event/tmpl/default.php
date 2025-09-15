@@ -228,7 +228,7 @@ if ($jemsettings->oldevent > 0) {
         <!--  Contact -->
         <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT') ; ?></h2>
+            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
 
             <dl class="location floattext">
                 <dt class="con_name"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
