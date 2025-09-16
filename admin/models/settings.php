@@ -186,59 +186,39 @@ class JemModelSettings extends AdminModel
     {
         $config = new stdClass();
 
-        // Get PHP version and optionally if Magic Quotes are enabled or not
+        // Get PHP version
         $phpversion = phpversion();
-
-        if (version_compare($phpversion, '5.4', '<')) {
-            $quote = (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) ? "enabled" : "disabled";
-        } else { // since PHP 5.4 magic quotes has completely removed
-            $quote = '';
-        }
-
         $config->vs_php = $phpversion;
-        $config->vs_php_magicquotes    = $quote;
 
-        // Get GD version.
+        // Magic quotes have been discontinued since PHP 5.4, so simply leave it blank
+        $config->vs_php_magicquotes = '';
+
+        // Get GD version
         $gd_version = '?';
         if (function_exists('gd_info')) {
             $gd_info = gd_info();
-            if (array_key_exists('GD Version', $gd_info)) {
-                $gd_version = $gd_info['GD Version'];
-            }
-        } else {
-            ob_start();
-            if (phpinfo(INFO_MODULES)) {
-                $info = strip_tags(ob_get_contents());
-            }
-            ob_end_clean();
-            preg_match('/gd support\w*(.*)/i', $info, $gd_sup);
-            preg_match('/gd version\w*(.*)/i', $info, $gd_ver);
-            if (count($gd_ver) > 0) {
-                $gd_version = trim($gd_ver[1]);
-            }
-            if (count($gd_sup) > 0) {
-                $gd_version .= ' (' . trim($gd_sup[1]) . ')';
-            }
+            $gd_version = $gd_info['GD Version'] ?? '?';
         }
-
         $config->vs_gd = $gd_version;
 
         // Get info about all JEM parts
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select(array('name', 'type', 'enabled', 'manifest_cache'));
-        $query->from('#__extensions');
-        $query->where(array('name LIKE "%jem%"'));
+        $query = $db->getQuery(true)
+            ->select(['name', 'type', 'enabled', 'manifest_cache'])
+            ->from('#__extensions')
+            ->where('name LIKE "%jem%"');
         $db->setQuery($query);
         $extensions = $db->loadObjectList('name');
 
-        $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
-                                  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide',
-                                  'plg_content_jem', 'plg_content_jemlistevents',
-                                  'plg_finder_jem', 'plg_search_jem',
-                                  'plg_quickicon_jem', 'Quick Icon - JEM',
-                                  'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
-                                  'AcyMailing Tag : insert events from JEM 2.1+');
+        $known_extensions = [
+            'pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
+            'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide',
+            'plg_content_jem', 'plg_content_jemlistevents',
+            'plg_finder_jem', 'plg_search_jem',
+            'plg_quickicon_jem', 'Quick Icon - JEM',
+            'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
+            'AcyMailing Tag : insert events from JEM 2.1+'
+        ];
 
         foreach ($extensions as $name => $extension) {
             if (in_array($name, $known_extensions)) {
@@ -249,8 +229,6 @@ class JemModelSettings extends AdminModel
                 $config->$name = clone $extension;
             }
         }
-
         return $config;
     }
-
 }
