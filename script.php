@@ -15,8 +15,9 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Installer\InstallerScript;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Version;
+use Joomla\CMS\Uri\Uri;
 
-// For Joomla 6 - new file system classes
+// Joomla 6 - new file system classes
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -66,7 +67,7 @@ class com_jemInstallerScript
 
             // Folder creation
             foreach($createDirs as $directory) {
-                if (@mkdir(JPATH_SITE.$directory, 0755, true)) {
+                if (Folder::create(JPATH_SITE.$directory)) {
                     echo "<li><span style='color:green;'>".Text::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
                         Text::sprintf('COM_JEM_INSTALL_DIRECTORY_CREATED', $directory)."</li>";
                 } else {
@@ -425,11 +426,9 @@ class com_jemInstallerScript
      */
     private function getHeader()
     {
-        ?>
-        <img src="../media/com_jem/images/jemlogo.webp" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;" />
-        <h1><?php echo Text::_('COM_JEM'); ?></h1>
-        <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
-        <?php
+        echo '<img src="' . Uri::root() . 'media/com_jem/images/jemlogo.webp" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;" />';
+        echo '<h1>' . Text::_('COM_JEM') . '</h1>';
+        echo '<p class="small">' . Text::_('COM_JEM_INSTALLATION_HEADER') . '</p>';
     }
 
     /**
@@ -608,22 +607,29 @@ class com_jemInstallerScript
         try {
             foreach ($files as $file) {
                 $fullpath = JPATH_ROOT.$file;
-                if (is_file($fullpath) && !@unlink($fullpath)) {
-                    echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br />';
+                if (is_file($fullpath) && !unlink($fullpath)) {
+                    Factory::getApplication()->enqueueMessage(
+                        Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file),
+                        'error'
+                    );
                     }
                 }
 
             foreach ($folders as $folder) {
                 $fullpath = JPATH_ROOT.$folder;
                 if (is_dir($fullpath) && !Folder::delete($fullpath)) {
-                    echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+                    Factory::getApplication()->enqueueMessage(
+                        Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder),
+                        'error'
+                    );
                     }
                 }
             }
             catch (\Exception $e) {
                 Factory::getApplication()->enqueueMessage(
                 Text::sprintf('COM_JEM_ERROR_DELETING_OBSOLETE_FILES', $e->getMessage()),
-            '    warning');
+                'warning'
+                );
             }
         }
     
