@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_banner</name>
     <author>JEM Community</author>
@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0a</version>
+    <version>5.0.0-alpha</version>
     <description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>

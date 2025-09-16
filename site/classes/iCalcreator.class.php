@@ -9436,7 +9436,7 @@ function iCal2vCards( & $calendar, $version='2.1', $directory=FALSE, $ext='vcf' 
  */
 function iCal2XML( & $calendar ) {
   /** fix an SimpleXMLElement instance and create root element */
-  $xmlstr       = '<?xml version="1.0" encoding="utf-8"?><icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">';
+  $xmlstr       = '<?xml version="1.0" encoding="UTF-8"?><icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">';
   $xmlstr      .= '<!-- created '.gmdate( 'Ymd\THis\Z' );
   $xmlstr      .= ' using kigkonsult.se '.ICALCREATOR_VERSION.' iCal2XMl (rfc6321) -->';
   $xmlstr      .= '</icalendar>';
