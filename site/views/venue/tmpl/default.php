@@ -195,10 +195,10 @@ use Joomla\CMS\Language\Text;
             <?php echo $this->pagination->getPagesLinks(); ?>
         </div>
 
-		<!--iCal-->
-	    <div id="iCal" class="iCal">
-    	    <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
-		 </div>
+        <!--iCal-->
+        <div id="iCal" class="iCal">
+            <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+         </div>
     <?php endif; ?>
 
     <!--copyright-->
