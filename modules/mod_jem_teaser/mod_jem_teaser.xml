@@ -238,21 +238,46 @@
                     description="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX_DESC"
                 />
             </fieldset>
-
             <fieldset name="advanced">
-                <field name="cache" type="list"
-                    default="1"
-                    label="MOD_JEM_TEASER_CACHING"
-                    description="MOD_JEM_TEASER_CACHING_DESC"
-                >
-                    <option value="1">MOD_JEM_TEASER_USE_GLOBAL</option>
-                    <option value="0">MOD_JEM_TEASER_NO_CACHING</option>
-                </field>
-                <field name="cache_time" type="text"
-                    default="900"
-                    label="MOD_JEM_TEASER_CACHE_TIME"
-                    description="MOD_JEM_TEASER_CACHE_TIME_DESC"
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="form-select"
+                    validate="moduleLayout"
                 />
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    description="MOD_JEM_TEASER_CACHING_DESC"
+                    default="1"
+                    filter="integer"
+                    validate="options"
+                >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    description="MOD_JEM_TEASER_CACHE_TIME_DESC"
+                    default="900"
+                    filter="integer"
+                />
+                <field name="cachemode" type="hidden"
+                    default="static"
+                >
+                    <option value="static"></option>
+                </field>
             </fieldset>
         </fields>
     </config>

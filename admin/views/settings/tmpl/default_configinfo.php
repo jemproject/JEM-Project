@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CONFIGINFO'); ?></legend>
-            <br>
+            <br/>
             <table class="adminlist table">
                 <?php
                 $known_extensions = array('pkg_jem'           => 'COM_JEM_MAIN_CONFIG_VS_PACKAGE'

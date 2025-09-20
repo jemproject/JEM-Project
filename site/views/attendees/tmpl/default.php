@@ -96,7 +96,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 &nbsp;
             </div>
-            <br><br><br>
+            <br/><br/><br/>
             <div class="jem_fleft" style="white-space:nowrap;">
                 <?php echo Text::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
             </div>

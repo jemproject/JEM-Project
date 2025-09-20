@@ -273,8 +273,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             if($this->item->reginvitedonly == 1){
                                 if($this->isregistered === 0){
                                     echo $this->loadTemplate('regform');
-                                }  else{
-                                    echo Text::_('COM_JEM_INVITED_USERS_ONLY') . '.<br>' . Text::_('COM_JEM_NOT_INVITED') . '.';
+                                }  else {
+                                    echo Text::_('COM_JEM_INVITED_USERS_ONLY') . '.<br/>' . Text::_('COM_JEM_NOT_INVITED') . '.';
                                 }
                             }
                             break;

@@ -23,7 +23,7 @@ use Joomla\CMS\Date\Date;
             <li id="counter_row" style="display: none;">
                 <?php echo $this->form->getLabel('recurrence_limit_date'); ?>
                 <?php echo $this->form->getInput('recurrence_limit_date', null, $this->item->recurrence_limit_date); ?>
-                <br><div class="recurrence_notice"><small>
+                <br/><div class="recurrence_notice"><small>
                         <?php
                         switch ($this->item->recurrence_type) {
                             case 1:
