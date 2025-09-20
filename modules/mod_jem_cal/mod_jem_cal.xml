@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="2.5" client="site" method="upgrade">
+<extension type="module" client="site" method="upgrade">
     <name>mod_jem_cal</name>
     <author>Toni Smillie, JEM Community</author>
     <authorEmail>toni@qivva.com, info@joomlaeventmanager.net</authorEmail>
