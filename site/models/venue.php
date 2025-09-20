@@ -78,6 +78,9 @@ class JemModelVenue extends JemModelEventslist
         $search = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
         $this->setState('filter.filter_search', $search);
 
+        $month = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_month', 'filter_month', '', 'string');
+        $this->setState('filter.filter_month', $month);
+
         # FilterType
         $filtertype = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
@@ -179,15 +182,35 @@ class JemModelVenue extends JemModelEventslist
     public function getVenue()
     {
         $user   = JemFactory::getUser();
+        $levels = $user->getAuthorisedViewLevels();
+        $jemsettings = JemHelper::config();
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query  = $db->getQuery(true);
 
         $query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
-                       ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
+                       ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, access, '.
                        ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
                        ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
         $query->from($db->quoteName('#__jem_venues'));
+
+        $case_when_a  = ' CASE WHEN ';
+        $case_when_a .= " access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= ' THEN 1 ';
+        $case_when_a .= ' ELSE 0 ';
+        $case_when_a .= ' END as user_has_access_venue';
+
+        $query->select(array($case_when_a));
+
+        # Filter by access level - public or with access_level_locked_venues active.
+        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $query->where('access IN ('.implode(',', $newlevels).')');
+        } else {
+            $query->where('access IN ('.implode(',', $levels).')');
+        }
+
         $query->where('id = '.(int)$this->_id);
 
         // all together: if published or the user is creator of the venue or allowed to edit or publish venues
@@ -207,7 +230,10 @@ class JemModelVenue extends JemModelEventslist
         $_venue = $db->loadObject();
 
         if (empty($_venue)) {
-            $this->setError(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+            return false;
+        }else if(!$_venue->user_has_access_venue) {
+            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
             return false;
         }
 

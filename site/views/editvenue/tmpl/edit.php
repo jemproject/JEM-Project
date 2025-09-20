@@ -253,6 +253,7 @@ window.onload = (event) => {
                     <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
                     <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+                    <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
                 </ul>
             </fieldset>
             <p>&nbsp;</p>
@@ -266,7 +267,8 @@ window.onload = (event) => {
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('map'); ?><?php echo $this->form->getInput('map'); ?></li>
                 </ul>
-
+                        <div class="clr"></div>
+                <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
                 <div class="clr"></div>
                 <div id="mapdiv">
                     <input id="geocomplete" type="text" size="55" placeholder="<?php echo Text::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />

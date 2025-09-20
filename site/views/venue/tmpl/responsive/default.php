@@ -26,6 +26,13 @@ use Joomla\CMS\Language\Text;
     </h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+        <p> </p>
+    <?php endif; ?>
+
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
     <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
       <h2 class="jem-venue-title">
@@ -174,7 +181,6 @@ use Joomla\CMS\Language\Text;
             <?php if ($global_show_mapserv == 3) : ?>
                 <input type="hidden" id="latitude" value="<?php echo $this->venue->latitude; ?>">
                 <input type="hidden" id="longitude" value="<?php echo $this->venue->longitude; ?>">
-
                 <input type="hidden" id="venue" value="<?php echo $this->venue->venue; ?>">
                 <input type="hidden" id="street" value="<?php echo $this->venue->street; ?>">
                 <input type="hidden" id="city" value="<?php echo $this->venue->city; ?>">
@@ -204,14 +210,11 @@ use Joomla\CMS\Language\Text;
         </h2>
         <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
             <?php echo $this->loadTemplate('events_table'); ?>
-
-            <p>
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="view" value="venue" />
             <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
-            </p>
         </form>
 
         <!--pagination-->
@@ -219,7 +222,10 @@ use Joomla\CMS\Language\Text;
             <?php echo $this->pagination->getPagesLinks(); ?>
         </div>
 
-        <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+        <!--iCal-->
+        <div id="iCal" class="iCal">
+            <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+        </div>
     <?php endif; ?>
 
     <!--copyright-->

@@ -99,7 +99,7 @@ function jem_common_show_filter(&$obj)
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" onchange="document.adminForm.submit();" />
+            <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
@@ -170,6 +170,20 @@ function jem_common_show_filter(&$obj)
 
         <?php foreach ($this->rows as $row) : ?>
             <?php
+            // has user access to category of this event
+            if (!$row->user_has_access_category) {
+                // The user has access to the event but doesn't have access to the category, the event doesn't display.
+                continue;
+            }
+
+            // has user access
+            $eventaccess = '';
+            if (!$row->user_has_access_event) {
+                // show a closed lock icon
+                $statusicon = JemOutput::publishstateicon($row);
+                $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+
             if ($paramShowMonthRow && $row->dates) {
                 //get event date
                 $year = date('Y', strtotime($row->dates));
@@ -212,6 +226,7 @@ function jem_common_show_filter(&$obj)
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     </h3>
 
                 <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
@@ -220,6 +235,7 @@ function jem_common_show_filter(&$obj)
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
 
                 <?php elseif (($this->jemsettings->showtitle == 0) && ($this->jemsettings->showdetails == 1)) : // Display date as title of jem-event with link ?>
@@ -235,6 +251,7 @@ function jem_common_show_filter(&$obj)
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
 
                 <?php else : // Display date as title of jem-event without link ?>
@@ -250,6 +267,7 @@ function jem_common_show_filter(&$obj)
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
                 <?php endif; ?>
 
@@ -271,7 +289,7 @@ function jem_common_show_filter(&$obj)
                             <?php echo $this->escape($row->title); ?>
                         </div>
                     <?php endif; ?>
-
+                    <?php if($row->user_has_access_venue) : ?>
                     <?php if (($this->jemsettings->showlocate == 1) && (!empty($row->locid))) : ?>
                         <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
@@ -296,6 +314,7 @@ function jem_common_show_filter(&$obj)
                             <?php echo $this->escape($row->state); ?>
                         </div>
                     <?php endif; ?>
+                    <?php endif; ?>
 
                     <?php if ($this->jemsettings->showcat == 1) : ?>
                         <div class="jem-event-info" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
@@ -303,7 +322,6 @@ function jem_common_show_filter(&$obj)
                             <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
                         </div>
                     <?php endif; ?>
-
 
                     <?php if ($this->jemsettings->showatte == 1) : ?>
                         <?php if (!empty($row->regCount)) : ?>
@@ -377,7 +395,7 @@ function jem_common_show_filter(&$obj)
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
         <div class="jem-row jem-justify-start jem-nowrap">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>

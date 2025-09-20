@@ -202,19 +202,22 @@ if ($jemsettings->oldevent > 0) {
                     if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
                         $link1 = Route::_('index.php?option=com_users&view=login');
                         $link = new Uri($link1);
-                        echo '<p class="readmore"><a href="'.$link.'">';
+                        echo '<p class="readmore">';
+                        echo '<a href="'.$link.'">';
                         if ($params->get('event_alternative_readmore') == false) {
                             echo Text::_('COM_JEM_EVENT_REGISTER_TO_READ_MORE');
                         } elseif ($readmore = $params->get('alternative_readmore')) {
                             echo $readmore;
                         }
+
                         if ($params->get('event_show_readmore_title', 0) != 0) {
                             echo HTMLHelper::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
                         } elseif ($params->get('event_show_readmore_title', 0) == 0) {
                         } else {
                             echo HTMLHelper::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
                         } ?>
-                        </a></p>
+                        </a>
+                        </p>
                         <?php
                     }
                 } /* access_view / show_noauth */
@@ -225,7 +228,7 @@ if ($jemsettings->oldevent > 0) {
         <!--  Contact -->
         <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT') ; ?></h2>
+            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
 
             <dl class="location floattext">
                 <dt class="con_name"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
@@ -260,6 +263,14 @@ if ($jemsettings->oldevent > 0) {
         <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr />
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$this->item->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
 
             <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
@@ -286,9 +297,11 @@ if ($jemsettings->oldevent > 0) {
                         if (!empty($this->item->url)) :
                             echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
                         endif;
+                    echo $venueaccess;
                         ?>
                     </dd>
                 </dl>
+            <?php if($this->item->user_has_access_venue) : ?>
                 <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext" itemprop="address" itemscope
                         itemtype="https://schema.org/PostalAddress">
@@ -392,6 +405,7 @@ if ($jemsettings->oldevent > 0) {
                 <?php echo $this->loadTemplate('attachments'); ?>
 
             </div>
+        <?php endif; ?>
         <?php endif; ?>
 
         <!-- Registration -->

@@ -17,6 +17,7 @@ use Joomla\CMS\Language\Text;
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_PUBLISHING_LEGEND'); ?></legend>
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+                    <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
                 </ul>
             </fieldset>
                 <!-- META -->

@@ -13,7 +13,7 @@ use Joomla\Registry\Registry;
 
 /**
  * Script file of JEM component
-*/
+ */
 class mod_jem_bannerInstallerScript
 {
 

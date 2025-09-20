@@ -90,6 +90,13 @@ function jem_common_show_filter(&$obj) {
             <?php else : ?>
                 <?php $odd = 0; ?>
                 <?php foreach ($this->rows as $row) : ?>
+                    <?php
+                    // has user access
+                    $venueaccess = '';
+                    if (!$row->user_has_access_venue) {
+                        // show a closed lock icon
+                        $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                    } ?>
                     <tr class="venue_id<?php echo $this->escape($row->id); ?>">
                     <?php $odd = 1 - $odd; ?>
                     <td headers="jem_city" style="text-align: left; vertical-align: top;"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
@@ -107,6 +114,7 @@ function jem_common_show_filter(&$obj) {
                             echo $row->id ? $this->escape($row->venue) : '-';
                         endif;
                         echo JemOutput::publishstateicon($row);
+                            echo $venueaccess;
                         ?>
                     </td>
                 </tr>

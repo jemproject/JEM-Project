@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Eventsedit-v2" serif:id="Eventsedit v2">
+            <g>
+                <g>
+                    <path d="M46.264,70.371L66.745,70.371" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+                    <path d="M29.674,73.87C28.736,73.87 27.917,73.522 27.22,72.825C26.523,72.128 26.174,71.31 26.174,70.37C26.174,69.431 26.523,68.613 27.22,67.916C27.917,67.22 28.736,66.871 29.674,66.871C30.613,66.871 31.431,67.22 32.129,67.916C32.826,68.613 33.174,69.431 33.174,70.37C33.174,71.31 32.826,72.128 32.129,72.825C31.431,73.522 30.613,73.87 29.674,73.87Z" style="fill:rgb(249,159,0);fill-rule:nonzero;"/>
+                </g>
+                <g>
+                    <path d="M46.264,55.707L66.745,55.707" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+                    <path d="M29.674,59.206C28.736,59.206 27.917,58.858 27.22,58.161C26.523,57.464 26.174,56.646 26.174,55.706C26.174,54.767 26.523,53.949 27.22,53.253C27.917,52.556 28.736,52.207 29.674,52.207C30.613,52.207 31.431,52.556 32.129,53.253C32.826,53.949 33.174,54.767 33.174,55.706C33.174,56.646 32.826,57.464 32.129,58.161C31.431,58.858 30.613,59.206 29.674,59.206Z" style="fill:rgb(249,159,0);fill-rule:nonzero;"/>
+                </g>
+            </g>
+            <path d="M67.311,10.02L67.311,17.721M28.617,10.02L28.617,17.721M69.308,85.75L19.747,85.75C18.403,85.75 17.114,85.223 16.163,84.286C15.212,83.348 14.678,82.076 14.678,80.75C14.678,68.519 14.678,37.201 14.678,24.971C14.678,23.645 15.212,22.373 16.163,21.435C17.114,20.498 18.403,19.971 19.747,19.971C32.136,19.971 63.843,19.971 76.232,19.971C77.576,19.971 78.865,20.498 79.815,21.435C80.766,22.373 81.3,23.645 81.3,24.971C81.3,34.565 81.3,54.419 81.3,69.077M16.55,40.29L78.813,40.29" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.53px;stroke-linecap:square;stroke-miterlimit:100;"/>
+            <g>
+                <circle cx="81.166" cy="81.611" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                <g transform="matrix(27,0,0,27,89.0077,91.1059)">
+                </g>
+                <text x="73.24px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
+            </g>
+        </g>
+    </g>
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+    </g>
+</svg>

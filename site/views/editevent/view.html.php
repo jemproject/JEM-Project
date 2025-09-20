@@ -81,8 +81,10 @@ class JemViewEditevent extends JemView
         }
 
         if (empty($item->id)) {
+            // Check if the user has access to the form
             $authorised = (bool)$user->can('add', 'event');
         } else {
+            // Check if user can edit
             $authorised = (bool)$item->params->get('access-edit');
         }
 
@@ -95,7 +97,7 @@ class JemViewEditevent extends JemView
         }
 
         // Decide which parameters should take priority
-        $useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
+        $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
             && ($menuitem->query['view']   == 'editevent')
             && (0 == $item->id) && (!isset($_GET['from_id']))); // menu item is always for new event
 
@@ -196,7 +198,7 @@ class JemViewEditevent extends JemView
         $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
-        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
+        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
 
         $this->user = $user;
         $permissions = new stdClass();

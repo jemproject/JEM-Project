@@ -16,11 +16,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Helper\ModuleHelper;
+
+$mod_name = 'mod_jem_cal';
 
 require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
@@ -169,3 +172,4 @@ JemHelper::loadIconFont();
 
 # Render
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+?>

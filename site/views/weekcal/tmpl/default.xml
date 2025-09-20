@@ -7,16 +7,16 @@
     </layout>
 
     <fields name="params">
-        <fieldset name="basic"
-            addfieldpath="/administrator/components/com_jem/models/fields"
-        >
-            <field name="introtext" type="textarea"
-                filter="safehtml"
-                default=""
-                rows="8"
-                cols="30"
-                label="COM_JEM_INTROTEXT_FIELD"
-                description="COM_JEM_INTROTEXT_FIELD_DESC"
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="introtext" type="editor"
+                   filter="safehtml"
+                   hide="readmore,pagebreak,module,menu,fields,contact,article"
+                   default=""
+                   rows="8"
+                   cols="30"
+                   height="300px"
+                   label="COM_JEM_INTROTEXT_FIELD"
+                   description="COM_JEM_INTROTEXT_FIELD_DESC"
             />
             <field name="showintrotext" type="radio"
                 default="0"
@@ -29,10 +29,10 @@
             </field>
             <field type="spacer" name="myspacer2" hr="true" />
             <field name="show_archived_events" type="radio"
-                   default="0"
-                   label="COM_JEM_SHOW_ARCHIVED_EVENTS"
-                   description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
-                   class="btn-group btn-group-yesno"
+                default="0"
+                label="COM_JEM_SHOW_ARCHIVED_EVENTS"
+                description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
+                class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
@@ -136,19 +136,37 @@
                 description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
             />
             <field name="usefeaturedborder" type="radio"
-                   default="0"
-                   label="COM_JEM_CALENDAR_USEFEATUREDBORDER"
-                   description="COM_JEM_CALENDAR_USEFEATUREDBORDER_DESC"
-                   class="btn-group btn-group-yesno"
+                default="0"
+                label="COM_JEM_CALENDAR_USEFEATUREDBORDER"
+                description="COM_JEM_CALENDAR_USEFEATUREDBORDER_DESC"
+                class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
             <field name="featuredbordercolor" type="color"
-                   default="#000080"
-                   label="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR"
-                   description="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR_DESC"
+                default="#000080"
+                label="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR"
+                description="COM_JEM_CALENDAR_FEATUREDBORDERCOLOR_DESC"
             />
+            <field name="recurrenceIconRender" type="radio"
+                   default="0"
+                   label="COM_JEM_CALENDAR_RECURRENCE_ICON_RENDERING"
+                   description="COM_JEM_CALENDAR_RECURRENCE_ICON_RENDERING_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="0">COM_JEM_USE_FONT</option>
+                <option value="1">COM_JEM_USE_IMAGE</option>
+            </field>
+            <field name="categoryColorMarker" type="radio"
+                   default="0"
+                   label="COM_JEM_CALENDAR_CATEGORY_COLOR_MARKER"
+                   description="COM_JEM_CALENDAR_CATEGORY_COLOR_MARKER_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="0">COM_JEM_MARKER_BLOCK</option>
+                <option value="1">COM_JEM_MARKER_TOP_BAR</option>
+            </field>
         </fieldset>
     </fields>
 </metadata>

@@ -29,7 +29,7 @@ class JemImage
         // create a new instance of the class
         $image = new Zebra_Image();
 
-        // indicate a source image (a GIF, PNG or JPEG file)
+        // indicate a source image (a GIF, PNG, JPEG or WEBP file)
         $image->source_path = $name;
 
         // indicate a target image

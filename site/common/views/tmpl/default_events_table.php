@@ -30,7 +30,7 @@ use Joomla\CMS\Router\Route;
         <?php if ($this->settings->get('global_show_filter',1)) : ?>
             <div class="jem_fleft">
                 <?php echo $this->lists['filter'].'&nbsp;'; ?>
-                <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo $this->lists['search'];?>" onchange="document.adminForm.submit();" />
+                <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
                 <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
                 <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
                 <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -114,6 +114,15 @@ use Joomla\CMS\Router\Route;
             <?php $odd = 0; ?>
             <?php foreach ($this->rows as $row) : ?>
                 <?php $odd = 1 - $odd; ?>
+                <?php
+                // has user access
+                $eventaccess = '';
+                if (!$row->user_has_access_event) {
+                    // show a closed lock icon
+                    $statusicon = JemOutput::publishstateicon($row);
+                    $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                }
+                ?>
                 <?php if (!empty($row->featured)) : ?>
                     <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php else : ?>
@@ -153,6 +162,7 @@ use Joomla\CMS\Router\Route;
                         <?php if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
+                        echo $eventaccess;
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
@@ -171,6 +181,7 @@ use Joomla\CMS\Router\Route;
                         if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
+                        echo $eventaccess;
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">

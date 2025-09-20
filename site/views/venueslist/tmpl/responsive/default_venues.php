@@ -68,7 +68,7 @@ function jem_common_show_filter(&$obj) {
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <?php echo $this->lists['filter']; ?>
-      <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
+      <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
     </div>
     <div class="jem-row jem-justify-start jem-nowrap">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -110,6 +110,13 @@ function jem_common_show_filter(&$obj) {
       ?>
             <?php $this->rows = $this->getRows(); ?>
             <?php foreach ($this->rows as $row) : ?>
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$row->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            } ?>
                 <?php if (!empty($row->featured)) :   ?>
                   <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
                 <?php else : ?>
@@ -144,6 +151,7 @@ function jem_common_show_filter(&$obj) {
                             echo $row->id ? $this->escape($row->venue) : '-';
                          endif; ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
+                    <?php echo $venueaccess;?>
                     </div>
                 <?php else : ?>
                   <div class="jem-event-info-small jem-event-venue">
@@ -155,6 +163,7 @@ function jem_common_show_filter(&$obj) {
                             echo $row->id ? $this->escape($row->venue) : '-';
                          endif; ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
+                    <?php echo $venueaccess;?>
                   </div>
                 <?php endif; ?>
 

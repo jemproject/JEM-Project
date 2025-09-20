@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Housekeeping-v2" serif:id="Housekeeping v2">
+            <g>
+                <path d="M64.652,86.002L80.582,86.002C81.809,86.002 82.968,85.439 83.726,84.474C84.485,83.509 84.758,82.25 84.468,81.058C82.713,73.833 79.654,61.243 79.654,61.243C79.654,61.243 79.36,56.856 79.091,52.837C78.845,49.161 75.791,46.305 72.107,46.305C69.299,46.305 61.724,46.305 59.26,46.305M78.654,61.243L50.577,61.243M70.598,86.002L70.598,73.386M50.841,50.369C51.956,47.958 54.394,46.305 57.197,46.305C59.724,46.305 62.017,46.305 62.017,46.305M50.69,61.243L78.767,61.243M58.746,86.002L58.746,73.386M64.652,86.002L48.723,86.002C47.496,86.002 46.337,85.439 45.578,84.474" style="fill:none;stroke:rgb(246,157,0);stroke-width:4px;"/>
+                <path d="M65.08,45.135L65.08,7.147" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-miterlimit:1.5;"/>
+            </g>
+            <g>
+                <path d="M52.683,38.02C52.683,38.02 48.728,69.563 47.25,81.353C46.936,83.854 44.81,85.731 42.29,85.731C36.566,85.733 26.637,85.735 20.912,85.737C18.392,85.737 16.265,83.861 15.95,81.36C14.467,69.568 10.5,38.02 10.5,38.02L52.683,38.02Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:butt;"/>
+                <path d="M39.567,46.035L39.613,51.991C39.613,56.426 36.013,60.026 31.579,60.026C27.144,60.026 23.544,56.426 23.544,51.991L23.544,46.035" style="fill:none;stroke:rgb(114,149,177);stroke-width:4px;stroke-linecap:butt;stroke-miterlimit:1.5;"/>
+                <circle cx="43.485" cy="25.995" r="4.024" style="fill:rgb(114,149,177);"/>
+                <path d="M23.482,9C27.889,9 31.468,12.579 31.468,16.986C31.468,21.394 27.889,24.973 23.482,24.973C19.074,24.973 15.495,21.394 15.495,16.986C15.495,12.579 19.074,9 23.482,9ZM23.482,13.5C21.557,13.5 19.995,15.062 19.995,16.986C19.995,18.91 21.557,20.473 23.482,20.473C25.406,20.473 26.968,18.91 26.968,16.986C26.968,15.062 25.406,13.5 23.482,13.5Z" style="fill:rgb(114,149,177);"/>
+            </g>
+        </g>
+    </g>
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+    </g>
+</svg>

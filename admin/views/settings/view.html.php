@@ -111,7 +111,6 @@ class JemViewSettings extends JemAdminView
     protected function WarningIcon()
     {
         $url = Uri::root();
-        // $tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
         $tip = '<span class="icon-info-circle" aria-hidden="true"></span>';
 
         return $tip;

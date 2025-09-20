@@ -81,6 +81,14 @@ $document->addStyleDeclaration($css);
       }
     ?>
     <?php foreach ($list as $item) : ?>
+                <?php
+                // has user access
+                $eventaccess = '';
+                if (!$item->user_has_access_venue) {
+                    // show a closed lock icon
+                    $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                }
+                ?>
     <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
       <?php echo $titletag; ?>
         <?php if ($item->eventlink) : ?>
@@ -88,6 +96,7 @@ $document->addStyleDeclaration($css);
         <?php else : ?>
           <?php echo $item->title; ?>
         <?php endif; ?>
+                    <?php echo $eventaccess; ?>
       <?php echo $titleendtag; ?>
 
       <div class="jem-row-teaser jem-teaser-event">
@@ -135,6 +144,7 @@ $document->addStyleDeclaration($css);
                 <?php echo $item->time; ?>
               </div>
             <?php */endif; ?>
+                                <?php if ($item->user_has_access_venue) : ?>
             <?php if (!empty($item->venue)) : ?>
               <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                 <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
@@ -144,6 +154,7 @@ $document->addStyleDeclaration($css);
                   <?php echo $item->venue; ?>
                 <?php endif; ?>
                 </div>
+                                        <?php endif; ?>
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
@@ -156,7 +167,7 @@ $document->addStyleDeclaration($css);
         <div class="jem-event-image-teaser">
           <div class="jem-row-image-teaser">
             <?php if($item->showimageevent): ?>
-                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
                       <div class="jem-eventimg-teaser">
@@ -187,7 +198,7 @@ $document->addStyleDeclaration($css);
             <?php endif; ?>
 
             <?php if($item->showimagevenue): ?>
-              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
                           <div class="jem-eventimg-teaser">

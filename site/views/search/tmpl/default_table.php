@@ -33,7 +33,7 @@ use Joomla\CMS\Router\Route;
                 </td>
                 <td>
                     <?php echo $this->lists['filter_types']; ?>
-                    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
+                    <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
                     <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                     <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 </td>

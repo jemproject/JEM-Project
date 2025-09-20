@@ -822,6 +822,7 @@ class JemHelper
 
                 // images
                 'png' => 'image/png',
+                'webp' => 'image/webp',
                 'jpe' => 'image/jpeg',
                 'jpeg' => 'image/jpeg',
                 'jpg' => 'image/jpeg',
@@ -1264,9 +1265,9 @@ class JemHelper
 
         if ($href) {
             $href = Route::_ ($href);
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
         } else {
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" title="'.$title.$tooltip.'">'.$text.'</span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'">'.$text.'</span>';
         }
 
         return $tip;
@@ -1458,7 +1459,11 @@ class JemHelper
         }
 
         //Search for template overrides
-        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
+            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/css/'. $module . '/' . $filestyle);
+        }
+        //Search for template overrides
+        else if (file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
             $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
         }
         //Search in media folder
@@ -1557,7 +1562,7 @@ class JemHelper
         $font_table_td_a      = $settings->get('css_color_font_table_td_a');
 
         switch ($layoutstyle) {
-        case 1: // 'responsive'
+        case 1: // 'Default (Responsive Style)'
             if (!empty($bg_filter)) {
                 $style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
             }
@@ -1608,58 +1613,7 @@ class JemHelper
                 $style .= "div#jem .jem-event a {color:" . $font_table_td_a . ";}";
             }
             break;
-        case 2: // 'alternative'
-            if (!empty($bg_filter)) {
-                $style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
-            }
-            if (!empty($bg_h2)) {
-                $style .= "div#jem h2 {background-color:".$bg_h2.";}";
-            }
-            if (!empty($bg_jem)) {
-                $style .= "div#jem {background-color:".$bg_jem.";}";
-            }
-            if (!empty($bg_table_th)) {
-                $style .= "div#jem div.eventtable .sectiontableheader {background-color:" . $bg_table_th . ";}";
-            }
-            if (!empty($bg_table_td)) {
-                $style .= "div#jem div.eventtable .sectiontableentry:nth-child(even) {background-color:" . $bg_table_td . ";}";
-            }
-            if (!empty($bg_table_tr_entry2)) {
-                $style .= "div#jem div.eventtable .sectiontableentry:nth-child(odd) {background-color:" . $bg_table_tr_entry2 . ";}";
-            }
-            if (!empty($bg_table_tr_featured)) {
-                $style .= "div#jem div.eventtable .sectiontableentry.featured {background-color:" . $bg_table_tr_featured . ";}";
-            }
-            // Important: :hover must be after .featured to overrule
-            if (!empty($bg_table_tr_hover)) {
-                $style .= "div#jem div.eventtable .sectiontableentry:hover {background-color:" . $bg_table_tr_hover . ";}";
-            }
-            if (!empty($border_filter)) {
-                $style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
-            }
-            if (!empty($border_h2)) {
-                $style .= "div#jem h2 {border-color:".$border_h2.";}";
-            }
-            if (!empty($border_table_th)) {
-                $style .= "div#jem div.eventtable .sectiontableheader {border-color:" . $border_table_th . ";}";
-            }
-            if (!empty($border_table_td)) {
-                $style .= "div#jem div.eventtable .sectiontableentry {border-color:" . $border_table_td . ";}";
-            }
-            if (!empty($font_table_h2)) {
-                $style .= "div#jem h2 {color:" . $font_table_h2 . ";}";
-            }
-            if (!empty($font_table_th)) {
-                $style .= "div#jem div.eventtable .sectiontableheader {color:" . $font_table_th . ";}";
-            }
-            if (!empty($font_table_td)) {
-                $style .= "div#jem div.eventtable .sectiontableentry {color:" . $font_table_td . ";}";
-            }
-            if (!empty($font_table_td_a)) {
-                $style .= "div#jem div.eventtable .sectiontableentry a {color:" . $font_table_td_a . ";}";
-            }
-            break;
-        default: // 'original'
+        default: // 'Legacy (Table Style)'
             if (!empty($bg_filter)) {
                 $style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
             }

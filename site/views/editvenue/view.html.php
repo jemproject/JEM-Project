@@ -76,6 +76,9 @@ class JemViewEditvenue extends JemView
             $authorised = $user->can('edit', 'venue', $item->id, $item->created_by);
         }
 
+        $access = isset($item->access) ? $item->access : 0;
+        $authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
+
         if ($authorised !== true) {
             $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
             return false;
@@ -84,7 +87,7 @@ class JemViewEditvenue extends JemView
         // Decide which parameters should take priority
         $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
                                         && $menuitem->query['view']   == 'editvenue'
-                                        && 0 == $item->id); // menu item is always for new venues
+                                        && 0 == $item->id); // menu item is always for new venue
 
         $title = ($item->id == 0) ? Text::_('COM_JEM_EDITVENUE_VENUE_ADD')
                                   : Text::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
@@ -108,10 +111,11 @@ class JemViewEditvenue extends JemView
             $item->params->merge($params);
         } else {
             $pagetitle = $title;
+
             $params->set('page_title', $pagetitle);
             $params->set('page_heading', $pagetitle);
             $params->set('show_page_heading', 1); // ensure page heading is shown
-            $params->set('introtext', ''); // there is no introtext in that case
+            $params->set('introtext', ''); // there is definitely no introtext.
             $params->set('showintrotext', 0);
             $pathway->addItem($pagetitle, ''); // link not required here so '' is ok
 
@@ -141,11 +145,11 @@ class JemViewEditvenue extends JemView
         // Check for errors.
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
+            Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'warning');
             return false;
         }
 
-        $access2      = JemHelper::getAccesslevelOptions(true);
+        $access2      = JemHelper::getAccesslevelOptions(true, $access);
         $this->access = $access2;
 
         // Load css
@@ -155,22 +159,15 @@ class JemViewEditvenue extends JemView
         JemHelper::loadCustomTag();
 
         // Load script
-
-        // HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
-        // HTMLHelper::_('script', 'com_jem/other.js', false, true);
         $document->addScript($url.'media/com_jem/js/attachments.js');
         $document->addScript($url.'media/com_jem/js/other.js');
         $key = trim($settings->get('global_googleapi', ''));
-        // $document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language);
 
         // Noconflict
         $document->addCustomTag( '<script>jQuery.noConflict();</script>' );
 
         // JQuery scripts
         $document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-
-        // HTMLHelper::_('script', 'com_jem/jquery.geocomplete.js', false, true);
-        // $document->addScript($url.'media/com_jem/js/jquery.geocomplete.js');
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
         $wa->registerScript('jem.jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')->useScript('jem.jquery');
@@ -185,7 +182,7 @@ class JemViewEditvenue extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
-        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
+        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
         $this->user          = $user;
 
         if (!$publisher) {

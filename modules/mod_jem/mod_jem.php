@@ -12,9 +12,10 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
+$mod_name = 'mod_jem';
+
 // get helper
 require_once __DIR__ . '/helper.php';
-
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
@@ -31,4 +32,4 @@ if (empty($list) && !$params->get('show_no_events')) {
 // load icon font if needed
 JemHelper::loadIconFont();
 
-require ModuleHelper::getLayoutPath('mod_jem', $params->get('layout', 'default'));
+require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));

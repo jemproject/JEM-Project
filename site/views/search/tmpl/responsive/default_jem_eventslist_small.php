@@ -149,7 +149,7 @@ $uri = Uri::getInstance();
   </dt>
   <dd>
     <?php echo  $this->lists['filter_types']; ?>
-    <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
+    <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
   </dd>
   <dt>
     <?php echo '<label for="category">'.Text::_('COM_JEM_CATEGORY').'</label>'; ?>

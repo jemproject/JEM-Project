@@ -234,6 +234,7 @@ class JemModelCategories extends BaseDatabaseModel
         $levels = $user->getAuthorisedViewLevels();
         $task   = Factory::getApplication()->input->getCmd('task', '');
         $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
+        $jemsettings = JemHelper::config();
 
         $id = (int)$id;
 
@@ -245,11 +246,39 @@ class JemModelCategories extends BaseDatabaseModel
             $where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
         }
 
-        // Second is to only select events assigned to category the user has access to
-        $where .= ' AND c.access IN (' . implode(',', $levels) . ')';
-        $where .= ' AND a.access IN (' . implode(',', $levels) . ')';
+        ###################
+        ## FILTER-ACCESS ##
+        ###################
+        // Second, only select events assigned to categories that the user has access to, based on the Advanced Parameters setting for locked events and categories
 
-        $query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.published,'
+        # Filter by access level - public or with access_level_locked_events active.
+        if($jemsettings->access_level_locked_events != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_events, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $where .= ' AND a.access IN (' . implode(',', $newlevels) . ')';
+        } else {
+            $where .= ' AND a.access IN (' . implode(',', $levels) . ')';
+        }
+
+        # Filter by access level - public or with access_level_locked_categories active.
+        if($jemsettings->access_level_locked_categories != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $where .= ' AND c.access IN (' . implode(',', $newlevels) . ')';
+        } else {
+            $where .= ' AND c.access IN (' . implode(',', $levels) . ')';
+        }
+
+        # Filter by access level - public or with access_level_locked_venues active.
+        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $where .= ' AND l.access IN (' . implode(',', $newlevels) . ')';
+        } else {
+            $where .= ' AND l.access IN (' . implode(',', $levels) . ')';
+        }
+
+        $query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.published, a.access,'
                . ' a.recurrence_type, a.recurrence_first_id,'
                . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
                . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
@@ -260,7 +289,10 @@ class JemModelCategories extends BaseDatabaseModel
                . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
                . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
                . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-               . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+               . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug,'
+               . ' CASE WHEN a.access IN (' . implode(',',$levels) . ') THEN 1 ELSE 0 END as user_has_access_event,'
+               . ' CASE WHEN c.access IN (' . implode(',',$levels) . ') THEN 1 ELSE 0 END as user_has_access_category,'
+               . ' CASE WHEN l.access IN (' . implode(',',$levels) . ') THEN 1 ELSE 0 END as user_has_access_venue'
                . ' FROM #__jem_events AS a'
                . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
@@ -401,8 +433,25 @@ class JemModelCategories extends BaseDatabaseModel
         // Parent category itself or its sub categories
         $parentCategoryQuery = $parentCategory ? 'c.id='.(int)$parent_id : 'c.parent_id='.(int)$parent_id;
 
+        $case_when_a  = ' CASE WHEN c.access IN (' . implode(',',$levels) . ') THEN 1 ELSE 0 END as user_has_access_category    ,';
+
+
+        ###################
+        ## FILTER-ACCESS ##
+        ###################
+
+        # Filter by access level - public or with access_level_locked_venues active.
+        if($jemsettings->access_level_locked_categories != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $where_access = ' AND c.access IN ('.implode(',', $newlevels).')';
+        } else {
+            $where_access = ' AND c.access IN ('.implode(',', $levels).')';
+        }
+
         $query = 'SELECT c.*,'
                . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
+               . $case_when_a
                . ' ('
                . '  SELECT COUNT(DISTINCT i.id)'
                . '  FROM #__jem_events AS i'
@@ -414,7 +463,7 @@ class JemModelCategories extends BaseDatabaseModel
                . ' FROM #__jem_categories AS c'
                . ' WHERE c.published = 1'
                . ' AND '.$parentCategoryQuery
-               . ' AND c.access IN (' . implode(',', $levels) . ')'
+               . $where_access
                . ' GROUP BY c.id '.$empty
                . ' ORDER BY '.$ordering
                ;

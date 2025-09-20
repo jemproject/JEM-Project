@@ -1064,7 +1064,7 @@ class vcalendar {
     if( ! $endM )   $endM   = $startM;
     if( ! $endD )   $endD   = $startD;
     $endDate   = mktime( 23, 59, 59, $endM, $endD, $endY );
-// echo 'selectComp arg='.date( 'Y-m-d H:i:s', $startDate).' -- '.date( 'Y-m-d H:i:s', $endDate)."<br/>\n"; $tcnt = 0;// test ###
+// echo 'selectComp arg='.date( 'Y-m-d H:i:s', $startDate).' -- '.date( 'Y-m-d H:i:s', $endDate)."<br>\n"; $tcnt = 0;// test ###
     /* check component types */
     $validTypes = array('vevent', 'vtodo', 'vjournal', 'vfreebusy' );
     if( empty( $cType ))
@@ -1149,14 +1149,14 @@ class vcalendar {
             $end['tz'] = $start['tz'];
         $SCbools[ 'durationExist'] = TRUE;
         $dateFormat['end'] = ( isset( $start['hour'] )) ? 'Y-m-d H:i:s' : 'Y-m-d';
-// if( !empty($end))  echo 'selectComp 4 start='.implode('-',$start).' end='.implode('-',$end)."<br/>\n"; // test ###
+// if( !empty($end))  echo 'selectComp 4 start='.implode('-',$start).' end='.implode('-',$end)."<br>\n"; // test ###
       }
       if( empty( $end )) { // assume one day duration if missing end date
         $end = array( 'year' => $start['year'], 'month' => $start['month'], 'day' => $start['day'], 'hour' => 23, 'min' => 59, 'sec' => 59 );
         if( isset( $start['tz'] ))
           $end['tz'] = $start['tz'];
       }
-// if( isset($end))  echo 'selectComp 5 start='.implode('-',$start).' end='.implode('-',$end)."<br/>\n"; // test ###
+// if( isset($end))  echo 'selectComp 5 start='.implode('-',$start).' end='.implode('-',$end)."<br>\n"; // test ###
       $endWdate = iCalUtilityFunctions::_SCsetXCurrentDateZ( iCalUtilityFunctions::_date2timestamp( $end ), $end );
       if( $endWdate < $startWdate ) { // MUST be after start date!!
         $end = array( 'year' => $start['year'], 'month' => $start['month'], 'day' => $start['day'], 'hour' => 23, 'min' => 59, 'sec' => 59 );
@@ -1182,7 +1182,7 @@ class vcalendar {
         $recurrid = iCalUtilityFunctions::_date2timestamp( $recurrid );
         $recurrid = mktime( 0, 0, 0, date( 'm', $recurrid ), date( 'd', $recurrid ), date( 'Y', $recurrid )); // on a day-basis !!!
         $recurridList[$recurrid] = TRUE;                                             // no recurring to start this day
-// echo "adding comp no:$cix with date=".implode($start)." and recurrid=".implode($recurrid)." to recurridList id=$recurrid<br/>\n"; // test ###
+// echo "adding comp no:$cix with date=".implode($start)." and recurrid=".implode($recurrid)." to recurridList id=$recurrid<br>\n"; // test ###
       } // end recurrence-id/sequence test
       /* select only components with.. . */
       if(( !$any && ( $startWdate >= $startDate ) && ( $startWdate <= $endDate )) || // (dt)start within the period
@@ -1199,12 +1199,12 @@ class vcalendar {
           $startYMD = $rstartYMD = date( 'Ymd', $rstart );
           $endYMD   = date( 'Ymd', $endWdate );
           $checkDate = mktime( 0, 0, 0, date( 'm', $rstart ), date( 'd', $rstart ), date( 'Y', $rstart ) ); // on a day-basis !!!
-// echo "going to test comp no:$cix with rstartYMD=$rstartYMD, endYMD=$endYMD and checkDate($checkDate) with recurridList=".implode(',',array_keys($recurridList))."<br/>\n"; // test ###
+// echo "going to test comp no:$cix with rstartYMD=$rstartYMD, endYMD=$endYMD and checkDate($checkDate) with recurridList=".implode(',',array_keys($recurridList))."<br>\n"; // test ###
           if( !isset( $exdatelist[$checkDate] )) { // exclude any recurrence START date, found in exdatelist
             while( $rstartYMD <= $endYMD ) { // iterate
               if( isset( $exdatelist[$checkDate] ) ||                   // exclude any recurrence date, found in the exdatelist
                   ( isset( $recurridList[$checkDate] ) && !$recurrid )) { // or in the recurridList, but not itself
-// echo "skipping comp no:$cix with datestart=$rstartYMD and checkdate=$checkDate<br/>\n"; // test ###
+// echo "skipping comp no:$cix with datestart=$rstartYMD and checkdate=$checkDate<br>\n"; // test ###
                 $rstart   += ( 24 *3600 ); // step one day
                 $rstartYMD = date( 'Ymd', $rstart );
                 continue;
@@ -1226,7 +1226,7 @@ class vcalendar {
 // echo "going to test comp no:$cix with checkDate=$checkDate with recurridList=".implode(',',array_keys($recurridList)); // test ###
           if(( !$any || !isset( $exdatelist[$checkDate] )) &&   // exclude any recurrence date, found in exdatelist
               ( !isset( $recurridList[$checkDate] ) || $recurrid )) { // or in the recurridList, but not itself
-// echo " and copied to output<br/>\n"; // test ###
+// echo " and copied to output<br>\n"; // test ###
             $wd = getdate( $startWdate );
             $result[$wd['year']][$wd['mon']][$wd['mday']][$compUID] = $component->copy(); // copy to output
           }
@@ -1276,7 +1276,7 @@ class vcalendar {
           $component2  = $component->copy();
           $compUID     = $component2->getProperty( 'UID' );
           foreach( $recurlist as $recurkey => $durvalue ) {
-// echo "recurKey=".date( 'Y-m-d H:i:s', $recurkey ).' dur='.iCalUtilityFunctions::offsetSec2His( $durvalue )."<br/>\n"; // test ###;
+// echo "recurKey=".date( 'Y-m-d H:i:s', $recurkey ).' dur='.iCalUtilityFunctions::offsetSec2His( $durvalue )."<br>\n"; // test ###;
             if((( $startDate - $rdurWsecs ) > $recurkey ) || ( $endDate < $recurkey )) // not within period
               continue;
             $checkDate = mktime( 0, 0, 0, date( 'm', $recurkey ), date( 'd', $recurkey ), date( 'Y', $recurkey ) ); // on a day-basis !!!
@@ -1300,14 +1300,14 @@ class vcalendar {
                 $rend = $endDate;
               $startYMD = $rstartYMD = date( 'Ymd', $rstart );
               $endYMD   = date( 'Ymd', $rend );
-// echo "splitStart=".date( 'Y-m-d H:i:s', $rstart ).' end='.date( 'Y-m-d H:i:s', $rend )."<br/>\n"; // test ###;
+// echo "splitStart=".date( 'Y-m-d H:i:s', $rstart ).' end='.date( 'Y-m-d H:i:s', $rend )."<br>\n"; // test ###;
               while( $rstartYMD <= $endYMD ) { // iterate.. .
                 $checkDate = mktime( 0, 0, 0, date( 'm', $rstart ), date( 'd', $rstart ), date( 'Y', $rstart ) ); // on a day-basis !!!
                 if( isset( $recurridList[$checkDate] )) // no recurring to start this day
                   break;
                 if( isset( $exdatelist[$checkDate] ))   // exclude any recurrence START date, found in exdatelist
                   break;
-// echo "checking date after startdate=".date( 'Y-m-d H:i:s', $rstart ).' mot '.date( 'Y-m-d H:i:s', $startDate )."<br/>"; // test ###;
+// echo "checking date after startdate=".date( 'Y-m-d H:i:s', $rstart ).' mot '.date( 'Y-m-d H:i:s', $startDate )."<br>"; // test ###;
                 if( $rstart >= $startDate ) {           // date after dtstart
                   iCalUtilityFunctions::_SCsetXCurrentStart( $component2, $dateFormat, $checkDate, $rstartYMD, $rstart,   $startYMD, $start );
                   iCalUtilityFunctions::_SCsetXCurrentEnd(   $component2, $dateFormat, $rstart,    $rstartYMD, $endWdate, $endYMD,   $end, $SCbools );
@@ -7732,7 +7732,7 @@ class iCalUtilityFunctions {
       $enddate = $startdate;
       $enddate['year'] += 1;
     }
-// echo "recur __in_ comp start ".implode('-',$wdate)." period start ".implode('-',$startdate)." period end ".implode('-',$enddate)."<br/>\n";print_r($recur);echo "<br/>\n";//test###
+// echo "recur __in_ comp start ".implode('-',$wdate)." period start ".implode('-',$startdate)." period end ".implode('-',$enddate)."<br>\n";print_r($recur);echo "<br>\n";//test###
     $endDatets = iCalUtilityFunctions::_date2timestamp( $enddate ); // fix break
     if( !isset( $recur['COUNT'] ) && !isset( $recur['UNTIL'] ))
       $recur['UNTIL'] = $enddate; // create break
@@ -7746,7 +7746,7 @@ class iCalUtilityFunctions {
         $recur['UNTIL'] = iCalUtilityFunctions::_timestamp2date( $endDatets, 6 );
     }
     if( $wdatets > $endDatets ) {
-// echo "recur out of date ".date('Y-m-d H:i:s',$wdatets)."<br/>\n";//test
+// echo "recur out of date ".date('Y-m-d H:i:s',$wdatets)."<br>\n";//test
       return array(); // nothing to do.. .
     }
     if( !isset( $recur['FREQ'] )) // "MUST be specified.. ."
@@ -7779,7 +7779,7 @@ class iCalUtilityFunctions {
     }
     if( isset( $recur['BYSETPOS'] )) { // save start date + weekno
       $bysetposymd1 = $bysetposymd2 = $bysetposw1 = $bysetposw2 = array();
-// echo "bysetposXold_start=$bysetposYold $bysetposMold $bysetposDold<br/>\n"; // test ###
+// echo "bysetposXold_start=$bysetposYold $bysetposMold $bysetposDold<br>\n"; // test ###
       if( is_array( $recur['BYSETPOS'] )) {
         foreach( $recur['BYSETPOS'] as $bix => $bval )
           $recur['BYSETPOS'][$bix] = (int) $bval;
@@ -7798,7 +7798,7 @@ class iCalUtilityFunctions {
       }
       else
         iCalUtilityFunctions::_stepdate( $enddate, $endDatets, $step); // make sure to count whole last period
-// echo "BYSETPOS endDat++ =".implode('-',$enddate).' step='.var_export($step,TRUE)."<br/>\n";//test###
+// echo "BYSETPOS endDat++ =".implode('-',$enddate).' step='.var_export($step,TRUE)."<br>\n";//test###
       $bysetposWold = (int) date( 'W', ( $wdatets + $wkst ));
       $bysetposYold = $wdate['year'];
       $bysetposMold = $wdate['month'];
@@ -7809,7 +7809,7 @@ class iCalUtilityFunctions {
     $year_old     = null;
     $daynames     = array( 'SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA' );
     /* MAIN LOOP */
-// echo "recur start ".implode('-',$wdate)." end ".implode('-',$enddate)."<br/>\n";//test
+// echo "recur start ".implode('-',$wdate)." end ".implode('-',$enddate)."<br>\n";//test
     while( TRUE ) {
       if( isset( $endDatets ) && ( $wdatets > $endDatets ))
         break;
@@ -7899,13 +7899,13 @@ class iCalUtilityFunctions {
         if(( $recur['INTERVAL'] != $intervalarr[$intervalix] ) &&
             ( 0 != $intervalarr[$intervalix] )) {
           /* step up date */
-// echo "skip: ".implode('-',$wdate)." ix=$intervalix old=$currentKey interval=".$intervalarr[$intervalix]."<br/>\n";//test
+// echo "skip: ".implode('-',$wdate)." ix=$intervalix old=$currentKey interval=".$intervalarr[$intervalix]."<br>\n";//test
           iCalUtilityFunctions::_stepdate( $wdate, $wdatets, $step);
           continue;
         }
         else // continue within the selected interval
           $intervalarr[$intervalix] = 0;
-// echo "cont: ".implode('-',$wdate)." ix=$intervalix old=$currentKey interval=".$intervalarr[$intervalix]."<br/>\n";//test
+// echo "cont: ".implode('-',$wdate)." ix=$intervalix old=$currentKey interval=".$intervalarr[$intervalix]."<br>\n";//test
       }
       $updateOK = TRUE;
       if( $updateOK && isset( $recur['BYMONTH'] ))
@@ -7924,7 +7924,7 @@ class iCalUtilityFunctions {
         $updateOK = iCalUtilityFunctions::_recurBYcntcheck( $recur['BYMONTHDAY']
             , $wdate['day']
             , $daycnts[$wdate['month']][$wdate['day']]['monthcnt_down'] );
-// echo "efter BYMONTHDAY: ".implode('-',$wdate).' status: '; echo ($updateOK) ? 'TRUE' : 'FALSE'; echo "<br/>\n";//test###
+// echo "efter BYMONTHDAY: ".implode('-',$wdate).' status: '; echo ($updateOK) ? 'TRUE' : 'FALSE'; echo "<br>\n";//test###
       if( $updateOK && isset( $recur['BYDAY'] )) {
         $updateOK = FALSE;
         $m = $wdate['month'];
@@ -7947,9 +7947,9 @@ class iCalUtilityFunctions {
           if((  $daynoexists &&  $daynosw && $daynamesw ) ||
               ( !$daynoexists && !$daynosw && $daynamesw )) {
             $updateOK = TRUE;
-// echo "m=$m d=$d day=".$daycnts[$m][$d]['DAY']." yeardayno_up=".$daycnts[$m][$d]['yeardayno_up']." daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw updateOK:$updateOK<br/>\n"; // test ###
+// echo "m=$m d=$d day=".$daycnts[$m][$d]['DAY']." yeardayno_up=".$daycnts[$m][$d]['yeardayno_up']." daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw updateOK:$updateOK<br>\n"; // test ###
           }
-// echo "m=$m d=$d day=".$daycnts[$m][$d]['DAY']." yeardayno_up=".$daycnts[$m][$d]['yeardayno_up']." daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw updateOK:$updateOK<br/>\n"; // test ###
+// echo "m=$m d=$d day=".$daycnts[$m][$d]['DAY']." yeardayno_up=".$daycnts[$m][$d]['yeardayno_up']." daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw updateOK:$updateOK<br>\n"; // test ###
         }
         else {
           foreach( $recur['BYDAY'] as $bydayvalue ) {
@@ -7969,7 +7969,7 @@ class iCalUtilityFunctions {
                     , $daycnts[$m][$d]['yeardayno_up']
                     , $daycnts[$m][$d]['yeardayno_down'] );
             }
-// echo "daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw<br/>\n"; // test ###
+// echo "daynoexists:$daynoexists daynosw:$daynosw daynamesw:$daynamesw<br>\n"; // test ###
             if((  $daynoexists &&  $daynosw && $daynamesw ) ||
                 ( !$daynoexists && !$daynosw && $daynamesw )) {
               $updateOK = TRUE;
@@ -7978,7 +7978,7 @@ class iCalUtilityFunctions {
           }
         }
       }
-// echo "efter BYDAY: ".implode('-',$wdate).' status: '; echo ($updateOK) ? 'TRUE' : 'FALSE'; echo "<br/>\n"; // test ###
+// echo "efter BYDAY: ".implode('-',$wdate).' status: '; echo ($updateOK) ? 'TRUE' : 'FALSE'; echo "<br>\n"; // test ###
       /* check BYSETPOS */
       if( $updateOK ) {
         if( isset( $recur['BYSETPOS'] ) &&
@@ -7999,11 +7999,11 @@ class iCalUtilityFunctions {
                     (( $bysetposYold == $wdate['year'] )  &&
                         ( $bysetposMold == $wdate['month'])  &&
                         ( $bysetposDold == $wdate['day'] )))) {
-// echo "bysetposymd1[]=".date('Y-m-d H:i:s',$wdatets)."<br/>\n";//test
+// echo "bysetposymd1[]=".date('Y-m-d H:i:s',$wdatets)."<br>\n";//test
               $bysetposymd1[] = $wdatets;
             }
             else {
-// echo "bysetposymd2[]=".date('Y-m-d H:i:s',$wdatets)."<br/>\n";//test
+// echo "bysetposymd2[]=".date('Y-m-d H:i:s',$wdatets)."<br>\n";//test
               $bysetposymd2[] = $wdatets;
             }
           }
@@ -8013,9 +8013,9 @@ class iCalUtilityFunctions {
           $countcnt++;
           if( $startdatets <= $wdatets ) { // only output within period
             $result[$wdatets] = TRUE;
-// echo "recur ".date('Y-m-d H:i:s',$wdatets)."<br/>\n";//test
+// echo "recur ".date('Y-m-d H:i:s',$wdatets)."<br>\n";//test
           }
-// echo "recur undate ".date('Y-m-d H:i:s',$wdatets)." okdatstart ".date('Y-m-d H:i:s',$startdatets)."<br/>\n";//test
+// echo "recur undate ".date('Y-m-d H:i:s',$wdatets)." okdatstart ".date('Y-m-d H:i:s',$startdatets)."<br>\n";//test
           $updateOK = FALSE;
         }
       }
@@ -8078,7 +8078,7 @@ class iCalUtilityFunctions {
             if( isset( $recur['COUNT'] ) && ( $countcnt >= $recur['COUNT'] ))
               break;
           }
-// echo "<br/>\n"; // test ###
+// echo "<br>\n"; // test ###
           $bysetposarr1 = $bysetposarr2;
           $bysetposarr2 = array();
         }

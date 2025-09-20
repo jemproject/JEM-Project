@@ -133,10 +133,10 @@
             label="COM_JEM_CATEGORY_INPUT_EMAIL"
         />
         <field name="emailacljl" type="radio"
-               class="inputbox btn-group btn-group-yesno"
-               label="COM_JEM_CATEGORY_SEND_EMAIL_USER_ACL"
-               description="COM_JEM_CATEGORY_SEND_EMAIL_USER_ACL_DESC"
-               default="0"
+            class="inputbox btn-group btn-group-yesno"
+            label="COM_JEM_CATEGORY_SEND_EMAIL_USER_ACL"
+            description="COM_JEM_CATEGORY_SEND_EMAIL_USER_ACL_DESC"
+            default="0"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>

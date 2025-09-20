@@ -24,8 +24,8 @@ class JemViewVenue extends HtmlView
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
 
-        $app       = Factory::getApplication();
-        $jinput    = $app->input;
+        $app          = Factory::getApplication();
+        $jinput       = $app->input;
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));
@@ -41,7 +41,7 @@ class JemViewVenue extends HtmlView
 
             // initiate new CALENDAR
             $vcal = JemHelper::getCalendarTool();
-            $vcal->setConfig("filename", "events_venue_" . $venueid . "_" . $year . $month . "ics");
+            $vcal->setConfig("filename", "events_venue_" . $venueid . "_" . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics");
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {

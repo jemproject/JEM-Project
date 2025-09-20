@@ -86,6 +86,13 @@ if (empty($this->catrow->events)) { return; }
       }
       ?>
             <?php foreach ($this->catrow->events as $row) : ?>
+                <?php
+                // has user access
+                $eventaccess = '';
+                if (!$row->user_has_access_event) {
+                    // show a closed lock icon
+                    $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                } ?>
         <?php if (!empty($row->featured)) :   ?>
           <li class="jem-event jem-row jem-justify-start jem-featured event_id<?php echo $row->id . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
                 <?php else : ?>
@@ -110,6 +117,7 @@ if (empty($this->catrow->events)) { return; }
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
+                            <?php echo $eventaccess; ?>
             </h4>
 
             <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : // Display title as title of jem-event without link ?>
@@ -118,6 +126,7 @@ if (empty($this->catrow->events)) { return; }
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
+                            <?php echo $eventaccess; ?>
             </h4>
 
             <?php elseif (($this->jemsettings->showtitle == 0) && ($this->jemsettings->showdetails == 1)) : // Display date as title of jem-event with link ?>
@@ -135,6 +144,7 @@ if (empty($this->catrow->events)) { return; }
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
+                            <?php echo $eventaccess; ?>
             </h4>
 
             <?php else : // Display date as title of jem-event without link ?>
@@ -150,10 +160,12 @@ if (empty($this->catrow->events)) { return; }
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
+                            <?php echo $eventaccess; ?>
             </h4>
             <?php endif; ?>
 
-            <?php // Display other information below in a row ?>
+                    <?php // Display other information below in a row
+                    if ($row->user_has_access_event) :?>
             <div class="jem-list-row">
               <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>" >
@@ -213,8 +225,9 @@ if (empty($this->catrow->events)) { return; }
                 </div>
               <?php endif; ?>
             </div>
+                    <?php endif; ?>
           </div>
-
+                <?php if ($row->user_has_access_event) :?>
           <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
           <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
           <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
@@ -241,7 +254,7 @@ if (empty($this->catrow->events)) { return; }
             ?>
             <meta itemprop="address" content="<?php echo $microadress; ?>" />
           </div>
-
+                <?php endif; ?>
         </li>
             <?php endforeach; ?>
   <?php endif; ?>

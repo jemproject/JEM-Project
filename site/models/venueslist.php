@@ -109,6 +109,8 @@ class JemModelVenueslist extends ListModel
         $params    = $app->getParams();
         $settings  = JemHelper::globalattribs();
         $user      = JemFactory::getUser();
+        $levels    = $user->getAuthorisedViewLevels();
+        $jemsettings = JemHelper::config();
 
         # Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -122,6 +124,14 @@ class JemModelVenueslist extends ListModel
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';
 
+        $case_when_a  = ' CASE WHEN ';
+        $case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= ' THEN 1 ';
+        $case_when_a .= ' ELSE 0 ';
+        $case_when_a .= ' END as user_has_access_venue';
+
+        $query->select(array($case_when_l, $case_when_a));
+
         # venue
         $query->select(
             $this->getState(
@@ -131,8 +141,6 @@ class JemModelVenueslist extends ListModel
         );
         $query->from('#__jem_venues as a');
 
-        $query->select(array($case_when_l));
-
         ###################
         ## FILTER-SEARCH ##
         ###################
@@ -140,6 +148,19 @@ class JemModelVenueslist extends ListModel
         # define variables
         $filter = $this->getState('filter.filter_type');
         $search = $this->getState('filter.filter_search'); // not escaped
+
+        ###################
+        ## FILTER-ACCESS ##
+        ###################
+
+        # Filter by access level - public or with access_level_locked_venues active.
+        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $query->where('a.access IN ('.implode(',', $newlevels).')');
+        } else {
+            $query->where('a.access IN ('.implode(',', $levels).')');
+        }
 
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {

@@ -142,6 +142,11 @@ body.com_jem.body-overlayed {
     margin-left: 210px;
 }
 
+#jem .jem-dl dd .venue_country_flag {
+    width: 20px;
+    height: auto;
+}
+
 #jem .jem-img {
     text-align: center;
 }

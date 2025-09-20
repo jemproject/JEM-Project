@@ -112,12 +112,15 @@ class com_jemInstallerScript
 
         if($error['summary']) {
             ?>
-            <p style='color: red;font-weight:bold;'><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></p>
+            <p style='color: red;'>
+                <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></b>
+            </p>
             <?php
         } else {
             ?>
-            <p style='color: green;font-weight:bold;'><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></p>
-            <?php
+            <p style='color: green;'>
+                <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></b>
+            </p> <?php
         }
 
         $param_array = array(
@@ -259,7 +262,7 @@ class com_jemInstallerScript
                 return false;
             }
 
-            // Remove obsolete files and folder
+            // Check and remove obsolete files and folder
             $this->deleteObsoleteFiles();
 
             // Check columns in database
@@ -423,7 +426,7 @@ class com_jemInstallerScript
     private function getHeader()
     {
         ?>
-        <img src="../media/com_jem/images/jemlogo.png" alt="" style="float:left; padding-right:20px;" />
+        <img src="../media/com_jem/images/jemlogo.webp" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;" />
         <h1><?php echo Text::_('COM_JEM'); ?></h1>
         <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
         <?php
@@ -538,9 +541,20 @@ class com_jemInstallerScript
      */
     private function deleteObsoleteFiles()
     {
+        // obsolete files
         $files = array(
-
-            // obsolete since JEM 4.0.0
+            '/administrator/components/com_jem/help/images/administrator.gif',
+            '/administrator/components/com_jem/help/images/checked_out.png',
+            '/administrator/components/com_jem/help/images/icon-32-attention.png',
+            '/administrator/components/com_jem/help/images/icon-32-hint.png',
+            '/administrator/components/com_jem/help/images/manager.png',
+            '/administrator/components/com_jem/help/images/publish_x.png',
+            '/administrator/components/com_jem/help/images/super_administrator.gif',
+            '/administrator/components/com_jem/help/images/tablemodern.jpg',
+            '/administrator/components/com_jem/help/images/tick.png',
+            '/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
+            '/administrator/components/com_jem/language/en-GB/en-GB.com_jem.sys.ini',
+            '/administrator/components/com_jem/sql/updates/1.9.sql',
             '/administrator/components/com_jem/sql/updates/1.9.1.sql',
             '/administrator/components/com_jem/sql/updates/1.9.2.sql',
             '/administrator/components/com_jem/sql/updates/1.9.3.sql',
@@ -549,7 +563,6 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/1.9.6.sql',
             '/administrator/components/com_jem/sql/updates/1.9.7.sql',
             '/administrator/components/com_jem/sql/updates/1.9.8.sql',
-            '/administrator/components/com_jem/sql/updates/1.9.sql',
             '/administrator/components/com_jem/sql/updates/2.0.0.sql',
             '/administrator/components/com_jem/sql/updates/2.0.1.sql',
             '/administrator/components/com_jem/sql/updates/2.0.2.sql',
@@ -558,9 +571,9 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/2.1.1.sql',
             '/administrator/components/com_jem/sql/updates/2.1.2.sql',
             '/administrator/components/com_jem/sql/updates/2.1.3.sql',
+            '/administrator/components/com_jem/sql/updates/2.1.4.sql',
             '/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
             '/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.sql',
             '/administrator/components/com_jem/sql/updates/2.1.5.sql',
             '/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
             '/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
@@ -572,11 +585,169 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
             '/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
             '/administrator/components/com_jem/sql/updates/2.3.1.sql',
-            // remove old langage files with lang prefix
-            '/language/en-GB/en-GB.pkg_jem.sys.ini',
-            '/administrator/components/com_jem/language/en-GB/en-GB.com_jem.ini',
-            '/administrator/components/com_jem/language/en-GB/en-GB.com_jem.sys.ini',
+            '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
+            '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
+            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
             '/components/com_jem/language/en-GB/en-GB.com_jem.ini',
+            '/language/en-GB/en-GB.pkg_jem.sys.ini',
+            '/media/com_jem/images/toolbar/icon-32-adduser.png',
+            '/media/com_jem/images/toolbar/icon-32-alert.png',
+            '/media/com_jem/images/toolbar/icon-32-apply.png',
+            '/media/com_jem/images/toolbar/icon-32-archive.png',
+            '/media/com_jem/images/toolbar/icon-32-article.png',
+            '/media/com_jem/images/toolbar/icon-32-article-add.png',
+            '/media/com_jem/images/toolbar/icon-32-back.png',
+            '/media/com_jem/images/toolbar/icon-32-banner.png',
+            '/media/com_jem/images/toolbar/icon-32-banner-categories.png',
+            '/media/com_jem/images/toolbar/icon-32-banner-client.png',
+            '/media/com_jem/images/toolbar/icon-32-banner-tracks.png',
+            '/media/com_jem/images/toolbar/icon-32-calendar.png',
+            '/media/com_jem/images/toolbar/icon-32-cancel.png',
+            '/media/com_jem/images/toolbar/icon-32-checkin.png',
+            '/media/com_jem/images/toolbar/icon-32-component.png',
+            '/media/com_jem/images/toolbar/icon-32-config.png',
+            '/media/com_jem/images/toolbar/icon-32-contacts.png',
+            '/media/com_jem/images/toolbar/icon-32-contact-categories.png',
+            '/media/com_jem/images/toolbar/icon-32-copy.png',
+            '/media/com_jem/images/toolbar/icon-32-css.png',
+            '/media/com_jem/images/toolbar/icon-32-default.png',
+            '/media/com_jem/images/toolbar/icon-32-delete.png',
+            '/media/com_jem/images/toolbar/icon-32-delete-style.png',
+            '/media/com_jem/images/toolbar/icon-32-deny.png',
+            '/media/com_jem/images/toolbar/icon-32-download.png',
+            '/media/com_jem/images/toolbar/icon-32-edit.png',
+            '/media/com_jem/images/toolbar/icon-32-error.png',
+            '/media/com_jem/images/toolbar/icon-32-export.png',
+            '/media/com_jem/images/toolbar/icon-32-extension.png',
+            '/media/com_jem/images/toolbar/icon-32-featured.png',
+            '/media/com_jem/images/toolbar/icon-32-forward.png',
+            '/media/com_jem/images/toolbar/icon-32-help.png',
+            '/media/com_jem/images/toolbar/icon-32-html.png',
+            '/media/com_jem/images/toolbar/icon-32-inbox.png',
+            '/media/com_jem/images/toolbar/icon-32-info.png',
+            '/media/com_jem/images/toolbar/icon-32-links.png',
+            '/media/com_jem/images/toolbar/icon-32-lock.png',
+            '/media/com_jem/images/toolbar/icon-32-menu.png',
+            '/media/com_jem/images/toolbar/icon-32-messaging.png',
+            '/media/com_jem/images/toolbar/icon-32-module.png',
+            '/media/com_jem/images/toolbar/icon-32-move.png',
+            '/media/com_jem/images/toolbar/icon-32-new.png',
+            '/media/com_jem/images/toolbar/icon-32-new-privatemessage.png',
+            '/media/com_jem/images/toolbar/icon-32-new-style.png',
+            '/media/com_jem/images/toolbar/icon-32-notice.png',
+            '/media/com_jem/images/toolbar/icon-32-preview.png',
+            '/media/com_jem/images/toolbar/icon-32-print.png',
+            '/media/com_jem/images/toolbar/icon-32-publish.png',
+            '/media/com_jem/images/toolbar/icon-32-purge.png',
+            '/media/com_jem/images/toolbar/icon-32-read-privatemessage.png',
+            '/media/com_jem/images/toolbar/icon-32-refresh.png',
+            '/media/com_jem/images/toolbar/icon-32-remove.png',
+            '/media/com_jem/images/toolbar/icon-32-revert.png',
+            '/media/com_jem/images/toolbar/icon-32-save.png',
+            '/media/com_jem/images/toolbar/icon-32-save-copy.png',
+            '/media/com_jem/images/toolbar/icon-32-save-new.png',
+            '/media/com_jem/images/toolbar/icon-32-search.png',
+            '/media/com_jem/images/toolbar/icon-32-send.png',
+            '/media/com_jem/images/toolbar/icon-32-stats.png',
+            '/media/com_jem/images/toolbar/icon-32-trash.png',
+            '/media/com_jem/images/toolbar/icon-32-unarchive.png',
+            '/media/com_jem/images/toolbar/icon-32-unblock.png',
+            '/media/com_jem/images/toolbar/icon-32-unpublish.png',
+            '/media/com_jem/images/toolbar/icon-32-upload.png',
+            '/media/com_jem/images/toolbar/icon-32-user-add.png',
+            '/media/com_jem/images/toolbar/icon-32-xml.png',
+            '/media/com_jem/images/addvenue.png',
+            '/media/com_jem/images/ajax-loader.gif',
+            '/media/com_jem/images/archive_front.png',
+            '/media/com_jem/images/arrow-left.png',
+            '/media/com_jem/images/arrow-middle.png',
+            '/media/com_jem/images/arrow-right.png',
+            '/media/com_jem/images/back.png',
+            '/media/com_jem/images/blank.png',
+            '/media/com_jem/images/calendar_copy.png',
+            '/media/com_jem/images/calendar_edit.png',
+            '/media/com_jem/images/category.png',
+            '/media/com_jem/images/clear.png',
+            '/media/com_jem/images/close.png',
+            '/media/com_jem/images/closelabel.gif',
+            '/media/com_jem/images/defaultcolor.jpg',
+            '/media/com_jem/images/disabled.png',
+            '/media/com_jem/images/download_16.png',
+            '/media/com_jem/images/edit.png',
+            '/media/com_jem/images/el.png',
+            '/media/com_jem/images/emailButton.png',
+            '/media/com_jem/images/export_excel.png',
+            '/media/com_jem/images/featured.png',
+            '/media/com_jem/images/iCal2.0.png',
+            '/media/com_jem/images/icon-16-back.png',
+            '/media/com_jem/images/icon-16-blank.png',
+            '/media/com_jem/images/icon-16-hint.png',
+            '/media/com_jem/images/icon-16-info.png',
+            '/media/com_jem/images/icon-16-new.png',
+            '/media/com_jem/images/icon-16-recurrence.png',
+            '/media/com_jem/images/icon-16-recurrence-first.png',
+            '/media/com_jem/images/icon-16-warning.png',
+            '/media/com_jem/images/icon-32-recurrence.png',
+            '/media/com_jem/images/icon-32-recurrence-first.png',
+            '/media/com_jem/images/icon-32-tableexport.png',
+            '/media/com_jem/images/icon-48-archive.png',
+            '/media/com_jem/images/icon-48-categories.png',
+            '/media/com_jem/images/icon-48-categoriesedit.png',
+            '/media/com_jem/images/icon-48-cleancategoryimag.png',
+            '/media/com_jem/images/icon-48-cleanvenueimg.png',
+            '/media/com_jem/images/icon-48-cssedit.png',
+            '/media/com_jem/images/icon-48-cssmanager.png',
+            '/media/com_jem/images/icon-48-eventedit.png',
+            '/media/com_jem/images/icon-48-events.png',
+            '/media/com_jem/images/icon-48-globe.png',
+            '/media/com_jem/images/icon-48-groupedit.png',
+            '/media/com_jem/images/icon-48-groups.png',
+            '/media/com_jem/images/icon-48-help.png',
+            '/media/com_jem/images/icon-48-home.png',
+            '/media/com_jem/images/icon-48-housekeeing.png',
+            '/media/com_jem/images/icon-48-latest-version.png',
+            '/media/com_jem/images/icon-48-plugins.png',
+            '/media/com_jem/images/icon-48-sampledata.png',
+            '/media/com_jem/images/icon-48-settings.png',
+            '/media/com_jem/images/icon-48-tableexport.png',
+            '/media/com_jem/images/icon-48-tableimport.png',
+            '/media/com_jem/images/icon-48-truncatealldata.png',
+            '/media/com_jem/images/icon-48-unknown-versino.png',
+            '/media/com_jem/images/icon-48-update.png',
+            '/media/com_jem/images/icon-48-users.png',
+            '/media/com_jem/images/icon-48-venues.png',
+            '/media/com_jem/images/icon-48-venuesedit.png',
+            '/media/com_jem/images/icon-48-venuesedit_2.png',
+            '/media/com_jem/images/invited.png',
+            '/media/com_jem/images/jem.png',
+            '/media/com_jem/images/jemlogo.png',
+            '/media/com_jem/images/loading.png',
+            '/media/com_jem/images/map_icon.png',
+            '/media/com_jem/images/mapsicon.png',
+            '/media/com_jem/images/marker.png',
+            '/media/com_jem/images/next.png',
+            '/media/com_jem/images/noimage.png',
+            '/media/com_jem/images/PayPal_DonateButton.png',
+            '/media/com_jem/images/prev.png',
+            '/media/com_jem/images/printButton.png',
+            '/media/com_jem/images/publish.png',
+            '/media/com_jem/images/publish_r.png',
+            '/media/com_jem/images/publish_x.png',
+            '/media/com_jem/images/publish_y.png',
+            '/media/com_jem/images/submitevent.png',
+            '/media/com_jem/images/tick.png',
+            '/media/com_jem/images/trash.png',
+            '/media/com_jem/images/unlimited.png',
+            '/media/com_jem/images/unpublish.png',
+            '/media/com_jem/images/user.png',
+            '/media/com_jem/images/users.png',
+            '/media/com_jem/images/venue.png',
+            '/media/com_jem/images/venue_add_btn_left.png',
+            '/media/com_jem/images/venue_reset_btn_left.png',
+            '/media/com_jem/images/venue_select_btn_left.png',
+            '/media/com_jem/images/venue_select_btn_right.png',
+            '/modules/mod_jem/language/en-GB/en-GB.mod_jem.ini',
+            '/modules/mod_jem/language/en-GB/en-GB.mod_jem.sys.ini',
             '/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.ini',
             '/modules/mod_jem_banner/language/en-GB/en-GB.mod_jem_banner.sys.ini',
             '/modules/mod_jem_cal/language/en-GB/en-GB.mod_jem_cal.ini',
@@ -587,8 +758,6 @@ class com_jemInstallerScript
             '/modules/mod_jem_teaser/language/en-GB/en-GB.mod_jem_teaser.sys.ini',
             '/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.ini',
             '/modules/mod_jem_wide/language/en-GB/en-GB.mod_jem_wide.sys.ini',
-            '/modules/mod_jem/language/en-GB/en-GB.mod_jem.ini',
-            '/modules/mod_jem/language/en-GB/en-GB.mod_jem.sys.ini',
             '/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.ini',
             '/plugins/content/jem/language/en-GB/en-GB.plg_content_jem.sys.ini',
             '/plugins/content/jemlistevents/language/en-GB/en-GB.plg_content_jemlistevents.ini',
@@ -601,23 +770,23 @@ class com_jemInstallerScript
             '/plugins/jem/mailer/language/en-GB/en-GB.plg_jem_mailer.sys.ini',
             '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.ini',
             '/plugins/search/jem/language/en-GB/en-GB.plg_search_jem.sys.ini',
-            '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
-            '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
-            '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
         );
 
-        // TODO There is an issue while deleting folders using the ftp mode
+        // obsolete folders
         $folders = array(
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
+            '/media/com_jem/images/flags/w20-png',
         );
 
+        // delete files
         foreach ($files as $file) {
             if (File::exists(JPATH_ROOT . $file) && !File::delete(JPATH_ROOT . $file)) {
                 echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br/>';
             }
         }
 
+        // delete folders
         foreach ($folders as $folder) {
             if (Folder::exists(JPATH_ROOT . $folder) && !Folder::delete(JPATH_ROOT . $folder)) {
                 echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br/>';

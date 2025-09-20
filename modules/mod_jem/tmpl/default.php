@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+JemHelper::loadModuleStyleSheet('mod_jem');
 $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');
 $linkloc = $params->get('linkloc');

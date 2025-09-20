@@ -40,7 +40,6 @@ use Joomla\CMS\Router\Route;
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
     <?php echo $this->loadTemplate('venues');?>
 
-
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
     <input type="hidden" name="boxchecked" value="0" />
