@@ -52,7 +52,7 @@ $settings = JemHelper::config();
         endif; ?>
 
             </span>
-            <br />
+            <br/>
             <?php if($highlight_featured && $item->featured): ?>
                 <span class="event-title highlight_featured">
             <?php else : ?>

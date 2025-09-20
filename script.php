@@ -614,13 +614,13 @@ class com_jemInstallerScript
 
         foreach ($files as $file) {
             if (File::exists(JPATH_ROOT . $file) && !File::delete(JPATH_ROOT . $file)) {
-                echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br />';
+                echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br/>';
             }
         }
 
         foreach ($folders as $folder) {
             if (Folder::exists(JPATH_ROOT . $folder) && !Folder::delete(JPATH_ROOT . $folder)) {
-                echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+                echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br/>';
             }
         }
     }

@@ -29,20 +29,20 @@ use Joomla\CMS\Language\Text;
     <div id="j-main-container" class="j-main-container">
         <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
             <div>
-                <strong><?php echo Text::_('COM_JEM_IMPORT_INSTRUCTIONS') ?></strong><br /><br />
-                <?php echo Text::_("COM_JEM_IMPORT_INSTRUCTIONS_DESC"); ?><br />
-                <?php echo Text::_("COM_JEM_IMPORT_COLUMNNAMESVENUES"); ?><br />
-                <?php echo Text::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
+                <strong><?php echo Text::_('COM_JEM_IMPORT_INSTRUCTIONS') ?></strong><br/><br/>
+                <?php echo Text::_("COM_JEM_IMPORT_INSTRUCTIONS_DESC"); ?><br/>
+                <?php echo Text::_("COM_JEM_IMPORT_COLUMNNAMESVENUES"); ?><br/>
+                <?php echo Text::_("COM_JEM_IMPORT_FIRSTROW"); ?><br/>
             </div>
             <hr />
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_VENUES'));?></strong></legend>
-                    <?php echo Text::_("COM_JEM_IMPORT_VENUES_DESC"); ?><br />
-                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_VENUE_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->venuefields); ?></div></div><br />
+                    <?php echo Text::_("COM_JEM_IMPORT_VENUES_DESC"); ?><br/>
+                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_VENUE_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->venuefields); ?></div></div><br/>
 
                     <div style="display:inline-block"><label for="replace_venues"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label></div>
-                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_venues', 'class="inputbox"', 0); ?></div><br /><br />
+                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_venues', 'class="inputbox"', 0); ?></div><br/><br/>
 
                     <label for="file"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
                     <input type="file" id="venue-file-upload" accept="text/*" name="Filevenues" />
@@ -53,11 +53,11 @@ use Joomla\CMS\Language\Text;
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_CATEGORIES'));?></strong></legend>
-                    <?php echo Text::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br />
-                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_CATEGORY_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->catfields); ?></div></div><br />
+                    <?php echo Text::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br/>
+                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_CATEGORY_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->catfields); ?></div></div><br/>
 
                     <div style="display:inline-block"><label for="replace_categories"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label></div>
-                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_categories', 'class="inputbox"', 0); ?></div><br /><br />
+                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_categories', 'class="inputbox"', 0); ?></div><br/><br/>
 
                     <label for="file"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
                     <input type="file" id="cat-file-upload" accept="text/*" name="Filecategories" />
@@ -70,11 +70,11 @@ use Joomla\CMS\Language\Text;
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_EVENTS'));?></strong></legend>
-                    <?php echo Text::_("COM_JEM_IMPORT_EVENTS_DESC"); ?><br />
-                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_EVENT_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->eventfields) . ',categories'; ?></div></div><br />
+                    <?php echo Text::_("COM_JEM_IMPORT_EVENTS_DESC"); ?><br/>
+                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_EVENT_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->eventfields) . ',categories'; ?></div></div><br/>
 
                     <div style="display:inline-block"><label for="replace_events"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label></div>
-                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_events', 'class="inputbox"', 0); ?></div><br /><br />
+                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_events', 'class="inputbox"', 0); ?></div><br/><br/>
 
                     <label for="file"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
                     <input type="file" id="event-file-upload" accept="text/*" name="Fileevents" />
@@ -86,11 +86,11 @@ use Joomla\CMS\Language\Text;
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_CAT_EVENTS'));?></strong></legend>
-                    <?php echo Text::_("COM_JEM_IMPORT_CAT_EVENTS_DESC"); ?><br />
-                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_CATEVENT_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->cateventsfields); ?></div></div><br />
+                    <?php echo Text::_("COM_JEM_IMPORT_CAT_EVENTS_DESC"); ?><br/>
+                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_CATEVENT_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->cateventsfields); ?></div></div><br/>
 
                     <div style="display:inline-block"><label for="replace_catevents"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label></div>
-                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_catevents', 'class="inputbox"', 0); ?></div><br /><br />
+                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_catevents', 'class="inputbox"', 0); ?></div><br/><br/>
 
                     <label for="file"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
                     <input type="file" id="catevents-file-upload" accept="text/*" name="Filecatevents" />

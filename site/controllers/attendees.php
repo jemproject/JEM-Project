@@ -169,7 +169,7 @@ class JemControllerAttendees extends BaseController
                 $errMsgs = array_unique($errMsgs);
 
                 if (count($errMsgs)) {
-                    $msg .= '<br />' . implode('<br />', $errMsgs);
+                    $msg .= '<br/>' . implode('<br/>', $errMsgs);
                 }
             }
         }

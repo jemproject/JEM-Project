@@ -99,7 +99,7 @@ use Joomla\CMS\Language\Text;
         </div>
       </div>
 
-            <?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+            <?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br/>') : ?>
             <h3 class="description">
                 <?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
             </h3>

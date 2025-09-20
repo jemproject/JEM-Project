@@ -111,7 +111,7 @@ $document->addStyleDeclaration($css);
         echo $item->startdate['month']; ?>
           </div>
           <div class="dayteaser">
-            <?php echo empty($item->dayname) ? '<br />' : $item->dayname; ?>
+            <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
           </div>
           <div class="daynumteaser">
             <?php echo empty($item->daynum) ? '?' : $item->daynum; ?>

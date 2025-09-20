@@ -51,7 +51,7 @@ class JemViewSettings extends JemAdminView
 
         // Check for model errors.
         if ($errors = $this->get('Errors')) {
-            $app->enqueueMessage(implode('<br />', $errors), 'error');
+            $app->enqueueMessage(implode('<br/>', $errors), 'error');
             return false;
         }
 

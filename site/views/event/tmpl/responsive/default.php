@@ -203,7 +203,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         </div>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br/>' || $this->item->introtext != '' && $this->item->introtext != '<br/>')) { ?>
             <h2 class="jem-description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <div class="jem-description event_desc" itemprop="description">
 
@@ -425,7 +425,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php endif; ?>
 
                 <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
-                    && $this->item->locdescription != '<br />') : ?>
+                    && $this->item->locdescription != '<br/>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>

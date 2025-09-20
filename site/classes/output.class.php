@@ -450,7 +450,7 @@ static public function lightbox() {
                         $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
                         $button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
                         $date = HTMLHelper::_('date', $item->checked_out_time);
-                        return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
+                        return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br/> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
                     }
 
                     if ($showIcon) {
@@ -477,7 +477,7 @@ static public function lightbox() {
                         $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
                         $button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
                         $date = HTMLHelper::_('date', $item->vChecked_out_time);
-                        return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
+                        return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br/> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
                     }
 
                     if ($showIcon) {
@@ -496,7 +496,7 @@ static public function lightbox() {
                         $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->vChecked_out);
                         $button = HTMLHelper::_('image', 'system/checked_out.png', NULL, NULL, true);
                         $date = HTMLHelper::_('date', $item->vChecked_out_time);
-                        return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
+                        return '<span ' . self::tooltip(Text::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br/> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
                     }
 
                     if ($showIcon) {

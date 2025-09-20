@@ -212,7 +212,7 @@ $options = array(
                     <?php //echo HTMLHelper::_('sliders.end'); ?>
                     <h3 class="title mt-4"><?php echo Text::_('COM_JEM_MAIN_DONATE'); ?></h3>
                     <div class="content">
-                        <?php echo Text::_('COM_JEM_MAIN_DONATE_TEXT'); ?> <br /><br />
+                        <?php echo Text::_('COM_JEM_MAIN_DONATE_TEXT'); ?> <br/><br/>
                         <div class="center">
                             <a href="https://www.joomlaeventmanager.net/project/donate" target="_blank">
                                 <?php echo HTMLHelper::_('image', 'com_jem/PayPal_DonateButton.png', Text::_('COM_JEM_MAIN_DONATE'), NULL, true); ?>
