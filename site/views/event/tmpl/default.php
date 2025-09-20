@@ -129,7 +129,7 @@ if ($jemsettings->oldevent > 0) {
                     }
                 echo '</dd>';
                     endif;
-            
+
             for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
@@ -411,7 +411,7 @@ if ($jemsettings->oldevent > 0) {
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
             <hr class="jem-hr">
-           
+
             <?php
             $timeNow = time();
 

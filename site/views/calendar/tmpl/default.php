@@ -361,7 +361,7 @@ use Joomla\CMS\Factory;
         if (empty($evbg_usecatcolor) || count($catcolor) !== 1) {
             $content .= $color;
         }
-        
+
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
         $content .= $eventaccess . $contentend . '</div></div>';

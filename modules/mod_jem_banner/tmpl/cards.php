@@ -97,12 +97,12 @@ $css = '
                 height: ' . $imageheight . ';
             }
         }
-        
+
 @media (max-width: 768px) {
     .events-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .event-date-container {
         flex-direction: column;
         align-items: flex-start;
@@ -123,12 +123,12 @@ $wa->addInlineStyle($css);
                     <div class="event-badge"><?php echo $item->catname; ?></div>
                 </div>
                 <?php endif; ?>
-                
+
                 <div class="event-content">
                     <h3 class="event-title">
                         <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" style="text-decoration:none;color:inherit;">'.$item->title.'</a>' : $item->title; ?>
                     </h3>
-                    
+
                     <div class="event-date-container">
                         <div class="date-box" style="<?php echo "background:" . (isset($item->color)? $item->color : $item->colorclass); ?>";">
                             <div class="date-day"><?php echo $item->startdate['day']; ?></div>
@@ -139,7 +139,7 @@ $wa->addInlineStyle($css);
                             <div class="date-hours"><?php echo $item->time ?: Text::_('MOD_JEM_BANNER_ALL_DAY'); ?></div>
                         </div>
                     </div>
-                    
+
                     <div class="event-meta">
                         <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) : ?>
                         <div class="meta-item">
@@ -147,7 +147,7 @@ $wa->addInlineStyle($css);
                             <div class="meta-text"><?php echo $item->venue; ?></div>
                         </div>
                         <?php endif; ?>
-                        
+
                         <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) : ?>
                         <div class="meta-item">
                             <div class="meta-icon"><i class="fas fa-tag"></i></div>
@@ -155,13 +155,13 @@ $wa->addInlineStyle($css);
                         </div>
                         <?php endif; ?>
                     </div>
-                    
+
                     <?php if ($params->get('showdesc', 1) == 1) : ?>
                     <div class="event-description">
                         <?php echo strip_tags(substr($item->eventdescription, 0, 150)); ?>...
                     </div>
                     <?php endif; ?>
-                    
+
                     <div class="event-actions">
                         <?php if (isset($item->link) && ($item->readmore != 0 || $params->get('readmore'))) : ?>
                         <a href="<?php echo $item->link; ?>" class="btn btn-primary"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>

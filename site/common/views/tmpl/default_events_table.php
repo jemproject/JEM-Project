@@ -114,7 +114,7 @@ use Joomla\CMS\Router\Route;
             <?php $odd = 0; ?>
             <?php foreach ($this->rows as $row) : ?>
                 <?php $odd = 1 - $odd; ?>
-                <?php 
+                <?php
                 // has user access
                 $eventaccess = '';
                 if (!$row->user_has_access_event) {

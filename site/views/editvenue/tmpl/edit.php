@@ -267,7 +267,7 @@ window.onload = (event) => {
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('map'); ?><?php echo $this->form->getInput('map'); ?></li>
                 </ul>
-                        <div class="clr"></div>                
+                        <div class="clr"></div>
                 <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
                 <div class="clr"></div>
                 <div id="mapdiv">
