@@ -21,7 +21,6 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem_cal';
 
