@@ -288,7 +288,7 @@ class JemViewVenue extends JemView
             $permissions->canEditPublishVenue = $user->can(array('edit', 'publish'), 'venue', $venue->id, $venue->created_by);
 
             // Generate Venuedescription
-            if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
+            if (!$venue->locdescription == '' || !$venue->locdescription == '<br/>') {
                 // execute plugins
                 $venue->text = $venue->locdescription;
                 $venue->title = $venue->venue;

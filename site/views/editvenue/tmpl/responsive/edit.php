@@ -308,7 +308,7 @@ window.onload = (event) => {
                         <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" /></dd>
                     </dl>
 
-                    <div style="clear: both;"><br /></div>
+                    <div style="clear: both;"><br/></div>
                     <div class="jem-row jem-justify-start">
                         <input id="cp-all" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" />
                         <input id="cp-address" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
@@ -321,7 +321,7 @@ window.onload = (event) => {
             <?php endif; ?>
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>
-                <div style="clear: both;"><br /></div>
+                <div style="clear: both;"><br/></div>
                 <div>
                     <?php echo $this->form->getLabel('locdescription'); ?>
                     <?php echo $this->form->getInput('locdescription'); ?>

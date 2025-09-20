@@ -183,7 +183,7 @@ if ($jemsettings->oldevent > 0) {
         </dl>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br/>' || $this->item->introtext != '' && $this->item->introtext != '<br/>')) { ?>
             <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <div class="description event_desc" itemprop="description">
 
@@ -394,7 +394,7 @@ if ($jemsettings->oldevent > 0) {
                 <?php endif; /* event_show_detailsadress */ ?>
 
                 <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
-                    && $this->item->locdescription != '<br />') : ?>
+                    && $this->item->locdescription != '<br/>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>

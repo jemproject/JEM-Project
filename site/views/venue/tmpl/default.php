@@ -168,7 +168,7 @@ use Joomla\CMS\Language\Text;
     <?php endif; ?>
 
     <?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
-              $this->venuedescription != '<br />') : ?>
+              $this->venuedescription != '<br/>') : ?>
 
         <h2 class="description"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
         <div class="description no_space floattext" itemprop="description">

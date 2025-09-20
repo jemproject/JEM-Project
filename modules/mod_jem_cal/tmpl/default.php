@@ -195,7 +195,7 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                             $tip .= '...';
                             break; // foreach
                         }
-                        $tip .= trim($t) . '<br />';
+                        $tip .= trim($t) . '<br/>';
                     }
                 }
 
