@@ -112,7 +112,7 @@
                     size="8"
                     label="MOD_JEM_TEASER_FALLBACK_COLOR"
                     description="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
-                    showon="color:alpha"
+                    showon="color:category,alpha"
                 />
 
                 <field name="use_modal" type="radio"
