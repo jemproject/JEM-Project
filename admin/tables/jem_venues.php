@@ -29,6 +29,8 @@ class jem_venues extends Table
     /** @var string */
     public $alias = '';
     /** @var string */
+    public $color = '';
+    /** @var string */
     public $url = '';
     /** @var string */
     public $street = '';
