@@ -320,7 +320,7 @@ window.onload = (event) => {
                 <div class="clr"></div>
                 <?php echo $this->form->getLabel('locdescription'); ?>
                 <div>
-                <div class="clr"><br/></div>
+                <div class="clr"><br></div>
                 <?php echo $this->form->getInput('locdescription'); ?>
                 </div>
             </fieldset>

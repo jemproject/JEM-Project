@@ -235,13 +235,13 @@ use Joomla\CMS\Factory;
 
             switch ($multi_mode) {
                 case 1:
-                    $timetp .= $multi_icon . ' ' . $start . '<br/>';
+                    $timetp .= $multi_icon . ' ' . $start . '<br>';
                     break;
                 case 2:
-                    $timetp .= $multi_icon . '<br/>';
+                    $timetp .= $multi_icon . '<br>';
                     break;
                 case 3:
-                    $timetp .= $multi_icon . ' ' . $end . '<br/>';
+                    $timetp .= $multi_icon . ' ' . $end . '<br>';
                     break;
                 default:
                     if ($start != '') {
@@ -249,7 +249,7 @@ use Joomla\CMS\Factory;
                         if ($end != '') {
                             $timetp .= ' - '.$end;
                         }
-                        $timetp .= '<br/>';
+                        $timetp .= '<br>';
                     }
                     break;
             }

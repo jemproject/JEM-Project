@@ -71,13 +71,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 <td style="width: 80%">
                     <b><?php echo Text::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
                     <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo $this->event->recurrence_type? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
-                    <br/>
+                    <br>
                     <b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
                         echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
                 </td>
             </tr>
         </table>
-        <br/>
+        <br>
 
         <?php if (empty($this->rows)) : ?>
 
@@ -96,7 +96,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 &nbsp;
             </div>
-            <br/><br/><br/>
+            <br><br><br>
             <div class="jem_fleft" style="white-space:nowrap;">
                 <?php echo Text::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
             </div>

@@ -52,9 +52,9 @@ function initialize() {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
         }
-        boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br/>" +
-                    escapeHTML(street) + "<br/>" +
-                    escapeHTML(postalCode) + "<br/>" +
+        boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br>" +
+                    escapeHTML(street) + "<br>" +
+                    escapeHTML(postalCode) + "<br>" +
                     escapeHTML(city);
 
         var myOptions = {
@@ -114,9 +114,9 @@ function initialize() {
                         .replace(/"/g, '&quot;')
                         .replace(/'/g, '&#039;');
                     }
-                    boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br/>" +
-                        escapeHTML(street) + "<br/>" +
-                        escapeHTML(postalCode) + "<br/>" +
+                    boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br>" +
+                        escapeHTML(street) + "<br>" +
+                        escapeHTML(postalCode) + "<br>" +
                         escapeHTML(city);
 
                     var myOptions = {

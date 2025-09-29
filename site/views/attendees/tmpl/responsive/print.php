@@ -26,15 +26,15 @@ use Joomla\CMS\HTML\HTMLHelper;
         </td>
     </tr>
 </table>
-<br/>
+<br>
 <table class="adminlist">
     <tr>
-        <td style="text-align: left;"><b><?php echo Text::_( 'COM_JEM_TITLE' ).':'; ?> </b>&nbsp;<?php echo $this->escape($this->event->title); ?><br/>
+        <td style="text-align: left;"><b><?php echo Text::_( 'COM_JEM_TITLE' ).':'; ?> </b>&nbsp;<?php echo $this->escape($this->event->title); ?><br>
             <b><?php echo Text::_( 'COM_JEM_DATE' ).':'; ?> </b>&nbsp;<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
                     $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?></td>
     </tr>
 </table>
-<br/>
+<br>
 <?php $regname = $this->settings->get('global_regname', '1'); ?>
 <table class="table table-striped" id="articleList">
     <thead>

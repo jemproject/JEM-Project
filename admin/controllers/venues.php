@@ -70,9 +70,9 @@ class JemControllerVenues extends AdminController
                 {
                     $html = array();
                     $html[] = '<span class="label label-info">'.$error[0].'</span>';
-                    $html[] = '<br/>';
+                    $html[] = '<br>';
                     unset($error[0]);
-                    $html[] = implode('<br/>', $error);
+                    $html[] = implode('<br>', $error);
                     $app->enqueueMessage(implode("\n",$html),'warning');
                 }
             }
