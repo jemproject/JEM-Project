@@ -48,7 +48,7 @@ $wa->addInlineScript('
                 <div class="col-md-11">
                      <div class="row mb-12">
                             <div class="col-md-2">
-                                   <strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br/>
+                                   <strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br>
                             </div>
                             <div class="col-md-2">
                                 <strong><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></strong>&nbsp;<?php echo $this->escape($this->event->title); ?>

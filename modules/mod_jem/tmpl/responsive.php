@@ -59,7 +59,7 @@ HTMLHelper::_('stylesheet', 'modules/mod_jem/tmpl/default.css');
                     echo $item->text;
                 endif; ?>
         </span>
-        <br/>
+        <br>
         <?php if($highlight_featured && $item->featured): ?>
             <span class="event-title highlight_featured">
         <?php else : ?>

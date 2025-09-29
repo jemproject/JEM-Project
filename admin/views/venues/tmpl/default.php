@@ -163,14 +163,14 @@ $wa->useScript('table.columns');
                         <?php
                         $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
                         $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp', NULL,NULL,true);
-                        $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br/>';
-                        $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br/>';
-                        $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br/>';
+                        $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br>';
+                        $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br>';
+                        $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br>';
                         if ($item->author_ip != '') {
-                            $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br/>';
+                            $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br>';
                         }
                         if (!empty($item->modified)) {
-                            $overlib     .= '<br/>'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br/>'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
+                            $overlib     .= '<br>'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br>'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
                         }
                         ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
