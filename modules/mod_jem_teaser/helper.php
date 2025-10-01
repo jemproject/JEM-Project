@@ -207,6 +207,7 @@ abstract class ModJemTeaserHelper
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->venuecolor  = !empty($row->venuecolor) ? $row->venuecolor : '';
             $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
             $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
@@ -274,7 +275,7 @@ abstract class ModJemTeaserHelper
             $lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
             $lists[$i]->colorclass = $color;
-            if (($color == 'alpha') || (($color == 'category') && empty($row->categories))) {
+            if (($color == 'alpha') || (($color == 'category') && empty($row->categories)) || (($color == 'venue') && empty($row->venuecolor))) {
                 $lists[$i]->color = $fallback_color;
                 $lists[$i]->color_is_dark = $fallback_color_is_dark;
             }
@@ -293,6 +294,10 @@ abstract class ModJemTeaserHelper
                     $lists[$i]->color =  $fallback_color;
                     $lists[$i]->color_is_dark = $fallback_color_is_dark;
                 }
+            }
+            elseif (($color == 'venue') && !empty($row->venuecolor)) {
+            	$lists[$i]->color = $row->venuecolor;
+            	$lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
             }
 
             # user has access

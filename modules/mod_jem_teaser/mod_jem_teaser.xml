@@ -103,6 +103,7 @@
                     <option value="blue">MOD_JEM_TEASER_BLUE</option>
                     <option value="green">MOD_JEM_TEASER_GREEN</option>
                     <option value="orange">MOD_JEM_TEASER_ORANGE</option>
+                    <option value="venue">MOD_JEM_TEASER_VENUE</option>
                     <option value="category">MOD_JEM_TEASER_CATEGORY</option>
                     <option value="alpha">MOD_JEM_TEASER_FALLBACK_COLOR</option>
                 </field>
@@ -112,7 +113,7 @@
                     size="8"
                     label="MOD_JEM_TEASER_FALLBACK_COLOR"
                     description="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
-                    showon="color:category,alpha"
+                    showon="color:venue,category,alpha"
                 />
 
                 <field name="use_modal" type="radio"

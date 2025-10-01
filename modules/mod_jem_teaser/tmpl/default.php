@@ -21,7 +21,7 @@ if ($params->get('use_modal', 0)) {
 }
 ?>
 
-<div class="jemmoduleteaser<?php echo $params->get('moduleclass_sfx')?>" id="jemmoduleteaser">
+<div class="jemmoduleteaser<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmoduleteaser">
     <div class="eventset" >
     <?php if (count($list)) : ?>
         <?php foreach ($list as $item) : ?>
@@ -43,20 +43,17 @@ if ($params->get('use_modal', 0)) {
                                        <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
                                        <div class="lower-background"></div>
                                        <div class="background-image"></div>
+                            <?php elseif ($item->colorclass === "venue") : ?>
+                                <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+                                    <div class="color-bar" style="background-color:<?php echo !empty($item->venuecolor) ? $item->venuecolor : (!empty($item->color) ? $item->color : 'rgb(128,128,128)'); ?>"></div>
+                                    <div class="lower-background"></div>
+                                    <div class="background-image"></div>
                                    <?php else: ?>
-        <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar"
-             title="<?php echo strip_tags($item->dateinfo); ?>">
+        						<div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
     <?php endif; ?>
-
-          <div class="monthteaser<?php
-    echo isset($item->color_is_dark)
-        ? ($item->color_is_dark === 1
-            ? ' monthcolor-light">'
-            : ($item->color_is_dark === 0
-                ? ' monthcolor-dark">'
-                : '">'))
-        : '">';
-        echo $item->startdate['month']; ?>
+        							<div class="monthteaser<?php echo isset($item->color_is_dark) ? ($item->color_is_dark === 1 ? ' monthcolor-light">' : ($item->color_is_dark === 0 ? ' monthcolor-dark">' : '">')) : '">';
+        							echo $item->startdate['month'];
+        							?>
             </div>
             <div class="dayteaser">
               <?php echo $item->startdate['weekday']; ?>
@@ -68,19 +65,20 @@ if ($params->get('use_modal', 0)) {
         <?php endif; ?>
                     </td>
                     <td class="event-info">
-                        <div class="teaser-jem">
-                            <div>
+                    	<div class="teaser-jem"><div>
               <?php if($item->showimageevent): ?>
                 <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
-                  <a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal;?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid ?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
-                    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" /></a>
+                  					<a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal; ?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" title="<?php echo Text::_(
+    'COM_JEM_CLICK_TO_ENLARGE'
+); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') . ': ' . $item->fulltitle; ?>"><img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" /></a>
                 <?php endif; ?>
               <?php endif; ?>
               <?php if($item->showimagevenue): ?>
               <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                 <?php if(!empty($item->venueimage)) : ?>
-                  <a href="<?php echo $item->venueimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal;?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid ?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
-                    <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
+                  						<a href="<?php echo $item->venueimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal; ?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" title="<?php echo Text::_(
+    'COM_JEM_CLICK_TO_ENLARGE'
+); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') . ': ' . $item->venue; ?>"><img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
                 <?php endif; ?>
               <?php endif; ?>
               <?php endif; ?>
