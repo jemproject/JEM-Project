@@ -1453,8 +1453,8 @@ class JemHelper
 
         if (empty($css)) {
             $css = $module;
-            $filestyle = ($suffix? $suffix . '/':'') . $css . '.css';
-        }else{
+            $filestyle = ($suffix ? $suffix . '/':'') . $css . '.css';
+        } else {
             $filestyle = $css . '.css';
         }
 
@@ -1474,9 +1474,9 @@ class JemHelper
         else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
             $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
         }
-        //Error the css file doesn't found
+        //Error no css file found
         else {
-            JemHelper::addLogEntry("Warning: The " . $filestyle . " file doesn't found.", __METHOD__);
+            JemHelper::addLogEntry("Warning: The file " . $filestyle . " couldn't be found.", __METHOD__);
         }
     }
 
