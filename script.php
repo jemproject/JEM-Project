@@ -426,7 +426,7 @@ class com_jemInstallerScript
     private function getHeader()
     {
         ?>
-        <img src="../media/com_jem/images/jemlogo.webp" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;" />
+        <img src="../media/com_jem/images/jemlogo.svg" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;height: 160px;width: 396px;background-color:#fff;border-radius: 8px;" />
         <h1><?php echo Text::_('COM_JEM'); ?></h1>
         <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
         <?php
