@@ -51,11 +51,12 @@ if ($params->get('use_modal', 0)) {
                             <?php else : ?>
                                 <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
                             <?php endif; ?>
-                            <div class="monthteaser<?php echo isset($item->color_is_dark) ? ($item->color_is_dark === 1 ? ' monthcolor-light">' : ($item->color_is_dark === 0 ? ' monthcolor-dark">' : '">')) : '">'; echo $item->startdate['month']; ?></div>
-                            <div class="dayteaser">
-                                <?php echo $item->startdate['weekday']; ?>
-                            </div>
-                                <div class="daynumteaser"><?php echo $item->startdate['day']; ?></div>
+                                    <div class="monthteaser<?php echo isset($item->color_is_dark) ? ($item->color_is_dark === 1 ? ' monthcolor-light">' : ($item->color_is_dark === 0 ? ' monthcolor-dark">' : '">')) : '">'; echo $item->startdate['month']; ?></div>
+                                    <div class="dayteaser">
+                                        <?php echo $item->startdate['weekday']; ?>
+                                    </div>
+                                    <div class="daynumteaser"><?php echo $item->startdate['day']; ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                     </td>
@@ -124,7 +125,7 @@ if ($params->get('use_modal', 0)) {
                             <?php endif; ?>
                             </div>
                         <?php endif; ?>
-                        <?php if (!empty($item->catname)): ?>
+                        <?php if (!empty($item->catname)) : ?>
                             <div class="category">
         						<?php echo $item->catname; ?>
                             </div>
