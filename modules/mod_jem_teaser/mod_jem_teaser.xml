@@ -115,7 +115,15 @@
                     description="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
                     showon="color:venue,category,alpha"
                 />
-
+                <field name="catcolor" type="list"
+                    default="none"
+                    label="MOD_JEM_TEASER_CATEGORY_COLOR"
+                    description="MOD_JEM_TEASER_CATEGORY_COLORR_DESC"
+                >
+                    <option value="none">MOD_JEM_TEASER_CATEGORY_COLOR_NO</option>
+                    <option value="text">MOD_JEM_TEASER_CATEGORY_COLOR_TEXT</option>
+                    <option value="background">MOD_JEM_TEASER_CATEGORY_COLOR_BG</option>
+                </field>
                 <field name="use_modal" type="radio"
                     default="0"
                     label="MOD_JEM_TEASER_USE_MODAL"

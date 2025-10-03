@@ -197,11 +197,79 @@ abstract class ModJemTeaserHelper
                 $title = $fulltitle;
             }
 
+            # get category colors
+            $catcolorMode = $params->get('catcolor', 'none'); // none, text, background
+            $coloredCategories = [];
+
+            if (!empty($row->categories) && is_array($row->categories)) {
+                foreach ($row->categories as $cat) {
+                    // --- ID ---
+                    $catId = isset($cat->id) ? (int)$cat->id : (isset($cat->catid) ? (int)$cat->catid : 0);
+
+                    // --- alias (generiate, if not yet evailable) ---
+                    if (!empty($cat->alias)) {
+                        $catAlias = $cat->alias;
+                    } elseif (!empty($cat->slug)) {
+                        $catAlias = $cat->slug;
+                    } else {
+                        // Fallback: generate URL safe string from name
+                        $rawName = isset($cat->catname) ? $cat->catname : (isset($cat->title) ? $cat->title : 'category');
+                        $catAlias = strtolower($rawName);
+                        $catAlias = preg_replace('/[^a-z0-9]+/i', '-', $catAlias);
+                        $catAlias = trim($catAlias, '-');
+                        if ($catAlias === '') {
+                            $catAlias = 'cat-' . ($catId ?: time()); // letzter Notfall
+                        }
+                    }
+
+                    // --- generate link ---
+                    $link = Route::_('index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
+                    $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
+
+                    // --- name and color ---
+                    $catName = isset($cat->catname) ? $cat->catname : (isset($cat->title) ? $cat->title : '');
+                    $escapedName = htmlspecialchars($catName, ENT_COMPAT, 'UTF-8');
+
+                    $colorRaw = isset($cat->color) ? trim($cat->color) : '';
+
+                    // Nur gültige Hex-Farben übernehmen (#rgb oder #rrggbb)
+                    $color = '';
+                    if (preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $colorRaw)) {
+                        $color = $colorRaw;
+                    }
+
+                    // --- Generate output ---
+                    if ($catcolorMode === 'text' && $color) {
+                            // text color
+                        $isDark = self::_is_dark($color);
+                        $shadow = $isDark 
+                            ? '0 0 2px rgba(255,255,255,0.6)'  // heller Shadow auf dunklem Text
+                            : '0 0 2px rgba(0,0,0,0.6)';       // dunkler Shadow auf hellem Text
+
+                        $coloredCategories[] = '<a href="' . $link . '" class="category-link-textcolor" style="color:' . $color . ';text-shadow:' . $shadow . ';text-decoration:none;">' . $escapedName . '</a>';
+
+                    } elseif ($catcolorMode === 'background') {
+                            // background color
+                        if ($color) {
+                            $textColor = self::_is_dark($color) ? '#fff' : '#000';
+                            $coloredCategories[] = '<a href="' . $link . '" class="category-link-bgcolor" style="background-color:' . $color . ';color:' . $textColor . ';padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
+                        } else {
+                            // no color
+                            $coloredCategories[] = '<a href="' . $link . '" class="category-link" style="background-color:transparent;box-shadow:0 0 3px rgba(0,0,0,0.5);padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
+                        }
+
+                    } else {
+                        // none or no valid color
+                        $coloredCategories[] = '<a href="' . $link . '">' . $escapedName . '</a>';
+                    }
+                }
+            }
+
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
+            $lists[$i]->catname     = implode("<span class=\"catseparator\"></span>", $coloredCategories);
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
@@ -296,8 +364,8 @@ abstract class ModJemTeaserHelper
                 }
             }
             elseif (($color == 'venue') && !empty($row->venuecolor)) {
-            	$lists[$i]->color = $row->venuecolor;
-            	$lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
+                $lists[$i]->color = $row->venuecolor;
+                $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
             }
 
             # user has access
