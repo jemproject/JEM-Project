@@ -67,6 +67,24 @@
                     label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH"
                     description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH_DESC"
                 />
+                <field name="DisplayLink" type="radio"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK"
+                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK_DESC"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="DisplayTime" type="radio"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME"
+                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME_DESC"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="DisplayCat" type="radio"
                     class="btn-group btn-group-yesno"
                     default="0"
