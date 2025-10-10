@@ -18,7 +18,7 @@ $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
         $wa->useScript('keepalive')
             ->useScript('form.validate');
-            
+
 jimport('joomla.html.html.tabs');
 
 // Create shortcut to parameters.
@@ -220,7 +220,6 @@ window.onload = (event) => {
 
                 <button type="submit" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-
         <br>
             <?php if ($this->params->get('showintrotext')) : ?>
             <div class="description no_space floattext">
@@ -308,7 +307,7 @@ window.onload = (event) => {
                         <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" /></dd>
                     </dl>
 
-                    <div style="clear: both;"><br /></div>
+                    <div style="clear: both;"><br></div>
                     <div class="jem-row jem-justify-start">
                         <input id="cp-all" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" />
                         <input id="cp-address" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
@@ -321,7 +320,7 @@ window.onload = (event) => {
             <?php endif; ?>
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>
-                <div style="clear: both;"><br /></div>
+                <div style="clear: both;"><br></div>
                 <div>
                     <?php echo $this->form->getLabel('locdescription'); ?>
                     <?php echo $this->form->getInput('locdescription'); ?>

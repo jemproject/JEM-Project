@@ -7,7 +7,7 @@
  *
  * @todo make custom colorfield so it can be used within xml
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;

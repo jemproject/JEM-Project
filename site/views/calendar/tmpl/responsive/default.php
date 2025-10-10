@@ -10,13 +10,15 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 ?>
 
 <style>
-td.today div.daynum::before,
-td.today div.daynum::after {
-  background-color: <?php echo $this->params->get('currentdaycolor'); ?>;
-}
+    td.today div.daynum::before,
+    td.today div.daynum::after {
+        background-color: <?php echo $this->params->get('currentdaycolor'); ?>;
+    }
 </style>
 
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
@@ -45,11 +47,20 @@ td.today div.daynum::after {
     $countperday = array();
     $limit = $this->params->get('daylimit', 10);
     $evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
+    $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
     $showtime = $this->settings->get('global_show_timedetails', 1);
+    $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
             continue; // skip, open date !
+        }
+
+        // has user access
+        $eventaccess = '';
+        if (!$row->user_has_access_event) {
+            // show a closed lock icon
+            $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
         }
 
         //get event date
@@ -91,6 +102,25 @@ td.today div.daynum::after {
         $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
         $eventid = $this->escape($row->id);
 
+        //Contact
+        $contactname = '';
+        if($row->contactid) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true);
+            $query->select('name');
+            $query->from('#__contact_details');
+            $query->where(array('id='.(int)$row->contactid));
+            $db->setQuery($query);
+            $contactname = $db->loadResult();
+        }
+        if ($contactname) {
+            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
+            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
+            $contact .= '</div>';
+        } else {
+            $contact = '';
+        }
+
         //initialize variables
         $multicatname = '';
         $colorpic = '';
@@ -101,17 +131,19 @@ td.today div.daynum::after {
         $catcolor = array();
 
         //walk through categories assigned to an event
+        $catcolor = array();
+
         foreach((array)$row->categories AS $category) {
-            //Currently only one id possible...so simply just pick one up...
+            // Currently only one id possible...so simply just pick one up...
             $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
-            //wrap a div for each category around the event for show hide toggler
+            // Wrap a div for each category around the event for show/hide toggler
             $content    .= '<div id="catz" class="cat'.$category->id.'">';
             $contentend .= '</div>';
 
-            //attach category color if any in front of the catname
+            // Attach category color in front of the catname
             if ($category->color) {
-                $multicatname .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
+                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
             } else {
                 $multicatname .= $category->catname;
             }
@@ -121,13 +153,12 @@ td.today div.daynum::after {
                 $multicatname .= ', ';
             }
 
-            //attach category color if any in front of the event title in the calendar overview
+            // Collect all category colors (needed for the bar or blocks)
             if (isset($category->color) && $category->color) {
-                $colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
-                $catcolor[$category->color] = $category->color; // we need to list all different colors of this event
+                $catcolor[$category->color] = $category->color;
             }
 
-            //count occurence of the category
+            // Count category occurrence
             if (!isset($row->multi) || ($row->multi == 'first')) {
                 if (!array_key_exists($category->id, $countcatevents)) {
                     $countcatevents[$category->id] = 1;
@@ -137,27 +168,66 @@ td.today div.daynum::after {
             }
         }
 
-        $color  = '<div id="eventcontenttop" class="eventcontenttop">';
-        $color .= $colorpic;
-        $color .= '</div>';
+        // Build color output depending on $categoryColorMarker
+        if (!empty($catcolor)) {
+            if ($categoryColorMarker) {
+                // Build a single multicolor TOP BAR
+                $numColors = count($catcolor);
+                $step = 100 / $numColors;
+                $gradientParts = [];
+                $i = 0;
+
+                foreach ($catcolor as $color) {
+                    $start = $i * $step;
+                    $end = ($i + 1) * $step;
+                    $gradientParts[] = "$color $start% $end%";
+                    $i++;
+                }
+
+                $gradientCss = "linear-gradient(to right, " . implode(", ", $gradientParts) . ")";
+                $color  = '<div id="eventcontenttop" class="eventcontenttop pt-0">';
+                $color .= '<div class="colorpicbar" style="background: '.$gradientCss.';"></div>';
+                $color .= '</div>';
+
+            } else {
+                // Build individual color BLOCKS
+                $colorpic = '';
+                foreach ($catcolor as $color) {
+                    $colorpic .= '<span class="colorpicblock" style="background-color: '.$color.';"></span>';
+                }
+                $color = $colorpic;
+            }
+        }
 
         // multiday
         $multi_mode = 0; // single day
         $multi_icon = '';
         if (isset($row->multi)) {
             switch ($row->multi) {
-            case 'first': // first day
-                $multi_mode = 1;
-                $multi_icon = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
-                break;
-            case 'middle': // middle day
-                $multi_mode = 2;
-                $multi_icon = '<i class="fas fa-arrows-alt-h"></i>';
-                break;
-            case 'zlast': // last day
-                $multi_mode = 3;
-                $multi_icon = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
-                break;
+                case 'first': // first day
+                    $multi_mode = 1;
+                    if($recurrenceIconRender){
+                        $multi_icon = HTMLHelper::_("image","com_jem/arrow-left.webp",'', NULL, true);
+                    }else{
+                        $multi_icon = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
+                    }
+                    break;
+                case 'middle': // middle day
+                    $multi_mode = 2;
+                    if($recurrenceIconRender){
+                        $multi_icon = HTMLHelper::_("image","com_jem/arrow-middle.webp",'', NULL, true);
+                    }else{
+                        $multi_icon = '<i class="fas fa-arrows-alt-h"></i>';
+                    }
+                    break;
+                case 'zlast': // last day
+                    $multi_mode = 3;
+                    if($recurrenceIconRender){
+                        $multi_icon = HTMLHelper::_("image","com_jem/arrow-right.webp",'', NULL, true);
+                    }else{
+                        $multi_icon = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
+                    }
+                    break;
             }
         }
 
@@ -169,24 +239,24 @@ td.today div.daynum::after {
             $end   = JemOutput::formattime($row->endtimes,'',false);
 
             switch ($multi_mode) {
-            case 1:
-                $timetp .= $multi_icon . ' ' . $start . '<br />';
-                break;
-            case 2:
-                $timetp .= $multi_icon . '<br />';
-                break;
-            case 3:
-                $timetp .= $multi_icon . ' ' . $end . '<br />';
-                break;
-            default:
-                if ($start != '') {
-                    $timetp .= $start;
-                    if ($end != '') {
-                        $timetp .= ' - '.$end;
+            	case 1:
+                    $timetp .= $multi_icon . ' ' . $start . '<br>';
+                    break;
+                case 2:
+                    $timetp .= $multi_icon . '<br>';
+                    break;
+                case 3:
+                    $timetp .= $multi_icon . ' ' . $end . '<br>';
+                    break;
+                default:
+                    if ($start != '') {
+                        $timetp .= $start;
+                        if ($end != '') {
+                            $timetp .= ' - '.$end;
+                        }
+                        $timetp .= '<br>';
                     }
-                    $timetp .= '<br />';
-                }
-                break;
+                    break;
             }
         } else {
             if (!empty($multi_icon)) {
@@ -218,10 +288,10 @@ td.today div.daynum::after {
             $statusicon  = JemOutput::publishstateicon($row);
             $eventstate  = '<div class="eventstate"><span class="text-label">'.Text::_('JSTATUS').': </span>';
             switch ($row->published) {
-            case  1: $eventstate .= Text::_('JPUBLISHED');   break;
-            case  0: $eventstate .= Text::_('JUNPUBLISHED'); break;
-            case  2: $eventstate .= Text::_('JARCHIVED');    break;
-            case -2: $eventstate .= Text::_('JTRASHED');     break;
+                case  1: $eventstate .= Text::_('JPUBLISHED');   break;
+                case  0: $eventstate .= Text::_('JUNPUBLISHED'); break;
+                case  2: $eventstate .= Text::_('JARCHIVED');    break;
+                case -2: $eventstate .= Text::_('JTRASHED');     break;
             }
             $eventstate .= '</div>';
         } else {
@@ -239,22 +309,22 @@ td.today div.daynum::after {
         //date in tooltip
         $multidaydate = '<div class="time"><span class="text-label">'.Text::_('COM_JEM_DATE').': </span>';
         switch ($multi_mode) {
-        case 1:  // first day
-            $multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
-            $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
-            break;
-        case 2:  // middle day
-            $multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
-            $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
-            break;
-        case 3:  // last day
-            $multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
-            $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
-            break;
-        default: // single day
-            $multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
-            $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
-            break;
+            case 1:  // first day
+                $multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                break;
+            case 2:  // middle day
+                $multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+                break;
+            case 3:  // last day
+                $multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+                break;
+            default: // single day
+                $multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                break;
         }
         $multidaydate .= '</div>';
 
@@ -287,16 +357,21 @@ td.today div.daynum::after {
 
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle;
-        if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
-            $content .= '; background-color:'.array_pop($catcolor);
-            $content .= '" onclick="location.href=\''.$detaillink.'\'">';
-        } else {
-            $content .= '" onclick="location.href=\''.$detaillink.'\'">' . $colorpic;
+        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 pb-2' : '') . '" style="' . $featuredstyle;
+        $style = '';
+        if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
+            $style = '; background-color:' . array_pop($catcolor);
         }
+        $content .= $style . '" onclick="location.href=\'' . $detaillink . '\'">';
+        $divClass = $categoryColorMarker ? 'eventcontenttextbar' : 'eventcontenttextblock';
+        $content .= '<div class="' . $divClass . '">';
+        if (empty($evbg_usecatcolor) || count($catcolor) !== 1) {
+            $content .= $color;
+        }
+
         $content .= $editicon;
-        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $eventaccess . $contentend . '</div>';
+        $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+        $content .= $eventaccess . $contentend . '</div></div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;
@@ -309,59 +384,60 @@ td.today div.daynum::after {
 
     $displayLegend = (int)$this->params->get('displayLegend', 1);
     if ($displayLegend == 2) : ?>
-    <!-- Calendar legend above -->
-    <div id="jlcalendarlegend">
+        <!-- Calendar legend above -->
+        <div id="jlcalendarlegend">
 
-    <!-- Calendar buttons -->
-        <div class="calendarButtons jem-row jem-justify-start">
+            <!-- Calendar buttons -->
+            <div class="calendarButtons jem-row jem-justify-start">
                 <button id="buttonshowall" class="calendarButton btn btn-outline-dark">
                     <?php echo Text::_('COM_JEM_SHOWALL'); ?>
                 </button>
                 <button id="buttonhideall" class="calendarButton btn btn-outline-dark">
                     <?php echo Text::_('COM_JEM_HIDEALL'); ?>
                 </button>
-        </div>
+            </div>
 
-    <!-- Calendar Legend -->
-        <div class="calendarLegends jem-row jem-justify-start">
-            <?php
-            if ($this->params->get('displayLegend')) {
+            <!-- Calendar Legend -->
+            <div class="calendarLegends jem-row jem-justify-start">
+                <?php
+                if ($this->params->get('displayLegend')) {
 
-                ##############
-                ## FOR EACH ##
-                ##############
+                    ##############
+                    ## FOR EACH ##
+                    ##############
 
-                $counter = array();
+                    $counter = array();
 
-                # walk through events
-                foreach ($this->rows as $row) {
-                    foreach ($row->categories as $cat) {
+                    # walk through events
+                    foreach ($this->rows as $row) {
+                        foreach ($row->categories as $cat) {
 
-                        # sort out dupes for the counter (catid-legend)
-                        if (!in_array($cat->id, $counter)) {
-                            # add cat id to cat counter
-                            $counter[] = $cat->id;
+                            # sort out dupes for the counter (catid-legend)
+                            if (!in_array($cat->id, $counter)) {
+                                # add cat id to cat counter
+                                $counter[] = $cat->id;
 
-                            # build legend
-                            if (array_key_exists($cat->id, $countcatevents)) {
-                            ?>
-                                <button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
-                                    <?php
-                                    if (isset($cat->color) && $cat->color) {
-                                        echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
-                                    }
-                                    echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+                                # build legend
+                                if (array_key_exists($cat->id, $countcatevents)) {
                                     ?>
-                                </button>
-                            <?php
+                                    <button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
+                                        <?php
+                                        if (!empty($cat->color)) {
+                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock';
+                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
+                                        }
+                                        echo $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
+                                        ?>
+                                    </button>
+                                    <?php
+                                }
                             }
                         }
                     }
                 }
-            }
-            ?>
+                ?>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <?php
@@ -370,59 +446,63 @@ td.today div.daynum::after {
     ?>
 
     <?php if (($displayLegend == 1) || ($displayLegend == 0)) : ?>
-    <!-- Calendar legend below -->
-    <div id="jlcalendarlegend">
+        <!-- Calendar legend below -->
+        <div id="jlcalendarlegend">
 
-    <!-- Calendar buttons -->
-        <div class="calendarButtons jem-row jem-justify-start">
+            <!-- Calendar buttons -->
+            <div class="calendarButtons jem-row jem-justify-start">
                 <button id="buttonshowall" class="btn btn-outline-dark">
                     <?php echo Text::_('COM_JEM_SHOWALL'); ?>
                 </button>
                 <button id="buttonhideall" class="btn btn-outline-dark">
                     <?php echo Text::_('COM_JEM_HIDEALL'); ?>
                 </button>
-        </div>
-    
-    <!-- Calendar Legend -->
-        <div class="calendarLegends jem-row jem-justify-start">
-            <?php
-            if ($displayLegend == 1) {
+            </div>
 
-                ##############
-                ## FOR EACH ##
-                ##############
+            <!-- Calendar Legend -->
+            <div class="calendarLegends jem-row jem-justify-start">
+                <?php
+                if ($displayLegend == 1) {
 
-                $counter = array();
+                    ##############
+                    ## FOR EACH ##
+                    ##############
 
-                # walk through events
-                foreach ($this->rows as $row) {
-                    foreach ($row->categories as $cat) {
+                    $counter = array();
 
-                        # sort out dupes for the counter (catid-legend)
-                        if (!in_array($cat->id, $counter)) {
-                            # add cat id to cat counter
-                            $counter[] = $cat->id;
+                    # walk through events
+                    foreach ($this->rows as $row) {
+                        foreach ($row->categories as $cat) {
 
-                            # build legend
-                            if (array_key_exists($cat->id, $countcatevents)) {
-                            ?>
-                                <button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
-                                    <?php
-                                    if (isset($cat->color) && $cat->color) {
-                                        echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
-                                    }
-                                    echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+                            # sort out dupes for the counter (catid-legend)
+                            if (!in_array($cat->id, $counter)) {
+                                # add cat id to cat counter
+                                $counter[] = $cat->id;
+
+                                # build legend
+                                if (array_key_exists($cat->id, $countcatevents)) {
                                     ?>
-                                </button>
-                            <?php
+                                    <button class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
+                                        <?php
+                                        if (!empty($cat->color)) {
+                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock ms-2';
+                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
+                                        }
+
+                                        $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
+                                        $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
+                                        echo '<span class="' . $textClass . '">' . $text . '</span>';
+                                        ?>
+                                    </button>
+                                    <?php
+                                }
                             }
                         }
                     }
                 }
-            }
-            ?>
+                ?>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <div class="clr"></div>

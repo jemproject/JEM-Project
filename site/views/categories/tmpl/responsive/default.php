@@ -39,7 +39,7 @@ use Joomla\CMS\Router\Route;
             <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
                 <?php echo $categoriesaccess; ?>
         </h2>
-    
+
             <?php if ($row->user_has_access_category) : ?>
     <?php if (($this->jemsettings->discatheader) && (!empty($row->image))) : ?>
       <div class="jem-catimg">
@@ -47,7 +47,7 @@ use Joomla\CMS\Router\Route;
         <?php    echo JemOutput::flyer($row, $cimage, 'category'); ?>
       </div>
     <?php endif; ?>
-    
+
     <div class="description">
       <?php echo $row->description; ?>
       <?php if ($i = count($row->subcats)) : ?>
@@ -73,10 +73,10 @@ use Joomla\CMS\Router\Route;
         </div>
       <?php endif; ?>
     </div>
-    
+
     <div class="jem-clear">
     </div>
-    
+
         <!--table-->
         <?php
             if ($this->params->get('detcat_nr', 0) > 0) {
@@ -97,7 +97,7 @@ use Joomla\CMS\Router\Route;
               echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENTS');
             elseif ($row->assignedevents == 1) :
               echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENT');
-            else : 
+            else :
               echo '- 0 '.TEXT::_('COM_JEM_EVENTS');
             endif;
           ?>
@@ -105,13 +105,13 @@ use Joomla\CMS\Router\Route;
       </a>
     </div>
             <?php endif; ?>
-    </div>    
-    
-    <?php 
+    </div>
+
+    <?php
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;
-   
+
    endforeach; ?>
 
     <!--pagination-->

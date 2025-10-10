@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-miterlimit:2;">
+    <g id="weitere-Icons" serif:id="weitere Icons">
+        <g>
+            <g id="user">
+                <g>
+                    <path d="M81.311,55.225L81.311,85.732L48,85.732L48,55.225M48,53.126C47.99,46.656 56.639,41.95 64.655,41.95C72.644,41.95 81.266,46.633 81.311,53.332" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+                    <circle cx="64.655" cy="25.759" r="8.997" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linecap:round;"/>
+                </g>
+                <g>
+                    <path d="M48,52.877L48,85.732L14.689,85.732L14.689,52.877M14.689,50.779C14.679,44.309 23.328,39.603 31.345,39.603C39.333,39.603 47.955,44.285 48,50.985" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+                    <circle cx="31.345" cy="23.412" r="8.997" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:round;"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

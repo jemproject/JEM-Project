@@ -48,12 +48,12 @@ if ($params->get('use_modal', 0)) {
              title="<?php echo strip_tags($item->dateinfo); ?>">
     <?php endif; ?>
 
-          <div class="monthteaser<?php 
-    echo isset($item->color_is_dark) 
-        ? ($item->color_is_dark === 1 
-            ? ' monthcolor-light">' 
-            : ($item->color_is_dark === 0 
-                ? ' monthcolor-dark">' 
+          <div class="monthteaser<?php
+    echo isset($item->color_is_dark)
+        ? ($item->color_is_dark === 1
+            ? ' monthcolor-light">'
+            : ($item->color_is_dark === 0
+                ? ' monthcolor-dark">'
                 : '">'))
         : '">';
         echo $item->startdate['month']; ?>
@@ -65,19 +65,19 @@ if ($params->get('use_modal', 0)) {
               <?php echo $item->startdate['day']; ?>
             </div>
           </div>
-        <?php endif; ?>                        
+        <?php endif; ?>
                     </td>
                     <td class="event-info">
                         <div class="teaser-jem">
                             <div>
               <?php if($item->showimageevent): ?>
-                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal;?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid ?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                     <img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" /></a>
                 <?php endif; ?>
               <?php endif; ?>
               <?php if($item->showimagevenue): ?>
-              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                 <?php if(!empty($item->venueimage)) : ?>
                   <a href="<?php echo $item->venueimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal;?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid ?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                     <img class="float_right image-preview" style="height:auto" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>

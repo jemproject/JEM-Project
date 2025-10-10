@@ -30,7 +30,7 @@ use Joomla\CMS\Language\Text;
       flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
     }
   </style>
-  
+
     <!--Venue-->
     <?php foreach($this->rows as $row) : ?>
             <?php
@@ -58,7 +58,7 @@ use Joomla\CMS\Language\Text;
             </dt>
             <dd class="venue_website">
               <a href="<?php echo $this->escape($row->url); ?>" target="_blank">
-              <?php 
+              <?php
                 if (\Joomla\String\StringHelper::strlen($row->url) > 35) {
                   $urlclean = htmlspecialchars(\Joomla\String\StringHelper::substr($row->url, 0 , 35)) . '...';
                 } else {
@@ -95,21 +95,21 @@ use Joomla\CMS\Language\Text;
             <dd class="venue_country">
               <?php if ($row->country) :
                 $countryimg = JemHelperCountries::getCountryFlag($row->country);
-                echo $countryimg ? $countryimg : $row->country; 
+                echo $countryimg ? $countryimg : $row->country;
               endif; ?>
               <meta itemprop="addressCountry" content="<?php echo $row->country; ?>" />
             </dd>
             <?php endif; ?>
           </dl>
         </div>
-        
+
         <!-- FLYER -->
         <div class="jem-img">
           <?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
-        </div> 
+        </div>
       </div>
 
-            <?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+            <?php /* if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br>') : ?>
             <h3 class="description">
                 <?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
             </h3>
@@ -119,7 +119,7 @@ use Joomla\CMS\Language\Text;
             <?php else : ?>
             <div class="clr"> </div>
             <?php endif; */?>
-      
+
       <div class="jem-readmore">
         <a href="<?php echo $row->linkEventsPublished; ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
           <button class="buttonfilter btn">
@@ -129,7 +129,7 @@ use Joomla\CMS\Language\Text;
       </div>
                 <?php endif; ?>
         </div>
-    <?php 
+    <?php
     if ($row !== end($this->rows)) :
         echo '<hr class="jem-hr">';
     endif;

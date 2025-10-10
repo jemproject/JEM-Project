@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
 });
 function mod_jem_cal_click_<?php print $module->id; ?>(url) {
     jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});        
+        jQuery(".hasTooltip").tooltip({'html':true});
     });
 }
 </script>
@@ -195,14 +195,14 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                             $tip .= '...';
                             break; // foreach
                         }
-                        $tip .= trim($t) . '<br />';
+                        $tip .= trim($t) . '<br>';
                     }
                 }
 
                 # J! version < 3.2.7: title already within $tip to ensure always '::' is present
                 # But with J! 3.3+ is a bug in script so we need to use the bad 'hasTooltip'
                 #  which is default of class parameter.
-                $calendar .= HTMLHelper::tooltip($tip, $tipTitle, 'tooltip.png', $space . $day, $link);
+                $calendar .= HTMLHelper::tooltip($tip, $tipTitle, 'tooltip.webp', $space . $day, $link);
             }
 
             $calendar .= '</td>';

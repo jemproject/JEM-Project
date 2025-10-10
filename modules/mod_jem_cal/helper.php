@@ -12,14 +12,14 @@
  * see example at https://keithdevens.com/weblog
  * License: https://keithdevens.com/software/license
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Helper\ModuleHelper;    
+use Joomla\CMS\Helper\ModuleHelper;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 

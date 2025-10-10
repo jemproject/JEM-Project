@@ -266,7 +266,7 @@ class jemmyeventsTab extends cbTabHandler {
         $return .= "\n\t\t\t</th>";
         ++$span;
 
-        
+
         /* Category header */
         if ($event_categories) {
             $return .= "\n\t\t\t<th class='jemmyeventsCBTabTableCat'>";
@@ -407,8 +407,8 @@ class jemmyeventsTab extends cbTabHandler {
                     if (!empty($result->city)) {
                         $return .= "<small style='font-style:italic;'> - {$result->city}</small>";
                     }
-                                                                
-                                                  
+
+
                     $return .= "\n\t\t\t</td>";
                 }
                 /* Attendees field */

@@ -44,7 +44,7 @@ use Joomla\CMS\HTML\HTMLHelper;
             $imgattribs['width'] = $jemsettings->imagewidth;
             $imgattribs['height'] = $jemsettings->imagehight;
 
-            echo HTMLHelper::_('image', 'com_jem/noimage.png', $this->category->catname, $imgattribs, true);
+            echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
         }
         else {
             echo JemOutput::flyer($this->category, $this->cimage, 'category');

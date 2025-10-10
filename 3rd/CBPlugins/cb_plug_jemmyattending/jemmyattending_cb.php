@@ -119,7 +119,7 @@ class jemmyattendingTab extends cbTabHandler {
                     . ' l.venue, l.city, l.state, l.url, '
                     . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
                     . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
-                    . ' r.waiting, r.places, ' 
+                    . ' r.waiting, r.places, '
                     . ($this->_found_state_field ? 'r.status' : '1') . ' AS reg_state '
                     . ($this->_found_state_field ? ', r.comment AS reg_comment' : '')
                     . ($this->_found_state_field ? ', r.places AS reg_places' : '')
@@ -418,38 +418,38 @@ class jemmyattendingTab extends cbTabHandler {
                  */
                 switch ($result->reg_state) {
                 case -1: // explicitely unregistered
-                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.png');
+                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.webp');
                     $tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNREGISTERED', 'Not attending' );
                     break;
                 case  0: // invited, not answered yet
-                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.png');
+                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.webp');
                     $tip = CBTxt::T( 'JEMMYATTENDING_STATUS_INVITED', 'Invited' );
                     break;
                 case  1: // registered
-                    $img = Route::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
+                    $img = Route::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.webp' : '/media/com_jem/images/tick.webp'));
                     $tip = $result->waiting ? CBTxt::T( 'JEMMYATTENDING_STATUS_WAITINGLIST', 'On Waitinglist' ) : CBTxt::T( 'JEMMYATTENDING_STATUS_REGISTERED', 'Attending' );
                     break;
                 default: // ? - shouldn't happen...
-                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.png');
+                    $img = Route::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.webp');
                     $tip = CBTxt::T( 'JEMMYATTENDING_STATUS_UNKNOWN', 'Status unknown' );
                     break;
                 }
                 $return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
                 $return .= "\n\t\t\t\t<img src='$img' alt='$tip' title='$tip'>";
                 $return .= "\n\t\t\t</td>";
-                
+
                 /* Places field */
                 if ($reg_places) {
                     $places = strip_tags($result->reg_places);
                     if (strlen($places) > 10) {
                         $places = substr($places, 0, 10) . '...';
-                    }                
+                    }
                     $return .= "\n\t\t\t<td class='jemmyattendingCBTabTablePlaces'>";
                     $return .= "\n\t\t\t\t{$places}";
-                    $return .= "\n\t\t\t</td>";            
+                    $return .= "\n\t\t\t</td>";
                 }
-    
-                
+
+
 
                 /* Comment field */
                 if ($reg_comment) {

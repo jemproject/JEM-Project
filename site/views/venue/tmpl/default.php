@@ -36,7 +36,7 @@ use Joomla\CMS\Language\Text;
         </div>
         <p> </p>
     <?php endif; ?>
-  
+
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
     <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
       <h2 class="jem-venue-title">
@@ -133,9 +133,9 @@ use Joomla\CMS\Language\Text;
                 echo JemOutput::mapicon($this->venue, null, $this->settings);
             }
             endif; ?>
-            
+
         </dl>
-        <?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?> 
+        <?php if ($this->settings->get('global_show_mapserv') == 2 || $this->settings->get('global_show_mapserv') == 5) : ?>
             <div class="jem-map">
                 <?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
             </div>
@@ -168,7 +168,7 @@ use Joomla\CMS\Language\Text;
     <?php endif; ?>
 
     <?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
-              $this->venuedescription != '<br />') : ?>
+              $this->venuedescription != '<br>') : ?>
 
         <h2 class="description"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
         <div class="description no_space floattext" itemprop="description">
@@ -187,7 +187,7 @@ use Joomla\CMS\Language\Text;
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="view" value="venue" />
-            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />            
+            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
         </form>
 
         <!--pagination-->
@@ -195,10 +195,10 @@ use Joomla\CMS\Language\Text;
             <?php echo $this->pagination->getPagesLinks(); ?>
         </div>
 
-		<!--iCal-->
-	    <div id="iCal" class="iCal">
-    	    <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
-		 </div>
+        <!--iCal-->
+        <div id="iCal" class="iCal">
+            <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+         </div>
     <?php endif; ?>
 
     <!--copyright-->
