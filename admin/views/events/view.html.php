@@ -119,7 +119,7 @@ class JemViewEvents extends JemAdminView
             if ($this->state->get('filter_state') != 2) {
                 ToolBarHelper::publishList('events.publish', 'JTOOLBAR_PUBLISH', true);
                 ToolBarHelper::unpublishList('events.unpublish', 'JTOOLBAR_UNPUBLISH', true);
-                ToolBarHelper::custom('events.featured', 'featured.png', 'featured_f2.png', 'JFEATURED', true);
+                ToolBarHelper::custom('events.featured', 'featured.webp', 'featured_f2.webp', 'JFEATURED', true);
             }
 
             if ($this->state->get('filter_state') != -1) {

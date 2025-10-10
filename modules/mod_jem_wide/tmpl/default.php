@@ -41,7 +41,7 @@ use Joomla\CMS\Uri\Uri;
                     <?php echo $item->title; ?>
                 </span>
                         <?php endif; ?>
-                        <br />
+                        <br>
                         <span class="date" title="<?php echo strip_tags($item->dateinfo); ?>"><?php echo $item->date; ?></span>
                         <?php if ($item->time && $params->get('datemethod', 1) == 1) :
                             ?>

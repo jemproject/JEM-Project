@@ -51,7 +51,7 @@
 .default_color_btn {
     width: 17px;
     height: 17px;
-    background-image: url(../images/defaultcolor.jpg);
+    background-image: url(../images/defaultcolor.webp);
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;

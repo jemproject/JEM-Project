@@ -47,7 +47,7 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-1">                
+                <div class="col-md-1">
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="input-group">
@@ -56,8 +56,8 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-                <div class="col-md-10">        
-                    <div class="row mb-12">    
+                <div class="col-md-10">
+                    <div class="row mb-12">
                         <div class="col-md-3">
                             <div class="input-group">
                                 <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
@@ -89,7 +89,7 @@ $wa->useScript('table.columns');
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">                
+                <div class="col-md-1">
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class=" float-end">
@@ -127,7 +127,7 @@ $wa->useScript('table.columns');
                     //Prepare date
                     $displaydate = JemOutput::formatShortDateTime($row->dates, null, $row->enddates, null, $this->jemsettings->showtime);
                     // Insert a break between date and enddate if possible
-                    $displaydate = str_replace(" - ", " -<br />", $displaydate);
+                    $displaydate = str_replace(" - ", " -<br>", $displaydate);
 
                     //Prepare time
                     if (!$row->times) {
@@ -168,7 +168,7 @@ $wa->useScript('table.columns');
                             <?php else : ?>
                                 <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
                             <?php endif; ?>
-                            <br />
+                            <br>
                             <?php if (\Joomla\String\StringHelper::strlen($row->alias) > 25) : ?>
                                 <?php echo \Joomla\String\StringHelper::substr( $this->escape($row->alias), 0 , 25).'...'; ?>
                             <?php else : ?>
@@ -216,15 +216,15 @@ $wa->useScript('table.columns');
                         <td>
                             <?php
                             $created         = HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));
-                            $image             = HTMLHelper::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
-                            $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
-                            $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br />';
-                            $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br />';
+                            $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp',NULL,NULL,true );
+                            $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br>';
+                            $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br>';
+                            $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br>';
                             if ($row->author_ip != '') {
-                                $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
+                                $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br>';
                             }
                             if (!empty($row->modified)) {
-                                $overlib     .= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
+                                $overlib     .= '<br>'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC5') ) .'<br>'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
                             }
                             ?>
                             <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>
@@ -258,7 +258,7 @@ $wa->useScript('table.columns');
                                     <?php echo $count; ?>
                                 </a>
                             <?php } else { ?>
-                                <?php echo HTMLHelper::_('image', 'com_jem/publish_r.png', NULL, NULL, true); ?>
+                                <?php echo HTMLHelper::_('image', 'com_jem/publish_r.webp', NULL, NULL, true); ?>
                             <?php } ?>
                         </td>
                         <td class="center">
@@ -271,9 +271,9 @@ $wa->useScript('table.columns');
                 <?php endforeach; ?>
                 </tbody>
             </table>
-            
+
             <div class="ms-auto mb-4 me-0">
-                <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
+                <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
             </div>
         </div>
     </div>

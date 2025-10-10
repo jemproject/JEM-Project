@@ -39,7 +39,7 @@ class JemViewSettings extends JemAdminView
 
         // Load css
         $wa = $document->getWebAssetManager();
-    
+
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
 
@@ -51,7 +51,7 @@ class JemViewSettings extends JemAdminView
 
         // Check for model errors.
         if ($errors = $this->get('Errors')) {
-            $app->enqueueMessage(implode('<br />', $errors), 'error');
+            $app->enqueueMessage(implode('<br>', $errors), 'error');
             return false;
         }
 
@@ -111,7 +111,6 @@ class JemViewSettings extends JemAdminView
     protected function WarningIcon()
     {
         $url = Uri::root();
-        // $tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
         $tip = '<span class="icon-info-circle" aria-hidden="true"></span>';
 
         return $tip;

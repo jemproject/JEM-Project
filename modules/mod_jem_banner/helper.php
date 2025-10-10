@@ -6,6 +6,7 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
 use \Joomla\CMS\Factory;
@@ -277,13 +278,13 @@ abstract class ModJemBannerHelper
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
             }
 
-            # append <br /> tags on line breaking tags so they can be stripped below
-            $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+            # append <br> tags on line breaking tags so they can be stripped below
+            $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br>", $row->introtext);
 
-            # strip html tags but leave <br /> tags
+            # strip html tags but leave <br> tags
             $description = strip_tags($description, "<br>");
 
-            # switch <br /> tags to space character
+            # switch <br> tags to space character
             if ($params->get('br') == 0) {
                 $description = mb_ereg_replace('<br[ /]*>',' ', $description);
             }

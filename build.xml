@@ -5,7 +5,7 @@
     <!-- load variables from config file -->
     <property name="cfg.configFile" location="build.config" />
     <loadproperties srcfile="${cfg.configFile}" />
-    
+
     <!-- load variables from package xml file -->
     <buildnumber file ="build.number" />
     <xmlproperty file="package/pkg_${cfg.name}.xml" prefix="pkg" keepRoot="false" />

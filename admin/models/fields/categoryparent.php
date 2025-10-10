@@ -90,16 +90,16 @@ class JFormFieldCategoryParent extends ListField
         // Get the options.
         $db->setQuery($query);
 
-        
+
 
         // Check for a database error.
         // if ($db->getErrorNum()) {
         //     Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
         // }
-        try 
+        try
         {
             $options = $db->loadObjectList();
-        } 
+        }
         catch (\InvalidArgumentException $e)
         {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');

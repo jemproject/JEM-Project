@@ -263,7 +263,7 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
-						<?php echo $eventaccess; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
                 </div>
             <?php else : ?>
@@ -296,12 +296,12 @@ function jem_common_show_filter(&$obj) {
                         <?php if (!empty($row->featured)) :?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
-						<?php echo $eventaccess; ?>
+                        <?php echo $eventaccess; ?>
                     </h4>
                 </div>
             <?php else : ?>
             <?php endif; ?>
-			<?php if($row->user_has_access_venue) : ?>
+            <?php if($row->user_has_access_venue) : ?>
             <?php if ($this->jemsettings->showlocate == 1) : ?>
                 <?php if (!empty($row->locid)) : ?>
                     <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
@@ -369,7 +369,7 @@ function jem_common_show_filter(&$obj) {
             <?php if ($this->params->get('show_introtext_events') == 1) : ?>
                 <div class="jem-event-intro">
                     <?php echo $row->introtext; ?>
-                    <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                    <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br>') : ?>
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
                     <?php endif; ?>
                 </div>

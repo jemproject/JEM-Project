@@ -1111,7 +1111,7 @@ class JemHelperCountries
         }
 
         $html = '<img src="' . $src . '" alt="' . self::getCountryName($countrycode) . '" ';
-        $html .= 'title="' . self::getCountryName($countrycode) . '" ' . $attributes . ' />';
+        $html .= 'title="' . self::getCountryName($countrycode) . '" class="venue_country_flag ' . str_replace(' ', '_', str_replace(['(', ')'], '', strtolower(transliterator_transliterate('Any-Latin; Latin-ASCII', self::getCountryName($countrycode))))) . '_flag" ' . $attributes . ' />';
         return $html;
     }
 

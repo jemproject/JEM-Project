@@ -280,13 +280,13 @@ abstract class ModJemJubileeHelper
                 $lists[$i]->venueimageorig = $uri->base(true).'/'.$limage['original'];
             }
 
-            # append <br /> tags on line breaking tags so they can be stripped below
-            $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+            # append <br> tags on line breaking tags so they can be stripped below
+            $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br>", $row->introtext);
 
-            # strip html tags but leave <br /> tags
+            # strip html tags but leave <br> tags
             $description = strip_tags($description, "<br>");
 
-            # switch <br /> tags to space character
+            # switch <br> tags to space character
             if ($params->get('br') == 0) {
                 $description = mb_ereg_replace('<br[ /]*>',' ', $description);
             }

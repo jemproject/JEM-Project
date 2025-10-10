@@ -567,7 +567,7 @@ abstract class JemUserAbstract extends User
  */
 class JemUser extends JemUserAbstract
 {
-    static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+    static function getInstance($id = 0, ?JUserWrapperHelper $userHelper = null)
     {
         // we don't need this helper
         return parent::_getInstance($id);

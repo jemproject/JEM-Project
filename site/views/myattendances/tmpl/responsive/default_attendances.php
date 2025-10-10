@@ -270,7 +270,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
             <div class="jem-event-info-small jem-myattendances-places" title="<?php echo Text::_('COM_JEM_TABLE_PLACES').': '.$this->escape($row->places); ?>">
                 <?php echo $this->escape($row->places); ?>
-            </div>            
+            </div>
 
                     <div class="jem-event-info-small jem-myattendances-status">
                         <?php

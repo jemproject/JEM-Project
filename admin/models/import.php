@@ -210,7 +210,7 @@ class JemModelImport extends BaseDatabaseModel
                 // collect categories for each event; we get array( itemid => array( catid => ordering ) )
                 $events[$row[$itemidx]][$row[$catidx]] = ($orderidx !== false) ? $row[$orderidx] : 0;
             }
-        
+
             // store data
             return $this->storeCatsEventRelations($events, $replace);
         }
@@ -279,8 +279,8 @@ class JemModelImport extends BaseDatabaseModel
                     }
                 }
             } // if 'JemTableCategory'
-        
-            
+
+
             // Bind the data
             $object->reset(); // clear old data first - which does NOT reset 'id' !
             $object->bind($values);
@@ -568,11 +568,11 @@ class JemModelImport extends BaseDatabaseModel
         $db = $this->_db;
         $db_tables = $db->setQuery('SHOW TABLES')->loadColumn();
         $db_prefix = $db->getPrefix();
-    
+
         foreach ($tables as $table => $value) {
             if(in_array($db_prefix.$table,$db_tables)){
                 $query = $db->getQuery('true');
-                
+
                 $query->select('COUNT(*)')
                     ->from($db->quoteName($prefix.$table));
 
@@ -1162,7 +1162,7 @@ class JemModelImport extends BaseDatabaseModel
         $query->from('#__jem_categories AS c');
         $query->where('c.alias LIKE "root"');
         $db->setQuery($query);
-        
+
 
         // Check for DB error.
         try
@@ -1171,7 +1171,7 @@ class JemModelImport extends BaseDatabaseModel
             return $key;
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
         }
     }

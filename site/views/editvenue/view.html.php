@@ -169,7 +169,7 @@ class JemViewEditvenue extends JemView
         // JQuery scripts
         $document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-    
+
         $wa->registerScript('jem.jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')->useScript('jem.jquery');
         $wa->registerScript('jem.jquery_map', 'https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language)->useScript('jem.jquery_map');
         $wa->registerScript('jem.geocomplete', 'com_jem/jquery.geocomplete.js')->useScript('jem.geocomplete');
@@ -182,7 +182,7 @@ class JemViewEditvenue extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
-        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
+        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
         $this->user          = $user;
 
         if (!$publisher) {
@@ -193,7 +193,7 @@ class JemViewEditvenue extends JemView
         // configure image field: show max. file size, and possibly mark field as required
         $tip = Text::_('COM_JEM_UPLOAD_IMAGE');
         if ((int)$jemsettings->sizelimit > 0) {
-            $tip .= ' <br/>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+            $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
         $this->form->setFieldAttribute('userfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {

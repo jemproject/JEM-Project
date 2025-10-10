@@ -64,9 +64,9 @@ use Joomla\CMS\Language\Text;
                     <input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_( 'COM_JEM_STARTTIME' ); ?>" />
                     <input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_( 'COM_JEM_ENDDATE' ); ?>" />
                     <input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_( 'COM_JEM_ENDTIME' ); ?>" />
-                    <br/>
+                    <br>
                     <?php echo $this->form->getInput('meta_description'); ?>
-                    <br/>
+                    <br>
                     <input type="button" value="<?php echo Text::_( 'COM_JEM_META_DESCRIPTION_BUTTON' ); ?>" onclick="include_description()" />
                     &nbsp;
                     <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_WARNING'), Text::_('COM_JEM_META_DESCRIPTION_WARN'), 'error'); ?>>

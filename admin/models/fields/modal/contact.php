@@ -51,7 +51,7 @@ class JFormFieldModal_Contact extends FormField
         $query->select('name');
         $query->from('#__contact_details');
         $query->where(array('id='.(int)$this->value));
-        
+
 
         // if ($error = $db->getErrorMsg()) {
         //     Factory::getApplication()->enqueueMessage($error, 'warning');
@@ -63,7 +63,7 @@ class JFormFieldModal_Contact extends FormField
         $contact = $db->loadResult();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 
@@ -85,7 +85,7 @@ class JFormFieldModal_Contact extends FormField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'contact-modal',
-            array(        
+            array(
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',

@@ -671,7 +671,7 @@ class plgAcymailingTagjem extends CMSPlugin
                 }
                 $result .= '<a style="text-decoration:none;" title="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;
                 if (!empty($event->custom1)) {
-                    $result .= '<br/><em>'.$event->custom1.'</em>';
+                    $result .= '<br><em>'.$event->custom1.'</em>';
                 }
                 $result .= '</h2></a>';
                 $result .= '<p><span class="eventdate">'.$date.'</span></p>';

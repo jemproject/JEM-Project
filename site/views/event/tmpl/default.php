@@ -129,7 +129,7 @@ if ($jemsettings->oldevent > 0) {
                     }
                 echo '</dd>';
                     endif;
-            
+
             for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
@@ -183,7 +183,7 @@ if ($jemsettings->oldevent > 0) {
         </dl>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br>' || $this->item->introtext != '' && $this->item->introtext != '<br>')) { ?>
             <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <div class="description event_desc" itemprop="description">
 
@@ -228,7 +228,7 @@ if ($jemsettings->oldevent > 0) {
         <!--  Contact -->
         <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT') ; ?></h2>
+            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
 
             <dl class="location floattext">
                 <dt class="con_name"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
@@ -394,7 +394,7 @@ if ($jemsettings->oldevent > 0) {
                 <?php endif; /* event_show_detailsadress */ ?>
 
                 <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
-                    && $this->item->locdescription != '<br />') : ?>
+                    && $this->item->locdescription != '<br>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
@@ -411,7 +411,7 @@ if ($jemsettings->oldevent > 0) {
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
             <hr class="jem-hr">
-           
+
             <?php
             $timeNow = time();
 

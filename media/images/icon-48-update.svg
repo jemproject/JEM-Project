@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Update">
+            <path d="M59.35,51C59.35,57.271 54.264,62.362 48,62.362C41.736,62.362 36.65,57.271 36.65,51C36.65,44.729 41.736,39.638 48,39.638" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;"/>
+            <path d="M82,50.969C82,50.979 82,50.99 82,51M82,51C82,69.765 66.765,85 48,85C29.235,85 14,69.765 14,51C14,32.235 29.235,17 48,17C60.944,17 72.208,24.249 77.951,34.905C78.903,36.672 79.703,38.531 80.334,40.467" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-miterlimit:2;"/>
+            <path d="M81.3,20.65L81.3,39.65L62.3,39.65" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-miterlimit:2;"/>
+        </g>
+    </g>
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+    </g>
+</svg>

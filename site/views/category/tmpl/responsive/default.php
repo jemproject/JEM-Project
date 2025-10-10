@@ -32,7 +32,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         </div>
         <p> </p>
     <?php endif; ?>
-  
+
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
       <h2 class="jem-category-title">
@@ -44,23 +44,23 @@ use Joomla\CMS\HTML\HTMLHelper;
       </h1>
     <?php endif; ?>
     <?php endif; ?>
-  
+
   <style>
     .jem-catimg {
       flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
     }
   </style>
-    
+
   <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
   <div class="jem-catimg">
     <?php    echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
   </div>
   <?php endif; ?>
-    
+
   <div class="description">
     <p><?php echo $this->description; ?></p>
   </div>
-  
+
   <div class="jem-clear">
   </div>
 

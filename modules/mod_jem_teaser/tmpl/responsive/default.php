@@ -78,7 +78,7 @@ $document->addStyleDeclaration($css);
       if ($module->showtitle) {
         $titletag = '<h3 class="event-title" itemprop="name">';
         $titleendtag = '</h3>';
-      } 
+      }
     ?>
     <?php foreach ($list as $item) : ?>
                 <?php
@@ -98,7 +98,7 @@ $document->addStyleDeclaration($css);
         <?php endif; ?>
                     <?php echo $eventaccess; ?>
       <?php echo $titleendtag; ?>
-      
+
       <div class="jem-row-teaser jem-teaser-event">
         <?php if ($item->colorclass === "category" || $item->colorclass === "alpha"): ?>
             <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
@@ -108,19 +108,19 @@ $document->addStyleDeclaration($css);
               <?php else : ?>
             <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>"<?php if (!empty($item->color)): ?> style="background-color: <?php echo $item->color; ?>"<?php endif; ?>>
         <?php endif; ?>
-    
-         <div class="monthteaser<?php 
-    echo isset($item->color_is_dark) 
-        ? ($item->color_is_dark === 1 
-            ? ' monthcolor-light">' 
-            : ($item->color_is_dark === 0 
-                ? ' monthcolor-dark">' 
+
+         <div class="monthteaser<?php
+    echo isset($item->color_is_dark)
+        ? ($item->color_is_dark === 1
+            ? ' monthcolor-light">'
+            : ($item->color_is_dark === 0
+                ? ' monthcolor-dark">'
                 : '">'))
         : '">';
         echo $item->startdate['month']; ?>
           </div>
           <div class="dayteaser">
-            <?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
+            <?php echo empty($item->dayname) ? '<br>' : $item->dayname; ?>
           </div>
           <div class="daynumteaser">
             <?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
@@ -167,7 +167,7 @@ $document->addStyleDeclaration($css);
         <div class="jem-event-image-teaser">
           <div class="jem-row-image-teaser">
             <?php if($item->showimageevent): ?>
-                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.png') === false) : ?>
+                <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                     <?php if(!empty($item->eventimage)) : ?>
                       <div class="jem-eventimg-teaser">
@@ -184,7 +184,7 @@ $document->addStyleDeclaration($css);
                     } else {
                         $image = '';
                     } ?>
-                    
+
                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                     <?php endif; ?>
                         <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
@@ -198,11 +198,11 @@ $document->addStyleDeclaration($css);
             <?php endif; ?>
 
             <?php if($item->showimagevenue): ?>
-              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.png') === false) : ?>
+              <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                   <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                       <?php if(!empty($item->venueimage)) : ?>
                           <div class="jem-eventimg-teaser">
-                    
+
                      <?php if ($params->get('use_modal')) : ?>
                     <?php if ($item->venueimageorig) {
                         $image = $item->venueimageorig;
@@ -246,7 +246,7 @@ $document->addStyleDeclaration($css);
         </div>
       </div>
       </div>
-      <?php 
+      <?php
       if ($item !== end($list)) :
           echo '<hr class="jem-hr">';
       endif;

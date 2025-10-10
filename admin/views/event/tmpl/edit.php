@@ -579,11 +579,11 @@ $params = $params->toArray();
                                     <input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_ ( 'COM_JEM_ENDDATE' );?>" />
                                     <input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_ ( 'COM_JEM_ENDTIME' );?>" />
                                 </p>
-                                <br />
+                                <br>
 
-                                <br />
+                                <br>
                                 <label for="meta_keywords"><?php echo Text::_ ('COM_JEM_META_KEYWORDS') . ':';?></label>
-                                <br />
+                                <br>
 
                                 <?php
                                 if (! empty ( $this->item->meta_keywords )) {
@@ -595,7 +595,7 @@ $params = $params->toArray();
                                 <textarea class="inputbox form-control" name="meta_keywords" id="meta_keywords" rows="6" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
 
                                 <label for="meta_description"><?php echo Text::_ ('COM_JEM_META_DESCRIPTION') . ':';?></label>
-                                <br />
+                                <br>
 
                                 <?php
                                 if (! empty ( $this->item->meta_description )) {

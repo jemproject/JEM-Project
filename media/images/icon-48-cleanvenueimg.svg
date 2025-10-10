@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:10;">
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+        <g id="Cleanup-Venue-Images" serif:id="Cleanup Venue Images">
+            <g>
+                <path d="M70.534,50.499L65.133,45.098L22.836,87.4M46.809,61.396L33.695,49.588L16.169,65.979" style="fill:none;fill-rule:nonzero;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+                <circle cx="48" cy="35.636" r="5.5" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            </g>
+            <path d="M80.4,53.106L80.4,38.603M91.5,48L48,12.288L4.481,48M14.678,40.929L14.678,85.75L60.842,85.732" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+            <g>
+                <path d="M63.359,61.298L91.959,61.298" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+                <path d="M71.394,59.563L83.925,59.563" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+                <path d="M67.215,61.298L67.215,88.301C67.215,88.832 67.426,89.341 67.801,89.716C68.177,90.091 68.686,90.302 69.216,90.301C73.072,90.299 81.489,90.294 85.343,90.292C86.447,90.291 87.342,89.396 87.342,88.292C87.342,81.735 87.342,61.298 87.342,61.298" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+                <path d="M70.947,69.432L83.561,82.046M70.947,82.046L83.561,69.432" style="fill:none;stroke:rgb(225,0,26);stroke-width:3.5px;stroke-linejoin:miter;stroke-miterlimit:2;"/>
+            </g>
+        </g>
+    </g>
+</svg>

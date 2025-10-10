@@ -198,7 +198,7 @@ class JemViewEditevent extends JemView
         $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
-        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.png', Text::_('COM_JEM_NOTES'), NULL, true);
+        $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
 
         $this->user = $user;
         $permissions = new stdClass();
@@ -219,7 +219,7 @@ class JemViewEditevent extends JemView
         // configure image field: show max. file size, and possibly mark field as required
         $tip = Text::_('COM_JEM_UPLOAD_IMAGE');
         if ((int)$jemsettings->sizelimit > 0) {
-            $tip .= ' <br/>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+            $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
         $this->form->setFieldAttribute('userfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {

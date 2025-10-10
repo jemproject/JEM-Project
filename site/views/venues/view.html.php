@@ -58,7 +58,7 @@ class JemViewVenues extends JemView
             $item->limage = JemImage::flyercreator($item->locimage, 'venue');
 
             // Generate Venuedescription
-            if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
+            if (!$item->locdescription == '' || !$item->locdescription == '<br>') {
                 //execute plugins
                 $item->text = $item->locdescription;
                 $item->title = $item->venue;

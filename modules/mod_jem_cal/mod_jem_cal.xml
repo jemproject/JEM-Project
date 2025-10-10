@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="2.5" client="site" method="upgrade">
+<extension type="module" client="site" method="upgrade">
     <name>mod_jem_cal</name>
     <author>Toni Smillie, JEM Community</author>
     <authorEmail>toni@qivva.com, info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.qivva.com, https://www.joomlaeventmanager.net</authorUrl>
-    <creationDate>Aug 2025</creationDate>
+    <creationDate>May 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <version>4.3.3</version>
@@ -235,29 +235,37 @@
                 />
             </fieldset>
             <fieldset name="advanced">
-                <field name="layout" type="modulelayout"
+                <field
+                    name="layout"
+                    type="modulelayout"
                     label="JFIELD_ALT_LAYOUT_LABEL"
                     class="form-select"
                     validate="moduleLayout"
                 />
-                <field name="moduleclass_sfx" type="textarea"
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
                     label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
                     rows="3"
                     validate="CssIdentifier"
                 />
-                <field name="cache" type="list"
-                    label="MOD_JEM_CACHING"
-                    description="MOD_JEM_CACHING_DESC"
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    description="MOD_JEM_CAL_CACHING_DESC"
                     default="1"
                     filter="integer"
                     validate="options"
-                    >
+                >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>
-                <field name="cache_time" type="number"
-                    label="MOD_JEM_CACHE_TIME"
-                    description="MOD_JEM_CACHE_TIME_DESC"
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    description="MOD_JEM_CAL_CACHE_TIME_DESC"
                     default="900"
                     filter="integer"
                 />

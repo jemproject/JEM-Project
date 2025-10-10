@@ -43,7 +43,7 @@ class JemControllerVenues extends AdminController
     {
         // Check for token
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
-        
+
         $app = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();
         $jinput = $app->input;

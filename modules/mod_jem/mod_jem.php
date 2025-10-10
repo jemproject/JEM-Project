@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\Module\Menu\Site\Helper\MenuHelper;
 
 $mod_name = 'mod_jem';
 

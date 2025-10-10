@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Plugins-v2" serif:id="Plugins v2">
+            <path d="M56.017,45.507C60.446,49.936 60.446,57.129 56.017,61.558C51.587,65.988 44.395,65.988 39.965,61.558C35.536,57.129 35.536,49.936 39.965,45.507C44.395,41.077 51.587,41.077 56.017,45.507Z" style="fill:none;stroke:rgb(249,159,0);stroke-width:4.5px;"/>
+            <path d="M75.655,44.75L87.983,32.421" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            <path d="M56.463,26.45L69.102,13.811" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            <path d="M14.678,76.238L25.285,86.845L34.353,77.777L60.384,77.909C60.384,77.909 72.91,65.383 79.213,59.08C81.166,57.127 81.166,53.961 79.213,52.009C72.187,44.982 56.541,29.336 49.515,22.31C47.562,20.357 44.397,20.357 42.444,22.31C36.14,28.614 23.614,41.14 23.614,41.14L23.746,67.171L14.678,76.238Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:square;"/>
+        </g>
+    </g>
+    <g id="_-Housekeeping-Icons" serif:id=" Housekeeping Icons">
+    </g>
+</svg>

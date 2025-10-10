@@ -1,206 +1,202 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="https://www.w3.org/1999/xhtml/" xml:lang="en-GB" lang="en-GB">
-<head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title><span>05</span>Edit Event</title>
-    <link href="../css/help.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<h1>Edit Event</h1>
-
-<h3>Description</h3>
-
-<div>
-    <p><img src="../../../../../media/com_jem/images/icon-48-eventedit.png" alt="" class="left" />
-        Edit your event items or add new ones from this screen.</p>
-    <div class="clear"></div>
-</div>
-
-<div class="box">
-    <p class="hintheader">Tip</p>
-    <p class="hint">Use Plugins to add additional functionality to JEM. For example, you can use the 'JEM Comments' Plugin
-        to show user comments for your events and enhance the social part of your website.</p>
-</div>
-
-
-<h3>Navigation</h3>
-
-<p>
-    To access this screen use:
-    <strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Add Event</strong> or by <strong>clicking an event in the overview</strong>
-</p>
-
-<h3>Toolbar</h3>
-
-<p><img src="../images/edit-event.png">
-    <div class="clear"> </div>
-</p>
-
-<p><strong>Save:</strong>
-    Saves the event and remains in the current view.</p>
-<p><strong>Save &amp; Close:</strong>
-    Saves the event and returns to the overview.</p>
-<p><strong>Save &amp; New:</strong>
-    Saves the event and opens a new empty Event edit screen.</p>
-<p><strong>Save as Copy:</strong>
-    Saves the event as a new instance and returns to the overview. If you have changed the name of the event, <br />
-    please keep in mind to change the name of the alias too. If you just clear the contents of the Alias field before saving, <br />
-    JEM will create an alias name by itself, based on the Event title</p>
-<p><strong>Close:</strong>
-    Cancels this operation and returns to the Events list.</p>
-
-<h2>Main publishing area </h2>
-
-<h3>[Optional Icons]</h3>
-<p>If a an event is part of a recurring set of events, there will be an icon above the Event / Attachemts / Permissions Tabs  <br />
-    <img src="../../../../../media/com_jem/images/icon-32-recurrence.png" alt="recurring event" />
-    indicates that an event is part of a set of recurring events. <br />
-    <img src="../../../../../media/com_jem/images/icon-32-recurrence-first.png" alt="first recurring event" />
-    indicates that an event is the first event of a set of recurring events.</p>
-
-<h3>Event Tab </h3>
-
-<p><strong>Title:</strong>
-    Enter or edit (if needed) the title of the Event here.</p>
-<p><strong>Alias:</strong>
-    Enter or edit (if needed) the alias of the Event here. The alias is used in the url, only use url safe characters here.
-    Leave this field blank if you want JEM to create it automatically.</p>
-<p><strong>Event date:</strong>
-    Select the Event date. (required)</p>
-<p><strong>End date:</strong>
-    Select the Date when the Event ends.</p>
-<p><strong>Time:</strong>
-    The time when the Event starts.</p>
-<p><strong>End time:</strong>
-    The time when the Event ends.</p>
-<p><strong>Category:</strong>
-    Choose the category you want the item to belong to. The dropdown list will display the available Categories.
-    <strong>Attention: It is possible to select multiple categoeries per event!</strong></p>
-<p><strong>Venue:</strong>
-    Choose the venue you want to associate with this event or set the value to no venue.
-    If you want you can also add a new venue to the venue database by clicking the &quot;add&quot; button.</p>
-<p><strong>Contact:</strong>
-    Select a contact from the contacts database.</p>
-<p><strong>Status:</strong>
-    Select Yes to publish the event or No to unpublish. Published events are displayed on the Frontend.</p>
-<p><strong>Featured:</strong>
-    Select Yes to mark the selected event as a featured event. In the Frontend, the featured event will
-    be especially marked or highlighted to distinguish it from other events.</p>
-<p><strong>Event Description:</strong>
-    This is the Event description. You can use Joomla Plugins in this field.</p>
-
-
-<h3>Attachments Tab</h3>
-
-<p>
-    In the Attachments Tab you can upload attachments for the event.
-    When you upload a file in the backend (please mind the maximum upload size set by set by php)
-    it will be visible at the event/venue-page.
-    When the access is set to registered only registered people can see that file.
-</p>
-
-
-<h3>Permissions Tab </h3>
-
-<p>
-In this tab you can set permissions per event. Settings can be set to influence the event display
-(author, print icon etc.), to infuence the venue display (full description, address and venue links)
-and to influence the link to a community solution.</p>
-<p>
-If you want to make global settings, use the JEM settings tab, via
-<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Settings</strong> </p>
-
-
-<h2>Advanced publishing area</h2>
-
-<h3>Publishing Options</h3>
-
-<p><strong>Eventdate:</strong>
-    Select the Eventdate. (required)</p>
-<p><strong>Enddate:</strong>
-    Select the Date when the Event ends.</p>
-<p><strong>Time:</strong>
-    The time when the Event starts.</p>
-<p><strong>Endtime:</strong>
-    The time when the Event ends.</p>
-
-
-<h3>Custom Fields</h3>
-
-<p>You can enter up to 10 custom fields here.
-    Here you can enter a maximum of 10 custom fields for an event. <br />
-    Empty fields are not displayed in the frontend. You can give the fields specific names using language overrides. <br />
-    If you want to do that, proceed as follows:<br />
-    Go to Extensions &rarr; Languages &rarr; Overrides. Choose 'Administrator' in the select-box on the right hand sode of the screen.<br />
-    The key for the event custom fields are COM_JEM_EVENT_CUSTOM_FIELD1 to COM_JEM_EVENT_CUSTOM_FIELD10.<br />
-    If you want to use the language string for both backend and frontend, then don't forget to click the 'for both locations' checkbox.
-</p>
-
-
-<h3>Registration</h3>
-
-<p><strong>Registration:</strong>
-    Select if users should be able to register to this Event. The options are No, Yes or Invited Users Only.</p>
-<p><strong>Registration Annulation:</strong>
-    Select if users should be able to annulate their registration from this Event. The options are No, Yes or Limited .... datetime before the event starts.</p>
-<p><strong>Max Places:</strong>
-    Enter the maximum capacity for the event. When there is no maximum, enter 0 for unlimited registrations.</p>
-<p><strong>Booked Places:</strong>
-    Displays the currently booked (registered) number of visitors to the event.</p>
-<p><strong>Waiting List:</strong>
-    Check this box to enable the waiting list.</p>
-
-
-<h3>Image</h3>
-
-<p><strong>Image:</strong>
-    Choose an image for this Event (flyer) or upload it.</p>
-
-
-<h3>Repeating Events</h3>
-
-<p>
-    Choose the type of the recurrence: daily, weekly, monthly, yearly or at a single weekday of the month.
-    If you only want to create events until a certain date, set a 'By the end of' date. See the explanation in the remark below.
-</p>
-
-
-<div class="box">
-    <p class="attentionheader">Attention</p>
-    <p class="attention">For all of the recurrence-options you can enter a 'By the end of' date. JEM will generate your
-    event for the repeating interval that you have chosen, until the end date, <strong> BUT</strong> it will never create
-    events that exceed the number of days ahead that you defined in the Settings &rarr; Global parameters &rarr; Advanced
-    Parameters &rarr; [Generate events up to (days).
-    <br />
-    <br />
-    This is called the 'Anticipation Window' (the number of days that JEM looks ahead) and is always leading.
-    Recurring events can be auto-generated by JEM for a shorter period ahead, but never for a longer period than defined there.
-    This is to protect busy websites with many event submissions by users from heavy database load.
-    </p>
-</div>
-
-<p><strong>Daily:</strong>
-    Choose this if you want the event to repeat every X calendar days. You can choose from 1 (every day) till 14 days.
-    Then set until what date JEM should create your recurring event.</p>
-<p><strong>Weekly:</strong>
-    Choose this if you want the event to repeat every X weeks. You can choose from 1 (every week) till 8 weeks.
-    Then set until what date JEM should create your recurring event.</p>
-<p><strong>Monthly:</strong>
-    Choose this if you want the event to repeat every X months. You can choose from 1 (every month) till 12 months.
-    Then set until what date JEM should create your recurring event.</p>
-<p><strong>Weekday:</strong>
-    Choose this if you want the event to repeat every 1st, 2nd, 3rd, or 4th Monday, Tuesday, Wednesday, etc of the month. <br />
-    You can also choose the 'last' or the 'before last'. Then set until what date JEM should create your recurring event.</p>
-
-<p>Once again, please note that the anticipation window that you set in the Settings of JEM will always be leading when
-    the end date is evaluated.</p>
-
-
-<h3>Metadata information</h3>
-
-<p><strong>Metadata information:</strong>
-    Enter or edit (if needed) the Meta Description and the Meta Keywords of the event here. <br />
-    You may use the suggestions in the settings to set default values which will be automatically set to the event data.</p>
-</body>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title><span>05</span>Edit Event</title>
+        <link href="../css/help.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <h1>Edit Event</h1>
+        <h2>Description</h2>
+        <div>
+            <p><img src="../../../../../media/com_jem/images/icon-48-eventedit.svg" alt="Edit Event" class="left" />
+                Edit your event items or add new ones from this screen.
+            </p>
+            <div class="clear"></div>
+        </div>
+        <div class="box">
+            <p class="hintheader">Tip</p>
+            <p class="hint">Use Plugins to add additional functionality to JEM. For example, you can use the 'JEM Comments' Plugin
+                to show user comments for your events and enhance the social part of your website.
+            </p>
+        </div>
+        <h2>Navigation</h2>
+        <p>
+            To access this screen use:
+            <strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Add Event</strong> or by <strong>clicking an event in the overview</strong>
+        </p>
+        <h2>Toolbar</h2>
+        <p><img src="../../../../../media/com_jem/images/icon-48-eventedit.svg" alt="Edit Event" class="left" />
+        <div class="clear"> </div>
+        </p>
+        <p><strong>Save:</strong>
+            Saves the event and remains in the current view.
+        </p>
+        <p><strong>Save &amp; Close:</strong>
+            Saves the event and returns to the overview.
+        </p>
+        <p><strong>Save &amp; New:</strong>
+            Saves the event and opens a new empty Event edit screen.
+        </p>
+        <p><strong>Save as Copy:</strong>
+            Saves the event as a new instance and returns to the overview. If you have changed the name of the event, <br>
+            please keep in mind to change the name of the alias too. If you just clear the contents of the Alias field before saving, <br>
+            JEM will create an alias name by itself, based on the Event title
+        </p>
+        <p><strong>Close:</strong>
+            Cancels this operation and returns to the Events list.
+        </p>
+        <h2>Main publishing area </h2>
+        <h3>[Optional Icons]</h3>
+        <p>If a an event is part of a recurring set of events, there will be an icon above the Event / Attachemts / Permissions Tabs  <br>
+            <img src="../../../../../media/com_jem/images/icon-32-recurrence.svg" alt="recurring event" />
+            indicates that an event is part of a set of recurring events. <br>
+            <img src="../../../../../media/com_jem/images/icon-32-recurrence-first.svg" alt="first recurring event" />
+            indicates that an event is the first event of a set of recurring events.
+        </p>
+        <h3>Event Tab </h3>
+        <p><strong>Title:</strong>
+            Enter or edit (if needed) the title of the Event here.
+        </p>
+        <p><strong>Alias:</strong>
+            Enter or edit (if needed) the alias of the Event here. The alias is used in the url, only use url safe characters here.
+            Leave this field blank if you want JEM to create it automatically.
+        </p>
+        <p><strong>Event date:</strong>
+            Select the Event date. (required)
+        </p>
+        <p><strong>End date:</strong>
+            Select the Date when the Event ends.
+        </p>
+        <p><strong>Time:</strong>
+            The time when the Event starts.
+        </p>
+        <p><strong>End time:</strong>
+            The time when the Event ends.
+        </p>
+        <p><strong>Category:</strong>
+            Choose the category you want the item to belong to. The dropdown list will display the available Categories.
+            <strong>Attention: It is possible to select multiple categoeries per event!</strong>
+        </p>
+        <p><strong>Venue:</strong>
+            Choose the venue you want to associate with this event or set the value to no venue.
+            If you want you can also add a new venue to the venue database by clicking the &quot;add&quot; button.
+        </p>
+        <p><strong>Contact:</strong>
+            Select a contact from the contacts database.
+        </p>
+        <p><strong>Status:</strong>
+            Select Yes to publish the event or No to unpublish. Published events are displayed on the Frontend.
+        </p>
+        <p><strong>Featured:</strong>
+            Select Yes to mark the selected event as a featured event. In the Frontend, the featured event will
+            be especially marked or highlighted to distinguish it from other events.
+        </p>
+        <p><strong>Event Description:</strong>
+            This is the Event description. You can use Joomla Plugins in this field.
+        </p>
+        <h3>Attachments Tab</h3>
+        <p>
+            In the Attachments Tab you can upload attachments for the event.
+            When you upload a file in the backend (please mind the maximum upload size set by set by php)
+            it will be visible at the event/venue-page.
+            When the access is set to registered only registered people can see that file.
+        </p>
+        <h3>Permissions Tab </h3>
+        <p>
+            In this tab you can set permissions per event. Settings can be set to influence the event display
+            (author, print icon etc.), to infuence the venue display (full description, address and venue links)
+            and to influence the link to a community solution.
+        </p>
+        <p>
+            If you want to make global settings, use the JEM settings tab, via
+            <strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Settings</strong> 
+        </p>
+        <h2>Advanced publishing area</h2>
+        <h3>Publishing Options</h3>
+        <p><strong>Eventdate:</strong>
+            Select the Eventdate. (required)
+        </p>
+        <p><strong>Enddate:</strong>
+            Select the Date when the Event ends.
+        </p>
+        <p><strong>Time:</strong>
+            The time when the Event starts.
+        </p>
+        <p><strong>Endtime:</strong>
+            The time when the Event ends.
+        </p>
+        <h3>Custom Fields</h3>
+        <p>You can enter up to 10 custom fields here.
+            Here you can enter a maximum of 10 custom fields for an event. <br>
+            Empty fields are not displayed in the frontend. You can give the fields specific names using language overrides. <br>
+            If you want to do that, proceed as follows:<br>
+            Go to Extensions &rarr; Languages &rarr; Overrides. Choose 'Administrator' in the select-box on the right hand sode of the screen.<br>
+            The key for the event custom fields are COM_JEM_EVENT_CUSTOM_FIELD1 to COM_JEM_EVENT_CUSTOM_FIELD10.<br>
+            If you want to use the language string for both backend and frontend, then don't forget to click the 'for both locations' checkbox.
+        </p>
+        <h3>Registration</h3>
+        <p><strong>Registration:</strong>
+            Select if users should be able to register to this Event. The options are No, Yes or Invited Users Only.
+        </p>
+        <p><strong>Registration Annulation:</strong>
+            Select if users should be able to annulate their registration from this Event. The options are No, Yes or Limited .... datetime before the event starts.
+        </p>
+        <p><strong>Max Places:</strong>
+            Enter the maximum capacity for the event. When there is no maximum, enter 0 for unlimited registrations.
+        </p>
+        <p><strong>Booked Places:</strong>
+            Displays the currently booked (registered) number of visitors to the event.
+        </p>
+        <p><strong>Waiting List:</strong>
+            Check this box to enable the waiting list.
+        </p>
+        <h3>Image</h3>
+        <p><strong>Image:</strong>
+            Choose an image for this Event (flyer) or upload it.
+        </p>
+        <h3>Repeating Events</h3>
+        <p>
+            Choose the type of the recurrence: daily, weekly, monthly, yearly or at a single weekday of the month.
+            If you only want to create events until a certain date, set a 'By the end of' date. See the explanation in the remark below.
+        </p>
+        <div class="box">
+            <p class="attentionheader">Attention</p>
+            <p class="attention">For all of the recurrence-options you can enter a 'By the end of' date. JEM will generate your
+                event for the repeating interval that you have chosen, until the end date, <strong> BUT</strong> it will never create
+                events that exceed the number of days ahead that you defined in the Settings &rarr; Global parameters &rarr; Advanced
+                Parameters &rarr; [Generate events up to (days).
+                <br>
+                <br>
+                This is called the 'Anticipation Window' (the number of days that JEM looks ahead) and is always leading.
+                Recurring events can be auto-generated by JEM for a shorter period ahead, but never for a longer period than defined there.
+                This is to protect busy websites with many event submissions by users from heavy database load.
+            </p>
+        </div>
+        <p><strong>Daily:</strong>
+            Choose this if you want the event to repeat every X calendar days. You can choose from 1 (every day) till 14 days.
+            Then set until what date JEM should create your recurring event.
+        </p>
+        <p><strong>Weekly:</strong>
+            Choose this if you want the event to repeat every X weeks. You can choose from 1 (every week) till 8 weeks.
+            Then set until what date JEM should create your recurring event.
+        </p>
+        <p><strong>Monthly:</strong>
+            Choose this if you want the event to repeat every X months. You can choose from 1 (every month) till 12 months.
+            Then set until what date JEM should create your recurring event.
+        </p>
+        <p><strong>Weekday:</strong>
+            Choose this if you want the event to repeat every 1st, 2nd, 3rd, or 4th Monday, Tuesday, Wednesday, etc of the month. <br>
+            You can also choose the 'last' or the 'before last'. Then set until what date JEM should create your recurring event.
+        </p>
+        <p>Once again, please note that the anticipation window that you set in the Settings of JEM will always be leading when
+            the end date is evaluated.
+        </p>
+        <h3>Metadata information</h3>
+        <p><strong>Metadata information:</strong>
+            Enter or edit (if needed) the Meta Description and the Meta Keywords of the event here. <br>
+            You may use the suggestions in the settings to set default values which will be automatically set to the event data.
+        </p>
+    </body>
 </html>

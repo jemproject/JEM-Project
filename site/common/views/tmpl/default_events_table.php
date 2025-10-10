@@ -114,15 +114,15 @@ use Joomla\CMS\Router\Route;
             <?php $odd = 0; ?>
             <?php foreach ($this->rows as $row) : ?>
                 <?php $odd = 1 - $odd; ?>
-	            <?php 
-				// has user access
-	            $eventaccess = '';
-	            if (!$row->user_has_access_event) {
-	                // show a closed lock icon
-	                $statusicon = JemOutput::publishstateicon($row);
-	                $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
-	            }
-	            ?>
+                <?php
+                // has user access
+                $eventaccess = '';
+                if (!$row->user_has_access_event) {
+                    // show a closed lock icon
+                    $statusicon = JemOutput::publishstateicon($row);
+                    $eventaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                }
+                ?>
                 <?php if (!empty($row->featured)) : ?>
                     <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php else : ?>
@@ -162,12 +162,12 @@ use Joomla\CMS\Router\Route;
                         <?php if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
-						echo $eventaccess;
+                        echo $eventaccess;
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
                                 <?php echo $row->introtext; ?>
-                                <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                                <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br>') : ?>
                                     <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
                                 <?php endif; ?>
                             </div>
@@ -181,12 +181,12 @@ use Joomla\CMS\Router\Route;
                         if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
-						echo $eventaccess;
+                        echo $eventaccess;
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
                                 <?php echo $row->introtext; ?>
-                                <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                                <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br>') : ?>
                                     <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
                                 <?php endif; ?>
                             </div>

@@ -14,9 +14,6 @@ CREATE TABLE IF NOT EXISTS `#__jem_types` (
 );
 
 -- change values
+UPDATE `#__jem_config` SET `value` = 'media/com_jem/images/flags/w80-webp/' WHERE `keyname` = 'flagicons_path' AND `value` = 'media/com_jem/images/flags/w20-png/';
 
 -- update values
-
-
-
-
