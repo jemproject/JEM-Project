@@ -124,13 +124,11 @@ use Joomla\CMS\Factory;
         //initialize variables
         $multicatname = '';
         $colorpic = '';
+        $color = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
         $contentend = '';
-        $catcolor = array();
-
-        //walk through categories assigned to an event
         $catcolor = array();
 
         foreach((array)$row->categories AS $category) {
