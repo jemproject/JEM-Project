@@ -13,7 +13,7 @@ use Joomla\Registry\Registry;
 
 /**
  * Script file of JEM component
-*/
+ */
 class mod_jem_mapInstallerScript
 {
 
@@ -53,7 +53,7 @@ class mod_jem_mapInstallerScript
     function postflight($type, $parent)
     {
         if (strtolower($type) == 'update') {
-           
+
         }
     }
 
@@ -73,7 +73,5 @@ class mod_jem_mapInstallerScript
         $manifest = json_decode($db->loadResult(), true);
         return $manifest[$name];
     }
-
-   
 
 }

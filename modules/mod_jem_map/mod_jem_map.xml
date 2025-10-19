@@ -29,29 +29,43 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
+
+                <field name="map_center_lat" type="text"
+                       default="48.750"
+                       label="MOD_JEM_MAP_CENTER_LATITUDE"
+                       description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"/>
+                <field name="map_center_lng" type="text"
+                       default="18.917"
+                       label="MOD_JEM_MAP_CENTER_LONGITUDE"
+                       description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"/>
+                <field name="map_zoom" type="number"
+                       default="4"
+                       label="MOD_JEM_MAP_ZOOM"
+                       description="MOD_JEM_MAP_ZOOM_DESC"
+                       min="0"
+                       max="19"/>
+                <field name="show_my_location" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_MY_LOCATION"
+                       description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="venue_markerfile" type="text" default="media/com_jem/images/marker.png"
-                       label="MOD_JEM_MAP_VENUE_MARKER_LABEL"
+                       label="MOD_JEM_MAP_VENUE_MARKER"
                        description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
                 <field name="mylocation_markerfile" type="text" default="media/com_jem/images/marker-red.png"
-                       label="MOD_JEM_MAP_MYLOC_MARKER_LABEL"
+                       label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
                 <field name="show_date_filter" type="radio" default="1"
-                       label="MOD_JEM_MAP_SHOW_DATE_FILTER_LABEL"
+                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
                        description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="jem_itemid" type="menuitem"
-                       label="MOD_JEM_MAP_JEM_ITEMID_LABEL"
-                       description="MOD_JEM_MAP_JEM_ITEMID_DESC" />
-
                 <field name="height" type="text" default="500px"
-                       label="MOD_JEM_MAP_HEIGHT_LABEL"
+                       label="MOD_JEM_MAP_HEIGHT"
                        description="MOD_JEM_MAP_HEIGHT_DESC" />
-
-                <field name="zoom" type="number" default="4"
-                       label="MOD_JEM_MAP_ZOOM_LABEL"
-                       description="MOD_JEM_MAP_ZOOM_DESC" />
             </fieldset>
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"

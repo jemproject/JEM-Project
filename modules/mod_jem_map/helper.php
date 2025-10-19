@@ -5,60 +5,59 @@
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Helper\ModuleHelper;    
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\Query\SelectQuery;
 
-BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 
-class ModJemMapHelper extends ModuleHelper
+/**
+ * Helper class for the JEM Map module.
+ */
+class ModJemMapHelper
 {
     /**
-     * Fetch venues:
-     * - Without date: all venues with lat/lng.
-     * - With date: INNER JOIN with events + filter (single-day or interval).
+     * Fetches venues with valid coordinates.
+     * Optionally filters venues to include only those hosting events within a given date range.
      *
-     * @param \Joomla\Registry\Registry $params
-     * @param string|null $filterDate   'YYYY-MM-DD' or null
-     * @return array<object>
+     * @param   string|null $filterStartDate  The start date of the filter range ('YYYY-MM-DD'). If null, no date filter is applied.
+     * @param   string|null $filterEndDate    The end date of the filter range ('YYYY-MM-DD'). If null, the range is open-ended (from start date to infinity).
+     *
+     * @return  array<object> An array of venue objects.
+     * @throws  \Exception if a database error occurs.
      */
-    public static function getVenues($params, $filterDate = null)
+    public static function getVenues($params, $filterStartDate, $filterEndDate = null)
     {
-        $db = Factory::getDbo();
-        $q  = $db->getQuery(true);
+        $db    = Factory::getDbo();
+        $query = $db->getQuery(true);
 
-        $q->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country')
-          ->from($db->quoteName('#__jem_venues', 'v'))
-          ->where('v.latitude IS NOT NULL')
-          ->where("v.latitude <> ''")
-          ->where('v.longitude IS NOT NULL')
-          ->where("v.longitude <> ''");
+        $query->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country')
+            ->from($db->quoteName('#__jem_venues', 'v'))
+            ->where(['v.latitude IS NOT NULL',"v.latitude <> ''",'v.longitude IS NOT NULL',"v.longitude <> ''"]);
 
-        // Only apply JOIN + date filter when filterDate is truly valid (YYYY-MM-DD)
-        if ($filterDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterDate)) {
-            $d = $db->quote($filterDate);
 
-            $q->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON e.locid = v.id');
+        // Apply date filtering only if a start date is provided.
+        if ($filterStartDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterStartDate)) {
+            $query->join('INNER', $db->quoteName('#__jem_events', 'e'), 'e.locid = v.id');
+            $effectiveEventEndDate = 'COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ')';
+            $conditions = [];
+            if ($filterEndDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterEndDate)) {
+                $conditions[] = $db->quoteName('e.dates') . ' <= ' . $db->quote($filterEndDate);
+                $conditions[] = $effectiveEventEndDate . ' >= ' . $db->quote($filterStartDate);
+            } else {
+                $conditions[] = $effectiveEventEndDate . ' >= ' . $db->quote($filterStartDate);
+            }
 
-            // SINGLE-DAY: e.dates = d
-            // MULTI-DAY: e.enddates IS NOT NULL AND e.dates <= d AND d <= e.enddates
-            // (No comparisons with empty string or '0000-00-00' → prevents error 1525)
-            $q->where('(
-                e.dates = ' . $d . '
-                OR (
-                    e.enddates IS NOT NULL
-                    AND e.dates <= ' . $d . '
-                    AND ' . $d . ' <= e.enddates
-                )
-            )');
+            $query->where($conditions);
         }
 
-        $q->order('v.venue ASC');
+        $query->order($db->quoteName('v.venue') . ' ASC');
+        $db->setQuery($query);
 
-        $db->setQuery($q);
         return $db->loadObjectList();
     }
 }

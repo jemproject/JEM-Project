@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Date\Date;
 
 $mod_name = 'mod_jem_map';
 
@@ -21,38 +23,90 @@ JemHelper::addFileLogger();
 # Parameters
 $venueMarker     = $params->get('venue_markerfile', 'media/com_jem/images/marker.png');
 $mylocMarker     = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.png');
+$venueMarker     = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
+$mylocMarker     = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
+
+
 $height          = $params->get('height', '500px');
 $zoom            = (int) $params->get('zoom', 8);
 $showDateFilter  = (int) $params->get('show_date_filter', 1);
-$jemItemid       = (int) $params->get('jem_itemid', 0);
 
 // Filter from request (only if backend option is enabled)
 $app         = Factory::getApplication();
 $filterMode  = 'all';
 $filterDate  = null;
-$selectedRaw = '';
+$selectedDate = '';
+$filterStartDate = '';
+$filterEndDate = '';
 
 if ($showDateFilter) {
-    $filterMode  = $app->input->get('jemfilter', 'all', 'cmd');   // 'all' of 'date'
-    $selectedRaw = $app->input->get('jemdate', '', 'string');     // verwacht 'YYYY-MM-DD'
+    $filterMode  = $app->input->get('jem_map_filter_mode', 'all', 'string');
+    $filterDate = $app->input->get('jem_map_filter_date', '', 'string');
 
-    if ($filterMode === 'date') {
-        // Strikte validatie: alleen geldige YYYY-MM-DD doorlaten
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedRaw)) {
-            $dt = \DateTime::createFromFormat('Y-m-d', $selectedRaw);
-            if ($dt && $dt->format('Y-m-d') === $selectedRaw) {
-                $filterDate = $selectedRaw;
+    if ($filterMode == 'date' && $filterDate === null) {
+        $filterMode = 'all';
+    }
+
+    // Get the current date
+    $now = Factory::getDate();
+
+    switch ($filterMode){
+        case 'date':
+            // Filter for a single, specific date selected by the user.
+            $selectedDate = $app->input->get('jem_map_filter_date', '', 'string');
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
+                $dt = Date::createFromFormat('Y-m-d', $selectedDate);
+                if ($dt && $dt->format('Y-m-d') === $selectedDate) {
+                    $filterStartDate = $selectedDate;
+                    $filterEndDate   = $selectedDate;
+                }
             }
-        }
-        // Invalid date? Fall back to 'all' (prevents SQL error)
-        if ($filterDate === null) {
-            $filterMode = 'all';
-        }
+            break;
+        case 'today':
+            // Shows events from today onwards, ending today.
+            $filterStartDate = $now->format('Y-m-d');
+            $filterEndDate   = $now->format('Y-m-d');
+            break;
+
+        case 'tomorrow':
+            // Shows events for tomorrow.
+            $tomorrow        = $now->modify('+1 day');
+            $filterStartDate = $tomorrow->format('Y-m-d');
+            $filterEndDate   = $tomorrow->format('Y-m-d');
+            break;
+
+        case 'week':
+            // Shows events from today until the end of the current week (Sunday).
+            $filterStartDate = $now->format('Y-m-d');
+            $endOfWeek       = $now->modify('Sunday this week');
+            $filterEndDate   = $endOfWeek->format('Y-m-d');
+            break;
+
+        case 'month':
+            // Shows events from today until the last day of the current month.
+            $filterStartDate = $now->format('Y-m-d');
+            $endOfMonth      = $now->modify('last day of this month');
+            $filterEndDate   = $endOfMonth->format('Y-m-d');
+            break;
+
+        case 'year':
+            // Shows events from today until the last day of the current year (Dec 31).
+            $filterStartDate = $now->format('Y-m-d');
+            $endOfYear       = $now->setDate((int) $now->format('Y'), 12, 31);
+            $filterEndDate   = $endOfYear->format('Y-m-d');
+            break;
+
+        case 'all':
+        default:
+            // Shows all upcoming events starting from today, with no end date.
+            $filterStartDate = $now->format('Y-m-d');
+            $filterEndDate   = null; // No end date means we search indefinitely into the future.
+            break;
     }
 }
 
 // Fetch venues (JOIN + date filter only if $filterDate is not null)
-$venues = ModJemMapHelper::getVenues($params, $filterDate);
+$venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate);
 
 // Render layout
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
