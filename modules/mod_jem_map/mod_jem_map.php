@@ -108,5 +108,24 @@ if ($showDateFilter) {
 // Fetch venues (JOIN + date filter only if $filterDate is not null)
 $venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate);
 
+// Get auto center map
+$centerLat = $centerLng = 0;
+$totalLat = $totalLng= 0;
+$countVenues = 0;
+if($params->get('map_auto_center',1)){
+    foreach ($venues as $venue) {
+        if (!empty($venue->latitude) && !empty($venue->longitude)) {
+            $totalLat += (float)$venue->latitude;
+            $totalLng += (float)$venue->longitude;
+            $countVenues++;
+        }
+    }
+
+    if ($countVenues > 0) {
+        $centerLat = $totalLat / $countVenues;
+        $centerLng = $totalLng / $countVenues   ;
+    }
+}
+
 // Render layout
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));

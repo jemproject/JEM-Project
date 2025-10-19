@@ -29,7 +29,13 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
-
+                <field name="map_auto_center" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_AUTO_CENTER"
+                       description="MOD_JEM_MAP_AUTO_CENTER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="map_center_lat" type="text"
                        default="48.750"
                        label="MOD_JEM_MAP_CENTER_LATITUDE"
@@ -51,10 +57,19 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="venue_markerfile" type="text" default="media/com_jem/images/marker.png"
+                <field name="heat_layer" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_HEAT_LAYER"
+                       description="MOD_JEM_MAP_HEAT_LAYER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="venue_markerfile" type="text"
+                       default="media/com_jem/images/marker-red.png"
                        label="MOD_JEM_MAP_VENUE_MARKER"
                        description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
-                <field name="mylocation_markerfile" type="text" default="media/com_jem/images/marker-red.png"
+                <field name="mylocation_markerfile" type="text"
+                       default="media/com_jem/images/marker-blue.png"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
                 <field name="show_date_filter" type="radio" default="1"
