@@ -30,14 +30,34 @@ if ($use_ajax && empty($module->in_ajax_call)) {
 ?>
 
 <script>
-jQuery(document).ready(function(){
-    jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
-    jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "grid");
+document.addEventListener("DOMContentLoaded", function() {
+    const naviNoJs = document.getElementById("mod_jem_cal_<?php echo $module->id; ?>_navi_nojs");
+    const naviAjax = document.getElementById("mod_jem_cal_<?php echo $module->id; ?>_navi_ajax");
+
+    if (naviNoJs) naviNoJs.style.display = "none";
+    if (naviAjax) naviAjax.style.display = "grid";
 });
-function mod_jem_cal_click_<?php print $module->id; ?>(url) {
-    jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});
-    });
+
+function mod_jem_cal_click_<?php echo $module->id; ?>(url) {
+    const target = document.getElementById("eventcalq<?php echo $module->id; ?>");
+    if (!target) return;
+
+    // Carga de contenido vía Fetch API (sustituye a jQuery.load)
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Error al cargar el contenido");
+            return response.text();
+        })
+        .then(html => {
+            target.innerHTML = html;
+
+            // Inicializar tooltips de Bootstrap 5+
+            const tooltipTriggerList = [].slice.call(target.querySelectorAll('.hasTooltip'));
+            tooltipTriggerList.map(function (el) {
+                return new bootstrap.Tooltip(el, { html: true });
+            });
+        })
+        .catch(err => console.error(err));
 }
 </script>
 
