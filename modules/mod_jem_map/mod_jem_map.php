@@ -21,23 +21,24 @@ require_once __DIR__ . '/helper.php';
 JemHelper::addFileLogger();
 
 # Parameters
-$venueMarker     = $params->get('venue_markerfile', 'media/com_jem/images/marker.png');
-$mylocMarker     = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.png');
-$venueMarker     = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
-$mylocMarker     = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
+$venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.png');
+$mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.png');
 
+$venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
+$mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
 
-$height          = $params->get('height', '500px');
-$zoom            = (int) $params->get('zoom', 8);
-$showDateFilter  = (int) $params->get('show_date_filter', 1);
+$height = $params->get('height', '500px');
+$zoom = (int) $params->get('zoom', 8);
+$showDateFilter = (int) $params->get('show_date_filter', 0);
 
 // Filter from request (only if backend option is enabled)
-$app         = Factory::getApplication();
-$filterMode  = 'all';
-$filterDate  = null;
+$app = Factory::getApplication();
+$filterMode = 'all';
+$filterDate = null;
 $selectedDate = '';
-$filterStartDate = '';
-$filterEndDate = '';
+
+$filterStartDate = null;
+$filterEndDate   = null;
 
 if ($showDateFilter) {
     $filterMode  = $app->input->get('jem_map_filter_mode', 'all', 'string');
@@ -98,9 +99,7 @@ if ($showDateFilter) {
 
         case 'all':
         default:
-            // Shows all upcoming events starting from today, with no end date.
-            $filterStartDate = null;
-            $filterEndDate   = null; // No end date means we search indefinitely into the future.
+            // Shows all venues with or without events.
             break;
     }
 }

@@ -7,7 +7,7 @@
     <creationDate>Aug 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.3.4</version>
+    <version>4.4.0</version>
     <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -54,6 +54,20 @@
                        default="1"
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
                        description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_date_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_DATE_FILTER"
+                       description="MOD_JEM_MAP_DATE_FILTER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="full_screen_map" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_FULL_SCREEN"
+                       description="MOD_JEM_MAP_FULL_SCREEN_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>

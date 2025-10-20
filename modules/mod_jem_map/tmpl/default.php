@@ -3,6 +3,9 @@
  * @package    JEM
  * @subpackage JEM Calendar Module
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright https://leafletjs.com/
+ * @copyright https://github.com/brunob/leaflet.fullscreen
+ * @copyright https://github.com/Leaflet/Leaflet.heat
  */
 
 defined('_JEXEC') or die;
@@ -17,8 +20,11 @@ $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
 
 $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
-$wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
+
+$wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
+$wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
+$wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 
 JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
 $jemsettings = JemHelper::config();
@@ -32,6 +38,7 @@ $startLat    = (float) $params->get('map_center_lat', '0');
 $startLng    = (float) $params->get('map_center_lng', '0');
 $startZoom   = (int)   $params->get('map_zoom', '10');
 $heatMapLayer = (int)  $params->get('heat_layer', '0');
+$fullScreenMap = (int)  $params->get('full_screen_map', '0');
 ?>
 
 <?php if (!empty($showDateFilter)): ?>
@@ -137,6 +144,18 @@ $heatMapLayer = (int)  $params->get('heat_layer', '0');
             attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        <?php if($fullScreenMap) { ?>
+        L.control
+            .fullscreen({
+                position: 'topleft', // change the position: topleft, topright, bottomright or bottomleft, default topleft
+                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
+                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                content: null,
+                forceSeparateButton: true
+            })
+            .addTo(map);
+        <?php } ?>
+
         // Variables for location marker
         var locationMarker = null;
         var locationCircle = null;
@@ -145,7 +164,7 @@ $heatMapLayer = (int)  $params->get('heat_layer', '0');
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('Geolocation is not supported by your browser');
+                showError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
                 return false;
             }
             return true;
@@ -222,12 +241,12 @@ $heatMapLayer = (int)  $params->get('heat_layer', '0');
                     locationMarker = L.marker(latlng, {
                         icon: L.icon({
                             iconUrl: "<?= addslashes($mylocMarker) ?>",
-                            iconSize: [25, 41],
-                            iconAnchor: [12, 41],
-                            popupAnchor: [1, -34],
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 32],
+                            popupAnchor: [0, -32],
                             shadowUrl: "media/com_jem/images/marker-shadow.png",
-                            shadowSize: [41, 41],
-                            shadowAnchor: [12, 41]
+                            shadowSize: [32, 32],
+                            shadowAnchor: [16, 32]
                         })
                     }).addTo(map).bindPopup(<?= json_encode($youAreHere) ?>).openPopup();
 
@@ -308,22 +327,20 @@ $heatMapLayer = (int)  $params->get('heat_layer', '0');
                 })
             }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
-
             <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
-
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
-        var coordinates = <?php echo json_encode($heatPoints); ?>;
-        var heatPoints = coordinates.map(function(p) {
-            return [p.lat, p.lng, 1]; // 1 = intensity
-        });
+            var coordinates = <?php echo json_encode($heatPoints); ?>;
+            var heatPoints = coordinates.map(function(p) {
+                return [p.lat, p.lng, 1]; // 1 = intensity
+            });
 
-        L.heatLayer(heatPoints, {
-            radius: 25,
-            blur: 10,
-            maxZoom: 17,
-        }).addTo(map);
+            L.heatLayer(heatPoints, {
+                radius: 25,
+                blur: 10,
+                maxZoom: 17,
+            }).addTo(map);
         <?php } ?>
 
     });
