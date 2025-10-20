@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="4.0" client="site" method="upgrade">
+    <name>JEM - Map Module</name>
+    <author>JEM Community</author>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <creationDate>Aug 2025</creationDate>
+    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <version>4.4.0</version>
+    <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
+
+    <scriptfile>script.php</scriptfile>
+
+    <files>
+        <filename module="mod_jem_map">mod_jem_map.php</filename>
+        <filename>helper.php</filename>
+        <filename>script.php</filename>
+        <filename>index.html</filename>
+
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jem_map.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_map.sys.ini</language>
+    </languages>
+    <help key="Modules" />
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="map_auto_center" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_AUTO_CENTER"
+                       description="MOD_JEM_MAP_AUTO_CENTER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="map_center_lat" type="text"
+                       default="48.750"
+                       label="MOD_JEM_MAP_CENTER_LATITUDE"
+                       description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"/>
+                <field name="map_center_lng" type="text"
+                       default="18.917"
+                       label="MOD_JEM_MAP_CENTER_LONGITUDE"
+                       description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"/>
+                <field name="map_zoom" type="number"
+                       default="4"
+                       label="MOD_JEM_MAP_ZOOM"
+                       description="MOD_JEM_MAP_ZOOM_DESC"
+                       min="0"
+                       max="19"/>
+                <field name="show_my_location" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_MY_LOCATION"
+                       description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_date_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_DATE_FILTER"
+                       description="MOD_JEM_MAP_DATE_FILTER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="full_screen_map" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_FULL_SCREEN"
+                       description="MOD_JEM_MAP_FULL_SCREEN_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="heat_layer" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_HEAT_LAYER"
+                       description="MOD_JEM_MAP_HEAT_LAYER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="venue_markerfile" type="text"
+                       default="media/com_jem/images/marker-red.png"
+                       label="MOD_JEM_MAP_VENUE_MARKER"
+                       description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
+                <field name="mylocation_markerfile" type="text"
+                       default="media/com_jem/images/marker-blue.png"
+                       label="MOD_JEM_MAP_MYLOC_MARKER"
+                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
+                <field name="show_date_filter" type="radio" default="1"
+                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
+                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="height" type="text" default="500px"
+                       label="MOD_JEM_MAP_HEIGHT"
+                       description="MOD_JEM_MAP_HEIGHT_DESC" />
+            </fieldset>
+            <fieldset name="advanced">
+                <field name="layout" type="modulelayout"
+                       label="JFIELD_ALT_LAYOUT_LABEL"
+                       class="form-select"
+                       validate="moduleLayout"
+                />
+                <field name="moduleclass_sfx" type="textarea"
+                       label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                       rows="3"
+                       validate="CssIdentifier"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
