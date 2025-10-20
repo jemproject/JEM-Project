@@ -95,6 +95,8 @@ abstract class ModJemCalHelper extends ModuleHelper
         $settings = JemHelper::globalattribs();
 
         $StraightToDetails = $params->get('StraightToDetails', '1');
+        $DisplayLink       = $params->get('DisplayLink', '0');
+        $DisplayTime       = $params->get('DisplayTime', '0');
         $DisplayCat        = $params->get('DisplayCat', '0');
         $DisplayVenue      = $params->get('DisplayVenue', '0');
         $ArchivedEvents    = $params->get('ArchivedEvents', '0');
@@ -224,29 +226,49 @@ abstract class ModJemCalHelper extends ModuleHelper
 
                     if (empty($days[$count][1])) {
                         // First event of the day
-                        $cut = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
-                        $title = htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
+                        $cut   = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
+                        $title = '';
+                        if ($DisplayLink == 1) {
+                            $title .= '<a href="' . Route::_(JemHelperRoute::getEventRoute($event->slug)) . '">';
+                        }
+                        if ($DisplayTime == 1) {
+                            $title .= date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ';
+                        }
+                        $title .= htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
                         if ($DisplayCat == 1) {
                             $title .= ' (' . $catname . ')';
                         }
                         if ($DisplayVenue == 1 && isset($event->venue)) {
                             $title .= ' @' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
                         }
+                        if ($DisplayLink == 1) {
+                            $title .= '</a>';
+                        }
 
                         $stod = 1;
                     } else {
                         // Other events on the same day
-                        $cut = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
-                        $newTitle = htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
+                        $cut      = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
+                        $newTitle = '';
+                        if ($DisplayLink == 1) {
+                            $newTitle .= '<a href="' . Route::_(JemHelperRoute::getEventRoute($event->slug)) . '">';
+                        }
+                        if ($DisplayTime == 1) {
+                            $newTitle .= date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ';
+                        }
+                        $newTitle .= htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
                         if ($DisplayCat == 1) {
                             $newTitle .= ' (' . $catname . ')';
                         }
                         if ($DisplayVenue == 1 && isset($event->venue)) {
                             $newTitle .= ' @' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
                         }
+                        if ($DisplayLink == 1) {
+                            $newTitle .= '</a>';
+                        }
 
                         $title = $days[$count][1] . '+%+%+' . $newTitle;
-                        $stod = 0;
+                        $stod  = 0;
                     }
 
                     if (($StraightToDetails == 1) and ($stod == 1)) {
