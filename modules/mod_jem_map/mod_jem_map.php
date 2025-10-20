@@ -99,7 +99,7 @@ if ($showDateFilter) {
         case 'all':
         default:
             // Shows all upcoming events starting from today, with no end date.
-            $filterStartDate = $now->format('Y-m-d');
+            $filterStartDate = null;
             $filterEndDate   = null; // No end date means we search indefinitely into the future.
             break;
     }
