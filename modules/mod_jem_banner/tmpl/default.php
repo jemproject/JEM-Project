@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
-JemHelper::loadModuleStyleSheet('mod_jem_banner');
+JemHelper::loadModuleStyleSheet('mod_jem_banner', 'mod_jem_banner');
 
 $app = Factory::getApplication();
 $wa  = $app->getDocument()->getWebAssetManager();
@@ -66,9 +66,9 @@ $wa->addInlineStyle($css);
                     <?php else: ?>
                     <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-banner-calendar"
                          title="<?php echo strip_tags($item->dateinfo); ?>"
-                        <?php if (!empty($item->color)) : ?>
-                            style="background-color: <?php echo $item->color; ?>"
-                        <?php endif; ?>>
+                            <?php if (!empty($item->color)) : ?>
+                                style="background-color: <?php echo $item->color; ?>"
+                            <?php endif; ?>>
                         <?php endif; ?>
 
                         <?php if (isset($item->color_is_dark)) : ?>
@@ -127,7 +127,6 @@ $wa->addInlineStyle($css);
                        *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
                        */
                     ?>
-
                     <?php /* if no calendar sheet is displayed */ ?>
                     <?php if ($showcalendar == 0) : ?>
                         <?php if ($item->date && $datemethod == 2) :?>

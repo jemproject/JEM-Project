@@ -15,11 +15,12 @@
 }
 
 .jemmodulebanner .event-card {
-    background: white;
-    border-radius: 12px;
+    background-color: var(--joomla-card-bg, #ffffff);
+    color: var(--joomla-body-color, #333333);
+    border: 1px solid var(--joomla-border-color, #dddddd);
+    border-radius: var(--joomla-card-border-radius, 12px);
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 .jemmodulebanner .event-card:hover {
@@ -46,6 +47,7 @@
     transition: transform 0.5s ease;
 }
 
+
 .jemmodulebanner .event-card:hover .event-media img {
     transform: scale(1.03);
 }
@@ -54,27 +56,25 @@
     position: absolute;
     top: 1rem;
     left: 1rem;
-    color: white;
-    padding: 0.4rem 0.8rem;
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
 }
 
 .jemmodulebanner .event-badge a {
-  display: inline-block;
-  background: var(--primary);
-  color: var(--secundary);
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  border: 1px solid #d0e3ff;
+    display: inline-block;
+    background: var(--primary);
+    color: var(--secundary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid #d0e3ff;
 }
 
 .jemmodulebanner .event-badge a:hover {
-  color: #0d5bba;
-  background-color: #f0f7ff;
+    color: #0d5bba;
+    background-color: #f0f7ff;
 }
 
 .jemmodulebanner .event-content {
@@ -88,28 +88,39 @@
     font-weight: 600;
 }
 
+.jemmodulebanner .event-title a:hover {
+    color: var(--joomla-link-hover-color, #0056b3);
+}
+
+.jemmodulebanner .event-title a {
+    color: var(--joomla-headings-color, #222222);
+    text-decoration: none;
+}
+
 .jemmodulebanner .event-date-container {
     display: flex;
     align-items: center;
     gap: 1.2rem;
-    margin: 1.2rem 0;
-    padding: 0.8rem;
+    margin: 1.0rem 0;
     border-radius: 8px;
     background-color: #f8fafc;
 }
 
 .jemmodulebanner .date-box {
     padding: 0.8rem;
+    border-left: 6px solid var(--event-specific-color, var(--joomla-primary-color));
+    background-color: var(--joomla-surface-lighter, #f8f9fa);
     border-radius: 8px;
     text-align: center;
     min-width: 54px;
-    color: white;
+    color: inherit;
 }
 
 .jemmodulebanner .date-day {
     font-size: 1.6rem;
     font-weight: 700;
     line-height: 1;
+    color: var(--joomla-headings-color, #212529);
 }
 
 .jemmodulebanner .date-month {
@@ -118,10 +129,12 @@
     letter-spacing: 0.5px;
     margin-top: 0.2rem;
     font-weight: 500;
+    color: var(--joomla-body-color, #495057);
 }
 
 .jemmodulebanner .date-time {
     flex: 1;
+    color: var(--joomla-text-muted-color, #4a5568);
 }
 
 .jemmodulebanner .date-weekday {
@@ -161,19 +174,19 @@
 }
 
 .jemmodulebanner .meta-icon i {
-    color: var(--accent);
+    color: var(--event-specific-color, #007bff);
     font-size: 0.9rem;
 }
 
 .jemmodulebanner .meta-text {
     font-size: 0.9rem;
-    color: #4a5568;
+    color: var(--joomla-text-muted-color, #4a5568);
 }
 
 .jemmodulebanner .event-description {
     font-size: 0.9rem;
     line-height: 1.6;
-    color: #4a5568;
+    color: var(--joomla-text-muted-color, #4a5568);
     margin-bottom: 1.5rem;
 }
 
@@ -198,12 +211,14 @@
 }
 
 .jemmodulebanner .btn-primary {
-    background: var(--primary);
-    color: white;
+    background-color: var(--joomla-primary-color, #007bff);
+    border-color: var(--joomla-primary-color, #007bff);
+    color: var(--joomla-primary-color-contrast, #ffffff);
 }
 
 .jemmodulebanner .btn-primary:hover {
     background: #3a56c4;
+    opacity: 0.85;
 }
 
 .jemmodulebanner .btn-secondary {
@@ -214,3 +229,12 @@
 .jemmodulebanner .btn-secondary:hover {
     background: #e2e8f0;
 }
+
+.jemmodulebanner .jem-no-events {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--joomla-text-muted-color, #6c757d);
+}
+
+
