@@ -9,10 +9,10 @@
 
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Date\Date;
 
@@ -39,7 +39,7 @@ abstract class ModJemBannerHelper
         static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l');
         static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '');
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db     = Factory::getContainer()->get('DatabaseDriver');
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
 
@@ -216,7 +216,7 @@ abstract class ModJemBannerHelper
             ## DEFINE LIST ##
             #################
 
-            $lists[++$i] = new stdClass(); // add new object
+            $lists[++$i] = new stdClass();
 
             # check view access
             if (in_array($row->access, $levels)) {

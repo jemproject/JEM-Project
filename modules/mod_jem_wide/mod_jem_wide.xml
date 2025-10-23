@@ -53,12 +53,21 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="highlight_featured" type="radio"
+                    default="0"
+                    label="MOD_JEM_HIGHLIGHT_FEATURED"
+                    description="MOD_JEM_HIGHLIGHT_FEATURED_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
                 <field name="offset_hours" type="text"
                     default=""
                     label="MOD_JEM_WIDE_OFFSET_HOURS"
                     description="MOD_JEM_WIDE_OFFSET_HOURS_DESC"
                 />
-
                 <field name="cuttitle" type="text"
                     default="25"
                     label="MOD_JEM_WIDE_MAX_TITLE_LENGTH"
@@ -83,26 +92,6 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-
-                <field name="datemethod" type="list"
-                    default="1"
-                    label="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE"
-                    description="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
-                >
-                    <option value="1">MOD_JEM_WIDE_SHOW_DATE</option>
-                    <option value="2">MOD_JEM_WIDE_SHOW_DAY_DIFFERENCE</option>
-                </field>
-                <field name="formatdate" type="text"
-                    default=""
-                    label="MOD_JEM_WIDE_DATE_FORMAT"
-                    description="MOD_JEM_WIDE_DATE_FORMAT_DESC"
-                />
-                <field name="formattime" type="text"
-                    default=""
-                    label="MOD_JEM_WIDE_TIME_FORMAT"
-                    description="MOD_JEM_WIDE_TIME_FORMAT_DESC"
-                />
-
                 <field name="linkcategory" type="radio"
                     default="1"
                     label="MOD_JEM_WIDE_LINK_TO_CATEGORY"
@@ -121,7 +110,6 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-
                 <field name="catid" type="categoryedit"
                     default=""
                     multiple="true"
@@ -135,7 +123,24 @@
                     label="MOD_JEM_WIDE_VENUE_ID"
                     description="MOD_JEM_WIDE_VENUE_ID_DESC"
                 />
-
+                <field name="datemethod" type="list"
+                    default="1"
+                    label="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE"
+                    description="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
+                >
+                    <option value="1">MOD_JEM_WIDE_SHOW_DATE</option>
+                    <option value="2">MOD_JEM_WIDE_SHOW_DAY_DIFFERENCE</option>
+                </field>
+                <field name="formatdate" type="text"
+                    default=""
+                    label="MOD_JEM_WIDE_DATE_FORMAT"
+                    description="MOD_JEM_WIDE_DATE_FORMAT_DESC"
+                />
+                <field name="formattime" type="text"
+                    default=""
+                    label="MOD_JEM_WIDE_TIME_FORMAT"
+                    description="MOD_JEM_WIDE_TIME_FORMAT_DESC"
+                />
                 <field name="moduleclass_sfx" type="text"
                     default=""
                     label="MOD_JEM_WIDE_MODULE_CLASS_SUFFIX"

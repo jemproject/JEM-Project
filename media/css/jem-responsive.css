@@ -305,6 +305,10 @@ body.com_jem.body-overlayed {
     width: auto;
 }
 
+#jem #filter_search {
+    width: 100%;
+}
+
 #jem #starthours,
 #jem #startminutes,
 #jem #endhours,

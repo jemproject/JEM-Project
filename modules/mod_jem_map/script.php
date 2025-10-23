@@ -1,7 +1,6 @@
 <?php
 /**
  * @package    JEM
- * @subpackage JEM Banner Module
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
@@ -10,24 +9,24 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 /**
- * Script file of JEM banner module
+ * Script file of JEM component
  */
-class mod_jem_bannerInstallerScript
+class mod_jem_mapInstallerScript
 {
-    /**
-     * Module element name
-     */
-    private $name = 'mod_jem_banner';
+
+    private $name = 'mod_jem_map';
+
+    private $oldRelease = "";
+    private $newRelease = "";
 
     /**
-     * Preflight method
-     * Called before install/update/uninstall
-     * Not required for installations and updates >= 2.3.6
+     * method to run before an install/update/uninstall method
+     * (it seams method is not called on uninstall)
      *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * @return void
      */
     function preflight($type, $parent)
     {
@@ -46,23 +45,15 @@ class mod_jem_bannerInstallerScript
     }
 
     /**
-     * Postflight method
-     * Called after install/update/uninstall
-     * Currently no post-install actions required
+     * Method to run after an install/update/uninstall method
+     * (it seams method is not called on uninstall)
      *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * @return void
      */
     function postflight($type, $parent)
     {
-        if (strtolower($type) == 'uninstall') {
-            return true;
-        }
-        if (strtolower($type) == 'update' ) {
-            return true;
-        }
-        if (strtolower($type) == 'install' ) {
-            return true;
+        if (strtolower($type) == 'update') {
+
         }
     }
 
@@ -82,6 +73,5 @@ class mod_jem_bannerInstallerScript
         $manifest = json_decode($db->loadResult(), true);
         return $manifest[$name];
     }
-
 
 }

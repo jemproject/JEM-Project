@@ -132,6 +132,11 @@
     border: 2px solid transparent; /* to get always same cell size */
 }
 
+/* Event tooltip link color */
+.tooltip a {
+    color: #fff;
+}
+
 /* Month heading properies */
 .eventcalq caption.mod_jemcalq_calendar-month {
     font: bold 12px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
