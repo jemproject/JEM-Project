@@ -253,6 +253,16 @@ window.onload = (event) => {
                     <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
                     <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+                    <li>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <?php echo $this->form->getLabel('color'); ?>
+                            </div>
+                            <div class="col-md-10">
+                                <?php echo $this->form->getInput('color'); ?>
+                            </div>
+                        </div>
+                    </li>
                     <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
                 </ul>
             </fieldset>
