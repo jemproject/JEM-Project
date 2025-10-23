@@ -16,8 +16,8 @@ use Joomla\CMS\Language\Text;
 $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
-        $wa->useScript('keepalive')
-            ->useScript('form.validate');
+$wa->useScript('keepalive')
+    ->useScript('form.validate');
 
 jimport('joomla.html.html.tabs');
 
@@ -51,7 +51,7 @@ $location = JemHelper::defineCenterMap($this->form);
 </script>
 <script>
     // window.addEvent('domready', function() {
-window.onload = (event) => {
+    window.onload = (event) => {
 
         setAttribute();
         test();
@@ -211,20 +211,20 @@ window.onload = (event) => {
 <div id="jem" class="jem_editvenue<?php echo $this->pageclass_sfx; ?>">
     <div class="edit item-page">
         <?php if ($params->get('show_page_heading')) : ?>
-        <h1>
-            <?php echo $this->escape($params->get('page_heading')); ?>
-        </h1>
+            <h1>
+                <?php echo $this->escape($params->get('page_heading')); ?>
+            </h1>
         <?php endif; ?>
 
         <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
 
-                <button type="submit" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
-                <button type="cancel" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-        <br>
+            <button type="submit" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
+            <button type="cancel" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+            <br>
             <?php if ($this->params->get('showintrotext')) : ?>
-            <div class="description no_space floattext">
-                <?php echo $this->params->get('introtext'); ?>
-            </div>
+                <div class="description no_space floattext">
+                    <?php echo $this->params->get('introtext'); ?>
+                </div>
             <?php endif; ?>
 
             <?php //echo HTMLHelper::_('tabs.start', 'venueTab', $options); ?>
@@ -240,8 +240,8 @@ window.onload = (event) => {
                     <dt><?php echo $this->form->getLabel('venue'); ?></dt>
                     <dd><?php echo $this->form->getInput('venue'); ?></dd>
                     <?php if (is_null($this->item->id)) : ?>
-                    <dt><?php echo $this->form->getLabel('alias'); ?></dt>
-                    <dd><?php echo $this->form->getInput('alias'); ?></dd>
+                        <dt><?php echo $this->form->getLabel('alias'); ?></dt>
+                        <dd><?php echo $this->form->getInput('alias'); ?></dd>
                     <?php endif; ?>
                     <dt><?php echo $this->form->getLabel('street'); ?></dt>
                     <dd><?php echo $this->form->getInput('street'); ?></dd>
@@ -268,57 +268,57 @@ window.onload = (event) => {
             <?php
             $global_show_mapserv = $this->settings->get('global_show_mapserv');
             if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
-            <fieldset class="adminform" id="geodata">
-                <legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
-                <dl class="adminformlist jem-dl">
-                    <dt><?php echo $this->form->getLabel('map'); ?></dt>
-                    <dd><?php echo $this->form->getInput('map'); ?></dd>
-                </dl>
-                <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
-
-                <div style="clear: both;"></div>
-
-                <div id="mapdiv">
-                    <div class="jem-row jem-justify-start">
-                        <div><input id="geocomplete" class="form-control" type="text" size="55" placeholder="<?php echo Text::_('COM_JEM_VENUE_ADDRPLACEHOLDER'); ?>" value="" /></div>
-                        <div><input id="find-left" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" /></div>
-                    </div>
-
-                    <div class="map_canvas"></div>
-
+                <fieldset class="adminform" id="geodata">
+                    <legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
                     <dl class="adminformlist jem-dl">
-                        <dt><label><?php echo Text::_('COM_JEM_STREET'); ?></label></dt>
-                        <dd>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
-                            <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
-                            <input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
-                        </dd>
-                        <dt><label><?php echo Text::_('COM_JEM_ZIP'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" readonly="readonly" /></dd>
-                        <dt><label><?php echo Text::_('COM_JEM_CITY'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_city" readonly="readonly" /></dd>
-                        <dt><label><?php echo Text::_('COM_JEM_STATE'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" /></dd>
-                        <dt><label><?php echo Text::_('COM_JEM_VENUE'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" /></dd>
-                        <dt><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_country" readonly="readonly" /></dd>
-                        <dt><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" readonly="readonly" /></dd>
-                        <dt><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label></dt>
-                        <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" /></dd>
+                        <dt><?php echo $this->form->getLabel('map'); ?></dt>
+                        <dd><?php echo $this->form->getInput('map'); ?></dd>
                     </dl>
+                    <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
 
-                    <div style="clear: both;"><br></div>
-                    <div class="jem-row jem-justify-start">
-                        <input id="cp-all" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" />
-                        <input id="cp-address" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
-                        <input id="cp-venue" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
-                        <input id="cp-latlong" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
+                    <div style="clear: both;"></div>
+
+                    <div id="mapdiv">
+                        <div class="jem-row jem-justify-start">
+                            <div><input id="geocomplete" class="form-control" type="text" size="55" placeholder="<?php echo Text::_('COM_JEM_VENUE_ADDRPLACEHOLDER'); ?>" value="" /></div>
+                            <div><input id="find-left" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" /></div>
+                        </div>
+
+                        <div class="map_canvas"></div>
+
+                        <dl class="adminformlist jem-dl">
+                            <dt><label><?php echo Text::_('COM_JEM_STREET'); ?></label></dt>
+                            <dd>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
+                                <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
+                                <input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
+                            </dd>
+                            <dt><label><?php echo Text::_('COM_JEM_ZIP'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" readonly="readonly" /></dd>
+                            <dt><label><?php echo Text::_('COM_JEM_CITY'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_city" readonly="readonly" /></dd>
+                            <dt><label><?php echo Text::_('COM_JEM_STATE'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" /></dd>
+                            <dt><label><?php echo Text::_('COM_JEM_VENUE'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" /></dd>
+                            <dt><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_country" readonly="readonly" /></dd>
+                            <dt><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" readonly="readonly" /></dd>
+                            <dt><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label></dt>
+                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" /></dd>
+                        </dl>
+
+                        <div style="clear: both;"><br></div>
+                        <div class="jem-row jem-justify-start">
+                            <input id="cp-all" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" />
+                            <input id="cp-address" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
+                            <input id="cp-venue" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
+                            <input id="cp-latlong" class="btn" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-            <p>&nbsp;</p>
+                </fieldset>
+                <p>&nbsp;</p>
             <?php endif; ?>
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>
@@ -346,10 +346,10 @@ window.onload = (event) => {
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
-                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-attachments', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB')); ?>
-                    <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachmentstab'); ?>
-                    <?php echo $this->loadTemplate('attachments'); ?>
-                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-attachments', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB')); ?>
+                <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachmentstab'); ?>
+                <?php echo $this->loadTemplate('attachments'); ?>
+                <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
             <!-- MORE TAB -->

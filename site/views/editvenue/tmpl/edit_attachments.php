@@ -18,7 +18,7 @@ use Joomla\CMS\Session\Session;
 
     <table class="adminform" id="el-attachments">
         <tbody>
-            <?php foreach ($this->item->attachments as $file): ?>
+        <?php foreach ($this->item->attachments as $file): ?>
             <tr>
                 <td>
                     <div>
@@ -41,27 +41,27 @@ use Joomla\CMS\Session\Session;
                     <div>
                         <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
                         <?php
-                            $attribs = array('class'=>'inputbox', 'size'=>'7');
-                            /* if attachment upload is not allowed changing access level should also not possible */
-                            if ($this->jemsettings->attachmentenabled == 0) :
-                                $attribs['disabled'] = 'disabled';
-                            endif;
+                        $attribs = array('class'=>'inputbox', 'size'=>'7');
+                        /* if attachment upload is not allowed changing access level should also not possible */
+                        if ($this->jemsettings->attachmentenabled == 0) :
+                            $attribs['disabled'] = 'disabled';
+                        endif;
 
-                            echo HTMLHelper::_('select.genericlist', $this->access, 'attached-access[]', $attribs, 'value', 'text', $file->access);
+                        echo HTMLHelper::_('select.genericlist', $this->access, 'attached-access[]', $attribs, 'value', 'text', $file->access);
                         ?>
                     </div>
                 </td>
                 <td class="center">
                     <?php if ($this->jemsettings->attachmentenabled != 0) : ?>
-                    <div>
-                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
-                        <?php echo JemOutput::removebutton(Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.Session::getFormToken(),'class' => 'attach-remove','title'=>Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
-                    </div>
+                        <div>
+                            <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
+                            <?php echo JemOutput::removebutton(Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.Session::getFormToken(),'class' => 'attach-remove','title'=>Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
+                        </div>
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php endforeach; ?>
-            <?php if ($this->jemsettings->attachmentenabled != 0) : ?>
+        <?php endforeach; ?>
+        <?php if ($this->jemsettings->attachmentenabled != 0) : ?>
             <tr>
                 <td style="width: 100%">
                     <div>
@@ -85,7 +85,7 @@ use Joomla\CMS\Session\Session;
                 </td>
                 <td>&nbsp;</td>
             </tr>
-            <?php endif; ?>
+        <?php endif; ?>
         </tbody>
     </table>
 </fieldset>
