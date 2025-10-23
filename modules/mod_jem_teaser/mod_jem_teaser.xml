@@ -118,7 +118,7 @@
                 <field name="catcolor" type="list"
                     default="none"
                     label="MOD_JEM_TEASER_CATEGORY_COLOR_LABEL"
-                    description="MOD_JEM_TEASER_CATEGORY_COLORR_DESC"
+                    description="MOD_JEM_TEASER_CATEGORY_COLOR_DESC"
                 >
                     <option value="none">MOD_JEM_TEASER_CATEGORY_COLOR_NO</option>
                     <option value="text">MOD_JEM_TEASER_CATEGORY_COLOR_TEXT</option>
@@ -240,7 +240,7 @@
                     multiple="true"
                     removeroot="true"
                     label="MOD_JEM_TEASER_COUNTRIES"
-                    description="MOD_JEM_TEASER_COUNTRIESE_DESC"
+                    description="MOD_JEM_TEASER_COUNTRIES_DESC"
                 />
                 <field name="moduleclass_sfx" type="text"
                     default=""

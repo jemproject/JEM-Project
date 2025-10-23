@@ -20,6 +20,9 @@ class mod_jem_calInstallerScript
      */
     private $name = 'mod_jem_cal';
 
+    private $oldRelease = "";
+    private $newRelease = "";
+
     /**
      * Preflight method
      * Called before install/update/uninstall
@@ -30,7 +33,18 @@ class mod_jem_calInstallerScript
      */
     function preflight($type, $parent)
     {
-        // No preflight checks required
+        // abort if the release being installed is not newer than the currently installed version
+        if (strtolower($type) == 'update') {
+            // Installed component version
+            $this->oldRelease = $this->getParam('version');
+
+            // Installing component version as per Manifest file
+            $this->newRelease = (string) $parent->getManifest()->version;
+
+            if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
+                return false;
+            }
+        }
     }
 
     /**

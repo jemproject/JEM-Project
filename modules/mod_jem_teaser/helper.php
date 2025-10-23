@@ -59,6 +59,7 @@ abstract class ModJemTeaserHelper
         #  2: archived               - no limit, but from now back to the past
         #  3: running (today)        - enddates,endtimes > today+offset AND dates,times < tomorrow+offset
         #  4: featured               - ? (same as upcoming yet)
+        #  5: open date              - no limit
         $type = (int)$params->get('type');
         $offset_hours = (int)$params->get('offset_hours', 0);
         $max_title_length = (int)$params->get('cuttitle', '25');
