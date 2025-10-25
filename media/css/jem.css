@@ -702,6 +702,10 @@ div.jem_select_users ul.adminformlist input {
     cursor: pointer;
 }
 
+div.jem_editvenue form #jform_color {
+    padding: 0.5em 0.5em 0.5em 44px;
+}
+
 div.jem_editvenue form select {
     margin: 0 0 0.5em 0;
     padding: 0.2em auto 0.2em 0.2em;
