@@ -257,6 +257,8 @@ $location = JemHelper::defineCenterMap($this->form);
                     <dd><?php echo $this->form->getInput('latitude'); ?></dd>
                     <dt><?php echo $this->form->getLabel('longitude'); ?></dt>
                     <dd><?php echo $this->form->getInput('longitude'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('url'); ?></dt>
+                    <dd><?php echo $this->form->getInput('url'); ?></dd>
                     <dt><?php echo $this->form->getLabel('color'); ?></dt>
                     <dd><?php echo $this->form->getInput('color'); ?></dd>
                 </dl>
