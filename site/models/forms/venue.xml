@@ -93,11 +93,10 @@
             <option value="1">JPUBLISHED</option>
             <option value="0">JUNPUBLISHED</option>
         </field>
-        <field name="access" type="list"
+        <field name="access" type="accesslevel"
                label="JFIELD_ACCESS_LABEL"
                description="JFIELD_ACCESS_DESC"
                class="inputbox"
-               size="1"
         />
         <field name="country" type="countryoptions"
             label="COM_JEM_COUNTRY"
