@@ -679,6 +679,10 @@ body.com_jem.body-overlayed {
     width: 1em !important;
 }
 
+#jem .form-check-input#jform_map  {
+    margin-left: -1.5em !important;
+}
+
 .jem-readmore .btn, #find-left.btn {
     background-color: #f0f0f0;
 }
