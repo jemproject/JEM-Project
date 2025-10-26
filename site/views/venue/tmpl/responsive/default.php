@@ -153,19 +153,7 @@ use Joomla\CMS\Language\Text;
       <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
     </div>
   </div>
-    <?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
-    <!-- PUBLISHING STATE -->
-        <dl>
-            <dt class="published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
-            <dd class="published">
-                <?php switch ($this->venue->published) {
-                case  1: echo Text::_('JPUBLISHED');   break;
-                case  0: echo Text::_('JUNPUBLISHED'); break;
-                case  2: echo Text::_('JARCHIVED');    break;
-                case -2: echo Text::_('JTRASHED');     break;
-                } ?>
-            </dd>
-        </dl>
+    
     <?php endif; ?>
 
     <?php
