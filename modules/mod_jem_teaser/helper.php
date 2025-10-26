@@ -161,9 +161,9 @@ abstract class ModJemTeaserHelper
         # Retrieve the available Events
         $events = $model->getItems();
 
-        $color = $params->get('color');
-        $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
-        $fallback_color_is_dark = self::_is_dark($fallback_color);
+        $module_color = $params->get('color');
+        $module_fallback_color = $params->get('fallbackcolor', '#EEEEEE');
+        $module_fallback_color_is_dark = self::_is_dark($module_fallback_color);
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -199,7 +199,7 @@ abstract class ModJemTeaserHelper
             }
 
             # get category colors
-            $catcolorMode = $params->get('catcolor', 'none'); // none, text, background
+            $module_catcolorMode = $params->get('catcolor', 'none'); // none, text, background
             $coloredCategories = [];
 
             if (!empty($row->categories) && is_array($row->categories)) {
@@ -207,7 +207,7 @@ abstract class ModJemTeaserHelper
                     // --- ID ---
                     $catId = isset($cat->id) ? (int)$cat->id : (isset($cat->catid) ? (int)$cat->catid : 0);
 
-                    // --- alias (generiate, if not yet evailable) ---
+                    // --- alias (generate if not yet available) ---
                     if (!empty($cat->alias)) {
                         $catAlias = $cat->alias;
                     } elseif (!empty($cat->slug)) {
@@ -233,23 +233,23 @@ abstract class ModJemTeaserHelper
 
                     $colorRaw = isset($cat->color) ? trim($cat->color) : '';
 
-                    // Nur gültige Hex-Farben übernehmen (#rgb oder #rrggbb)
+                    // Only accept valid hex colors (#rgb or #rrggbb) for category
                     $color = '';
                     if (preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $colorRaw)) {
                         $color = $colorRaw;
                     }
 
                     // --- Generate output ---
-                    if ($catcolorMode === 'text' && $color) {
+                    if ($module_catcolorMode === 'text' && $color) {
                             // text color
                         $isDark = self::_is_dark($color);
                         $shadow = $isDark 
-                            ? '0 0 2px rgba(255,255,255,0.6)'  // heller Shadow auf dunklem Text
-                            : '0 0 2px rgba(0,0,0,0.6)';       // dunkler Shadow auf hellem Text
+                            ? '0 0 2px rgba(255,255,255,0.6)'  // light shadow on dark text
+                            : '0 0 2px rgba(0,0,0,0.6)';       // dark shadow on light text
 
                         $coloredCategories[] = '<a href="' . $link . '" class="category-link-textcolor" style="color:' . $color . ';text-shadow:' . $shadow . ';text-decoration:none;">' . $escapedName . '</a>';
 
-                    } elseif ($catcolorMode === 'background') {
+                    } elseif ($module_catcolorMode === 'background') {
                             // background color
                         if ($color) {
                             $textColor = self::_is_dark($color) ? '#fff' : '#000';
@@ -343,12 +343,12 @@ abstract class ModJemTeaserHelper
 
             $lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
-            $lists[$i]->colorclass = $color;
-            if (($color == 'alpha') || (($color == 'category') && empty($row->categories)) || (($color == 'venue') && empty($row->venuecolor))) {
-                $lists[$i]->color = $fallback_color;
-                $lists[$i]->color_is_dark = $fallback_color_is_dark;
+            $lists[$i]->colorclass = $module_color;
+            if (($module_color == 'alpha') || (($module_color == 'category') && empty($row->categories)) || (($module_color == 'venue') && empty($row->venuecolor))) {
+                $lists[$i]->color = $module_fallback_color;
+                $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
             }
-            elseif (($color == 'category') && !empty($row->categories)) {
+            elseif (($module_color == 'category') && !empty($row->categories)) {
                 $colors = array();
                 foreach ($row->categories as $category) {
                     if (!empty($category->color)) {
@@ -360,13 +360,18 @@ abstract class ModJemTeaserHelper
                     $lists[$i]->color =  array_pop($colors);
                     $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
                 } else {
-                    $lists[$i]->color =  $fallback_color;
-                    $lists[$i]->color_is_dark = $fallback_color_is_dark;
+                    $lists[$i]->color =  $module_fallback_color;
+                    $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
                 }
             }
-            elseif (($color == 'venue') && !empty($row->venuecolor)) {
+            elseif ($module_color == 'venue'){
+                if (!empty($row->venuecolor)) {
                 $lists[$i]->color = $row->venuecolor;
                 $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
+                } else {
+                    $lists[$i]->color =  $module_fallback_color;
+                    $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
+                }
             }
 
             # user has access

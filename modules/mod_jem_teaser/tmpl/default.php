@@ -11,6 +11,8 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Language\Text;
 
+JemHelper::loadModuleStyleSheet('mod_jem_teaser','mod_jem_teaser');
+
 $showcalendar    = (int)$params->get('showcalendar', 1);
 
 if ($params->get('use_modal', 0)) {
@@ -116,6 +118,7 @@ if ($params->get('use_modal', 0)) {
                   </div>
                     </td>
                     <td class="event-vencat">
+                                <div class="block-event-vencat">
                         <?php if (!empty($item->venue)) : ?>
                             <div class="venue-title">
                             <?php if ($item->venuelink) : ?>
@@ -130,6 +133,7 @@ if ($params->get('use_modal', 0)) {
         						<?php echo $item->catname; ?>
                             </div>
                         <?php endif; ?>
+                                </div>
                     </td>
                 </tr>
             </table>

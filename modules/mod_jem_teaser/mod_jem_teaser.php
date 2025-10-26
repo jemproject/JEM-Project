@@ -51,7 +51,7 @@ if (empty($list) && !$params->get('show_no_events')) {
 $mod_name = 'mod_jem_teaser';
 $jemsettings = JemHelper::config();
 $iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
-JemHelper::loadModuleStyleSheet($mod_name);
+
 JemHelper::loadModuleStyleSheet($mod_name, $color);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 
