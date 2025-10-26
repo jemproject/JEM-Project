@@ -139,21 +139,8 @@ use Joomla\CMS\Language\Text;
             <div class="jem-map">
                 <?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
             </div>
-        <?php endif;
-        if (isset($this->venue->published) && !empty($this->show_status)) : ?>
-    <!-- PUBLISHING STATE -->
-        <dl>
-            <dt class="published"><?php echo Text::_('JSTATUS'); ?>:</dt>
-            <dd class="published">
-                <?php switch ($this->venue->published) {
-                case  1: echo Text::_('JPUBLISHED');   break;
-                case  0: echo Text::_('JUNPUBLISHED'); break;
-                case  2: echo Text::_('JARCHIVED');    break;
-                case -2: echo Text::_('JTRASHED');     break;
-                } ?>
-            </dd>
-        </dl>
-    <?php endif; ?>
+        <?php endif;?>
+  
 
     <?php if ($this->settings->get('global_show_mapserv') == 3) : ?>
         <input type="hidden" id="latitude" value="<?php echo $this->venue->latitude; ?>">
