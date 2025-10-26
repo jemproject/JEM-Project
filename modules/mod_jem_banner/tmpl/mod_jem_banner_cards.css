@@ -64,7 +64,7 @@
 .jemmodulebanner .event-badge a {
     display: inline-block;
     background: var(--primary);
-    color: var(--secundary);
+    color: #f0f7ff;
     text-decoration: none;
     padding: 6px 12px;
     border-radius: 20px;
@@ -73,8 +73,8 @@
 }
 
 .jemmodulebanner .event-badge a:hover {
-    color: #0d5bba;
     background-color: #f0f7ff;
+    color: var(--secundary);
 }
 
 .jemmodulebanner .event-content {
