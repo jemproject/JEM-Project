@@ -25,7 +25,6 @@ use Joomla\CMS\Language\Text;
         <span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
         <?php
         echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
-        echo JemOutput::copybutton($this->venue, $this->params, NULL, $this->permissions->canAddVenue, 'venue');
         ?>
     </h1>
     <?php endif; ?>
