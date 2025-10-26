@@ -26,8 +26,6 @@ class mod_jem_bannerInstallerScript
 
     /**
      * Preflight method
-     * Called before install/update/uninstall
-     * Not required for installations and updates >= 2.3.6
      *
      * @param string $type   The type of action (install, update, discover_install)
      * @param object $parent The class calling this method
@@ -50,8 +48,6 @@ class mod_jem_bannerInstallerScript
 
     /**
      * Postflight method
-     * Called after install/update/uninstall
-     * Currently no post-install actions required
      *
      * @param string $type   The type of action (install, update, discover_install)
      * @param object $parent The class calling this method
@@ -85,6 +81,5 @@ class mod_jem_bannerInstallerScript
         $manifest = json_decode($db->loadResult(), true);
         return $manifest[$name];
     }
-
 
 }

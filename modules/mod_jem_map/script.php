@@ -23,10 +23,10 @@ class mod_jem_mapInstallerScript
     private $newRelease = "";
 
     /**
-     * method to run before an install/update/uninstall method
-     * (it seams method is not called on uninstall)
+     * Preflight method
      *
-     * @return void
+     * @param string $type   The type of action (install, update, discover_install)
+     * @param object $parent The class calling this method
      */
     function preflight($type, $parent)
     {
@@ -45,15 +45,21 @@ class mod_jem_mapInstallerScript
     }
 
     /**
-     * Method to run after an install/update/uninstall method
-     * (it seams method is not called on uninstall)
+     * Postflight method
      *
-     * @return void
+     * @param string $type   The type of action (install, update, discover_install)
+     * @param object $parent The class calling this method
      */
     function postflight($type, $parent)
     {
-        if (strtolower($type) == 'update') {
-
+        if (strtolower($type) == 'uninstall') {
+            return true;
+        }
+        if (strtolower($type) == 'update' ) {
+            return true;
+        }
+        if (strtolower($type) == 'install' ) {
+            return true;
         }
     }
 

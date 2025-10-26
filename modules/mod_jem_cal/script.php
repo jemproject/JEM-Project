@@ -20,13 +20,11 @@ class mod_jem_calInstallerScript
      */
     private $name = 'mod_jem_cal';
 
-    private $oldRelease = "";
+private $oldRelease = "";
     private $newRelease = "";
 
     /**
      * Preflight method
-     * Called before install/update/uninstall
-     * Not required for installations and updates >= 2.3.6
      *
      * @param string $type   The type of action (install, update, discover_install)
      * @param object $parent The class calling this method
@@ -49,14 +47,38 @@ class mod_jem_calInstallerScript
 
     /**
      * Postflight method
-     * Called after install/update/uninstall
-     * Currently no post-install actions required
      *
      * @param string $type   The type of action (install, update, discover_install)
      * @param object $parent The class calling this method
      */
     function postflight($type, $parent)
     {
-        // No postflight actions required
+        if (strtolower($type) == 'uninstall') {
+            return true;
+        }
+        if (strtolower($type) == 'update' ) {
+            return true;
+        }
+        if (strtolower($type) == 'install' ) {
+            return true;
+        }
     }
+
+    /**
+     * Get a parameter from the manifest file (actually, from the manifest cache).
+     *
+     * @param $name  The name of the parameter
+     *
+     * @return The parameter
+     */
+    private function getParam($name)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
+        $db->setQuery($query);
+        $manifest = json_decode($db->loadResult(), true);
+        return $manifest[$name];
+    }
+
 }
