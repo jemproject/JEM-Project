@@ -241,16 +241,16 @@ abstract class ModJemTeaserHelper
 
                     // --- Generate output ---
                     if ($module_catcolorMode === 'text' && $color) {
-                            // text color
+                        // text color
                         $isDark = self::_is_dark($color);
-                        $shadow = $isDark 
+                        $shadow = $isDark
                             ? '0 0 2px rgba(255,255,255,0.6)'  // light shadow on dark text
                             : '0 0 2px rgba(0,0,0,0.6)';       // dark shadow on light text
 
                         $coloredCategories[] = '<a href="' . $link . '" class="category-link-textcolor" style="color:' . $color . ';text-shadow:' . $shadow . ';text-decoration:none;">' . $escapedName . '</a>';
 
                     } elseif ($module_catcolorMode === 'background') {
-                            // background color
+                        // background color
                         if ($color) {
                             $textColor = self::_is_dark($color) ? '#fff' : '#000';
                             $coloredCategories[] = '<a href="' . $link . '" class="category-link-bgcolor" style="background-color:' . $color . ';color:' . $textColor . ';padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
@@ -293,7 +293,7 @@ abstract class ModJemTeaserHelper
             $lists[$i]->startdate   = $tmpdate;
             $lists[$i]->enddate     = empty($row->enddates) ? $defaults : self::_format_date_fields($row->enddates, $formats);
             list($lists[$i]->date,
-                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
+                $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
@@ -313,33 +313,33 @@ abstract class ModJemTeaserHelper
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
             }
 
-      if ($max_desc_length != 1208) {
-        # append <br> tags on line breaking tags so they can be stripped below
-        $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br>", $row->introtext);
+            if ($max_desc_length != 1208) {
+                # append <br> tags on line breaking tags so they can be stripped below
+                $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br>", $row->introtext);
 
-        # strip html tags but leave <br> tags
-        $description = strip_tags($description, "<br>");
+                # strip html tags but leave <br> tags
+                $description = strip_tags($description, "<br>");
 
-        # switch <br> tags to space character
-        if ($params->get('br') == 0) {
-          $description = mb_ereg_replace('<br[ /]*>',' ', $description);
-        }
+                # switch <br> tags to space character
+                if ($params->get('br') == 0) {
+                    $description = mb_ereg_replace('<br[ /]*>',' ', $description);
+                }
 
-        if (empty($description)) {
-          $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
-        } elseif (mb_strlen($description) > $max_desc_length) {
-          $lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
-        } else {
-          $lists[$i]->eventdescription = $description;
-        }
-      } else {
-        $description = $row->introtext;
-        if (empty($description)) {
-          $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
-        } else {
-          $lists[$i]->eventdescription = $description;
-        }
-      }
+                if (empty($description)) {
+                    $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
+                } elseif (mb_strlen($description) > $max_desc_length) {
+                    $lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
+                } else {
+                    $lists[$i]->eventdescription = $description;
+                }
+            } else {
+                $description = $row->introtext;
+                if (empty($description)) {
+                    $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
+                } else {
+                    $lists[$i]->eventdescription = $description;
+                }
+            }
 
             $lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
@@ -366,8 +366,8 @@ abstract class ModJemTeaserHelper
             }
             elseif ($module_color == 'venue'){
                 if (!empty($row->venuecolor)) {
-                $lists[$i]->color = $row->venuecolor;
-                $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
+                    $lists[$i]->color = $row->venuecolor;
+                    $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
                 } else {
                     $lists[$i]->color =  $module_fallback_color;
                     $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
@@ -410,15 +410,15 @@ abstract class ModJemTeaserHelper
             $scan = sscanf($color, '#%1x%1x%1x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = (17 * $scan[0] *  77) / 255
-                      + (17 * $scan[1] * 150) / 255
-                      + (17 * $scan[2] *  28) / 255;
+                    + (17 * $scan[1] * 150) / 255
+                    + (17 * $scan[2] *  28) / 255;
             }
         } else {
             $scan = sscanf($color, '#%2x%2x%2x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = ($scan[0] *  77) / 255
-                      + ($scan[1] * 150) / 255
-                      + ($scan[2] *  28) / 255;
+                    + ($scan[1] * 150) / 255
+                    + ($scan[2] *  28) / 255;
             }
         }
         return ($gray <= 160) ? 1 : 0;
@@ -472,18 +472,18 @@ abstract class ModJemTeaserHelper
                     $days = round( ($today_stamp - $enddates_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
 
-                //the event has an enddate and it's later than today but the startdate is today or earlier than today
-                //means a currently running event with startdate = today
+                    //the event has an enddate and it's later than today but the startdate is today or earlier than today
+                    //means a currently running event with startdate = today
                 } elseif ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp <= $today_stamp)) {
                     $days = round( ($enddates_stamp - $today_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_DAYS_LEFT', $days);
 
-                //the events date is earlier than yesterday
+                    //the events date is earlier than yesterday
                 } elseif ($dates_stamp < $yesterday_stamp) {
                     $days = round( ($today_stamp - $dates_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days );
 
-                //the events date is later than tomorrow
+                    //the events date is later than tomorrow
                 } elseif ($dates_stamp > $tomorrow_stamp) {
                     $days = round( ($dates_stamp - $today_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
@@ -571,7 +571,7 @@ abstract class ModJemTeaserHelper
             }
             # datemethod show date - not shown beause there is a calendar image
             else {
-            ///@todo check date+time to be more acurate
+                ///@todo check date+time to be more acurate
                 # Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
                 if (($dates_stamp >= $today_stamp) && ($enddates_stamp > $dates_stamp)) {
                     $startdate = JemOutput::formatdate($row->dates, $dateFormat);
