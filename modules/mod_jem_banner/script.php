@@ -21,6 +21,9 @@ class mod_jem_bannerInstallerScript
      */
     private $name = 'mod_jem_banner';
 
+    private $oldRelease = "";
+    private $newRelease = "";
+
     /**
      * Preflight method
      * Called before install/update/uninstall
