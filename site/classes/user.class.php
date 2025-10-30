@@ -133,10 +133,10 @@ abstract class JemUserAbstract extends User
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         $query = 'SELECT gr.id' . ' FROM #__jem_groups AS gr'
-                . ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-                . ' WHERE g.member = ' . (int)$this->id
-                . ' AND ' . $db->quoteName('gr.' . $action . 'event') . ' = 1 '
-                . ' AND g.member NOT LIKE 0';
+            . ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+            . ' WHERE g.member = ' . (int)$this->id
+            . ' AND ' . $db->quoteName('gr.' . $action . 'event') . ' = 1 '
+            . ' AND g.member NOT LIKE 0';
         $db->setQuery($query);
         $groupnumber = $db->loadColumn();
 
@@ -152,16 +152,16 @@ abstract class JemUserAbstract extends User
 
         if ($action == 'edit') {
             $query = 'SELECT a.catid' . ' FROM #__jem_cats_event_relations AS a'
-                    . ' LEFT JOIN #__jem_categories AS c ON c.id = a.catid'
-                    . ' WHERE c.published = 1'
-                    . ' AND (c.groupid = ' . $categories . ')'
-                    . ' AND a.itemid = ' . $eventid;
+                . ' LEFT JOIN #__jem_categories AS c ON c.id = a.catid'
+                . ' WHERE c.published = 1'
+                . ' AND (c.groupid = ' . $categories . ')'
+                . ' AND a.itemid = ' . $eventid;
             $db->setQuery($query);
         }
         else {
             $query = 'SELECT id' . ' FROM #__jem_categories'
-                    . ' WHERE published = 1'
-                    . ' AND (groupid = ' . $categories . ')';
+                . ' WHERE published = 1'
+                . ' AND (groupid = ' . $categories . ')';
             $db->setQuery($query);
         }
 
@@ -193,12 +193,12 @@ abstract class JemUserAbstract extends User
          */
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = 'SELECT gr.id'
-                . ' FROM #__jem_groups AS gr'
-                . ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-                . ' AND '.$db->quoteName('gr.'.$action.'venue').' = 1 '
-                . ' WHERE g.member = ' . (int)$this->id
-                . ' AND g.member NOT LIKE 0';
-                ;
+            . ' FROM #__jem_groups AS gr'
+            . ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+            . ' AND '.$db->quoteName('gr.'.$action.'venue').' = 1 '
+            . ' WHERE g.member = ' . (int)$this->id
+            . ' AND g.member NOT LIKE 0';
+        ;
         $db->setQuery($query);
 
         $groupnumber = $db->loadResult();
@@ -235,10 +235,10 @@ abstract class JemUserAbstract extends User
         }
 
         $query = 'SELECT gr.*'
-               . ' FROM #__jem_groups AS gr'
-               . ' LEFT JOIN #__jem_groupmembers AS gm ON gm.group_id = gr.id'
-               . ' WHERE gm.member = '. $userId . $field
-               . ' GROUP BY gr.id';
+            . ' FROM #__jem_groups AS gr'
+            . ' LEFT JOIN #__jem_groupmembers AS gm ON gm.group_id = gr.id'
+            . ' WHERE gm.member = '. $userId . $field
+            . ' GROUP BY gr.id';
         $db->setQuery($query);
 
         $groups = $db->loadAssocList('id');
@@ -273,17 +273,17 @@ abstract class JemUserAbstract extends User
         if (!$all) {
             foreach ($action as $act) {
                 switch ($act) {
-                case 'add':
-                    $all = (bool)$this->authorise('core.create', $asset);
-                    break;
-                case 'edit':
-                    $all = (bool)$this->authorise('core.edit', $asset) || (bool)$this->authorise('core.edit.own', $asset);
-                    break;
-                case 'publish':
-                    $all = (bool)$this->authorise('core.edit.state', $asset);
-                    break;
-                default:
-                    break;
+                    case 'add':
+                        $all = (bool)$this->authorise('core.create', $asset);
+                        break;
+                    case 'edit':
+                        $all = (bool)$this->authorise('core.edit', $asset) || (bool)$this->authorise('core.edit.own', $asset);
+                        break;
+                    case 'publish':
+                        $all = (bool)$this->authorise('core.edit.state', $asset);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -293,34 +293,34 @@ abstract class JemUserAbstract extends User
             $fields = array();
             foreach ($action as $act) {
                 switch ($act) {
-                case 'add':
-                    $fields[] = $act . $type;
-                    break;
-                case 'edit':
-                    $fields[] = $act . $type;
-                    break;
-                case 'publish':
-                    $fields[] = $act . $type;
-                    break;
-                default:
-                    break;
+                    case 'add':
+                        $fields[] = $act . $type;
+                        break;
+                    case 'edit':
+                        $fields[] = $act . $type;
+                        break;
+                    case 'publish':
+                        $fields[] = $act . $type;
+                        break;
+                    default:
+                        break;
                 }
             }
 
             switch ($type) {
-            case 'event':
-                $create   = ($jemsettings->delivereventsyes == -1);
-                $edit     = ($jemsettings->eventedit == -1);
-                $edit_own = ($jemsettings->eventowner == 1) && $owner;
-                break;
-            case 'venue':
-                $create   = ($jemsettings->deliverlocsyes == -1);
-                $edit     = ($jemsettings->venueedit == -1);
-                $edit_own = ($jemsettings->venueowner == 1) && $owner;
-                break;
-            default:
-                $create = $edit = $edit_own = false;
-                break;
+                case 'event':
+                    $create   = ($jemsettings->delivereventsyes == -1);
+                    $edit     = ($jemsettings->eventedit == -1);
+                    $edit_own = ($jemsettings->eventowner == 1) && $owner;
+                    break;
+                case 'venue':
+                    $create   = ($jemsettings->deliverlocsyes == -1);
+                    $edit     = ($jemsettings->venueedit == -1);
+                    $edit_own = ($jemsettings->venueowner == 1) && $owner;
+                    break;
+                default:
+                    $create = $edit = $edit_own = false;
+                    break;
             }
 
             // Get all JEM groups with requested permissions and user is member of.
@@ -362,10 +362,10 @@ abstract class JemUserAbstract extends User
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query  = 'SELECT DISTINCT c.*' . $disable
-                . ' FROM #__jem_categories AS c'
-                . ' WHERE c.published = 1'
-                . $where
-                . ' ORDER BY ' . $order;
+            . ' FROM #__jem_categories AS c'
+            . ' WHERE c.published = 1'
+            . $where
+            . ' ORDER BY ' . $order;
         $db->setQuery( $query );
         $cats = $db->loadObjectList('id');
 
@@ -415,29 +415,29 @@ abstract class JemUserAbstract extends User
         $jemsettings = JemHelper::config();
 
         switch ($type) {
-        case 'event':
-            $create   = ($jemsettings->delivereventsyes == -1);
-            $edit     = ($jemsettings->eventedit == -1);
-            $edit_own = ($jemsettings->eventowner == 1);
-            $autopubl = ($jemsettings->autopubl == -1); // auto-publish new events
-            // not supported yet
-            //if (!empty($id)) {
-            //    $asset .= '.event.' . $id;
-            //}
-            break;
-        case 'venue':
-            $create   = ($jemsettings->deliverlocsyes == -1);
-            $edit     = ($jemsettings->venueedit == -1);
-            $edit_own = ($jemsettings->venueowner == 1);
-            $autopubl = ($jemsettings->autopublocate == -1); // auto-publish new venues
-            // not supported yet
-            //if (!empty($id)) {
-            //    $asset .= '.venue.' . $id;
-            //}
-            break;
-        default:
-            $create = $edit = $edit_own = $autopubl = false;
-            break;
+            case 'event':
+                $create   = ($jemsettings->delivereventsyes == -1);
+                $edit     = ($jemsettings->eventedit == -1);
+                $edit_own = ($jemsettings->eventowner == 1);
+                $autopubl = ($jemsettings->autopubl == -1); // auto-publish new events
+                // not supported yet
+                //if (!empty($id)) {
+                //    $asset .= '.event.' . $id;
+                //}
+                break;
+            case 'venue':
+                $create   = ($jemsettings->deliverlocsyes == -1);
+                $edit     = ($jemsettings->venueedit == -1);
+                $edit_own = ($jemsettings->venueowner == 1);
+                $autopubl = ($jemsettings->autopublocate == -1); // auto-publish new venues
+                // not supported yet
+                //if (!empty($id)) {
+                //    $asset .= '.venue.' . $id;
+                //}
+                break;
+            default:
+                $create = $edit = $edit_own = $autopubl = false;
+                break;
         }
         $assets[] = $asset;
         // not supported yet
@@ -455,28 +455,28 @@ abstract class JemUserAbstract extends User
             foreach ($action as $act) {
                 if ($authorised) { break; }
                 switch ($act) {
-                case 'add':
-                    $authorised |= $create || $this->authorise('core.create', $asset);
-                    break;
-                case 'edit':
-                    $authorised |= $this->authorise('core.edit', $asset); // $edit is limited to events not attached to jem groups
-                    // user is owner and edit-own is enabled
-                    $authorised |= ($edit_own || $this->authorise('core.edit.own', $asset)) &&
-                                   !empty($created_by) && ($userId == $created_by);
-                    break;
-                case 'publish':
-                    $authorised |= $this->authorise('core.edit.state', $asset);
-                    // user is creator of new item and auto-publish is enabled
-                    $authorised |= $autopubl && ($id === 0) &&
-                                   (empty($created_by) || ($userId == $created_by));
-                    // user is creator, can edit this item and auto-publish is enabled
-                    // (that's because we allowed user to not publish new item with auto-puplish enabled)
-                    $authorised |= $autopubl && ($edit || $edit_own) && ($id !== 0) &&
-                                   !empty($created_by) && ($userId == $created_by);
-                    break;
-                case 'delete':
-                    $authorised |= $this->authorise('core.delete', $asset);
-                    break;
+                    case 'add':
+                        $authorised |= $create || $this->authorise('core.create', $asset);
+                        break;
+                    case 'edit':
+                        $authorised |= $this->authorise('core.edit', $asset); // $edit is limited to events not attached to jem groups
+                        // user is owner and edit-own is enabled
+                        $authorised |= ($edit_own || $this->authorise('core.edit.own', $asset)) &&
+                            !empty($created_by) && ($userId == $created_by);
+                        break;
+                    case 'publish':
+                        $authorised |= $this->authorise('core.edit.state', $asset);
+                        // user is creator of new item and auto-publish is enabled
+                        $authorised |= $autopubl && ($id === 0) &&
+                            (empty($created_by) || ($userId == $created_by));
+                        // user is creator, can edit this item and auto-publish is enabled
+                        // (that's because we allowed user to not publish new item with auto-puplish enabled)
+                        $authorised |= $autopubl && ($edit || $edit_own) && ($id !== 0) &&
+                            !empty($created_by) && ($userId == $created_by);
+                        break;
+                    case 'delete':
+                        $authorised |= $this->authorise('core.delete', $asset);
+                        break;
                 }
             }
         }
@@ -514,11 +514,11 @@ abstract class JemUserAbstract extends User
                         // We have to check ALL categories, also those not seen by user.
                         $db = Factory::getContainer()->get('DatabaseDriver');
                         $query  = 'SELECT DISTINCT c.id, c.groupid, c.access'
-                                . ' FROM #__jem_categories AS c';
+                            . ' FROM #__jem_categories AS c';
                         if (!empty($id)) {
                             $query .= ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-                                    . ' WHERE rel.itemid = ' . $id
-                                    . ' AND c.published = 1';
+                                . ' WHERE rel.itemid = ' . $id
+                                . ' AND c.published = 1';
                         } else {
                             $query .= ' WHERE c.published = 1';
                         }
@@ -567,7 +567,7 @@ abstract class JemUserAbstract extends User
  */
 class JemUser extends JemUserAbstract
 {
-    static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+    static function getInstance($id = 0, ?JUserWrapperHelper $userHelper = null)
     {
         // we don't need this helper
         return parent::_getInstance($id);

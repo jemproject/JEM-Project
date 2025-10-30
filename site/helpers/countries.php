@@ -1111,7 +1111,12 @@ class JemHelperCountries
         }
 
         $html = '<img src="' . $src . '" alt="' . self::getCountryName($countrycode) . '" ';
-        $html .= 'title="' . self::getCountryName($countrycode) . '" class="venue_country_flag ' . str_replace(' ', '_', str_replace(['(', ')'], '', strtolower(transliterator_transliterate('Any-Latin; Latin-ASCII', self::getCountryName($countrycode))))) . '_flag" ' . $attributes . ' />';
+        if (function_exists('transliterator_transliterate')) {
+            $countryName = transliterator_transliterate('Any-Latin; Latin-ASCII', self::getCountryName($countrycode));
+        } else {
+            $countryName = iconv('UTF-8', 'ASCII//TRANSLIT', self::getCountryName($countrycode));
+        }
+        $html .= 'title="' . self::getCountryName($countrycode) . '" class="venue_country_flag ' . str_replace(' ', '_', str_replace(['(', ')'], '', strtolower($countryName))) . '_flag" ' . $attributes . ' />';
         return $html;
     }
 

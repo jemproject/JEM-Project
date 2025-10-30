@@ -27,7 +27,7 @@ class JemViewVenue extends JemAdminView
         $this->form     = $this->get('Form');
         $this->item     = $this->get('Item');
         $this->state = $this->get('State');
-        
+
         // Check for errors.
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
@@ -43,7 +43,7 @@ class JemViewVenue extends JemAdminView
         $task           = $app->getInput()->get('task', '');
         $this->task     = $task;
         $wa = $app->getDocument()->getWebAssetManager();
-    
+
         // Load css
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->registerStyle('jem.geostyle', 'com_jem/geostyle.css')->useStyle('jem.geostyle');
@@ -52,9 +52,9 @@ class JemViewVenue extends JemAdminView
         // HTMLHelper::_('script', 'com_jem/attachments.js', false, true);
         $wa->useScript('jquery');
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
-        
+
         //$this->document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
-        
+
         $language = Factory::getApplication()->getLanguage();
         $language = $language->getTag();
         $language = substr($language, 0,2);
@@ -69,7 +69,7 @@ class JemViewVenue extends JemAdminView
         // $this->document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
         $wa->registerScript('jem.jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')->useScript('jem.jquery');
         $wa->registerScript('jem.jquery_map', 'https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language)->useScript('jem.jquery_map');
-    
+
         // HTMLHelper::_('script', 'com_jem/jquery.geocomplete.js', false, true);
         $wa->registerScript('jem.geocomplete', 'com_jem/jquery.geocomplete.js')->useScript('jem.geocomplete');
 

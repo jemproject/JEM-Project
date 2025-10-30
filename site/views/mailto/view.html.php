@@ -42,13 +42,12 @@ class JemViewMailto extends HtmlView
         $menuitem    = $menu->getActive();
         $pathway     = $app->getPathway();
         $uri         = Uri::getInstance();
-        
+
         $this->state = $this->get('State');
         $this->params = $this->state->get('params');
         $this->link = urldecode($app->getInput()->get('link', '', 'BASE64'));
         
         $layout = $app->getInput()->get('layout', 'edit');
-        
         $params = $this->params;
         $this->pageclass_sfx = $params->get('pageclass_sfx');
         // Get the form to display

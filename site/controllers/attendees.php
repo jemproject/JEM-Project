@@ -62,7 +62,7 @@ class JemControllerAttendees extends BaseController
         $uids    = array_unique($uids);
         $total   = is_array($uids) ? count($uids) : 0;
         $msg     = '';
-        
+
         if ($jinput->get('task', 0,'string')=="attendeeadd") {
             $places = $jinput->getInput()->getInt('places', 0);
         } else {
@@ -123,7 +123,7 @@ class JemControllerAttendees extends BaseController
             foreach ($events as $key => $row) {
 
                 $skip = $error = $changed = 0;
-                
+
                 foreach ($uids as $uid) {
                     if (array_key_exists($uid, $regs)) {
                         $reg = $regs[$uid];
@@ -169,7 +169,7 @@ class JemControllerAttendees extends BaseController
                 $errMsgs = array_unique($errMsgs);
 
                 if (count($errMsgs)) {
-                    $msg .= '<br />' . implode('<br />', $errMsgs);
+                    $msg .= '<br>' . implode('<br>', $errMsgs);
                 }
             }
         }

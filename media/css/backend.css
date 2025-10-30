@@ -799,6 +799,9 @@ table.table tfoot td, table.table tfoot th {
     text-align: center;
 }
 
+[data-bs-theme="dark"] table.table tfoot td, table.table tfoot th {
+    background-color: transparent;}
+
 table.table .pagination {
     /* display:inline-block;
     padding:0;
@@ -894,7 +897,7 @@ table.adminlist {
     .update-details .detail-item {
         flex-direction: column;
     }
-        
+
     .update-details .detail-item strong {
         margin-bottom: 0.25rem;
         flex: 0;

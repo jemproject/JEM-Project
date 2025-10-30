@@ -67,6 +67,24 @@
                     label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH"
                     description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH_DESC"
                 />
+                <field name="DisplayLink" type="radio"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK"
+                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK_DESC"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="DisplayTime" type="radio"
+                    class="btn-group btn-group-yesno"
+                    default="0"
+                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME"
+                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME_DESC"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="DisplayCat" type="radio"
                     class="btn-group btn-group-yesno"
                     default="0"
@@ -235,18 +253,24 @@
                 />
             </fieldset>
             <fieldset name="advanced">
-                <field name="layout" type="modulelayout"
+                <field
+                    name="layout"
+                    type="modulelayout"
                     label="JFIELD_ALT_LAYOUT_LABEL"
                     class="form-select"
                     validate="moduleLayout"
                 />
-                <field name="moduleclass_sfx" type="textarea"
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
                     label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
                     rows="3"
                     validate="CssIdentifier"
                 />
-                <field name="cache" type="list"
-                    label="MOD_JEM_CAL_CACHING"
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
                     description="MOD_JEM_CAL_CACHING_DESC"
                     default="1"
                     filter="integer"
@@ -255,8 +279,10 @@
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>
-                <field name="cache_time" type="number"
-                    label="MOD_JEM_CAL_CACHE_TIME"
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
                     description="MOD_JEM_CAL_CACHE_TIME_DESC"
                     default="900"
                     filter="integer"

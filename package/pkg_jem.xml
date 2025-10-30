@@ -4,11 +4,13 @@
     <author>JEM Community</author>
     <creationDate>August 2025</creationDate>
     <packagename>jem</packagename>
+    <creationDate>Aug 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
     <version>5.0.0-alpha</version>
+    <version>4.4.0</version>
     <url>https://www.joomlaeventmanager.net/</url>
     <packager>JEM Community</packager>
     <packagerurl>https://www.joomlaeventmanager.net</packagerurl>
@@ -22,6 +24,7 @@
         <file type="module" id="mod_jem" client="site">mod_jem.zip</file>
         <file type="module" id="mod_jem_wide" client="site">mod_jem_wide.zip</file>
         <file type="module" id="mod_jem_cal" client="site">mod_jem_cal.zip</file>
+	    <file type="module" id="mod_jem_map" client="site">mod_jem_map.zip</file>
         <file type="module" id="mod_jem_teaser" client="site">mod_jem_teaser.zip</file>
         <file type="module" id="mod_jem_banner" client="site">mod_jem_banner.zip</file>
         <file type="module" id="mod_jem_jubilee" client="site">mod_jem_jubilee.zip</file>

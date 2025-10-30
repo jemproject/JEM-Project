@@ -5,7 +5,7 @@
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -233,6 +233,7 @@ class com_jemInstallerScript
         }
 
         // Additional checks when updating
+
         if (strtolower($type) == 'update') {
             // Currently installed extension version
             $this->oldRelease = $this->getParam('version');
@@ -633,6 +634,8 @@ class com_jemInstallerScript
             }
         }
     
+    }
+
     /**
      * Ensure some columns exist into JEM tables (database)
      *
@@ -699,23 +702,23 @@ class com_jemInstallerScript
     {
         $db = Factory::getContainer()->get('DatabaseDriver');              
         try {
-            
+
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
             $db->setQuery($query);
             $db->execute();
 
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
             $db->setQuery($query);
-            $db->execute();       
-            
+            $db->execute();
+
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
             $db->setQuery($query);
-            $db->execute();       
+            $db->execute();
 
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
             $db->setQuery($query);
             $db->execute();
-            
+
             $query = "UPDATE `#__jem_events` SET `unregistra_until` = DATE_FORMAT(DATE_SUB(CONCAT(`dates`, ' ', `times`), INTERVAL `unregistra_until` HOUR),'%Y-%m-%d %H:%i:%s') WHERE `unregistra_until` != 0 AND `times` IS NOT NULL AND `dates` IS NOT NULL";
             $db->setQuery($query);
             $db->execute();

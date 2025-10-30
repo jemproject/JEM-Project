@@ -27,6 +27,13 @@
             description="COM_JEM_ALIAS"
             hint="JFIELD_ALIAS_PLACEHOLDER"
         />
+        <field name="color" type="color"
+            class="form-control"
+            default=""
+            size="8"
+            label="COM_JEM_VENUE_COLOR"
+            description="COM_JEM_VENUE_COLOR"
+        />
         <field name="url" type="text"
             class="inputbox"
             size="40"

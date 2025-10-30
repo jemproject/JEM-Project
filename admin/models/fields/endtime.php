@@ -17,7 +17,7 @@ jimport('joomla.html.html');
 /**
  * Endtime Field class.
  *
- * 
+ *
  */
 class JFormFieldEndtime extends FormField
 {
@@ -27,17 +27,17 @@ class JFormFieldEndtime extends FormField
      */
     protected $type = 'Endtime';
 
-    
+
     public function getInput()
     {
-        
+
         $endhours = JEMHelper::buildtimeselect(23, 'endhours', substr( $this->value, 0, 2 ),array('class'=>'form-select','class'=>'select-time'));
         $endminutes = JEMHelper::buildtimeselect(59, 'endminutes', substr($this->value, 3, 2 ),array('class'=>'form-select','class'=>'select-time'));
-        
+
         $var2 = $endhours.$endminutes;
-    
+
         return $var2;
-        
+
     }
-    
+
 }
