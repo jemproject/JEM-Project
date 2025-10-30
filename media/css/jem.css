@@ -606,7 +606,7 @@ div#jem .jem_fright {
     float: unset;
 }
 
-/* 
+/*
 #jem .edit .current dd.tabs {
     border: none;
 }
@@ -700,6 +700,10 @@ div.jem_select_users ul.adminformlist input {
     padding: 0.2em;
     border: 1px solid #808080;
     cursor: pointer;
+}
+
+div.jem_editvenue form #jform_color {
+    padding: 0.5em 0.5em 0.5em 44px;
 }
 
 div.jem_editvenue form select {

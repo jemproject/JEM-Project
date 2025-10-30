@@ -80,8 +80,8 @@ class JemController extends BaseController
                 case 'search':
                 case 'venue':
                 case 'venues':
-                case 'venueslist':    
-                case 'mailto':    
+                case 'venueslist':
+                case 'mailto':
                 case 'weekcal':
                     $model = $this->getModel($viewName);
                     break;

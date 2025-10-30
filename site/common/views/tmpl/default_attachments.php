@@ -24,10 +24,10 @@ use Joomla\CMS\Session\Session;
                         <?php
                         $overlib = Text::_('COM_JEM_FILE').': '.$this->escape($file->file);
                         if (!empty($file->name)) {
-                            $overlib .= '<BR />'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
+                            $overlib .= '<br>'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
                         }
                         if (!empty($file->description)) {
-                            $overlib .= '<BR />'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
+                            $overlib .= '<br>'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
                         }
                         ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_DOWNLOAD'), $overlib, 'file-dl-icon file-name'); ?>>

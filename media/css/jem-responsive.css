@@ -248,7 +248,7 @@ body.com_jem.body-overlayed {
     --btn-padding-y: 0.4rem;
 }
 
-#jem_filter #filter_continent, 
+#jem_filter #filter_continent,
 #jem_filter #filter_country,
 #jem_filter #filter_city {min-width: 250px;}
 
@@ -303,6 +303,10 @@ body.com_jem.body-overlayed {
 #jem select,
 #jem input {
     width: auto;
+}
+
+#jem #filter_search {
+    width: 100%;
 }
 
 #jem #starthours,
@@ -489,7 +493,7 @@ body.com_jem.body-overlayed {
 #jem div.jem-map {
     padding-top: 15px;
     padding-bottom: 5px;
-    animation: blendin .5s ease-out forwards;   
+    animation: blendin .5s ease-out forwards;
 }
 
 /* prevent osm maps from flickering */
@@ -673,6 +677,10 @@ body.com_jem.body-overlayed {
 
 #jem .form-check-input {
     width: 1em !important;
+}
+
+#jem .form-check-input#jform_map  {
+    margin-left: -1.5em !important;
 }
 
 .jem-readmore .btn, #find-left.btn {

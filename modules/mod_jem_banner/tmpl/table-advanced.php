@@ -97,7 +97,7 @@ $css = '
                 height: ' . $imageheight . ';
             }
         }
-        
+
     @media (max-width: 768px) {
         .events-grid {
             grid-template-columns: 1fr;
@@ -122,12 +122,12 @@ $wa->addInlineStyle($css);
                         <?php endif; ?>
                     </div>
                     <?php endif; ?>
-                    
+
                     <h3 class="event-title" itemprop="name">
                         <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'" itemprop="url">'.$item->title.'</a>' : $item->title; ?>
                     </h3>
                 </div>
-                
+
                 <div class="event-body">
                     <div class="event-meta">
                         <?php if ($showcalendar == 0) : ?>
@@ -137,7 +137,7 @@ $wa->addInlineStyle($css);
                                     <span><?php echo $item->date; ?></span>
                                 </div>
                             <?php endif; ?>
-                            
+
                             <?php if ($item->date && $datemethod == 1) :?>
                                 <div class="event-meta-item">
                                     <i class="icon-calendar"></i>
@@ -151,14 +151,14 @@ $wa->addInlineStyle($css);
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php endif; ?>
-                        
+
                         <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
                             <div class="event-meta-item">
                                 <i class="icon-location"></i>
                                 <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
                             </div>
                         <?php endif; ?>
-                        
+
                         <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
                             <div class="event-meta-item">
                                 <i class="icon-tag"></i>
@@ -166,7 +166,7 @@ $wa->addInlineStyle($css);
                             </div>
                         <?php endif; ?>
                     </div>
-                    
+
                     <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
                     <div class="event-image">
                         <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
@@ -175,7 +175,7 @@ $wa->addInlineStyle($css);
                         </a>
                     </div>
                     <?php endif; ?>
-                    
+
                     <?php if ($params->get('showdesc', 1) == 1) :?>
                     <div class="event-description" itemprop="description">
                         <?php echo $item->eventdescription; ?>

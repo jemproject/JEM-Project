@@ -37,7 +37,7 @@ $location = JemHelper::defineCenterMap($this->form);
     }
 
     // window.addEvent('domready', function() {
-    window.onload = function() {        
+    window.onload = function() {
         setAttribute();
         test();
     }
@@ -52,7 +52,7 @@ $location = JemHelper::defineCenterMap($this->form);
         document.getElementById("tmp_form_country").setAttribute("geo-data", "country_short");
         document.getElementById("tmp_form_latitude").setAttribute("geo-data", "lat");
         document.getElementById("tmp_form_longitude").setAttribute("geo-data", "lng");
-        document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");    
+        document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");
     }
 
     function meta(){
@@ -110,8 +110,8 @@ $location = JemHelper::defineCenterMap($this->form);
 
     // jQuery(function() {
     jQuery(document).ready(function() {
-        
-            
+
+
         jQuery("#geocomplete").geocomplete({
             map: ".map_canvas",
             <?php echo $location; ?>
@@ -125,13 +125,13 @@ $location = JemHelper::defineCenterMap($this->form);
             markerOptions: {
                 draggable: true
             }
-            
+
         });
 
         jQuery("#geocomplete").bind('geocode:result', function(){
                 var street = jQuery("#tmp_form_street").val();
                 var route  = jQuery("#tmp_form_route").val();
-                
+
                 if (route) {
                     /* something to add */
                 } else {
@@ -167,7 +167,7 @@ $location = JemHelper::defineCenterMap($this->form);
             document.getElementById("jform_street").value = document.getElementById("tmp_form_street").value;
             document.getElementById("jform_postalCode").value = document.getElementById("tmp_form_postalCode").value;
             document.getElementById("jform_city").value = document.getElementById("tmp_form_city").value;
-            document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;    
+            document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;
             document.getElementById("jform_country").value = document.getElementById("tmp_form_country").value;
         });
 
@@ -182,7 +182,7 @@ $location = JemHelper::defineCenterMap($this->form);
             jQuery("#cp-address").click();
             jQuery("#cp-latlong").click();
             jQuery("#cp-venue").click();
-        });    
+        });
 
         jQuery('#jform_map').on('keyup keypress blur change', function() {
             test();
@@ -208,7 +208,7 @@ $location = JemHelper::defineCenterMap($this->form);
                 map.setCenter(center);
             }
         });
-    });    
+    });
 </script>
 
 <form
@@ -239,6 +239,8 @@ $location = JemHelper::defineCenterMap($this->form);
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
+
                         </ul>
                         <div class="clr"></div>
                         <div>
