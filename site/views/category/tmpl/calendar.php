@@ -246,14 +246,14 @@ use Joomla\CMS\Factory;
             $end   = JemOutput::formattime($row->endtimes,'',false);
 
             switch ($multi_mode) {
-                case 1:
-                    $timetp .= $multi_icon . ' ' . $start . '<br />';
+            	case 1:
+                    $timetp .= $multi_icon . ' ' . $start . '<br>';
                     break;
                 case 2:
-                    $timetp .= $multi_icon . '<br />';
+                    $timetp .= $multi_icon . '<br>';
                     break;
                 case 3:
-                    $timetp .= $multi_icon . ' ' . $end . '<br />';
+                    $timetp .= $multi_icon . ' ' . $end . '<br>';
                     break;
                 default:
                     if ($start != '') {
@@ -261,7 +261,7 @@ use Joomla\CMS\Factory;
                         if ($end != '') {
                             $timetp .= ' - '.$end;
                         }
-                        $timetp .= '<br />';
+                        $timetp .= '<br>';
                     }
                     break;
             }
@@ -463,49 +463,59 @@ use Joomla\CMS\Factory;
         <!-- Calendar legend below -->
         <div id="jlcalendarlegend">
 
+            <!-- Calendar buttons -->
+            <div class="calendarButtons jem-row jem-justify-start">
+                <button id="buttonshowall" class="calendarButton btn btn-outline-dark">
+                    <?php echo Text::_('COM_JEM_SHOWALL'); ?>
+                </button>
+                <button id="buttonhideall" class="calendarButton btn btn-outline-dark">
+                    <?php echo Text::_('COM_JEM_HIDEALL'); ?>
+                </button>
+            </div>
             <!-- Calendar Legend -->
             <div class="calendarLegends">
                 <?php
+                if ($displayLegend == 1) {
 
-                ##############
-                ## FOR EACH ##
-                ##############
+                    ##############
+                    ## FOR EACH ##
+                    ##############
 
-                $counter = array();
+                    $counter = array();
 
-                # walk through events
-                foreach ($this->rows as $row) {
-                foreach ($row->categories as $cat) {
-                # skip foreign categories - we are restricted to one
-                if ($cat->id != $this->catid) {
-                    continue;
-                }
+                    # walk through events
+                    foreach ($this->rows as $row) {
+                        foreach ($row->categories as $cat) {
+                            # skip foreign categories - we are restricted to one
+                            if ($cat->id != $this->catid) {
+                                continue;
+                            }
 
-                # sort out dupes for the counter (catid-legend)
-                if (!in_array($cat->id, $counter)) {
-                # add cat id to cat counter
-                $counter[] = $cat->id;
+                            # sort out dupes for the counter (catid-legend)
+                            if (!in_array($cat->id, $counter)) {
+                                # add cat id to cat counter
+                                $counter[] = $cat->id;
 
-                # build legend
-                if (array_key_exists($cat->id, $countcatevents)) {
-                ?>
-                <div class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
-                    <?php
-                    if (!empty($cat->color)) {
-                        $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock ms-2';
-                        echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
+                                # build legend
+                                if (array_key_exists($cat->id, $countcatevents)) {
+                                    ?>
+                                    <div class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
+                                        <?php
+                                        if (!empty($cat->color)) {
+                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock ms-2';
+                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
+                                        }
+
+                                        $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
+                                        $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
+                                        echo '<span class="' . $textClass . '">' . $text . '</span>';
+                                        ?>
+                                    </div>
+                                    <?php
+                                }
+                            }
+                        }
                     }
-
-                    $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
-                    $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
-                    echo '<span class="' . $textClass . '">' . $text . '</span>';
-                    ?>
-                </div>
-                <?php
-                }
-                }
-                }
-                }
                 }
                 ?>
             </div>

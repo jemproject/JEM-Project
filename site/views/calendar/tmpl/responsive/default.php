@@ -124,13 +124,11 @@ use Joomla\CMS\Factory;
         //initialize variables
         $multicatname = '';
         $colorpic = '';
+        $color = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
         $contentend = '';
-        $catcolor = array();
-
-        //walk through categories assigned to an event
         $catcolor = array();
 
         foreach((array)$row->categories AS $category) {
@@ -239,14 +237,14 @@ use Joomla\CMS\Factory;
             $end   = JemOutput::formattime($row->endtimes,'',false);
 
             switch ($multi_mode) {
-                case 1:
-                    $timetp .= $multi_icon . ' ' . $start . '<br />';
+            	case 1:
+                    $timetp .= $multi_icon . ' ' . $start . '<br>';
                     break;
                 case 2:
-                    $timetp .= $multi_icon . '<br />';
+                    $timetp .= $multi_icon . '<br>';
                     break;
                 case 3:
-                    $timetp .= $multi_icon . ' ' . $end . '<br />';
+                    $timetp .= $multi_icon . ' ' . $end . '<br>';
                     break;
                 default:
                     if ($start != '') {
@@ -254,7 +252,7 @@ use Joomla\CMS\Factory;
                         if ($end != '') {
                             $timetp .= ' - '.$end;
                         }
-                        $timetp .= '<br />';
+                        $timetp .= '<br>';
                     }
                     break;
             }

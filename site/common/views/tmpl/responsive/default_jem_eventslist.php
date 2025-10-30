@@ -346,7 +346,7 @@ function jem_common_show_filter(&$obj)
                 <?php if ($this->params->get('show_introtext_events') == 1) : ?>
                     <div class="jem-event-intro">
                         <?php echo $row->introtext; ?>
-                        <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
+                        <?php if ($this->settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br>') : ?>
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
                         <?php endif; ?>
                     </div>
@@ -402,4 +402,40 @@ function jem_common_show_filter(&$obj)
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
     </div>
-<?php endif; ?>
+<?php endif;
+
+// Add Load More Button
+if (!$this->noevents && $this->settings->get('show_more_button', 1) && count($this->rows) >= $this->pagination->limit) {
+    // jQuery is loaded, just add Script
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->registerAndUseScript(
+        'com_jem.load-more',
+        'media/com_jem/js/load-more.js',
+        ['jquery'], // Specify jQuery as a dependency
+        ['defer' => true]
+    );
+    
+    $currentOffset = $this->pagination->limitstart;
+    $nextOffset = $currentOffset + $this->pagination->limit;
+    $totalItems = $this->pagination->total;
+    $hasMore = $nextOffset < $totalItems;
+    
+    if ($hasMore) :
+?>
+<div class="jem-load-more-container text-center mt-3">
+    <button 
+        id="jem-load-more-btn" 
+        class="btn btn-primary"
+        data-offset="<?php echo $currentOffset; ?>"
+        data-limit="<?php echo $this->pagination->limit; ?>"
+        data-text-loading="<?php echo Text::_('COM_JEM_LOADING'); ?>"
+        data-text-loadmore="<?php echo Text::_('COM_JEM_LOAD_MORE'); ?>"
+        type="button"
+    >
+        <?php echo Text::_('COM_JEM_LOAD_MORE'); ?>
+    </button>
+</div>
+<?php 
+    endif;
+}
+?>

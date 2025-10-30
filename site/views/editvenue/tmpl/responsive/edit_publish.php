@@ -29,9 +29,9 @@ use Joomla\CMS\Language\Text;
     <input type="button" class="button btn" value="<?php echo Text::_('COM_JEM_ADD_VENUE_CITY'); ?>" onclick="meta()" />
     <p>&nbsp;</p>
     <?php foreach ($this->form->getFieldset('meta') as $field) : ?>
-    <dl class="jem-dl">
-        <dt class="control-label"><?php echo $field->label; ?></dt>
-        <dd class="controls"><?php echo $field->input; ?></dd>
-    </dl>
+        <dl class="jem-dl">
+            <dt class="control-label"><?php echo $field->label; ?></dt>
+            <dd class="controls"><?php echo $field->input; ?></dd>
+        </dl>
     <?php endforeach; ?>
 </fieldset>

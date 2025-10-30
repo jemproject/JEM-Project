@@ -56,6 +56,34 @@ class JemModelEventslist extends ListModel
     }
 
     /**
+     * Get events for AJAX load more functionality
+     */
+    public function getEventsAjax($offset = 0, $limit = 10)
+    {
+        // Keep current filters and sorting
+        $currentStart = $this->getState('list.start', 0);
+        $currentLimit = $this->getState('list.limit', 10);
+        
+        // set temporary new values
+        $this->setState('list.start', $offset);
+        $this->setState('list.limit', $limit);
+        
+        // load items
+        $items = $this->getItems();
+        $total = $this->getTotal();
+        
+        // Restore original values
+        $this->setState('list.start', $currentStart);
+        $this->setState('list.limit', $currentLimit);
+        
+        return [
+            'items' => $items,
+            'hasMore' => ($offset + $limit) < $total,
+            'total' => $total
+        ];
+    }
+
+    /**
      * Method to auto-populate the model state.
      */
     protected function populateState($ordering = null, $direction = null)
@@ -221,7 +249,6 @@ class JemModelEventslist extends ListModel
             }
         }
         $this->setState('filter.groupby',array('a.id'));
-
     }
 
     /**
@@ -276,6 +303,21 @@ class JemModelEventslist extends ListModel
     public function setLimitStart($value)
     {
         $this->setState('list.start', (int) $value);
+    }
+
+    /**
+     * set limits for infinite scroll
+     */
+    public function getMoreEvents($limitstart)
+    {
+        $this->setLimitStart($limitstart);
+
+        // make sure a limit is set
+        if (!$this->getState('list.limit')) {
+            $this->setLimit(10);
+        }
+
+        return $this->getItems();
     }
 
     /**
@@ -350,7 +392,7 @@ class JemModelEventslist extends ListModel
         $query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
         # Venue
-        $query->select(array('l.alias AS l_alias','l.checked_out AS l_checked_out','l.checked_out_time AS l_checked_out_time','l.city','l.country','l.created AS l_created','l.created_by AS l_createdby'));
+        $query->select(array('l.alias AS l_alias','l.color AS venuecolor','l.checked_out AS l_checked_out','l.checked_out_time AS l_checked_out_time','l.city','l.country','l.created AS l_created','l.created_by AS l_createdby'));
         $query->select(array('l.custom1 AS l_custom1','l.custom2 AS l_custom2','l.custom3 AS l_custom3','l.custom4 AS l_custom4','l.custom5 AS l_custom5','l.custom6 AS l_custom6','l.custom7 AS l_custom7','l.custom8 AS l_custom8','l.custom9 AS l_custom9','l.custom10 AS l_custom10'));
         $query->select(array('l.id AS l_id','l.latitude','l.locdescription','l.locimage','l.longitude','l.map','l.meta_description AS l_meta_description','l.meta_keywords AS l_meta_keywords','l.modified AS l_modified','l.modified_by AS l_modified_by','l.postalCode'));
         $query->select(array('l.publish_up AS l_publish_up','l.publish_down AS l_publish_down','l.published AS l_published','l.state','l.street','l.url','l.venue','l.version AS l_version'));

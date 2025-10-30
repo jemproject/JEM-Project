@@ -86,20 +86,20 @@ class JemViewEditvenue extends JemView
 
         // Decide which parameters should take priority
         $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-                                        && $menuitem->query['view']   == 'editvenue'
-                                        && 0 == $item->id); // menu item is always for new venue
+            && $menuitem->query['view']   == 'editvenue'
+            && 0 == $item->id); // menu item is always for new venue
 
         $title = ($item->id == 0) ? Text::_('COM_JEM_EDITVENUE_VENUE_ADD')
-                                  : Text::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
+            : Text::sprintf('COM_JEM_EDITVENUE_VENUE_EDIT', $item->venue);
 
         if ($useMenuItemParams) {
             $pagetitle = $menuitem->title ? $menuitem->title : $title;
             $params->def('page_title', $pagetitle);
             $params->def('page_heading', $pagetitle);
-      $pathwayKeys = array_keys($pathway->getPathway());
-      $lastPathwayEntryIndex = end($pathwayKeys);
-      $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-      //$pathway->setItemName(1, $menuitem->title);
+            $pathwayKeys = array_keys($pathway->getPathway());
+            $lastPathwayEntryIndex = end($pathwayKeys);
+            $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+            //$pathway->setItemName(1, $menuitem->title);
 
             // Load layout from menu item if one is set else from venue if there is one set
             if (isset($menuitem->query['layout'])) {
@@ -169,7 +169,7 @@ class JemViewEditvenue extends JemView
         // JQuery scripts
         $document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-    
+
         $wa->registerScript('jem.jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')->useScript('jem.jquery');
         $wa->registerScript('jem.jquery_map', 'https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language)->useScript('jem.jquery_map');
         $wa->registerScript('jem.geocomplete', 'com_jem/jquery.geocomplete.js')->useScript('jem.geocomplete');
@@ -193,7 +193,7 @@ class JemViewEditvenue extends JemView
         // configure image field: show max. file size, and possibly mark field as required
         $tip = Text::_('COM_JEM_UPLOAD_IMAGE');
         if ((int)$jemsettings->sizelimit > 0) {
-            $tip .= ' <br/>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+            $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
         $this->form->setFieldAttribute('userfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {

@@ -115,7 +115,7 @@ $options = array(
                     </table>
                 </td>
                 <td style="vertical-align: top; width: 320px; padding: 7px 0 0 18px">
-                    
+
                     <div class="accordion" id="accordion_jem">
                         <?php //echo HTMLHelper::_('sliders.start','stat-pane',$options); ?>
                         <?php //echo HTMLHelper::_('sliders.panel', Text::_('COM_JEM_MAIN_EVENT_STATS'),'events'); ?>
@@ -211,7 +211,7 @@ $options = array(
                             </div>
                         </div>
                     </div>
-                
+
                     <?php //echo HTMLHelper::_('sliders.end'); ?>
                     <h3 class="title mt-4"><?php echo Text::_('COM_JEM_MAIN_DONATE'); ?></h3>
                     <div class="content">

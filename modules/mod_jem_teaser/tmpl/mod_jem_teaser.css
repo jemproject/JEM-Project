@@ -24,6 +24,7 @@ div#jemmoduleteaser .venue-title a {
 
 #jemmoduleteaser td.event-calendar {
     width: 1%; /* keep it as small as possible */
+    align-content: baseline;
 }
 
 #jemmoduleteaser [class|="calendar"] {
@@ -121,4 +122,9 @@ div#jemmoduleteaser .image-preview {
     padding: 3px;
     background-color: white;
     margin: 3px;
+}
+
+div#jemmoduleteaser .block-event-vencat {
+    display: flex;
+    gap: 5px;
 }

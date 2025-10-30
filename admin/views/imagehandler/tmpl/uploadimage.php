@@ -58,7 +58,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                         <tr>
                             <td>
                                 <input class="inputbox" name="userfile" id="userfile" type="file" />
-                                <br /><br />
+                                <br><br>
                                 <input class="btn btn-primary" type="submit" value="<?php echo Text::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
                             </td>
                         </tr>
@@ -88,29 +88,29 @@ use Joomla\CMS\HTML\HTMLHelper;
                                     $this->task = 'imagehandler.categoriesimgup';
                                 }
                                 ?>
-                                <br />
-                                <b><?php echo Text::_('COM_JEM_IMAGE_FILESIZE').':'; ?></b> <?php echo $this->jemsettings->sizelimit; ?> kb<br />
+                                <br>
+                                <b><?php echo Text::_('COM_JEM_IMAGE_FILESIZE').':'; ?></b> <?php echo $this->jemsettings->sizelimit; ?> kb<br>
 
                                 <?php
                                 if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_PNG)) {
-                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM_PNG_SUPPORT')."</span>";
+                                    echo "<br><span style='color:green'>".Text::_('COM_JEM_PNG_SUPPORT')."</span>";
                                 } else {
-                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_PNG_SUPPORT')."</span>";
+                                    echo "<br><span style='color:red'>".Text::_('COM_JEM_NO_PNG_SUPPORT')."</span>";
                                 }
                                 if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_JPEG)) {
-                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM_JPG_SUPPORT')."</span>";
+                                    echo "<br><span style='color:green'>".Text::_('COM_JEM_JPG_SUPPORT')."</span>";
                                 } else {
-                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_JPG_SUPPORT')."</span>";
+                                    echo "<br><span style='color:red'>".Text::_('COM_JEM_NO_JPG_SUPPORT')."</span>";
                                 }
                                 if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_GIF)) {
-                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM_GIF_SUPPORT')."</span>";
+                                    echo "<br><span style='color:green'>".Text::_('COM_JEM_GIF_SUPPORT')."</span>";
                                 } else {
-                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_GIF_SUPPORT')."</span>";
+                                    echo "<br><span style='color:red'>".Text::_('COM_JEM_NO_GIF_SUPPORT')."</span>";
                                 }
                                 if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_WEBP)) {
-                                    echo "<br /><span style='color:green'>".Text::_('COM_JEM_WEBP_SUPPORT')."</span>";
+                                    echo "<br><span style='color:green'>".Text::_('COM_JEM_WEBP_SUPPORT')."</span>";
                                 } else {
-                                    echo "<br /><span style='color:red'>".Text::_('COM_JEM_NO_WEBP_SUPPORT')."</span>";
+                                    echo "<br><span style='color:red'>".Text::_('COM_JEM_NO_WEBP_SUPPORT')."</span>";
                                 }
                                 ?>
                             </td>

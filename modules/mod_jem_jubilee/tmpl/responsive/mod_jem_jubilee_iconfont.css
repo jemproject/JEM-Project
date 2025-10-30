@@ -9,7 +9,7 @@
 div#jemmodulejubilee .time:before,
 div#jemmodulejubilee div.date:before,
 div#jemmodulejubilee .category:before,
-div#jemmodulejubilee .venue-title:before {                                                 
+div#jemmodulejubilee .venue-title:before {
     font-family:var(--fa-style-family,"Font Awesome 6 Free", "Font Awesome 5 Free");
     font-weight:var(--fa-style,900);
 }

@@ -59,6 +59,7 @@ abstract class ModJemTeaserHelper
         #  2: archived               - no limit, but from now back to the past
         #  3: running (today)        - enddates,endtimes > today+offset AND dates,times < tomorrow+offset
         #  4: featured               - ? (same as upcoming yet)
+        #  5: open date              - no limit
         $type = (int)$params->get('type');
         $offset_hours = (int)$params->get('offset_hours', 0);
         $max_title_length = (int)$params->get('cuttitle', '25');
@@ -160,9 +161,9 @@ abstract class ModJemTeaserHelper
         # Retrieve the available Events
         $events = $model->getItems();
 
-        $color = $params->get('color');
-        $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
-        $fallback_color_is_dark = self::_is_dark($fallback_color);    
+        $module_color = $params->get('color');
+        $module_fallback_color = $params->get('fallbackcolor', '#EEEEEE');
+        $module_fallback_color_is_dark = self::_is_dark($module_fallback_color);
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -197,16 +198,85 @@ abstract class ModJemTeaserHelper
                 $title = $fulltitle;
             }
 
+            # get category colors
+            $module_catcolorMode = $params->get('catcolor', 'none'); // none, text, background
+            $coloredCategories = [];
+
+            if (!empty($row->categories) && is_array($row->categories)) {
+                foreach ($row->categories as $cat) {
+                    // --- ID ---
+                    $catId = isset($cat->id) ? (int)$cat->id : (isset($cat->catid) ? (int)$cat->catid : 0);
+
+                    // --- alias (generate if not yet available) ---
+                    if (!empty($cat->alias)) {
+                        $catAlias = $cat->alias;
+                    } elseif (!empty($cat->slug)) {
+                        $catAlias = $cat->slug;
+                    } else {
+                        // Fallback: generate URL safe string from name
+                        $rawName = isset($cat->catname) ? $cat->catname : (isset($cat->title) ? $cat->title : 'category');
+                        $catAlias = strtolower($rawName);
+                        $catAlias = preg_replace('/[^a-z0-9]+/i', '-', $catAlias);
+                        $catAlias = trim($catAlias, '-');
+                        if ($catAlias === '') {
+                            $catAlias = 'cat-' . ($catId ?: time()); // letzter Notfall
+                        }
+                    }
+
+                    // --- generate link ---
+                    $link = Route::_('index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
+                    $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
+
+                    // --- name and color ---
+                    $catName = isset($cat->catname) ? $cat->catname : (isset($cat->title) ? $cat->title : '');
+                    $escapedName = htmlspecialchars($catName, ENT_COMPAT, 'UTF-8');
+
+                    $colorRaw = isset($cat->color) ? trim($cat->color) : '';
+
+                    // Only accept valid hex colors (#rgb or #rrggbb) for category
+                    $color = '';
+                    if (preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $colorRaw)) {
+                        $color = $colorRaw;
+                    }
+
+                    // --- Generate output ---
+                    if ($module_catcolorMode === 'text' && $color) {
+                        // text color
+                        $isDark = self::_is_dark($color);
+                        $shadow = $isDark
+                            ? '0 0 2px rgba(255,255,255,0.6)'  // light shadow on dark text
+                            : '0 0 2px rgba(0,0,0,0.6)';       // dark shadow on light text
+
+                        $coloredCategories[] = '<a href="' . $link . '" class="category-link-textcolor" style="color:' . $color . ';text-shadow:' . $shadow . ';text-decoration:none;">' . $escapedName . '</a>';
+
+                    } elseif ($module_catcolorMode === 'background') {
+                        // background color
+                        if ($color) {
+                            $textColor = self::_is_dark($color) ? '#fff' : '#000';
+                            $coloredCategories[] = '<a href="' . $link . '" class="category-link-bgcolor" style="background-color:' . $color . ';color:' . $textColor . ';padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
+                        } else {
+                            // no color
+                            $coloredCategories[] = '<a href="' . $link . '" class="category-link" style="background-color:transparent;box-shadow:0 0 3px rgba(0,0,0,0.5);padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
+                        }
+
+                    } else {
+                        // none or no valid color
+                        $coloredCategories[] = '<a href="' . $link . '">' . $escapedName . '</a>';
+                    }
+                }
+            }
+
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
+            $lists[$i]->catname     = implode("<span class=\"catseparator\"></span>", $coloredCategories);
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->venuecolor  = !empty($row->venuecolor) ? $row->venuecolor : '';
             $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
             $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
@@ -223,7 +293,7 @@ abstract class ModJemTeaserHelper
             $lists[$i]->startdate   = $tmpdate;
             $lists[$i]->enddate     = empty($row->enddates) ? $defaults : self::_format_date_fields($row->enddates, $formats);
             list($lists[$i]->date,
-                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
+                $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
@@ -243,42 +313,42 @@ abstract class ModJemTeaserHelper
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
             }
 
-      if ($max_desc_length != 1208) {
-        # append <br /> tags on line breaking tags so they can be stripped below
-        $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+            if ($max_desc_length != 1208) {
+                # append <br> tags on line breaking tags so they can be stripped below
+                $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br>", $row->introtext);
 
-        # strip html tags but leave <br /> tags
-        $description = strip_tags($description, "<br>");
+                # strip html tags but leave <br> tags
+                $description = strip_tags($description, "<br>");
 
-        # switch <br /> tags to space character
-        if ($params->get('br') == 0) {
-          $description = mb_ereg_replace('<br[ /]*>',' ', $description);
-        }
+                # switch <br> tags to space character
+                if ($params->get('br') == 0) {
+                    $description = mb_ereg_replace('<br[ /]*>',' ', $description);
+                }
 
-        if (empty($description)) {
-          $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
-        } elseif (mb_strlen($description) > $max_desc_length) {
-          $lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
-        } else {
-          $lists[$i]->eventdescription = $description;
-        }
-      } else {
-        $description = $row->introtext;
-        if (empty($description)) {
-          $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
-        } else {
-          $lists[$i]->eventdescription = $description;          
-        }
-      }
+                if (empty($description)) {
+                    $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
+                } elseif (mb_strlen($description) > $max_desc_length) {
+                    $lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
+                } else {
+                    $lists[$i]->eventdescription = $description;
+                }
+            } else {
+                $description = $row->introtext;
+                if (empty($description)) {
+                    $lists[$i]->eventdescription = Text::_('MOD_JEM_TEASER_NO_DESCRIPTION');
+                } else {
+                    $lists[$i]->eventdescription = $description;
+                }
+            }
 
             $lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
-            $lists[$i]->colorclass = $color;
-            if (($color == 'alpha') || (($color == 'category') && empty($row->categories))) {
-                $lists[$i]->color = $fallback_color;
-                $lists[$i]->color_is_dark = $fallback_color_is_dark;
+            $lists[$i]->colorclass = $module_color;
+            if (($module_color == 'alpha') || (($module_color == 'category') && empty($row->categories)) || (($module_color == 'venue') && empty($row->venuecolor))) {
+                $lists[$i]->color = $module_fallback_color;
+                $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
             }
-            elseif (($color == 'category') && !empty($row->categories)) {
+            elseif (($module_color == 'category') && !empty($row->categories)) {
                 $colors = array();
                 foreach ($row->categories as $category) {
                     if (!empty($category->color)) {
@@ -290,8 +360,17 @@ abstract class ModJemTeaserHelper
                     $lists[$i]->color =  array_pop($colors);
                     $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
                 } else {
-                    $lists[$i]->color =  $fallback_color;
-                    $lists[$i]->color_is_dark = $fallback_color_is_dark;
+                    $lists[$i]->color =  $module_fallback_color;
+                    $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
+                }
+            }
+            elseif ($module_color == 'venue'){
+                if (!empty($row->venuecolor)) {
+                    $lists[$i]->color = $row->venuecolor;
+                    $lists[$i]->color_is_dark = self::_is_dark($lists[$i]->color);
+                } else {
+                    $lists[$i]->color =  $module_fallback_color;
+                    $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
                 }
             }
 
@@ -331,15 +410,15 @@ abstract class ModJemTeaserHelper
             $scan = sscanf($color, '#%1x%1x%1x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = (17 * $scan[0] *  77) / 255
-                      + (17 * $scan[1] * 150) / 255
-                      + (17 * $scan[2] *  28) / 255;
+                    + (17 * $scan[1] * 150) / 255
+                    + (17 * $scan[2] *  28) / 255;
             }
         } else {
             $scan = sscanf($color, '#%2x%2x%2x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = ($scan[0] *  77) / 255
-                      + ($scan[1] * 150) / 255
-                      + ($scan[2] *  28) / 255;
+                    + ($scan[1] * 150) / 255
+                    + ($scan[2] *  28) / 255;
             }
         }
         return ($gray <= 160) ? 1 : 0;
@@ -393,18 +472,18 @@ abstract class ModJemTeaserHelper
                     $days = round( ($today_stamp - $enddates_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
 
-                //the event has an enddate and it's later than today but the startdate is today or earlier than today
-                //means a currently running event with startdate = today
+                    //the event has an enddate and it's later than today but the startdate is today or earlier than today
+                    //means a currently running event with startdate = today
                 } elseif ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp <= $today_stamp)) {
                     $days = round( ($enddates_stamp - $today_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_DAYS_LEFT', $days);
 
-                //the events date is earlier than yesterday
+                    //the events date is earlier than yesterday
                 } elseif ($dates_stamp < $yesterday_stamp) {
                     $days = round( ($today_stamp - $dates_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days );
 
-                //the events date is later than tomorrow
+                    //the events date is later than tomorrow
                 } elseif ($dates_stamp > $tomorrow_stamp) {
                     $days = round( ($dates_stamp - $today_stamp) / 86400 );
                     $result = Text::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
@@ -492,7 +571,7 @@ abstract class ModJemTeaserHelper
             }
             # datemethod show date - not shown beause there is a calendar image
             else {
-            ///@todo check date+time to be more acurate
+                ///@todo check date+time to be more acurate
                 # Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
                 if (($dates_stamp >= $today_stamp) && ($enddates_stamp > $dates_stamp)) {
                     $startdate = JemOutput::formatdate($row->dates, $dateFormat);

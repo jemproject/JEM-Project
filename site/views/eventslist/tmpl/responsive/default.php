@@ -53,11 +53,13 @@ defined('_JEXEC') or die;
         echo $this->task; ?>"/>
         <input type="hidden" name="view" value="eventslist"/>
     </form>
-
-    <div class="pagination">
-        <?php
-        echo $this->pagination->getPagesLinks(); ?>
-    </div>
+    
+    <?php if (!$this->settings->get('show_more_button', 1)) : ?>
+        <div class="pagination">
+            <?php
+            echo $this->pagination->getPagesLinks(); ?>
+        </div>
+    <?php endif; ?>
 
     <hr class="jem-hr" style="display: none;"/>
 

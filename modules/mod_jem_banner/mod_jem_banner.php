@@ -11,8 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\Module\Menu\Site\Helper\MenuHelper;
-use Joomla\CMS\Language\Text;
 
 $mod_name = 'mod_jem_banner';
 
