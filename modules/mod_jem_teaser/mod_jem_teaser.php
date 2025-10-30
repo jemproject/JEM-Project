@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 
 // get module helper
 require_once __DIR__.'/helper.php';
@@ -29,7 +30,8 @@ switch($params->get('color')) {
     case 'green':
     case 'orange':
     case 'category':
-    case 'alpha':              
+    case 'venue':
+    case 'alpha':
         $color = $params->get('color');
         break;
     default:
@@ -49,11 +51,11 @@ if (empty($list) && !$params->get('show_no_events')) {
 $mod_name = 'mod_jem_teaser';
 $jemsettings = JemHelper::config();
 $iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
-JemHelper::loadModuleStyleSheet($mod_name);
+
 JemHelper::loadModuleStyleSheet($mod_name, $color);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 
 // load icon font if needed
 JemHelper::loadIconFont();
 
-require(JemHelper::getModuleLayoutPath($mod_name));
+require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));

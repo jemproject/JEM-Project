@@ -168,7 +168,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
                         <td class="center" headers="jem_places" style="text-align: left; vertical-align: top;">
                             <?php echo !empty($row->places) ? $this->escape($row->places) : '-'; ?>
                         </td>
-                        
+
                         <td class="center">
                             <?php
                             $status = (int)$row->status;

@@ -46,7 +46,6 @@ defined('_JEXEC') or die;
     <div class="pagination">
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
-
     <div class="copyright">
         <?php echo JemOutput::footer( ); ?>
     </div>

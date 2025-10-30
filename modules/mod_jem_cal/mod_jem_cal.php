@@ -54,7 +54,7 @@ $tooltips_max_events = $params->get('tooltips_max_events', 0);
 $Itemid              = $app->input->request->getInt('Itemid', 0);
 
 if($Itemid ==0){
-    
+
     $Itemid = $app->getMenu()->getActive()->id;
 }
 
@@ -165,10 +165,10 @@ if ($Default_Stylesheet == 1) {
     $document->addStyleSheet(Uri::base() . $User_stylesheet);
 }
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
+
 # Load icon font if needed
 JemHelper::loadIconFont();
 
 # Render
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
-
 ?>

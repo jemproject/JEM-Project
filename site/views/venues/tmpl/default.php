@@ -191,7 +191,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>
             <?php endif; ?>
 
-            <?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+            <?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br>') : ?>
             <h2 class="description">
                 <?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
             </h2>

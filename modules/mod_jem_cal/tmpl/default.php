@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
 });
 function mod_jem_cal_click_<?php print $module->id; ?>(url) {
     jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});        
+        jQuery(".hasTooltip").tooltip({'html':true});
     });
 }
 </script>
@@ -195,7 +195,7 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                             $tip .= '...';
                             break; // foreach
                         }
-                        $tip .= trim($t) . '<br />';
+                        $tip .= trim($t) . '<br>';
                     }
                 }
 

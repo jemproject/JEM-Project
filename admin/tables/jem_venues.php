@@ -29,6 +29,8 @@ class jem_venues extends Table
     /** @var string */
     public $alias = '';
     /** @var string */
+    public $color = '';
+    /** @var string */
     public $url = '';
     /** @var string */
     public $street = '';
@@ -193,7 +195,7 @@ class jem_venues extends Table
      */
     public function insertIgnore($updateNulls = false)
     {
-        
+
         try {
             $ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
         } catch (RuntimeException $e){

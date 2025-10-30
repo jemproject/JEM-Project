@@ -102,7 +102,7 @@ class JemModelVenues extends ListModel
         $query->select(
                 $this->getState(
                         'list.select',
-                        'a.id, a.venue, a.alias, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
+                        'a.id, a.venue, a.alias, a.color, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
                         .'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
                         .'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
                         .'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
