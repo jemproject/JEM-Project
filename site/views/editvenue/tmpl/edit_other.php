@@ -34,5 +34,3 @@ $max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields',
     </fieldset>
 <?php endif; ?>
 
-
-
