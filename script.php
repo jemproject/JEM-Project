@@ -46,50 +46,52 @@ class com_jemInstallerScript
         $this->getHeader();
         ?>
 
-        <h2><?php echo Text::_('COM_JEM_INSTALL_STATUS'); ?>:</h2>
-        <h3><?php echo Text::_('COM_JEM_INSTALL_CHECK_FOLDERS'); ?>:</h3>
+        <h2><?php
+            echo Text::_('COM_JEM_INSTALL_STATUS'); ?>:</h2>
+        <h3><?php
+            echo Text::_('COM_JEM_INSTALL_CHECK_FOLDERS'); ?>:</h3>
 
         <?php
         $imageDir = "/images/jem";
         $createDirs = array(
             $imageDir,
-            $imageDir.'/categories',
-            $imageDir.'/categories/small',
-            $imageDir.'/events',
-            $imageDir.'/events/small',
-            $imageDir.'/venues',
-            $imageDir.'/venues/small'
+            $imageDir . '/categories',
+            $imageDir . '/categories/small',
+            $imageDir . '/events',
+            $imageDir . '/events/small',
+            $imageDir . '/venues',
+            $imageDir . '/venues/small'
         );
 
         // Check for existance of /images/jem directory
-        if (Folder::exists(JPATH_SITE.$createDirs[0])) {
-            echo "<p><span style='color:green;'>".Text::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
-                Text::sprintf('COM_JEM_INSTALL_DIRECTORY_EXISTS_SKIP', $createDirs[0])."</p>";
+        if (Folder::exists(JPATH_SITE . $createDirs[0])) {
+            echo "<p><span style='color:green;'>" . Text::_('COM_JEM_INSTALL_SUCCESS') . ":</span> " .
+                Text::sprintf('COM_JEM_INSTALL_DIRECTORY_EXISTS_SKIP', $createDirs[0]) . "</p>";
         } else {
-            echo "<p><span style='color:orange;'>".Text::_('COM_JEM_INSTALL_INFO').":</span> ".
-                Text::sprintf('COM_JEM_INSTALL_DIRECTORY_NOT_EXISTS', $createDirs[0])."</p>";
-            echo "<p>".Text::_('COM_JEM_INSTALL_DIRECTORY_TRY_CREATE').":</p>";
+            echo "<p><span style='color:orange;'>" . Text::_('COM_JEM_INSTALL_INFO') . ":</span> " .
+                Text::sprintf('COM_JEM_INSTALL_DIRECTORY_NOT_EXISTS', $createDirs[0]) . "</p>";
+            echo "<p>" . Text::_('COM_JEM_INSTALL_DIRECTORY_TRY_CREATE') . ":</p>";
 
             echo "<ul>";
             // Folder creation
-            foreach($createDirs as $directory) {
-                if (Folder::create(JPATH_SITE.$directory)) {
-                    echo "<li><span style='color:green;'>".Text::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
-                        Text::sprintf('COM_JEM_INSTALL_DIRECTORY_CREATED', $directory)."</li>";
+            foreach ($createDirs as $directory) {
+                if (Folder::create(JPATH_SITE . $directory)) {
+                    echo "<li><span style='color:green;'>" . Text::_('COM_JEM_INSTALL_SUCCESS') . ":</span> " .
+                        Text::sprintf('COM_JEM_INSTALL_DIRECTORY_CREATED', $directory) . "</li>";
                 } else {
-                    echo "<li><span style='color:red;'>".Text::_('COM_JEM_INSTALL_ERROR').":</span> ".
-                        Text::sprintf('COM_JEM_INSTALL_DIRECTORY_NOT_CREATED', $directory)."</li>";
+                    echo "<li><span style='color:red;'>" . Text::_('COM_JEM_INSTALL_ERROR') . ":</span> " .
+                        Text::sprintf('COM_JEM_INSTALL_DIRECTORY_NOT_CREATED', $directory) . "</li>";
                     $error['folders']++;
                 }
             }
             echo "</ul>";
         }
 
-        if($error['folders']) {
-            echo "<p>".Text::_('COM_JEM_INSTALL_DIRECTORY_CHECK_EXISTANCE')."</p>";
+        if ($error['folders']) {
+            echo "<p>" . Text::_('COM_JEM_INSTALL_DIRECTORY_CHECK_EXISTANCE') . "</p>";
         }
 
-        echo "<h3>".Text::_('COM_JEM_INSTALL_SETTINGS')."</h3>";
+        echo "<h3>" . Text::_('COM_JEM_INSTALL_SETTINGS') . "</h3>";
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
@@ -98,19 +100,19 @@ class com_jemInstallerScript
         $conf = $db->loadAssocList();
 
         if (count($conf)) {
-            echo "<p><span style='color:green;'>".Text::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
-                Text::_('COM_JEM_INSTALL_FOUND_SETTINGS')."</p>";
+            echo "<p><span style='color:green;'>" . Text::_('COM_JEM_INSTALL_SUCCESS') . ":</span> " .
+                Text::_('COM_JEM_INSTALL_FOUND_SETTINGS') . "</p>";
         }
 
-        echo "<h3>".Text::_('COM_JEM_INSTALL_SUMMARY')."</h3>";
+        echo "<h3>" . Text::_('COM_JEM_INSTALL_SUMMARY') . "</h3>";
 
         foreach ($error as $k => $v) {
-            if($k != 'summary') {
+            if ($k != 'summary') {
                 $error['summary'] += $v;
             }
         }
 
-        if($error['summary']) {
+        if ($error['summary']) {
             ?>
             <p style='color: red;'>
                 <b><?php echo Text::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></b>
@@ -124,52 +126,52 @@ class com_jemInstallerScript
         }
 
         $param_array = array(
-            "event_comunoption"=>"0",
-            "event_comunsolution"=>"0",
-            "event_show_attendeenames"=>"2",
-            "event_show_more_attendeedetails"=>"0",
-            "event_show_venue_name"=>"1",
-            "event_show_category"=>"1",
-            "event_link_category"=>"1",
-            "event_show_author"=>"1",
-            "event_lg"=>"",
-            "event_link_author"=>"1",
-            "event_show_contact"=>"1",
-            "event_link_contact"=>"1",
-            "event_show_description"=>"1",
-            "event_show_detailsadress"=>"1",
-            "event_show_detailstitle"=>"1",
-            "event_show_detlinkvenue"=>"1",
-            "event_show_hits"=>"0",
-            "event_show_locdescription"=>"1",
-            "event_show_mapserv"=>"0",
-            "event_show_print_icon"=>"1",
-            "event_show_email_icon"=>"1",
-            "event_show_ical_icon"=>"1",
-            "event_tld"=>"",
-            "editevent_show_meta_option"=>"0",
-            "editevent_show_attachment_tab"=>"0",
-            "editevent_show_other_tab"=>"0",
-            "global_display"=>"1",
-            "global_editevent_starttime_limit"=>"0",
-            "global_editevent_endtime_limit"=>"23",
-            "global_editevent_minutes_block"=>"1",
-            "global_regname"=>"1",
-            "global_show_archive_icon"=>"1",
-            "global_show_filter"=>"1",
-            "global_show_email_icon"=>"1",
-            "global_show_ical_icon"=>"1",
-            "global_show_icons"=>"1",
-            "global_show_locdescription"=>"1",
-            "global_show_print_icon"=>"1",
-            "global_show_timedetails"=>"1",
-            "global_show_detailsadress"=>"1",
-            "global_show_detlinkvenue"=>"1",
-            "global_show_listevents"=>"1",
-            "global_show_mapserv"=>"0",
-            "global_tld"=>"",
-            "global_lg"=>"",
-            "global_cleanup_db_on_uninstall"=>"0"
+            "event_comunoption" => "0",
+            "event_comunsolution" => "0",
+            "event_show_attendeenames" => "2",
+            "event_show_more_attendeedetails" => "0",
+            "event_show_venue_name" => "1",
+            "event_show_category" => "1",
+            "event_link_category" => "1",
+            "event_show_author" => "1",
+            "event_lg" => "",
+            "event_link_author" => "1",
+            "event_show_contact" => "1",
+            "event_link_contact" => "1",
+            "event_show_description" => "1",
+            "event_show_detailsadress" => "1",
+            "event_show_detailstitle" => "1",
+            "event_show_detlinkvenue" => "1",
+            "event_show_hits" => "0",
+            "event_show_locdescription" => "1",
+            "event_show_mapserv" => "0",
+            "event_show_print_icon" => "1",
+            "event_show_email_icon" => "1",
+            "event_show_ical_icon" => "1",
+            "event_tld" => "",
+            "editevent_show_meta_option" => "0",
+            "editevent_show_attachment_tab" => "0",
+            "editevent_show_other_tab" => "0",
+            "global_display" => "1",
+            "global_editevent_starttime_limit" => "0",
+            "global_editevent_endtime_limit" => "23",
+            "global_editevent_minutes_block" => "1",
+            "global_regname" => "1",
+            "global_show_archive_icon" => "1",
+            "global_show_filter" => "1",
+            "global_show_email_icon" => "1",
+            "global_show_ical_icon" => "1",
+            "global_show_icons" => "1",
+            "global_show_locdescription" => "1",
+            "global_show_print_icon" => "1",
+            "global_show_timedetails" => "1",
+            "global_show_detailsadress" => "1",
+            "global_show_detlinkvenue" => "1",
+            "global_show_listevents" => "1",
+            "global_show_mapserv" => "0",
+            "global_tld" => "",
+            "global_lg" => "",
+            "global_cleanup_db_on_uninstall" => "0"
         );
 
         $this->setGlobalAttribs($param_array);
@@ -194,7 +196,7 @@ class com_jemInstallerScript
             // user decided to fully remove JEM - so do it!
             $this->removeJemMenuItems();
             $this->removeAllJemTables();
-            $imageDir = JPATH_SITE.'/images/jem';
+            $imageDir = JPATH_SITE . '/images/jem';
             if (Folder::exists($imageDir)) {
                 Folder::delete($imageDir);
             }
@@ -225,19 +227,18 @@ class com_jemInstallerScript
      */
     public function preflight($type, $parent)
     {
-
         $app = Factory::getApplication();
         // Are we installing in J4.0?
         $jversion = new Version();
         $current_version = Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION;
         $devLevel = Version::PATCH_VERSION;
-        $this->newRelease = (string) $parent->manifest->version;
+        $this->newRelease = (string)$parent->manifest->version;
 
         if (version_compare(JVERSION, '6.0.0', 'ge') || // J! 6.x NOT supported, but allow alpha/beta
             !(($current_version >= '4.3' && $devLevel >= '0') ||
                 ($current_version >= '4.2' && $devLevel >= '9') ||
                 ($current_version == '4.1' && $devLevel >= '5') ||
-                ($current_version == '4.0' && $devLevel >= '6') )) {
+                ($current_version == '4.0' && $devLevel >= '6'))) {
             $app->enqueueMessage(Text::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
             return false;
         }
@@ -246,7 +247,7 @@ class com_jemInstallerScript
         $minPhpVersion = "8.0.0";
 
         // Abort if PHP release is older than required version
-        if(version_compare(PHP_VERSION, $minPhpVersion, '<')) {
+        if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
             $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'warning');
             return false;
         }
@@ -269,7 +270,7 @@ class com_jemInstallerScript
             $this->checkColumnsIntoDatabase();
 
             // Verify the data type of 'unregistra_until' in the database
-            if($this->oldRelease < '4.3.1'){
+            if ($this->oldRelease < '4.3.1') {
                 $this->checkUnregistraUntil();
             }
 
@@ -301,8 +302,7 @@ class com_jemInstallerScript
                 // change categoriesdetailed view name in menu items
                 $this->updateJem2315();
             }
-        }
-        elseif (strtolower($type) == 'install') {
+        } elseif (strtolower($type) == 'install') {
             $this->fixJemMenuItems();
         }
     }
@@ -341,14 +341,14 @@ class com_jemInstallerScript
 
             // add the new variable(s) to the existing one(s)
             foreach ($param_array as $name => $value) {
-                $params[(string) $name] = (string) $value;
+                $params[(string)$name] = (string)$value;
             }
 
             // store the combined new and existing values back as a JSON string
             $paramsString = json_encode($params);
             $query = $db->getQuery(true);
             $query->update('#__extensions')
-                ->set('params = '.$db->quote($paramsString))
+                ->set('params = ' . $db->quote($paramsString))
                 ->where(array("type = 'component'", "element = 'com_jem'"));
             $db->setQuery($query);
             $db->execute();
@@ -401,7 +401,7 @@ class com_jemInstallerScript
 
             // add the new variable(s) to the existing one(s)
             foreach ($param_array as $name => $value) {
-                $params[(string) $name] = (string) $value;
+                $params[(string)$name] = (string)$value;
             }
 
             // store the combined new and existing values back as a JSON string
@@ -410,10 +410,10 @@ class com_jemInstallerScript
             if ($this->useJemConfig) {
                 $query->update('#__jem_config')
                     ->where($db->quoteName('keyname') . ' = ' . $db->quote('globalattribs'))
-                    ->set($db->quoteName('value') . ' = '. $db->quote($paramsString));
+                    ->set($db->quoteName('value') . ' = ' . $db->quote($paramsString));
             } else {
                 $query->update('#__jem_settings')
-                    ->set('globalattribs = '.$db->quote($paramsString));
+                    ->set('globalattribs = ' . $db->quote($paramsString));
             }
             $db->setQuery($query);
             $db->execute();
@@ -454,7 +454,7 @@ class com_jemInstallerScript
 
         // Check if an entry already exists in schemas table
         $query = $db->getQuery(true);
-        $query->select('version_id')->from('#__schemas')->where('extension_id = '.$extensionId);
+        $query->select('version_id')->from('#__schemas')->where('extension_id = ' . $extensionId);
         $db->setQuery($query);
 
         if ($db->loadResult()) {
@@ -777,6 +777,14 @@ class com_jemInstallerScript
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
             '/media/com_jem/images/flags/w20-png',
+			'/components/com_jem/common/views/tmpl/alternative',
+			'/components/com_jem/views/attendees/tmpl/alternative',
+			'/components/com_jem/views/categories/tmpl/alternative',
+		    '/components/com_jem/views/day/tmpl/alternative',
+			'/components/com_jem/views/myattendances/tmpl/alternative',			
+ 			'/components/com_jem/views/myevents/tmpl/alternative',
+ 			'/components/com_jem/views/myvenues/tmpl/alternative',
+ 			'/components/com_jem/views/search/tmpl/alternative',
         );
 
         // delete files
@@ -833,7 +841,7 @@ class com_jemInstallerScript
      */
     private function makeFilesWritable()
     {
-        $path = Path::clean(JPATH_ROOT.'/media/com_jem/css');
+        $path = Path::clean(JPATH_ROOT . '/media/com_jem/css');
         $files = Folder::files($path, '.*\.css', false, true); // all css files, full path
         foreach ($files as $fullpath) {
             if (is_file($fullpath)) {
@@ -992,7 +1000,8 @@ class com_jemInstallerScript
     private function removeAllJemTables()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $tables = array('#__jem_attachments',
+        $tables = array(
+            '#__jem_attachments',
             '#__jem_categories',
             '#__jem_cats_event_relations',
             '#__jem_countries',
@@ -1002,8 +1011,9 @@ class com_jemInstallerScript
             '#__jem_register',
             '#__jem_settings',
             '#__jem_config',
-            '#__jem_venues');
-        foreach ($tables AS $table) {
+            '#__jem_venues'
+        );
+        foreach ($tables as $table) {
             try {
                 $db->dropTable($table);
             } catch (Exception $ex) {
@@ -1022,7 +1032,6 @@ class com_jemInstallerScript
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         try {
-
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
             $db->setQuery($query);
             $db->execute();
@@ -1046,11 +1055,9 @@ class com_jemInstallerScript
             $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` DATETIME DEFAULT NULL";
             $db->setQuery($query);
             $db->execute();
-
         } catch (\Exception $e) {
             echo "Error updating `unregistra_until`: " . $e->getMessage();
         }
-
-}
+    }
 
 }
