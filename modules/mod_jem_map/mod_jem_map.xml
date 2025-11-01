@@ -32,7 +32,9 @@
                 <field name="map_auto_center" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_AUTO_CENTER"
-                       description="MOD_JEM_MAP_AUTO_CENTER_DESC">
+                       description="MOD_JEM_MAP_AUTO_CENTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                    >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -53,28 +55,36 @@
                 <field name="show_my_location" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
-                       description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC">
+                       description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                    >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="show_date_filter" type="radio"
                        default="0"
                        label="MOD_JEM_MAP_DATE_FILTER"
-                       description="MOD_JEM_MAP_DATE_FILTER_DESC">
+                       description="MOD_JEM_MAP_DATE_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                    >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="full_screen_map" type="radio"
                        default="0"
                        label="MOD_JEM_MAP_FULL_SCREEN"
-                       description="MOD_JEM_MAP_FULL_SCREEN_DESC">
+                       description="MOD_JEM_MAP_FULL_SCREEN_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                    >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="heat_layer" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_HEAT_LAYER"
-                       description="MOD_JEM_MAP_HEAT_LAYER_DESC">
+                       description="MOD_JEM_MAP_HEAT_LAYER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                    >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -88,7 +98,9 @@
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
                 <field name="show_date_filter" type="radio" default="1"
                        label="MOD_JEM_MAP_SHOW_DATE_FILTER"
-                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC">
+                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                    >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
