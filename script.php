@@ -631,9 +631,7 @@ class com_jemInstallerScript
                 Text::sprintf('COM_JEM_ERROR_DELETING_OBSOLETE_FILES', $e->getMessage()),
                 'warning'
                 );
-            }
         }
-    
     }
 
     /**
