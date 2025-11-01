@@ -158,7 +158,7 @@ class PlgContentJemembed extends CMSPlugin
     protected function getSiteDomain()
     {
         $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-                   $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+                      $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         return rtrim($protocol . $_SERVER['HTTP_HOST'], '/');
     }
 
@@ -401,10 +401,10 @@ class PlgContentJemembed extends CMSPlugin
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $where = ' DATEDIFF (a.dates, "'. $to_date .'") = 0';
-                    $model->setState('filter.calendar_to',$where);
+                    $model->setState('filter.calendar_to', $where);
                     break;
                 default:
-                case 'unfinished': // All upcoming events, incl. today.
+                case 'unfinished': // All upcoming events, incl. today. (Default filter)
                     $to_date = date('Y-m-d H:i:s', $timestamp);
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
@@ -426,7 +426,7 @@ class PlgContentJemembed extends CMSPlugin
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $full_start_datetime = 'CONCAT(a.dates, " ", COALESCE(a.times, "00:00:00"))';
                     $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
-                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';        
+                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';
                     $model->setState('filter.calendar_to', $where);
                     break;
                 case 'archived': // Archived events only.
