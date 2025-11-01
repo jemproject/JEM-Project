@@ -244,7 +244,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                             iconSize: [32, 32],
                             iconAnchor: [16, 32],
                             popupAnchor: [0, -32],
-                            shadowUrl: "media/com_jem/images/marker-shadow.png",
+                            shadowUrl: "media/com_jem/images/marker-shadow.webp",
                             shadowSize: [32, 32],
                             shadowAnchor: [16, 32]
                         })

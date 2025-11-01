@@ -79,11 +79,11 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="venue_markerfile" type="text"
-                       default="media/com_jem/images/marker-red.png"
+                       default="media/com_jem/images/marker-red.webp"
                        label="MOD_JEM_MAP_VENUE_MARKER"
                        description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
                 <field name="mylocation_markerfile" type="text"
-                       default="media/com_jem/images/marker-blue.png"
+                       default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
                 <field name="show_date_filter" type="radio" default="1"
