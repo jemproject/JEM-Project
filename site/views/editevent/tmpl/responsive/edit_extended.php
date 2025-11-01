@@ -103,6 +103,7 @@ use Joomla\CMS\Date\Date;
     <?php /* show "old" recurrence settings for information */
     if (!empty($this->item->recurr_bak->recurrence_type)) {
         $recurr_type = '';
+        $recurr_info = '';
         $rlDate = $this->item->recurr_bak->recurrence_limit_date;
         $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
         if (!empty($rlDate)) {
