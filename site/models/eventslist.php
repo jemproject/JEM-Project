@@ -129,11 +129,9 @@ class JemModelEventslist extends ListModel
             $this->setState('filter.calendar_from',$where);
         }
         $filterDaysAfter  = $params->get('tablefiltereventuntil','');
-        if ($filterDaysAfter){
-            $dateTo = (clone $today)->modify( $filterDaysAfter . ' days')->format('Y-m-d');
-            $where = ' DATEDIFF(a.dates, "'. $dateTo . '") <= 0';
-            $this->setState('filter.calendar_to',$where);
-        }
+        $dateTo = (clone $today)->modify( $filterDaysAfter . ' days')->format('Y-m-d');
+        $where = ' DATEDIFF(a.dates, "'. $dateTo . '") ' . ($filterDaysAfter ? '<=' : '<') . ' 0';
+        $this->setState('filter.calendar_to', $where);
 
         # publish state
         $this->_populatePublishState($task);
