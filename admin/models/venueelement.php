@@ -104,7 +104,7 @@ class JemModelVenueelement extends BaseDatabaseModel
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select(array('l.id', 'l.state', 'l.city', 'l.country', 'l.published', 'l.venue', 'l.ordering'));
+        $query->select(array('l.id', 'l.state', 'l.color', 'l.city', 'l.country', 'l.published', 'l.venue', 'l.ordering'));
         $query->from('#__jem_venues as l');
 
         // where

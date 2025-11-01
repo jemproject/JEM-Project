@@ -19,12 +19,13 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
 
 <table class="adminform">
     <tr>
-        <td style="width: 100%;">
-            <?php echo Text::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" onChange="document.adminForm.submit();" />
-            <button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-            <button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECTVENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+        <td style="width: 100%;"><div class="input-group">
+            <?php echo $this->lists['filter']; ?>&nbsp;
+            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area form-control" onChange="document.adminForm.submit();" />&nbsp;
+            <button type="submit" class="filter-search-bar__button btn btn-primary"><span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span></button>&nbsp;
+            <button type="button" class="filter-search-bar__button btn btn-success" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>&nbsp;
+            <button type="button" class="filter-search-bar__button btn btn-danger"" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECTVENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+            </div>
         </td>
     </tr>
 </table>
@@ -34,6 +35,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
         <tr>
             <th class="center" style="width: 7px;"><?php echo Text::_('COM_JEM_NUM'); ?></th>
             <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+            <th style="text-align: center;" class="title"><?php echo Text::_('COM_JEM_COLOR') ?></th>
             <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
             <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
             <th style="text-align: left;" class="title center"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
@@ -55,6 +57,8 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
             <td style="text-align: left;">
                  <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
             </td>
+            <td class="center">
+            <div class="colorpreview<?php echo ($this->escape($row->color) == '') ? ' transparent-color" title="transparent"' : '" style="background-color:' . $this->escape($row->color) . '"' ?> aria-labelledby="color-desc-<?php echo $this->escape($row->id); ?>"></div></td>
             <td style="text-align: left;"><?php echo $this->escape($row->city); ?></td>
             <td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
             <td class="center"><?php echo $this->escape($row->country); ?></td>
