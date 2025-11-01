@@ -95,6 +95,10 @@ class JemModelEventslist extends ListModel
         $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
         $params      = $app->getParams();
 
+        if(!$task){
+            $task = ($params->get('showarchived')? 'archive':'');
+        }
+
         # limit/start
         if (empty($format) || ($format == 'html')) {
             /* in J! 3.3.6 limitstart is removed from request - but we need it! */
