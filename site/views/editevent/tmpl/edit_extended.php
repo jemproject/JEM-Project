@@ -49,7 +49,7 @@ use Joomla\CMS\Date\Date;
                     }
 
                     $limitdate = new Date('now +' . $anticipation . 'month');
-                    $limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+					$limitdate = '<strong>' . JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '') . '</strong>';
                     echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
                     ?></small></div>
         </li>
