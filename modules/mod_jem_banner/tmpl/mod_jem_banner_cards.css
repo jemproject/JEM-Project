@@ -63,7 +63,7 @@
 
 .jemmodulebanner .event-badge a {
     display: inline-block;
-    background: var(--primary);
+    background: rgba(var(--primary-rgb), 0.6);
     color: #f0f7ff;
     text-decoration: none;
     padding: 6px 12px;
