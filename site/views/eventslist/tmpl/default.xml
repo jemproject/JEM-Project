@@ -8,7 +8,7 @@
 
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-            <field name="showarchived" type="radio"
+            <field name="show_archived_events" type="radio"
                    default="0"
                    label="COM_JEM_SHOW_ARCHIVED_EVENTS"
                    description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
@@ -30,15 +30,6 @@
                 default="0"
                 label="COM_JEM_SHOW_INTROTEXT_EVENTS"
                 description="COM_JEM_SHOW_INTROTEXT_EVENTS_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="show_archived_events" type="radio"
-                default="0"
-                label="COM_JEM_SHOW_ARCHIVED_EVENTS"
-                description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>

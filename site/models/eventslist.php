@@ -96,7 +96,7 @@ class JemModelEventslist extends ListModel
         $params      = $app->getParams();
 
         if(!$task){
-            $task = ($params->get('showarchived')? 'archive':'');
+            $task = ($params->get('show_archived_events')? 'archive':'');
         }
 
         # limit/start
