@@ -25,6 +25,7 @@ use Joomla\CMS\Language\Text;
                                          ,'mod_jem_calajax'   => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CALAJAX'
                                          ,'mod_jem_banner'    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_BANNER'
                                          ,'mod_jem_jubilee'   => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_JUBILEE'
+                                         ,'mod_jem_map'       => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_MAP'
                                          ,'mod_jem_teaser'    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER'
                                          ,'mod_jem_wide'      => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE'
                                          ,'plg_content_jem'   => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT'
