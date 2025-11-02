@@ -58,7 +58,7 @@ $group = 'globalattribs';
     </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-            <legend><?php echo Text::_('COM_JEM_SETIINGS_GLOBAL_RECURRENCE'); ?></legend>
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_GLOBAL_RECURRENCE'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('globalparam_recurrence') as $field): ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
