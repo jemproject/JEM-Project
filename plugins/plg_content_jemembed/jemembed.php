@@ -51,14 +51,14 @@ class PlgContentJemembed extends CMSPlugin
 
     /** all valid token values */
     protected static $tokenValues = array(
-        'type'        => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
-        'featured'    => array('on', 'off'),
-        'title'       => array('on', 'link', 'off'),
-        'date'        => array('on', 'link', 'off'),
-        'time'        => array('on', 'off'),
-        'enddatetime' => array('on', 'off'),
-        'category'    => array('on', 'link', 'off'),
-        'venue'       => array('on', 'link', 'off'),
+        'type'          => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
+        'featured'      => array('on', 'off'),
+        'title'         => array('on', 'link', 'off'),
+        'date'          => array('on', 'link', 'off'),
+        'time'          => array('on', 'off'),
+        'enddatetime'   => array('on', 'off'),
+        'category'      => array('on', 'link', 'off'),
+        'venue'         => array('on', 'link', 'off'),
     );
 
     /**
@@ -96,10 +96,10 @@ class PlgContentJemembed extends CMSPlugin
         
         $tokensList = array_filter(array_map('trim', explode(',', (string) $allowedTokens)));
 
-		// Nur prüfen, wenn wirklich Tokens vorhanden sind
-		if (!empty($tokensList) && in_array($token, $tokensList, true)) {
-    		return true;
-		}
+        // Only check if tokens are actually present
+        if (!empty($tokensList) && in_array($token, $tokensList, true)) {
+            return true;
+        }
         return false;
     }
 
@@ -433,16 +433,16 @@ class PlgContentJemembed extends CMSPlugin
                     $model->setState('filter.published', 2);
                     $model->setState('filter.orderby', array('a.dates DESC', 'a.times DESC'));
                     break;
-                case 'newest': //newest events = events with the highest IDs
+                case 'newest': // Newest events = events with the highest IDs.
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.id DESC'));
                     break;
-                case 'open': //open events = events with no start and enddate
+                case 'open': // Open events = events with no start and end date.
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.id DESC'));
                     $model->setState('filter.opendates', 2);
                     break;
-                case 'all': //all events
+                case 'all': // All events.
                     $model->setState('filter.published', array(1, 2));
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $model->setState('filter.opendates', 1);
