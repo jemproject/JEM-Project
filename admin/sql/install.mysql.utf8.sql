@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   KEY `iso2` (`iso2`)
 ) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
-INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('oldevent', '2'),
 ('minus', '1'),
 ('showtime', '1'),
