@@ -257,7 +257,7 @@ input#jform_title {
     font-size: 0.909em !important;
 }
 
-#jem select.form-control {
+.com_jem select.form-control {
   background-color: var(--form-control-bg);
 }
 
