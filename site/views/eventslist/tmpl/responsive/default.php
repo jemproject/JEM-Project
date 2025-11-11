@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
         <input type="hidden" name="view" value="eventslist"/>
     </form>
     
-    <?php if (!$this->settings->get('show_more_button', 1)) : ?>
+    <?php if (!$this->params->get('show_more_button', 1)) : ?>
         <div class="pagination">
             <?php
             echo $this->pagination->getPagesLinks(); ?>

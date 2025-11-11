@@ -111,6 +111,16 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="show_more_button" type="radio" 
+                   default="0" 
+                   label="COM_JEM_SHOW_MORE_BUTTON" 
+                   description="COM_JEM_SHOW_MORE_BUTTON_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   required="false"
+                >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="tabledirectionorder" type="radio"
                 default="ASC"
                 label="COM_JEM_TABLE_DIRECTION_ORDER"
