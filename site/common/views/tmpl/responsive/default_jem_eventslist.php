@@ -94,8 +94,7 @@ function jem_common_show_filter(&$obj)
     return false;
 }
 
-?>
-<?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
+if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
@@ -257,10 +256,8 @@ function jem_common_show_filter(&$obj)
                 <?php else : // Display date as title of jem-event without link ?>
                     <h4>
                         <?php
-                        echo JemOutput::formatShortDateTime($row->dates, $row->times,
-                            $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                            $row->enddates, $row->endtimes);
+                        echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
+                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
                         ?>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
@@ -405,7 +402,7 @@ function jem_common_show_filter(&$obj)
 <?php endif;
 
 // Add Load More Button
-if (!$this->noevents && $this->settings->get('show_more_button', 1) && count($this->rows) >= $this->pagination->limit) {
+if (!$this->noevents && $this->params->get('show_more_button', 1) && count($this->rows) >= $this->pagination->limit) {
     // jQuery is loaded, just add Script
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
     $wa->registerAndUseScript(
