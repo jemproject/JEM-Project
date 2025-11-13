@@ -228,11 +228,11 @@ function jem_common_show_filter(&$obj) {
                 <?php }
             } ?>
             <?php if (!empty($row->featured)) : ?>
-                <li class="jem-event jem-list-row jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
+                <li class="jem-event jem-list-column jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php else : ?>
-                <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
+                <li class="jem-event jem-list-column jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php endif; ?>
-
+            <div class="jem-list-row jem-small-list">
             <?php if ($this->jemsettings->showeventimage == 1) : ?>
                 <div class="jem-event-info-small jem-eventimage">
                     <?php if (!empty($row->datimage)) : ?>
@@ -366,6 +366,8 @@ function jem_common_show_filter(&$obj) {
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
+            </div>
+            <div class="w-100">
             <?php if ($this->params->get('show_introtext_events') == 1) : ?>
                 <div class="jem-event-intro">
                     <?php echo $row->introtext; ?>
@@ -380,7 +382,7 @@ function jem_common_show_filter(&$obj) {
                 $showMonthRow = false;
             }
             ?>
-
+            </div>
             <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
