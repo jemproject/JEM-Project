@@ -34,7 +34,7 @@
                        label="MOD_JEM_MAP_AUTO_CENTER"
                        description="MOD_JEM_MAP_AUTO_CENTER_DESC"
                        class="inputbox btn-group btn-group-yesno"
-                    >
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -57,25 +57,39 @@
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
                        description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC"
                        class="inputbox btn-group btn-group-yesno"
-                    >
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="show_date_filter" type="radio"
-                       default="0"
-                       label="MOD_JEM_MAP_DATE_FILTER"
-                       description="MOD_JEM_MAP_DATE_FILTER_DESC"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
+                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
                        class="inputbox btn-group btn-group-yesno"
-                    >
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
+                </field>
+                <field name="date_filter_default" type="radio"
+                       default="today"
+                       label="MOD_JEM_MAP_DATE_FILTER_DEFAULT"
+                       description="MOD_JEM_MAP_DATE_FILTER_DEFAULT_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="all">MOD_JEM_MAP_ALL</option>
+                    <option value="today">MOD_JEM_MAP_TODAY</option>
+                    <option value="tomorrow">MOD_JEM_MAP_TOMORROW</option>
+                    <option value="week">MOD_JEM_MAP_WEEK</option>
+                    <option value="month">MOD_JEM_MAP_MONTH</option>
+                    <option value="year">MOD_JEM_MAP_YEAR</option>
+                    <option value="date">MOD_JEM_MAP_DATE</option>
                 </field>
                 <field name="full_screen_map" type="radio"
                        default="0"
                        label="MOD_JEM_MAP_FULL_SCREEN"
                        description="MOD_JEM_MAP_FULL_SCREEN_DESC"
                        class="inputbox btn-group btn-group-yesno"
-                    >
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -84,7 +98,7 @@
                        label="MOD_JEM_MAP_HEAT_LAYER"
                        description="MOD_JEM_MAP_HEAT_LAYER_DESC"
                        class="inputbox btn-group btn-group-yesno"
-                    >
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -96,14 +110,7 @@
                        default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
-                <field name="show_date_filter" type="radio" default="1"
-                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
-                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
-                       class="inputbox btn-group btn-group-yesno"
-                    >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
+
                 <field name="height" type="text" default="500px"
                        label="MOD_JEM_MAP_HEIGHT"
                        description="MOD_JEM_MAP_HEIGHT_DESC" />
@@ -119,6 +126,27 @@
                        rows="3"
                        validate="CssIdentifier"
                 />
+                <field name="cache" type="list"
+                        label="COM_MODULES_FIELD_CACHING_LABEL"
+                        description="MOD_JEM_TEASER_CACHING_DESC"
+                        default="1"
+                        filter="integer"
+                        validate="options"
+                >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field  name="cache_time" type="number"
+                        label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                        description="MOD_JEM_TEASER_CACHE_TIME_DESC"
+                        default="900"
+                        filter="integer"
+                />
+                <field name="cachemode" type="hidden"
+                       default="static"
+                >
+                    <option value="static"></option>
+                </field>
             </fieldset>
         </fields>
     </config>
