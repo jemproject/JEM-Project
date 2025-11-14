@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `venue` varchar(100) NOT NULL DEFAULT '',
   `alias` varchar(100) NOT NULL DEFAULT '',
+  `color` varchar(7) NOT NULL DEFAULT '',
   `url` varchar(200)  NOT NULL DEFAULT '',
   `street` varchar(50) DEFAULT NULL,
   `postalCode` varchar(20) DEFAULT NULL,
