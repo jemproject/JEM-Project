@@ -14,6 +14,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
+//require needed component classes
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
@@ -21,7 +25,6 @@ $wa          = $document->getWebAssetManager();
 
 $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
 $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
-
 $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
 $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
 $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
@@ -87,6 +90,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                 <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
             </button>
         <?php } ?>
+	    <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!-- Location help text -->
