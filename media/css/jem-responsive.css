@@ -383,6 +383,15 @@ body.com_jem.body-overlayed {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
+    width: 100%;
+}
+
+
+#jem .jem-list-column {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 #jem .jem-small-list {
@@ -719,3 +728,6 @@ body.com_jem.body-overlayed {
     background-color: #ffffff;
 }
 
+#jem .jem-event-intro {
+    width: 100%;
+}
