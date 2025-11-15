@@ -27,7 +27,7 @@ class JemImage
         //require 'path/to/Zebra_Image.php';
 
         // create a new instance of the class
-        $image = new Zebra_Image();
+        $image = new \stefangabos\Zebra_Image\Zebra_Image();
 
         // indicate a source image (a GIF, PNG, JPEG or WEBP file)
         $image->source_path = $name;
