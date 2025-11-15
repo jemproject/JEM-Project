@@ -242,7 +242,7 @@ class JemModelCategories extends BaseDatabaseModel
         if ($task == 'archive') {
             $where = ' WHERE a.published = 2 AND rel.catid = '.$id;
         } else {
-            $ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
+            $ispublished = 'a.published = 1 AND a.publish_up >= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
             $where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
         }
 

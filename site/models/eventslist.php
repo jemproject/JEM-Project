@@ -126,16 +126,21 @@ class JemModelEventslist extends ListModel
 
         # Search - Filter by setting menu
         $today = new DateTime();
-        $filterDaysBefore = $params->get('tablefiltereventfrom','');
+        $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
         if ($filterDaysBefore){
             $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-            $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $dateFrom .'") >= 0';
-            $this->setState('filter.calendar_from',$where);
+        }else{
+            $dateFrom = $today->format('Y-m-d');
         }
-        $filterDaysAfter  = $params->get('tablefiltereventuntil','');
-        $dateTo = (clone $today)->modify( $filterDaysAfter . ' days')->format('Y-m-d');
-        $where = ' DATEDIFF(a.dates, "'. $dateTo . '") ' . ($filterDaysAfter ? '<=' : '<') . ' 0';
-        $this->setState('filter.calendar_to', $where);
+        $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $dateFrom .'") >= 0';
+        $this->setState('filter.calendar_from',$where);
+
+        $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
+        if ($filterDaysAfter) {
+            $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
+            $where = ' DATEDIFF(a.dates, "' . $dateTo . '") ' . ($filterDaysAfter ? '<=' : '<') . ' 0';
+            $this->setState('filter.calendar_to', $where);
+        }
 
         # publish state
         $this->_populatePublishState($task);
@@ -492,7 +497,7 @@ class JemModelEventslist extends ListModel
             if($this->getState('filter.published') == 2) {
                 $ispublished = $where_pub;
             } else {
-                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
+                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND a.publish_up >= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
             }
             $query->where($ispublished);
         } else {
