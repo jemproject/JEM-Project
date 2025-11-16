@@ -1,6 +1,7 @@
 <?php
 /**
  * @package    JEM
+ * @subpackage JEM Map Module
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
@@ -16,17 +17,18 @@ use Joomla\Registry\Registry;
  */
 class mod_jem_mapInstallerScript
 {
+    /**
+     * Module name (extension element)
+     */
+    private string $name = 'mod_jem_map';
 
-    private $name = 'mod_jem_map';
-
-    private $oldRelease = "";
-    private $newRelease = "";
+    private string $oldRelease = "";
+    private string $newRelease = "";
 
     /**
-     * Preflight method
+     * Method to run before an install/update/uninstall method
      *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * @return bool|void
      */
     function preflight($type, $parent)
     {

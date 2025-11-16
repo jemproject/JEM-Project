@@ -1,6 +1,7 @@
 <?php
 /**
  * @package    JEM
+ * @subpackage JEM Jubilee Module
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
@@ -9,37 +10,37 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 /**
- * Script file of JEM Jubilee module
- */
+ * Script file of JEM component
+*/
 class mod_jem_jubileeInstallerScript
 {
-
     /**
-     * Module element name
+     * Module name (extension element)
      */
-    private $name = 'mod_jem_jubilee';
+    private string $name = 'mod_jem_jubilee';
 
-    private $oldRelease = "";
-    private $newRelease = "";
+    private string $oldRelease = "";
+    private string $newRelease = "";
 
     /**
-     * Preflight method
+     * Method to run before an install/update/uninstall method
      *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * @return bool|void
      */
     function preflight($type, $parent)
     {
-        // abort if the release being installed is not newer than the currently installed version
-        if (strtolower($type) == 'update') {
-            // Installed component version
-            $this->oldRelease = $this->getParam('version');
+        if (strtolower($type) === 'update') {
 
-            // Installing component version as per Manifest file
+            // Installed module version (from manifest cache)
+            $this->oldRelease = (string) $this->getParam('version');
+
+            // Version being installed (manifest)
             $this->newRelease = (string) $parent->getManifest()->version;
 
+            // Abort if new version is older
             if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
                 return false;
             }
@@ -47,39 +48,99 @@ class mod_jem_jubileeInstallerScript
     }
 
     /**
-     * Postflight method
+     * Method to run after an install/update/uninstall method
      *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * @return void
      */
     function postflight($type, $parent)
     {
-        if (strtolower($type) == 'uninstall') {
-            return true;
-        }
-        if (strtolower($type) == 'update' ) {
-            return true;
-        }
         if (strtolower($type) == 'install' ) {
+            return true;
+        }
+        if (strtolower($type) === 'update') {
+
+            // Migration 2.1.5 -> 2.1.6
+            if (
+                version_compare($this->oldRelease, '2.1.6', 'le') &&
+                version_compare($this->newRelease, '2.1.6', 'ge')
+            ) {
+                $this->updateParams216();
+            }
+        }
+        if (strtolower($type) == 'uninstall') {
             return true;
         }
     }
 
     /**
-     * Get a parameter from the manifest file (actually, from the manifest cache).
-     *
-     * @param $name  The name of the parameter
-     *
-     * @return The parameter
+     * Get a parameter from the manifest cache
      */
-    private function getParam($name)
+    private function getParam(string $name)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
+
+        $query = $db->getQuery(true)
+            ->select('manifest_cache')
+            ->from('#__extensions')
+            ->where([
+                "type = 'module'",
+                "element = " . $db->quote($this->name)
+            ]);
+
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
-        return $manifest[$name];
+
+        return $manifest[$name] ?? null;
     }
 
+    /**
+     * Migration: convert catid/venid strings to arrays
+     *
+     * Required for updates <= 2.1.6
+     */
+    private function updateParams216(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select('id, params')
+            ->from('#__modules')
+            ->where('module = ' . $db->quote($this->name));
+
+        $db->setQuery($query);
+        $items = $db->loadObjectList();
+
+        foreach ($items as $item) {
+
+            $reg = new Registry;
+            $reg->loadString($item->params);
+
+            $modified = false;
+
+            // catid (string → array)
+            $ids = $reg->get('catid');
+            if (!empty($ids) && is_string($ids)) {
+                $reg->set('catid', explode(',', $ids));
+                $modified = true;
+            }
+
+            // venid (string → array)
+            $ids = $reg->get('venid');
+            if (!empty($ids) && is_string($ids)) {
+                $reg->set('venid', explode(',', $ids));
+                $modified = true;
+            }
+
+            // Save back
+            if ($modified) {
+                $query = $db->getQuery(true)
+                    ->update('#__modules')
+                    ->set('params = ' . $db->quote((string) $reg))
+                    ->where('id = ' . (int) $item->id);
+
+                $db->setQuery($query);
+                $db->execute();
+            }
+        }
+    }
 }
