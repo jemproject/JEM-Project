@@ -22,17 +22,17 @@ class mod_jemInstallerScript
      */
     private string $name = 'mod_jem';
 
-    private string $oldRelease = "";
-    private string $newRelease = "";
+    private string $oldRelease = '';
+    private string $newRelease = '';
 
     /**
-     * Method to run before an install/update/uninstall method
-     *
-     * @return bool|void
+     * Run before install/update/uninstall
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
-        if (strtolower($type) === 'update') {
+        $type = strtolower($type);
+
+        if ($type === 'update') {
 
             // Installed module version (from manifest cache)
             $this->oldRelease = (string) $this->getParam('version');
@@ -48,16 +48,16 @@ class mod_jemInstallerScript
     }
 
     /**
-     * Method to run after an install/update/uninstall method
-     *
-     * @return void
+     * Run after install/update/uninstall
      */
-    function postflight($type, $parent)
+    public function postflight($type, $parent)
     {
-        if (strtolower($type) == 'install' ) {
+        $type = strtolower($type);
+
+        if ($type === 'install') {
             return true;
         }
-        if (strtolower($type) === 'update') {
+        if ($type === 'update') {
 
             // Migration 2.1.5 -> 2.1.6
             if (
@@ -67,7 +67,7 @@ class mod_jemInstallerScript
                 $this->updateParams216();
             }
         }
-        if (strtolower($type) == 'uninstall') {
+        if ($type == 'uninstall') {
             return true;
         }
     }

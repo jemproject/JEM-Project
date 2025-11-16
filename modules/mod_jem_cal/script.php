@@ -14,7 +14,7 @@ use Joomla\Registry\Registry;
 
 /**
  * Script file of JEM component
-*/
+ */
 class mod_jem_calInstallerScript
 {
     /**
@@ -22,17 +22,17 @@ class mod_jem_calInstallerScript
      */
     private string $name = 'mod_jem_cal';
 
-    private string $oldRelease = "";
-    private string $newRelease = "";
+    private string $oldRelease = '';
+    private string $newRelease = '';
 
     /**
-     * Method to run before an install/update/uninstall method
-     *
-     * @return bool|void
+     * Run before install/update/uninstall
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
-        if (strtolower($type) === 'update') {
+        $type = strtolower($type);
+
+        if ($type === 'update') {
 
             // Installed module version (from manifest cache)
             $this->oldRelease = (string) $this->getParam('version');
@@ -45,19 +45,21 @@ class mod_jem_calInstallerScript
                 return false;
             }
         }
+        return true;
     }
 
     /**
-     * Method to run after an install/update/uninstall method
-     *
-     * @return void
+     * Run after install/update/uninstall
      */
-    function postflight($type, $parent)
+    public function postflight($type, $parent)
     {
-        if (strtolower($type) == 'install' ) {
+        $type = strtolower($type);
+
+        if ($type === 'install') {
             return true;
         }
-        if (strtolower($type) === 'update') {
+
+        if ($type === 'update') {
 
             // Migration 2.1.5 -> 2.1.6
             if (
@@ -66,8 +68,17 @@ class mod_jem_calInstallerScript
             ) {
                 $this->updateParams216();
             }
+
+            // Migration: <= 2.2.3 → merge mod_jem_calajax
+            if (
+                version_compare($this->oldRelease, '2.2.3', 'le') &&
+                version_compare($this->newRelease, '2.2.3', 'ge')
+            ) {
+                $this->updateParams223();
+            }
         }
-        if (strtolower($type) == 'uninstall') {
+
+        if ($type === 'uninstall') {
             return true;
         }
     }
@@ -82,10 +93,8 @@ class mod_jem_calInstallerScript
         $query = $db->getQuery(true)
             ->select('manifest_cache')
             ->from('#__extensions')
-            ->where([
-                "type = 'module'",
-                "element = " . $db->quote($this->name)
-            ]);
+            ->where('type = ' . $db->quote('module'))
+            ->where('element = ' . $db->quote($this->name));
 
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
@@ -94,9 +103,7 @@ class mod_jem_calInstallerScript
     }
 
     /**
-     * Migration: convert catid/venid strings to arrays
-     *
-     * Required for updates <= 2.1.6
+     * Migration: convert catid/venid strings to arrays (≤ 2.1.6)
      */
     private function updateParams216(): void
     {
@@ -138,26 +145,33 @@ class mod_jem_calInstallerScript
                     ->set('params = ' . $db->quote((string) $reg))
                     ->where('id = ' . (int) $item->id);
 
+                $db->setQuery($query);
+                $db->execute();
+            }
+        }
+    }
+
     /**
      * Add use_ajax,
      * take over instances from mod_jem_calajax which becomes obsolete
-     *
-     * @return void
      */
-    private function updateParams223()
+    private function updateParams223(): void
     {
         // get all "mod_jem..." entries
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('id, module, note, params');
-        $query->from('#__modules');
-        $query->where('module = "' . $this->name . '" OR module = "mod_jem_calajax"');
+
+        $query = $db->getQuery(true)
+            ->select('id, module, note, params')
+            ->from('#__modules')
+            ->where('(module = ' . $db->quote($this->name) .
+                    ' OR module = ' . $db->quote('mod_jem_calajax') . ')');
+
         $db->setQuery($query);
         $items = $db->loadObjectList();
 
-        $use_ajax = version_compare(JVERSION, '3.2.7', 'ge') ? '1' : '0';
-        $obs_params = array('UseJoomlaLanguage', 'locale_override');
-        $fix_params = array('cal15q_tooltips_title', 'cal15q_tooltipspl_title');
+        $use_ajax = '1';  // Joomla 4/5-konform
+        $obs_params = ['UseJoomlaLanguage', 'locale_override'];
+        $fix_params = ['cal15q_tooltips_title', 'cal15q_tooltipspl_title'];
 
         foreach ($items as $item) {
             // Decode the item params
@@ -165,7 +179,7 @@ class mod_jem_calInstallerScript
             $reg->loadString($item->params);
 
             $mod_params = false;
-            $mod_mod = $item->module == 'mod_jem_calajax';
+            $mod_mod = $item->module === 'mod_jem_calajax';
 
             // add use_ajax if missing
             if (!$reg->exists('use_ajax')) {
@@ -194,16 +208,21 @@ class mod_jem_calInstallerScript
             // write back
             if ($mod_params || $mod_mod) {
                 // write changed data back into DB
-                $query = $db->getQuery(true);
-                $query->update('#__modules');
+                $query = $db->getQuery(true)
+                    ->update('#__modules');
+
                 if ($mod_params) {
-                    $query->set('params = '.$db->quote((string)$reg));
+                    $query->set('params = ' . $db->quote((string)$reg));
                 }
+
                 if ($mod_mod) { // change module and append a note
-                    $query->set('module = '.$db->quote($this->name));
-                    $query->set('note = '.$db->quote(join(' -- ', array($item->note, 'PLEASE CHECK this transfered from obsolete mod_jem_calajax, then uninstall mod_jem_calajax!'))));
+                    $note = trim($item->note . ' -- migrated from obsolete mod_jem_calajax');
+                    $query->set('module = ' . $db->quote($this->name));
+                    $query->set('note = ' . $db->quote($note));
                 }
-                $query->where(array('id = '.$db->quote($item->id)));
+
+                $query->where('id = ' . (int)$item->id);
+
                 $db->setQuery($query);
                 $db->execute();
             }

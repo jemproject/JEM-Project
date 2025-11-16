@@ -22,15 +22,15 @@ class mod_jem_mapInstallerScript
      */
     private string $name = 'mod_jem_map';
 
-    private string $oldRelease = "";
-    private string $newRelease = "";
+    private string $oldRelease = '';
+    private string $newRelease = '';
 
     /**
      * Method to run before an install/update/uninstall method
      *
      * @return bool|void
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
         // abort if the release being installed is not newer than the currently installed version
         if (strtolower($type) == 'update') {
@@ -47,20 +47,19 @@ class mod_jem_mapInstallerScript
     }
 
     /**
-     * Postflight method
-     *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * Run after install/update/uninstall
      */
-    function postflight($type, $parent)
+    public function postflight($type, $parent)
     {
-        if (strtolower($type) == 'uninstall') {
+        $type = strtolower($type);
+
+        if ($type === 'install') {
             return true;
         }
-        if (strtolower($type) == 'update' ) {
+        if ($type === 'update') {
             return true;
         }
-        if (strtolower($type) == 'install' ) {
+        if ($type === 'uninstall') {
             return true;
         }
     }
