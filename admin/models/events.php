@@ -17,6 +17,9 @@ use Joomla\CMS\Component\ComponentHelper;
  **/
 class JemModelEvents extends ListModel
 {
+    // Definiere den Namen der Filterform für die moderne Joomla-Filterarchitektur
+    protected $filterFormName = 'filter_events';
+
     /**
      * Constructor.
      */
@@ -49,21 +52,37 @@ class JemModelEvents extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
-        $search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
+        // Suchstring
+        $search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
+        $this->setState('filter.search', $search);
+        // Kompatibilität mit altem Code
         $this->setState('filter_search', $search);
 
-        $published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
+        // Status (published)
+        $published = $this->getUserStateFromRequest($this->context.'.filter.state', 'filter_state', '', 'string');
+        $this->setState('filter.state', $published);
+        // Kompatibilität mit altem Code
         $this->setState('filter_state', $published);
 
-        $filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
+        // Filter-Typ (für Suchfeld)
+        $filterfield = $this->getUserStateFromRequest($this->context.'.filter.type', 'filter_type', 0, 'int');
+        $this->setState('filter.type', $filterfield);
+        // Kompatibilität mit altem Code
         $this->setState('filter_type', $filterfield);
 
-        $begin = $this->getUserStateFromRequest($this->context.'.filter_begin', 'filter_begin', '', 'string');
+        // Datum Begin
+        $begin = $this->getUserStateFromRequest($this->context.'.filter.begin', 'filter_begin', '', 'string');
+        $this->setState('filter.begin', $begin);
+        // Kompatibilität mit altem Code
         $this->setState('filter_begin', $begin);
 
-        $end = $this->getUserStateFromRequest($this->context.'.filter_end', 'filter_end', '', 'string');
+        // Datum End
+        $end = $this->getUserStateFromRequest($this->context.'.filter.end', 'filter_end', '', 'string');
+        $this->setState('filter.end', $end);
+        // Kompatibilität mit altem Code
         $this->setState('filter_end', $end);
 
+        // Access
         $access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', 0, 'int');
         $this->setState('filter.access', $access);
 
@@ -88,9 +107,12 @@ class JemModelEvents extends ListModel
     protected function getStoreId($id = '')
     {
         // Compile the store id.
-        $id .= ':' . $this->getState('filter_search');
-        $id .= ':' . $this->getState('filter_published');
-        $id .= ':' . $this->getState('filter_type');
+        $id .= ':' . $this->getState('filter.search');
+        $id .= ':' . $this->getState('filter.state');
+        $id .= ':' . $this->getState('filter.type');
+        $id .= ':' . $this->getState('filter.begin');
+        $id .= ':' . $this->getState('filter.end');
+        $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
     }
@@ -136,7 +158,7 @@ class JemModelEvents extends ListModel
         $query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
 
         // Filter by published state
-        $published = $this->getState('filter_state');
+        $published = $this->getState('filter.state');
         if (is_numeric($published)) {
             $query->where('a.published = '.(int) $published);
         } elseif ($published === '') {
@@ -149,8 +171,8 @@ class JemModelEvents extends ListModel
         }
 
         // Filter by Date
-        $startDate = $this->getState('filter_begin');
-        $endDate   = $this->getState('filter_end');
+        $startDate = $this->getState('filter.begin');
+        $endDate   = $this->getState('filter.end');
         if (!empty($startDate) && !empty($endDate)) {
             $query->where('(a.dates >= '.$db->Quote($startDate).')');
             $query->where('(a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' . $db->Quote($endDate) . '))');
@@ -164,8 +186,8 @@ class JemModelEvents extends ListModel
         }
 
         // Filter by search in title
-        $filter = $this->getState('filter_type');
-        $search = $this->getState('filter_search');
+        $filter = $this->getState('filter.type');
+        $search = $this->getState('filter.search');
 
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
@@ -235,8 +257,8 @@ class JemModelEvents extends ListModel
     {
         $items  = parent::getItems();
 
-        $filter = $this->getState('filter_type');
-        $search = $this->getState('filter_search');
+        $filter = $this->getState('filter.type');
+        $search = $this->getState('filter.search');
 
         foreach ($items as $index => $item) {
             $item->categories = $this->getCategories($item->id);
@@ -311,27 +333,12 @@ class JemModelEvents extends ListModel
         ###################
 
         # define variables
-        $filter = $this->getState('filter_type');
-        $search = $this->getState('filter_search');
+        $filter = $this->getState('filter.type');
+        $search = $this->getState('filter.search');
 
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
                 $query->where('c.id = ' . (int)substr($search, 3));
-            } else {
-            /* In case of a search string the db query had already filtered out
-             *  all events without a matching caterory.
-             * So we can here return all categories of the event
-             *  which the user is allowed to see.
-             */
-            /*
-                $search = $db->Quote('%'.$db->escape($search, true).'%');
-
-                if($search) {
-                    if ($filter == 4) {
-                        $query->where('c.catname LIKE '.$search);
-                    }
-                }
-             */
             }
         }
 

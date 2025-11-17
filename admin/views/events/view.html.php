@@ -29,16 +29,19 @@ class JemViewEvents extends JemAdminView
     {
         $app            = Factory::getApplication();
         $document       = $app->getDocument();
-        $user             = JemFactory::getUser();
-        $settings         = JemHelper::globalattribs();
-        $jemsettings     = JemAdmin::config();
-        $uri            = Uri::getInstance();
-        $url             = $uri->root();
+        $user           = JemFactory::getUser();
+        $settings       = JemHelper::globalattribs();
+        $jemsettings    = JemAdmin::config();
 
-        // Initialise variables.
-        $this->items        = $this->get('Items');
-        $this->pagination    = $this->get('Pagination');
-        $this->state        = $this->get('State');
+        // Hole Model
+        $model = $this->getModel();
+
+        // Initialisiere Variablen
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->state         = $model->getState();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
 
         // Retrieving params
         $params = $this->state->get('params');
@@ -46,7 +49,7 @@ class JemViewEvents extends JemAdminView
         // highlighter
         $highlighter = $settings->get('highlight','0');
 
-        // Check for errors.
+        // Check for errors
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
             Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
@@ -69,22 +72,10 @@ class JemViewEvents extends JemAdminView
             $this->document->addStyleDeclaration($style);
         }
 
-        // add filter selection for the search
-        $filters = array();
-        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_EVENT_TITLE'));
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
-        $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
-        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
-        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
-        $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
-        $filters[] = HTMLHelper::_('select.option', '7', Text::_('JALL'));
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select m-0','onChange'=>"this.form.submit()"), 'value', 'text', $this->state->get('filter_type'));
-
-        //assign data to template
-        $this->lists        = $lists;
-        $this->user            = $user;
+        // Die alte $lists['filter'] Logik kann entfernt werden
+        $this->user         = $user;
         $this->jemsettings  = $jemsettings;
-        $this->settings        = $settings;
+        $this->settings     = $settings;
 
         // add toolbar
         $this->addToolbar();
