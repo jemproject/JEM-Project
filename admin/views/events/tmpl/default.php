@@ -56,9 +56,6 @@ if ($saveOrder) {
                                 <td class="w-1 text-center">
                                     <?php echo HTMLHelper::_('grid.checkall'); ?>
                                 </td>
-                                <th scope="col" class="w-1 text-center d-none d-md-table-cell">
-                                    <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
-                                </th>
                                 <th scope="col" class="w-10 d-none d-md-table-cell">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder); ?>
                                 </th>
@@ -72,7 +69,7 @@ if ($saveOrder) {
                                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                                    <?php echo Text::_('COM_JEM_CATEGORY'); ?>
+                                    <?php echo Text::_('COM_JEM_CATEGORIES'); ?>
                                 </th>
                                 <th scope="col" class="w-1 text-center">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder); ?>
@@ -81,13 +78,13 @@ if ($saveOrder) {
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="w-10 d-none d-md-table-cell">
-                                    <?php echo Text::_('JAUTHOR'); ?>
+                                    <?php echo HTMLHelper::_('searchtools.sort', 'JAUTHOR', 'a.created_by', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="w-5 d-none d-md-table-cell text-center">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="w-5 d-none d-md-table-cell text-center">
-                                    <?php echo Text::_('COM_JEM_REGISTERED'); ?>
+                                    <?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?>
                                 </th>
                                 <th scope="col" class="w-10 d-none d-md-table-cell">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
@@ -108,11 +105,20 @@ if ($saveOrder) {
                                 
                                 // Check if event is recurring
                                 $isRecurring = ($item->recurrence_type > 0) || ($item->recurrence_first_id > 0);
+                                
+                                // Prepare date using JEM formatting (like in original)
+                                $displaydate = JemOutput::formatShortDateTime($item->dates, null, $item->enddates, null, $this->jemsettings->showtime);
+                                // Insert a break between date and enddate if possible
+                                $displaydate = str_replace(" - ", " -<br>", $displaydate);
+                                
+                                // Prepare time using JEM formatting (like in original)
+                                if (!$item->times) {
+                                    $displaytime = '-';
+                                } else {
+                                    $displaytime = JemOutput::formattime($item->times);
+                                }
                             ?>
                             <tr class="row<?php echo $i % 2; ?>">
-                                <td class="text-center">
-                                    <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
-                                </td>
                                 <td class="text-center d-none d-md-table-cell">
                                     <?php
                                     $iconClass = '';
@@ -129,39 +135,25 @@ if ($saveOrder) {
                                         <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>" class="width-20 text-area-order hidden">
                                     <?php endif; ?>
                                 </td>
-                                <td class="d-none d-md-table-cell">
+                                <td class="d-none d-md-table-cell startdate">
                                     <?php if ($item->dates) : ?>
                                         <?php if ($canEdit || $canEditOwn) : ?>
                                             <a href="<?php echo Route::_('index.php?option=com_jem&task=event.edit&id=' . (int) $item->id); ?>" 
                                                title="<?php echo Text::sprintf('COM_JEM_EDIT_EVENT', $this->escape($item->title)); ?>" 
                                                class="hasTooltip">
-                                                <?php echo HTMLHelper::_('date', $item->dates, Text::_('DATE_FORMAT_LC4')); ?>
+                                                <?php echo $displaydate; ?>
                                             </a>
                                         <?php else : ?>
-                                            <?php echo HTMLHelper::_('date', $item->dates, Text::_('DATE_FORMAT_LC4')); ?>
-                                        <?php endif; ?>
-                                        <?php if ($item->enddates && $item->enddates != $item->dates) : ?>
-                                            <div class="small text-muted">
-                                                <?php echo ' - ' . HTMLHelper::_('date', $item->enddates, Text::_('DATE_FORMAT_LC4')); ?>
-                                            </div>
+                                            <?php echo $displaydate; ?>
                                         <?php endif; ?>
                                     <?php else : ?>
                                         <span class="badge bg-secondary"><?php echo Text::_('COM_JEM_NO_DATE'); ?></span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="d-none d-md-table-cell">
-                                    <?php if ($item->times) : ?>
-                                        <?php echo substr($item->times, 0, 5); ?>
-                                        <?php if ($item->endtimes) : ?>
-                                            <div class="small text-muted">
-                                                <?php echo substr($item->endtimes, 0, 5); ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    <?php else : ?>
-                                        <span class="text-muted">-</span>
-                                    <?php endif; ?>
+                                <td class="d-none d-md-table-cell starttime">
+                                    <?php echo $displaytime; ?>
                                 </td>
-                                <td>
+                                <td class="eventtitle">
                                     <div class="break-word">
                                         <?php if ($item->checked_out) : ?>
                                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'events.', $canCheckin); ?>
@@ -170,19 +162,14 @@ if ($saveOrder) {
                                             <a href="<?php echo Route::_('index.php?option=com_jem&task=event.edit&id=' . (int) $item->id); ?>" 
                                                title="<?php echo Text::sprintf('COM_JEM_EDIT_EVENT', $this->escape($item->title)); ?>" 
                                                class="hasTooltip">
-                                                <?php echo $this->escape($item->title); ?>
+                                                <?php echo $this->escape($item->title) . JemOutput::recurrenceicon($item); ?>
                                             </a>
                                         <?php else : ?>
-                                            <?php echo $this->escape($item->title); ?>
-                                        <?php endif; ?>
-                                        <?php if ($isRecurring) : ?>
-                                            <span class="hasTooltip" title="<?php echo Text::_('COM_JEM_RECURRENCE'); ?>">
-                                                <span class="icon-loop" style="color: #0066cc;" aria-hidden="true"></span>
-                                            </span>
+                                            <?php echo $this->escape($item->title) . JemOutput::recurrenceicon($item); ?>
                                         <?php endif; ?>
                                     </div>
                                 </td>
-                                <td class="d-none d-md-table-cell">
+                                <td class="d-none d-md-table-cell venue">
                                     <?php if ($item->locid && $item->venue) : ?>
                                         <div class="break-word">
                                             <?php if ($canEditVenue) : ?>
@@ -208,7 +195,7 @@ if ($saveOrder) {
                                         <span class="badge bg-secondary"><?php echo Text::_('COM_JEM_NO_VENUE'); ?></span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="d-none d-md-table-cell">
+                                <td class="d-none d-md-table-cell category">
                                     <?php if (!empty($item->categories)) : ?>
                                         <div class="break-word">
                                             <?php 
@@ -216,15 +203,8 @@ if ($saveOrder) {
                                             foreach ($item->categories as $j => $category) : 
                                                 $canEditCat = $user->authorise('core.edit', 'com_jem.category.' . $category->id);
                                             ?>
-                                                <?php if ($j > 0) : ?>, <?php endif; ?>
                                                 <?php if ($canEditCat) : ?>
-                                                    <a href="<?php echo Route::_('index.php?option=com_jem&task=category.edit&id=' . (int) $category->id); ?>" 
-                                                       title="<?php echo Text::sprintf('COM_JEM_EDIT_CATEGORY', $this->escape($category->catname)); ?>" 
-                                                       class="hasTooltip">
-                                                        <span class="badge bg-secondary" style="<?php echo !empty($category->color) ? 'background-color: ' . $category->color . ' !important;' : ''; ?>">
-                                                            <?php echo $this->escape($category->catname); ?>
-                                                        </span>
-                                                    </a>
+                                                    <a href="<?php echo Route::_('index.php?option=com_jem&task=category.edit&id=' . (int) $category->id); ?>" title="<?php echo Text::sprintf('COM_JEM_EDIT_CATEGORY', $this->escape($category->catname)); ?>" class="hasTooltip"><span class="badge bg-secondary" style="<?php echo !empty($category->color) ? 'background-color: ' . $category->color . ' !important;' : ''; ?>"><?php echo $this->escape($category->catname); ?></span></a>
                                                 <?php else : ?>
                                                     <span class="badge bg-secondary" style="<?php echo !empty($category->color) ? 'background-color: ' . $category->color . ' !important;' : ''; ?>">
                                                         <?php echo $this->escape($category->catname); ?>
@@ -241,17 +221,20 @@ if ($saveOrder) {
                                     // Featured status - clickable
                                     if ($canChange) :
                                         $featured_task = $item->featured ? 'events.unfeatured' : 'events.featured';
-                                        $featured_title = $item->featured ? '<strong>' . Text::_('JFEATURED') . '</strong><br>' : '<strong>' .  Text::_('JUNFEATURED') . '</strong><br>';
+                                        $featured_title = $item->featured ? '<strong>' . Text::_('JFEATURED') . '</strong>' : '<strong>' .  Text::_('JUNFEATURED') . '</strong>';
                                         ?>
                                         <a href="javascript:void(0);" 
                                            onclick="return Joomla.listItemTask('cb<?php echo $i; ?>','<?php echo $featured_task; ?>')"
                                            class="tbody-icon hasTooltip"
-                                           title="<?php echo htmlspecialchars($featured_title . ': ' . Text::_('JGLOBAL_TOGGLE_FEATURED'), ENT_QUOTES, 'UTF-8'); ?>">
-                                            <span class="<?php echo $item->featured ? 'icon-color-featured icon-star' : 'icon-unfeatured' ?>" aria-hidden="true"></span>
+                                           data-bs-html="true"
+                                           title="<?php echo htmlspecialchars($featured_title . '<br>' . Text::_('JGLOBAL_TOGGLE_FEATURED'), ENT_QUOTES, 'UTF-8'); ?>">
+                                            <span class="<?php echo $item->featured ? 'icon-color-featured icon-star' : 'icon-unfeatured icon-star' ?>" aria-hidden="true"></span>
                                         </a>
                                     <?php else : ?>
-                                        <span class="tbody-icon disabled hasTooltip" title="<?php echo $item->featured ? Text::_('JFEATURED') : Text::_('JUNFEATURED'); ?>">
-                                            <span class="<?php echo $item->featured ? 'icon-color-featured icon-star' : 'icon-unfeatured' ?>" aria-hidden="true"></span>
+                                        <span class="tbody-icon disabled hasTooltip" 
+                                              data-bs-html="true"
+                                              title="<?php echo htmlspecialchars('<strong>' . ($item->featured ? Text::_('JFEATURED') : Text::_('JUNFEATURED')) . '</strong>', ENT_QUOTES, 'UTF-8'); ?>">
+                                            <span class="<?php echo $item->featured ? 'icon-color-featured icon-star' : 'icon-unfeatured icon-star' ?>" aria-hidden="true"></span>
                                         </span>
                                     <?php endif; ?>
                                 </td>
@@ -367,9 +350,25 @@ if ($saveOrder) {
                                 </td>
                                 <td class="d-none d-md-table-cell">
                                     <?php if (!empty($item->author)) : ?>
-                                        <div class="break-word">
-                                            <?php echo $this->escape($item->author); ?>
-                                        </div>
+                                        <?php
+                                        $created = HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC5'));
+                                        $overlib = Text::_('COM_JEM_CREATED_AT') . ': ' . $created . '<br>';
+                                        $overlib .= Text::_('COM_JEM_AUTHOR') . ': ' . $item->author . '<br>';
+                                        $overlib .= Text::_('COM_JEM_EMAIL') . ': ' . $item->email . '<br>';
+                                        if ($item->author_ip != '') {
+                                            $overlib .= Text::_('COM_JEM_WITH_IP') . ': ' . $item->author_ip . '<br>';
+                                        }
+                                        if (!empty($item->modified)) {
+                                            $overlib .= '<br>' . Text::_('COM_JEM_EDITED_AT') . ': ' . HTMLHelper::_('date', $item->modified, Text::_('DATE_FORMAT_LC5')) . '<br>' . Text::_('COM_JEM_GLOBAL_MODIFIEDBY') . ': ' . $item->modified_by;
+                                        }
+                                        ?>
+                                        <span class="hasTooltip" 
+                                              data-bs-html="true"
+                                              title="<?php echo htmlspecialchars('<strong>' . Text::_('COM_JEM_EVENTS_STATS') . '</strong><br>' . $overlib, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <a href="<?php echo 'index.php?option=com_users&amp;task=user.edit&amp;id=' . $item->created_by; ?>">
+                                                <?php echo $this->escape($item->author); ?>
+                                            </a>
+                                        </span>
                                     <?php else : ?>
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
@@ -385,18 +384,29 @@ if ($saveOrder) {
                                     </span>
                                 </td>
                                 <td class="d-none d-md-table-cell text-center">
-                                    <?php if (isset($item->registered) && $item->maxplaces > 0) : ?>
-                                        <span class="badge <?php echo ($item->registered >= $item->maxplaces) ? 'bg-danger' : 'bg-success'; ?>" 
-                                              title="<?php echo Text::sprintf('COM_JEM_REGISTERED_USERS', (int)$item->registered, (int)$item->maxplaces); ?>">
-                                            <?php echo (int)$item->registered . ' / ' . (int)$item->maxplaces; ?>
-                                        </span>
-                                    <?php elseif (isset($item->registered)) : ?>
-                                        <span class="badge bg-info" title="<?php echo Text::sprintf('COM_JEM_REGISTERED_USERS_UNLIMITED', (int)$item->registered); ?>">
-                                            <?php echo (int)$item->registered; ?>
-                                        </span>
-                                    <?php else : ?>
-                                        <span class="text-muted">-</span>
-                                    <?php endif; ?>
+                                    <?php
+                                    if ($this->jemsettings->showfroregistra || ($item->registra & 1)) {
+                                        $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;eventid=' . $item->id;
+                                        $count = $item->regCount + $item->reserved;
+                                        if ($item->maxplaces) {
+                                            $count .= '/' . $item->maxplaces;
+                                            if ($item->waitinglist && $item->waiting) {
+                                                $count .= '+' . $item->waiting;
+                                            }
+                                        }
+                                        if (!empty($item->unregCount)) {
+                                            $count .= '-' . (int)$item->unregCount;
+                                        }
+                                        if (!empty($item->invited)) {
+                                            $count .= ',' . (int)$item->invited . '?';
+                                        }
+                                        ?>
+                                        <a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
+                                            <?php echo $count; ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php echo HTMLHelper::_('image', 'com_jem/publish_r.webp', NULL, NULL, true); ?>
+                                    <?php } ?>
                                 </td>
                                 <td class="small d-none d-md-table-cell">
                                     <?php echo $this->escape($item->access_level); ?>
