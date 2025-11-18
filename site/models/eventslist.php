@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\CMS\ArrayHelper; 
+use Joomla\Utilities\ArrayHelper; 
 use Joomla\Database\DatabaseDriver;
 use Joomla\CMS\Date\Date; // Añadido para mejor práctica en Joomla 5
 
