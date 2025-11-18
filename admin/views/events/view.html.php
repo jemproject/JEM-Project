@@ -25,7 +25,7 @@ class JemViewEvents extends JemAdminView
     protected $pagination;
     protected $state;
 
-    public function display($tpl = null)
+        public function display($tpl = null)
     {
         $app            = Factory::getApplication();
         $document       = $app->getDocument();
