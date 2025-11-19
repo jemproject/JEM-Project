@@ -13,7 +13,6 @@
             name="type"
             type="list"
             label="COM_JEM_FILTER_TYPE"
-            class="js-select-submit-on-change"
             default="7"
             validate="options"
         >
@@ -69,7 +68,7 @@
             type="list"
             label="JGLOBAL_SORT_BY"
             class="js-select-submit-on-change"
-            default="a.id DESC"
+            default="a.dates DESC"
             validate="options"
         >
             <option value="">JGLOBAL_SORT_BY</option>
@@ -90,7 +89,7 @@
             <option value="a.access ASC">JGRID_HEADING_ACCESS_ASC</option>
             <option value="a.access DESC">JGRID_HEADING_ACCESS_DESC</option>
             <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
-            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>            
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
         </field>
 
         <field
