@@ -12,6 +12,10 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx; ?>">
     <div class="buttons">
         <?php
+
+        if (!$this->task) {
+            $this->task = ($this->params->get('show_archived_events') ? 'archive' : '');
+        }
         $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>

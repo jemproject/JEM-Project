@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @subpackage JEM Calendar Module
+ * @subpackage JEM Map Module
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright https://leafletjs.com/
  * @copyright https://github.com/brunob/leaflet.fullscreen
@@ -48,13 +48,13 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
         <?php
         $options = [
-                'all'      => 'MOD_JEM_MAP_ALL',
-                'today'    => 'MOD_JEM_MAP_TODAY',
-                'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
-                'week'     => 'MOD_JEM_MAP_WEEK',
-                'month'    => 'MOD_JEM_MAP_MONTH',
-                'year'     => 'MOD_JEM_MAP_YEAR',
-                'date'     => 'MOD_JEM_MAP_DATE'
+            'all'      => 'MOD_JEM_MAP_ALL',
+            'today'    => 'MOD_JEM_MAP_TODAY',
+            'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
+            'week'     => 'MOD_JEM_MAP_WEEK',
+            'month'    => 'MOD_JEM_MAP_MONTH',
+            'year'     => 'MOD_JEM_MAP_YEAR',
+            'date'     => 'MOD_JEM_MAP_DATE'
         ];
 
         foreach ($options as $value => $label) {
