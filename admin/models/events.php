@@ -17,7 +17,7 @@ use Joomla\CMS\Component\ComponentHelper;
  **/
 class JemModelEvents extends ListModel
 {
-    // Definiere den Namen der Filterform für die moderne Joomla-Filterarchitektur
+    // Define the name of the filter form for the modern Joomla filter architecture
     protected $filterFormName = 'filter_events';
 
     /**
@@ -52,34 +52,34 @@ class JemModelEvents extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
-        // Suchstring
+        // Search String
         $search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
         $this->setState('filter.search', $search);
-        // Kompatibilität mit altem Code
+        // compatibility with old code
         $this->setState('filter_search', $search);
 
         // Status (published)
         $published = $this->getUserStateFromRequest($this->context.'.filter.state', 'filter_state', '', 'string');
         $this->setState('filter.state', $published);
-        // Kompatibilität mit altem Code
+        // compatibility with old code
         $this->setState('filter_state', $published);
 
-        // Filter-Typ (für Suchfeld)
+        // Filter Typ (for search field)
         $filterfield = $this->getUserStateFromRequest($this->context.'.filter.type', 'filter_type', 0, 'int');
         $this->setState('filter.type', $filterfield);
-        // Kompatibilität mit altem Code
+        // compatibility with old code
         $this->setState('filter_type', $filterfield);
 
-        // Datum Begin
+        // Start Date
         $begin = $this->getUserStateFromRequest($this->context.'.filter.begin', 'filter_begin', '', 'string');
         $this->setState('filter.begin', $begin);
-        // Kompatibilität mit altem Code
+        // compatibility with old code
         $this->setState('filter_begin', $begin);
 
         // Datum End
         $end = $this->getUserStateFromRequest($this->context.'.filter.end', 'filter_end', '', 'string');
         $this->setState('filter.end', $end);
-        // Kompatibilität mit altem Code
+        // compatibility with old code
         $this->setState('filter_end', $end);
 
         // Access
