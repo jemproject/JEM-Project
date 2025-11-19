@@ -36,7 +36,7 @@ class JemViewEvents extends JemAdminView
         // Hole Model
         $model = $this->getModel();
 
-        // Initialisiere Variablen
+        // Initialise variables.
         $this->items         = $model->getItems();
         $this->pagination    = $model->getPagination();
         $this->state         = $model->getState();
@@ -49,7 +49,7 @@ class JemViewEvents extends JemAdminView
         // highlighter
         $highlighter = $settings->get('highlight','0');
 
-        // Check for errors
+        // Check for errors.
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
             Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
@@ -72,7 +72,7 @@ class JemViewEvents extends JemAdminView
             $this->document->addStyleDeclaration($style);
         }
 
-        // Die alte $lists['filter'] Logik kann entfernt werden
+        // Old ['filter'] logic was removed
         $this->user         = $user;
         $this->jemsettings  = $jemsettings;
         $this->settings     = $settings;
