@@ -94,13 +94,11 @@ class JemController extends BaseController
             if ($viewName == 'venue') {
                 $model1 = $this->getModel('Venue');
                 $model2 = $this->getModel('VenueCal');
-
                 $view->setModel($model1, true);
                 $view->setModel($model2);
             } elseif($viewName == 'category') {
                 $model1 = $this->getModel('Category');
                 $model2 = $this->getModel('CategoryCal');
-
                 $view->setModel($model1, true);
                 $view->setModel($model2);
             } else {
@@ -440,14 +438,14 @@ class JemController extends BaseController
 
         if (!$res) {
             echo 0; // The caller expects an answer!
-            jexit();
+            $this->app->close();
         }
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();
 
         echo 1; // The caller expects an answer!
-        jexit();
+        $this->app->close();;
     }
 
     /**
@@ -457,7 +455,7 @@ class JemController extends BaseController
     public function ajaximageremove()
     {
         // prevent unwanted usage
-        jexit();
+        $this->app->close();
     }
 }
 ?>
