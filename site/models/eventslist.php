@@ -530,44 +530,6 @@ class JemModelEventslist extends ListModel
         }
 
         #############################
-        ## FILTER - CALENDAR_DATES ##
-        #############################
-        $cal_month = $this->getState('filter.filter_month');
-        $today     = new Date('now', $app->get('offset'));
-        
-        if ($cal_month) {
-            // Apply Month filter
-            $filter_date_from = $cal_month . '-01';
-            $filter_date_to   = date("Y-m-t", strtotime($filter_date_from));
-
-            // Check if event ENDS after or on the start date
-            $where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0';
-            $query->where($where_from);
-            $this->setState('filter.calendar_from',$where_from);
-
-            // Check if event STARTS before or on the end date
-            $where_to = ' DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0';
-            $query->where($where_to);
-            $this->setState('filter.calendar_to',$where_to);
-        } else {
-            // Apply menu date filters
-            $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
-            $filterDaysAfter  = $params->get('tablefiltereventuntil', 0);
-            if(empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
-                $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-                $where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($dateFrom) . ') >= 0';
-                $query->where($where_from);
-                $this->setState('filter.calendar_from', $where_from);
-            }
-            if ($filterDaysAfter) {
-                $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
-                $where_to = ' DATEDIFF(a.dates, ' . $db->quote($dateTo) . ') <= 0';
-                $query->where($where_to);
-                $this->setState('filter.calendar_to',$where_to);
-            }
-        }
-
-        #############################
         ## FILTER - OPEN_DATES     ##
         #############################
         $opendates = $this->getState('filter.opendates');
@@ -575,13 +537,57 @@ class JemModelEventslist extends ListModel
         switch ($opendates) {
             case 0: // don't show events without start date
             default:
-                $query->where('a.dates IS NOT NULL');
+                $opendates_query = " OR a.dates IS NOT NULL)";
                 break;
             case 1: // show all events, with or without start date
+                $opendates_query = " OR a.dates IS NULL)";
                 break;
             case 2: // show only events without startdate
-                $query->where('a.dates IS NULL');
+                $opendates_query = " a.dates IS NULL";
                 break;
+        }
+
+        #############################
+        ## FILTER - CALENDAR_DATES ##
+        #############################
+        $cal_month = $this->getState('filter.filter_month');
+        $today     = new Date('now', $app->get('offset'));
+
+        if($opendates != 2) {
+            if ($cal_month) {
+                // Apply Month filter
+                $filter_date_from = $cal_month . '-01';
+                $filter_date_to = date("Y-m-t", strtotime($filter_date_from));
+
+                // Check if event ENDS after or on the start date
+                $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0 ' . $opendates_query;
+                $query->where($where_from);
+                $this->setState('filter.calendar_from', $where_from);
+
+                // Check if event STARTS before or on the end date
+                $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0' . $opendates_query;
+                $query->where($where_to);
+                $this->setState('filter.calendar_to', $where_to);
+            } else {
+                // Apply menu date filters
+                $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
+                $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
+                if (empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
+                    $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
+                    $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($dateFrom) . ') >= 0' . $opendates_query;
+                    $query->where($where_from);
+                    $this->setState('filter.calendar_from', $where_from);
+                }
+                if ($filterDaysAfter) {
+                    $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
+                    $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($dateTo) . ') <= 0' . $opendates_query;
+                    $query->where($where_to);
+                    $this->setState('filter.calendar_to', $where_to);
+                }
+            }
+        } else {
+            // Only open day events
+            $query->where($opendates_query);
         }
 
         #####################
