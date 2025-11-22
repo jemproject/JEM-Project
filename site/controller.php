@@ -297,60 +297,70 @@ class JemController extends BaseController
                         </div>
                     <?php endif; ?>
 
-                    <?php if (($jemsettings->showlocate == 1) && (!empty($row->locid))) : ?>
-                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.htmlspecialchars($row->venue); ?>">
+                    <?php if ($jemsettings->showlocate == 1 && !empty($row->locid)) : ?>
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION') . ': ' . htmlspecialchars($row->venue); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                             <?php if ($jemsettings->showlinkvenue == 1) : ?>
-                                <?php echo "<a href='" . Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) . "'>" . htmlspecialchars($row->venue) . "</a>"; ?>
+                                <a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($row->venueslug ?? '')); ?>">
+                                    <?php echo htmlspecialchars($row->venue); ?>
+                                </a>
                             <?php else : ?>
                                 <?php echo htmlspecialchars($row->venue); ?>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
 
-                    <?php if (($jemsettings->showcity == 1) && (!empty($row->city))) : ?>
-                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.htmlspecialchars($row->city); ?>">
+                    <?php if ($jemsettings->showcity == 1 && !empty($row->city)) : ?>
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_CITY') . ': ' . htmlspecialchars($row->city); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-building" aria-hidden="true"></i>':''); ?>
                             <?php echo htmlspecialchars($row->city); ?>
                         </div>
                     <?php endif; ?>
 
-                    <?php if (($jemsettings->showstate == 1) && (!empty($row->state))): ?>
-                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.htmlspecialchars($row->state); ?>">
+                    <?php if ($jemsettings->showstate == 1 && !empty($row->state)): ?>
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_STATE') . ': ' . htmlspecialchars($row->state); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-map" aria-hidden="true"></i>':''); ?>
                             <?php echo htmlspecialchars($row->state); ?>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($jemsettings->showcat == 1) : ?>
-                        <div class="jem-event-info" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $jemsettings->catlinklist))); ?>">
+                        <?php 
+                        $catList = JemOutput::getCategoryList($row->categories, $jemsettings->catlinklist);
+                        $catString = implode(", ", $catList); 
+                        ?>
+                        <div class="jem-event-info" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY') . ': ' . $catString); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-tag" aria-hidden="true"></i>':''); ?>
-                            <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $jemsettings->catlinklist)); ?>
+                            <?php echo $catString; ?>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($jemsettings->showatte == 1) : ?>
-                        <?php if (!empty($row->regCount)) : ?>
-                            <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_ATTENDEES').': '.htmlspecialchars($row->regCount); ?>">
+                         <?php 
+                         $maxPlaces = (int)($row->maxplaces ?? 0);
+                         $regCount = (int)($row->regCount ?? 0);
+                         ?>
+                        <?php if ($regCount > 0) : ?>
+                            <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_ATTENDEES') . ': ' . $regCount; ?>">
                                 <?php echo ($showiconsineventdata? '<i class="fa fa-user" aria-hidden="true"></i>':''); ?>
-                                <?php echo htmlspecialchars($row->regCount), " / ", htmlspecialchars($row->maxplaces); ?>
+                                <?php echo $regCount . " / " . $maxPlaces; ?>
                             </div>
-                        <?php elseif (htmlspecialchars($row->maxplaces) == 0) : ?>
+                        <?php elseif ($maxPlaces == 0) : ?>
                             <div>
                                 <?php echo ($showiconsineventdata? '<i class="fa fa-user" aria-hidden="true"></i>':''); ?>
-                                <?php echo " &gt; 0 "; ?>
+                                &gt; 0
                             </div>
                         <?php else : ?>
                             <div class="jem-event-info-small jem-event-attendees">
                                 <?php echo ($showiconsineventdata? '<i class="fa fa-user" aria-hidden="true"></i>':''); ?>
-                                <?php echo " &lt; ", htmlspecialchars($row->maxplaces); ?>
+                                &lt; <?php echo $maxPlaces; ?>
                             </div>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
                 <?php if ($params->get('show_introtext_events') == 1) : ?>
                     <div class="jem-event-intro">
-                        <?php echo $row->introtext; ?>
+                        <?php echo $row->introtext ?? ''; ?>
                         <?php $settings = JemHelper::globalattribs(); ?>
                         <?php if ($settings->get('event_show_readmore') && $row->fulltext != '' && $row->fulltext != '<br />') : ?>
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
@@ -363,11 +373,7 @@ class JemController extends BaseController
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                <?php if (!empty($row->locid)) : ?>
-                    <meta itemprop="name" content="<?php echo htmlspecialchars($row->venue); ?>"/>
-                <?php else : ?>
-                    <meta itemprop="name" content="None"/>
-                <?php endif; ?>
+                <meta itemprop="name" content="<?php echo !empty($row->locid) ? htmlspecialchars($row->venue) : 'None'; ?>"/>
                 <?php
                 $microadress = '';
                 if (!empty($row->city)) {
@@ -409,12 +415,18 @@ class JemController extends BaseController
         $id = Factory::getApplication()->input->getInt('file', 0);
         $path = JemAttachment::getAttachmentPath($id);
 
-        header("Content-Type: application/application/octet-stream\n");
-        header('Content-Disposition: attachment; filename="' . basename($path) . '"');
+        if (!$path || !file_exists($path)) {
+             throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
+        }
 
+        header("Content-Type: application/octet-stream");
+        header('Content-Disposition: attachment; filename="' . basename($path) . '"');
+        header('Content-Length: ' . filesize($path));
         ob_clean();
         ob_end_flush();
         readfile($path);
+        
+        $this->app->close();
     }
 
     /**
