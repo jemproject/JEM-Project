@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `publish_up` datetime DEFAULT NULL,
   `publish_down` datetime DEFAULT NULL,
   `version` int(11) unsigned NOT NULL DEFAULT '0',
-  `author_ip` varchar(39) DEFAULT NULL,
+    `author_ip` varchar(45) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `introtext` mediumtext NOT NULL,
   `meta_keywords` varchar(200) DEFAULT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `locimage` varchar(100) NOT NULL DEFAULT '',
   `map` tinyint(4) NOT NULL DEFAULT '0',
   `created_by` int(11) unsigned NOT NULL DEFAULT '0',
-  `author_ip` varchar(39) NOT NULL DEFAULT '',
+    `author_ip` varchar(45) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` datetime NULL DEFAULT NULL,
   `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_register` (
   `uid` int(11) NOT NULL DEFAULT '0',
   `places` int(11) NOT NULL DEFAULT '1',
   `uregdate` varchar(50) NOT NULL DEFAULT '',
-  `uip` varchar(15) NOT NULL DEFAULT '',
+    `uip` varchar(45) NOT NULL DEFAULT '',
   `waiting` tinyint(1) NOT NULL DEFAULT '0',
   `status` tinyint(3) NOT NULL DEFAULT '1',
   `comment` varchar(255) DEFAULT '',
@@ -582,5 +582,5 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time`, `path` ) VALUES
 (1, 0, 0, 3, 0, 'root', 'root', 1, 1, now(), null),
-(2, 1, 1, 2, 0, 'Uncategorised', 'uncategorised', 1, 1, now(), 'uncategorised');
+(2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
 
