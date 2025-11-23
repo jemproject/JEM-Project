@@ -16,6 +16,7 @@ use Joomla\CMS\Date\Date;
 $mod_name = 'mod_jem_map';
 
 require_once __DIR__ . '/helper.php';
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 # Parameters
 $venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
