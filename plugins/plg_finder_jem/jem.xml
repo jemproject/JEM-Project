@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="finder" method="upgrade">
-    <name>plg_finder_jem</name>
+    <name>PLG_FINDER_JEM</name>
     <author>JEM Community</author>
     <creationDate>August 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
