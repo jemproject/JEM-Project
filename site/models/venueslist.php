@@ -119,7 +119,7 @@ class JemModelVenueslist extends ListModel
         $case_when_l = ' CASE WHEN ';
         $case_when_l .= $query->charLength('a.alias','!=', '0');
         $case_when_l .= ' THEN ';
-        $id_l = $query->castAsChar('a.id');
+        $id_l = $query->castAs('CHAR', 'a.id');
         $case_when_l .= $query->concatenate(array($id_l, 'a.alias'), ':');
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';

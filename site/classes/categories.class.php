@@ -153,7 +153,7 @@ class JemCategories
         $case_when_c = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = $query->castAs('CHAR', 'c.id');
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as slug';
@@ -392,7 +392,7 @@ class JemCategories
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = $query->castAs('CHAR', 'c.id');
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';
@@ -469,7 +469,7 @@ class JemCategories
             $case_when_cat_alias = ' CASE WHEN ';
             $case_when_cat_alias .= $sql->charLength('alias');
             $case_when_cat_alias .= ' THEN ';
-            $cat_id = $sql->castAsChar('id');
+            $cat_id = $sql->castAs('CHAR', 'id');
             $case_when_cat_alias .= $sql->concatenate(array($cat_id, 'alias'), ':');
             $case_when_cat_alias .= ' ELSE ';
             $case_when_cat_alias .= $cat_id.' END as slug';
@@ -525,7 +525,7 @@ class JemCategories
             $case_when_cat_alias  = ' CASE WHEN ';
             $case_when_cat_alias .= $query->charLength('c.alias');
             $case_when_cat_alias .= ' THEN ';
-            $cat_id = $query->castAsChar('c.id');
+            $cat_id = $query->castAs('CHAR', 'c.id');
             $case_when_cat_alias .= $query->concatenate(array($cat_id, 'c.alias'), ':');
             $case_when_cat_alias .= ' ELSE ';
             $case_when_cat_alias .= $cat_id.' END AS slug';
