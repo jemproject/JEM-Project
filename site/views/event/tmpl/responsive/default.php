@@ -88,7 +88,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <dt class="jem-title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
                         <dd class="jem-title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
                     <?php else : ?>
-                    	<meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
+                        <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
                     <?php endif; ?>
                     <dt class="jem-when hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHEN'); ?>"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
                     <dd class="jem-when">
@@ -417,8 +417,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
                     <?php endif; /* event_show_detailsadress */ ?>
                 </div>
-                <?php if($this->item->user_has_access_venue) : ?>
-                <?php
+                <?php if($this->item->user_has_access_venue) :
                 $event_show_mapserv = $params->get('event_show_mapserv');
                 if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
                     <div class="jem-map">
