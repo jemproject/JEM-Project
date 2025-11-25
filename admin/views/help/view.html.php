@@ -106,6 +106,7 @@ class JemViewHelp extends JemAdminView
     {
         //create the toolbar
         ToolbarHelper::title(Text::_('COM_JEM_HELP'), 'help');
+        ToolbarHelper::back();
         ToolBarHelper::divider();
         ToolBarHelper::help('help', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/help');
     }
