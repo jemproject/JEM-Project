@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
   UNIQUE KEY `category event relation` (`catid`,`itemid`),
   KEY `catid` (`catid`),
   KEY `itemid` (`itemid`)
-) ENGINE=MyISAM CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_register` (
   `id` int(11) unsigned NOT NULL auto_increment,
