@@ -45,6 +45,7 @@ class mod_jem_teaserInstallerScript
                 return false;
             }
         }
+		return true;
     }
 
     /**
@@ -57,17 +58,10 @@ class mod_jem_teaserInstallerScript
         if ($type === 'install') {
             return true;
         }
-        if ($type === 'update') {
-
-            // Migration 2.1.5 -> 2.1.6
-            if (
-                version_compare($this->oldRelease, '2.1.6', 'le') &&
-                version_compare($this->newRelease, '2.1.6', 'ge')
-            ) {
-                $this->updateParams216();
-            }
+        if ($type === 'update') {            
+			return true;
         }
-        if ($type == 'uninstall') {
+        if ($type === 'uninstall') {
             return true;
         }
     }
@@ -91,56 +85,5 @@ class mod_jem_teaserInstallerScript
         $manifest = json_decode($db->loadResult(), true);
 
         return $manifest[$name] ?? null;
-    }
-
-    /**
-     * Migration: convert catid/venid strings to arrays
-     *
-     * Required for updates <= 2.1.6
-     */
-    private function updateParams216(): void
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
-        $query = $db->getQuery(true)
-            ->select('id, params')
-            ->from('#__modules')
-            ->where('module = ' . $db->quote($this->name));
-
-        $db->setQuery($query);
-        $items = $db->loadObjectList();
-
-        foreach ($items as $item) {
-
-            $reg = new Registry;
-            $reg->loadString($item->params);
-
-            $modified = false;
-
-            // catid (string → array)
-            $ids = $reg->get('catid');
-            if (!empty($ids) && is_string($ids)) {
-                $reg->set('catid', explode(',', $ids));
-                $modified = true;
-            }
-
-            // venid (string → array)
-            $ids = $reg->get('venid');
-            if (!empty($ids) && is_string($ids)) {
-                $reg->set('venid', explode(',', $ids));
-                $modified = true;
-            }
-
-            // Save back
-            if ($modified) {
-                $query = $db->getQuery(true)
-                    ->update('#__modules')
-                    ->set('params = ' . $db->quote((string) $reg))
-                    ->where('id = ' . (int) $item->id);
-
-                $db->setQuery($query);
-                $db->execute();
-            }
-        }
     }
 }

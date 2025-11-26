@@ -81,9 +81,9 @@ if ($jemsettings->oldevent > 0) {
             <?php if ($params->get('event_show_detailstitle',1)) : ?>
                 <dt class="title"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
                 <dd class="title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
-            <?php
-            endif;
-            ?>
+            <?php else : ?>
+                <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
+            <?php endif; ?>
             <dt class="when"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
             <dd class="when">
                 <?php
@@ -109,8 +109,36 @@ if ($jemsettings->oldevent > 0) {
                     if ($state) { echo ', ' . $state; }
                     ?>
                 </dd>
-            <?php
-            endif;
+            <?php endif;
+            
+            if (empty($this->item->locid)) : ?>
+            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                <meta itemprop="name" content="None"/>
+            </div>
+
+            <?php else : ?>
+                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                    <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display: none;">
+                        <?php if ($this->item->street) : ?>
+                            <meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->postalCode) : ?>
+                            <meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->city) : ?>
+                            <meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->state) : ?>
+                            <meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->country) : ?>
+                            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif;
+            
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
