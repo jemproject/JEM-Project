@@ -26,24 +26,27 @@ class mod_jem_mapInstallerScript
     private string $newRelease = '';
 
     /**
-     * Method to run before an install/update/uninstall method
-     *
-     * @return bool|void
+     * Run before install/update/uninstall
      */
     public function preflight($type, $parent)
     {
+        $type = strtolower($type);
+        
         // abort if the release being installed is not newer than the currently installed version
-        if (strtolower($type) == 'update') {
-            // Installed component version
-            $this->oldRelease = $this->getParam('version');
+        if ($type === 'update') {
+        
+            // Installed module version (from manifest cache)
+            $this->oldRelease = (string) $this->getParam('version');
 
-            // Installing component version as per Manifest file
+            // Version being installed (manifest)
             $this->newRelease = (string) $parent->getManifest()->version;
 
+            // Abort if new version is older
             if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
                 return false;
             }
         }
+		return true;
     }
 
     /**
@@ -65,20 +68,27 @@ class mod_jem_mapInstallerScript
     }
 
     /**
-     * Get a parameter from the manifest file (actually, from the manifest cache).
+     * Get a parameter from the manifest cache
      *
      * @param $name  The name of the parameter
      *
      * @return The parameter
      */
-    private function getParam($name)
+    private function getParam(string $name)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
+
+        $query = $db->getQuery(true)
+            ->select('manifest_cache')
+            ->from('#__extensions')
+            ->where([
+                "type = 'module'",
+                "element = " . $db->quote($this->name)
+            ]);
+
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
-        return $manifest[$name];
-    }
 
+        return $manifest[$name] ?? null;
+    }
 }
