@@ -25,6 +25,7 @@ $wa->registerAndUseStyle('user-stylesheet', Uri::base() . "modules/mod_jem_map/t
 # Parameters
 $venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
 $mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.webp');
+$catsId = $params->get('catsId', '');
 
 $venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
 $mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
@@ -127,6 +128,9 @@ if($params->get('map_auto_center',1)){
         $centerLng = $totalLng / $countVenues   ;
     }
 }
+
+// Get category list
+$categories = ModJemMapHelper::getCategories($params, $catsId);
 
 // Render layout
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));

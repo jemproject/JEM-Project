@@ -1,0 +1,22 @@
+#filter_category {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+.btn-group{
+    align-items: center;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+#jem_map_filter_date{
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+#jem_map_filter_date_selected{
+    padding-bottom: 4px;
+    padding-top: 4px;
+    width: auto;
+    border-radius: 0px;
+}
+.category-map-filter{
+    padding:2px 5px;
+}

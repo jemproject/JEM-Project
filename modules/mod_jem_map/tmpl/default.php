@@ -56,41 +56,52 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             'year'     => 'MOD_JEM_MAP_YEAR',
             'date'     => 'MOD_JEM_MAP_DATE'
         ];
+        ?>
+        <div>
+            <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                <?php
+                foreach ($options as $value => $label) {
+                    $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
+                    $isDateField = $value === 'date';
+                    ?>
+                    <?php if ($isDateField) { ?>
+                        <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                            <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
+                                   id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
+                            <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
+                                <?= Text::_($label) ?>
+                            </label>
+                            <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                                   class="form-control form-control-sm" style="width: auto;">
 
-        foreach ($options as $value => $label) {
-            $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
-            $isDateField = $value === 'date';
-            ?>
-            <?php if ($isDateField) { ?>
-                <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                    <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
-                           id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
-                        <?= Text::_($label) ?>
-                    </label>
-                    <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
-                           class="form-control form-control-sm" style="width: auto;">
+                        </div>
+                    <?php } else { ?>
+                        <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
+                               id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
+                        <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
+                            <?= Text::_($label) ?>
+                        </label>
+                    <?php } ?>
+                <?php } ?>
+                <div class="btn-group btn-group-sm" style="margin:0 0 0 10px;" role="group">
+                    <?php if($params->get('show_my_location','0')) {
+                        echo $categories["category"];
+                    } ?>
                 </div>
-            <?php } else { ?>
-                <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
-                       id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
-                <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
-                    <?= Text::_($label) ?>
-                </label>
-            <?php } ?>
-        <?php } ?>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm"><?= Text::_('MOD_JEM_MAP_APPLY') ?></button>
 
-        <button type="submit" class="btn btn-primary btn-sm">
-            <?= Text::_('MOD_JEM_MAP_APPLY') ?>
-        </button>
 
-        <?php if($params->get('show_my_location','0')) { ?>
-            <!-- Location button -->
-            <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
-                <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
-            </button>
-        <?php } ?>
-	    <?php echo HTMLHelper::_('form.token'); ?>
+            <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                <?php if($params->get('show_my_location','0')) { ?>
+                    <!-- Location button -->
+                    <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                        <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
+                    </button>
+                <?php } ?>
+            </div>
+        </div>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!-- Location help text -->
@@ -305,46 +316,46 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         <?php
         $heatPoints = [];
         foreach ($venues as $v):
-            $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
-            if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
-            $sef  = Route::_($route, false);
-            $link = Uri::root() . ltrim($sef, '/');
+        $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
+        if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
+        $sef  = Route::_($route, false);
+        $link = Uri::root() . ltrim($sef, '/');
 
-            $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
-            $city      = htmlspecialchars($v->city, ENT_QUOTES);
-            $country   = htmlspecialchars($v->country, ENT_QUOTES);
+        $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
+        $city      = htmlspecialchars($v->city, ENT_QUOTES);
+        $country   = htmlspecialchars($v->country, ENT_QUOTES);
 
-            $countryFlagPath = rtrim($jemsettings->flagicons_path, '/');
-            $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
-            $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
+        $countryFlagPath = rtrim($jemsettings->flagicons_path, '/');
+        $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
+        $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
 
-            $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
-                    . $city . '<br>'
-                    . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
-                    . '<a href="https://maps.google.com/?daddr=' . (float) $v->latitude . ',' . (float) $v->longitude . '">'
-                    . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
-            ?>
-            L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
-                icon: L.icon({
-                    iconUrl: "<?= addslashes($venueMarker) ?>",
-                    iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
-                })
-            }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
+        $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
+            . $city . '<br>'
+            . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
+            . '<a href="https://maps.google.com/?daddr=' . (float) $v->latitude . ',' . (float) $v->longitude . '">'
+            . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
+        ?>
+        L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
+            icon: L.icon({
+                iconUrl: "<?= addslashes($venueMarker) ?>",
+                iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
+            })
+        }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
-            <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
+        <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
-            var coordinates = <?php echo json_encode($heatPoints); ?>;
-            var heatPoints = coordinates.map(function(p) {
-                return [p.lat, p.lng, 1]; // 1 = intensity
-            });
+        var coordinates = <?php echo json_encode($heatPoints); ?>;
+        var heatPoints = coordinates.map(function(p) {
+            return [p.lat, p.lng, 1]; // 1 = intensity
+        });
 
-            L.heatLayer(heatPoints, {
-                radius: 25,
-                blur: 10,
-                maxZoom: 17,
-            }).addTo(map);
+        L.heatLayer(heatPoints, {
+            radius: 25,
+            blur: 10,
+            maxZoom: 17,
+        }).addTo(map);
         <?php } ?>
 
     });

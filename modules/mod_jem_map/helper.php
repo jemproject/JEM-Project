@@ -15,6 +15,10 @@ use Joomla\Database\Query\SelectQuery;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 
+require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
+require_once(JPATH_SITE.'/components/com_jem/models/fields/catoptions.php');
+
+
 /**
  * Helper class for the JEM Map module.
  */
@@ -71,4 +75,13 @@ class ModJemMapHelper
 
         return $db->loadObjectList();
     }
+	
+	
+	public static function getCategories($params, $catsId)
+	{
+        $categories     = JemCategories::getCategoriesTree(1);
+        $Lists = array();
+        $Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', 0, 0, 'class="category-map-filter" size="1"');
+        return $Lists;
+	}
 }
