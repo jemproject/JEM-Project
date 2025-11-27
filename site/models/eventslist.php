@@ -415,7 +415,7 @@ class JemModelEventslist extends ListModel
         $case_when_e = ' CASE WHEN ';
         $case_when_e .= $query->charLength('a.alias', '!=', '0');
         $case_when_e .= ' THEN ';
-        $id_e = $query->castAsChar('a.id');
+        $id_e = $query->castAs('CHAR', 'a.id');
         $case_when_e .= $query->concatenate(array($id_e, 'a.alias'), ':');
         $case_when_e .= ' ELSE ';
         $case_when_e .= $id_e . ' END as slug';
@@ -423,7 +423,7 @@ class JemModelEventslist extends ListModel
         $case_when_l = ' CASE WHEN ';
         $case_when_l .= $query->charLength('l.alias', '!=', '0');
         $case_when_l .= ' THEN ';
-        $id_l = $query->castAsChar('a.locid');
+        $id_l = $query->castAs('CHAR', 'a.locid');
         $case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l . ' END as venueslug';
@@ -773,7 +773,7 @@ class JemModelEventslist extends ListModel
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = $query->castAs('CHAR', 'c.id');
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';

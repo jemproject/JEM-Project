@@ -63,12 +63,12 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             ?>
             <?php if ($isDateField) { ?>
                 <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                    <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
+                    <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
                            id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 6px;" for="filter-<?= $value ?>">
+                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
                         <?= Text::_($label) ?>
                     </label>
-                    <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                    <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
                            class="form-control form-control-sm" style="width: auto;">
                 </div>
             <?php } else { ?>

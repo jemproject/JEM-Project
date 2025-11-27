@@ -510,7 +510,7 @@ class JemModelEvent extends ItemModel
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = $query->castAs('CHAR', 'c.id');
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';
