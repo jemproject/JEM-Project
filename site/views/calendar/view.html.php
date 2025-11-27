@@ -63,13 +63,6 @@ class JemViewCalendar extends JemView
         div#jem .eventandmore a {
             color:' . $evlinkcolor . ';
         }
-        .eventcontentinner {
-            background-color:'.$evbackgroundcolor .';
-        }
-        .eventandmore {
-            background-color:'.$eventandmorecolor .';
-        }
-
         .today .daynum {
             background-color:'.$currentdaycolor.';
         }';

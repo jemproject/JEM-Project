@@ -404,7 +404,7 @@ class JemModelEventslist extends ListModel
         $query->select(array('l.alias AS l_alias', 'l.color AS venuecolor', 'l.checked_out AS l_checked_out', 'l.checked_out_time AS l_checked_out_time', 'l.city', 'l.country', 'l.created AS l_created', 'l.created_by AS l_createdby'));
         $query->select(array('l.custom1 AS l_custom1', 'l.custom2 AS l_custom2', 'l.custom3 AS l_custom3', 'l.custom4 AS l_custom4', 'l.custom5 AS l_custom5', 'l.custom6 AS l_custom6', 'l.custom7 AS l_custom7', 'l.custom8 AS l_custom8', 'l.custom9 AS l_custom9', 'l.custom10 AS l_custom10'));
         $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
-        $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.venue', 'l.version AS l_version'));
+        $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.version AS l_version'));
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
 
         # Country

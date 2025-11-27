@@ -100,7 +100,6 @@ div[id^='scat'] {
 
 .eventcontentinner {
     cursor: pointer;
-    background-color: yellow;
     border-radius: .5rem;
     margin: 5px;
     overflow: hidden;
@@ -136,8 +135,13 @@ div#jem .eventcontenttop {
     height: 16px;
     min-height: 16px;
     text-align: left;
-    padding-top: 2px;
     top: 60px;
+}
+
+div#jem .eventcontentbottom {
+    text-align: left;
+    margin-top: 5px;
+    bottom: 0px;
 }
 
 div#jem .eventcontenttop.no-padding-top {
@@ -222,9 +226,10 @@ div#jem .eventtitle {
     margin: 0 2px;
 }
 
-.colorpicbartext {
-    padding: 0px 10px;
+.colorpicblocktext {
+    padding-left: 5px;
 }
+
 
 .colorpicbar {
     display: block;
@@ -234,13 +239,30 @@ div#jem .eventtitle {
     border-top-right-radius: 5px;
 }
 
-.colorpicblocktext {
-    padding-left: 5px;
-}
 .colorpicbartext {
+    padding: 0px 10px;
     display: inline-block;
     align-items: center;
     justify-content: center;
+}
+
+.colorpicbarbottom {
+    display: block;
+    width: 100%;
+    height: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.colorpicbarbottom-leyend {
+    display: block;
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 #jlcalendarlegend {
@@ -249,13 +271,26 @@ div#jem .eventtitle {
 }
 
 #jlcalendarlegend .calendarButtons, #jlcalendarlegend .calendarLegends {
-    padding: 10px 0;
+    padding: 5px 0;
 }
 
 #jlcalendarlegend .eventCat {
     cursor: pointer;
     padding: 0px;
     border: 1px solid black;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    line-height: 40px;
+}
+
+#jlcalendarlegend .eventVenues {
+    cursor: pointer;
+    padding: 0px;
+    padding-bottom: 5px;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    border: 1px solid darkslategrey;
     margin-right: 5px;
     margin-bottom: 5px;
     line-height: 40px;
