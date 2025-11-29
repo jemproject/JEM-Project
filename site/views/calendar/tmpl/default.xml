@@ -107,7 +107,7 @@
                 description="COM_JEM_CALENDAR_EVENTLINKCOLOR_DESC"
             />
             <field name="eventbackgroundcolor" type="color"
-                default="#FFFF00"
+                default="#FFF8E1"
                 label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
                 description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
             />
@@ -135,7 +135,7 @@
                 description="COM_JEM_CALENDAR_CURRENTDAYCOLOR_DESC"
             />
             <field name="eventandmorecolor" type="color"
-                default="#FFFF00"
+                default="#FFF8E1"
                 label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"
                 description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
             />
