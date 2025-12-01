@@ -139,8 +139,8 @@ $document->addStyleDeclaration($css);
                                     </div>
                                     <?php //endif; ?>
                                 <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
-                                    <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->dateinfo); ?>">
-                                        <?php echo $item->dateinfo; ?>
+              <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->time); ?>">
+                                        <?php echo $item->time; ?>
                                     </div>
                                     <?php //endif; ?>
                                 <?php /* elseif ($item->time && $params->get('datemethod', 1) == 1) :?>
