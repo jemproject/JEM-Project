@@ -127,7 +127,7 @@ if ($flyer_link_type == 1) {
 
             <div class="clr"></div>
 
-            <?php /* Datum und Zeitangabe:
+            <?php /* Date and time specification:
                    *  showcalendar 1, datemethod 1 : date inside calendar image + time
                    *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
                    *  showcalendar 0, datemethod 1 : no calendar image, date + time
