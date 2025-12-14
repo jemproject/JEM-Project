@@ -2,12 +2,12 @@
 <extension type="plugin" group="finder" method="upgrade">
     <name>plg_finder_jem</name>
     <author>JEM Community</author>
-    <creationDate>August 2025</creationDate>
+    <creationDate>December 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.3.4</version>
+    <version>4.4.0-beta1</version>
     <description>PLG_FINDER_JEM_XML_DESCRIPTION</description>
 
     <!-- <scriptfile>script.php</scriptfile> -->
