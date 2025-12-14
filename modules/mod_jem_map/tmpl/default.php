@@ -90,7 +90,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                 <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
             </button>
         <?php } ?>
-	    <?php echo HTMLHelper::_('form.token'); ?>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!-- Location help text -->

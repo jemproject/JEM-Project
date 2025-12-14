@@ -80,7 +80,7 @@ class JemRouter extends RouterView
             $viewConfig->setKey('id');
             $this->registerView($viewConfig);
         }
-		
+
         parent::__construct($app, $menu);
 
         $this->attachRule(new MenuRules($this));

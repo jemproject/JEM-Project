@@ -46,7 +46,7 @@ class mod_jem_mapInstallerScript
                 return false;
             }
         }
-		return true;
+        return true;
     }
 
     /**
