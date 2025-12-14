@@ -146,7 +146,7 @@ $wa->addInlineStyle($css);
                         <?php endif; ?>
                         <div class="jem-event-details-banner jem-row-banner">
                             <div class="jem-row-banner <?php echo $banneralignment; ?> jem-banner-datecat">
-                                <?php /* Datum und Zeitangabe:
+                                <?php /* Date and time specification:
                  *  showcalendar 1, datemethod 1 : date inside calendar image + time
                  *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
                  *  showcalendar 0, datemethod 1 : no calendar image, date + time

@@ -777,14 +777,14 @@ class com_jemInstallerScript
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
             '/media/com_jem/images/flags/w20-png',
-			'/components/com_jem/common/views/tmpl/alternative',
-			'/components/com_jem/views/attendees/tmpl/alternative',
-			'/components/com_jem/views/categories/tmpl/alternative',
-		    '/components/com_jem/views/day/tmpl/alternative',
-			'/components/com_jem/views/myattendances/tmpl/alternative',			
- 			'/components/com_jem/views/myevents/tmpl/alternative',
- 			'/components/com_jem/views/myvenues/tmpl/alternative',
- 			'/components/com_jem/views/search/tmpl/alternative',
+            '/components/com_jem/common/views/tmpl/alternative',
+            '/components/com_jem/views/attendees/tmpl/alternative',
+            '/components/com_jem/views/categories/tmpl/alternative',
+            '/components/com_jem/views/day/tmpl/alternative',
+            '/components/com_jem/views/myattendances/tmpl/alternative',            
+             '/components/com_jem/views/myevents/tmpl/alternative',
+             '/components/com_jem/views/myvenues/tmpl/alternative',
+             '/components/com_jem/views/search/tmpl/alternative',
         );
 
         // delete files

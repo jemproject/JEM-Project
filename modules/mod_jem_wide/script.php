@@ -45,7 +45,7 @@ class mod_jem_wideInstallerScript
                 return false;
             }
         }
-		return true;
+        return true;
     }
 
     /**
@@ -59,7 +59,7 @@ class mod_jem_wideInstallerScript
             return true;
         }
         if ($type === 'update') {            
-			return true;
+            return true;
         }
         if ($type === 'uninstall') {
             return true;

@@ -237,7 +237,7 @@ use Joomla\CMS\Factory;
             $end   = JemOutput::formattime($row->endtimes,'',false);
 
             switch ($multi_mode) {
-            	case 1:
+                case 1:
                     $timetp .= $multi_icon . ' ' . $start . '<br>';
                     break;
                 case 2:
