@@ -753,4 +753,31 @@
             filter="string"
             cols="30" rows="2" />
     </fields>
+
+    <fieldset name="links" addfieldpath="/administrator/components/com_jem/models/links">
+        <field name="link_info" type="text"
+               class="inputbox"
+               size="255"
+               label="COM_JEM_EVENT_LINK_INFO"
+               description="COM_JEM_EVENT_LINK_INFO_DESC"
+        />
+        <field name="link_online" type="text"
+               class="inputbox"
+               size="255"
+               label="COM_JEM_EVENT_LINK_ONLINE"
+               description="COM_JEM_EVENT_LINK_ONLINE_DESC"
+        />
+        <field name="link_request" type="text"
+               class="inputbox"
+               size="255"
+               label="COM_JEM_EVENT_LINK_REQUEST"
+               description="COM_JEM_EVENT_LINK_REQUEST_DESC"
+        />
+        <field name="link_pay" type="text"
+               class="inputbox"
+               size="255"
+               label="COM_JEM_EVENT_LINK_PAY"
+               description="COM_JEM_EVENT_LINK_PAY_DESC"
+        />
+    </fieldset>
 </form>

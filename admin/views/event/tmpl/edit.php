@@ -244,10 +244,12 @@ $params = $params->toArray();
             </fieldset>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
             <?php echo $this->loadTemplate('attachments'); ?>
 
-            <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-settings', Text::_('COM_JEM_EVENT_SETTINGS_TAB')); ?>
             <?php echo $this->loadTemplate('settings'); ?>
