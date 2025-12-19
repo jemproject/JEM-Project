@@ -18,13 +18,10 @@ $showtitloc         = (int) $params->get('showtitloc');
 $linkloc            = (int) $params->get('linkloc');
 $linkdet            = (int) $params->get('linkdet');
 $showiconcountry    = (int) $params->get('showiconcountry');
-
-$moduleClass = htmlspecialchars((string) $params->get('moduleclass_sfx'), ENT_QUOTES, 'UTF-8');
 ?>
 
-<div class="jemmodulebasic<?php echo $moduleClass; ?>">
+<div class="jem_acymailing">
 <?php if (!empty($list)) : ?>
-    <div class="jemmod">
 
 <?php foreach ($list as $item) :
 
@@ -33,19 +30,13 @@ $moduleClass = htmlspecialchars((string) $params->get('moduleclass_sfx'), ENT_QU
     $venue   = htmlspecialchars((string) ($item->venue ?? ''), ENT_QUOTES, 'UTF-8');
     $country = htmlspecialchars((string) ($item->country ?? ''), ENT_QUOTES, 'UTF-8');
 
-    // Datuminfo mit HTML belassen
+    // Leave date information with HTML
     $date    = (string) ($item->dateinfo ?? '');
 
     $eventLink = !empty($item->link) ? htmlspecialchars((string) $item->link, ENT_QUOTES, 'UTF-8') : '';
     $venueLink = !empty($item->venueurl) ? htmlspecialchars((string) $item->venueurl, ENT_QUOTES, 'UTF-8') : '';
 
-    // CSS-Klasse für Titel
-    $titleClass = 'event-title';
-    if ($highlight_featured && !empty($item->featured)) {
-        $titleClass .= ' highlight_featured';
-    }
-
-    // Titel / Location entscheiden
+    // Title / Location
     $mainText = '';
     $mainLink = '';
 
@@ -61,47 +52,41 @@ $moduleClass = htmlspecialchars((string) $params->get('moduleclass_sfx'), ENT_QU
         }
     }
 
-    // Datum-Link entscheiden
+    // Date Link
     $dateLink = ($linkdet === 1) ? $eventLink : '';
 ?>
 
-        <article class="event-item event_id<?php echo (int) $item->eventid; ?>"
-                 itemscope
-                 itemtype="https://schema.org/Event">
+    <div style="margin-bottom:15px;">
+        <p style="font-weight:bold; margin:0;">
+            <?php
+            if ($showiconcountry === 1 && $country !== '') {
+                echo $country . ' ';
+            }
 
-            <span class="<?php echo $titleClass; ?>">
-                <?php
-                if ($showiconcountry === 1 && $country !== '') {
-                    echo $country . ' ';
-                }
+            if ($mainLink !== '') {
+                echo '<a href="' . $mainLink . '" style="text-decoration:none; color:#000;">' . $mainText . '</a>';
+            } else {
+                echo $mainText;
+            }
+            ?>
+        </p>
 
-                if ($mainLink !== '') {
-                    echo '<a href="' . $mainLink . '">' . $mainText . '</a>';
-                } else {
-                    echo $mainText;
-                }
-                ?>
-            </span>
+        <p style="font-size:0.9em; color:#555; margin:2px 0 0 0;">
+            <?php
+            if ($dateLink !== '') {
+                echo '<a href="' . $dateLink . '" style="text-decoration:none; color:#555;">' . $date . '</a>';
+            } else {
+                echo $date;
+            }
+            ?>
+        </p>
 
-            <br />
-
-            <span class="<?php echo $titleClass; ?>" itemprop="startDate">
-                <?php
-                if ($dateLink !== '') {
-                    echo '<a href="' . $dateLink . '">' . $date . '</a>';
-                } else {
-                    echo $date;
-                }
-                ?>
-            </span>
-
-            <hr class="jem-hr" />
-        </article>
+        <div style="border-top:1px solid #ccc; margin:10px 0;"></div>
+    </div>
 
 <?php endforeach; ?>
 
-    </div>
 <?php else : ?>
-    <?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
+    <p><?php echo Text::_('MOD_JEM_NO_EVENTS'); ?></p>
 <?php endif; ?>
 </div>
