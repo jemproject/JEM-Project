@@ -266,6 +266,20 @@ img[src*="icon-48"] {
     height: 48px;
 }
 
+.help-image {
+    width:400px;
+    max-width:100%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 1rem 0 1rem -1rem;
+    border-radius: 2px;
+}
+
+.help-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);   
+}
+
 @media (prefers-color-scheme: dark) {
     body
     {
