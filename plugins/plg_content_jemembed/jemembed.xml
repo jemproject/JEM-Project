@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="content" method="upgrade">
     <name>plg_content_jemembed</name>
-    <creationDate>March 2025</creationDate>
     <author>JEM Community</author>
-    <authorEmail>info@joomlaeventmanager.net</authorEmail>
-    <authorUrl>www.joomlaeventmanager.net</authorUrl>
+    <creationDate>December 2025</creationDate>
     <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.4.0</version>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.4.0-beta1</version>
     <description>PLG_CONTENT_JEMEMBED_XML_DESCRIPTION</description>
 
     <files>
