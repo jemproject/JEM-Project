@@ -10,10 +10,10 @@
         <h2>1. Providing the JEM Events</h2>
         <ol>
             <li>Go to <strong>Site Modules</strong> and create a new module <strong>JEM - Basic Module</strong>.</li>
+            <li>Give the module the title <strong>Acymailing</strong>.<br><img src="../images/01-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
             <li>Select the desired settings for displaying the events.</li>
             <li>Open the <strong>Advanced</strong> tab.</li>
-            <li>Under <strong>Layout</strong>, select <strong>acymailing</strong> from the dropdown list.</li>
-            <li>Give the module the title <strong>Acymailing</strong>.</li>
+            <li>Under <strong>Layout</strong>, select <strong>acymailing</strong> from the dropdown list.<br><img src="../images/02-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
             <li>
                 Save the module. It does <strong>not</strong> need a position assigned and does
                 <strong>not</strong> need to be published.
@@ -22,12 +22,12 @@
         <h2>2. Inserting into Acymailing</h2>
         <ol>
             <li>Open the desired email in edit mode.</li>
-            <li>Under <strong>Blocks</strong>, select the <strong>Module</strong> block.</li>
+            <li>Under <strong>Blocks</strong>, select the <strong>Module</strong> block.<br><img src="../images/03-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
             <li>Drag and drop the block to the desired position in the email.</li>
-            <li>Click on the inserted block and select the <strong>Acymailing</strong> module.</li>
+            <li>Click on the inserted block and select the <strong>Acymailing</strong> module.<br><img src="../images/04-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
             <li>
                 The events will now appear in the email preview according to the settings of the
-                <strong>JEM - Basic Module</strong>.
+                <strong>JEM - Basic Module</strong>.<br><img src="../images/05-acymailing.webp" class="help-image" onclick="openImage(this.src)" />
             </li>
         </ol>
         <blockquote>
@@ -41,5 +41,13 @@
             </li>
             <li>These layouts can then be embedded into Acymailing in the same way.</li>
         </ul>
+    <script>
+function openImage(src) {
+  window.parent.postMessage(
+    { type: "openImage", src: src },
+    "*"
+  );
+}
+</script>
     </body>
 </html>
