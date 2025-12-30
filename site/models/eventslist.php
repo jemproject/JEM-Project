@@ -537,7 +537,7 @@ class JemModelEventslist extends ListModel
         switch ($opendates) {
             case 0: // don't show events without start date
             default:
-                $opendates_query = " OR a.dates IS NOT NULL)";
+                $opendates_query = " AND a.dates IS NOT NULL)";
                 break;
             case 1: // show all events, with or without start date
                 $opendates_query = " OR a.dates IS NULL)";

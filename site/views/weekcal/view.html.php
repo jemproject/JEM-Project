@@ -79,7 +79,18 @@ class JemViewWeekcal extends JemView
         $document->addScript($url.'media/com_jem/js/calendar.js');
 
         $year  = (int)$jinput->getInt('yearID', date("Y"));
+        $month  = (int)$jinput->getInt('monthID', date("m"));
         $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
+
+		// Adjustment of the ISO-8601 week number at the end or beginning of the year.
+		// Case 1: Late December days belonging to Week 1 of the NEXT year.
+		// Case 2: Early January days belonging to Week 52/53 of the PREVIOUS year.
+		
+		if ($month == 12 && $week == 1) {
+		    $year++;
+		} elseif ($month == 1 && $week >= 52) {
+		    $year--;
+		}
 
         // get data from model and set the month
         $model = $this->getModel();
