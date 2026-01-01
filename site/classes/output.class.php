@@ -320,7 +320,8 @@ static public function lightbox() {
     static public function prepareAddEventButton($urlparams = '')
     {
         $uri   = Uri::getInstance();
-        $image = HTMLHelper::_('image', 'com_jem/icon-16-new.webp', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
+        $app   = Factory::getApplication();
+        $image = jemhtml::icon( 'com_jem/submitevent.webp', 'fa fa-fw fa-lg fa-calendar-plus jem-submitbutton', Text::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, !$app->isClient('site'));
         $url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
         if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
             $url .= '&'.$urlparams;
