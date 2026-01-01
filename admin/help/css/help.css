@@ -47,6 +47,9 @@ pre {
     background-color: #fff;
     border-left: 1px solid #aaa;
     padding: 5px;
+	white-space: pre-wrap;
+	word-break: normal;
+	overflow-wrap: normal;
 }
 
 ul {
@@ -132,7 +135,7 @@ table.help tr:nth-child(odd) {background: #f3f3f3}
 
 table.help th {
     padding: 6px 2px 4px 4px;
-    text-align: left;
+    text-align: left !important;
     height: 25px;
     color: #000;
     background-color: #eee;
