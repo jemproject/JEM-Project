@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Map Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright https://leafletjs.com/
  * @copyright https://github.com/brunob/leaflet.fullscreen
  * @copyright https://github.com/Leaflet/Leaflet.heat
