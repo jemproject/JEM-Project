@@ -1,9 +1,9 @@
 <?php
 /**
- * @package JEM
- * @copyright (C) 2013-2025 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -537,7 +537,7 @@ class JemModelEventslist extends ListModel
         switch ($opendates) {
             case 0: // don't show events without start date
             default:
-                $opendates_query = " OR a.dates IS NOT NULL)";
+                $opendates_query = " AND a.dates IS NOT NULL)";
                 break;
             case 1: // show all events, with or without start date
                 $opendates_query = " OR a.dates IS NULL)";

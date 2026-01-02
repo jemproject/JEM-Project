@@ -2,7 +2,7 @@
 /**
  * @package JEM
  * @subpackage JEM Banner Module
- * @copyright (C) 2013-2025 joomlaeventmanager.net
+ * @copyright (C) 2013-2026 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */

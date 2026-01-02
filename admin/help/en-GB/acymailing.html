@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml/" lang="en-GB" xml:lang="en-GB">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title><span>21</span>JEM Events in Acymailing</title>
+        <link href="../css/help.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <h1>Embedding JEM Events in Acymailing</h1>
+        <h2>1. Providing the JEM Events</h2>
+        <ol>
+            <li>Go to <strong>Site Modules</strong> and create a new module <strong>JEM - Basic Module</strong>.</li>
+            <li>Give the module the title <strong>Acymailing</strong>.<br><img src="../images/01-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
+            <li>Select the desired settings for displaying the events.</li>
+            <li>Open the <strong>Advanced</strong> tab.</li>
+            <li>Under <strong>Layout</strong>, select <strong>acymailing</strong> from the dropdown list.<br><img src="../images/02-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
+            <li>
+                Save the module. It does <strong>not</strong> need a position assigned and does
+                <strong>not</strong> need to be published.
+            </li>
+        </ol>
+        <h2>2. Inserting into Acymailing</h2>
+        <ol>
+            <li>Open the desired email in edit mode.</li>
+            <li>Under <strong>Blocks</strong>, select the <strong>Module</strong> block.<br><img src="../images/03-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
+            <li>Drag and drop the block to the desired position in the email.</li>
+            <li>Click on the inserted block and select the <strong>Acymailing</strong> module.<br><img src="../images/04-acymailing.webp" class="help-image" onclick="openImage(this.src)" /></li>
+            <li>
+                The events will now appear in the email preview according to the settings of the
+                <strong>JEM - Basic Module</strong>.<br><img src="../images/05-acymailing.webp" class="help-image" onclick="openImage(this.src)" />
+            </li>
+        </ol>
+        <blockquote>
+            <p>Note: The events will automatically include links to their respective event pages in the email.</p>
+        </blockquote>
+        <h2>3. Layout Customization (Optional)</h2>
+        <ul>
+            <li>
+                For customized or enhanced display (e.g., with event or venue images), custom layouts can be created in
+                JEM modules.
+            </li>
+            <li>These layouts can then be embedded into Acymailing in the same way.</li>
+        </ul>
+    <script>
+function openImage(src) {
+  window.parent.postMessage(
+    { type: "openImage", src: src },
+    "*"
+  );
+}
+</script>
+    </body>
+</html>
