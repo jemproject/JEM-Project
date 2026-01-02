@@ -164,7 +164,7 @@ class PlgContentJemembed extends CMSPlugin
 
     /**
      * AJAX endpoint to retrieve events in JSON format
-     * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_API_TOKEN
+     * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_SECURITY_TOKEN
      * 
      * Optional parameters:
      * - type: today, unfinished, upcoming, ongoing, archived, newest, open, all

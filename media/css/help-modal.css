@@ -1,0 +1,24 @@
+#helpImgModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#helpImgModal img {
+  max-width: 92vw;
+  max-height: 92vh;
+}
+
+#helpModalClose {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  text-shadow: 0 0 12px #000;
+}
