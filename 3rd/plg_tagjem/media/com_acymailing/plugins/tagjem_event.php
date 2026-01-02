@@ -1,8 +1,8 @@
 <?php
 /**
  * @JEM Tag Plugin for AcyMailing 5.x
- * @copyright  Copyright (C) 2014 Thamesmog.
- * @copyright  copyright (C) 2013-2025 joomlaeventmanager.net. All rights reserved.
+ * @copyright  (C) 2014 Thamesmog.
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net. All rights reserved.
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist tag and JEM specific code by JEM Community
  */

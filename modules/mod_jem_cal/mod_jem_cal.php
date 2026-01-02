@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Calendar Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2008 Toni Smillie www.qivva.com
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
