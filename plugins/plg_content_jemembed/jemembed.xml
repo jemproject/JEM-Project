@@ -9,7 +9,6 @@
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
     <version>4.4.0-beta2</version>
     <description>PLG_CONTENT_JEMEMBED_XML_DESCRIPTION</description>
-
     <files>
         <filename plugin="jemembed">jemembed.php</filename>
         <folder>language</folder>
