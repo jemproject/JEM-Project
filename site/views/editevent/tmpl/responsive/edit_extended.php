@@ -177,16 +177,6 @@ use Joomla\CMS\Date\Date;
 </fieldset>
 <!-- RECURRENCE END -->
 <hr />
-<!-- CONTACT START -->
-<fieldset class="panelform"  style="margin:0">
-    <legend><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_CONTACT'); ?></legend>
-    <dl class="jem-dl">
-        <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
-        <dd><?php echo $this->form->getInput('contactid'); ?></dd>
-    </dl>
-</fieldset>
-<!-- CONTACT END -->
-<hr />
 <!-- REGISTRATION START -->
 <fieldset class="" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
