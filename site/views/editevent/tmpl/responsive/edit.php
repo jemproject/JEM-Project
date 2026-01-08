@@ -239,7 +239,8 @@ $params        = $this->params;
                     } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
-
+                    <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
+                    <dd><?php echo $this->form->getInput('contactid'); ?></dd>
                 </dl>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
