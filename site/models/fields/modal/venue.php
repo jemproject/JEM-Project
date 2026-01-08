@@ -96,7 +96,7 @@ class JFormFieldModal_Venue extends FormField
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
             )
         );
-        $html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT').'
+        $html[] ='<button type="button" class="btn btn-success button-select" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT').'
         </button>';
 
         // The active venue id field
