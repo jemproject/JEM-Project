@@ -147,6 +147,10 @@ body.com_jem.body-overlayed {
     height: auto;
 }
 
+#jem .jem-dl dd.time-input {
+	display:flex;
+}
+
 #jem .jem-img {
     text-align: center;
 }
@@ -316,6 +320,10 @@ body.com_jem.body-overlayed {
 #jem #jform_locid_name {
     padding: .6rem 1rem;
     border-color: #ced4da;
+}
+
+#jem .jem-dl dd.time-input select {
+    width: 95px;
 }
 
 #jem form input::-webkit-outer-spin-button,

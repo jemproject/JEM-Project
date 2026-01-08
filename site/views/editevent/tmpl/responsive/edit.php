@@ -226,9 +226,9 @@ $params        = $this->params;
                     <dt><?php echo $this->form->getLabel('enddates'); ?></dt>
                     <dd><?php echo $this->form->getInput('enddates'); ?></dd>
                     <dt><?php echo $this->form->getLabel('times'); ?></dt>
-                    <dd><?php echo $this->form->getInput('times'); ?></dd>
+                    <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
-                    <dd><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
