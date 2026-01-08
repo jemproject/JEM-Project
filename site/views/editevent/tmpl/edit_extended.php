@@ -278,3 +278,4 @@ use Joomla\CMS\Date\Date;
         registraSelect.addEventListener('change', updateOptionalFieldsVisibility);
     });
 </script>
+
