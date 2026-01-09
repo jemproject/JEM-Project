@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
+JemHelper::loadModuleStyleSheet('mod_jem_jubilee','mod_jem_jubilee_responsive');
+
 $datemethod      = (int)$params->get('datemethod', 0);
 $showtime        = (int)$params->get('showtime', 0);
 $showcalendar    = (int)$params->get('showcalendar', 1);
