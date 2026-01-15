@@ -41,13 +41,3 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php endif; ?>
     </fieldset>
 <?php endif; ?>
-
-<!-- URL -->
-<fieldset>
-    <legend><?php echo Text::_('COM_JEM_EDITVENUE_URL_LEGEND'); ?></legend>
-    <ul class="adminformlist">
-        <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
-    </ul>
-</fieldset>
-
-
