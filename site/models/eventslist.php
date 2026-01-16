@@ -590,6 +590,15 @@ class JemModelEventslist extends ListModel
             $query->where($opendates_query);
         }
 
+        #############################
+        ## FILTER - JUBILEE        ##
+        #############################
+        $jubilee_filter = $this->getState('filter.jubilee_date_match');
+
+        if (!empty($jubilee_filter)) {
+            $query->where($jubilee_filter);
+        }
+
         #####################
         ### FILTER - BYCAT ##
         #####################
