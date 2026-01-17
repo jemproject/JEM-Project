@@ -156,6 +156,7 @@ abstract class ModJemJubileeHelper
         $model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
         if (!empty($cal_from)) {
         $model->setState('filter.jubilee_date_match', $cal_from);
+            $model->setState('filter.jubilee_show_past', (int)$params->get('show_past_events', 0));
             }
         $model->setState('filter.groupby', 'a.id');
 
