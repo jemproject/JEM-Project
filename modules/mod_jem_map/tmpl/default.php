@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Map Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright https://leafletjs.com/
  * @copyright https://github.com/brunob/leaflet.fullscreen
  * @copyright https://github.com/Leaflet/Leaflet.heat
@@ -90,7 +90,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                 <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
             </button>
         <?php } ?>
-	    <?php echo HTMLHelper::_('form.token'); ?>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!-- Location help text -->

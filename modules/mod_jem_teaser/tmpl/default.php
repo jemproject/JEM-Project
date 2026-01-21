@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Teaser Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -102,7 +102,7 @@ if ($params->get('use_modal', 0)) {
                                     </div>
                                 <?php endif; ?>
                                 <?php if ($item->time && $params->get('datemethod', 1) == 1) : ?>
-                                    <div class="time" title="<?php echo strip_tags($item->dateinfo); ?>">
+                                    <div class="time" title="<?php echo strip_tags($item->time); ?>">
                                         <small><?php echo $item->time; ?></small>
                                     </div>
                                 <?php endif;

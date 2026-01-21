@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -41,13 +41,3 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php endif; ?>
     </fieldset>
 <?php endif; ?>
-
-<!-- URL -->
-<fieldset>
-    <legend><?php echo Text::_('COM_JEM_EDITVENUE_URL_LEGEND'); ?></legend>
-    <ul class="adminformlist">
-        <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
-    </ul>
-</fieldset>
-
-
