@@ -6,7 +6,7 @@
  * @package    JEM
  * @subpackage JEM Listevents Plugin
  * @author     JEM Team <info@joomlaeventmanager.net>, Luis Raposo
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 

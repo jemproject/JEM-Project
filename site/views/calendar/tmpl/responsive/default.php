@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -237,7 +237,7 @@ use Joomla\CMS\Factory;
             $end   = JemOutput::formattime($row->endtimes,'',false);
 
             switch ($multi_mode) {
-            	case 1:
+                case 1:
                     $timetp .= $multi_icon . ' ' . $start . '<br>';
                     break;
                 case 2:

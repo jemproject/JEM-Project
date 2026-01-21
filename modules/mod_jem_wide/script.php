@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Wide Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -45,7 +45,7 @@ class mod_jem_wideInstallerScript
                 return false;
             }
         }
-		return true;
+        return true;
     }
 
     /**
@@ -59,7 +59,7 @@ class mod_jem_wideInstallerScript
             return true;
         }
         if ($type === 'update') {            
-			return true;
+            return true;
         }
         if ($type === 'uninstall') {
             return true;

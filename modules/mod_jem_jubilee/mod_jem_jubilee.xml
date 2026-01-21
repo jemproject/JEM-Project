@@ -2,12 +2,12 @@
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_jubilee</name>
     <author>JEM Community</author>
-    <creationDate>August 2025</creationDate>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.3.4</version>
+    <version>4.4.0-beta3</version>
     <description>MOD_JEM_JUBILEE_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -65,6 +65,15 @@
                     <option value="1">MOD_JEM_JUBILEE_DATE_MATCH_ON_START</option>
                     <option value="2">MOD_JEM_JUBILEE_DATE_MATCH_ON_END</option>
                     <option value="3">MOD_JEM_JUBILEE_DATE_MATCH_ON_START_OR_END</option>
+                </field>
+                <field name="show_past_events" type="radio" 
+                    default="0"
+                    label="MOD_JEM_JUBILEE_SHOW_PAST_YEAR_EVENTS"
+                    description="MOD_JEM_JUBILEE_SHOW_PAST_YEAR_EVENTS_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
                 </field>
                 <field name="shuffle" type="radio"
                     default="0"

@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Map Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -52,11 +52,11 @@ class ModJemMapHelper
         if ($dateFilterApplied || $categoryFilterApplied) {
             $query->join('INNER', $db->quoteName('#__jem_events', 'e'), 'e.locid = v.id');
 
-	        if ($categoryFilterApplied) {
-	            $catidIn = implode(',', $catids);
-	            $query->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr'), $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'));
-	            $query->where($db->quoteName('cr.catid') . ' IN (' . $catidIn . ')');
-	        }
+            if ($categoryFilterApplied) {
+                $catidIn = implode(',', $catids);
+                $query->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr'), $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'));
+                $query->where($db->quoteName('cr.catid') . ' IN (' . $catidIn . ')');
+            }
 
             $effectiveEventEndDate = 'COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ')';
             $conditions = [];

@@ -2,7 +2,7 @@
 /**
  * @version    4.2.3
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -590,6 +590,7 @@ class com_jemInstallerScript
             '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
             '/components/com_jem/language/en-GB/en-GB.com_jem.ini',
             '/language/en-GB/en-GB.pkg_jem.sys.ini',
+            '/media/com_jem/css/jem-alternative.css',
             '/media/com_jem/images/toolbar/icon-32-adduser.png',
             '/media/com_jem/images/toolbar/icon-32-alert.png',
             '/media/com_jem/images/toolbar/icon-32-apply.png',
@@ -687,6 +688,7 @@ class com_jemInstallerScript
             '/media/com_jem/images/icon-16-recurrence.png',
             '/media/com_jem/images/icon-16-recurrence-first.png',
             '/media/com_jem/images/icon-16-warning.png',
+            '/media/com_jem/images/icon-32-contacts-categories.png',
             '/media/com_jem/images/icon-32-recurrence.png',
             '/media/com_jem/images/icon-32-recurrence-first.png',
             '/media/com_jem/images/icon-32-tableexport.png',
@@ -694,6 +696,8 @@ class com_jemInstallerScript
             '/media/com_jem/images/icon-48-categories.png',
             '/media/com_jem/images/icon-48-categoriesedit.png',
             '/media/com_jem/images/icon-48-cleancategoryimag.png',
+            '/media/com_jem/images/icon-48-cleancategoryimg.png',
+            '/media/com_jem/images/icon-48-cleaneventimg.png',
             '/media/com_jem/images/icon-48-cleanvenueimg.png',
             '/media/com_jem/images/icon-48-cssedit.png',
             '/media/com_jem/images/icon-48-cssmanager.png',
@@ -704,6 +708,7 @@ class com_jemInstallerScript
             '/media/com_jem/images/icon-48-groups.png',
             '/media/com_jem/images/icon-48-help.png',
             '/media/com_jem/images/icon-48-home.png',
+            '/media/com_jem/images/icon-48-housekeeping.png',
             '/media/com_jem/images/icon-48-housekeeing.png',
             '/media/com_jem/images/icon-48-latest-version.png',
             '/media/com_jem/images/icon-48-plugins.png',
@@ -712,6 +717,7 @@ class com_jemInstallerScript
             '/media/com_jem/images/icon-48-tableexport.png',
             '/media/com_jem/images/icon-48-tableimport.png',
             '/media/com_jem/images/icon-48-truncatealldata.png',
+            '/media/com_jem/images/icon-48-unknown-version.png',
             '/media/com_jem/images/icon-48-unknown-versino.png',
             '/media/com_jem/images/icon-48-update.png',
             '/media/com_jem/images/icon-48-users.png',
@@ -722,6 +728,7 @@ class com_jemInstallerScript
             '/media/com_jem/images/jem.png',
             '/media/com_jem/images/jemlogo.png',
             '/media/com_jem/images/loading.png',
+            '/media/com_jem/images/loading.gif',
             '/media/com_jem/images/map_icon.png',
             '/media/com_jem/images/mapsicon.png',
             '/media/com_jem/images/marker.png',
@@ -777,14 +784,14 @@ class com_jemInstallerScript
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
             '/media/com_jem/images/flags/w20-png',
-			'/components/com_jem/common/views/tmpl/alternative',
-			'/components/com_jem/views/attendees/tmpl/alternative',
-			'/components/com_jem/views/categories/tmpl/alternative',
-		    '/components/com_jem/views/day/tmpl/alternative',
-			'/components/com_jem/views/myattendances/tmpl/alternative',			
- 			'/components/com_jem/views/myevents/tmpl/alternative',
- 			'/components/com_jem/views/myvenues/tmpl/alternative',
- 			'/components/com_jem/views/search/tmpl/alternative',
+            '/components/com_jem/common/views/tmpl/alternative',
+            '/components/com_jem/views/attendees/tmpl/alternative',
+            '/components/com_jem/views/categories/tmpl/alternative',
+            '/components/com_jem/views/day/tmpl/alternative',
+            '/components/com_jem/views/myattendances/tmpl/alternative',            
+             '/components/com_jem/views/myevents/tmpl/alternative',
+             '/components/com_jem/views/myvenues/tmpl/alternative',
+             '/components/com_jem/views/search/tmpl/alternative',
         );
 
         // delete files
