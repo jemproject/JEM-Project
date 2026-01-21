@@ -6,7 +6,7 @@
  * @package    JEM
  * @subpackage JEM Embed Plugin
  * @author     JEM Team <info@joomlaeventmanager.net>
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -164,7 +164,7 @@ class PlgContentJemembed extends CMSPlugin
 
     /**
      * AJAX endpoint to retrieve events in JSON format
-     * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_API_TOKEN
+     * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_SECURITY_TOKEN
      * 
      * Optional parameters:
      * - type: today, unfinished, upcoming, ongoing, archived, newest, open, all

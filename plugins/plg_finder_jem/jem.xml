@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="finder" method="upgrade">
-    <name>plg_finder_jem</name>
+    <name>PLG_FINDER_JEM</name>
     <author>JEM Community</author>
-    <creationDate>December 2025</creationDate>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.0-beta1</version>
+    <version>4.4.0-beta3</version>
     <description>PLG_FINDER_JEM_XML_DESCRIPTION</description>
 
     <!-- <scriptfile>script.php</scriptfile> -->

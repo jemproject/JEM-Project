@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Jubilee Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+
+JemHelper::loadModuleStyleSheet('mod_jem_jubilee','mod_jem_jubilee_responsive');
 
 $datemethod      = (int)$params->get('datemethod', 0);
 $showtime        = (int)$params->get('showtime', 0);

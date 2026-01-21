@@ -1,9 +1,9 @@
 <?php
 /**
- * @package JEM
- * @copyright (C) 2013-2025 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -537,7 +537,7 @@ class JemModelEventslist extends ListModel
         switch ($opendates) {
             case 0: // don't show events without start date
             default:
-                $opendates_query = " OR a.dates IS NOT NULL)";
+                $opendates_query = " AND a.dates IS NOT NULL)";
                 break;
             case 1: // show all events, with or without start date
                 $opendates_query = " OR a.dates IS NULL)";
@@ -552,42 +552,59 @@ class JemModelEventslist extends ListModel
         #############################
         $cal_month = $this->getState('filter.filter_month');
         $today     = new Date('now', $app->get('offset'));
+        $jubilee_filter = $this->getState('filter.jubilee_date_match');
+        $jubilee_show_past = $this->getState('filter.jubilee_show_past', 0);
 
         if($opendates != 2) {
-            if ($cal_month) {
-                // Apply Month filter
-                $filter_date_from = $cal_month . '-01';
-                $filter_date_to = date("Y-m-t", strtotime($filter_date_from));
+            // Skip calendar date filtering if Jubilee filter is active AND show_past_events is enabled
+            // The Jubilee module handles its own date matching logic
+            if (empty($jubilee_filter) || !$jubilee_show_past) {
+                if ($cal_month) {
+                    // Apply Month filter
+                    $filter_date_from = $cal_month . '-01';
+                    $filter_date_to = date("Y-m-t", strtotime($filter_date_from));
 
-                // Check if event ENDS after or on the start date
-                $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0 ' . $opendates_query;
-                $query->where($where_from);
-                $this->setState('filter.calendar_from', $where_from);
-
-                // Check if event STARTS before or on the end date
-                $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0' . $opendates_query;
-                $query->where($where_to);
-                $this->setState('filter.calendar_to', $where_to);
-            } else {
-                // Apply menu date filters
-                $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
-                $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
-                if (empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
-                    $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-                    $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($dateFrom) . ') >= 0' . $opendates_query;
+                    // Check if event ENDS after or on the start date
+                    $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0 ' . $opendates_query;
                     $query->where($where_from);
                     $this->setState('filter.calendar_from', $where_from);
-                }
-                if ($filterDaysAfter) {
-                    $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
-                    $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($dateTo) . ') <= 0' . $opendates_query;
+
+                    // Check if event STARTS before or on the end date
+                    $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0' . $opendates_query;
                     $query->where($where_to);
                     $this->setState('filter.calendar_to', $where_to);
+                } else {
+                    // Apply menu date filters
+                    $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
+                    $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
+                    if (empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
+                        $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
+                        $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($dateFrom) . ') >= 0' . $opendates_query;
+                        $query->where($where_from);
+                        $this->setState('filter.calendar_from', $where_from);
+                    }
+                    if ($filterDaysAfter) {
+                        $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
+                        $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($dateTo) . ') <= 0' . $opendates_query;
+                        $query->where($where_to);
+                        $this->setState('filter.calendar_to', $where_to);
+                    }
                 }
             }
         } else {
             // Only open day events
             $query->where($opendates_query);
+        }
+
+        #############################
+        ## FILTER - JUBILEE        ##
+        #############################
+        # Custom filter for Jubilee module to filter events by month/day (ignoring year)
+        # This allows matching events on specific calendar dates across all years
+        # Filter format: SQL WHERE condition using DATE_FORMAT on a.dates and a.enddates
+
+        if (!empty($jubilee_filter)) {
+            $query->where($jubilee_filter);
         }
 
         #####################
