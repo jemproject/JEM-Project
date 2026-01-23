@@ -2,7 +2,7 @@
 /**
  * @package JEM
  * @subpackage JEM Banner Module
- * @copyright (C) 2013-2025 joomlaeventmanager.net
+ * @copyright (C) 2013-2026 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -16,7 +16,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Date\Date;
 
-BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 
 /**
  * Module-Banner

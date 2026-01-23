@@ -10,4 +10,6 @@ ALTER TABLE `#__jem_venues` ADD `color` VARCHAR(7) NOT NULL AFTER `alias`;
 UPDATE `#__jem_config` SET `value` = 'media/com_jem/images/flags/w80-webp/' WHERE `keyname` = 'flagicons_path' AND `value` = 'media/com_jem/images/flags/w20-png/';
 
 -- update values
-
+ALTER TABLE `#__jem_events` MODIFY `author_ip` varchar(45) DEFAULT NULL;
+ALTER TABLE `#__jem_venues` MODIFY `author_ip` varchar(45) NOT NULL DEFAULT '';
+ALTER TABLE `#__jem_register` MODIFY `uip` varchar(45) NOT NULL DEFAULT '';

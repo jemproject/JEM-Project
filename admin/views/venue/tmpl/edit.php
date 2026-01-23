@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -238,9 +238,8 @@ $location = JemHelper::defineCenterMap($this->form);
                             <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
-
+                            <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                         </ul>
                         <div class="clr"></div>
                         <div>

@@ -2,8 +2,8 @@
 <extension type="plugin" group="jem" method="upgrade">
     <name>plg_jem_comments</name>
     <author>JEM Community</author>
-    <creationDate>August 2025</creationDate>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>

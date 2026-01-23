@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Mailer Plugin
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
@@ -104,7 +104,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = 'CAST(a.id AS CHAR)';
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -285,7 +285,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = 'CAST(a.id AS CHAR)';
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -388,7 +388,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = 'CAST(a.id AS CHAR)';
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -558,7 +558,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = 'CAST(a.id AS CHAR)';
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -696,7 +696,7 @@ class plgJemMailer extends CMSPlugin
         $case_when = ' CASE WHEN ';
         $case_when .= $query->charLength('alias');
         $case_when .= ' THEN ';
-        $id = 'CAST(id AS CHAR)';
+        $id = $query->castAs('CHAR', 'id');
         $case_when .= $query->concatenate(array($id, 'alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';

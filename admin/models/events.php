@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -280,7 +280,7 @@ class JemModelEvents extends ListModel
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = 'CAST(c.id AS CHAR)';
+        $id_c = $query->castAs('CHAR', 'c.id');
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';

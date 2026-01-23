@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -54,7 +54,7 @@ use Joomla\CMS\Date\Date;
                         }
 
                         $limitdate = new Date('now +' . $anticipation . 'month');
-                        $limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+                        $limitdate = '<strong>' . JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '') . '</strong>';
                         echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
                         ?></small>
                 </div>
@@ -103,6 +103,7 @@ use Joomla\CMS\Date\Date;
     <?php /* show "old" recurrence settings for information */
     if (!empty($this->item->recurr_bak->recurrence_type)) {
         $recurr_type = '';
+        $recurr_info = '';
         $rlDate = $this->item->recurr_bak->recurrence_limit_date;
         $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
         if (!empty($rlDate)) {
@@ -175,16 +176,6 @@ use Joomla\CMS\Date\Date;
     } ?>
 </fieldset>
 <!-- RECURRENCE END -->
-<hr />
-<!-- CONTACT START -->
-<fieldset class="panelform"  style="margin:0">
-    <legend><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_CONTACT'); ?></legend>
-    <dl class="jem-dl">
-        <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
-        <dd><?php echo $this->form->getInput('contactid'); ?></dd>
-    </dl>
-</fieldset>
-<!-- CONTACT END -->
 <hr />
 <!-- REGISTRATION START -->
 <fieldset class="" style="margin:0">

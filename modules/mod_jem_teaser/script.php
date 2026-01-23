@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Teaser Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -10,76 +10,80 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 /**
- * Script file of JEM Teaser module
- */
+ * Script file of JEM component
+*/
 class mod_jem_teaserInstallerScript
 {
     /**
-     * Module element name
+     * Module name (extension element)
      */
-    private $name = 'mod_jem_teaser';
+    private string $name = 'mod_jem_teaser';
 
-private $oldRelease = "";
-    private $newRelease = "";
+    private string $oldRelease = '';
+    private string $newRelease = '';
 
     /**
-     * Preflight method
-     *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * Run before install/update/uninstall
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
-        // abort if the release being installed is not newer than the currently installed version
-        if (strtolower($type) == 'update') {
-            // Installed component version
-            $this->oldRelease = $this->getParam('version');
+        $type = strtolower($type);
 
-            // Installing component version as per Manifest file
+        if ($type === 'update') {
+
+            // Installed module version (from manifest cache)
+            $this->oldRelease = (string) $this->getParam('version');
+
+            // Version being installed (manifest)
             $this->newRelease = (string) $parent->getManifest()->version;
 
+            // Abort if new version is older
             if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
                 return false;
             }
         }
+        return true;
     }
 
     /**
-     * Postflight method
-     *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * Run after install/update/uninstall
      */
-    function postflight($type, $parent)
+    public function postflight($type, $parent)
     {
-        if (strtolower($type) == 'uninstall') {
+        $type = strtolower($type);
+
+        if ($type === 'install') {
             return true;
         }
-        if (strtolower($type) == 'update' ) {
+        if ($type === 'update') {            
             return true;
         }
-        if (strtolower($type) == 'install' ) {
+        if ($type === 'uninstall') {
             return true;
         }
     }
 
     /**
-     * Get a parameter from the manifest file (actually, from the manifest cache).
-     *
-     * @param $name  The name of the parameter
-     *
-     * @return The parameter
+     * Get a parameter from the manifest cache
      */
-    private function getParam($name)
+    private function getParam(string $name)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
+
+        $query = $db->getQuery(true)
+            ->select('manifest_cache')
+            ->from('#__extensions')
+            ->where([
+                "type = 'module'",
+                "element = " . $db->quote($this->name)
+            ]);
+
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
-        return $manifest[$name];
-    }
 
+        return $manifest[$name] ?? null;
+    }
 }

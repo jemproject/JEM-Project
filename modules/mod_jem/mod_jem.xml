@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
-    <name>mod_jem</name>
+    <name>JEM - Basic Module</name>
     <author>JEM Community</author>
-    <creationDate>August 2025</creationDate>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>

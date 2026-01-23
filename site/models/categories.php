@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -242,7 +242,7 @@ class JemModelCategories extends BaseDatabaseModel
         if ($task == 'archive') {
             $where = ' WHERE a.published = 2 AND rel.catid = '.$id;
         } else {
-            $ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
+            $ispublished = 'a.published = 1 AND a.publish_up >= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
             $where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
         }
 

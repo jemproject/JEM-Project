@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="4.0" client="site" method="upgrade">
-    <name>JEM - Map Module</name>
+    <name>mod_jem_map</name>
     <author>JEM Community</author>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <creationDate>Aug 2025</creationDate>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-    <version>4.4.0</version>
+    <version>5.0.0-alpha</version>
     <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -25,14 +25,16 @@
         <language tag="en-GB">language/en-GB/mod_jem_map.ini</language>
         <language tag="en-GB">language/en-GB/mod_jem_map.sys.ini</language>
     </languages>
-    <help key="Modules" />
+    <help key="Modules"/>
     <config>
         <fields name="params">
-            <fieldset name="basic">
+            <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
                 <field name="map_auto_center" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_AUTO_CENTER"
-                       description="MOD_JEM_MAP_AUTO_CENTER_DESC">
+                       description="MOD_JEM_MAP_AUTO_CENTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
@@ -53,48 +55,86 @@
                 <field name="show_my_location" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
-                       description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC">
+                       description="MOD_JEM_MAP_SHOW_MY_LOCATION_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="show_date_filter" type="radio"
-                       default="0"
-                       label="MOD_JEM_MAP_DATE_FILTER"
-                       description="MOD_JEM_MAP_DATE_FILTER_DESC">
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
+                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
+                </field>
+                <field name="date_filter_default" type="radio"
+                       default="today"
+                       label="MOD_JEM_MAP_DATE_FILTER_DEFAULT"
+                       description="MOD_JEM_MAP_DATE_FILTER_DEFAULT_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="all">MOD_JEM_MAP_ALL</option>
+                    <option value="today">MOD_JEM_MAP_TODAY</option>
+                    <option value="tomorrow">MOD_JEM_MAP_TOMORROW</option>
+                    <option value="week">MOD_JEM_MAP_WEEK</option>
+                    <option value="month">MOD_JEM_MAP_MONTH</option>
+                    <option value="year">MOD_JEM_MAP_YEAR</option>
+                    <option value="date">MOD_JEM_MAP_DATE</option>
                 </field>
                 <field name="full_screen_map" type="radio"
                        default="0"
                        label="MOD_JEM_MAP_FULL_SCREEN"
-                       description="MOD_JEM_MAP_FULL_SCREEN_DESC">
+                       description="MOD_JEM_MAP_FULL_SCREEN_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="heat_layer" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_HEAT_LAYER"
-                       description="MOD_JEM_MAP_HEAT_LAYER_DESC">
+                       description="MOD_JEM_MAP_HEAT_LAYER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="venue_markerfile" type="text"
-                       default="media/com_jem/images/marker-red.png"
+                       default="media/com_jem/images/marker-red.webp"
                        label="MOD_JEM_MAP_VENUE_MARKER"
                        description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
                 <field name="mylocation_markerfile" type="text"
-                       default="media/com_jem/images/marker-blue.png"
+                       default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
-                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC" />
-                <field name="show_date_filter" type="radio" default="1"
+                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC"/>
+                <field name="show_date_filter" type="radio" 
+		       default="1"
                        label="MOD_JEM_MAP_SHOW_DATE_FILTER"
-                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC">
+                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="catid" type="categoryedit"
+                       default=""
+                       multiple="true"
+                       removeroot="true"
+                       label="MOD_JEM_MAP_CATEGORY_ID"
+                       description="MOD_JEM_MAP_CATEGORY_ID_DESC"
+                />
                 <field name="height" type="text" default="500px"
                        label="MOD_JEM_MAP_HEIGHT"
-                       description="MOD_JEM_MAP_HEIGHT_DESC" />
+                       description="MOD_JEM_MAP_HEIGHT_DESC"
+                />
+                <field name="moduleclass_sfx" type="text"
+                       default=""
+                       label="MOD_JEM_MODULE_CLASS_SUFFIX"
+                       description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC"
+                />
             </fieldset>
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"
@@ -107,6 +147,27 @@
                        rows="3"
                        validate="CssIdentifier"
                 />
+                <field name="cache" type="list"
+                       label="MOD_JEM_CACHING"
+                       description="MOD_JEM_CACHING_DESC"
+                       default="1"
+                       filter="integer"
+                       validate="options"
+                >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field name="cache_time" type="number"
+                       label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                       description="MOD_JEM_CACHE_TIME_DESC"
+                       default="900"
+                       filter="integer"
+                />
+                <field name="cachemode" type="hidden"
+                       default="static"
+                >
+                    <option value="static"></option>
+                </field>
             </fieldset>
         </fields>
     </config>

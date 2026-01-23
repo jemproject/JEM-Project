@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Banner Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -120,7 +120,7 @@ $wa->addInlineStyle($css);
 
                     <div class="clr"></div>
 
-                    <?php /* Datum und Zeitangabe:
+                    <?php /* Date and time specification:
                        *  showcalendar 1, datemethod 1 : date inside calendar image + time
                        *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
                        *  showcalendar 0, datemethod 1 : no calendar image, date + time

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -143,8 +143,12 @@ class JemModelCategoryCal extends JemModelEventslist
         // Let parent create a new query object.
         $query = parent::getListQuery();
 
+       // If no contact exists, cn.name will be NULL
+       $query->select('cn.name AS contact_name')
+             ->leftJoin('#__contact_details AS cn ON cn.id = a.contactid');
+
         // here we can extend the query of the Eventslist model
-        $query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
+        $query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
 
         return $query;
     }

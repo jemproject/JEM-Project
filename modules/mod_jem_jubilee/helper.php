@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Jubilee Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -84,6 +84,11 @@ abstract class ModJemJubileeHelper
         if (empty($cur_md)) { // oops...
             return array();
         }
+        
+        # Validate and sanitize $cur_md (should be 4 digits: mmdd)
+        if (!preg_match('/^\d{4}$/', $cur_md)) {
+            return array();
+        }
 
         # count
         $count = min(max($params->get('count', '5'), 1), 100); // range 1..100, default 5
@@ -124,37 +129,35 @@ abstract class ModJemJubileeHelper
             break;
         }
 
-        # filter by day + month
+        # Filter by day + month (ignoring year)
+        # Build SQL condition for matching events on specific calendar dates
         switch ($date_match_mode) {
         case 0: # somewhen from start date to end date
             $cal_from  = " IF(YEAR(IFNULL(a.enddates, a.dates)) > YEAR(a.dates)";
-            $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= $cur_md) OR  ($cur_md <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
-            $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= $cur_md) AND ($cur_md <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
+            $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') OR ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
+            $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') AND ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
             $cal_from .= " ) ";
             break;
         case 1: # on start date
         default:
-            $cal_from  = " (DATE_FORMAT(a.dates, '%m%d') = $cur_md) ";
+            $cal_from  = " (DATE_FORMAT(a.dates, '%m%d') = '$cur_md') ";
             break;
         case 2: # on end date
-            $cal_from  = " (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = $cur_md) ";
+            $cal_from  = " (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = '$cur_md') ";
             break;
         case 3: # on start or end date
-            $cal_from  = " ((DATE_FORMAT(a.dates, '%m%d') = $cur_md) OR ";
-            $cal_from .= "  (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = $cur_md)) ";
+            $cal_from  = " ((DATE_FORMAT(a.dates, '%m%d') = '$cur_md') OR ";
+            $cal_from .= "  (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = '$cur_md')) ";
             break;
         }
-        $cal_to    = false;
 
         $model->setState('filter.opendates', 0);
         $model->setState('filter.published', $published);
         $model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
         if (!empty($cal_from)) {
-            $model->setState('filter.calendar_from', $cal_from);
-        }
-        if (!empty($cal_to)) {
-            $model->setState('filter.calendar_to', $cal_to);
-        }
+        $model->setState('filter.jubilee_date_match', $cal_from);
+            $model->setState('filter.jubilee_show_past', (int)$params->get('show_past_events', 0));
+            }
         $model->setState('filter.groupby', 'a.id');
 
         # clean parameter data
@@ -351,6 +354,7 @@ abstract class ModJemJubileeHelper
         }
         return ($gray <= 160) ? 1 : 0;
     }
+    
     /**
      * Method to get current day repecting local time.
      *

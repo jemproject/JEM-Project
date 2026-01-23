@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -27,7 +27,7 @@ class JemImage
         //require 'path/to/Zebra_Image.php';
 
         // create a new instance of the class
-        $image = new Zebra_Image();
+        $image = new \stefangabos\Zebra_Image\Zebra_Image();
 
         // indicate a source image (a GIF, PNG, JPEG or WEBP file)
         $image->source_path = $name;

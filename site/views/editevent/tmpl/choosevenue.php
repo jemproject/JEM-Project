@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -57,19 +57,19 @@ $function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectVe
 
         <table class="eventtable table table-striped" style="width:100%" summary="jem">
             <thead>
-                <tr>
-                    <th style="width: 7px; text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-                    <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-                    <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-                    <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-                    <th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
-                </tr>
+            <tr>
+                <th style="width: 7px; text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+                <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+                <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+                <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                <th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+            </tr>
             </thead>
             <tbody>
-                <?php if (empty($this->rows)) : ?>
-                    <tr style="text-align: center"><td colspan="0"><?php echo Text::_('COM_JEM_NOVENUES'); ?></td></tr>
-                <?php else :?>
-                    <?php foreach ($this->rows as $i => $row) : ?>
+            <?php if (empty($this->rows)) : ?>
+                <tr style="text-align: center"><td colspan="0"><?php echo Text::_('COM_JEM_NOVENUES'); ?></td></tr>
+            <?php else :?>
+                <?php foreach ($this->rows as $i => $row) : ?>
                     <tr class="row<?php echo $i % 2; ?>">
                         <td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
                         <td style="text-align: left;">
@@ -79,18 +79,18 @@ $function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectVe
                         <td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
                         <td style="text-align: left;"><?php echo !empty($row->country) ? $this->escape($row->country) : ''; ?></td>
                     </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
             </tbody>
         </table>
 
         <p>
-        <input type="hidden" name="task" value="selectvenue" />
-        <input type="hidden" name="option" value="com_jem" />
-        <input type="hidden" name="tmpl" value="component" />
-        <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
-        <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+            <input type="hidden" name="task" value="selectvenue" />
+            <input type="hidden" name="option" value="com_jem" />
+            <input type="hidden" name="tmpl" value="component" />
+            <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
+            <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+            <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         </p>
     </form>
 

@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -145,6 +145,10 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dd .venue_country_flag {
     width: 20px;
     height: auto;
+}
+
+#jem .jem-dl dd.time-input {
+	display:flex;
 }
 
 #jem .jem-img {
@@ -313,9 +317,14 @@ body.com_jem.body-overlayed {
 #jem #startminutes,
 #jem #endhours,
 #jem #endminutes,
-#jem #jform_locid_name {
+#jem #jform_locid_name,
+#jem #jform_contactid_name {
     padding: .6rem 1rem;
     border-color: #ced4da;
+}
+
+#jem .jem-dl dd.time-input select {
+    width: 95px;
 }
 
 #jem form input::-webkit-outer-spin-button,
@@ -381,6 +390,15 @@ body.com_jem.body-overlayed {
 #jem .jem-list-row {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+
+#jem .jem-list-column {
+    display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: flex-start;
 }
@@ -657,11 +675,11 @@ body.com_jem.body-overlayed {
         }
 
         #jem .jem-sort-small .jem-small-list div {
-            flex-basis: 30%;
+            flex-basis: 10%;
         }
 
         #jem .jem-event-info-small {
-            flex-basis: 100% !important;
+            flex-basis: 10% !important;
         }
     }
 }
@@ -719,3 +737,6 @@ body.com_jem.body-overlayed {
     background-color: #ffffff;
 }
 
+#jem .jem-event-intro {
+    width: 100%;
+}

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -224,7 +224,7 @@ $params        = $this->params;
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
-
+                    <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
                 </ul>
             </fieldset>
             <!-- EVENTDESCRIPTION -->

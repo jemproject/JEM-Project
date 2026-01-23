@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -119,7 +119,7 @@ class JemModelVenueslist extends ListModel
         $case_when_l = ' CASE WHEN ';
         $case_when_l .= $query->charLength('a.alias','!=', '0');
         $case_when_l .= ' THEN ';
-        $id_l = 'CAST(a.id AS CHAR)';
+        $id_l = $query->castAs('CHAR', 'a.id');
         $case_when_l .= $query->concatenate(array($id_l, 'a.alias'), ':');
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';

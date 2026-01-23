@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Finder Plugin
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -357,7 +357,7 @@ class plgFinderJEM extends Adapter
         $case_when_item_alias = ' CASE WHEN ';
         $case_when_item_alias .= $sql->charLength('a.alias');
         $case_when_item_alias .= ' THEN ';
-        $a_id                 = 'CAST(a.id AS CHAR)';
+        $a_id                 = $sql->castAs('CHAR', 'a.id');
         $case_when_item_alias .= $sql->concatenate(array($a_id, 'a.alias'), ':');
         $case_when_item_alias .= ' ELSE ';
         $case_when_item_alias .= $a_id . ' END as slug';
@@ -366,7 +366,7 @@ class plgFinderJEM extends Adapter
         $case_when_category_alias = ' CASE WHEN ';
         $case_when_category_alias .= $sql->charLength('c.alias');
         $case_when_category_alias .= ' THEN ';
-        $c_id                     = 'CAST(c.id AS CHAR)';
+        $c_id                     = $sql->castAs('CHAR', 'c.id');
         $case_when_category_alias .= $sql->concatenate(array($c_id, 'c.alias'), ':');
         $case_when_category_alias .= ' ELSE ';
         $case_when_category_alias .= $c_id . ' END as catslug';
@@ -375,7 +375,7 @@ class plgFinderJEM extends Adapter
         $case_when_venue_alias = ' CASE WHEN ';
         $case_when_venue_alias .= $sql->charLength('l.alias');
         $case_when_venue_alias .= ' THEN ';
-        $l_id                  = 'CAST(l.id AS CHAR)';
+        $l_id                  = $sql->castAs('CHAR', 'l.id');
         $case_when_venue_alias .= $sql->concatenate(array($l_id, 'l.alias'), ':');
         $case_when_venue_alias .= ' ELSE ';
         $case_when_venue_alias .= $l_id . ' END as venueslug';

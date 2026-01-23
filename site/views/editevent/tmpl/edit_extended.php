@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -49,7 +49,7 @@ use Joomla\CMS\Date\Date;
                     }
 
                     $limitdate = new Date('now +' . $anticipation . 'month');
-                    $limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+                    $limitdate = '<strong>' . JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '') . '</strong>';
                     echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
                     ?></small></div>
         </li>
@@ -194,14 +194,6 @@ use Joomla\CMS\Date\Date;
 </fieldset>
 
 <!-- RECURRENCE END -->
-<!-- CONTACT START -->
-<fieldset class="adminform">
-    <legend><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></legend>
-    <ul class="adminformlist">
-        <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
-    </ul>
-</fieldset>
-<!-- CONTACT END -->
 
 <!-- REGISTRATION START -->
 <fieldset class="panelform">
@@ -286,3 +278,4 @@ use Joomla\CMS\Date\Date;
         registraSelect.addEventListener('change', updateOptionalFieldsVisibility);
     });
 </script>
+

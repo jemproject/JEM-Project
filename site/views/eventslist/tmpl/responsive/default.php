@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -12,6 +12,10 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx; ?>">
     <div class="buttons">
         <?php
+
+        if (!$this->task) {
+            $this->task = ($this->params->get('show_archived_events') ? 'archive' : '');
+        }
         $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
@@ -53,11 +57,13 @@ defined('_JEXEC') or die;
         echo $this->task; ?>"/>
         <input type="hidden" name="view" value="eventslist"/>
     </form>
-
-    <div class="pagination">
-        <?php
-        echo $this->pagination->getPagesLinks(); ?>
-    </div>
+    
+    <?php if (!$this->params->get('show_more_button', 1)) : ?>
+        <div class="pagination">
+            <?php
+            echo $this->pagination->getPagesLinks(); ?>
+        </div>
+    <?php endif; ?>
 
     <hr class="jem-hr" style="display: none;"/>
 

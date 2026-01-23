@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml/" lang="en-GB" xml:lang="en-GB">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title><span>22</span>JEM Embed Plugin</title>
+        <link href="../css/help.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <h1>How to use the JEM Embed Plugin</h1>
+        <h2>1. What does this plugin do?</h2>
+        <p>
+            The <strong>JEM Embed</strong> plugin allows you to get JEM events as structured data (JSON).
+            This makes it possible to show JEM events on other websites that are not running Joomla.
+        </p>
+        <p>
+            The data from the events are provided through a special URL.
+            By adding parameters to this URL, you can control which events are returned and how they are displayed.
+        </p>
+        <p>
+            To configure the output from the source site see on this help page section 2–6, to embed the events on an other web site, see section 7.
+        </p>
+        <hr />
+        <h2>2. Basic Usage</h2>
+        <p>
+            JEM Embed works by calling a special Joomla URL.
+            When you open this URL, Joomla returns a list of events instead of a normal webpage.
+        </p>
+        <p><strong>The base URL (mandatory):</strong></p>
+        <pre>
+https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=content<wbr>&format=json
+</pre>
+        <p>
+            You can add more parameters to this URL to filter events or change the output.
+        </p>
+        <hr />
+        <h2>3. Example with Parameters</h2>
+        To the base URL can be added: 1) the security token (see section 4), 2) various optional paramters (see section 5).
+        <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=content<wbr>&format=json
+&token=YOUR_SECURITY_TOKEN 
+&max=10
+&venueids=1,2
+&category=2,3,5</pre>
+results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=content<wbr>&format=json<wbr><strong>&token=YOUR_SECURITY_TOKEN</strong><wbr><strong>&max=10</strong><wbr><strong>&venueids=1,2</strong><wbr><strong>&category=2,3,5</strong>
+</pre>
+        <p>
+            When multiple parameters are used, only events that match <strong>all</strong> conditions will be returned.
+        </p>
+        <hr />
+        <h2>4. Security Token</h2>
+        <p>
+            To protect your data, access to the events is secured with a token.
+        </p>
+        <ul>
+            <li>The token is defined in the plugin settings.</li>
+            <li>Every request must include this token.</li>
+        </ul>
+        <pre>
+&token=YOUR_SECURITY_TOKEN
+</pre>
+        <p>
+            Requests without a valid token will not work.
+        </p>
+        <hr />
+        <h2>5. URL Parameters</h2>
+        <h3>5.1 Which events should be returned?</h3>
+        <table class="help">
+            <tr>
+                <th>Parameter</th>
+                <th>Meaning</th>
+            </tr>
+            <tr>
+                <td><code>type=today</code></td>
+                <td>Events happening today</td>
+            </tr>
+            <tr>
+                <td><code>type=unfinished</code></td>
+                <td>Ongoing and upcoming events</td>
+            </tr>
+            <tr>
+                <td><code>type=upcoming</code></td>
+                <td>Only future events</td>
+            </tr>
+            <tr>
+                <td><code>type=archived</code></td>
+                <td>Past (archived) events</td>
+            </tr>
+            <tr>
+                <td><code>type=newest</code></td>
+                <td>Newest events</td>
+            </tr>
+            <tr>
+                <td><code>featured=on</code></td>
+                <td>Only featured events</td>
+            </tr>
+            <tr>
+                <td><code>featured=off</code></td>
+                <td>Exclude featured events</td>
+            </tr>
+            <tr>
+                <td><code>featured=only</code></td>
+                <td>Show only featured events</td>
+            </tr>
+        </table>
+        <h3>5.2 What information should be shown?</h3>
+        <table class="help">
+            <tr>
+                <th>Parameter</th>
+                <th>Options</th>
+            </tr>
+            <tr>
+                <td><code>title</code></td>
+                <td><code>on | link | off</code></td>
+            </tr>
+            <tr>
+                <td><code>date</code></td>
+                <td><code>on | link | off</code></td>
+            </tr>
+            <tr>
+                <td><code>time</code></td>
+                <td><code>on | off</code></td>
+            </tr>
+            <tr>
+                <td><code>enddatetime</code></td>
+                <td><code>on | off</code></td>
+            </tr>
+            <tr>
+                <td><code>category</code></td>
+                <td><code>on | link | off</code></td>
+            </tr>
+            <tr>
+                <td><code>venue</code></td>
+                <td><code>on | link | off</code></td>
+            </tr>
+        </table>
+        <h3>5.3 Filter by category or venue</h3>
+        <table class="help">
+            <tr>
+                <th>Parameter</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>catids=1,2,3</code></td>
+                <td>Only events from these categories</td>
+            </tr>
+            <tr>
+                <td><code>venueids=1,2</code></td>
+                <td>Only events from these venues</td>
+            </tr>
+        </table>
+        <h3>5.4 Limits and text options</h3>
+        <table class="help">
+            <tr>
+                <th>Parameter</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>max=n</code></td>
+                <td>Maximum number of events</td>
+            </tr>
+            <tr>
+                <td><code>cuttitle=n</code></td>
+                <td>Maximum length of the event title</td>
+            </tr>
+            <tr>
+                <td><code>noeventsmsg=text</code></td>
+                <td>Message shown if no events are found</td>
+            </tr>
+        </table>
+        <hr />
+        <h2>6. Parameter Notes</h2>
+        <ul>
+            <li><code>n</code> must be a positive number</li>
+            <li><code>|</code> means you can choose one option</li>
+            <li>Do not use spaces in comma-separated lists</li>
+        </ul>
+        <hr />
+        <h2>7. Showing events on another website</h2>
+        <h3>Step 1: Download the files</h3>
+        <p>
+            Download and extract <a href="/media/plg_content_jemembed/files/jemevents.zip">jemevents.zip</a>
+        </p>
+        <p>
+            It contains:
+        </p>
+        <ul>
+            <li><code>jemevents.php</code></li>
+            <li><code>jemevents.js</code></li>
+            <li><code>jemevents-example.html</code> (test page)</li>
+            <li><code>readme.txt</code></li>
+        </ul>
+        <h3>Step 2: Upload the files</h3>
+        <p>
+            Upload these files to the external website:
+        </p>
+        <ul>
+            <li><code>jemevents.php</code></li>
+            <li><code>jemevents.js</code></li>
+        </ul>
+        <h3>Step 3: Configure jemevents.php</h3>
+        <p>
+            Open <code>jemevents.php</code> and set:
+        </p>
+        <ul>
+            <li>The URL of your Joomla website</li>
+            <li>Your API token</li>
+            <li>Default parameters if needed</li>
+        </ul>
+        <h3>Step 4: Include the JavaScript file</h3>
+        <p>
+            Add this line before <code>&lt;/body&gt;</code>:
+        </p>
+        <pre>
+&lt;script src="/jemevents.js"&gt;&lt;/script&gt;
+</pre>
+        <h3>Step 5: Add the event container</h3>
+        <p>
+            Place this where the events should appear:
+        </p>
+        <pre>
+&lt;div id="jemevents-container"&gt;&lt;/div&gt;
+</pre>
+        <p>
+            The events will be loaded automatically.
+        </p>
+        <hr />
+        <h2>8. Final Notes</h2>
+        <ul>
+            <li>The event data can also be used by other software or scripts.</li>
+            <li>Design and styling are handled by the external website.</li>
+            <li>The example files are meant as a starting point.</li>
+        </ul>
+        <script>
+            function openImage(src) {
+            	window.parent.postMessage({ type: "openImage", src: src }, "*");
+            }
+        </script>
+    </body>
+</html>

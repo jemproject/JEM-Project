@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Calendar Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -16,13 +16,15 @@ use Joomla\CMS\Date\Date;
 $mod_name = 'mod_jem_map';
 
 require_once __DIR__ . '/helper.php';
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
-# Create JEM's file logger (for debug)
-JemHelper::addFileLogger();
+$app = Factory::getApplication();
+$wa = $app->getDocument()->getWebAssetManager();
+$wa->registerAndUseStyle('user-stylesheet', Uri::base() . "modules/mod_jem_map/tmpl/mod_jem_map.css");
 
 # Parameters
-$venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.png');
-$mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.png');
+$venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
+$mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.webp');
 
 $venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
 $mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
@@ -30,9 +32,9 @@ $mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/')
 $height = $params->get('height', '500px');
 $zoom = (int) $params->get('zoom', 8);
 $showDateFilter = (int) $params->get('show_date_filter', 0);
+$dateFilterDefault = $params->get('date_filter_default', 'today');
 
 // Filter from request (only if backend option is enabled)
-$app = Factory::getApplication();
 $filterMode = 'all';
 $filterDate = null;
 $selectedDate = '';
@@ -41,7 +43,7 @@ $filterStartDate = null;
 $filterEndDate   = null;
 
 if ($showDateFilter) {
-    $filterMode  = $app->input->get('jem_map_filter_mode', 'all', 'string');
+    $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');
     $filterDate = $app->input->get('jem_map_filter_date', '', 'string');
 
     if ($filterMode == 'date' && $filterDate === null) {

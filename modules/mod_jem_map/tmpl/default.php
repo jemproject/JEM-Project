@@ -1,8 +1,8 @@
 <?php
 /**
  * @package    JEM
- * @subpackage JEM Calendar Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @subpackage JEM Map Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright https://leafletjs.com/
  * @copyright https://github.com/brunob/leaflet.fullscreen
  * @copyright https://github.com/Leaflet/Leaflet.heat
@@ -14,6 +14,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
+//require needed component classes
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
@@ -21,7 +25,6 @@ $wa          = $document->getWebAssetManager();
 
 $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
 $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
-
 $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
 $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
 $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
@@ -45,13 +48,13 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
         <?php
         $options = [
-                'all'      => 'MOD_JEM_MAP_ALL',
-                'today'    => 'MOD_JEM_MAP_TODAY',
-                'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
-                'week'     => 'MOD_JEM_MAP_WEEK',
-                'month'    => 'MOD_JEM_MAP_MONTH',
-                'year'     => 'MOD_JEM_MAP_YEAR',
-                'date'     => 'MOD_JEM_MAP_DATE'
+            'all'      => 'MOD_JEM_MAP_ALL',
+            'today'    => 'MOD_JEM_MAP_TODAY',
+            'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
+            'week'     => 'MOD_JEM_MAP_WEEK',
+            'month'    => 'MOD_JEM_MAP_MONTH',
+            'year'     => 'MOD_JEM_MAP_YEAR',
+            'date'     => 'MOD_JEM_MAP_DATE'
         ];
 
         foreach ($options as $value => $label) {
@@ -60,12 +63,12 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             ?>
             <?php if ($isDateField) { ?>
                 <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                    <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
+                    <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
                            id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 6px;" for="filter-<?= $value ?>">
+                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
                         <?= Text::_($label) ?>
                     </label>
-                    <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                    <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
                            class="form-control form-control-sm" style="width: auto;">
                 </div>
             <?php } else { ?>
@@ -87,6 +90,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                 <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
             </button>
         <?php } ?>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!-- Location help text -->
@@ -244,7 +248,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                             iconSize: [32, 32],
                             iconAnchor: [16, 32],
                             popupAnchor: [0, -32],
-                            shadowUrl: "media/com_jem/images/marker-shadow.png",
+                            shadowUrl: "media/com_jem/images/marker-shadow.webp",
                             shadowSize: [32, 32],
                             shadowAnchor: [16, 32]
                         })

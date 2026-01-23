@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="content" method="upgrade">
-	<name>plg_content_jemembed</name>
-	<creationDate>March 2025</creationDate>
-	<author>JEM Community</author>
-	<authorEmail>info@joomlaeventmanager.net</authorEmail>
-	<authorUrl>www.joomlaeventmanager.net</authorUrl>
-	<copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
-	<license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
-	<version>4.3.2</version>
-	<description>PLG_CONTENT_JEMEMBED_XML_INSTRUCTION</description>
-    
+    <name>plg_content_jemembed</name>
+    <author>JEM Community</author>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>5.0.0-alpha</version>
+    <description>PLG_CONTENT_JEMEMBED_XML_DESCRIPTION</description>
     <files>
         <filename plugin="jemembed">jemembed.php</filename>
         <folder>language</folder>
     </files>
-    
+
     <media destination="plg_content_jemembed" folder="media">
         <folder>files</folder>
     </media>
-    
-	<languages>
+
+    <languages>
         <language tag="en-GB">language/en-GB/plg_content_jemembed.ini</language>
         <language tag="en-GB">language/en-GB/plg_content_jemembed.sys.ini</language>
     </languages>
-    
+
     <config>
         <fields name="params">
             <fieldset name="basic">
@@ -31,7 +30,7 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                
+
                 <field name="api_tokens" type="textarea" label="PLG_CONTENT_JEMEMBED_API_TOKENS_LABEL" description="PLG_CONTENT_JEMEMBED_API_TOKENS_DESC" rows="5" cols="30" />
             </fieldset>
         </fields>

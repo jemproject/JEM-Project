@@ -6,7 +6,7 @@
  * @package    JEM
  * @subpackage JEM Embed Plugin
  * @author     JEM Team <info@joomlaeventmanager.net>
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -51,14 +51,14 @@ class PlgContentJemembed extends CMSPlugin
 
     /** all valid token values */
     protected static $tokenValues = array(
-        'type'        => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
-        'featured'    => array('on', 'off'),
-        'title'       => array('on', 'link', 'off'),
-        'date'        => array('on', 'link', 'off'),
-        'time'        => array('on', 'off'),
-        'enddatetime' => array('on', 'off'),
-        'category'    => array('on', 'link', 'off'),
-        'venue'       => array('on', 'link', 'off'),
+        'type'          => array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
+        'featured'      => array('on', 'off'),
+        'title'         => array('on', 'link', 'off'),
+        'date'          => array('on', 'link', 'off'),
+        'time'          => array('on', 'off'),
+        'enddatetime'   => array('on', 'off'),
+        'category'      => array('on', 'link', 'off'),
+        'venue'         => array('on', 'link', 'off'),
     );
 
     /**
@@ -96,10 +96,10 @@ class PlgContentJemembed extends CMSPlugin
         
         $tokensList = array_filter(array_map('trim', explode(',', (string) $allowedTokens)));
 
-		// Nur prüfen, wenn wirklich Tokens vorhanden sind
-		if (!empty($tokensList) && in_array($token, $tokensList, true)) {
-    		return true;
-		}
+        // Only check if tokens are actually present
+        if (!empty($tokensList) && in_array($token, $tokensList, true)) {
+            return true;
+        }
         return false;
     }
 
@@ -158,13 +158,13 @@ class PlgContentJemembed extends CMSPlugin
     protected function getSiteDomain()
     {
         $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-                   $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+                      $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         return rtrim($protocol . $_SERVER['HTTP_HOST'], '/');
     }
 
     /**
      * AJAX endpoint to retrieve events in JSON format
-     * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_API_TOKEN
+     * Can be accessed via: index.php?option=com_ajax&plugin=jemembed&group=content&format=json&token=YOUR_SECURITY_TOKEN
      * 
      * Optional parameters:
      * - type: today, unfinished, upcoming, ongoing, archived, newest, open, all
@@ -401,10 +401,10 @@ class PlgContentJemembed extends CMSPlugin
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $where = ' DATEDIFF (a.dates, "'. $to_date .'") = 0';
-                    $model->setState('filter.calendar_to',$where);
+                    $model->setState('filter.calendar_to', $where);
                     break;
                 default:
-                case 'unfinished': // All upcoming events, incl. today.
+                case 'unfinished': // All upcoming events, incl. today. (Default filter)
                     $to_date = date('Y-m-d H:i:s', $timestamp);
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
@@ -426,23 +426,23 @@ class PlgContentJemembed extends CMSPlugin
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $full_start_datetime = 'CONCAT(a.dates, " ", COALESCE(a.times, "00:00:00"))';
                     $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
-                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';        
+                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';
                     $model->setState('filter.calendar_to', $where);
                     break;
                 case 'archived': // Archived events only.
                     $model->setState('filter.published', 2);
                     $model->setState('filter.orderby', array('a.dates DESC', 'a.times DESC'));
                     break;
-                case 'newest': //newest events = events with the highest IDs
+                case 'newest': // Newest events = events with the highest IDs.
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.id DESC'));
                     break;
-                case 'open': //open events = events with no start and enddate
+                case 'open': // Open events = events with no start and end date.
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.id DESC'));
                     $model->setState('filter.opendates', 2);
                     break;
-                case 'all': //all events
+                case 'all': // All events.
                     $model->setState('filter.published', array(1, 2));
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $model->setState('filter.opendates', 1);

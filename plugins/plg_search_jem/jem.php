@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Search Plugin
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -154,7 +154,7 @@ class plgSearchJEM extends CMSPlugin
             $case_when = ' CASE WHEN ';
             $case_when .= $query->charLength('a.alias');
             $case_when .= ' THEN ';
-            $a_id      = 'CAST(a.id AS CHAR)';
+            $a_id      = $query->castAs('CHAR', 'a.id');
             $case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
             $case_when .= ' ELSE ';
             $case_when .= $a_id . ' END as slug';
@@ -162,7 +162,7 @@ class plgSearchJEM extends CMSPlugin
             $case_when1 = ' CASE WHEN ';
             $case_when1 .= $query->charLength('c.alias');
             $case_when1 .= ' THEN ';
-            $c_id       = 'CAST(c.id AS CHAR)';
+            $c_id       = $query->castAs('CHAR', 'c.id');
             $case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
             $case_when1 .= ' ELSE ';
             $case_when1 .= $c_id . ' END as catslug';
