@@ -216,8 +216,7 @@ class JemModelSettings extends AdminModel
             'plg_content_jem', 'plg_content_jemlistevents',
             'plg_finder_jem', 'plg_search_jem',
             'plg_quickicon_jem', 'Quick Icon - JEM',
-            'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
-            'AcyMailing Tag : insert events from JEM 2.1+'
+            'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo'
         ];
 
         foreach ($extensions as $name => $extension) {

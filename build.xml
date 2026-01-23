@@ -79,7 +79,6 @@
 
     <target name="build_3rd" description="packages any 3rd party plugins">
         <!-- add all 3rd party plugins directories here -->
-        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}" />
         <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending" />
         <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents" />
         <zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/" />
