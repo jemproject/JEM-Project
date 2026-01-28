@@ -154,6 +154,7 @@
                     label="JFIELD_ALT_LAYOUT_LABEL"
                     class="form-select"
                     validate="moduleLayout"
+		    default="_:default"
                 />
                 <field
                     name="moduleclass_sfx"
