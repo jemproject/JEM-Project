@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.0-beta3</version>
+    <version>4.4.0-beta4</version>
     <description>This plugin will show events where the user is attending.</description>
     <files>
         <filename plugin="jemmyattending_cb">jemmyattending_cb.php</filename>
