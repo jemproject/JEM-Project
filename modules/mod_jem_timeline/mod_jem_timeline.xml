@@ -2,26 +2,280 @@
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_timeline</name>
     <author>JEM Community</author>
-    <version>1.0.0</version>
-    <description>JEM Timeline Module</description>
+    <creationDate>January 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.4.0-beta3</version>
+    <description>MOD_JEM_TIMELINE_XML_DESCRIPTION</description>
+
+    <scriptfile>script.php</scriptfile>
+
     <files>
         <filename module="mod_jem_timeline">mod_jem_timeline.php</filename>
         <filename>helper.php</filename>
+        <filename>script.php</filename>
+        <filename>index.html</filename>
         <folder>tmpl</folder>
+        <folder>language</folder>
     </files>
+    <help key="Modules" />
     <config>
         <fields name="params">
-            <fieldset name="basic">
-                <field name="count" type="text" default="10" label="Number of Events"/>
-                <field name="catid" type="text" default="" label="Filter Categories"/>
-                <field name="venid" type="text" default="" label="Filter Venues"/>
-                <field name="show_no_events" type="radio" default="1" label="Show if empty">
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
+            <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+                <field name="type" type="list"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_UPCOMING_ARCHIVED_OR_CURRENT"
+                    description="MOD_JEM_TIMELINE_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
+                >
+                    <option value="0">MOD_JEM_TIMELINE_UPCOMING_EVENTS</option>
+                    <option value="1">MOD_JEM_TIMELINE_UNFINISHED_EVENTS</option>
+                    <option value="2">MOD_JEM_TIMELINE_ARCHIVED_EVENTS</option>
+                    <option value="3">MOD_JEM_TIMELINE_CURRENT_EVENTS</option>
+                    <option value="5">MOD_JEM_TIMELINE_OPENDATE_EVENTS</option>
                 </field>
-                <field name="order" type="list" default="asc" label="Startpunkt">
-                    <option value="asc">MOD_JEM_TIMELINE_OLDEST_FIRST</option>
-                    <option value="desc">MOD_JEM_TIMELINE_NEWEST_FIRST</option>
+                <field name="count" type="text"
+                    default="5"
+                    label="MOD_JEM_TIMELINE_EVENTS_IN_MODULE"
+                    description="MOD_JEM_TIMELINE_EVENTS_IN_MODULE_DESC"
+                />
+                <field name="show_no_events" type="radio"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_SHOW_NO_EVENTS"
+                    description="MOD_JEM_TIMELINE_SHOW_NO_EVENTS_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="max_days" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_MAX_DAYS"
+                    description="MOD_JEM_TIMELINE_MAX_DAYS_DESC"
+                />
+                <field name="offset_hours" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_OFFSET_HOURS"
+                    description="MOD_JEM_TIMELINE_OFFSET_HOURS_DESC"
+                />
+                <field name="cuttitle" type="text"
+                    default="25"
+                    label="MOD_JEM_TIMELINE_MAX_TITLE_LENGTH"
+                    description="MOD_JEM_TIMELINE_MAX_TITLE_LENGTH_DESC"
+                />
+                <field name="linkevent" type="radio"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_LINK_TO_DETAILS"
+                    description="MOD_JEM_TIMELINE_LINK_TO_DETAILS_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="imagewidthmax" type="text"
+                       class="inputbox"
+                       default=""
+                       size="8"
+                       label="MOD_JEM_TIMELINE_IMAGE_WIDTH_MAX"
+                       description="MOD_JEM_TIMELINE_IMAGE_WIDTH_MAX_DESC"
+                />
+                <field name="showflyer" type="radio"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_SHOWFLYER"
+                    description="MOD_JEM_TIMELINE_SHOWFLYER_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="flyer_link_type" type="list"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_FLYER_LINKS_TO"
+                    description="MOD_JEM_TIMELINE_FLYER_LINKS_TO_DESC"
+                >
+                    <option value="0">MOD_JEM_TIMELINE_FLYER_LINK_IMAGE_PAGE</option>
+                    <option value="1">MOD_JEM_TIMELINE_FLYER_LINK_IMAGE_MODAL</option>
+                    <option value="2">MOD_JEM_TIMELINE_FLYER_LINK_EVENT_DETAILS</option>
+                    <option value="3">COM_JEM_NO_LINK</option>
+                </field>
+
+                <field name="showdesc" type="radio"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_SHOWDESC"
+                    description="MOD_JEM_TIMELINE_SHOWDESC_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="descriptionlength" type="text"
+                    default="300"
+                    label="MOD_JEM_TIMELINE_MAX_DESCRIPTION_LENGTH"
+                    description="MOD_JEM_TIMELINE_MAX_DESCRIPTION_LENGTH_DESC"
+                />
+                <field name="br" type="radio"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_ALLOW_LINEBREAK"
+                    description="MOD_JEM_TIMELINE_ALLOW_LINEBREAK_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="readmore" type="radio"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_FIELD_READMORE_LABEL"
+                    description="MOD_JEM_TIMELINE_FIELD_READMORE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="datemethod" type="list"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_SHOW_DATE_OR_DAY_DIFFERENCE"
+                    description="MOD_JEM_TIMELINE_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
+                >
+                    <option value="1">MOD_JEM_TIMELINE_SHOW_DATE</option>
+                    <option value="2">MOD_JEM_TIMELINE_SHOW_DAY_DIFFERENCE</option>
+                </field>
+                <field name="formatdate" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_DATE_FORMAT"
+                    description="MOD_JEM_TIMELINE_DATE_FORMAT_DESC"
+                />
+                <field name="formattime" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_TIME_FORMAT"
+                    description="MOD_JEM_TIMELINE_TIME_FORMAT_DESC"
+                />
+                <field name="showcategory" type="radio"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_SHOWCATEGORY"
+                    description="MOD_JEM_TIMELINE_SHOWCATEGORY_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="linkcategory" type="radio"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_LINK_TO_CATEGORY"
+                    description="MOD_JEM_TIMELINE_LINK_TO_CATEGORY_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showvenue" type="radio"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_SHOWVENUE"
+                    description="MOD_JEM_TIMELINE_SHOWVENUE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="linkvenue" type="radio"
+                    default="1"
+                    label="MOD_JEM_TIMELINE_LINK_TO_VENUE"
+                    description="MOD_JEM_TIMELINE_LINK_TO_VENUE_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="featured_only" type="radio"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_FEATURED_ONLY"
+                    description="MOD_JEM_TIMELINE_FEATURED_ONLY_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="catid" type="categoryedit"
+                    default=""
+                    multiple="true"
+                    removeroot="true"
+                    label="MOD_JEM_TIMELINE_CATEGORY_ID"
+                    description="MOD_JEM_TIMELINE_CATEGORY_ID_DESC"
+                />
+                <field name="venid" type="venueoptions"
+                    default=""
+                    multiple="true"
+                    label="MOD_JEM_TIMELINE_VENUE_ID"
+                    description="MOD_JEM_TIMELINE_VENUE_ID_DESC"
+                />
+                <field name="eventid" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_EVENT_ID"
+                    description="MOD_JEM_TIMELINE_EVENT_ID_DESC"
+                />
+                <field name="stateloc" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_STATE"
+                    description="MOD_JEM_TIMELINE_STATE_DESC"
+                />
+                <field name="stateloc_mode" type="list"
+                    default="0"
+                    label="MOD_JEM_TIMELINE_STATE_MODE"
+                    description="MOD_JEM_TIMELINE_STATE_MODE_DESC"
+                >
+                    <option value="0">MOD_JEM_TIMELINE_STATE_MODE_EXACTMATCH</option>
+                    <option value="1">MOD_JEM_TIMELINE_STATE_MODE_CONTAINS</option>
+                </field>
+
+                <field name="moduleclass_sfx" type="text"
+                    default=""
+                    label="MOD_JEM_TIMELINE_MODULE_CLASS_SUFFIX"
+                    description="MOD_JEM_TIMELINE_MODULE_CLASS_SUFFIX_DESC"
+                />
+            </fieldset>
+            <fieldset name="advanced">
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="form-select"
+                    validate="moduleLayout"
+                />
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    description="MOD_JEM_TIMELINE_CACHING_DESC"
+                    default="1"
+                    filter="integer"
+                    validate="options"
+                    >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    description="MOD_JEM_TIMELINE_CACHE_TIME_DESC"
+                    default="900"
+                    filter="integer"
+                />
+                <field
+                    name="cachemode"
+                    type="hidden"
+                    default="static"
+                    >
+                    <option value="static"></option>
                 </field>
             </fieldset>
         </fields>

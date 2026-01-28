@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>mod_jem_timeline</name>
+    <author>JEM Community</author>
+    <version>1.0.0</version>
+    <description>JEM Timeline Module</description>
+    <files>
+        <filename module="mod_jem_timeline">mod_jem_timeline.php</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="count" type="text" default="10" label="Number of Events"/>
+                <field name="catid" type="text" default="" label="Filter Categories"/>
+                <field name="venid" type="text" default="" label="Filter Venues"/>
+                <field name="show_no_events" type="radio" default="1" label="Show if empty">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </field>
+                <field name="order" type="list" default="asc" label="Startpunkt">
+                    <option value="asc">MOD_JEM_TIMELINE_OLDEST_FIRST</option>
+                    <option value="desc">MOD_JEM_TIMELINE_NEWEST_FIRST</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>

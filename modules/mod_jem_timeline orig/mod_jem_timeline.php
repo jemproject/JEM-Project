@@ -13,7 +13,7 @@ use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem_timeline';
 
-// get helper
+// load helper
 require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -23,19 +23,16 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
+// get filtered events
 $list = ModJemTimelineHelper::getList($params);
 
-// check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {
     return;
 }
 
-
+// load styles
 $jemsettings = JemHelper::config();
-$iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
-JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
+JemHelper::loadModuleStyleSheet($mod_name, 'mod_jem_timeline');
 
-// load icon font if needed
-JemHelper::loadIconFont();
-
+// load layout
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
