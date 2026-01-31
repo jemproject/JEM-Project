@@ -543,7 +543,7 @@ class JemModelEventslist extends ListModel
                 $opendates_query = " OR a.dates IS NULL)";
                 break;
             case 2: // show only events without startdate
-                $opendates_query = " a.dates IS NULL";
+                $opendates_query = " a.dates IS NULL)";
                 break;
         }
 
@@ -592,8 +592,8 @@ class JemModelEventslist extends ListModel
                             $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
                             if (empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
                                 $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-                                $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($dateFrom) . ') >= 0 ';
-                                $where_from .= ' AND DATEDIFF(a.dates, ' . $db->quote($dateFrom) . ') <= 0 )' . $opendates_query;
+                                $where_from = '( (a.dates >= ' . $db->quote($dateFrom);
+                                $where_from .= ' AND COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . ' )' . $opendates_query;
                                 $query->where($where_from);
                                 $this->setState('filter.calendar_from', $where_from);
                             }
