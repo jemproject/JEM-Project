@@ -97,9 +97,8 @@ abstract class ModJemBannerHelper
         # create type dependent filter rules
         switch ($type) {
             case 1: # unfinished events
-                $cal_from  = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-                $cal_from .= "  OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
-                $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
+                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), ' ', IFNULL(a.endtimes, '23:59:59'))) > $offset_minutes) ";
+                $cal_to   = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates, ' ', IFNULL(a.times, '00:00:00'))) < $max_minutes) " : '';
                 break;
 
             case 2: # archived events
@@ -108,8 +107,9 @@ abstract class ModJemBannerHelper
                 break;
 
             case 3: # running events (one day)
-                $cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days) ";
-                $cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
+                $target_date = "DATE_ADD(CURDATE(), INTERVAL $offset_days DAY)";
+                $cal_from = " (a.dates <= $target_date AND IFNULL(a.enddates, a.dates) >= $target_date) ";
+                $cal_to = "";
                 break;
 
             case 5: # open date (only)
@@ -121,8 +121,8 @@ abstract class ModJemBannerHelper
             //        # fall through
             case 0: # upcoming events
             default:
-                $cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
-                $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
+                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+                $cal_to = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes) " : '';
                 break;
         }
 
