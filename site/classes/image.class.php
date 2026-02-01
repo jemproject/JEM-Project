@@ -220,9 +220,16 @@ class JemImage
 
             if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
                 //get imagesize of the thumbnail
-                $thumbiminfo = @getimagesize($img_thumb);
-                $dimage['thumbwidth']  = $thumbiminfo[0];
-                $dimage['thumbheight'] = $thumbiminfo[1];
+                $thumbiminfo = @getimagesize(JPATH_SITE.'/'.$img_thumb);
+
+                // Set dimensions if the image information is successfully retrieved
+                if (is_array($thumbiminfo)) {
+                    $dimage['thumbwidth']  = $thumbiminfo[0];
+                    $dimage['thumbheight'] = $thumbiminfo[1];
+                } else {
+                    $dimage['thumbwidth']  = 0;
+                    $dimage['thumbheight'] = 0;
+                }
             }
 
             return $dimage;

@@ -10,7 +10,6 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Form\FormField;
 
-
 /**
  * CountryOptions Field class.
  *
@@ -24,18 +23,11 @@ class JFormFieldStarttime extends FormField
      */
     protected $type = 'Starttime';
 
-
     public function getInput()
     {
-
-
-        $starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ));
-        $startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ));
-
+        $starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ),array('class'=>'form-select valid form-control-success'));
+        $startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ),array('class'=>'form-select valid form-control-success'));
         $var2 = $starthours.$startminutes;
-
         return $var2;
-
     }
-
 }

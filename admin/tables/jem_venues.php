@@ -122,14 +122,32 @@ class jem_venues extends Table
             $this->url = strip_tags($this->url);
 
             if (strlen($this->url) > 199) {
-                $this->_error = Text::_('COM_JEM_ERROR_URL_LONG');
-                Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
                 return false;
             }
-            if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
-            .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
-                $this->_error = Text::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
-                Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+
+            // convert IDN Domain to punycode for validation
+            $urlToValidate = $this->url;
+            $parsed = parse_url($this->url);
+            
+            if (isset($parsed['host']) && function_exists('idn_to_ascii')) {
+                // convert host to ASCII/punycode
+                $asciiHost = idn_to_ascii($parsed['host'], IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+                
+                if ($asciiHost !== false) {
+                    $urlToValidate = str_replace($parsed['host'], $asciiHost, $this->url);
+                }
+            }
+
+            // validate with converted URL
+            if (filter_var($urlToValidate, FILTER_VALIDATE_URL) === false) {
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
+                return false;
+            }
+
+            // allow http/https only
+            if (!isset($parsed['scheme']) || !in_array($parsed['scheme'], ['http', 'https'])) {
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_SCHEME'));
                 return false;
             }
         }

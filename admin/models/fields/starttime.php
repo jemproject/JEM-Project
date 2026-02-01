@@ -14,7 +14,6 @@ use Joomla\CMS\Form\FormField;
 
 jimport('joomla.html.html');
 
-
 /**
  * CountryOptions Field class.
  *
@@ -28,18 +27,11 @@ class JFormFieldStarttime extends FormField
      */
     protected $type = 'Starttime';
 
-
     public function getInput()
     {
-
-
         $starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ),array('class'=>'form-select','class'=>'select-time'));
         $startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ),array('class'=>'form-select','class'=>'select-time'));
-
         $var2 = $starthours.$startminutes;
-
         return $var2;
-
     }
-
 }

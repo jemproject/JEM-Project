@@ -147,6 +147,10 @@ body.com_jem.body-overlayed {
     height: auto;
 }
 
+#jem .jem-dl dd.time-input {
+	display:flex;
+}
+
 #jem .jem-img {
     text-align: center;
 }
@@ -313,9 +317,14 @@ body.com_jem.body-overlayed {
 #jem #startminutes,
 #jem #endhours,
 #jem #endminutes,
-#jem #jform_locid_name {
+#jem #jform_locid_name,
+#jem #jform_contactid_name {
     padding: .6rem 1rem;
     border-color: #ced4da;
+}
+
+#jem .jem-dl dd.time-input select {
+    width: 95px;
 }
 
 #jem form input::-webkit-outer-spin-button,
@@ -666,11 +675,11 @@ body.com_jem.body-overlayed {
         }
 
         #jem .jem-sort-small .jem-small-list div {
-            flex-basis: 30%;
+            flex-basis: 10%;
         }
 
         #jem .jem-event-info-small {
-            flex-basis: 100% !important;
+            flex-basis: 10% !important;
         }
     }
 }

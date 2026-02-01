@@ -1080,38 +1080,58 @@ static public function lightbox() {
      * @param bool $showinline Add css class to scale icon to fit text height
      * @param bool $showtitle  Add title (tooltip)
      */
-    static public function recurrenceicon($event, $showinline = true, $showtitle = true)
+    public static function recurrenceicon($event, $showinline = true, $showtitle = true)
     {
-        $app = Factory::getApplication();
-        $settings = JemHelper::globalattribs();
+        $app       = Factory::getApplication();
         $settings2 = JemHelper::config();
         $item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
         //stop if disabled
         if (empty($item->recurrence_number) && empty($item->recurrence_type)) {
-            return;
+            return null;
         }
 
         if (version_compare(JVERSION, '5.0.0', '>=')) {
             // Joomla 5 with Font Awesome 6
             $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
             $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
-        } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-            // Joomla 4 witn Font Awesome 5
+        } else {
+            // Joomla 4 with Font Awesome 5
             $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
             $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
         }
 
         $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
-        $image = $first ? 'com_jem/icon-32-recurrence-first.svg' : 'com_jem/icon-32-recurrence.svg';
-        /* F1DA: fa-history, F0E2: fa-undo/fa-rotate-left, F01E: fa-repeat/fa-rotate-right, F021: fa-refresh */
-        $icon  = $first ? $iconRecurrenceFirst : $iconRecurrence;
-        $showinline &= !($settings2->useiconfont == 1 && $app->isClient('site'));
-        $attr_class = $showinline ? ('class="icon-inline" ') : '';
-        $attr_title = $showtitle  ? ('title="' . Text::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
-        $output = jemhtml::icon($image, $icon, Text::_('COM_JEM_RECURRING_EVENT'), $attr_class . $attr_title, !$app->isClient('site'));
 
-        return $output;
+        $image = $first
+            ? 'com_jem/icon-32-recurrence-first.svg'
+            : 'com_jem/icon-32-recurrence.svg';
+
+        $icon = $first ? $iconRecurrenceFirst : $iconRecurrence;
+
+        $showinline &= !($settings2->useiconfont == 1 && $app->isClient('site'));
+
+        $attribs = [];
+
+        if ($showinline) {
+            $attribs['class'] = 'icon-inline';
+        }
+
+        if ($showtitle) {
+            $attribs['title'] = Text::_(
+                $first
+                    ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC'
+                    : 'COM_JEM_RECURRING_EVENT_DESC'
+            );
+        }
+
+        return jemhtml::icon(
+            $image,
+            $icon,
+            Text::_('COM_JEM_RECURRING_EVENT'),
+            $attribs,
+            !$app->isClient('site')
+        );
     }
 
     /**

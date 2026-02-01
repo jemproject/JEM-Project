@@ -100,9 +100,9 @@ abstract class JEMHelperRoute
         }
         elseif ($item = self::_findItem()) {
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            }
         }
 
         return $link;
@@ -133,9 +133,9 @@ abstract class JEMHelperRoute
         elseif ($item = self::_findItem()) {
             // $link .= '&Itemid='.$item;
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            }
         }
 
         return $link;
@@ -161,9 +161,9 @@ abstract class JEMHelperRoute
         }
         elseif ($item = self::_findItem()) {
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            }
         }
 
         return $link;
@@ -185,11 +185,11 @@ abstract class JEMHelperRoute
         }
         elseif ($item = self::_findItem()) {
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                } else {
-                    $link .= '&Itemid='.$item;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            } else {
+                $link .= '&Itemid='.$item;
+            }
         }
 
         return $link;
