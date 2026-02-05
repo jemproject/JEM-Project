@@ -1,1 +1,4 @@
--- update all JEM table from v.2.3.14 to v.2.3.15 to new JEM version with support Joomla 4
+-- ===============================================
+-- JEM Upgrade 2.3.14 → 2.3.15
+-- No changes or actions required here
+-- ===============================================

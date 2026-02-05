@@ -1,4 +1,8 @@
--- insert new config values
+-- ===============================================
+-- JEM Upgrade 4.2.0 → 4.2.1
+-- Convert tables to utf8mb4 character set
+-- ===============================================
+
 ALTER TABLE `#__jem_attachments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `#__jem_categories` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `#__jem_cats_event_relations` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
