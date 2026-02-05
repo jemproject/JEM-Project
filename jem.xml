@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0-alpha</version>
+    <version>5.0.0-alpha1</version>
     <description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -35,24 +35,6 @@
         <folder>css</folder>
         <folder>js</folder>
     </media>
-
-    <install>
-        <sql>
-            <file driver="mysqli" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
-        </sql>
-    </install>
-
-    <uninstall>
-        <sql>
-            <file driver="mysqli" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
-        </sql>
-    </uninstall>
-
-    <update>
-        <schemas>
-            <schemapath type="mysqli">sql/updates/mysql</schemapath>
-        </schemas>
-    </update>
 
     <administration>
         <menu icon="icon-calendar" link="option=com_jem">COM_JEM</menu>
@@ -86,5 +68,23 @@
             <folder>language</folder>
         </files>
     </administration>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <update>
+        <schemas>
+            <schemapath type="mysql" charset="utf8mb4">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
 
 </extension>

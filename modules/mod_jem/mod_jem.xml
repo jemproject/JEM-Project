@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0-alpha</version>
+    <version>5.0.0-alpha1</version>
     <description>MOD_JEM_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
