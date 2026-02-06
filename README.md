@@ -1,5 +1,7 @@
-# JEM 4.4.0 (the Joomla Event Manager)
-released 2026-01-02
+# JEM 5.0.0 alpha
+released 2026-02-06
+
+##  ALPHA – NOT FOR PRODUCTION SITES. 
 
 Based on
 - jemproject/JEM-Project
