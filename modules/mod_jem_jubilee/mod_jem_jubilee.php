@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
+$mod_name = 'mod_jem_jubilee';
+
 // get module helper
 require_once __DIR__ . '/helper.php';
 
@@ -42,14 +44,16 @@ switch($params->get('color')) {
 $list = ModJemJubileeHelper::getList($params);
 
 // check if any results returned
-if (empty($list)) {
-//    return;
+if (empty($list) && !$params->get('show_no_events')) {
+    return;
 }
 
-$mod_name = 'mod_jem_jubilee';
 $jemsettings = JemHelper::config();
-$iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
-JemHelper::loadModuleStyleSheet($mod_name);
+
+$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
+
+JemHelper::loadModuleStyleSheet($mod_name, $layout);
 JemHelper::loadModuleStyleSheet($mod_name, $color);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 
