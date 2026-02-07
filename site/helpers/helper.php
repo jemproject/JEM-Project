@@ -1444,19 +1444,12 @@ class JemHelper
      *
      * @since   2.3
      */
-    public static function loadModuleStyleSheet($module, $css = null)
+    public static function loadModuleStyleSheet($module, $css)
     {
         $app = Factory::getApplication();
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
-        $suffix = self::getLayoutStyleSuffix();
-
-        if (empty($css)) {
-            $css = $module;
-            $filestyle = ($suffix ? $suffix . '/':'') . $css . '.css';
-        } else {
-            $filestyle = $css . '.css';
-        }
+        $filestyle = $css . '.css';
 
         //Search for template overrides
         if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
