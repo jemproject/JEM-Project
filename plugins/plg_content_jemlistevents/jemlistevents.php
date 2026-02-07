@@ -17,6 +17,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\Database\ParameterType;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
@@ -446,13 +447,13 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     private function handleError(\Exception $e): void
     {
-        JLog::add(
+        Log::add(
             sprintf('Error in JemListEvents plugin: %s (File: %s, Line: %s)',
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getLine()
             ),
-            JLog::ERROR,
+            Log::ERROR,
             'plg_content_jemlistevents'
         );
 
