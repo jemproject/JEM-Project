@@ -5,7 +5,7 @@
 -- 1. Venues: correct attribs field
 -- ------------------------------------
 UPDATE `#__jem_venues` 
-SET `attribs` = JSON_OBJECT() 
+SET `attribs` = 'json_object()'
 WHERE `attribs` IS NULL 
    OR `attribs` = '' 
    OR `attribs` = '""'
@@ -15,7 +15,7 @@ WHERE `attribs` IS NULL
 -- 2. Events: correct attribs field
 -- ------------------------------------
 UPDATE `#__jem_events` 
-SET `attribs` = JSON_OBJECT() 
+SET `attribs` = 'json_object()'
 WHERE `attribs` IS NULL 
    OR `attribs` = '' 
    OR `attribs` = '""'
@@ -25,7 +25,7 @@ WHERE `attribs` IS NULL
 -- 3. Categories: correct metadata field
 -- -----------------------------------------
 UPDATE `#__jem_categories` 
-SET `metadata` = JSON_OBJECT() 
+SET `attribs` = 'json_object()'
 WHERE `metadata` IS NULL 
    OR `metadata` = '' 
    OR `metadata` = '""'
