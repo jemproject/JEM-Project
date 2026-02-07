@@ -30,88 +30,88 @@
         <fields name="params">
             <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
                 <field name="Show_Tooltips" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_SHOW_TOOLTIPS"
-                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="MOD_JEM_CAL_SHOW_TOOLTIPS"
+                       description="MOD_JEM_CAL_SHOW_TOOLTIPS_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="Show_Tooltips_Title" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_TITLE"
-                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_TITLE_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="MOD_JEM_CAL_SHOW_TOOLTIPS_TITLE"
+                       description="MOD_JEM_CAL_SHOW_TOOLTIPS_TITLE_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="cal15q_tooltips_title" type="text"
-                    default="Event"
-                    label="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR"
-                    description="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR_DESC"
+                       default="Event"
+                       label="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR"
+                       description="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR_DESC"
                 />
                 <field name="cal15q_tooltipspl_title" type="text"
-                    default="Events"
-                    label="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL"
-                    description="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL_DESC"
+                       default="Events"
+                       label="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL"
+                       description="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL_DESC"
                 />
                 <field name="tooltips_max_events" type="text"
-                    default=""
-                    label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENTS"
-                    description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENTS_DESC"
+                       default=""
+                       label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENTS"
+                       description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENTS_DESC"
                 />
                 <field name="event_cut_title" type="text"
-                    default="25"
-                    label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH"
-                    description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH_DESC"
+                       default="25"
+                       label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH"
+                       description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH_DESC"
                 />
                 <field name="DisplayLink" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="0"
-                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK"
-                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK"
+                       description="MOD_JEM_CAL_SHOW_TOOLTIPS_LINK_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="DisplayTime" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="0"
-                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME"
-                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME"
+                       description="MOD_JEM_CAL_SHOW_TOOLTIPS_TIME_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="DisplayCat" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="0"
-                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_CATEGORY"
-                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_CATEGORY_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_TOOLTIPS_CATEGORY"
+                       description="MOD_JEM_CAL_SHOW_TOOLTIPS_CATEGORY_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="DisplayVenue" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="0"
-                    label="MOD_JEM_CAL_SHOW_TOOLTIPS_VENUE"
-                    description="MOD_JEM_CAL_SHOW_TOOLTIPS_VENUE_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_TOOLTIPS_VENUE"
+                       description="MOD_JEM_CAL_SHOW_TOOLTIPS_VENUE_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="spacer2" type="spacer"
-                    label=""
-                    description=""
-                    hr="true"
+                       label=""
+                       description=""
+                       hr="true"
                 />
                 <field name="day_name_length" type="list"
-                    default="2"
-                    label="MOD_JEM_CAL_DAYNAME_LENGTH"
-                    description="MOD_JEM_CAL_DAYNAME_LENGTH_DESC"
+                       default="2"
+                       label="MOD_JEM_CAL_DAYNAME_LENGTH"
+                       description="MOD_JEM_CAL_DAYNAME_LENGTH_DESC"
                 >
                     <option value="0">MOD_JEM_CAL_DAYNAME_DONT_DISPLAY</option>
                     <option value="1">MOD_JEM_CAL_DAYNAME_ONE_LETTER</option>
@@ -120,9 +120,9 @@
                     <option value="4">MOD_JEM_CAL_DAYNAME_FULL</option>
                 </field>
                 <field name="first_day" type="list"
-                    default="1"
-                    label="MOD_JEM_CAL_FIRST_DAY_OF_WEEK"
-                    description="MOD_JEM_CAL_FIRST_DAY_OF_WEEK_DESC"
+                       default="1"
+                       label="MOD_JEM_CAL_FIRST_DAY_OF_WEEK"
+                       description="MOD_JEM_CAL_FIRST_DAY_OF_WEEK_DESC"
                 >
                     <option value="0">SUNDAY</option>
                     <option value="1">MONDAY</option>
@@ -133,163 +133,144 @@
                     <option value="6">SATURDAY</option>
                 </field>
                 <field name="Year_length" type="list"
-                    default="1"
-                    label="MOD_JEM_CAL_YEAR_LENGTH"
-                    description="MOD_JEM_CAL_YEAR_LENGTH_DESC"
+                       default="1"
+                       label="MOD_JEM_CAL_YEAR_LENGTH"
+                       description="MOD_JEM_CAL_YEAR_LENGTH_DESC"
                 >
                     <option value="0">MOD_JEM_CAL_TWO_DIGITS</option>
                     <option value="1">MOD_JEM_CAL_FOUR_DIGITS</option>
                 </field>
                 <field name="Month_length" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="0"
-                    label="MOD_JEM_CAL_SHORT_MONTHNAME"
-                    description="MOD_JEM_CAL_SHORT_MONTHNAME_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="MOD_JEM_CAL_SHORT_MONTHNAME"
+                       description="MOD_JEM_CAL_SHORT_MONTHNAME_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="Month_offset" type="text"
-                    default="0"
-                    label="MOD_JEM_CAL_MONTH_OFFSET"
-                    description="MOD_JEM_CAL_MONTH_OFFSET_DESC"
+                       default="0"
+                       label="MOD_JEM_CAL_MONTH_OFFSET"
+                       description="MOD_JEM_CAL_MONTH_OFFSET_DESC"
                 />
                 <field name="Time_offset" type="text"
-                    default="0"
-                    label="MOD_JEM_CAL_TIME_OFFSET"
-                    description="MOD_JEM_CAL_TIME_OFFSET_DESC"
+                       default="0"
+                       label="MOD_JEM_CAL_TIME_OFFSET"
+                       description="MOD_JEM_CAL_TIME_OFFSET_DESC"
                 />
                 <field name="spacer3" type="spacer"
-                    label=""
-                    description=""
-                    hr="true"
+                       label=""
+                       description=""
+                       hr="true"
                 />
                 <field name="Remember" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_REMEMBER"
-                    description="MOD_JEM_CAL_REMEMBER_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="MOD_JEM_CAL_REMEMBER"
+                       description="MOD_JEM_CAL_REMEMBER_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="use_ajax" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_USE_AJAX"
-                    description="MOD_JEM_CAL_USE_AJAX_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="MOD_JEM_CAL_USE_AJAX"
+                       description="MOD_JEM_CAL_USE_AJAX_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="CurrentEvents" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_SHOW_CURRENT_EVENTS"
-                    description="MOD_JEM_CAL_SHOW_CURRENT_EVENTS_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="MOD_JEM_CAL_SHOW_CURRENT_EVENTS"
+                       description="MOD_JEM_CAL_SHOW_CURRENT_EVENTS_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="ArchivedEvents" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="0"
-                    label="MOD_JEM_CAL_SHOW_ARCHIVED_EVENTS"
-                    description="MOD_JEM_CAL_SHOW_ARCHIVED_EVENTS_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_ARCHIVED_EVENTS"
+                       description="MOD_JEM_CAL_SHOW_ARCHIVED_EVENTS_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="catid" type="categoryedit"
-                    default=""
-                    multiple="true"
-                    removeroot="true"
-                    label="MOD_JEM_CAL_LIMIT_TO_CATEGORY_IDS"
-                    description="MOD_JEM_CAL_LIMIT_TO_CATEGORY_IDS_DESC"
+                       default=""
+                       multiple="true"
+                       removeroot="true"
+                       label="MOD_JEM_CAL_LIMIT_TO_CATEGORY_IDS"
+                       description="MOD_JEM_CAL_LIMIT_TO_CATEGORY_IDS_DESC"
                 />
                 <field name="venid" type="venueoptions"
-                    default=""
-                    multiple="true"
-                    label="MOD_JEM_CAL_LIMIT_TO_VENUE_IDS"
-                    description="MOD_JEM_CAL_LIMIT_TO_VENUE_IDS_DESC"
+                       default=""
+                       multiple="true"
+                       label="MOD_JEM_CAL_LIMIT_TO_VENUE_IDS"
+                       description="MOD_JEM_CAL_LIMIT_TO_VENUE_IDS_DESC"
                 />
                 <field name="StraightToDetails" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_STRAIGHT_TO_DETAILS"
-                    description="MOD_JEM_CAL_STRAIGHT_TO_DETAILS_DESC"
+                       class="btn-group btn-group-yesno"
+                       default="1"
+                       label="MOD_JEM_CAL_STRAIGHT_TO_DETAILS"
+                       description="MOD_JEM_CAL_STRAIGHT_TO_DETAILS_DESC"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
                 <field name="spacer4" type="spacer"
-                    label=""
-                    description=""
-                    hr="true"
-                />
-                <field name="Default_Stylesheet" type="radio"
-                    class="btn-group btn-group-yesno"
-                    default="1"
-                    label="MOD_JEM_CAL_DEFAULT_CSS"
-                    description="MOD_JEM_CAL_DEFAULT_CSS_DESC"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="User_stylesheet" type="text"
-                    default=""
-                    label="MOD_JEM_CAL_USER_CSS"
-                    description="MOD_JEM_CAL_USER_CSS_DESC"
-                />
-                <field name="moduleclass_sfx" type="text"
-                    default=""
-                    label="MOD_JEM_CAL_MODULE_CLASS_SUFFIX"
-                    description="MOD_JEM_CAL_MODULE_CLASS_SUFFIX_DESC"
+                       label=""
+                       description=""
+                       hr="true"
                 />
                 <field name="FixItemID" type="text"
-                    default=""
-                    label="MOD_JEM_CAL_DEFAULT_ITEM_ID"
-                    description="MOD_JEM_CAL_DEFAULT_ITEM_ID_DESC"
+                       default=""
+                       label="MOD_JEM_CAL_DEFAULT_ITEM_ID"
+                       description="MOD_JEM_CAL_DEFAULT_ITEM_ID_DESC"
                 />
             </fieldset>
             <fieldset name="advanced">
                 <field
-                    name="layout"
-                    type="modulelayout"
-                    label="JFIELD_ALT_LAYOUT_LABEL"
-                    class="form-select"
-                    validate="moduleLayout"
-		    default="_:default"
+                        name="layout"
+                        type="modulelayout"
+                        label="JFIELD_ALT_LAYOUT_LABEL"
+                        class="form-select"
+                        validate="moduleLayout"
+                        default="_:default"
                 />
                 <field
-                    name="moduleclass_sfx"
-                    type="textarea"
-                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
-                    rows="3"
-                    validate="CssIdentifier"
+                        name="moduleclass_sfx"
+                        type="textarea"
+                        label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                        rows="3"
+                        validate="CssIdentifier"
                 />
                 <field
-                    name="cache"
-                    type="list"
-                    label="COM_MODULES_FIELD_CACHING_LABEL"
-                    description="MOD_JEM_CAL_CACHING_DESC"
-                    default="1"
-                    filter="integer"
-                    validate="options"
+                        name="cache"
+                        type="list"
+                        label="COM_MODULES_FIELD_CACHING_LABEL"
+                        description="MOD_JEM_CAL_CACHING_DESC"
+                        default="1"
+                        filter="integer"
+                        validate="options"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>
                 <field
-                    name="cache_time"
-                    type="number"
-                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
-                    description="MOD_JEM_CAL_CACHE_TIME_DESC"
-                    default="900"
-                    filter="integer"
+                        name="cache_time"
+                        type="number"
+                        label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                        description="MOD_JEM_CAL_CACHE_TIME_DESC"
+                        default="900"
+                        filter="integer"
                 />
                 <field name="cachemode" type="hidden"
-                    default="static"
+                       default="static"
                 >
                     <option value="static"></option>
                 </field>
