@@ -17,26 +17,30 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CONFIGINFO'); ?></legend>
             <br>
             <table class="adminlist table">
-                <?php
-                $known_extensions = ['pkg_jem'                    => 'COM_JEM_MAIN_CONFIG_VS_PACKAGE'
-                                         ,'com_jem'                    => 'COM_JEM_MAIN_CONFIG_VS_COMPONENT'
-                                         ,'mod_jem'                    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM'
-                                         ,'mod_jem_cal'                => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CAL'
-                                         ,'mod_jem_calajax'            => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CALAJAX'
-                                         ,'mod_jem_banner'             => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_BANNER'
-                                         ,'mod_jem_jubilee'            => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_JUBILEE'
-                                         ,'mod_jem_teaser'             => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER'
-                                         ,'mod_jem_wide'               => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE'
-                                         ,'plg_content_jem'            => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT'
-                                         ,'plg_content_jemlistevents'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS'
-                                         ,'plg_content_jemembed'       => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS'
-                                         ,'plg_finder_jem'             => 'COM_JEM_MAIN_CONFIG_VS_PLG_FINDER'
-                                         ,'plg_search_jem'             => 'COM_JEM_MAIN_CONFIG_VS_PLG_SEARCH'
-                                         ,'plg_jem_comments'           => 'COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS'
-                                         ,'plg_jem_mailer'             => 'COM_JEM_MAIN_CONFIG_VS_PLG_MAILER'
-                                         ,'plg_jem_demo'               => 'COM_JEM_MAIN_CONFIG_VS_PLG_DEMO'
-                                         ,'plg_quickicon_jemquickicon' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
-                                         ];
+				<?php
+				$known_extensions = [
+				  "pkg_jem" 					=> "COM_JEM_MAIN_CONFIG_VS_PACKAGE",
+				  "com_jem" 					=> "COM_JEM_MAIN_CONFIG_VS_COMPONENT",
+				  "mod_jem" 					=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM",
+				  "mod_jem_cal" 				=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CAL",
+				  "mod_jem_calajax" 			=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CALAJAX",
+				  "mod_jem_banner" 				=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_BANNER",
+				  "mod_jem_jubilee" 			=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_JUBILEE",
+				  "mod_jem_map" 				=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_MAP",
+				  "mod_jem_teaser" 				=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER",
+				  "mod_jem_wide" 				=> "COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE",
+				  "plg_content_jem" 			=> "COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT",
+				  "plg_content_jemlistevents" 	=> "COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS",
+				  "plg_content_jemembed" 		=> "COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS",
+				  "plg_finder_jem" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_FINDER",
+				  "plg_search_jem" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_SEARCH",
+				  "plg_jem_comments" 			=> "COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS",
+				  "plg_jem_mailer" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_MAILER",
+				  "plg_jem_demo" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_DEMO",
+				  "plg_quickicon_jemquickicon" 	=> "COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON",
+				];
+				?>
+                      ];
                 ?>
                 <tr>
                     <th><u><?php echo Text::_('COM_JEM_NAME'); ?></u></th>
