@@ -286,8 +286,6 @@
                     <option value="0">MOD_JEM_JUBILEE_STATE_MODE_EXACTMATCH</option>
                     <option value="1">MOD_JEM_JUBILEE_STATE_MODE_CONTAINS</option>
                 </field>
-
-
             </fieldset>
             <fieldset name="advanced">
                 <field
