@@ -257,7 +257,6 @@ class JemModelSampledata extends BaseDatabaseModel
                 unlink($path);
             }
         }
-        
         return rmdir($dir);
     }
 
