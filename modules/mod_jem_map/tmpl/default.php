@@ -29,7 +29,6 @@ $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullsc
 $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
 $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 
-JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
 $jemsettings = JemHelper::config();
 
 $map_id       = 'leafletmap-' . uniqid();
@@ -305,46 +304,46 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         <?php
         $heatPoints = [];
         foreach ($venues as $v):
-            $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
-            if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
-            $sef  = Route::_($route, false);
-            $link = Uri::root() . ltrim($sef, '/');
+        $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
+        if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
+        $sef  = Route::_($route, false);
+        $link = Uri::root() . ltrim($sef, '/');
 
-            $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
-            $city      = htmlspecialchars($v->city, ENT_QUOTES);
-            $country   = htmlspecialchars($v->country, ENT_QUOTES);
+        $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
+        $city      = htmlspecialchars($v->city, ENT_QUOTES);
+        $country   = htmlspecialchars($v->country, ENT_QUOTES);
 
-            $countryFlagPath = rtrim($jemsettings->flagicons_path, '/');
-            $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
-            $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
+        $countryFlagPath = rtrim($jemsettings->flagicons_path, '/');
+        $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
+        $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
 
-            $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
-                    . $city . '<br>'
-                    . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
-                    . '<a href="https://maps.google.com/?daddr=' . (float) $v->latitude . ',' . (float) $v->longitude . '">'
-                    . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
-            ?>
-            L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
-                icon: L.icon({
-                    iconUrl: "<?= addslashes($venueMarker) ?>",
-                    iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
-                })
-            }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
+        $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
+            . $city . '<br>'
+            . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
+            . '<a href="https://maps.google.com/?daddr=' . (float) $v->latitude . ',' . (float) $v->longitude . '">'
+            . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
+        ?>
+        L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
+            icon: L.icon({
+                iconUrl: "<?= addslashes($venueMarker) ?>",
+                iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
+            })
+        }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
-            <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
+        <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
-            var coordinates = <?php echo json_encode($heatPoints); ?>;
-            var heatPoints = coordinates.map(function(p) {
-                return [p.lat, p.lng, 1]; // 1 = intensity
-            });
+        var coordinates = <?php echo json_encode($heatPoints); ?>;
+        var heatPoints = coordinates.map(function(p) {
+            return [p.lat, p.lng, 1]; // 1 = intensity
+        });
 
-            L.heatLayer(heatPoints, {
-                radius: 25,
-                blur: 10,
-                maxZoom: 17,
-            }).addTo(map);
+        L.heatLayer(heatPoints, {
+            radius: 25,
+            blur: 10,
+            maxZoom: 17,
+        }).addTo(map);
         <?php } ?>
 
     });

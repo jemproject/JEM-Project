@@ -110,8 +110,8 @@
                        default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC"/>
-                <field name="show_date_filter" type="radio" 
-		       default="1"
+                <field name="show_date_filter" type="radio"
+                       default="1"
                        label="MOD_JEM_MAP_SHOW_DATE_FILTER"
                        description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
                        class="inputbox btn-group btn-group-yesno"
@@ -130,18 +130,13 @@
                        label="MOD_JEM_MAP_HEIGHT"
                        description="MOD_JEM_MAP_HEIGHT_DESC"
                 />
-                <field name="moduleclass_sfx" type="text"
-                       default=""
-                       label="MOD_JEM_MODULE_CLASS_SUFFIX"
-                       description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC"
-                />
             </fieldset>
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"
                        label="JFIELD_ALT_LAYOUT_LABEL"
                        class="form-select"
                        validate="moduleLayout"
-		       default="_:default"
+                       default="_:default"
                 />
                 <field name="moduleclass_sfx" type="textarea"
                        label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
