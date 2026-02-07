@@ -1097,7 +1097,7 @@ static public function lightbox() {
             $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
             $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
         } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-            // Joomla 4 witn Font Awesome 5
+            // Joomla 4 with Font Awesome 5
             $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
             $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
         }
