@@ -12,7 +12,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
-JemHelper::loadModuleStyleSheet('mod_jem');
 $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');
 $linkloc = $params->get('linkloc');
@@ -22,35 +21,35 @@ $settings = JemHelper::config();
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
-<?php if (count($list)): ?>
-    <ul class="jemmod">
-        <?php foreach ($list as $item) : ?>
-        <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
-            <?php if($highlight_featured && $item->featured): ?>
-                <span class="event-title highlight_featured">
+    <?php if (count($list)): ?>
+        <ul class="jemmod">
+            <?php foreach ($list as $item) : ?>
+                <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                    <?php if($highlight_featured && $item->featured): ?>
+                    <span class="event-title highlight_featured">
             <?php else : ?>
                 <span class="event-title">
             <?php endif; ?>
-            <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
-                <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
-                  $flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
-                $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
-                echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
-            <?php endif; ?>
+                    <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
+                        <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
+                        $flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
+                        $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
+                        echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
+                    <?php endif; ?>
                     <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
                         <a href="<?php echo $item->venueurl; ?>">
               <?php echo $item->venue; ?>
                 </a>
                     <?php elseif ($showtitloc == 1 && $linkdet == 2) : ?>
-            <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->title); ?>">
+                        <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->title); ?>">
               <?php echo $item->title; ?>
                 </a>
-          <?php elseif ($showtitloc == 1 && $linkdet == 1) :
-              echo $item->title;
+                    <?php elseif ($showtitloc == 1 && $linkdet == 1) :
+                        echo $item->title;
 
-          elseif ($showtitloc == 0 && $linkdet == 1) :
-              echo $item->venue;
-        endif; ?>
+                    elseif ($showtitloc == 0 && $linkdet == 1) :
+                        echo $item->venue;
+                    endif; ?>
 
             </span>
             <br>
@@ -59,13 +58,13 @@ $settings = JemHelper::config();
             <?php else : ?>
                 <span class="event-title">
             <?php endif; ?>
-            <?php if ($linkdet == 1) : ?>
-        <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>">
+                    <?php if ($linkdet == 1) : ?>
+                        <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>">
                 <?php echo $item->dateinfo; ?>
             </a>
-            <?php else :
-                echo $item->dateinfo;
-        endif; ?>
+                    <?php else :
+                        echo $item->dateinfo;
+                    endif; ?>
             </span>
         <?php echo $item->dateschema; ?>
         <meta itemprop="name" content="<?php echo $item->title; ?>" />
@@ -79,10 +78,10 @@ $settings = JemHelper::config();
         </div>
         </div>
 
-        </li>
-        <?php endforeach; ?>
-    </ul>
-<?php else : ?>
-    <?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
-<?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else : ?>
+        <?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
+    <?php endif; ?>
 </div>

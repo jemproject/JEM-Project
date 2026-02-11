@@ -60,7 +60,7 @@ class mod_jem_calInstallerScript
         }
         if ($type === 'update') {
             return true;
-            }
+        }
         if ($type == 'uninstall') {
             return true;
         }

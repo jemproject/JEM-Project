@@ -68,7 +68,7 @@
   }
 
   div#jem .flyerimage {
-      border: none !important;
+    border: none !important;
   }
 
   a[href]:after {
@@ -95,6 +95,6 @@
 
 
   div#jem .flyerimage {
-      border: none;
+    border: none;
   }
 }

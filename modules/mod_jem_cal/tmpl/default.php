@@ -19,25 +19,23 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
-JemHelper::loadModuleStyleSheet('mod_jem');
-
 # Ensure $use_ajax is defined and boolean
 $use_ajax = !empty($use_ajax);
 
 # Use Ajax to navigate through the months if JS is enabled on browser.
 if ($use_ajax && empty($module->in_ajax_call)) { ?>
-<script>
-jQuery(document).ready(function(){
-    jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
-    jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "table-caption");
-});
-function mod_jem_cal_click_<?php print $module->id; ?>(url) {
-    jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});
-    });
-}
-</script>
-<?php
+    <script>
+        jQuery(document).ready(function(){
+            jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
+            jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "table-caption");
+        });
+        function mod_jem_cal_click_<?php print $module->id; ?>(url) {
+            jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
+                jQuery(".hasTooltip").tooltip({'html':true});
+            });
+        }
+    </script>
+    <?php
 }
 
 # Output

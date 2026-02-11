@@ -437,7 +437,7 @@ abstract class ModJemTeaserHelper
         $tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
         $tomorrow        = date("Y-m-d", $tomorrow_stamp);
 
-        $dates_stamp     = strtotime($row->dates);
+        $dates_stamp     = $row->dates ? strtotime($row->dates) : null;
         $enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 
         //check if today or tomorrow or yesterday and no current running multiday event
@@ -451,12 +451,12 @@ abstract class ModJemTeaserHelper
             //if daymethod show day
             if ($params->get('daymethod', 1) == 1) {
                 //single day event
-                $date = date('l', strtotime($row->dates));
+                $date = $row->dates ? date('l', strtotime($row->dates)) : null;
                 $result = Text::sprintf('MOD_JEM_TEASER_ON_DATE', $date);
 
                 //Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
                 if (($dates_stamp > $tomorrow_stamp) && $enddates_stamp) {
-                    $startdate = date('l', strtotime($row->dates ?? ''));
+                    $startdate = $row->dates ? date('l', strtotime($row->dates)) : null;
                     $result = Text::sprintf('MOD_JEM_TEASER_FROM', $startdate);
                 }
 

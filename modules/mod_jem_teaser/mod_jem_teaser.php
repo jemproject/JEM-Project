@@ -12,8 +12,10 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
+$mod_name = 'mod_jem_teaser';
+
 // get module helper
-require_once __DIR__.'/helper.php';
+require_once __DIR__ . '/helper.php';
 
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -48,10 +50,12 @@ if (empty($list) && !$params->get('show_no_events')) {
     return;
 }
 
-$mod_name = 'mod_jem_teaser';
 $jemsettings = JemHelper::config();
-$iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
 
+$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
+
+JemHelper::loadModuleStyleSheet($mod_name, $layout);
 JemHelper::loadModuleStyleSheet($mod_name, $color);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 
