@@ -134,12 +134,13 @@ div#jem a .eventcontenttop {
 div#jem .eventcontenttop {
     height: 16px;
     min-height: 16px;
-    text-align: left;
+    text-align: left;    
     top: 60px;
 }
 
 div#jem .eventcontentbottom {
     text-align: left;
+    margin-bottom: -8px;
     margin-top: 5px;
     bottom: 0px;
 }

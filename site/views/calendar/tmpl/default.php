@@ -64,7 +64,7 @@ use Joomla\CMS\Factory;
         $countperday[$year.$month.$day]++;
         if ($countperday[$year.$month.$day] == $limit+1) {
             $var1a = Route::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
-            $var1b = Text::_('COM_JEM_CALENDAR_ANDMORE');
+            $var1b = Text::_('COM_JEM_AND_MORE');
             $var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
             $id = 'eventandmore';
 
