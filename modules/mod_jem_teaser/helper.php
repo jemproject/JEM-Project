@@ -247,16 +247,16 @@ abstract class ModJemTeaserHelper
                             ? '0 0 2px rgba(255,255,255,0.6)'  // light shadow on dark text
                             : '0 0 2px rgba(0,0,0,0.6)';       // dark shadow on light text
 
-                        $coloredCategories[] = '<a href="' . $link . '" class="category-link-textcolor" style="color:' . $color . ';text-shadow:' . $shadow . ';text-decoration:none;">' . $escapedName . '</a>';
+                        $coloredCategories[] = '<a href="' . $link . '" class="category-link-textcolor" style="color:' . $color . ';text-shadow:' . $shadow . ';">' . $escapedName . '</a>';
 
                     } elseif ($module_catcolorMode === 'background') {
                         // background color
                         if ($color) {
                             $textColor = self::_is_dark($color) ? '#fff' : '#000';
-                            $coloredCategories[] = '<a href="' . $link . '" class="category-link-bgcolor" style="background-color:' . $color . ';color:' . $textColor . ';padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
+                            $coloredCategories[] = '<a href="' . $link . '" class="category-link-bgcolor" style="background-color:' . $color . ';color:' . $textColor . ';">' . $escapedName . '</a>';
                         } else {
                             // no color
-                            $coloredCategories[] = '<a href="' . $link . '" class="category-link" style="background-color:transparent;box-shadow:0 0 3px rgba(0,0,0,0.5);padding:0.15em 0.4em;border-radius:0.25em;text-decoration:none;">' . $escapedName . '</a>';
+                            $coloredCategories[] = '<a href="' . $link . '" class="category-link">' . $escapedName . '</a>';
                         }
 
                     } else {
@@ -270,7 +270,7 @@ abstract class ModJemTeaserHelper
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->catname     = implode("<span class=\"catseparator\"></span>", $coloredCategories);
+            $lists[$i]->catname     = implode("<span class=\"catseparator\">, </span>", $coloredCategories);
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
