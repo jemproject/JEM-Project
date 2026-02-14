@@ -14,7 +14,7 @@ use Joomla\Registry\Registry;
 
 /**
  * Script file of JEM component
-*/
+ */
 class mod_jem_wideInstallerScript
 {
     /**
@@ -58,7 +58,7 @@ class mod_jem_wideInstallerScript
         if ($type === 'install') {
             return true;
         }
-        if ($type === 'update') {            
+        if ($type === 'update') {
             return true;
         }
         if ($type === 'uninstall') {

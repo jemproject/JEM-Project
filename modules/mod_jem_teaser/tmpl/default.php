@@ -11,8 +11,6 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Language\Text;
 
-JemHelper::loadModuleStyleSheet('mod_jem_teaser','mod_jem_teaser');
-
 $showcalendar    = (int)$params->get('showcalendar', 1);
 
 if ($params->get('use_modal', 0)) {
@@ -40,27 +38,27 @@ if ($params->get('use_modal', 0)) {
                         <tr>
                             <td class="event-calendar">
                                 <?php if ($showcalendar == 1) : ?>
-                                    <?php if ($item->colorclass === "category" || $item->colorclass === "alpha") : ?>
-                                        <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-                                        <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
-                                        <div class="lower-background"></div>
-                                        <div class="background-image"></div>
+                                <?php if ($item->colorclass === "category" || $item->colorclass === "alpha") : ?>
+                                <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+                                    <div class="color-bar" style="background-color:<?php echo !empty($item->color) ? $item->color : 'rgb(128,128,128)'; ?>"></div>
+                                    <div class="lower-background"></div>
+                                    <div class="background-image"></div>
                                     <?php elseif ($item->colorclass === "venue") : ?>
-                                        <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+                                    <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
                                         <div class="color-bar" style="background-color:<?php echo !empty($item->venuecolor) ? $item->venuecolor : (!empty($item->color) ? $item->color : 'rgb(128,128,128)'); ?>"></div>
                                         <div class="lower-background"></div>
                                         <div class="background-image"></div>
-                                    <?php else : ?>
-                                            <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
-                                    <?php endif; ?>
-                                    <div class="monthteaser<?php echo isset($item->color_is_dark) ? ($item->color_is_dark === 1 ? ' monthcolor-light">' : ($item->color_is_dark === 0 ? ' monthcolor-dark">' : '">')) : '">'; echo $item->startdate['month']; ?></div>
+                                        <?php else : ?>
+                                        <div class="calendar<?php echo '-' . $item->colorclass; ?> jem-teaser-calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+                                            <?php endif; ?>
+                                            <div class="monthteaser<?php echo isset($item->color_is_dark) ? ($item->color_is_dark === 1 ? ' monthcolor-light">' : ($item->color_is_dark === 0 ? ' monthcolor-dark">' : '">')) : '">'; echo $item->startdate['month']; ?></div>
                                         <div class="dayteaser">
-                                                <?php echo $item->startdate['weekday']; ?>
-                                            </div>
-                                            <div class="daynumteaser"><?php echo $item->startdate['day']; ?>
+                                            <?php echo $item->startdate['weekday']; ?>
+                                        </div>
+                                        <div class="daynumteaser"><?php echo $item->startdate['day']; ?>
                                         </div>
                                     </div>
-                                <?php endif; ?>
+                                    <?php endif; ?>
                             </td>
                             <td class="event-info">
                                 <div class="teaser-jem"><div>

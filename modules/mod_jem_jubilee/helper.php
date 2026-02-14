@@ -19,8 +19,8 @@ use Joomla\CMS\Date\Date;
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 /**
-* Module-Jubilee
-*/
+ * Module-Jubilee
+ */
 abstract class ModJemJubileeHelper
 {
     /**
@@ -84,7 +84,7 @@ abstract class ModJemJubileeHelper
         if (empty($cur_md)) { // oops...
             return array();
         }
-        
+
         # Validate and sanitize $cur_md (should be 4 digits: mmdd)
         if (!preg_match('/^\d{4}$/', $cur_md)) {
             return array();
@@ -117,47 +117,47 @@ abstract class ModJemJubileeHelper
         }
 
         switch ($status) {
-        case 1: # published
-            $published = 1;
-            break;
-        case 2: # archived
-        default:
-            $published = 2;
-            break;
-        case 3: # both
-            $published = array(1, 2);
-            break;
+            case 1: # published
+                $published = 1;
+                break;
+            case 2: # archived
+            default:
+                $published = 2;
+                break;
+            case 3: # both
+                $published = array(1, 2);
+                break;
         }
 
         # Filter by day + month (ignoring year)
         # Build SQL condition for matching events on specific calendar dates
         switch ($date_match_mode) {
-        case 0: # somewhen from start date to end date
-            $cal_from  = " IF(YEAR(IFNULL(a.enddates, a.dates)) > YEAR(a.dates)";
-            $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') OR ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
-            $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') AND ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
-            $cal_from .= " ) ";
-            break;
-        case 1: # on start date
-        default:
-            $cal_from  = " (DATE_FORMAT(a.dates, '%m%d') = '$cur_md') ";
-            break;
-        case 2: # on end date
-            $cal_from  = " (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = '$cur_md') ";
-            break;
-        case 3: # on start or end date
-            $cal_from  = " ((DATE_FORMAT(a.dates, '%m%d') = '$cur_md') OR ";
-            $cal_from .= "  (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = '$cur_md')) ";
-            break;
+            case 0: # somewhen from start date to end date
+                $cal_from  = " IF(YEAR(IFNULL(a.enddates, a.dates)) > YEAR(a.dates)";
+                $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') OR ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
+                $cal_from .= " , (DATE_FORMAT(a.dates, '%m%d') <= '$cur_md') AND ('$cur_md' <= DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d'))";
+                $cal_from .= " ) ";
+                break;
+            case 1: # on start date
+            default:
+                $cal_from  = " (DATE_FORMAT(a.dates, '%m%d') = '$cur_md') ";
+                break;
+            case 2: # on end date
+                $cal_from  = " (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = '$cur_md') ";
+                break;
+            case 3: # on start or end date
+                $cal_from  = " ((DATE_FORMAT(a.dates, '%m%d') = '$cur_md') OR ";
+                $cal_from .= "  (DATE_FORMAT(IFNULL(a.enddates, a.dates), '%m%d') = '$cur_md')) ";
+                break;
         }
 
         $model->setState('filter.opendates', 0);
         $model->setState('filter.published', $published);
         $model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
         if (!empty($cal_from)) {
-        $model->setState('filter.jubilee_date_match', $cal_from);
+            $model->setState('filter.jubilee_date_match', $cal_from);
             $model->setState('filter.jubilee_show_past', (int)$params->get('show_past_events', 0));
-            }
+        }
         $model->setState('filter.groupby', 'a.id');
 
         # clean parameter data
@@ -263,7 +263,7 @@ abstract class ModJemJubileeHelper
             $lists[$i]->startdate   = empty($row->dates)    ? $defaults : self::_format_date_fields($row->dates,    $formats);
             $lists[$i]->enddate     = empty($row->enddates) ? $defaults : self::_format_date_fields($row->enddates, $formats);
             list($lists[$i]->date,
-                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
+                $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix, $showtime);
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
@@ -341,20 +341,20 @@ abstract class ModJemJubileeHelper
             $scan = sscanf($color, '#%1x%1x%1x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = (17 * $scan[0] *  77) / 255
-                      + (17 * $scan[1] * 150) / 255
-                      + (17 * $scan[2] *  28) / 255;
+                    + (17 * $scan[1] * 150) / 255
+                    + (17 * $scan[2] *  28) / 255;
             }
         } else {
             $scan = sscanf($color, '#%2x%2x%2x');
             if (is_array($scan) && count($scan) == 3) {
                 $gray = ($scan[0] *  77) / 255
-                      + ($scan[1] * 150) / 255
-                      + ($scan[2] *  28) / 255;
+                    + ($scan[1] * 150) / 255
+                    + ($scan[2] *  28) / 255;
             }
         }
         return ($gray <= 160) ? 1 : 0;
     }
-    
+
     /**
      * Method to get current day repecting local time.
      *
@@ -464,7 +464,7 @@ abstract class ModJemJubileeHelper
             $today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
             $dates_stamp     = $row->dates ? strtotime($row->dates) : null;
             $enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
-        //    $enddates_stamp  = null; // it doesn't make sense on a Jubilee list
+            //    $enddates_stamp  = null; // it doesn't make sense on a Jubilee list
 
             $times = $row->times; // show starttime by default
 
@@ -472,7 +472,7 @@ abstract class ModJemJubileeHelper
             if ($method == 2) {
                 $dateToday = self::_get_local_now();//new DateTime('today');
                 $diffStart = !empty($row->dates)    ? $dateToday->diff(date_create($row->dates))   : null;
-            //    $diffEnd   = !empty($row->enddates) ? $dateToday->diff(date_create($row->enddates)): null;
+                //    $diffEnd   = !empty($row->enddates) ? $dateToday->diff(date_create($row->enddates)): null;
                 $diffEnd   = null; // it doesn't make sense on a Jubilee list
                 $daysStart = is_object($diffStart)  ? $diffStart->format('%r%a') : null;
                 $daysEnd   = is_object($diffEnd)    ? $diffEnd->format('%r%a')   : null;
@@ -515,7 +515,7 @@ abstract class ModJemJubileeHelper
             }
             # datemethod show date
             elseif ($method == 1) {
-            ///@todo check date+time to be more acurate
+                ///@todo check date+time to be more acurate
                 /*
                  * On Jubilee module differentiation between upcoming, running, and past is unimportant.
                  * Let's show us "From ... Until ..." and "On ..." only.

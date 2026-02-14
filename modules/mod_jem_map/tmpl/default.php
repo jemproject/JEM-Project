@@ -29,7 +29,6 @@ $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullsc
 $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
 $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 
-JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
 $jemsettings = JemHelper::config();
 
 $map_id       = 'leafletmap-' . uniqid();

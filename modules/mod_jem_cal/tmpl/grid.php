@@ -27,41 +27,41 @@ $use_ajax = !empty($use_ajax);
 # Use Ajax to navigate through the months if JS is enabled on browser.
 if ($use_ajax && empty($module->in_ajax_call)) {
 
-?>
+    ?>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const naviNoJs = document.getElementById("mod_jem_cal_<?php echo $module->id; ?>_navi_nojs");
-    const naviAjax = document.getElementById("mod_jem_cal_<?php echo $module->id; ?>_navi_ajax");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const naviNoJs = document.getElementById("mod_jem_cal_<?php echo $module->id; ?>_navi_nojs");
+            const naviAjax = document.getElementById("mod_jem_cal_<?php echo $module->id; ?>_navi_ajax");
 
-    if (naviNoJs) naviNoJs.style.display = "none";
-    if (naviAjax) naviAjax.style.display = "grid";
-});
+            if (naviNoJs) naviNoJs.style.display = "none";
+            if (naviAjax) naviAjax.style.display = "grid";
+        });
 
-function mod_jem_cal_click_<?php echo $module->id; ?>(url) {
-    const target = document.getElementById("eventcalq<?php echo $module->id; ?>");
-    if (!target) return;
+        function mod_jem_cal_click_<?php echo $module->id; ?>(url) {
+            const target = document.getElementById("eventcalq<?php echo $module->id; ?>");
+            if (!target) return;
 
-    // Carga de contenido vía Fetch API (sustituye a jQuery.load)
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error("Error al cargar el contenido");
-            return response.text();
-        })
-        .then(html => {
-            target.innerHTML = html;
+            // Carga de contenido vía Fetch API (sustituye a jQuery.load)
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("Error al cargar el contenido");
+                    return response.text();
+                })
+                .then(html => {
+                    target.innerHTML = html;
 
-            // Inicializar tooltips de Bootstrap 5+
-            const tooltipTriggerList = [].slice.call(target.querySelectorAll('.hasTooltip'));
-            tooltipTriggerList.map(function (el) {
-                return new bootstrap.Tooltip(el, { html: true });
-            });
-        })
-        .catch(err => console.error(err));
-}
-</script>
+                    // Inicializar tooltips de Bootstrap 5+
+                    const tooltipTriggerList = [].slice.call(target.querySelectorAll('.hasTooltip'));
+                    tooltipTriggerList.map(function (el) {
+                        return new bootstrap.Tooltip(el, { html: true });
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
 
-<?php
+    <?php
 }
 
 # Output
@@ -254,63 +254,63 @@ if (!$use_ajax || empty($module->in_ajax_call)) {
 }
 ?>
 <script>
-(function () {
-  const POPOVER_SELECTOR = '.hasTip';
-  const CALENDAR_SELECTOR = '.mod_jemcalq_calendar';
-  const OPTIONS = { trigger: 'manual', placement: 'top', html: true };
+    (function () {
+        const POPOVER_SELECTOR = '.hasTip';
+        const CALENDAR_SELECTOR = '.mod_jemcalq_calendar';
+        const OPTIONS = { trigger: 'manual', placement: 'top', html: true };
 
-  const getPop = el => bootstrap.Popover.getInstance(el);
-  const ensurePop = el => getPop(el) || new bootstrap.Popover(el, OPTIONS);
-  const hideAll = except => document.querySelectorAll(POPOVER_SELECTOR)
-    .forEach(el => { const p = getPop(el); if (p && el !== except) p.hide(); });
+        const getPop = el => bootstrap.Popover.getInstance(el);
+        const ensurePop = el => getPop(el) || new bootstrap.Popover(el, OPTIONS);
+        const hideAll = except => document.querySelectorAll(POPOVER_SELECTOR)
+            .forEach(el => { const p = getPop(el); if (p && el !== except) p.hide(); });
 
-  // Delegate click handler
-  document.addEventListener('click', e => {
-    const tip = e.target.closest(POPOVER_SELECTOR);
-    if (tip) {
-      e.stopPropagation();
-      hideAll(tip);
-      ensurePop(tip).toggle();
-    } else {
-      hideAll();
-    }
-  });
+        // Delegate click handler
+        document.addEventListener('click', e => {
+            const tip = e.target.closest(POPOVER_SELECTOR);
+            if (tip) {
+                e.stopPropagation();
+                hideAll(tip);
+                ensurePop(tip).toggle();
+            } else {
+                hideAll();
+            }
+        });
 
-  // Popovers für neue Elemente erstellen, für entfernte entsorgen
-  const initPopovers = root => root.querySelectorAll(POPOVER_SELECTOR)
-    .forEach(ensurePop);
-  const disposePopovers = node => {
-    if (!(node instanceof Element)) return;
-    (node.matches(POPOVER_SELECTOR) ? [node] : [])
-      .concat([...node.querySelectorAll(POPOVER_SELECTOR)])
-      .forEach(el => { const p = getPop(el); if (p) p.dispose(); });
-  };
+        // Popovers für neue Elemente erstellen, für entfernte entsorgen
+        const initPopovers = root => root.querySelectorAll(POPOVER_SELECTOR)
+            .forEach(ensurePop);
+        const disposePopovers = node => {
+            if (!(node instanceof Element)) return;
+            (node.matches(POPOVER_SELECTOR) ? [node] : [])
+                .concat([...node.querySelectorAll(POPOVER_SELECTOR)])
+                .forEach(el => { const p = getPop(el); if (p) p.dispose(); });
+        };
 
-  // Create popovers for new elements, dispose of them for removed elements
-  const observeCalendar = container => {
-    initPopovers(container);
-    new MutationObserver(muts => {
-      let added = false;
-      muts.forEach(m => {
-        m.removedNodes.forEach(disposePopovers);
-        if (m.addedNodes.length) added = true;
-      });
-      if (added) initPopovers(container);
-    }).observe(container, { childList: true, subtree: true });
-  };
+        // Create popovers for new elements, dispose of them for removed elements
+        const observeCalendar = container => {
+            initPopovers(container);
+            new MutationObserver(muts => {
+                let added = false;
+                muts.forEach(m => {
+                    m.removedNodes.forEach(disposePopovers);
+                    if (m.addedNodes.length) added = true;
+                });
+                if (added) initPopovers(container);
+            }).observe(container, { childList: true, subtree: true });
+        };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const cal = document.querySelector(CALENDAR_SELECTOR);
-    if (cal) observeCalendar(cal);
-    else {
-      // If container comes later via AJAX
-      new MutationObserver(() => {
-        const c = document.querySelector(CALENDAR_SELECTOR);
-        if (c) {
-          observeCalendar(c);
-        }
-      }).observe(document.documentElement, { childList: true, subtree: true });
-    }
-  });
-})();
+        document.addEventListener('DOMContentLoaded', () => {
+            const cal = document.querySelector(CALENDAR_SELECTOR);
+            if (cal) observeCalendar(cal);
+            else {
+                // If container comes later via AJAX
+                new MutationObserver(() => {
+                    const c = document.querySelector(CALENDAR_SELECTOR);
+                    if (c) {
+                        observeCalendar(c);
+                    }
+                }).observe(document.documentElement, { childList: true, subtree: true });
+            }
+        });
+    })();
 </script>

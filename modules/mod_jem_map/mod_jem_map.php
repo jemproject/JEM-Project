@@ -19,8 +19,7 @@ require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 $app = Factory::getApplication();
-$wa = $app->getDocument()->getWebAssetManager();
-$wa->registerAndUseStyle('user-stylesheet', Uri::base() . "modules/mod_jem_map/tmpl/mod_jem_map.css");
+
 
 # Parameters
 $venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
@@ -131,6 +130,9 @@ if($params->get('map_auto_center',1)){
 
 // Get category list
 $categories = ModJemMapHelper::getCategories($params, $catsId);
+$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+
+JemHelper::loadModuleStyleSheet($mod_name, $layout);
 
 // Render layout
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));

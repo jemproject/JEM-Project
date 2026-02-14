@@ -14,8 +14,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-JemHelper::loadModuleStyleSheet('mod_jem_banner', 'mod_jem_banner_responsive');
-
 $app = Factory::getApplication();
 $wa  = $app->getDocument()->getWebAssetManager();
 
