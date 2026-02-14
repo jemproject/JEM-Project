@@ -1,0 +1,28 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Latest Events Basic Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+
+.highlight_featured{
+  font-weight: bold;
+}
+
+.jem_acymailing {
+  padding: 10px 5px;
+}
+
+.jem_acymailing ul {
+  margin-left: 0.7em;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.jem_acymailing ul li {
+  position: relative;
+  margin-left: 1em;
+  margin-bottom: 10px;
+}

@@ -14,8 +14,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-JemHelper::loadModuleStyleSheet('mod_jem_banner', 'mod_jem_banner_table-advanced');
-
 $app = Factory::getApplication();
 $wa  = $app->getDocument()->getWebAssetManager();
 
@@ -110,82 +108,82 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-            <div class="event-card" itemprop="event" itemscope itemtype="https://schema.org/Event">
-                <div class="event-header">
-                    <?php if ($showcalendar == 1) : ?>
-                    <div class="event-date">
-                        <div class="event-month"><?php echo $item->startdate['month']; ?></div>
-                        <div class="event-day"><?php echo $item->startdate['day']; ?></div>
-                        <div class="event-weekday"><?php echo $item->startdate['weekday']; ?></div>
-                        <?php if ($item->time && $datemethod == 1) : ?>
-                        <div class="event-time"><?php echo $item->time; ?></div>
+                <div class="event-card" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                    <div class="event-header">
+                        <?php if ($showcalendar == 1) : ?>
+                            <div class="event-date">
+                                <div class="event-month"><?php echo $item->startdate['month']; ?></div>
+                                <div class="event-day"><?php echo $item->startdate['day']; ?></div>
+                                <div class="event-weekday"><?php echo $item->startdate['weekday']; ?></div>
+                                <?php if ($item->time && $datemethod == 1) : ?>
+                                    <div class="event-time"><?php echo $item->time; ?></div>
+                                <?php endif; ?>
+                            </div>
                         <?php endif; ?>
+
+                        <h3 class="event-title" itemprop="name">
+                            <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'" itemprop="url">'.$item->title.'</a>' : $item->title; ?>
+                        </h3>
                     </div>
-                    <?php endif; ?>
 
-                    <h3 class="event-title" itemprop="name">
-                        <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'" itemprop="url">'.$item->title.'</a>' : $item->title; ?>
-                    </h3>
-                </div>
+                    <div class="event-body">
+                        <div class="event-meta">
+                            <?php if ($showcalendar == 0) : ?>
+                                <?php if ($item->date && $datemethod == 2) :?>
+                                    <div class="event-meta-item">
+                                        <i class="icon-calendar"></i>
+                                        <span><?php echo $item->date; ?></span>
+                                    </div>
+                                <?php endif; ?>
 
-                <div class="event-body">
-                    <div class="event-meta">
-                        <?php if ($showcalendar == 0) : ?>
-                            <?php if ($item->date && $datemethod == 2) :?>
-                                <div class="event-meta-item">
-                                    <i class="icon-calendar"></i>
-                                    <span><?php echo $item->date; ?></span>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if ($item->date && $datemethod == 1) :?>
-                                <div class="event-meta-item">
-                                    <i class="icon-calendar"></i>
-                                    <span><?php echo $item->date; ?></span>
-                                </div>
-                                <?php if ($item->time && $datemethod == 1) :?>
-                                <div class="event-meta-item">
-                                    <i class="icon-clock"></i>
-                                    <span><?php echo $item->time; ?></span>
-                                </div>
+                                <?php if ($item->date && $datemethod == 1) :?>
+                                    <div class="event-meta-item">
+                                        <i class="icon-calendar"></i>
+                                        <span><?php echo $item->date; ?></span>
+                                    </div>
+                                    <?php if ($item->time && $datemethod == 1) :?>
+                                        <div class="event-meta-item">
+                                            <i class="icon-clock"></i>
+                                            <span><?php echo $item->time; ?></span>
+                                        </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             <?php endif; ?>
-                        <?php endif; ?>
 
-                        <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
-                            <div class="event-meta-item">
-                                <i class="icon-location"></i>
-                                <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
+                            <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
+                                <div class="event-meta-item">
+                                    <i class="icon-location"></i>
+                                    <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                                <div class="event-meta-item">
+                                    <i class="icon-tag"></i>
+                                    <span><?php echo $item->catname; ?></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
+                            <div class="event-image">
+                                <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
+                                   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>">
+                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                </a>
                             </div>
                         <?php endif; ?>
 
-                        <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
-                            <div class="event-meta-item">
-                                <i class="icon-tag"></i>
-                                <span><?php echo $item->catname; ?></span>
+                        <?php if ($params->get('showdesc', 1) == 1) :?>
+                            <div class="event-description" itemprop="description">
+                                <?php echo $item->eventdescription; ?>
+                                <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
+                                    <a href="<?php echo $item->link ?>" class="read-more"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
-
-                    <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
-                    <div class="event-image">
-                        <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
-                           title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>">
-                            <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
-                        </a>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if ($params->get('showdesc', 1) == 1) :?>
-                    <div class="event-description" itemprop="description">
-                        <?php echo $item->eventdescription; ?>
-                        <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
-                        <a href="<?php echo $item->link ?>" class="read-more"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
-                        <?php endif; ?>
-                    </div>
-                    <?php endif; ?>
                 </div>
-            </div>
             <?php endforeach; ?>
         <?php else : ?>
             <div class="no-events"><?php echo Text::_('MOD_JEM_BANNER_NO_EVENTS'); ?></div>

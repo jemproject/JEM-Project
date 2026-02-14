@@ -149,6 +149,7 @@ abstract class ModJemWideHelper
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
             $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->featured    = $row->featured;
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.webp';

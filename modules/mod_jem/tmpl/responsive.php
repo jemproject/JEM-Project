@@ -18,16 +18,12 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $uri = Uri::getInstance();
 
-JemHelper::loadModuleStyleSheet('mod_jem', 'mod_jem_responsive');
-
 $highlight_featured = $params->get('highlight_featured');
 $showtitloc = $params->get('showtitloc');
 $linkloc = $params->get('linkloc');
 $linkdet = $params->get('linkdet');
 $showiconcountry = $params->get('showiconcountry');
 $settings = JemHelper::config();
-
-HTMLHelper::_('stylesheet', 'modules/mod_jem/tmpl/default.css');
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
