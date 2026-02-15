@@ -533,6 +533,7 @@ class JemModelEventslist extends ListModel
         ## FILTER - OPEN_DATES     ##
         #############################
         $opendates = $this->getState('filter.opendates');
+        $opendates_query = "";
 
         switch ($opendates) {
             case 0: // don't show events without start date
@@ -543,7 +544,7 @@ class JemModelEventslist extends ListModel
                 $opendates_query = " OR a.dates IS NULL)";
                 break;
             case 2: // show only events without startdate
-                $opendates_query = " a.dates IS NULL)";
+                $opendates_query = " a.dates IS NULL";
                 break;
         }
 

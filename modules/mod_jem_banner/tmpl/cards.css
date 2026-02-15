@@ -20,7 +20,7 @@
     border: 1px solid var(--joomla-border-color, #dddddd);
     border-radius: var(--joomla-card-border-radius, 12px);
     overflow: hidden;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .jemmodulebanner .event-card:hover {
