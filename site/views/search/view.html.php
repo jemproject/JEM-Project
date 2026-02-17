@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -35,7 +35,7 @@ class JemViewSearch extends JemView
         $pathway      = $app->getPathWay();
         $url           = Uri::root();
         $model        = $this->getModel('search');
-        //    $user     = JemFactory::getUser();
+     // $user         = JemFactory::getUser();
 
         // Decide which parameters should take priority
         $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'

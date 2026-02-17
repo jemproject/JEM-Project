@@ -8,6 +8,15 @@
 
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="show_archived_events" type="radio"
+                   default="0"
+                   label="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS"
+                   description="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="onlyfeatured" type="radio"
                 default="0"
                 label="COM_JEM_DISPLAY_FEATUREDONLY"
@@ -21,15 +30,6 @@
                 default="0"
                 label="COM_JEM_SHOW_INTROTEXT_EVENTS"
                 description="COM_JEM_SHOW_INTROTEXT_EVENTS_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="show_archived_events" type="radio"
-                default="0"
-                label="COM_JEM_SHOW_ARCHIVED_EVENTS"
-                description="COM_JEM_SHOW_ARCHIVED_EVENTS_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>
@@ -108,6 +108,16 @@
                 description="COM_JEM_DISPLAY_MONTH_ROW_DESC"
                 class="btn-group btn-group-yesno"
             >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_more_button" type="radio" 
+                   default="0" 
+                   label="COM_JEM_SHOW_MORE_BUTTON" 
+                   description="COM_JEM_SHOW_MORE_BUTTON_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   required="false"
+                >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -24,14 +24,14 @@ class JemControllerMailto extends JemControllerForm
     // protected $view_list = 'eventslist';
     protected $_id = 0;
 
-    
+
     public function getModel($name = 'mailto', $prefix = '', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
 
         return $model;
     }
-    
+
     public function save($key = NULL, $urlVar = NULL){
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
@@ -42,7 +42,7 @@ class JemControllerMailto extends JemControllerForm
         $form       = $model->getForm();
         $post_link  = $this->input->post->get('link', '', 'post');
         $currentUri = $uri->toString() . '&link='.$post_link;
-        
+
         if (!$form)
         {
             $app->enqueueMessage($model->getError(), 'error');
@@ -91,7 +91,7 @@ class JemControllerMailto extends JemControllerForm
 
         $siteName = $app->get('sitename');
         $link     = JemMailtoHelper::validateHash($this->input->post->get('link', '', 'post'));
-        
+
         // Verify that this is a local link
         if (!$link || !Uri::isInternal($link))
         {
@@ -152,7 +152,7 @@ class JemControllerMailto extends JemControllerForm
                 return false;
             }
         }catch(Exception $e){
-            $app->enqueueMessage($e->getMessage(), 'notice');            
+            $app->enqueueMessage($e->getMessage(), 'notice');
             $this->setRedirect($currentUri);
             return false;
         }

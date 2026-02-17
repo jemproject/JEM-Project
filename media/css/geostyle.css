@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -9,11 +9,9 @@
     width: 88%;
 }
 
-/**
-input#geocomplete {
-	height: 20px;
-}
- */
+/** input#geocomplete {
+    height: 20px;
+} */
 input.geobutton {
     height: 27px; /* maybe 24px ? */
     padding: 0 4px;

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -58,10 +58,10 @@ class JemViewEventslist extends HtmlView
                 $link = Route::_(JemHelperRoute::getEventRoute($row->id));
 
                 // feed item description text
-                $description  = Text::_('COM_JEM_TITLE').': '.$title.'<br />';
-                $description .= Text::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
-                $description .= Text::_('COM_JEM_CATEGORY').': '.$category.'<br />';
-                $description .= Text::_('COM_JEM_DATE').': '.$displaydate.'<br />';
+                $description  = Text::_('COM_JEM_TITLE').': '.$title.'<br>';
+                $description .= Text::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br>';
+                $description .= Text::_('COM_JEM_CATEGORY').': '.$category.'<br>';
+                $description .= Text::_('COM_JEM_DATE').': '.$displaydate.'<br>';
                 $description .= Text::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
 
                 $created = ($row->created ? date('r', strtotime($row->created)) : '');

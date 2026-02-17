@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -26,8 +26,8 @@ class JemViewEvent extends JemAdminView
     public function display($tpl = null)
     {
         // Initialise variables.
-        $this->form     = $this->get('Form');
-        $this->item     = $this->get('Item');
+        $this->form  = $this->get('Form');
+        $this->item  = $this->get('Item');
         $this->state = $this->get('State');
 
         // Check for errors.
@@ -38,18 +38,18 @@ class JemViewEvent extends JemAdminView
         }
 
         //initialise variables
-        $jemsettings     = JemHelper::config();
+        $jemsettings    = JemHelper::config();
         $app            = Factory::getApplication();
         $this->document = $app->getDocument();
-        $user             = JemFactory::getUser();
-        $this->settings    = JemAdmin::config();
-        $task            = $app->input->get('task', '');
+        $user           = JemFactory::getUser();
+        $this->settings = JemAdmin::config();
+        $task           = $app->input->get('task', '');
         $this->task     = $task;
         $uri            = Uri::getInstance();
-        $url             = $uri->root();
+        $url            = $uri->root();
 
         $categories     = JemCategories::getCategoriesTree(1);
-        $selectedcats     = $this->get('Catsselected');
+        $selectedcats   = $this->get('Catsselected');
 
         $Lists = array();
         $Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
@@ -71,10 +71,10 @@ class JemViewEvent extends JemAdminView
         //$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
         //$document->addScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 
-        $access2             = JemHelper::getAccesslevelOptions();
-        $this->access        = $access2;
-        $this->jemsettings    = $jemsettings;
-        $this->Lists         = $Lists;
+        $access2           = JemHelper::getAccesslevelOptions();
+        $this->access      = $access2;
+        $this->jemsettings = $jemsettings;
+        $this->Lists       = $Lists;
 
         $this->addToolbar();
         parent::display($tpl);
@@ -88,10 +88,10 @@ class JemViewEvent extends JemAdminView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user        = JemFactory::getUser();
-        $isNew        = ($this->item->id == 0);
-        $checkedOut    = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        $canDo        = JemHelperBackend::getActions();
+        $user       = JemFactory::getUser();
+        $isNew      = ($this->item->id == 0);
+        $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        $canDo      = JemHelperBackend::getActions();
 
         ToolBarHelper::title($isNew ? Text::_('COM_JEM_ADD_EVENT') : Text::_('COM_JEM_EDIT_EVENT'), 'eventedit');
 

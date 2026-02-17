@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -42,13 +42,13 @@ class JemViewMailto extends HtmlView
         $menuitem    = $menu->getActive();
         $pathway     = $app->getPathway();
         $uri         = Uri::getInstance();
-        
+
         $this->state = $this->get('State');
         $this->params = $this->state->get('params');
         $this->link = urldecode($app->input->get('link', '', 'BASE64'));
-        
+
         $layout = $app->input->get('layout', 'edit');
-        
+
         $params = $this->params;
         $this->pageclass_sfx = $params->get('pageclass_sfx');
         // Get the form to display

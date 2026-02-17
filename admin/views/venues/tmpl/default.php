@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -28,7 +28,7 @@ $wa->useScript('table.columns');
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-11">        
+                <div class="col-md-11">
                     <div class="row mb-12">
                         <div class="col-md-4">
                             <div class="input-group">
@@ -44,11 +44,11 @@ $wa->useScript('table.columns');
                             <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                                 <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
                                 <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true);?>
-                            </select>                        
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">                
+                <div class="col-md-1">
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="float-end">
@@ -73,6 +73,9 @@ $wa->useScript('table.columns');
                 <th style="width:20%">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder ); ?>
                 </th>
+                <th style="width:5%" class="center" nowrap="nowrap">
+                    <?php echo Text::_('COM_JEM_COLOR'); ?>
+                </th>
                 <th>
                     <?php echo Text::_('COM_JEM_WEBSITE'); ?>
                 </th>
@@ -88,6 +91,9 @@ $wa->useScript('table.columns');
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo Text::_('JSTATUS'); ?>
                 </th>
+                <th style="width:5%" class="center" nowrap="nowrap">
+                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+                </th>
                 <th>
                     <?php echo Text::_('COM_JEM_CREATION'); ?>
                 </th>
@@ -96,9 +102,6 @@ $wa->useScript('table.columns');
                 </th>
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder ); ?>
-                    <?php if ($saveOrder) :?>
-                        <?php //echo HTMLHelper::_('grid.order',  $this->items, 'filesave.png', 'venues.saveorder'); ?>
-                    <?php endif; ?>
                 </th>
                 <th style="width:1%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?>
@@ -141,6 +144,14 @@ $wa->useScript('table.columns');
                             <?php echo $this->escape($item->alias); ?>
                         <?php endif; ?>
                     </td>
+                    <td class="center">
+                        <div class="colorpreview<?php echo ($item->color == '') ? ' transparent-color" title="transparent"' : '" style="background-color:' . $item->color . '"' ?> aria-labelledby="
+                             color-desc-<?php echo $item->id; ?>">
+                        </div>
+                        <div role="tooltip"
+                             id="color-desc-<?php echo $item->id; ?>"><?php echo ($item->color == '') ? 'transparent' : $item->color ?>
+                        </div>
+                    </td>
                     <td style="text-align:left">
                         <?php if ($item->url) : ?>
                             <a href="<?php echo $this->escape($item->url); ?>" target="_blank">
@@ -158,18 +169,19 @@ $wa->useScript('table.columns');
                     <td class="center state"><?php echo $item->state ? $this->escape($item->state) : '-'; ?></td>
                     <td class="center country"><?php echo $item->country ? $this->escape($item->country) : '-'; ?></td>
                     <td class="center"><?php echo $published; ?></td>
+                    <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php
                         $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
-                        $image             = HTMLHelper::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
-                        $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
-                        $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br />';
-                        $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br />';
+                        $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp', NULL,NULL,true);
+                        $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br>';
+                        $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br>';
+                        $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br>';
                         if ($item->author_ip != '') {
-                            $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br />';
+                            $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br>';
                         }
                         if (!empty($item->modified)) {
-                            $overlib     .= '<br />'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br />'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
+                            $overlib     .= '<br>'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br>'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
                         }
                         ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
@@ -219,9 +231,9 @@ $wa->useScript('table.columns');
             <?php endforeach; ?>
             </tbody>
         </table>
-            
+
         <div class="ms-auto mb-4 me-0">
-            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>           
+            <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
         </div>
     </div>
 

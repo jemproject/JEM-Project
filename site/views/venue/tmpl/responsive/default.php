@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -32,7 +32,7 @@ use Joomla\CMS\Language\Text;
         </div>
         <p> </p>
     <?php endif; ?>
-  
+
   <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
     <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
       <h2 class="jem-venue-title">
@@ -61,42 +61,42 @@ use Joomla\CMS\Language\Text;
           <dd class="title">
             <?php echo $this->venue->title;?>
           </dd>
-        
+
           <?php if (($this->settings->get('global_show_detlinkvenue', 1)) && (!empty($this->venue->url))) : ?>
           <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WEBSITE'); ?>"><?php echo Text::_('COM_JEM_WEBSITE'); ?>:</dt>
           <dd class="venue">
             <a href="<?php echo $this->venue->url; ?>" target="_blank"><?php echo $this->venue->urlclean; ?></a>
           </dd>
           <?php endif; ?>
-        
+
           <?php if ($this->venue->street) : ?>
           <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
           <dd class="venue_street" itemprop="streetAddress">
             <?php echo $this->escape($this->venue->street); ?>
           </dd>
           <?php endif; ?>
-    
+
           <?php if ($this->venue->postalCode) : ?>
           <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
           <dd class="venue_postalCode" itemprop="postalCode">
             <?php echo $this->escape($this->venue->postalCode); ?>
           </dd>
           <?php endif; ?>
-    
+
           <?php if ($this->venue->city) : ?>
           <dt class="venue_city hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_CITY'); ?>"><?php echo Text::_('COM_JEM_CITY'); ?>:</dt>
           <dd class="venue_city" itemprop="addressLocality">
             <?php echo $this->escape($this->venue->city); ?>
           </dd>
           <?php endif; ?>
-    
+
           <?php if ($this->venue->state) : ?>
           <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
           <dd class="venue_state" itemprop="addressRegion">
             <?php echo $this->escape($this->venue->state); ?>
           </dd>
           <?php endif; ?>
-    
+
           <?php if ($this->venue->country) : ?>
           <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
           <dd class="venue_country">
@@ -104,7 +104,7 @@ use Joomla\CMS\Language\Text;
             <meta itemprop="addressCountry" content="<?php echo $this->venue->country; ?>" />
           </dd>
           <?php endif; ?>
-    
+
           <!-- PUBLISHING STATE -->
           <?php if (isset($this->venue->published) && !empty($this->show_status)) : ?>
           <dt class="published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
@@ -132,7 +132,7 @@ use Joomla\CMS\Language\Text;
             }
           }
           ?>
-    
+
           <?php
           if ($this->settings->get('global_show_mapserv') == 1 || $this->settings->get('global_show_mapserv') == 4) {
             echo JemOutput::mapicon($this->venue, null, $this->settings);
@@ -142,8 +142,8 @@ use Joomla\CMS\Language\Text;
         <?php
       ?>
     </div>
-    
-    
+
+
     <style>
       .jem-img {
         flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
@@ -151,21 +151,9 @@ use Joomla\CMS\Language\Text;
     </style>
     <div class="jem-img">
       <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
-    </div>  
+    </div>
   </div>
-    <?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
-    <!-- PUBLISHING STATE -->
-        <dl>
-            <dt class="published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
-            <dd class="published">
-                <?php switch ($this->venue->published) {
-                case  1: echo Text::_('JPUBLISHED');   break;
-                case  0: echo Text::_('JUNPUBLISHED'); break;
-                case  2: echo Text::_('JARCHIVED');    break;
-                case -2: echo Text::_('JTRASHED');     break;
-                } ?>
-            </dd>
-        </dl>
+    
     <?php endif; ?>
 
     <?php
@@ -181,7 +169,6 @@ use Joomla\CMS\Language\Text;
             <?php if ($global_show_mapserv == 3) : ?>
                 <input type="hidden" id="latitude" value="<?php echo $this->venue->latitude; ?>">
                 <input type="hidden" id="longitude" value="<?php echo $this->venue->longitude; ?>">
-
                 <input type="hidden" id="venue" value="<?php echo $this->venue->venue; ?>">
                 <input type="hidden" id="street" value="<?php echo $this->venue->street; ?>">
                 <input type="hidden" id="city" value="<?php echo $this->venue->city; ?>">
@@ -193,7 +180,7 @@ use Joomla\CMS\Language\Text;
     <?php endif; ?>
 
     <?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
-              $this->venuedescription != '<br />') : ?>
+              $this->venuedescription != '<br>') : ?>
 
         <h2 class="description"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
         <div class="description no_space floattext" itemprop="description">
@@ -211,14 +198,11 @@ use Joomla\CMS\Language\Text;
         </h2>
         <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm">
             <?php echo $this->loadTemplate('events_table'); ?>
-
-            <p>
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="view" value="venue" />
             <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
-            </p>
         </form>
 
         <!--pagination-->
@@ -226,7 +210,10 @@ use Joomla\CMS\Language\Text;
             <?php echo $this->pagination->getPagesLinks(); ?>
         </div>
 
-        <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+        <!--iCal-->
+        <div id="iCal" class="iCal">
+            <?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
+        </div>
     <?php endif; ?>
 
     <!--copyright-->

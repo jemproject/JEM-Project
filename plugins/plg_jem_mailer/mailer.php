@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Mailer Plugin
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
@@ -25,8 +25,8 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Filter\OutputFilter;    
-use Joomla\CMS\HTML\HTMLHelper;    
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\HTML\HTMLHelper;
 // Import library dependencies
 jimport('joomla.utilities.mail');
 
@@ -104,7 +104,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -285,7 +285,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -388,7 +388,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -558,7 +558,7 @@ class plgJemMailer extends CMSPlugin
         $case_when  = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('a.id');
+        $id = $query->castAs('CHAR', 'a.id');
         $case_when .= $query->concatenate(array($id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
@@ -696,7 +696,7 @@ class plgJemMailer extends CMSPlugin
         $case_when = ' CASE WHEN ';
         $case_when .= $query->charLength('alias');
         $case_when .= ' THEN ';
-        $id = $query->castAsChar('id');
+        $id = $query->castAs('CHAR', 'id');
         $case_when .= $query->concatenate(array($id, 'alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -18,7 +18,7 @@ $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
         $wa->useScript('keepalive')
             ->useScript('form.validate');
-        
+
 
 // Create shortcut to parameters.
 $params        = $this->params;
@@ -30,7 +30,7 @@ $params        = $this->params;
             $(".sbmit-btn").prop('disabled',true);
             $(".sbmit-btn .spinner-border").removeClass('d-none');
             Joomla.submitform(task);
-        } 
+        }
     }
 </script>
 

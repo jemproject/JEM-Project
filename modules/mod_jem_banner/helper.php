@@ -2,20 +2,21 @@
 /**
  * @package JEM
  * @subpackage JEM Banner Module
- * @copyright (C) 2013-2025 joomlaeventmanager.net
+ * @copyright (C) 2013-2026 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Language\Text;
-use \Joomla\CMS\Router\Route;
-use \Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Date\Date;
 
-BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 
 /**
  * Module-Banner
@@ -38,7 +39,7 @@ abstract class ModJemBannerHelper
         static $formats  = array('year' => 'Y', 'month' => 'F', 'day' => 'j', 'weekday' => 'l');
         static $defaults = array('year' => '&nbsp;', 'month' => '', 'day' => '?', 'weekday' => '');
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db     = Factory::getContainer()->get('DatabaseDriver');
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
 
@@ -96,9 +97,8 @@ abstract class ModJemBannerHelper
         # create type dependent filter rules
         switch ($type) {
             case 1: # unfinished events
-                $cal_from  = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-                $cal_from .= "  OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
-                $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
+                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), ' ', IFNULL(a.endtimes, '23:59:59'))) > $offset_minutes) ";
+                $cal_to   = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates, ' ', IFNULL(a.times, '00:00:00'))) < $max_minutes) " : '';
                 break;
 
             case 2: # archived events
@@ -107,8 +107,9 @@ abstract class ModJemBannerHelper
                 break;
 
             case 3: # running events (one day)
-                $cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days) ";
-                $cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
+                $target_date = "DATE_ADD(CURDATE(), INTERVAL $offset_days DAY)";
+                $cal_from = " (a.dates <= $target_date AND IFNULL(a.enddates, a.dates) >= $target_date) ";
+                $cal_to = "";
                 break;
 
             case 5: # open date (only)
@@ -120,8 +121,8 @@ abstract class ModJemBannerHelper
             //        # fall through
             case 0: # upcoming events
             default:
-                $cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
-                $cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
+                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+                $cal_to = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes) " : '';
                 break;
         }
 
@@ -215,7 +216,7 @@ abstract class ModJemBannerHelper
             ## DEFINE LIST ##
             #################
 
-            $lists[++$i] = new stdClass(); // add new object
+            $lists[++$i] = new stdClass();
 
             # check view access
             if (in_array($row->access, $levels)) {
@@ -277,13 +278,13 @@ abstract class ModJemBannerHelper
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
             }
 
-            # append <br /> tags on line breaking tags so they can be stripped below
-            $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+            # append <br> tags on line breaking tags so they can be stripped below
+            $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br>", $row->introtext);
 
-            # strip html tags but leave <br /> tags
+            # strip html tags but leave <br> tags
             $description = strip_tags($description, "<br>");
 
-            # switch <br /> tags to space character
+            # switch <br> tags to space character
             if ($params->get('br') == 0) {
                 $description = mb_ereg_replace('<br[ /]*>',' ', $description);
             }
@@ -382,7 +383,7 @@ abstract class ModJemBannerHelper
         $tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
         $tomorrow        = date("Y-m-d", $tomorrow_stamp);
 
-        $dates_stamp     = strtotime($row->dates);
+        $dates_stamp     = $row->dates ? strtotime($row->dates) : null;
         $enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 
         //check if today or tomorrow or yesterday and no current running multiday event
@@ -395,19 +396,19 @@ abstract class ModJemBannerHelper
         } else {
             //if daymethod show day
             if ($params->get('daymethod', 1) == 1) {
-                $date = date('l', strtotime($row->dates));
+                $date = $row->dates ? date('l', strtotime($row->dates)) : null;
                 $result = Text::sprintf('MOD_JEM_BANNER_ON_DATE', $date);
 
                 //Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
                 if (($dates_stamp > $tomorrow_stamp) && $enddates_stamp) {
-                    $startdate = date('l', strtotime($row->dates));
+                    $startdate = $row->dates ? date('l', strtotime($row->dates)) : null;
                     $result = Text::sprintf('MOD_JEM_BANNER_FROM', $startdate);
                 }
 
                 //current multidayevent (Until 18.08.2008)
                 if ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp <= $today_stamp)) {
                     //format date
-                    $enddate = date('l', strtotime($row->enddates));
+                    $enddate = $row->enddates ? strtotime($row->enddates) : null;
                     $result = Text::sprintf('MOD_JEM_BANNER_UNTIL', $enddate);
                 }
             } else { // show day difference

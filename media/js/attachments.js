@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -39,18 +39,18 @@ jQuery(document).ready(function ($) {
         }
 
         // var theAjax = new Request( {
-        // 	url : url,
-        // 	method: 'post',
-        // 	postBody : ''
-        // 	});
+        // url : url,
+        // method: 'post',
+        // postBody : ''
+        // });
 
         // theAjax.addEventListener('onSuccess', function(response) {
-        // 	/* server sends 1 on success, 0 on error */
-        // 	if (response.indexOf('1') > -1) {
-        // 		$(clickednode).getParent().getParent().dispose();
-        // 	} else {
-        // 		$(clickednode).style.cursor = 'not-allowed'; /* remove failed - how to show? */
-        // 	}
+        // /* server sends 1 on success, 0 on error */
+        // if (response.indexOf('1') > -1) {
+        // $(clickednode).getParent().getParent().dispose();
+        // } else {
+        // $(clickednode).style.cursor = 'not-allowed'; /* remove failed - how to show? */
+        // }
         // }.bind(this));
         // theAjax.send();
 

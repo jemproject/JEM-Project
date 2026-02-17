@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -48,7 +48,7 @@ $wa->addInlineScript('
                 <div class="col-md-11">
                      <div class="row mb-12">
                             <div class="col-md-2">
-                                   <strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br />
+                                   <strong><?php echo Text::_('COM_JEM_DATE').':'; ?></strong>&nbsp;<?php echo $this->event->dates; ?><br>
                             </div>
                             <div class="col-md-2">
                                 <strong><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></strong>&nbsp;<?php echo $this->escape($this->event->title); ?>
@@ -137,7 +137,7 @@ $wa->addInlineScript('
                     <?php endif; ?>
                     <td class="center">
                         <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">
-                            <?php echo HTMLHelper::_('image','com_jem/publish_r.png',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
+                            <?php echo HTMLHelper::_('image','com_jem/publish_r.webp',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
                         </a>
                     </td>
                     <td class="center">

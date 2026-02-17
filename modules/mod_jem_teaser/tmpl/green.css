@@ -1,11 +1,11 @@
 #jemmoduleteaser .calendar-green {
-	background-image: url(img/calendar_green.png);
+    background-image: url(img/calendar_green.webp);
     background-size: 100%;
 }
 
 #jemmoduleteaser .calendar-green .monthteaser {
-	color: #fff;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    color: #fff;
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
     1px -1px 0 rgba(0,0,0,0.2),
     -1px 1px 0 rgba(0,0,0,0.2),
     1px 1px 0 rgba(0,0,0,0.2);

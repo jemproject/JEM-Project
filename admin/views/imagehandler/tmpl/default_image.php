@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -23,7 +23,7 @@ use Joomla\CMS\Session\Session;
     <div class="controls">
         <?php echo $this->_tmp_img->size; ?> -
         <a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $this->folder; ?>&amp;rm[]=<?php echo $this->_tmp_img->name; ?>&amp;<?php echo Session::getFormToken(); ?>=1">
-            <?php echo HTMLHelper::_('image','/media/com_jem/images/publish_r.png',Text::_('COM_JEM_DELETE_IMAGE'),array('title' => Text::_('COM_JEM_DELETE_IMAGE')),true); ?>
+            <?php echo HTMLHelper::_('image','/media/com_jem/images/publish_r.webp',Text::_('COM_JEM_DELETE_IMAGE'),array('title' => Text::_('COM_JEM_DELETE_IMAGE')),true); ?>
         </a>
     </div>
     <div class="imageinfo">

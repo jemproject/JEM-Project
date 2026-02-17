@@ -2,7 +2,7 @@
 /**
  * @JEM Tag Plugin for AcyMailing 5.x
  * @copyright  (C) 2014 Ghost Art digital media.
- * @copyright  (C) 2013-2025 joomlaeventmanager.net. All rights reserved.
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net. All rights reserved.
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist tag and JEM specific code by JEM Community
  */
@@ -671,7 +671,7 @@ class plgAcymailingTagjem extends CMSPlugin
                 }
                 $result .= '<a style="text-decoration:none;" title="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;
                 if (!empty($event->custom1)) {
-                    $result .= '<br/><em>'.$event->custom1.'</em>';
+                    $result .= '<br><em>'.$event->custom1.'</em>';
                 }
                 $result .= '</h2></a>';
                 $result .= '<p><span class="eventdate">'.$date.'</span></p>';

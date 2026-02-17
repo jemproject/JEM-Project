@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="content" method="upgrade">
+    <name>plg_content_jemembed</name>
+    <author>JEM Community</author>
+    <creationDate>February 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.4.0</version>
+    <description>PLG_CONTENT_JEMEMBED_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="jemembed">jemembed.php</filename>
+        <folder>language</folder>
+    </files>
+
+    <media destination="plg_content_jemembed" folder="media">
+        <folder>files</folder>
+    </media>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_content_jemembed.ini</language>
+        <language tag="en-GB">language/en-GB/plg_content_jemembed.sys.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="require_token" type="radio" label="PLG_CONTENT_JEMEMBED_REQUIRE_TOKEN_LABEL" description="PLG_CONTENT_JEMEMBED_REQUIRE_TOKEN_DESC" default="1" class="btn-group btn-group-yesno">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="api_tokens" type="textarea" label="PLG_CONTENT_JEMEMBED_API_TOKENS_LABEL" description="PLG_CONTENT_JEMEMBED_API_TOKENS_DESC" rows="5" cols="30" />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

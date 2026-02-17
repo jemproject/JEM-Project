@@ -1,52 +1,55 @@
 body {
-	font-family:"Roboto", "Helvetica Neue", Arial, sans-serif;
-	line-height: 1.4rem;
+    font-family:"Roboto", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.4rem;
 }
 
 a:link {
-	color: #0B55C4;
-	text-decoration: none;
+    color: #0B55C4;
+    text-decoration: none;
 }
 
 a:visited {
-	color: #0B55C4;
-	text-decoration: none;
+    color: #0B55C4;
+    text-decoration: none;
 }
 
 a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 h1 {
-	color: #1B57B1;
-	font-size: 1.4em;
-	border-bottom: 1px solid #1B57B1;
-	padding: 0 0 2px;
-	margin: 0;
+    color: #1B57B1;
+    font-size: 1.5em;
+    border-bottom: 1px solid #1B57B1;
+    padding: 0 0 2px;
+    margin: 0;
 }
 
 h2 {
-	margin: 30px 0 10px;
-	font-size: 1.3em;
-	font-weight: bold;
-	border-bottom: 1px solid #cccccc;
-	color: #1b57b1;
-	width: 100%;
+    margin: 30px 0 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-bottom: 1px solid #cccccc;
+    color: #1b57b1;
+    width: 100%;
 }
 
 h3 {
-	margin: 20px 0 10px;
-	font-size: 1.1em;
-	font-weight: bold;
-	border-bottom: 1px solid #cccccc;
-	color: #1b57b1;
+    margin: 20px 0 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-bottom: 1px solid #cccccc;
+    color: #1b57b1;
 }
 
 pre {
-	text-align: left;
-	background-color: #fff;
-	border-left: 1px solid #aaa;
-	padding: 5px;
+    text-align: left;
+    background-color: #fff;
+    border-left: 1px solid #aaa;
+    padding: 5px;
+	white-space: pre-wrap;
+	word-break: normal;
+	overflow-wrap: normal;
 }
 
 ul {
@@ -60,229 +63,260 @@ ul li:not(:last-child) {
 }
 
 .clear {
-	clear: both;
+    clear: both;
 }
 
 img.left {
-	float: left;
-	padding-right: 10px;
+    float: left;
+    padding-right: 10px;
 }
 
 .box {
-	clear: both;
-	padding: 1px 0;
+    clear: both;
+    padding: 1px 0;
 }
 
 .hintheader {
-	border-left: 6px solid #ffa909;
-	border-right: 1px solid #e7e7e7;
-	border-top: 1px solid #ffa909;
-	padding: 3px 3px 3px 54px;
-	font-weight: bold;
-	margin: 8px auto 0;
-	color: #000;
-	background-color: #ffa909;
+    border-left: 6px solid #ffa909;
+    border-right: 1px solid #e7e7e7;
+    border-top: 1px solid #ffa909;
+    padding: 3px 3px 3px 54px;
+    font-weight: bold;
+    margin: 8px auto 0;
+    color: #000;
+    background-color: #ffa909;
 }
 
 .hint {
-	border-left: 6px solid #ffa909;
-	border-right: 1px solid #e7e7e7;
-	border-bottom: 1px solid #e7e7e7;
-	padding: 12px 12px 20px 54px;
-	margin: 0 auto 8px;
-	color: #465584;
-	background: #fff url(../images/icon-32-hint.png) no-repeat 4px 15px;
+    border-left: 6px solid #ffa909;
+    border-right: 1px solid #e7e7e7;
+    border-bottom: 1px solid #e7e7e7;
+    padding: 12px 12px 20px 54px;
+    margin: 0 auto 8px;
+    color: #465584;
+    background: #fff url(../images/icon-32-hint.webp) no-repeat 4px 15px;
+    background-size: 32px;
 }
 
 .attentionheader {
-	border-left: 6px solid #FE8282;
-	border-right: 1px solid #e7e7e7;
-	border-top: 1px solid #FE8282;
-	padding: 3px 3px 3px 54px;
-	font-weight: bold;
-	margin: 8px auto 0;
-	color: #000;
-	background-color: #FE8C8C;
+    border-left: 6px solid #FE8282;
+    border-right: 1px solid #e7e7e7;
+    border-top: 1px solid #FE8282;
+    padding: 3px 3px 3px 54px;
+    font-weight: bold;
+    margin: 8px auto 0;
+    color: #000;
+    background-color: #FE8C8C;
 }
 
 .attention {
-	border-left: 6px solid #FE8282;
-	border-right: 2px solid #FE8282;
-	border-bottom: 2px solid #FE8282;
-	padding: 6px 6px 20px 54px;
-	margin: 0 auto 8px;
-	color: #465584;
-	background: #fff url(../images/icon-32-attention.png) no-repeat 6px 6px;
+    border-left: 6px solid #FE8282;
+    border-right: 2px solid #FE8282;
+    border-bottom: 2px solid #FE8282;
+    padding: 6px 6px 20px 54px;
+    margin: 0 auto 8px;
+    color: #465584;
+    background: #fff url(../images/icon-32-attention.svg) no-repeat 6px 6px;
+    background-size: 32px 32px;
 }
 
 table.help {
-	background-color: #fff;
-	border: solid 1px #d5d5d5;
-	border-left: none;
-	border-right: none;
-	width: 100%;
-	border-collapse: collapse;
-	margin: 8px 0 15px;
+    background-color: #fff;
+    border: solid 1px #d5d5d5;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 15px;
 }
 
 table.help tr:nth-child(even) {background: #f9f9f9}
 table.help tr:nth-child(odd) {background: #f3f3f3}
 
 table.help th {
-	padding: 6px 2px 4px 4px;
-	text-align: left;
-	height: 25px;
-	color: #000;
-	background-color: #eee;
-	vertical-align: top;
+    padding: 6px 2px 4px 4px;
+    text-align: left !important;
+    height: 25px;
+    color: #000;
+    background-color: #eee;
+    vertical-align: top;
 }
 
 table.help td {
-	padding: 4px;
-	text-align: left;
-	vertical-align: top;
+    padding: 4px;
+    text-align: left;
+    vertical-align: top;
 }
 
 .close {
-	text-align: center;
-	margin: 30px 0;
+    text-align: center;
+    margin: 30px 0;
 }
 
 .toolbar-list {
-	float: left;
-	color: #465584;
-	background-color: #eee;
+    float: left;
+    color: #465584;
+    background-color: #eee;
 }
 .toolbar-list ul {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 .toolbar-list li {
-	float: left;
-	height: 48px;
-	min-width: 48px;
-	list-style: none outside none;
-	padding: 1px 4px;
-	text-align: center;
+    float: left;
+    height: 48px;
+    min-width: 48px;
+    list-style: none outside none;
+    padding: 1px 4px;
+    text-align: center;
 }
 .toolbar-list span {
-	height: 32px;
-	width: 32px;
-	display: block;
-	float: none;
-	margin: 0 auto;
+    height: 32px;
+    width: 32px;
+    display: block;
+    float: none;
+    margin: 0 auto;
 }
 
 .icon-32-alert {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-alert.webp");
 }
 .icon-32-apply {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-apply.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-apply.webp");
 }
 .icon-32-archive {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-archive.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-archive.webp");
 }
 .icon-32-back {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-back.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-back.webp");
 }
 .icon-32-cancel {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-cancel.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-cancel.webp");
 }
 .icon-32-checkin {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-checkin.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-checkin.webp");
 }
 .icon-32-delete {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-delete.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-delete.webp");
 }
 .icon-32-edit {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-edit.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-edit.webp");
 }
 .icon-32-export {
-	background-image: url("../../../../../media/com_jem/images/icon-32-tableexport.png");
+    background-image: url("../../../../../media/com_jem/images/icon-32-tableexport.svg");
 }
 .icon-32-featured {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-featured.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-featured.webp");
 }
 .icon-32-forward {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-forward.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-forward.webp");
 }
 .icon-32-help {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-help.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-help.webp");
 }
 .icon-32-move {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-move.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-move.webp");
 }
 .icon-32-new {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-new.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-new.webp");
 }
 .icon-32-options {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-config.png");
-}	
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-config.webp");
+}
 .icon-32-print {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-print.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-print.webp");
 }
 .icon-32-publish {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-publish.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-publish.webp");
 }
 .icon-32-purge {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-purge.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-purge.webp");
 }
 .icon-32-refresh {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-refresh.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-refresh.webp");
 }
 .icon-32-save {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save.webp");
 }
 .icon-32-save-new {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-new.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-new.webp");
 }
 .icon-32-save-copy {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-copy.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-save-copy.webp");
 }
 .icon-32-trash {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-trash.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-trash.webp");
 }
 .icon-32-upload {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-upload.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-upload.webp");
 }
 .icon-32-unpublish {
-	background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-unpublish.png");
+    background-image: url("../../../../../media/com_jem/images/toolbar/icon-32-unpublish.webp");
+}
+
+img[src*="icon-16"] {
+    width: 16px;
+    height: 16px;
+}
+
+img[src*="icon-32"] {
+    width: 32px;
+    height: 32px;
+}
+
+img[src*="icon-48"] {
+    width: 48px;
+    height: 48px;
+}
+
+.help-image {
+    width:400px;
+    max-width:100%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 1rem 0 1rem -1rem;
+    border-radius: 2px;
+}
+
+.help-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);   
 }
 
 @media (prefers-color-scheme: dark) {
-	body
-	{
-    	background-color: #171C24;
-    	color: #fff;
+    body
+    {
+        background-color: #171C24;
+        color: #fff;
     }
-    
+
     table.help {
-		background-color: #000;
+        background-color: #000;
     }
     h1, h2, h3 {
-	color: #8BB2ED;
-	}
-	
-	.hint, .attentionheader, .attention, table.help {
-	color: #fff;
-	background-color: #465584;
+        color: #8BB2ED;
+    }
+
+    .hint, .attentionheader, .attention, table.help {
+        color: #fff;
+        background-color: #465584;
 }
 
 a:link {
-	color: #fe8282;
-	text-decoration: underline;
+    color: #fe8282;
+    text-decoration: underline;
 }
 
 a:visited {
-	color: #fe8c8c;
-	text-decoration: underline;
+    color: #fe8c8c;
+    text-decoration: underline;
 }
 
 a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
-	
-}    
-    
+
+}
+
     

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -41,7 +41,7 @@ class JFormFieldImageselect extends ListField
     {
         // ImageType
         $imagetype = $this->element['imagetype'];
-        
+
         // Build the script.
         $script = array();
         $script[] = '    function SelectImage(image, imagename) {';
@@ -51,7 +51,7 @@ class JFormFieldImageselect extends ListField
         // $script[] = '        window.parent.SqueezeBox.close()';
         $script[] = '        $(".btn-close").trigger("click");';
         $script[] = '    }';
-        
+
         switch ($imagetype)
         {
             case 'categories':
@@ -61,13 +61,13 @@ class JFormFieldImageselect extends ListField
             case 'events':
                 $task         = 'eventimg';
                 $taskselect = 'selecteventimg';
-                break;    
+                break;
             case 'venues':
                 $task         = 'venueimg';
                 $taskselect = 'selectvenueimg';
-                break;    
+                break;
         }
-        
+
         // Add the script to the document head.
         Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 
@@ -78,13 +78,13 @@ class JFormFieldImageselect extends ListField
 
         //
         $html[] = "<div class=\"fltlft\">";
-        $html[] = "<input class=\"form-control\" style=\"background: #fff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/com_jem/images/blank.png'}\"; />";
+        $html[] = "<input class=\"form-control\" style=\"background: #fff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/com_jem/images/blank.webp'}\"; />";
         $html[] = "</div>";
         $html[] = "<div class=\"button2-left\"><div class=\"blank\">";
             $html[] = HTMLHelper::_(
                 'bootstrap.renderModal',
                 'imageupload-modal',
-                array(        
+                array(
                     'url'    => $link,
                     'title'  => Text::_('COM_JEM_UPLOAD'),
                     'width'  => '650px',
@@ -100,7 +100,7 @@ class JFormFieldImageselect extends ListField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'imageselect-modal',
-            array(        
+            array(
                 'url'    => $link2,
                 'title'  => Text::_('COM_JEM_SELECTIMAGE'),
                 'width'  => '650px',
@@ -113,7 +113,7 @@ class JFormFieldImageselect extends ListField
         $html[] = "</div></div>";
         $html[] = "\n&nbsp;<input class=\"btn btn-danger btn-margin\" type=\"button\" onclick=\"SelectImage('', '".Text::_('COM_JEM_SELECTIMAGE')."');\" value=\"".Text::_('COM_JEM_RESET')."\" />";
         $html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";
-        $html[] = "<img src=\"../media/com_jem/images/blank.png\" name=\"imagelib\" id=\"imagelib\" class=\"venue-image\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
+        $html[] = "<img src=\"../media/com_jem/images/blank.webp\" name=\"imagelib\" id=\"imagelib\" class=\"venue-image\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
         $html[] = "<script type=\"text/javascript\">";
         $html[] = "if (document.forms[0].a_imagename.value!='') {";
         $html[] = "var imname = document.forms[0].a_imagename.value;";

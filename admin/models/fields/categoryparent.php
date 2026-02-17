@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -90,16 +90,16 @@ class JFormFieldCategoryParent extends ListField
         // Get the options.
         $db->setQuery($query);
 
-        
+
 
         // Check for a database error.
         // if ($db->getErrorNum()) {
         //     Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'warning');
         // }
-        try 
+        try
         {
             $options = $db->loadObjectList();
-        } 
+        }
         catch (\InvalidArgumentException $e)
         {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -30,12 +30,12 @@ defined('_JEXEC') or die;
         <?php echo $this->daydate; ?>
     </h2>
     <?php endif; ?>
-    
+
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
         </div>
-    <?php endif; ?>    
+    <?php endif; ?>
 
     <!--table-->
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
@@ -52,7 +52,7 @@ defined('_JEXEC') or die;
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>
-    <?php endif; ?>                                                     
+    <?php endif; ?>
 
     <!--footer-->
     <div class="pagination">

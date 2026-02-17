@@ -2,13 +2,13 @@
 <extension type="package" version="4.4" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
-    <creationDate>August 2025</creationDate>
+    <creationDate>February 2026</creationDate>
     <packagename>jem</packagename>
-    <copyright>copyright (C) 2013-2025 joomlaeventmanager.net</copyright>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.3.4</version>
+    <version>4.4.0</version>
     <url>https://www.joomlaeventmanager.net/</url>
     <packager>JEM Community</packager>
     <packagerurl>https://www.joomlaeventmanager.net</packagerurl>
@@ -22,13 +22,14 @@
         <file type="module" id="mod_jem" client="site">mod_jem.zip</file>
         <file type="module" id="mod_jem_wide" client="site">mod_jem_wide.zip</file>
         <file type="module" id="mod_jem_cal" client="site">mod_jem_cal.zip</file>
-        <!--file type="module" id="mod_jem_calajax" client="site">mod_jem_calajax.zip</file-->
+	<file type="module" id="mod_jem_map" client="site">mod_jem_map.zip</file>
         <file type="module" id="mod_jem_teaser" client="site">mod_jem_teaser.zip</file>
         <file type="module" id="mod_jem_banner" client="site">mod_jem_banner.zip</file>
         <file type="module" id="mod_jem_jubilee" client="site">mod_jem_jubilee.zip</file>
 
         <file type="plugin" id="jem" group="content">plg_content_jem.zip</file>
         <file type="plugin" id="jemlistevents" group="content">plg_content_jemlistevents.zip</file>
+        <file type="plugin" id="jemembed" group="content">plg_content_jemembed.zip</file>
         <file type="plugin" id="jem" group="search">plg_search_jem.zip</file>
         <file type="plugin" id="jem" group="finder">plg_finder_jem.zip</file>
         <file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>

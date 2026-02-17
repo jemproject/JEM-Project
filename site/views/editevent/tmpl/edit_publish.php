@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -24,7 +24,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
         <li><?php echo $this->form->getLabel('publish_down'); ?><?php echo $this->form->getInput('publish_down'); ?></li>
         <li><?php echo $this->form->getLabel('access'); ?><?php
             echo HTMLHelper::_('select.genericlist', $this->access, 'jform[access]',
-                array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
+                array('list.attr' => ' class="form-select inputbox valid form-control-success" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
             ?>
         </li>
     </ul>
@@ -35,14 +35,14 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 <fieldset class="">
     <legend><?php echo Text::_('COM_JEM_META_HANDLING'); ?></legend>
     <div class="formelm-area">
-        <input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_TITLE' );    ?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php    echo Text::_ ( 'COM_JEM_VENUE' );?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php    echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_DATE' );?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_ ( 'COM_JEM_TIME' );?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_ ( 'COM_JEM_ENDDATE' );?>" />
-        <input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_ ( 'COM_JEM_ENDTIME' );?>" />
-        <br /><br />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[title]')" value="<?php echo Text::_ ( 'COM_JEM_TITLE' );    ?>" />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[a_name]')" value="<?php    echo Text::_ ( 'COM_JEM_VENUE' );?>" />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[categories]')" value="<?php    echo Text::_ ( 'COM_JEM_CATEGORIES' );?>" />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[dates]')" value="<?php echo Text::_ ( 'COM_JEM_DATE' );?>" />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[times]')" value="<?php echo Text::_ ( 'COM_JEM_TIME' );?>" />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo Text::_ ( 'COM_JEM_ENDDATE' );?>" />
+        <input class="inputbox btn" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo Text::_ ( 'COM_JEM_ENDTIME' );?>" />
+        <br><br>
         <label for="meta_keywords">
             <?php echo Text::_('COM_JEM_META_KEYWORDS').':';?>
         </label>

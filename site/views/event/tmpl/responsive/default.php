@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -87,9 +87,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     <?php if ($params->get('event_show_detailstitle',1)) : ?>
                         <dt class="jem-title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
                         <dd class="jem-title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
-                    <?php
-                    endif;
-                    ?>
+                    <?php else : ?>
+                        <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
+                    <?php endif; ?>
                     <dt class="jem-when hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHEN'); ?>"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
                     <dd class="jem-when">
             <span style="white-space: nowrap;">
@@ -203,7 +203,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         </div>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br>' || $this->item->introtext != '' && $this->item->introtext != '<br>')) { ?>
             <h2 class="jem-description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <div class="jem-description event_desc" itemprop="description">
 
@@ -248,7 +248,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <!--  Contact -->
         <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT') ; ?></h2>
+            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
 
             <dl class="jem-dl">
                 <dt class="con_name hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_NAME'); ?>"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
@@ -283,6 +283,14 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php if ((!empty($this->item->locid)) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr class="jem-hr">
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$this->item->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
 
             <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
@@ -308,8 +316,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     else :
                                         echo $this->escape($this->item->venue);
                                     endif;
+                                    echo $venueaccess;
                                     ?>
                                 </dd>
+                                <?php if($this->item->user_has_access_venue) : ?>
                                 <?php if ($this->item->street) : ?>
                                     <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
                                     <dd class="venue_street" itemprop="streetAddress">
@@ -376,6 +386,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
                                     <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
                                 <?php endif; ?>
+                                <?php endif; ?>
                             </dl>
                         </div>
 
@@ -406,8 +417,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
                     <?php endif; /* event_show_detailsadress */ ?>
                 </div>
-
-                <?php
+                <?php if($this->item->user_has_access_venue) :
                 $event_show_mapserv = $params->get('event_show_mapserv');
                 if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
                     <div class="jem-map">
@@ -428,11 +438,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php endif; ?>
 
                 <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
-                    && $this->item->locdescription != '<br />') : ?>
+                    && $this->item->locdescription != '<br>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
                     </div>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <?php $this->attachments = $this->item->vattachments; ?>

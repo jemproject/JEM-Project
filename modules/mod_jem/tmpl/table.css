@@ -1,0 +1,33 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Latest Events Basic Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+
+#jemmodulebasic-table table {
+
+}
+
+#jemmodulebasic-table tr:nth-child(even) {
+
+}
+
+#jemmodulebasic-table tr:hover {
+    background-color: #eaeaea;
+}
+
+#jemmodulebasic-table th {
+
+}
+
+#jemmodulebasic-table td {
+    padding: 0 10px;
+}
+
+#jemmodulebasic-table caption {
+
+}
+

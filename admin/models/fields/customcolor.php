@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -39,12 +39,12 @@ class JFormFieldCustomColor extends FormField
 
         // load script.
         $script = array();
-        
+
         $script[] = '    function jClearColor(id) {';
         $script[] = '        document.getElementById(id).value = "";';
         $script[] = '        document.getElementById(id).style.background = "";';
         $script[] = '    }';
-            
+
         // Add the script to the document head.
         Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
 
@@ -56,7 +56,7 @@ class JFormFieldCustomColor extends FormField
         $html[] = '<input style="background:'.$this->value.'" type="text" name="' . $this->name . '" id="' . $this->id . '"' . ' value="'
             . htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8') . '"' . $class . $size .$onclick. '/>';
         $html[] = '<input title="'.Text::_('JCLEAR').'" type="text" class="button" size="1" value="" id="clear" onclick="return jClearColor(\''.$this->id.'\')">';
-        
+
         return implode("\n", $html);
     }
 }

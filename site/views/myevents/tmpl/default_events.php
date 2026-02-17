@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -206,7 +206,7 @@ use Joomla\CMS\Router\Route;
                                         echo $count;
                                     }
                                 } else {
-                                    echo HTMLHelper::_('image', 'com_jem/publish_r.png',NULL,NULL,true);
+                                    echo HTMLHelper::_('image', 'com_jem/publish_r.webp',NULL,NULL,true);
                                 }
                                 ?>
                             </td>

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -14,11 +14,10 @@ use Joomla\CMS\Form\FormField;
 
 jimport('joomla.html.html');
 
-
 /**
  * CountryOptions Field class.
  *
- * 
+ *
  */
 class JFormFieldStarttime extends FormField
 {
@@ -28,18 +27,11 @@ class JFormFieldStarttime extends FormField
      */
     protected $type = 'Starttime';
 
-    
     public function getInput()
     {
-    
-        
         $starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ),array('class'=>'form-select','class'=>'select-time'));
         $startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ),array('class'=>'form-select','class'=>'select-time'));
-        
         $var2 = $starthours.$startminutes;
-    
         return $var2;
-        
     }
-    
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -122,7 +122,7 @@ $params        = $this->params;
                 document.getElementById('jform_unregistra_until').style.display = '';
                 document.getElementById('jform_unregistra_until2').style.display = '';
             } else {
-                document.getElementById('unregistra_until').style.display = 'none';            
+                document.getElementById('unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until').style.display = 'none';
                 document.getElementById('jform_unregistra_until2').style.display = 'none';
             }
@@ -172,7 +172,6 @@ $params        = $this->params;
 
             <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
             <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-
             <br>
             <?php if ($this->item->recurrence_type > 0) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
@@ -225,7 +224,7 @@ $params        = $this->params;
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
-
+                    <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
                 </ul>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
@@ -259,7 +258,7 @@ $params        = $this->params;
                             </li>
                             <?php
                             if ($this->item->datimage) :
-                                echo HTMLHelper::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE')));
+                                echo HTMLHelper::image('media/com_jem/images/publish_r.webp', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE')));
 
                             endif;
                             ?>

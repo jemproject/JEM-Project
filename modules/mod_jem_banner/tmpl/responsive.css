@@ -1,0 +1,154 @@
+/*
+ * @package    JEM
+ * @subpackage JEM Banner Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+#sbox-overlay {
+    width: 100% !important;
+}
+#sbox-window {
+    height: auto !important;
+}
+#sbox-content {
+    height: auto !important;
+    width: auto !important;
+    max-height: 100%;
+    max-width: 100%;
+}
+body.body-overlayed {
+    overflow: auto;
+}
+
+#jemmodulebanner .jem-row-banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+#jemmodulebanner .jem-horizontal-banner {
+    flex-direction: row;
+}
+
+#jemmodulebanner .jem-vertical-banner {
+    flex-direction: column;
+}
+
+#jemmodulebanner .jem-event-details-banner {
+    flex: 1;
+}
+
+#jemmodulebanner .event-title,
+#jemmodulebanner .jem-banner-datecat {
+    hyphens: auto;
+}
+
+#jemmodulebanner .jem-banner-datecat {
+    margin-bottom: 8px;
+}
+
+#jemmodulebanner .jem-banner-datecat > div {
+    margin-right: 10px;
+}
+
+#jemmodulebanner .jem-banner-datecat > div:last-child {
+    margin-right: 0;
+}
+
+#jemmodulebanner .jem-eventimg-banner {
+    margin-bottom: 10px;
+}
+
+#jemmodulebanner .time, #jemmodulebanner .date {
+    font-weight: bold;
+}
+
+#jemmodulebanner [class|="calendar"] {
+    background-repeat: no-repeat;
+    width: 81px;
+    height: 85px;
+    text-align: center;
+    padding: 5px 1px 0 0;
+    margin: 0 10px 10px 0;
+    line-height: 24px;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
+}
+
+#jemmodulebanner [class|="calendar"] .yearbanner,
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    font-size: 13px;
+    height: 24px;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner,
+#jemmodulebanner [class|="calendar"] .daybanner,
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0;
+    text-align: center;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner {
+    padding-top: 2px;
+}
+
+#jemmodulebanner [class|="calendar"] .daybanner {
+    font-size: 12px;
+    min-height: 0.8rem;
+}
+
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+    font-size: 150%;
+}
+
+@media print {
+    #main a:link, #main a:visited {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    div#jem {
+        border: 0;
+    }
+
+    div#jem h2 {
+        border: none;
+    }
+
+    div#jem .flyerimage {
+        border: none !important;
+    }
+
+    a[href]:after {
+        content: none !important;
+    }
+
+    div#jem .buttons {
+        display: none;
+    }
+
+    abbr[title]:after {
+        content: none;
+    }
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: none;
+    }
+
+    a:link:after, a:visited:after {
+        content: none;
+    }
+
+
+    div#jem .flyerimage {
+        border: none;
+    }
+}

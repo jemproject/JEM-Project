@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -30,16 +30,26 @@ use Joomla\CMS\HTML\HTMLHelper;
     <!--Venue-->
 
     <?php foreach($this->rows as $row) : ?>
+        <?php
+        // has user access
+        $venueaccess = '';
+        if (!$row->user_has_access_venue) {
+            // show a closed lock icon
+            $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+        } ?>
+
         <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
             <h2 class="jem">
                 <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
                 <?php echo JemOutput::publishstateicon($row); ?>
+                <?php echo $venueaccess;?>
             </h2>
 
             <!-- FLYER -->
             <?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
 
             <!--  -->
+            <?php if ($row->user_has_access_venue) : ?>
             <dl class="location">
                 <?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
                 <dt class="venue_website">
@@ -181,7 +191,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>
             <?php endif; ?>
 
-            <?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+            <?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br>') : ?>
             <h2 class="description">
                 <?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
             </h2>
@@ -190,6 +200,7 @@ use Joomla\CMS\HTML\HTMLHelper;
             </div>
             <?php else : ?>
             <div class="clr"> </div>
+            <?php endif; ?>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>

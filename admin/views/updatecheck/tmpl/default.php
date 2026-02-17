@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -25,11 +25,11 @@ use Joomla\CMS\Router\Route;
             <div class="update-info">
                 <?php
                 if ($this->updatedata->current == 0 ) {
-                    echo HTMLHelper::_('image', 'com_jem/icon-48-latest-version.png', NULL, NULL, true);
+                    echo HTMLHelper::_('image', 'com_jem/icon-48-latest-version.svg', NULL, NULL, true);
                 } elseif( $this->updatedata->current == -1 ) {
-                    echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+                    echo HTMLHelper::_('image', 'com_jem/icon-48-update.svg', NULL, NULL, true);
                 } else {
-                    echo HTMLHelper::_('image', 'com_jem/icon-48-unknown-version.png', NULL, NULL, true);
+                    echo HTMLHelper::_('image', 'com_jem/icon-48-unknown-version.svg', NULL, NULL, true);
                 }
                 ?>
                 <?php
@@ -72,7 +72,7 @@ use Joomla\CMS\Router\Route;
                 </div>
                 <div class="detail-item">
                     <strong><?php echo Text::_('COM_JEM_UPDATECHECK_FILES').':'; ?></strong>
-                    <span><a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a><br />
+                    <span><a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a><br>
                 <?php if ($this->updatedata->current == -1 ) : ?>
                     <a href="/administrator/index.php?option=com_installer&view=update&filter[search]=JEM" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE'); ?></a>
                 <?php endif; ?>
@@ -95,7 +95,7 @@ use Joomla\CMS\Router\Route;
                 <tr>
                     <td>
                         <?php
-                        echo HTMLHelper::_('image', 'com_jem/icon-48-update.png', NULL, NULL, true);
+                        echo HTMLHelper::_('image', 'com_jem/icon-48-update.svg', NULL, NULL, true);
                         ?>
                     </td>
                     <td>
@@ -108,7 +108,7 @@ use Joomla\CMS\Router\Route;
 
         <?php endif; ?>
 
-        <br />
+        <br>
         <?php if (isset($this->sidebar)) : ?>
     </div>
         <?php endif; ?>

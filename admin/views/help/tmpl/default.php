@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -35,9 +35,9 @@ $options = array(
                 <fieldset id="filter-bar" class=" mb-3">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <div class="input-group">  
+                            <div class="input-group">
                                 <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo htmlspecialchars($this->helpsearch, ENT_QUOTES, 'UTF-8'); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
-                                
+
                                 <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
                                     <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
                                 </button>
@@ -55,7 +55,7 @@ $options = array(
                                     <a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_CREDITS'); ?></a>
                                     |
                                     <?php echo HTMLHelper::_('link', 'https://www.gnu.org/licenses/gpl-3.0', Text::_('COM_JEM_LICENSE'), array('target' => '_blank')) ?>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -107,9 +107,35 @@ $options = array(
     <input type="hidden" name="task" value="" />
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+<div id="helpImgModal">
+  <span id="helpModalClose">&times;</span>
+  <img id="modalImg">
+</div>
 
-<?php 
+<script>
+const modal = document.getElementById("helpImgModal");
+const modalImg = document.getElementById("modalImg");
+const close = document.getElementById("helpModalClose");
+
+window.addEventListener("message", (e) => {
+  if (e.data.type === "openImage") {
+    modalImg.src = e.data.src;
+    modal.style.display = "flex";
+  }
+});
+
+close.onclick = () => modal.style.display = "none";
+modal.onclick = e => {
+  if (e.target === modal) modal.style.display = "none";
+};
+</script>
+
+<?php
 $wa = $this->document->getWebAssetManager();
-$wa->useScript('keepalive');
+$wa->registerAndUseStyle(
+    'com_jem.help.modal',
+    'media/com_jem/css/help-modal.css'
+);
 
+$wa->useScript('keepalive');
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -40,7 +40,7 @@ abstract class JEMHelperRoute
      */
     public static function getRoute($id, $view = 'event', $category = null)
     {
-        
+
         // Deprecation warning.
         Log::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', Log::WARNING, 'deprecated');
 
@@ -100,9 +100,9 @@ abstract class JEMHelperRoute
         }
         elseif ($item = self::_findItem()) {
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            }
         }
 
         return $link;
@@ -133,9 +133,9 @@ abstract class JEMHelperRoute
         elseif ($item = self::_findItem()) {
             // $link .= '&Itemid='.$item;
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            }
         }
 
         return $link;
@@ -161,9 +161,9 @@ abstract class JEMHelperRoute
         }
         elseif ($item = self::_findItem()) {
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            }
         }
 
         return $link;
@@ -185,11 +185,11 @@ abstract class JEMHelperRoute
         }
         elseif ($item = self::_findItem()) {
             if (isset($defaultItemid))
-                {
-                    $link .= '&Itemid='.$defaultItemid;
-                } else {
-                    $link .= '&Itemid='.$item;
-                }
+            {
+                $link .= '&Itemid='.$defaultItemid;
+            } else {
+                $link .= '&Itemid='.$item;
+            }
         }
 
         return $link;

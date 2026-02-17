@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -60,6 +60,8 @@ class jem_settings extends Table
     public $formattime = null;
     /** @var string */
     public $timename = null;
+    /** @var int */
+    public $show_date_in_title = '1';
     /** @var int */
     public $showdetails = '1';
     /** @var int */

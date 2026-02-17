@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -88,7 +88,7 @@ $wa->useScript('table.columns');
                 <th style="width:5px%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.lft', $listDirn, $listOrder); ?>
                     <?php if ($saveOrder) : ?>
-                        <?php //echo HTMLHelper::_('grid.order',  $this->items, 'filesave.png', 'categories.saveorder'); ?>
+                        <?php //echo HTMLHelper::_('grid.order',  $this->items, 'filesave.webp', 'categories.saveorder'); ?>
                     <?php endif; ?>
                 </th>
                 <th style="width:10%" class="center" nowrap="nowrap">

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
@@ -171,7 +171,11 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                                 $needle = 'index.php?option=com_comprofiler&view=userprofile';
                                 $menu = Factory::getApplication()->getMenu();
                                 $item = $menu->getItems('link', $needle, true);
-                                $cntlink = !empty($item) ? $needle . '&user=' . $register->uid . '&Itemid=' . $item->id : $needle;
+                                $userId = isset($register->uid) ? (int)$register->uid : 0;
+                                $cntlink = $needle . '&user=' . $userId;
+                                if (!empty($item) && isset($item->id)) {
+                                    $cntlink .= '&Itemid=' . $item->id;
+                                }
                                 if ($this->settings->get('event_comunoption', '0') == 1) :
                                     // User has avatar
                                     if (!empty($register->avatar)) :
@@ -269,7 +273,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             if($this->item->reginvitedonly == 1){
                                 if($this->isregistered === 0){
                                     echo $this->loadTemplate('regform');
-                                }  else{
+                                }  else {
                                     echo Text::_('COM_JEM_INVITED_USERS_ONLY') . '.<br>' . Text::_('COM_JEM_NOT_INVITED') . '.';
                                 }
                             }

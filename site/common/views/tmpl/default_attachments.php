@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -24,16 +24,16 @@ use Joomla\CMS\Session\Session;
                         <?php
                         $overlib = Text::_('COM_JEM_FILE').': '.$this->escape($file->file);
                         if (!empty($file->name)) {
-                            $overlib .= '<BR />'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
+                            $overlib .= '<br>'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
                         }
                         if (!empty($file->description)) {
-                            $overlib .= '<BR />'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
+                            $overlib .= '<br>'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
                         }
                         ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_DOWNLOAD'), $overlib, 'file-dl-icon file-name'); ?>>
                     <?php
                     $filename    = $this->escape($file->name ? $file->name : $file->file);
-                    $image        = HTMLHelper::_('image','com_jem/download_16.png', Text::_('COM_JEM_DOWNLOAD'),NULL,true)." "."<span class=file-name>".$filename."</span>";
+                    $image        = HTMLHelper::_('image','com_jem/download_16.webp', Text::_('COM_JEM_DOWNLOAD'),NULL,true)." "."<span class=file-name>".$filename."</span>";
                     $attribs    = array('class'=>'file-name');
                     echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.Session::getFormToken().'=1',$image,$attribs);
                     ?>

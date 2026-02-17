@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Wide Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -22,6 +22,7 @@ BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemM
  */
 abstract class ModJemWideHelper
 {
+
     /**
      * Method to get the events
      *
@@ -32,9 +33,10 @@ abstract class ModJemWideHelper
     {
         mb_internal_encoding('UTF-8');
 
-        $db     = Factory::getContainer()->get('DatabaseDriver');
-        $user   = JemFactory::getUser();
-        $levels = $user->getAuthorisedViewLevels();
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $user     = JemFactory::getUser();
+        $levels   = $user->getAuthorisedViewLevels();
+        $settings = JemHelper::config();
 
         # Retrieve Eventslist model for the data
         $model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
@@ -52,10 +54,6 @@ abstract class ModJemWideHelper
         $type = (int)$params->get('type');
         $offset_hours = (int)$params->get('offset_hours', 0);
         $max_title_length = (int)$params->get('cuttitle', '25');
-
-        # clean parameter data
-        $catids = JemHelper::getValidIds($params->get('catid'));
-        $venids = JemHelper::getValidIds($params->get('venid'));
 
         # all upcoming or unfinished events
         if (($type == 0) || ($type == 1)) {
@@ -89,12 +87,14 @@ abstract class ModJemWideHelper
         $model->setState('filter.groupby','a.id');
 
         # filter category's
+        $catids = JemHelper::getValidIds($params->get('catid'));
         if ($catids) {
             $model->setState('filter.category_id', $catids);
             $model->setState('filter.category_id.include', true);
         }
 
         # filter venue's
+        $venids = JemHelper::getValidIds($params->get('venid'));
         if ($venids) {
             $model->setState('filter.venue_id', $venids);
             $model->setState('filter.venue_id.include', true);
@@ -113,8 +113,8 @@ abstract class ModJemWideHelper
         $events = $model->getItems();
 
         # Loop through the result rows and prepare data
-        $lists = array();
         $i     = -1;
+        $lists = array();
 
         foreach ($events as $row)
         {
@@ -122,11 +122,7 @@ abstract class ModJemWideHelper
             $dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event') : null;
             $limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
 
-            #################
-            ## DEFINE LIST ##
-            #################
 
-            $lists[++$i] = new stdClass();
 
             # cut titel
             $fulltitle = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
@@ -136,35 +132,36 @@ abstract class ModJemWideHelper
                 $title = $fulltitle;
             }
 
+            $lists[++$i]            = new stdClass();
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
-            $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-            $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
-            $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
-
-            # time/date
             list($lists[$i]->date,
-                $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
+                $lists[$i]->time)   = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
+            $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
+            $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
+            $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->featured    = $row->featured;
+
             if ($dimage == null) {
-                $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.png';
-                $lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
+                $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimageorig = Uri::base(true).'/media/com_jem/images/blank.webp';
             } else {
                 $lists[$i]->eventimage     = Uri::base(true).'/'.$dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true).'/'.$dimage['original'];
             }
 
             if ($limage == null) {
-                $lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.png';
-                $lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.png';
+                $lists[$i]->venueimage     = Uri::base(true).'/media/com_jem/images/blank.webp';
+                $lists[$i]->venueimageorig = Uri::base(true).'/media/com_jem/images/blank.webp';
             } else {
                 $lists[$i]->venueimage     = Uri::base(true).'/'.$limage['thumb'];
                 $lists[$i]->venueimageorig = Uri::base(true).'/'.$limage['original'];
@@ -178,11 +175,10 @@ abstract class ModJemWideHelper
                 $var = 'custom'.$n;
                 $lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
             }
-        } // foreach ($events as $row)
+        }
 
         return $lists;
     }
-
 
     /**
      * Method to format date and time information

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -40,8 +40,9 @@ class JemViewCategory extends HtmlView
             $rows = $model->getItems();
 
             // initiate new CALENDAR
+            $category = $model->getCategories($catid);
             $vcal = JemHelper::getCalendarTool();
-            $vcal->setConfig("filename", "events_category_" . $catid . "_". $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics");
+            $vcal->setConfig("filename", "events_category_" . $category[0]->catname . "_". $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics");
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {

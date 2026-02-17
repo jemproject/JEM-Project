@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -44,7 +44,7 @@ class JemModelMailto extends FormModel
     }
     public function getForm($data = array(), $loadData = true)
     {
-        
+
         // Get the form.
         $form = $this->loadForm('com_jem.mailto', 'mailto', array('load_data' => $loadData));
 
@@ -63,14 +63,14 @@ class JemModelMailto extends FormModel
      *
      * @since   3.8.9
      */
-   
+
     protected function loadFormData()
     {
         $app  = Factory::getApplication();
         $user = $app->getIdentity();
-      
+
         $data = $app->getUserState('jem.mailto.form.data', array());
-        
+
         $data['link'] = urldecode($app->input->get('link', '', 'BASE64'));
 
         if ($data['link'] == '')
@@ -92,7 +92,7 @@ class JemModelMailto extends FormModel
             $data['sender']    = $user->name;
             $data['emailfrom'] = $user->email;
         }
-        
+
         $app->setUserState('jem.mailto.form.data', $data);
 
         $this->preprocessData('com_jem.mailto', $data);
@@ -120,5 +120,5 @@ class JemModelMailto extends FormModel
         return $data;
     }
 
- 
+
 }

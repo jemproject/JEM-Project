@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -27,10 +27,10 @@ if (isset($this->attachments) && is_array($this->attachments) && (count($this->a
                     <?php
                     $overlib = Text::_('COM_JEM_FILE').': '.$this->escape($file->file);
                     if (!empty($file->name)) {
-                        $overlib .= '<br />'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
+                        $overlib .= '<br>'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
                     }
                     if (!empty($file->description)) {
-                        $overlib .= '<br />'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
+                        $overlib .= '<br>'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
                     }
                     ?>
                     <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_DOWNLOAD'), $overlib, 'jem-files'); ?>>
@@ -45,4 +45,4 @@ if (isset($this->attachments) && is_array($this->attachments) && (count($this->a
             <?php endforeach; ?>
         </dl>
     </div>
-<?php endif; ?>    
+<?php endif; ?>

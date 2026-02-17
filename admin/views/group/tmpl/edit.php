@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -100,7 +100,7 @@ $params = $params->toArray();
                                 <td style="width: 44%"><?php echo $this->lists['available_users']; ?></td>
                                 <td style="width: 10%">
                                     <input style="width: 90%" type="button" name="right" value="&gt;" onClick="moveOptions(document.adminForm['available_users'], document.adminForm['maintainers[]'])" />
-                                    <br /><br />
+                                    <br><br>
                                     <input style="width: 90%" type="button" name="left" value="&lt;" onClick="moveOptions(document.adminForm['maintainers[]'], document.adminForm['available_users'])" />
                                 </td>
                                 <td style="width: 44%"><?php echo $this->lists['maintainers']; ?></td>

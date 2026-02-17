@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -81,9 +81,9 @@ if ($jemsettings->oldevent > 0) {
             <?php if ($params->get('event_show_detailstitle',1)) : ?>
                 <dt class="title"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
                 <dd class="title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
-            <?php
-            endif;
-            ?>
+            <?php else : ?>
+                <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
+            <?php endif; ?>
             <dt class="when"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
             <dd class="when">
                 <?php
@@ -109,8 +109,36 @@ if ($jemsettings->oldevent > 0) {
                     if ($state) { echo ', ' . $state; }
                     ?>
                 </dd>
-            <?php
-            endif;
+            <?php endif;
+            
+            if (empty($this->item->locid)) : ?>
+            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                <meta itemprop="name" content="None"/>
+            </div>
+
+            <?php else : ?>
+                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                    <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display: none;">
+                        <?php if ($this->item->street) : ?>
+                            <meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->postalCode) : ?>
+                            <meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->city) : ?>
+                            <meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->state) : ?>
+                            <meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
+                        <?php endif; ?>
+                        <?php if ($this->item->country) : ?>
+                            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif;
+            
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
@@ -129,7 +157,7 @@ if ($jemsettings->oldevent > 0) {
                     }
                 echo '</dd>';
                     endif;
-            
+
             for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
@@ -183,7 +211,7 @@ if ($jemsettings->oldevent > 0) {
         </dl>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br>' || $this->item->introtext != '' && $this->item->introtext != '<br>')) { ?>
             <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <div class="description event_desc" itemprop="description">
 
@@ -228,7 +256,7 @@ if ($jemsettings->oldevent > 0) {
         <!--  Contact -->
         <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT') ; ?></h2>
+            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
 
             <dl class="location floattext">
                 <dt class="con_name"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
@@ -263,6 +291,14 @@ if ($jemsettings->oldevent > 0) {
         <?php if (($this->item->locid != 0) && !empty($this->item->venue) && $params->get('event_show_venue', '1')) : ?>
             <p></p>
             <hr />
+            <?php
+            // has user access
+            $venueaccess = '';
+            if (!$this->item->user_has_access_venue) {
+                // show a closed lock icon
+                $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+            }
+            ?>
 
             <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
@@ -289,9 +325,11 @@ if ($jemsettings->oldevent > 0) {
                         if (!empty($this->item->url)) :
                             echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
                         endif;
+                    echo $venueaccess;
                         ?>
                     </dd>
                 </dl>
+            <?php if($this->item->user_has_access_venue) : ?>
                 <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext" itemprop="address" itemscope
                         itemtype="https://schema.org/PostalAddress">
@@ -384,7 +422,7 @@ if ($jemsettings->oldevent > 0) {
                 <?php endif; /* event_show_detailsadress */ ?>
 
                 <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
-                    && $this->item->locdescription != '<br />') : ?>
+                    && $this->item->locdescription != '<br>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
@@ -396,11 +434,12 @@ if ($jemsettings->oldevent > 0) {
 
             </div>
         <?php endif; ?>
+        <?php endif; ?>
 
         <!-- Registration -->
         <?php if ($this->showAttendees && $params->get('event_show_registration', '1')) : ?>
             <hr class="jem-hr">
-           
+
             <?php
             $timeNow = time();
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -28,7 +28,7 @@ class JemRouter extends RouterView
      * Router segments.
      *
      * @var  array
-     *  
+     *
      * @since  1.0.0
      */
     protected $_segments = array();
@@ -52,92 +52,35 @@ class JemRouter extends RouterView
      */
     public function __construct($app = null, $menu = null)
     {
-        
-        // calendar route
-        $calendar = new RouterViewConfiguration('calendar');
-        $calendar->setKey('id');
-        $this->registerView($calendar);
 
-        // eventslist route
-        $eventslist = new RouterViewConfiguration('eventslist');
-        $eventslist->setKey('id');
-        $this->registerView($eventslist);
-    
-        // event route
-        $event = new RouterViewConfiguration('event');
-        $event->setKey('id');
-        $this->registerView($event);
+       
+        $viewsWithId = [
+            'calendar',
+            'eventslist',
+            'event',
+            'categories',
+            'category',
+            'attendees',
+            'day',
+            'editevent',
+            'editvenue',
+            'myattendances',
+            'myevents',
+            'myvenues',
+            'search',
+            'venue',
+            'venueslist',
+            'venues',
+            'weekcal'
+        ];
 
-        // categories route
-        $categories = new RouterViewConfiguration('categories');
-        $categories->setKey('id');
-        $this->registerView($categories);
+        // Registro masivo de vistas (DRY: Don't Repeat Yourself)
+        foreach ($viewsWithId as $viewName) {
+            $viewConfig = new RouterViewConfiguration($viewName);
+            $viewConfig->setKey('id');
+            $this->registerView($viewConfig);
+        }
 
-        // category route
-        $category = new RouterViewConfiguration('category');
-        $category->setKey('id');
-        $this->registerView($category);
-
-        // attendees route
-        $attendees = new RouterViewConfiguration('attendees');
-        $attendees->setKey('id');
-        $this->registerView($attendees);
-
-        // day route
-        $day = new RouterViewConfiguration('day');
-        $day->setKey('id');
-        $this->registerView($day);
-
-        // editevent route
-        $editevent = new RouterViewConfiguration('editevent');
-        $editevent->setKey('id');
-        $this->registerView($editevent);
-
-        // editvenue route
-        $editvenue = new RouterViewConfiguration('editvenue');
-        $editvenue->setKey('id');
-        $this->registerView($editvenue);
-
-        // myattendances route
-        $myattendances = new RouterViewConfiguration('myattendances');
-        $myattendances->setKey('id');
-        $this->registerView($myattendances);
-
-        // myevents route
-        $myevents = new RouterViewConfiguration('myevents');
-        $myevents->setKey('id');
-        $this->registerView($myevents);
-
-        // myvenues route
-        $myvenues = new RouterViewConfiguration('myvenues');
-        $myvenues->setKey('id');
-        $this->registerView($myvenues);
-
-        // search route
-        $search = new RouterViewConfiguration('search');
-        $search->setKey('id');
-        $this->registerView($search);
-
-        // venue route
-        $venue = new RouterViewConfiguration('venue');
-        $venue->setKey('id');
-        $this->registerView($venue);
-
-        // venueslist route
-        $venueslist = new RouterViewConfiguration('venueslist');
-        $venueslist->setKey('id');
-        $this->registerView($venueslist);
-
-        // venues route
-        $venues = new RouterViewConfiguration('venues');
-        $venues->setKey('id');
-        $this->registerView($venues);
-
-        // weekcal route
-        $weekcal = new RouterViewConfiguration('weekcal');
-        $weekcal->setKey('id');
-        $this->registerView($weekcal);
-        
         parent::__construct($app, $menu);
 
         $this->attachRule(new MenuRules($this));
@@ -148,16 +91,16 @@ class JemRouter extends RouterView
 function jemBuildRoute(&$query)
 {
     $app    = Factory::getApplication();
-    
+
     $router = new JemRouter($app, $app->getMenu());
 
     return $router->build($query);
 }
 
 function jemParseRoute($segments)
-{    
+{
     $app    = Factory::getApplication();
     $router = new JemRouter($app, $app->getMenu());
-    return $router->parse($segments);    
+    return $router->parse($segments);
 }
 ?>

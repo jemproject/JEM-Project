@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -251,7 +251,7 @@ class JemModelVenue extends JemModelAdmin
             $author_ip = $jinput->get('author_ip', '', 'string');
             $data['author_ip'] = $author_ip;
         }
-    
+
         $data['modified'] = (isset($data['modified']) && !empty($data['modified'])) ? $data['modified'] : null;
         $data['publish_up'] = (isset($data['publish_up']) && !empty($data['publish_up'])) ? $data['publish_up'] : null;
         $data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : null;
@@ -260,7 +260,7 @@ class JemModelVenue extends JemModelAdmin
         $data['language'] = (isset($data['language'])) ? $data['language'] : '';
         $data['latitude'] = (isset($data['latitude']) && !empty($data['latitude'])) ? $data['latitude'] : 0;
         $data['longitude'] = (isset($data['longitude']) && !empty($data['longitude'])) ? $data['longitude'] : 0;
-    
+
         // Store as copy - reset creation date, modification fields, hit counter, version
         if ($task == 'save2copy') {
             unset($data['created']);

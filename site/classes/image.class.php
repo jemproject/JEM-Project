@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -27,9 +27,9 @@ class JemImage
         //require 'path/to/Zebra_Image.php';
 
         // create a new instance of the class
-        $image = new Zebra_Image();
+        $image = new \stefangabos\Zebra_Image\Zebra_Image();
 
-        // indicate a source image (a GIF, PNG or JPEG file)
+        // indicate a source image (a GIF, PNG, JPEG or WEBP file)
         $image->source_path = $name;
 
         // indicate a target image
@@ -220,9 +220,16 @@ class JemImage
 
             if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
                 //get imagesize of the thumbnail
-                $thumbiminfo = @getimagesize($img_thumb);
-                $dimage['thumbwidth']  = $thumbiminfo[0];
-                $dimage['thumbheight'] = $thumbiminfo[1];
+                $thumbiminfo = @getimagesize(JPATH_SITE.'/'.$img_thumb);
+
+                // Set dimensions if the image information is successfully retrieved
+                if (is_array($thumbiminfo)) {
+                    $dimage['thumbwidth']  = $thumbiminfo[0];
+                    $dimage['thumbheight'] = $thumbiminfo[1];
+                } else {
+                    $dimage['thumbwidth']  = 0;
+                    $dimage['thumbheight'] = 0;
+                }
             }
 
             return $dimage;

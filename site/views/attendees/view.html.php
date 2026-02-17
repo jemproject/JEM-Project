@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -99,10 +99,10 @@ class JemViewAttendees extends JemView
       //$pathway->setItemName(1, $menuitem->title);
         }
         $pathway->addItem('Att:'.$event->title);
-        
+
         // Emailaddress
         $enableemailaddress = $params->get('enableemailaddress', 0);
-        
+
         $print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
         $backlink = 'attendees';
 

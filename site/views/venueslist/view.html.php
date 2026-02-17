@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -18,7 +18,7 @@ use Joomla\CMS\Router\Route;
  * View: Venueslist
  */
 
-    
+
 class JemViewVenueslist extends JemView
 {
     public function __construct($config = array())
@@ -27,8 +27,8 @@ class JemViewVenueslist extends JemView
 
         // additional path for common templates + corresponding override path
         $this->addCommonTemplatePath();
-    }    
-    
+    }
+
     /**
      * Creates the Venueslist View
      */
@@ -88,11 +88,11 @@ class JemViewVenueslist extends JemView
         $jemsettings->showlocate = 1;
 
         //$filters[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_CHOOSE'));
-        
+
         if ($jemsettings->showlocate == 1) {
             $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         }
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));            
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
         $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter);
 
@@ -144,23 +144,22 @@ class JemViewVenueslist extends JemView
 
         // Create the pagination object
         // $pagination = $this->get('Pagination');
-        
 
-        $this->action             = $uri->toString();
-        $this->rows                  = $rows;
-        $this->task               = $task;
-        $this->print              = $print;
-        $this->params             = $params;
-        $this->pagination           = $pagination;
-        $this->jemsettings        = $jemsettings;
-        $this->settings           = $settings;
-        $this->pagetitle          = $pagetitle;
-        $this->lists              = $lists;
-        $this->novenues           = $novenues;
-        $this->permissions          = $permissions;
-        $this->show_status          = $permissions->canEditPublishVenue;
-        $this->print_link          = $print_link;
-        $this->pageclass_sfx      = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+        $this->action         = $uri->toString();
+        $this->rows           = $rows;
+        $this->task           = $task;
+        $this->print          = $print;
+        $this->params         = $params;
+        $this->pagination     = $pagination;
+        $this->jemsettings    = $jemsettings;
+        $this->settings       = $settings;
+        $this->pagetitle      = $pagetitle;
+        $this->lists          = $lists;
+        $this->novenues       = $novenues;
+        $this->permissions    = $permissions;
+        $this->show_status    = $permissions->canEditPublishVenue;
+        $this->print_link     = $print_link;
+        $this->pageclass_sfx  = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
         parent::display($tpl);
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -42,7 +42,7 @@ use Joomla\CMS\Session\Session;
             <td class="center">
                 <div>
                     <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
-                    <?php echo HTMLHelper::_('image','com_jem/publish_r.png', Text::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.Session::getFormToken(), 'class' => 'attach-remove', 'title'=>Text::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
+                    <?php echo HTMLHelper::_('image','com_jem/publish_r.webp', Text::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.Session::getFormToken(), 'class' => 'attach-remove', 'title'=>Text::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
                 </div>
             </td>
         </tr>

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -16,8 +16,8 @@ use Joomla\CMS\Language\Text;
 $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
-        $wa->useScript('keepalive')
-            ->useScript('form.validate');
+$wa->useScript('keepalive')
+    ->useScript('form.validate');
 
 jimport('joomla.html.html.tabs');
 
@@ -52,7 +52,7 @@ $location = JemHelper::defineCenterMap($this->form);
 </script>
 <script>
     // window.addEvent('domready', function(){
-window.onload = (event) => {
+    window.onload = (event) => {
 
         setAttribute();
         test();
@@ -131,23 +131,23 @@ window.onload = (event) => {
             detailsAttribute: "geo-data",
             types: ['establishment', 'geocode'],
             mapOptions: {
-                  zoom: 16,
-                  mapTypeId: "hybrid"
-                },
+                zoom: 16,
+                mapTypeId: "hybrid"
+            },
             markerOptions: {
                 draggable: true
             }
         });
 
         jQuery("#geocomplete").bind('geocode:result', function(){
-                var street = jQuery("#tmp_form_street").val();
-                var route  = jQuery("#tmp_form_route").val();
+            var street = jQuery("#tmp_form_street").val();
+            var route  = jQuery("#tmp_form_route").val();
 
-                if (route) {
-                    /* something to add */
-                } else {
-                    jQuery("#tmp_form_street").val('');
-                }
+            if (route) {
+                /* something to add */
+            } else {
+                jQuery("#tmp_form_street").val('');
+            }
         });
 
         jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
@@ -212,21 +212,21 @@ window.onload = (event) => {
 <div id="jem" class="jem_editvenue<?php echo $this->pageclass_sfx; ?>">
     <div class="edit item-page">
         <?php if ($params->get('show_page_heading')) : ?>
-        <h1>
-            <?php echo $this->escape($params->get('page_heading')); ?>
-        </h1>
+            <h1>
+                <?php echo $this->escape($params->get('page_heading')); ?>
+            </h1>
         <?php endif; ?>
 
         <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int)$this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
 
-                <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
-                <button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+            <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
+            <button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
 
 
             <?php if ($this->params->get('showintrotext')) : ?>
-            <div class="description no_space floattext">
-                <?php echo $this->params->get('introtext'); ?>
-            </div>
+                <div class="description no_space floattext">
+                    <?php echo $this->params->get('introtext'); ?>
+                </div>
             <?php endif; ?>
 
             <p>&nbsp;</p>
@@ -242,7 +242,7 @@ window.onload = (event) => {
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('venue'); ?><?php echo $this->form->getInput('venue'); ?></li>
                     <?php if (is_null($this->item->id)) : ?>
-                    <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
+                        <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
                     <?php endif; ?>
                     <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
                     <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
@@ -252,7 +252,16 @@ window.onload = (event) => {
                     <li><?php echo $this->form->getLabel('latitude'); ?><?php echo $this->form->getInput('latitude'); ?></li>
                     <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
-                    <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+                    <li>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <?php echo $this->form->getLabel('color'); ?>
+                            </div>
+                            <div class="col-md-10">
+                                <?php echo $this->form->getInput('color'); ?>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </fieldset>
             <p>&nbsp;</p>
@@ -261,66 +270,66 @@ window.onload = (event) => {
             <?php
             $global_show_mapserv = $this->settings->get('global_show_mapserv');
             if ($global_show_mapserv == 2 || $global_show_mapserv == 3 || $global_show_mapserv == 5) : ?>
-            <fieldset class="adminform" id="geodata">
-                <legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
-                <ul class="adminformlist">
-                    <li><?php echo $this->form->getLabel('map'); ?><?php echo $this->form->getInput('map'); ?></li>
-                </ul>
-                        <div class="clr"></div>                
-                <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
-                <div class="clr"></div>
-                <div id="mapdiv">
-                    <input id="geocomplete" type="text" size="55" placeholder="<?php echo Text::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-                    <input id="find-left" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" />
-                    <div class="clr"></div>
-
-                    <div class="map_canvas"></div>
-
-                    <ul class="adminformlist label-button-line">
-                        <li><label><?php echo Text::_('COM_JEM_STREET'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
-                            <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
-                            <input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_ZIP'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_city" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_VENUE'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_country" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" readonly="readonly" />
-                        </li>
-                        <li><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label>
-                            <input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" />
-                        </li>
+                <fieldset class="adminform" id="geodata">
+                    <legend><?php echo Text::_('COM_JEM_GEODATA_LEGEND'); ?></legend>
+                    <ul class="adminformlist">
+                        <li><?php echo $this->form->getLabel('map'); ?><?php echo $this->form->getInput('map'); ?></li>
                     </ul>
-
                     <div class="clr"></div>
-                    <input id="cp-all"     class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
-                    <input id="cp-address" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
-                    <input id="cp-venue"   class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
-                    <input id="cp-latlong" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
-                </div>
-            </fieldset>
-            <p>&nbsp;</p>
+                    <?php echo Text::_('COM_JEM_ADDRESS_NOTICE'); ?>
+                    <div class="clr"></div>
+                    <div id="mapdiv">
+                        <input id="geocomplete" type="text" size="55" placeholder="<?php echo Text::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
+                        <input id="find-left" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" />
+                        <div class="clr"></div>
+
+                        <div class="map_canvas"></div>
+
+                        <ul class="adminformlist label-button-line">
+                            <li><label><?php echo Text::_('COM_JEM_STREET'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
+                                <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
+                                <input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_ZIP'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_city" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_VENUE'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_country" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" readonly="readonly" />
+                            </li>
+                            <li><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label>
+                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" />
+                            </li>
+                        </ul>
+
+                        <div class="clr"></div>
+                        <input id="cp-all"     class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
+                        <input id="cp-address" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
+                        <input id="cp-venue"   class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
+                        <input id="cp-latlong" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
+                    </div>
+                </fieldset>
+                <p>&nbsp;</p>
             <?php endif; ?>
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EDITVENUE_DESCRIPTION_LEGEND'); ?></legend>
                 <div class="clr"></div>
                 <?php echo $this->form->getLabel('locdescription'); ?>
                 <div>
-                <div class="clr"><br /></div>
-                <?php echo $this->form->getInput('locdescription'); ?>
+                    <div class="clr"><br></div>
+                    <?php echo $this->form->getInput('locdescription'); ?>
                 </div>
             </fieldset>
             <p>&nbsp;</p>

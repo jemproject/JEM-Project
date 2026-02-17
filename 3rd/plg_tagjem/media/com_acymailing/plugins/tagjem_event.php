@@ -1,8 +1,8 @@
 <?php
 /**
  * @JEM Tag Plugin for AcyMailing 5.x
- * @copyright  Copyright (C) 2014 Thamesmog.
- * @copyright  copyright (C) 2013-2025 joomlaeventmanager.net. All rights reserved.
+ * @copyright  (C) 2014 Thamesmog.
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net. All rights reserved.
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  * Based on Eventlist tag and JEM specific code by JEM Community
  */
@@ -21,7 +21,7 @@ if (!empty($event->datimage)) {
 }
 $result .= '<a style="text-decoration:none;" name="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;
 if (!empty($event->custom1)) {
-    $result .= '<br/><em>'.$event->custom1.'</em>';
+    $result .= '<br><em>'.$event->custom1.'</em>';
 }
 $result .= '</h2></a>';
 $result .= '<p><span class="eventdate">'.$date.'</span></p>';
@@ -38,13 +38,13 @@ if (!empty($event->conname)) {
     $cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
     $result .= Text::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';
     //if (!empty($event->conemail_to)) {
-    //    $result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
+    //    $result .= '<br><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
     //}
     //if (!empty($event->contelephone)) {
-    //    $result .= '<br/>'.Text::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
+    //    $result .= '<br>'.Text::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
     //}
     if (!empty($event->conmobile)) {
-        $result .= '<br/>'.Text::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
+        $result .= '<br>'.Text::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
     }
     $result .= '</p>';
 //    $result .= '</div>';

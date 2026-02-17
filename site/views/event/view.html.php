@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -244,7 +244,7 @@ class JemViewEvent extends JemView
         //$permissions->canEditAttendees = $isAuthor;
         //new logic: user can edit events, suggested by jojo12
         $permissions->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
-        //suggestion by M59S to allow groupmembers too see line 230/231 too 
+        //suggestion by M59S to allow groupmembers too see line 230/231 too
         $edit_att->canEditAttendees = $user->can('edit', 'event', $item->id, $item->created_by);
 
         $this->permissions    = $permissions;
@@ -384,8 +384,21 @@ class JemViewEvent extends JemView
 
         //Get itemRoot if item is a recurrence event
         $this->item_root = 0;
-        if($this->item->recurrence_type){
-            $this->item_root = $model->getItem($this->item->recurrence_first_id );
+
+        // Check if this is a recurring event
+        if (!empty($this->item->recurrence_type) && !empty($this->item->recurrence_first_id)) {
+
+            // Only proceed if the current event has no attachments of its own
+            if (empty($this->item->attachments)) {
+
+                // Load the parent (root) event record
+                $this->item_root = $model->getItem($this->item->recurrence_first_id);
+
+                // Ensure root item exists and has attachments to inherit
+                if ($this->item_root && !empty($this->item_root->attachments)) {
+                    $this->item->attachments = $this->item_root->attachments;
+                }
+            }
         }
 
         $this->_prepareDocument();
@@ -503,6 +516,22 @@ class JemViewEvent extends JemView
         if (empty($title)) {
             $title = $this->item->title;
         }
+
+        $showDateInTitle = $this->item->params->get('show_date_in_title', $this->jemsettings->show_date_in_title ?? 0);
+            if ($showDateInTitle) {
+                // add date to browser title
+                if (!empty($this->item->dates)) {
+                    $startDate = JemOutput::formatdate($this->item->dates);
+                    $title .= ', ' . $startDate;
+                    // add end date to browser title, if availaböe
+                    if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
+                        $endDate = JemOutput::formatdate($this->item->enddates);
+                        $title .= ' - ' . $endDate;
+                    }
+                } else {
+                    $title .= ', ' . Text::_('COM_JEM_OPEN_DATE');
+                }
+            }
         $this->document->setTitle($title);
 
         if ($this->params->get('robots')) {

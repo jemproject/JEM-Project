@@ -52,11 +52,11 @@ function initialize() {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
         }
-        boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br />" + 
-                    escapeHTML(street) + "<br />" + 
-                    escapeHTML(postalCode) + "<br />" + 
+        boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br>" +
+                    escapeHTML(street) + "<br>" +
+                    escapeHTML(postalCode) + "<br>" +
                     escapeHTML(city);
-        
+
         var myOptions = {
             content: boxText
             , disableAutoPan: false
@@ -108,16 +108,16 @@ function initialize() {
                     boxText.style.cssText = "border: 1px solid black; margin-top: 8px; background: yellow; padding: 5px;";
                     function escapeHTML(str) {
                     return str
-                    	.replace(/&/g, '&amp;')
-                    	.replace(/</g, '&lt;')
-                    	.replace(/>/g, '&gt;')
-                    	.replace(/"/g, '&quot;')
-                    	.replace(/'/g, '&#039;');
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
                     }
-                    boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br />" + 
-                    	escapeHTML(street) + "<br />" + 
-                    	escapeHTML(postalCode) + "<br />" + 
-                    	escapeHTML(city);
+                    boxText.innerHTML = "<strong>" + escapeHTML(title) + "</strong><br>" +
+                        escapeHTML(street) + "<br>" +
+                        escapeHTML(postalCode) + "<br>" +
+                        escapeHTML(city);
 
                     var myOptions = {
                         content: boxText

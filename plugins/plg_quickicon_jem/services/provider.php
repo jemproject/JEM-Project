@@ -17,7 +17,7 @@ return new class implements ServiceProviderInterface
             function (Container $container) {
                 $dispatcher = $container->get(DispatcherInterface::class);
                 $pluginParams = (array) PluginHelper::getPlugin('quickicon', 'jem');
-                
+
                 $plugin = new Jem($dispatcher, $pluginParams);
                 $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
 

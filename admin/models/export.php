@@ -1,13 +1,13 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Based on: https://gist.github.com/dongilbert/4195504
  */
- 
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -315,14 +315,14 @@ class JemModelExport extends ListModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $where = ' WHERE c.published = 1';
         $query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
-        
+
         try
         {
             $db->setQuery($query);
             $mitems = $db->loadObjectList();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -136,7 +136,7 @@ class JemViewMyattendances extends JemView
             // Add site name to title if param is set
             if ($app->get('sitename_pagetitles', 0) == 1) {
                 $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
-            } 
+            }
             elseif ($app->get('sitename_pagetitles', 0) == 2) {
                 $pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
             }

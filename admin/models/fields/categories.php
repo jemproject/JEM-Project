@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -46,7 +46,7 @@ class JFormFieldCategories extends ListField
         $script[] = '        document.getElementById("'.$this->id.'_name").value = category;';
         // $script[] = '        SqueezeBox.close();';
         $script[] = '        $("#categories-modal").modal("hide");';
-        
+
         $script[] = '    };';
 
         // Add the script to the document head.
@@ -61,7 +61,7 @@ class JFormFieldCategories extends ListField
         $query->select('catname');
         $query->from('#__jem_categories');
         $query->where('id='.(int)$this->value);
-        
+
 
         try
         {
@@ -92,7 +92,7 @@ class JFormFieldCategories extends ListField
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'categories-modal',
-            array(        
+            array(
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT_CATEGORY'),
                 'width'  => '800px',

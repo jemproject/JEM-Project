@@ -5,7 +5,7 @@
     <!-- load variables from config file -->
     <property name="cfg.configFile" location="build.config" />
     <loadproperties srcfile="${cfg.configFile}" />
-    
+
     <!-- load variables from package xml file -->
     <buildnumber file ="build.number" />
     <xmlproperty file="package/pkg_${cfg.name}.xml" prefix="pkg" keepRoot="false" />
@@ -74,6 +74,7 @@
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map" />
     </target>
 
     <target name="build_3rd" description="packages any 3rd party plugins">

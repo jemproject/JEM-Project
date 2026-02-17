@@ -1,7 +1,7 @@
 @charset "ISO-8859-1";
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -29,16 +29,16 @@ a[href]:after {
 }
 
 div#jem #jem_filter {
-	background-color: transparent;
-	border: none;
+    background-color: transparent;
+    border: none;
 }
 
 div#jem #jem_filter .jem_fleft, div#jem #jem_filter .jem_fright label  {
-	display: none;
+    display: none;
 }
 
 div#jem a {
-	text-decoration: none !important;
+    text-decoration: none !important;
 }
 
 div#jem table,
@@ -98,6 +98,6 @@ div#jem table.eventtable th a {
     }
 
     div#jem #jem_filter {
-	display: none;
-	}
+    display: none;
+    }
 }

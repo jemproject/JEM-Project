@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -287,7 +287,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
                 $row_aux= clone $row;
                 $row_aux->event = $e->id;
-                
+
                 // Get register information of the event
                 $query = $db->getQuery(true);
                 $query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));

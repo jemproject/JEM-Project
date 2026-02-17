@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -220,8 +220,8 @@ class JemModelSettings extends AdminModel
         $extensions = $db->loadObjectList('name');
 
         $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
-                                  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide',
-                                  'plg_content_jem', 'plg_content_jemlistevents',
+                                  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map',
+                                  'plg_content_jem', 'plg_content_jemlistevents', 'plg_content_jemembed',
                                   'plg_finder_jem', 'plg_search_jem',
                                   'plg_quickicon_jem', 'Quick Icon - JEM',
                                   'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',

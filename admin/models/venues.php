@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -102,11 +102,11 @@ class JemModelVenues extends ListModel
         $query->select(
                 $this->getState(
                         'list.select',
-                        'a.id, a.venue, a.alias, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
+                        'a.id, a.venue, a.alias, a.color, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
                         .'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
                         .'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
                         .'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
-                        .'a.ordering, a.publish_up, a.publish_down'
+                        .'a.ordering, a.publish_up, a.publish_down, a.access'
                 )
         );
         $query->from($db->quoteName('#__jem_venues').' AS a');
@@ -127,6 +127,10 @@ class JemModelVenues extends ListModel
         $query->select('COUNT(e.locid) AS assignedevents');
         $query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
         $query->group('a.id');
+
+        // Join over the asset groups.
+        $query->select('ag.title AS access_level');
+        $query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
 
         // Filter by published state
         $published = $this->getState('filter_state');

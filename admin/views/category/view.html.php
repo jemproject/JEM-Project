@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -78,10 +78,9 @@ class JemViewCategory extends JemAdminView
     {
         // Initialise variables.
         $user        = JemFactory::getUser();
-        $userId        = $user->get('id');
-
-        $isNew        = ($this->item->id == 0);
-        $checkedOut    = !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
+        $userId      = $user->get('id');
+        $isNew       = ($this->item->id == 0);
+        $checkedOut  = !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
 
         // Get the results for each action.
         $canDo = JemHelperBackend::getActions();

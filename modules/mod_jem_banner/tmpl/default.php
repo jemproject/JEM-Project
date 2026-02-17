@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Banner Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -11,8 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-
-JemHelper::loadModuleStyleSheet('mod_jem_banner');
 
 $app = Factory::getApplication();
 $wa  = $app->getDocument()->getWebAssetManager();
@@ -120,14 +118,13 @@ $wa->addInlineStyle($css);
 
                     <div class="clr"></div>
 
-                    <?php /* Datum und Zeitangabe:
+                    <?php /* Date and time specification:
                        *  showcalendar 1, datemethod 1 : date inside calendar image + time
                        *  showcalendar 1, datemethod 2 : date inside calendar image + relative date + time
                        *  showcalendar 0, datemethod 1 : no calendar image, date + time
                        *  showcalendar 0, datemethod 2 : no calendar image, relative date + time
                        */
                     ?>
-
                     <?php /* if no calendar sheet is displayed */ ?>
                     <?php if ($showcalendar == 0) : ?>
                         <?php if ($item->date && $datemethod == 2) :?>

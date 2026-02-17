@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -59,7 +59,7 @@ class JFormFieldModal_Venue extends FormField
         $query->where(array('id='.(int)$this->value));
         $db->setQuery($query);
 
-        
+
 
         // if ($error = $db->getErrorMsg()) {
         //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
@@ -69,7 +69,7 @@ class JFormFieldModal_Venue extends FormField
             $venue = $db->loadResult();
         }
         catch (RuntimeException $e)
-        {            
+        {
             \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
         }
 
@@ -79,16 +79,12 @@ class JFormFieldModal_Venue extends FormField
         $venue = htmlspecialchars($venue, ENT_QUOTES, 'UTF-8');
 
         // The current venue input field
-        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
-
-        // The venue select button
-        // $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-        //             Text::_('COM_JEM_SELECT').'</a>';
+        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" class="form-control readonly valid form-control-success" style="display:inline-block;" />';
 
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             'venue-modal',
-            array(        
+            array(
                 'url'    => $link.'&amp;'.Session::getFormToken().'=1',
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',
@@ -96,7 +92,7 @@ class JFormFieldModal_Venue extends FormField
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
             )
         );
-        $html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT').'
+        $html[] ='<button type="button" class="btn btn-success button-select" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT').'
         </button>';
 
         // The active venue id field

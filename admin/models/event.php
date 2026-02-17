@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -90,7 +90,7 @@ class JemModelEvent extends JemModelAdmin
     }
 
     /**
-     * Method to get the record form.
+     * Method to get the form.
      *
      * @param  array   $data     Data for the form.
      * @param  boolean $loadData True if the form is to load its own data (default case), false if not.
@@ -280,7 +280,7 @@ class JemModelEvent extends JemModelAdmin
         $isInitialEvent = true;
 
         if(!$new && $data["recurrence_type"]) {
-            // This event is a child, it has recurrence, is not a root event, and has ID.
+            // This event has recurrence, can be a root or child event because has ID (!new).
             $isInitialEvent = false;
             $this->eventid = $data["id"];
 
@@ -524,24 +524,6 @@ class JemModelEvent extends JemModelAdmin
                     JemAttachment::postUpload($attachments, 'event' . $pk);
                 }
 
-                // and update old ones
-                $old = array();
-                $old['id'] = $jinput->post->get('attached-id', array(), 'array');
-                $old['name'] = $jinput->post->get('attached-name', array(), 'array');
-                $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
-                $old['access'] = $jinput->post->get('attached-access', array(), 'array');
-
-                foreach ($old['id'] as $k => $id) {
-                    $attach = array();
-                    $attach['id'] = $id;
-                    $attach['name'] = $old['name'][$k];
-                    $attach['description'] = $old['description'][$k];
-                    if ($allowed) {
-                        $attach['access'] = $old['access'][$k];
-                    } // else don't touch this field
-                    JemAttachment::update($attach);
-                }
-
                 // Store cats
                 if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
                     //    JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, Log::ERROR);
@@ -619,6 +601,41 @@ class JemModelEvent extends JemModelAdmin
             $table->load($data['id']);
             if (isset($table->id)) {
                 $this->setState($this->getName() . '.id', $table->id);
+            }
+
+			// Update  and new attachment file
+            $allowed = $backend || ($jemsettings->attachmentenabled > 0);
+
+            if ($allowed) {
+                // attachments, new ones first
+                $attachments = $jinput->files->get('attach', array(), 'array');
+                $attach_name = $jinput->post->get('attach-name', array(), 'array');
+                $attach_descr = $jinput->post->get('attach-desc', array(), 'array');
+                $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                foreach ($attachments as $n => &$a) {
+                    $a['customname'] = array_key_exists($n, $attach_access) ? $attach_name[$n] : '';
+                    $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n] : '';
+                    $a['access'] = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                }
+                JemAttachment::postUpload($attachments, 'event' . $this->eventid);
+            }
+
+            // and update old ones
+            $old = array();
+            $old['id'] = $jinput->post->get('attached-id', array(), 'array');
+            $old['name'] = $jinput->post->get('attached-name', array(), 'array');
+            $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
+            $old['access'] = $jinput->post->get('attached-access', array(), 'array');
+
+            foreach ($old['id'] as $k => $id) {
+                $attach = array();
+                $attach['id'] = $id;
+                $attach['name'] = $old['name'][$k];
+                $attach['description'] = $old['description'][$k];
+                if ($allowed) {
+                    $attach['access'] = $old['access'][$k];
+                } // else don't touch this field
+                JemAttachment::update($attach);
             }
         }
 

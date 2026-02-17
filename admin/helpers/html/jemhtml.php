@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -33,7 +33,7 @@ class JemHtml
         // Array of image, iconfont, task, title, action
         $states = array(
                 0 => array(
-                        'disabled.png',
+                        'disabled.webp',
                         // 'fa-star-o', //'fa-circle-o',
                         'fas fa-star', //'fa-circle-o',
                         'events.featured',
@@ -41,7 +41,7 @@ class JemHtml
                         'COM_JEM_EVENTS_TOGGLE_TO_FEATURE'
                 ),
                 1 => array(
-                        'featured.png',
+                        'featured.webp',
                         'fa-star', //'fa-circle',
                         'events.unfeatured',
                         'COM_JEM_EVENTS_FEATURED',
@@ -74,14 +74,14 @@ class JemHtml
         // Array of image, iconfont, task, title, action
         $states = array(
                 0 => array(
-                        'tick.png',
+                        'tick.webp',
                         'fa-check-circle',
                         'attendees.OnWaitinglist',
                         'COM_JEM_ATTENDING',
                         'COM_JEM_ATTENDING'
                 ),
                 1 => array(
-                        'publish_y.png',
+                        'publish_y.webp',
                         'fa-hourglass-half', //'fa-exclamation-circle',
                         'attendees.OffWaitinglist',
                         'COM_JEM_ON_WAITINGLIST',
@@ -113,7 +113,7 @@ class JemHtml
         // Array of image, iconfont, task, alt-text, alt-text edit, tooltip
         $states = array(
                 -99 => array( // fallback on wrong status value
-                        'disabled.png',
+                        'disabled.webp',
                         'fa-circle-o',
                         '',
                         'COM_JEM_STATUS_UNKNOWN',
@@ -121,7 +121,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_STATUS_UNKNOWN'
                 ),
                 -1 => array( // not attending, no toggle
-                        'publish_r.png',
+                        'publish_r.webp',
                         'fa-times-circle',
                         '',
                         'COM_JEM_NOT_ATTENDING',
@@ -129,7 +129,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_NOT_ATTENDING'
                 ),
                 0 => array( // invited, no toggle
-                        'invited.png',
+                        'invited.webp',
                         'fa-question-circle',
                         '',
                         'COM_JEM_INVITED',
@@ -137,7 +137,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_INVITED'
                 ),
                 1 => array( // attending, toggle: waiting list
-                        'tick.png',
+                        'tick.webp',
                         'fa-check-circle',
                         'attendees.OnWaitinglist',
                         'COM_JEM_ATTENDING',
@@ -145,7 +145,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_ATTENDING'
                 ),
                 2 => array( // on waiting list, toggle: list of attendees
-                        'publish_y.png',
+                        'publish_y.webp',
                         'fa-hourglass-half', //'fa-exclamation-circle',
                         'attendees.OffWaitinglist',
                         'COM_JEM_ON_WAITINGLIST',
@@ -180,7 +180,7 @@ class JemHtml
         // Array of image, iconfont, task, alt-text, alt-text edit, tooltip
         $states = array(
                 -99 => array( // fallback on wrong status value
-                        'disabled.png',
+                        'disabled.webp',
                         'fa-circle',
                         '',
                         'COM_JEM_STATUS_UNKNOWN',
@@ -188,7 +188,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_STATUS_UNKNOWN'
                 ),
                 -1 => array( // not attending, no toggle
-                        'publish_r.png',
+                        'publish_r.webp',
                         'fa-times-circle',
                         '',
                         'COM_JEM_NOT_ATTENDING',
@@ -196,7 +196,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_NOT_ATTENDING'
                 ),
                 0 => array( // invited, no toggle
-                        'invited.png',
+                        'invited.webp',
                         'fa-question-circle',
                         '',
                         'COM_JEM_INVITED',
@@ -204,7 +204,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_INVITED'
                 ),
                 1 => array( // attending, toggle: waiting list
-                        'tick.png',
+                        'tick.webp',
                         'fa-check-circle',
                         'attendees.OnWaitinglist',
                         'COM_JEM_ATTENDING',
@@ -212,7 +212,7 @@ class JemHtml
                         'COM_JEM_ATTENDEES_ATTENDING'
                 ),
                 2 => array( // on waiting list, toggle: list of attendees
-                        'publish_y.png',
+                        'publish_y.webp',
                         'fa-hourglass-half', //fa-exclamation-circle',
                         'attendees.OffWaitinglist',
                         'COM_JEM_ON_WAITINGLIST',

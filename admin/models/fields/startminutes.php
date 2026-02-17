@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -17,7 +17,7 @@ jimport('joomla.html.html');
 /**
  * CountryOptions Field class.
  *
- * 
+ *
  */
 class JFormFieldStartminutes extends FormField
 {
@@ -28,16 +28,16 @@ class JFormFieldStartminutes extends FormField
     protected $type = 'Startminutes';
 
 
-    
-    
+
+
     public function getInput()
     {
 
-    
+
         $startminutes = JEMAdmin::buildtimeselect(59, 'startminutes', substr( $this->name, 3, 2 ), array('class'=>'form-select','class'=>'select-time'));
-    
+
         return $startminutes;
-        
+
     }
-    
+
 }

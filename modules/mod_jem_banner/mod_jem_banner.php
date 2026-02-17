@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Banner Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -11,13 +11,13 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\Module\Menu\Site\Helper\MenuHelper;
-use Joomla\CMS\Language\Text;
 
 $mod_name = 'mod_jem_banner';
 
-// get helper
+// get module helper
 require_once __DIR__ . '/helper.php';
+
+//require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
@@ -51,7 +51,11 @@ if (empty($list) && !$params->get('show_no_events')) {
 
 
 $jemsettings = JemHelper::config();
-$iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg');
+
+$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
+
+JemHelper::loadModuleStyleSheet($mod_name, $layout);
 JemHelper::loadModuleStyleSheet($mod_name, $color);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 

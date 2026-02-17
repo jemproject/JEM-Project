@@ -1,54 +1,54 @@
 .jem-teaser-calendar {
-  width: 80px;
-  height: 80px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
-  border-radius: 0 0 5px 5px;
+    width: 80px;
+    height: 80px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 3px 4px 4px -3px rgba(0, 0, 0, 0.3), -3px 4px 4px -3px rgba(0, 0, 0, 0.3);
+    border-radius: 0 0 5px 5px;
 }
 
 .jem-teaser-calendar .color-bar {
-  position: absolute;
-  top: 5px;
-  left: 0;
-  right: 0;
-  height: 24px;
-  border-radius: 5px 5px 0 0;
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    height: 24px;
+    border-radius: 5px 5px 0 0;
 }
 
 .jem-teaser-calendar .lower-background {
-  position: absolute;
-  top: 29px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to top, #ddd 0%, #fff 50%);
-  }
+    position: absolute;
+    top: 29px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, #ddd 0%, #fff 50%);
+}
 
 .jem-teaser-calendar .background-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('img/cal.png');
-  background-repeat: no-repeat;
-  background-position: top;
-  background-size: contain;
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('img/cal.webp');
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: contain;
+    z-index: 1;
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser.monthcolor-dark {
-	color: black;
-	text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
+    color: black;
+    text-shadow: -1px -1px 0 rgba(255,255,255,0.2),
     1px -1px 0 rgba(255,255,255,0.2),
     -1px 1px 0 rgba(255,255,255,0.2),
     1px 1px 0 rgba(255,255,255,0.2);
 }
 
 #jemmoduleteaser [class|="calendar"] .monthteaser.monthcolor-light {
-	color: #FFF;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
+    color: #FFF;
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.2),
     1px -1px 0 rgba(0,0,0,0.2),
     -1px 1px 0 rgba(0,0,0,0.2),
     1px 1px 0 rgba(0,0,0,0.2);

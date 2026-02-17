@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -110,7 +110,7 @@ class JemTableGroup extends Table
         $query->update($this->_db->quoteName($this->_tbl));
         $query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
         $query->where($where);
-    
+
 
         // Check for a database error.
         // TODO: use exception handling
@@ -124,7 +124,7 @@ class JemTableGroup extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

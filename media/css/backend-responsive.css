@@ -1,81 +1,81 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 /** header icons **/
 .icon-48-archive {
-    background-image: url(../images/icon-48-archive.png);
+    background-image: url(../images/icon-48-archive.svg);
 }
 
 .icon-48-elcategories {
-    background-image: url(../images/icon-48-categories.png);
+    background-image: url(../images/icon-48-categories.svg);
 }
 
 .icon-48-categoriesedit {
-    background-image: url(../images/icon-48-categoriesedit.png);
+    background-image: url(../images/icon-48-categoriesedit.svg);
 }
 
 .icon-48-eventedit {
-    background-image: url(../images/icon-48-eventedit.png);
+    background-image: url(../images/icon-48-eventedit.svg);
 }
 
 .icon-48-events {
-    background-image: url(../images/icon-48-events.png);
+    background-image: url(../images/icon-48-events.svg);
 }
 
 .icon-48-groups {
-    background-image: url(../images/icon-48-groups.png);
+    background-image: url(../images/icon-48-groups.svg);
 }
 
 .icon-48-groupedit {
-    background-image: url(../images/icon-48-groupedit.png);
+    background-image: url(../images/icon-48-groupedit.svg);
 }
 
 .icon-48-help {
-    background-image: url(../images/icon-48-help.png);
+    background-image: url(../images/icon-48-help.svg);
 }
 
 .icon-48-home {
-    background-image: url(../images/icon-48-home.png);
+    background-image: url(../images/icon-48-home.svg);
 }
 
 .icon-48-settings {
-    background-image: url(../images/icon-48-settings.png);
+    background-image: url(../images/icon-48-settings.svg);
 }
 
 .icon-48-tableexport {
-    background-image: url(../images/icon-48-tableexport.png);
+    background-image: url(../images/icon-48-tableexport.svg);
 }
 
 .icon-48-tableimport {
-    background-image: url(../images/icon-48-tableimport.png);
+    background-image: url(../images/icon-48-tableimport.svg);
 }
 
 .icon-48-update {
-    background-image: url(../images/icon-48-update.png);
+    background-image: url(../images/icon-48-update.svg);
 }
 
 .icon-48-users {
-    background-image: url(../images/icon-48-users.png);
+    background-image: url(../images/icon-48-users.svg);
 }
 
 .icon-48-venues {
-    background-image: url(../images/icon-48-venues.png);
+    background-image: url(../images/icon-48-venues.svg);
 }
 
 .icon-48-venuesedit {
-    background-image: url(../images/icon-48-venuesedit.png);
+    background-image: url(../images/icon-48-venuesedit.svg);
 }
 
 .icon-48-housekeeping {
-    background-image: url(../images/icon-48-housekeeping.png);
+    background-image: url(../images/icon-48-housekeeping.svg);
 }
 
 .icon-48-plugins {
-    background-image: url(../images/icon-48-plugins.png);
+    background-image: url(../images/icon-48-plugins.svg);
 }
 
 /** linkicons **/
@@ -96,7 +96,7 @@ input.button:focus { /*background-color:#......; */
 }
 
 input#clear {
-    background: url('../images/clear.png') no-repeat scroll left center;
+    background: url('../images/clear.webp') no-repeat scroll left center;
     border: none;
     cursor: pointer;
     caret-color: transparent;
@@ -113,8 +113,8 @@ input#clear:focus {
 div.linkicon a {
     display: block;
     border: 1px solid #F0F0F0;
-    height: 76px;
-    width: 76px;
+    height: 65px;
+    width: 65px;
     vertical-align: middle;
     text-decoration: none;
 }
@@ -128,7 +128,7 @@ div.linkicon a:hover {
 }
 
 div.linkicon img {
-    padding: 10px 0;
+    padding: 0;
     margin: 0 auto;
 }
 
@@ -274,13 +274,13 @@ label#replace_catevents1-lbl {
 }
 
 a.import-fieldinfo {
-	cursor: pointer;
-	color:blue;
-	text-decoration: underline;
+    cursor: pointer;
+    color:blue;
+    text-decoration: underline;
 }
 
 a.import-fieldinfo:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 input#replace_events0.inputbox,
@@ -419,7 +419,7 @@ div.pagination ul li {
 
 #cpanel img,
 .cpanel img {
-    padding: 10px 0;
+    padding: 12px 0 5px;
     margin: 0 auto;
 }
 
@@ -822,7 +822,7 @@ table.adminlist {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 0.5rem;
-	border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
     padding: 0.5rem 0 ;
 }
 
@@ -839,18 +839,18 @@ table.adminlist {
 
 .update-details .detail-item ul {
     padding:  0 0 0 1rem;
-	margin: 0 0 0.3rem;
+    margin: 0 0 0.3rem;
 }
 
 .update-details .detail-item ul li {
-	padding: 0.1rem 0;
+    padding: 0.1rem 0;
 }
 
 @media (max-width: 600px) {
     .update-details .detail-item {
         flex-direction: column;
     }
-        
+
     .update-details .detail-item strong {
         margin-bottom: 0.25rem;
         flex: 0;
@@ -862,7 +862,7 @@ input.selectcat {
 }
 
 input#csvexport {
-    background-image: url('../images/export_excel.png');
+    background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;
     padding-left: 30px;
@@ -879,22 +879,22 @@ input#csvexport {
 }
 
 .colorpreview {
-	cursor:default;
-	background-color: #ccc;
-	border-radius:50%;
-	border:1px solid var(--border);
-	font-size:1rem;
-	height:26px;
-	line-height:22px;
-	width:26px;
-	margin: 0 auto;
+    cursor:default;
+    background-color: #ccc;
+    border-radius:50%;
+    border:1px solid var(--border);
+    font-size:1rem;
+    height:26px;
+    line-height:22px;
+    width:26px;
+    margin: 0 auto;
 }
 
 .colorpreview.transparent-color {
-	background-color: #fff;
-	background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
-	background-size: 10px 10px;
-	background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+    background-color: #fff;
+    background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
 }
 
 /* scale icon to fit text height */

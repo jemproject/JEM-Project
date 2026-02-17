@@ -1,7 +1,8 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @subpackage JEM Jubilee Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -13,119 +14,76 @@ use Joomla\Registry\Registry;
 
 /**
  * Script file of JEM component
-*/
+ */
 class mod_jem_jubileeInstallerScript
 {
+    /**
+     * Module name (extension element)
+     */
+    private string $name = 'mod_jem_jubilee';
 
-    private $name = 'mod_jem_jubilee';
-
-    private $oldRelease = "";
-    private $newRelease = "";
+    private string $oldRelease = '';
+    private string $newRelease = '';
 
     /**
-     * method to run before an install/update/uninstall method
-     * (it seams method is not called on uninstall)
-     *
-     * @return void
+     * Run before install/update/uninstall
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
-        // abort if the release being installed is not newer than the currently installed version
-        if (strtolower($type) == 'update') {
-            // Installed component version
-            $this->oldRelease = $this->getParam('version');
+        $type = strtolower($type);
 
-            // Installing component version as per Manifest file
+        if ($type === 'update') {
+
+            // Installed module version (from manifest cache)
+            $this->oldRelease = (string) $this->getParam('version');
+
+            // Version being installed (manifest)
             $this->newRelease = (string) $parent->getManifest()->version;
 
+            // Abort if new version is older
             if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
                 return false;
             }
         }
+        return true;
     }
 
     /**
-     * Method to run after an install/update/uninstall method
-     * (it seams method is not called on uninstall)
-     *
-     * @return void
+     * Run after install/update/uninstall
      */
-    function postflight($type, $parent)
+    public function postflight($type, $parent)
     {
-        if (strtolower($type) == 'update') {
-            // Changes between 2.1.5 -> 2.1.6
-            if (version_compare($this->oldRelease, '2.1.6-rc3', 'le') && version_compare($this->newRelease, '2.1.6-rc3', 'ge')) {
-                // change category/venue/event ID lists from string to array
-                $this->updateParams216();
-            }
+        $type = strtolower($type);
+
+        if ($type === 'install') {
+            return true;
+        }
+        if ($type === 'update') {
+            return true;
+        }
+        if ($type == 'uninstall') {
+            return true;
         }
     }
 
     /**
-     * Get a parameter from the manifest file (actually, from the manifest cache).
-     *
-     * @param $name  The name of the parameter
-     *
-     * @return The parameter
+     * Get a parameter from the manifest cache
      */
-    private function getParam($name)
+    private function getParam(string $name)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'module'", "element = '".$this->name."'"));
+
+        $query = $db->getQuery(true)
+            ->select('manifest_cache')
+            ->from('#__extensions')
+            ->where([
+                "type = 'module'",
+                "element = " . $db->quote($this->name)
+            ]);
+
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
-        return $manifest[$name];
+
+        return $manifest[$name] ?? null;
     }
-
-    /**
-     * Increment category ids in params of JEM modules.
-     * (required when updating from 1.9.4 or below to 1.9.5 or newer)
-     *
-     * @return void
-     */
-    private function updateParams216()
-    {
-        // get all "mod_jem..." entries
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('id, params');
-        $query->from('#__modules');
-        $query->where('module = "' . $this->name . '"');
-        $db->setQuery($query);
-        $items = $db->loadObjectList();
-
-        foreach ($items as $item) {
-            // Decode the item params
-            $reg = new Registry;
-            $reg->loadString($item->params);
-
-            $modified = false;
-
-            // catid - if string then convert to array
-            $ids = $reg->get('catid');
-            if (!empty($ids) && is_string($ids)) {
-                $reg->set('catid', explode(',', $ids));
-                $modified = true;
-            }
-            // venid - if string then convert to array
-            $ids = $reg->get('venid');
-            if (!empty($ids) && is_string($ids)) {
-                $reg->set('venid', explode(',', $ids));
-                $modified = true;
-            }
-
-            // write back
-            if ($modified) {
-                // write changed params back into DB
-                $query = $db->getQuery(true);
-                $query->update('#__modules');
-                $query->set('params = '.$db->quote((string)$reg));
-                $query->where(array('id = '.$db->quote($item->id)));
-                $db->setQuery($query);
-                $db->execute();
-            }
-        }
-    }
-
 }

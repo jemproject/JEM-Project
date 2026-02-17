@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -179,7 +179,6 @@ $params        = $this->params;
 
             <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
             <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-
             <br>
             <?php if ($this->item->recurrence_type > 0) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
@@ -227,9 +226,9 @@ $params        = $this->params;
                     <dt><?php echo $this->form->getLabel('enddates'); ?></dt>
                     <dd><?php echo $this->form->getInput('enddates'); ?></dd>
                     <dt><?php echo $this->form->getLabel('times'); ?></dt>
-                    <dd><?php echo $this->form->getInput('times'); ?></dd>
+                    <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
-                    <dd><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
@@ -240,7 +239,8 @@ $params        = $this->params;
                     } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
-
+                    <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
+                    <dd><?php echo $this->form->getInput('contactid'); ?></dd>
                 </dl>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
@@ -272,7 +272,7 @@ $params        = $this->params;
                             <?php if ($this->item->datimage) : ?>
                                 <dt><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
                                 <dd><?php
-                                    echo HTMLHelper::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' => 'btn')); ?>
+                                    echo HTMLHelper::image('media/com_jem/images/publish_r.webp', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' => 'btn')); ?>
                                 </dd>
                             <?php endif; ?>
                         </dl>

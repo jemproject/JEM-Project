@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -17,16 +17,16 @@ use Joomla\CMS\HTML\HTMLHelper;
             <td><div class="button2-left"><div class="blank"><a href="#" onclick="window.print();return false;"><?php echo Text::_('COM_JEM_PRINT'); ?></a></div></div></td>
         </tr>
     </table>
-    <br />
+    <br>
     <table class="adminlist" style="width:100%">
         <tr>
             <td style="text-align: left;">
-                <b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
+                <b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br>
                 <b><?php echo Text::_('COM_JEM_EVENT_TITLE').':'; ?></b>&nbsp;<?php echo $this->escape($this->event->title); ?>
             </td>
         </tr>
     </table>
-    <br />
+    <br>
     <table class="table table-striped" id="attendeesList">
         <thead>
             <tr>

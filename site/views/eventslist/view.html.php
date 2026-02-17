@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -33,7 +33,7 @@ class JemViewEventslist extends JemView
      */
     public function display($tpl = null)
     {
-        
+
         // Initialize variables
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
@@ -73,7 +73,7 @@ class JemViewEventslist extends JemView
         if ($params->get('onlyfeatured')) {
               $this->getModel()->setState('filter.featured',1);
         }
-        
+
         //Get initial order by menu item
         $tableInitialorderby = $params->get('tableorderby','0');
         if ($tableInitialorderby) {

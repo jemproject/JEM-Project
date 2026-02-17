@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -75,10 +75,29 @@ class JemTableVenue extends Table
                 $this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
                 return false;
             }
-            if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9äöüáéíóúñ]+)*\.[a-z]{2,24}'
-                           .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url))
-            {
+
+            // convert IDN Domain to punycode for validation
+            $urlToValidate = $this->url;
+            $parsed = parse_url($this->url);
+            
+            if (isset($parsed['host']) && function_exists('idn_to_ascii')) {
+                // convert host to ASCII/punycode
+                $asciiHost = idn_to_ascii($parsed['host'], IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+                
+                if ($asciiHost !== false) {
+                    $urlToValidate = str_replace($parsed['host'], $asciiHost, $this->url);
+                }
+            }
+
+            // validate with converted URL
+            if (filter_var($urlToValidate, FILTER_VALIDATE_URL) === false) {
                 $this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
+                return false;
+            }
+
+            // allow http/https only
+            if (!isset($parsed['scheme']) || !in_array($parsed['scheme'], ['http', 'https'])) {
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_URL_SCHEME'));
                 return false;
             }
         }
@@ -234,7 +253,7 @@ class JemTableVenue extends Table
      */
     public function insertIgnore($updateNulls = false)
     {
-        
+
         try {
             $ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
         } catch (RuntimeException $e){
@@ -329,7 +348,7 @@ class JemTableVenue extends Table
         $query->update($this->_db->quoteName($this->_tbl));
         $query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
         $query->where($where);
-        
+
 
         // Check for a database error.
         // TODO: use exception handling
@@ -344,7 +363,7 @@ class JemTableVenue extends Table
             $this->_db->execute();
         }
         catch (RuntimeException $e)
-        {            
+        {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 

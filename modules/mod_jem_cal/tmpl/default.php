@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Calendar Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2008 Toni Smillie www.qivva.com
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
@@ -19,25 +19,23 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
-JemHelper::loadModuleStyleSheet('mod_jem');
-
 # Ensure $use_ajax is defined and boolean
 $use_ajax = !empty($use_ajax);
 
 # Use Ajax to navigate through the months if JS is enabled on browser.
 if ($use_ajax && empty($module->in_ajax_call)) { ?>
-<script>
-jQuery(document).ready(function(){
-    jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
-    jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "table-caption");
-});
-function mod_jem_cal_click_<?php print $module->id; ?>(url) {
-    jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
-        jQuery(".hasTooltip").tooltip({'html':true});        
-    });
-}
-</script>
-<?php
+    <script>
+        jQuery(document).ready(function(){
+            jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_nojs').css("display", "none");
+            jQuery('#mod_jem_cal_<?php print $module->id; ?>_navi_ajax').css("display", "table-caption");
+        });
+        function mod_jem_cal_click_<?php print $module->id; ?>(url) {
+            jQuery('#eventcalq<?php echo $module->id;?>').load(url, function () {
+                jQuery(".hasTooltip").tooltip({'html':true});
+            });
+        }
+    </script>
+    <?php
 }
 
 # Output
@@ -195,14 +193,14 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                             $tip .= '...';
                             break; // foreach
                         }
-                        $tip .= trim($t) . '<br />';
+                        $tip .= trim($t) . '<br>';
                     }
                 }
 
                 # J! version < 3.2.7: title already within $tip to ensure always '::' is present
                 # But with J! 3.3+ is a bug in script so we need to use the bad 'hasTooltip'
                 #  which is default of class parameter.
-                $calendar .= HTMLHelper::tooltip($tip, $tipTitle, 'tooltip.png', $space . $day, $link);
+                $calendar .= HTMLHelper::tooltip($tip, $tipTitle, 'tooltip.webp', $space . $day, $link);
             }
 
             $calendar .= '</td>';

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -50,13 +51,14 @@ class JemControllerEvent extends JemControllerForm
     {
         // Initialise variables.
         $user       = JemFactory::getUser();
-        $categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', Factory::getApplication()->input->getInt('catid', 0), 'int');
+        $inputCatId = Factory::getApplication()->input->getInt('catid', 0);
+        $categoryId = ArrayHelper::getValue($data, 'catid', $inputCatId, 'int');
 
         if ($user->can('add', 'event', false, $categoryId ? $categoryId : false)) {
             return true;
         }
 
-        // In the absense of better information, revert to the component permissions.
+        // In the absence of better information, revert to the component permissions.
         return parent::allowAdd();
     }
 
@@ -71,14 +73,14 @@ class JemControllerEvent extends JemControllerForm
     protected function allowEdit($data = array(), $key = 'id')
     {
         // Initialise variables.
-        $recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+        $recordId = (int) ($data[$key] ?? 0);
         $user     = JemFactory::getUser();
 
         if (isset($data['access'])) {
             $access = $data['access'];
         } else {
             $record = $this->getModel()->getItem($recordId);
-            $access = isset($record->access) ? $record->access : 0;
+            $access = $record->access ?? 0;
         }
 
         if (!in_array($access, $user->getAuthorisedViewLevels())) {
@@ -89,7 +91,7 @@ class JemControllerEvent extends JemControllerForm
             $created_by = $data['created_by'];
         } else {
             $record = $this->getModel()->getItem($recordId);
-            $created_by = isset($record->created_by) ? $record->created_by : false;
+            $created_by = $record->created_by ?? 0;
         }
 
         if ($user->can('edit', 'event', $recordId, $created_by)) {
@@ -128,9 +130,7 @@ class JemControllerEvent extends JemControllerForm
      */
     public function edit($key = null, $urlVar = 'a_id')
     {
-        $result = parent::edit($key, $urlVar);
-
-        return $result;
+        return parent::edit($key, $urlVar);
     }
 
     /**
@@ -157,9 +157,7 @@ class JemControllerEvent extends JemControllerForm
      */
     public function getModel($name = 'editevent', $prefix = '', $config = array('ignore_request' => true))
     {
-        $model = parent::getModel($name, $prefix, $config);
-
-        return $model;
+        return parent::getModel($name, $prefix, $config);
     }
 
     /**
@@ -175,22 +173,21 @@ class JemControllerEvent extends JemControllerForm
         // Need to override the parent method completely.
         $jinput = Factory::getApplication()->input;
         $tmpl   = $jinput->getCmd('tmpl', '');
-        $layout = $jinput->getCmd('layout', 'edit');
+        $layout = $jinput->getCmd('layout', 'edit'); 
         $task   = $jinput->getCmd('task', '');
         $append = '';
 
         // Setup redirect info.
         if ($tmpl) {
-            $append .= '&tmpl='.$tmpl;
+            $append .= '&tmpl=' . $tmpl;
         }
 
         $append .= '&layout=edit';
 
         if ($recordId) {
-            $append .= '&'.$urlVar.'='.$recordId;
-        }
-        elseif (($task === 'copy') && ($fromId = $jinput->getInt('a_id', 0))) {
-            $append .= '&from_id='.$fromId;
+            $append .= '&' . $urlVar . '=' . $recordId;
+        } elseif (($task === 'copy') && ($fromId = $jinput->getInt('a_id', 0))) {
+            $append .= '&from_id=' . $fromId;
         }
 
         $itemId = $jinput->getInt('Itemid', 0);
@@ -200,23 +197,23 @@ class JemControllerEvent extends JemControllerForm
         $return = $this->getReturnPage();
 
         if ($itemId) {
-            $append .= '&Itemid='.$itemId;
+            $append .= '&Itemid=' . $itemId;
         }
 
         if ($catId) {
-            $append .= '&catid='.$catId;
+            $append .= '&catid=' . $catId;
         }
 
         if ($locId) {
-            $append .= '&locid='.$locId;
+            $append .= '&locid=' . $locId;
         }
 
         if ($date) {
-            $append .= '&date='.$date;
+            $append .= '&date=' . $date;
         }
 
         if ($return) {
-            $append .= '&return='.base64_encode($return);
+            $append .= '&return=' . base64_encode($return);
         }
 
         return $append;
@@ -239,8 +236,7 @@ class JemControllerEvent extends JemControllerForm
                 return Route::_(JemHelperRoute::getEventRoute($this->_id));
             }
             return $uri->base();
-        }
-        else {
+        } else {
             return base64_decode($return);
         }
     }
@@ -287,7 +283,7 @@ class JemControllerEvent extends JemControllerForm
     // echo "<pre/>";print_R($_POST);die;
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
-        
+
         $result = parent::save($key, $urlVar);
 
         // If ok, redirect to the return page.
@@ -335,7 +331,8 @@ class JemControllerEvent extends JemControllerForm
 
         PluginHelper::importPlugin('jem');
         $dispatcher = JemFactory::getDispatcher();
-        $dispatcher->triggerEvent('onEventUserRegistered', array($register_id, $reg->places));
+        $places = isset($reg->places) ? $reg->places : 0;
+        $dispatcher->triggerEvent('onEventUserRegistered', array($register_id, $places));
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();

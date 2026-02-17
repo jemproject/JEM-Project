@@ -3,7 +3,7 @@
  * @version    4.2.2
  * @package    JEM
  * @subpackage JEM Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -20,9 +20,6 @@ $linkloc = $params->get('linkloc');
 $linkdet = $params->get('linkdet');
 $showiconcountry = $params->get('showiconcountry');
 $settings = JemHelper::config();
-
-JemHelper::loadModuleStyleSheet('mod_jem', 'mod_jem_table-style');
-
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic-tablestyle">
