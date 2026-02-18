@@ -34,7 +34,7 @@ class JemViewWeekcal extends JemView
         $user         = JemFactory::getUser();
         $params       = $app->getParams();
         $top_category = (int)$params->get('top_category', 0);
-        $jinput       = $app->getInput();
+        $jinput       = $app->input;
         $print        = $jinput->getBool('print', false);
 
         $this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';

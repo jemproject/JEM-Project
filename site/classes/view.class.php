@@ -87,7 +87,7 @@ class JemView extends HtmlView
         $app   = Factory::getApplication();
         $menus = $app->getMenu();
         $menu  = $menus->getActive();
-        $print = $app->getInput()->getBool('print', false);
+        $print = $app->input->getBool('print', false);
 
         if ($print) {
             JemHelper::loadCss('print');

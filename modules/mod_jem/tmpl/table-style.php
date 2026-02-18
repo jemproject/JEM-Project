@@ -20,9 +20,6 @@ $linkloc = $params->get('linkloc');
 $linkdet = $params->get('linkdet');
 $showiconcountry = $params->get('showiconcountry');
 $settings = JemHelper::config();
-
-JemHelper::loadModuleStyleSheet('mod_jem', 'mod_jem_table-style');
-
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic-tablestyle">

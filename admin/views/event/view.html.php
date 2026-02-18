@@ -86,7 +86,7 @@ class JemViewEvent extends JemAdminView
      */
     protected function addToolbar()
     {
-        Factory::getApplication()->getInput()->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
 
         $user       = JemFactory::getUser();
         $isNew      = ($this->item->id == 0);

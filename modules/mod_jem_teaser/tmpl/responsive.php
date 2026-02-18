@@ -13,8 +13,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-JemHelper::loadModuleStyleSheet('mod_jem_teaser','mod_jem_teaser_responsive');
-
 $showcalendar    = (int)$params->get('showcalendar', 1);
 
 if ($params->get('use_modal', 0)) {
@@ -139,7 +137,7 @@ $document->addStyleDeclaration($css);
                                     </div>
                                     <?php //endif; ?>
                                 <?php elseif ($item->date && $params->get('datemethod', 1) == 1) : ?>
-              <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->time); ?>">
+                                    <div class="time" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags($item->time); ?>">
                                         <?php echo $item->time; ?>
                                     </div>
                                     <?php //endif; ?>

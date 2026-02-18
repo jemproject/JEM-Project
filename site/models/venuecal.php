@@ -38,7 +38,7 @@ class JemModelVenueCal extends JemModelEventslist
     {
         $app         = Factory::getApplication();
     //    $jemsettings = JemHelper::config();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $params      = $app->getParams();
 
         $id = $jinput->getInt('id', 0);
@@ -73,8 +73,8 @@ class JemModelVenueCal extends JemModelEventslist
     {
         $app          = Factory::getApplication();
         $params       = $app->getParams();
-        $itemid       = $app->getInput()->getInt('Itemid', 0);
-        $task         = $app->getInput()->getCmd('task', '');
+        $itemid       = $app->input->getInt('Itemid', 0);
+        $task         = $app->input->getCmd('task', '');
         $startdayonly = $params->get('show_only_start', false);
         $show_archived_events = $params->get('show_archived_events', 0);
 

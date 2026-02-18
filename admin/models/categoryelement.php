@@ -39,7 +39,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
     {
         parent::__construct();
 
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $array = $jinput->get('cid', 0, 'array');
 
         if(is_array($this) && $this->setId((int)$array[0]));
@@ -67,7 +67,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
     {
         $app    = Factory::getApplication();
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $itemid = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+        $itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
         $limit            = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->get('list_limit'), 'int');
         $limitstart       = $app->getUserStateFromRequest('com_jem.limitstart', 'limitstart', 0, 'int');

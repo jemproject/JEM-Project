@@ -275,7 +275,7 @@ class JemViewEditevent extends JemView
     protected function _displaychoosevenue($tpl)
     {
         $app         = Factory::getApplication();
-        $jinput      = Factory::getApplication()->getInput();
+        $jinput      = Factory::getApplication()->input;
         $jemsettings = JemHelper::config();
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();
@@ -324,7 +324,7 @@ class JemViewEditevent extends JemView
     protected function _displaychoosecontact($tpl)
     {
         $app         = Factory::getApplication();
-        $jinput      = Factory::getApplication()->getInput();
+        $jinput      = Factory::getApplication()->input;
         $jemsettings = JemHelper::config();
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();
@@ -376,7 +376,7 @@ class JemViewEditevent extends JemView
     protected function _displaychooseusers($tpl)
     {
         $app         = Factory::getApplication();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $jemsettings = JemHelper::config();
         //    $db          = Factory::getContainer()->get('DatabaseDriver');
         $document    = $app->getDocument();

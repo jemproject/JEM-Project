@@ -48,7 +48,7 @@ class JemControllerGroups extends AdminController
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $cid = $jinput->get('cid',  0, 'array');
 
         if (!is_array($cid) || count($cid) < 1) {

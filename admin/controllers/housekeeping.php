@@ -43,7 +43,7 @@ class JemControllerHousekeeping extends BaseController
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
 
-        $task = Factory::getApplication()->getInput()->get('task', '');
+        $task = Factory::getApplication()->input->get('task', '');
         $model = $this->getModel('housekeeping');
 
         if ($task == 'cleaneventimg') {

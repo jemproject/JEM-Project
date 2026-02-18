@@ -36,8 +36,8 @@ class JemViewMyevents extends JemView
         $user         = JemFactory::getUser();
         $userId       = $user->get('id');
         $pathway      = $app->getPathWay();
-        $print        = $app->getInput()->getBool('print', false);
-        $task         = $app->getInput()->getCmd('task', '');
+        $print        = $app->input->getBool('print', false);
+        $task         = $app->input->getCmd('task', '');
 
         // redirect if not logged in
         $this->needLoginFirst = 0;

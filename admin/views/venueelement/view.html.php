@@ -26,7 +26,7 @@ class JemViewVenueelement extends Htmlview {
         //initialise variables
         $document   = $app->getDocument();
         $db            = Factory::getContainer()->get('DatabaseDriver');
-        $itemid     = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+        $itemid     = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
         //get vars
         $filter_order     = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd');

@@ -50,7 +50,7 @@ class JemViewVenueslist extends JemView
         $user         = JemFactory::getUser();
         $userId       = $user->get('id');
         $pathway      = $app->getPathWay();
-        $jinput       = $app->getInput();
+        $jinput       = $app->input;
         $print        = $jinput->getBool('print', false);
         $task         = $jinput->getCmd('task', '');
 

@@ -71,7 +71,7 @@ abstract class ModJemCalHelper extends ModuleHelper
     public static function getAjax()
     {
         $app     = Factory::getApplication();
-        $modid   = $app->getInput()->getInt('modjemcal_id');
+        $modid   = $app->input->getInt('modjemcal_id');
         # JModuleHelper doesn't provide module by id - but we
         $module = self::getModuleById($modid);
         if (!empty($module->id) && ((int)$module->id === $modid)) {

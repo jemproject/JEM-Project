@@ -14,7 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-$function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectUsers');
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
 $checked = 0;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');

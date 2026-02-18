@@ -58,7 +58,7 @@ class JemModelMyevents extends BaseDatabaseModel
         //get the number of events from database
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->getInput()->getInt('limitstart', null) === null) {
+        if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myevents.limitstart', 0);
         }
 
@@ -79,7 +79,7 @@ class JemModelMyevents extends BaseDatabaseModel
      */
     public function getEvents()
     {
-        $pop = Factory::getApplication()->getInput()->getBool('pop', false);
+        $pop = Factory::getApplication()->input->getBool('pop', false);
         $user = JemFactory::getUser();
         $userId = $user->get('id');
 
@@ -248,7 +248,7 @@ class JemModelMyevents extends BaseDatabaseModel
     protected function _buildOrderBy()
     {
         $app  = Factory::getApplication();
-        $task = $app->getInput()->getCmd('task', '');
+        $task = $app->input->getCmd('task', '');
 
         $filter_order      = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
         $filter_order_Dir  = $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
@@ -278,7 +278,7 @@ class JemModelMyevents extends BaseDatabaseModel
     protected function _buildWhere()
     {
         $app      = Factory::getApplication();
-        $task     = $app->getInput()->getCmd('task', '');
+        $task     = $app->input->getCmd('task', '');
         $params   = $app->getParams();
         $settings = JemHelper::globalattribs();
         $user     = JemFactory::getUser();

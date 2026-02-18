@@ -251,7 +251,7 @@ class JemModelVenue extends JemModelAdmin
     {
         // Variables
         $app         = Factory::getApplication();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $jemsettings = JemHelper::config();
         $task        = $jinput->get('task', '', 'cmd');
 

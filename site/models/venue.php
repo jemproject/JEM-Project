@@ -29,7 +29,7 @@ class JemModelVenue extends JemModelEventslist
     public function __construct()
     {
         $app    = Factory::getApplication();
-        $jinput = $app->getInput();
+        $jinput = $app->input;
         $params = $app->getParams();
 
         # determing the id to load
@@ -51,7 +51,7 @@ class JemModelVenue extends JemModelEventslist
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
         $params      = $app->getParams();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $task        = $jinput->getCmd('task','');
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
         $user        = JemFactory::getUser();
@@ -61,7 +61,7 @@ class JemModelVenue extends JemModelEventslist
 
         if (empty($format) || ($format == 'html')) {
             /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-            if ($app->getInput()->getInt('limitstart', null) === null) {
+            if ($app->input->getInt('limitstart', null) === null) {
                 $app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
             }
 

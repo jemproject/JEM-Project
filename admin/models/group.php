@@ -155,7 +155,7 @@ class JemModelGroup extends JemModelAdmin
             throw new Exception($table->getError(), 500);
         }
 
-        $members = $app->getInput()->get('maintainers', array(), 'array');
+        $members = $app->input->get('maintainers', array(), 'array');
 
         // Updating group references
         $query = $db->getQuery(true);

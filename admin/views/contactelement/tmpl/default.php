@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-$function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectContact');
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">

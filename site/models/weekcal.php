@@ -32,7 +32,7 @@ class JemModelWeekcal extends JemModelEventslist
     protected function populateState($ordering = null, $direction = null)
     {
         $app           = Factory::getApplication();
-        $task          = $app->getInput()->getCmd('task', '');
+        $task          = $app->input->getCmd('task', '');
         $params        = $app->getParams();
         $top_category  = $params->get('top_category', 0);
         $show_archived_events = $params->get('show_archived_events', 0);

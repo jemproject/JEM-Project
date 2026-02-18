@@ -38,10 +38,10 @@ class JemModelEvent extends ItemModel
         $app = Factory::getApplication('site');
 
         // Load state from the request.
-        $pk = $app->getInput()->getInt('id', 0);
+        $pk = $app->input->getInt('id', 0);
         $this->setState('event.id', $pk);
 
-        $offset = $app->getInput()->getInt('limitstart', 0);
+        $offset = $app->input->getInt('limitstart', 0);
         $this->setState('list.offset', $offset);
 
         // Load the parameters.
@@ -461,7 +461,7 @@ class JemModelEvent extends ItemModel
      */
     public function hit($pk = 0)
     {
-        $hitcount = Factory::getApplication()->getInput()->getInt('hitcount', 1);
+        $hitcount = Factory::getApplication()->input->getInt('hitcount', 1);
 
         if ($hitcount) {
             // Initialise variables.
@@ -891,14 +891,14 @@ class JemModelEvent extends ItemModel
         $user = JemFactory::getUser();
         $jemsettings = JemHelper::config();
 
-        $status  = $app->getInput()->getInt('reg_check', 0);
-        //    $noreg   = ($status == -1) ? 'on' : 'off';//$app->getInput()->getString('noreg_check', 'off');
-        $comment = $app->getInput()->getString('reg_comment', '');
+        $status  = $app->input->getInt('reg_check', 0);
+        //    $noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
+        $comment = $app->input->getString('reg_comment', '');
         $comment = OutputFilter::cleanText($comment);
-        $regid   = $app->getInput()->getInt('regid', 0);
-        $addplaces = $app->getInput()->getInt('addplaces', 0);
-        $cancelplaces = $app->getInput()->getInt('cancelplaces', 0);
-        $checkseries = $app->getInput()->getString('reg_check_series', '0');
+        $regid   = $app->input->getInt('regid', 0);
+        $addplaces = $app->input->getInt('addplaces', 0);
+        $cancelplaces = $app->input->getInt('cancelplaces', 0);
+        $checkseries = $app->input->getString('reg_check_series', '0');
         $checkseries = ($checkseries === 'true' || $checkseries === 'on' || $checkseries === '1');
         $uid = (int) $user->get('id');
         $eventId = (int) $this->_registerid;

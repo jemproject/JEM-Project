@@ -39,7 +39,7 @@ class ModJemMapHelper
         // filter category's
         $catids = JemHelper::getValidIds($params->get('catid'));
         $categoryFilterApplied = !empty($catids);
-        
+
         $query->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country')
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->where(['v.latitude IS NOT NULL',"v.latitude <> ''",'v.longitude IS NOT NULL',"v.longitude <> ''"]);

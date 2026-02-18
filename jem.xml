@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="component" method="upgrade">
     <name>com_jem</name>
-    <creationDate>January 2026</creationDate>
+    <creationDate>February 2026</creationDate>
     <author>JEM Community</author>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0-alpha1</version>
+    <version>5.0.0-alpha2</version>
     <description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -36,17 +36,35 @@
         <folder>js</folder>
     </media>
 
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+
     <administration>
-        <menu icon="icon-calendar" link="option=com_jem">COM_JEM</menu>
+        <menu img="../media/com_jem/images/jem.webp" link="option=com_jem">COM_JEM</menu>
 
         <submenu>
-            <menu icon="icon-home" link="option=com_jem&amp;view=main">COM_JEM_MENU_MAINMENU</menu>
-            <menu icon="icon-calendar" link="option=com_jem&amp;view=events">COM_JEM_MENU_EVENTS</menu>
-            <menu icon="icon-calendar" link="option=com_jem&amp;view=venues">COM_JEM_MENU_VENUES</menu>
-            <menu icon="icon-calendar" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
-            <menu icon="icon-calendar" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
-            <menu icon="icon-calendar" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
-            <menu icon="icon-calendar" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=main">COM_JEM_MENU_MAINMENU</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=events">COM_JEM_MENU_EVENTS</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=venues">COM_JEM_MENU_VENUES</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
         </submenu>
 
         <files folder="admin">
@@ -68,23 +86,5 @@
             <folder>language</folder>
         </files>
     </administration>
-
-    <install>
-        <sql>
-            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
-        </sql>
-    </install>
-    
-    <uninstall>
-        <sql>
-            <file driver="mysql" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
-        </sql>
-    </uninstall>
-
-    <update>
-        <schemas>
-            <schemapath type="mysql" charset="utf8mb4">sql/updates/mysql</schemapath>
-        </schemas>
-    </update>
 
 </extension>

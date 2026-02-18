@@ -48,7 +48,7 @@ class JemViewVenue extends JemView
             $params      = $app->getParams();
             $uri         = Uri::getInstance();
             $pathway     = $app->getPathWay();
-            $jinput      = $app->getInput();
+            $jinput      = $app->input;
             $print       = $jinput->getBool('print', false);
             $user        = JemFactory::getUser();
             $url          = Uri::root();
@@ -173,11 +173,11 @@ class JemViewVenue extends JemView
             $params      = $app->getParams('com_jem');
             $pathway     = $app->getPathWay ();
             $uri         = Uri::getInstance();
-            $jinput      = $app->getInput();
+            $jinput      = $app->input;
             $task        = $jinput->getCmd('task', '');
             $print       = $jinput->getBool('print', false);
             $user        = JemFactory::getUser();
-            $itemid      = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+            $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
             // Load css
             JemHelper::loadCss('jem');

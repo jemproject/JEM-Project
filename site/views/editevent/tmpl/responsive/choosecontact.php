@@ -14,7 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-$function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectContact');
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
 ?>
 
 <script>

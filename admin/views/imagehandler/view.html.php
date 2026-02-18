@@ -33,7 +33,7 @@ class JemViewImagehandler extends HtmlView
     public function display($tpl = null)
     {
         $app    = Factory::getApplication();
-        $option = $app->getInput()->getString('option', 'com_jem');
+        $option = $app->input->getString('option', 'com_jem');
 
         if ($this->getLayout() == 'uploadimage') {
             $this->_displayuploadimage($tpl);
@@ -41,7 +41,7 @@ class JemViewImagehandler extends HtmlView
         }
 
         //get vars
-        $task   = $app->getInput()->get('task', '');
+        $task   = $app->input->get('task', '');
         $search = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
         $search = trim(\Joomla\String\StringHelper::strtolower($search));
 
@@ -60,7 +60,7 @@ class JemViewImagehandler extends HtmlView
             $redi   = 'selectcategoriesimg';
         }
 
-        $app->getInput()->set('folder', $folder);
+        $app->input->set('folder', $folder);
 
         // Do not allow cache
         $app->allowCache(false);
@@ -85,7 +85,7 @@ class JemViewImagehandler extends HtmlView
             //no images in the folder, redirect to uploadscreen and raise notice
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_NO_IMAGES_AVAILABLE'), 'notice');
             $this->setLayout('uploadimage');
-            $app->getInput()->set('task', $task);
+            $app->input->set('task', $task);
             $this->_displayuploadimage($tpl);
             return;
         }
@@ -114,7 +114,7 @@ class JemViewImagehandler extends HtmlView
         $jemsettings = JemAdmin::config();
 
         //get vars
-        $task = Factory::getApplication()->getInput()->get('task', '');
+        $task = Factory::getApplication()->input->get('task', '');
 
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();

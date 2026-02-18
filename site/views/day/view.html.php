@@ -41,7 +41,7 @@ class JemViewDay extends JemView
         $document    = $app->getDocument();
         $params      = $app->getParams();
         $uri         = Uri::getInstance();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $task        = $jinput->getCmd('task', '');
         $print       = $jinput->getBool('print', false);
         $pathway     = $app->getPathWay();

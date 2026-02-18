@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 
-$function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectVenue');
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
 ?>
 
 <script>

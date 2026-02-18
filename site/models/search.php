@@ -62,7 +62,7 @@ class JemModelSearch extends BaseDatabaseModel
 
         //get the number of events from database
         $limit      = $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart = $app->getInput()->getInt('limitstart', 0);
+        $limitstart = $app->input->getInt('limitstart', 0);
         // correct start value if required
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -70,16 +70,16 @@ class JemModelSearch extends BaseDatabaseModel
         $this->setState('limitstart', $limitstart);
 
         // Get the filter request variables
-        $filter_order = $app->getInput()->getCmd('filter_order', 'a.dates');
+        $filter_order = $app->input->getCmd('filter_order', 'a.dates');
         $this->setState('filter_order', $filter_order);
 
         $filter_order_DirDefault = 'ASC';
         // Reverse default order for dates in archive mode
-        $task = $app->getInput()->getCmd('task', '');
+        $task = $app->input->getCmd('task', '');
         if (($task == 'archive') && ($filter_order == 'a.dates')) {
             $filter_order_DirDefault = 'DESC';
         }
-        $this->setState('filter_order_Dir', $app->getInput()->getCmd('filter_order_Dir', $filter_order_DirDefault));
+        $this->setState('filter_order_Dir', $app->input->getCmd('filter_order_Dir', $filter_order_DirDefault));
     }
 
     /**
@@ -90,7 +90,7 @@ class JemModelSearch extends BaseDatabaseModel
      */
     public function getData()
     {
-        $pop = Factory::getApplication()->getInput()->getBool('pop', false);
+        $pop = Factory::getApplication()->input->getBool('pop', false);
 
         // Lets load the content if it doesn't already exist
         if (empty($this->_data)) {
@@ -180,7 +180,7 @@ class JemModelSearch extends BaseDatabaseModel
     protected function _buildOrderBy()
     {
         $app  = Factory::getApplication();
-        $task = $app->getInput()->getCmd('task', '');
+        $task = $app->input->getCmd('task', '');
 
         $filter_order      = $this->getState('filter_order');
         $filter_order_Dir  = $this->getState('filter_order_Dir');
@@ -213,7 +213,7 @@ class JemModelSearch extends BaseDatabaseModel
 
         // Get the paramaters of the active menu item
         $params       = $app->getParams();
-        $task         = $app->getInput()->getCmd('task', '');
+        $task         = $app->input->getCmd('task', '');
         $user         = JemFactory::getUser();
         $levels       = $user->getAuthorisedViewLevels();
         $top_category = $params->get('top_category', 1);
@@ -228,9 +228,9 @@ class JemModelSearch extends BaseDatabaseModel
         // filter by user's access levels
         $where .= ' AND a.access IN (' . implode(', ', $levels) .')';
 
-        //$filter            = $app->getInput()->getString('filter', '');
+        //$filter            = $app->input->getString('filter', '');
         $filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-        $filter_type       = $app->getInput()->get('filter_type', '');
+        $filter_type       = $app->input->get('filter_type', '');
         $filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
         $filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
         $filter_city       = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
@@ -374,7 +374,7 @@ class JemModelSearch extends BaseDatabaseModel
 
     public function getCityOptions()
     {
-        if (!$country = Factory::getApplication()->getInput()->getString('filter_country', '')) {
+        if (!$country = Factory::getApplication()->input->getString('filter_country', '')) {
             return array();
         }
         $query = ' SELECT DISTINCT l.city as value, l.city as text '

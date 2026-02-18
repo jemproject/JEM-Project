@@ -97,11 +97,11 @@ class JemModelCategory extends AdminModel
     {
         $app = Factory::getApplication('administrator');
 
-        $parentId = $app->getInput()->getInt('parent_id', 0);
+        $parentId = $app->input->getInt('parent_id', 0);
         $this->setState('category.parent_id', $parentId);
 
         // Load the User state.
-        $pk = (int) $app->getInput()->getInt('id', 0);
+        $pk = (int) $app->input->getInt('id', 0);
         $this->setState($this->getName() . '.id', $pk);
 
         // Load the parameters.
@@ -239,7 +239,7 @@ class JemModelCategory extends AdminModel
         // Initialise variables;
         $dispatcher = JemFactory::getDispatcher();
         $table = $this->getTable();
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
 
         $pk = (!empty($data['id'])) ? $data['id'] : (int) $this->getState($this->getName() . '.id');
         $isNew = true;
@@ -356,7 +356,7 @@ class JemModelCategory extends AdminModel
         if (parent::publish($pks, $value)) {
             // Initialise variables.
             $dispatcher = JemFactory::getDispatcher();
-            $extension = Factory::getApplication()->getInput()->getCmd('extension', '');
+            $extension = Factory::getApplication()->input->getCmd('extension', '');
 
             // Include the content plugins for the change of category state
             // event.
@@ -434,7 +434,7 @@ class JemModelCategory extends AdminModel
         $table = $this->getTable();
         $db = Factory::getContainer()->get('DatabaseDriver');
         $user = JemFactory::getUser();
-        $extension = Factory::getApplication()->getInput()->get('extension', '', 'word');
+        $extension = Factory::getApplication()->input->get('extension', '', 'word');
         $i = 0;
 
         // Check that the parent exists
@@ -604,7 +604,7 @@ class JemModelCategory extends AdminModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $user = JemFactory::getUser();
-        $extension = Factory::getApplication()->getInput()->get('extension', '', 'word');
+        $extension = Factory::getApplication()->input->get('extension', '', 'word');
 
         // Check that the parent exists.
         if ($parentId) {
@@ -712,7 +712,7 @@ class JemModelCategory extends AdminModel
      */
     protected function cleanCache($group = null, $client_id = 0)
     {
-        $extension = Factory::getApplication()->getInput()->getCmd('extension', '');
+        $extension = Factory::getApplication()->input->getCmd('extension', '');
         switch ($extension)
         {
             case 'com_content':

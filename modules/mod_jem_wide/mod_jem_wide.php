@@ -14,13 +14,15 @@ use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem_wide';
 
-// get helper
+// get module helper
 require_once __DIR__ . '/helper.php';
-require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
+
+//require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
-require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 
 Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
@@ -32,8 +34,9 @@ if (empty($list) && !$params->get('show_no_events')) {
 
 $jemsettings = JemHelper::config();
 $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
-$iconcss = $mod_name . (($jemsettings->useiconfont == 1) ? '_iconfont' : '_iconimg') ;
-JemHelper::loadModuleStyleSheet($mod_name, $mod_name . '_' . $layout);
+$iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
+
+JemHelper::loadModuleStyleSheet($mod_name, $layout);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 
 // load icon font if needed

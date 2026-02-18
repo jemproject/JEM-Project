@@ -1,5 +1,5 @@
-# JEM 5.0.0 alpha
-released 2026-02-06
+# JEM 5.0.0 alpha 2
+released 2026-02-18
 
 ##  ALPHA – NOT FOR PRODUCTION SITES. 
 

@@ -170,7 +170,7 @@ class JemControllerEvent extends JemControllerForm
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
     {
         // Need to override the parent method completely.
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $tmpl   = $jinput->getCmd('tmpl', '');
         $layout = $jinput->getCmd('layout', 'edit'); 
         $task   = $jinput->getCmd('task', '');
@@ -228,7 +228,7 @@ class JemControllerEvent extends JemControllerForm
     protected function getReturnPage()
     {
         $uri    = Uri::getInstance();
-        $return = Factory::getApplication()->getInput()->get('return', null, 'base64');
+        $return = Factory::getApplication()->input->get('return', null, 'base64');
 
         if (empty($return) || !Uri::isInternal(base64_decode($return))) {
             if (!empty($this->_id)) {
@@ -301,7 +301,7 @@ class JemControllerEvent extends JemControllerForm
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $input = Factory::getApplication()->getInput();
+        $input = Factory::getApplication()->input;
         $id  = $input->getInt('rdid', 0);
         $rid = $input->getInt('regid', 0);
 
@@ -350,7 +350,7 @@ class JemControllerEvent extends JemControllerForm
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $id = Factory::getApplication()->getInput()->getInt('rdid', 0);
+        $id = Factory::getApplication()->input->getInt('rdid', 0);
 
         // Get/Create the model
         $model = $this->getModel('Event', 'JemModel');

@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
+$highlight_featured = $params->get('highlight_featured');
+
 ?>
 
 <div class="jemmodulewide<?= $params->get('moduleclass_sfx')?>" id="jemmodulewide">
@@ -32,8 +34,7 @@ use Joomla\CMS\Uri\Uri;
             <?php foreach ($list as $item) : ?>
                 <tr class="event_id<?= $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <td>
-                        <span itemprop="name" class="event-title <?= ($highlight_featured && $item->featured) ? 'highlight_featured' : '' ?>">
-
+                        <span itemprop="name" class="event-title<?= ($highlight_featured && $item->featured) ? ' highlight_featured' : '' ?>">
                         <?php if ($item->eventlink) : ?>
                             <a href="<?= $item->eventlink; ?>" itemprop="url" title="<?= $item->fulltitle; ?>"><?= $item->title; ?></a></span>
                         <?php else : ?>

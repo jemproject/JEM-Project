@@ -26,12 +26,12 @@ class JemModelVenues extends JemModelEventslist
 
         $app    = Factory::getApplication();
         $params = $app->getParams();
-        $task   = $app->getInput()->getCmd('task','');
+        $task   = $app->input->getCmd('task','');
 
         // List state information
-        $limit  = $app->getInput()->getInt('limit', $params->get('display_venues_num'));
+        $limit  = $app->input->getInt('limit', $params->get('display_venues_num'));
         $this->setState('list.limit', $limit);
-        $limitstart = $app->getInput()->getInt('limitstart', 0);
+        $limitstart = $app->input->getInt('limitstart', 0);
         // correct start value if required
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
         $this->setState('list.start', $limitstart);

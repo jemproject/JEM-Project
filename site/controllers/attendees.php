@@ -50,7 +50,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput  = Factory::getApplication()->getInput();
+        $jinput  = Factory::getApplication()->input;
         $eventid = $jinput->getInt('id', 0);
         $status  = $jinput->getInt('status', 0);
         $checkseries  = $jinput->getString('series', '');
@@ -184,7 +184,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $cid    = $jinput->get('cid', array(), 'array');
         $id     = $jinput->getInt('id', 0);
         $fid    = $jinput->getInt('Itemid', 0);
@@ -234,7 +234,7 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $id     = $jinput->getInt('id', 0);
         $fid    = $jinput->getInt('Itemid', 0);
 

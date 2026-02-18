@@ -21,25 +21,50 @@ use Joomla\CMS\Factory;
  */
 class JemViewUpdatecheck extends JemAdminView
 {
+    protected $app;
+
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+        $this->app = Factory::getApplication();
+    }
 
     public function display($tpl = null)
     {
-        //Get data from the model
-        $updatedata          = $this->get('Updatedata');
+        // Get data from the model
+        $updatedata = $this->get('Updatedata');
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Check if data was retrieved successfully
+        if ($updatedata === false) {
+            $this->app->enqueueMessage(Text::_('COM_JEM_ERROR_UPDATEDATA'), 'warning');
+            $updatedata = new stdClass();
+        }
 
-        //assign data to template
-        $this->updatedata    = $updatedata;
+        // Load CSS properly
+        $this->loadCss();
 
-        // add toolbar
+        // Assign data to template
+        $this->updatedata = $updatedata;
+
+        // Add toolbar
         $this->addToolbar();
 
         parent::display($tpl);
     }
 
+    /**
+     * Load CSS assets
+     */
+    protected function loadCss()
+    {
+        $wa = $this->app->getDocument()->getWebAssetManager();
+
+        // Register style if not already registered
+        if (!$wa->assetExists('style', 'jem.backend')) {
+            $wa->registerStyle('jem.backend', 'com_jem/backend.css');
+        }
+        $wa->useStyle('jem.backend');
+    }
 
     /**
      * Add Toolbar
@@ -48,7 +73,8 @@ class JemViewUpdatecheck extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
 
-        ToolbarHelper::back();
+        // Use cancel instead of deprecated back
+        ToolbarHelper::cancel('updatecheck.cancel', 'JTOOLBAR_CLOSE');
         ToolbarHelper::divider();
         ToolBarHelper::help('update', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/check-update');
     }

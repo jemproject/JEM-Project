@@ -12,7 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
-$function = Factory::getApplication()->getInput()->getCmd('function', 'jSelectVenue');
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">

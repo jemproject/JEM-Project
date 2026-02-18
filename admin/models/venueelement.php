@@ -55,10 +55,10 @@ class JemModelVenueelement extends BaseDatabaseModel
 
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
-    //    $itemid      = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+    //    $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
         $limit       = $app->getUserStateFromRequest('com_jem.venueelement.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->getInput()->getInt('limitstart', 0);
+        $limitstart  = $app->input->getInt('limitstart', 0);
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
         $this->setState('limit', $limit);
@@ -89,7 +89,7 @@ class JemModelVenueelement extends BaseDatabaseModel
     {
         $app              = Factory::getApplication();
         $jemsettings      = JemHelper::config();
-        $itemid           = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+        $itemid           = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
         $filter_order     = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd' );
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word' );

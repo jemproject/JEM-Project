@@ -48,7 +48,7 @@ class JemModelMyvenues extends BaseDatabaseModel
         //get the number of events
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->getInput()->getInt('limitstart', null) === null) {
+        if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myvenues.limitstart', 0);
         }
 
@@ -69,7 +69,7 @@ class JemModelMyvenues extends BaseDatabaseModel
      */
     public function getVenues()
     {
-        $pop = Factory::getApplication()->getInput()->getBool('pop', false);
+        $pop = Factory::getApplication()->input->getBool('pop', false);
         $user = JemFactory::getUser();
         $userId = $user->get('id');
 

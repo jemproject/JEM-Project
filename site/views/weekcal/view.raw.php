@@ -24,7 +24,7 @@ class JemViewWeekcal extends HtmlView
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
         $app       = Factory::getApplication();
-        $jinput    = $app->getInput();
+        $jinput    = $app->input;
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));

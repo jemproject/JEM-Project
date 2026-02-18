@@ -60,8 +60,10 @@ class JemControllerImport extends BaseController
     {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+		
+		$app = Factory::getApplication();
 
-        $replace = Factory::getApplication()->getInput()->post->getInt('replace_'.$type, 0);
+        $replace = $app->input->post->getInt('replace_'.$type, 0);
         $object = Table::getInstance('jem_'.$dbname, '');
         $object_fields = get_object_vars($object);
         $jemconfig = JemConfig::getInstance()->toRegistry();
@@ -74,7 +76,7 @@ class JemControllerImport extends BaseController
         }
 
         $msg = '';
-        $file = Factory::getApplication()->getInput()->files->get('File'.$type, array(), 'array');
+        $file = $app->input->files->get('File'.$type, array(), 'array');
 
         if (empty($file['name']))
         {
@@ -246,21 +248,23 @@ class JemControllerImport extends BaseController
         $tables->eltables  = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
         $tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
 
-        $app = Factory::getApplication();
-        $jinput = $app->getInput();
-        $step = $jinput->get('step', 0, 'INT');
-        $current = $jinput->get->get('current', 0, 'INT');
-        $total = $jinput->get->get('total', 0, 'INT');
-        $table = $jinput->get->get('table', 0, 'INT');
-        $prefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
-        $copyImages = $app->getUserStateFromRequest('com_jem.import.elimport.copyImages', 'copyImages', 0, 'int');
-        $copyAttachments = $app->getUserStateFromRequest('com_jem.import.elimport.copyAttachments', 'copyAttachments', 0, 'int');
-        $fromJ15 = $app->getUserStateFromRequest('com_jem.import.elimport.fromJ15', 'fromJ15', '0', 'int'); // import from Joomla! 1.5 site?
+		$app = Factory::getApplication();
+
+		$step = $app->input->get('step', 0, 'INT');
+		$current = $app->input->get('current', 0, 'INT');
+		$total = $app->input->get('total', 0, 'INT');
+		$table = $app->input->get('table', 0, 'INT');
+
+		$prefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
+		$copyImages = $app->getUserStateFromRequest('com_jem.import.elimport.copyImages', 'copyImages', 0, 'int');
+		$copyAttachments = $app->getUserStateFromRequest('com_jem.import.elimport.copyAttachments', 'copyAttachments', 0, 'int');
+		$fromJ15 = $app->getUserStateFromRequest('com_jem.import.elimport.fromJ15', 'fromJ15', '0', 'int');
+
 
         $link = 'index.php?option=com_jem&view=import';
         $msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
-        if ($jinput->get('startToken', 0, 'INT') || ($step === 1)) {
+        if ($app->input->get('startToken', 0, 'INT') || ($step === 1)) {
             // Are the JEM tables empty at start? If no, stop import
             if ($model->getExistingJemData()) {
                 $this->setRedirect($link);

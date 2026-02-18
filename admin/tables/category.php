@@ -36,7 +36,9 @@ class JemTableCategory extends Nested
      * @param  integer  $pk        The primary key of the node to delete.
      * @param  boolean  $children  True to delete child nodes, false to move them up a level.
      *
-     * @return boolean
+     * @return boolean  True on success.
+     *
+     * @link   https://docs.joomla.org/JTableNested/delete
      */
     public function delete($pk = null, $children = false)
     {
@@ -58,59 +60,49 @@ class JemTableCategory extends Nested
         $query = $db->getQuery(true);
 
         // Insert columns.
-        $columns = [
-            'parent_id', 'lft', 'rgt', 'level',
-            'catname', 'alias', 'access', 'title', 'published'
-        ];
+        $columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access','title','published');
 
         // Insert values.
-        $values = [
-            0, 0, 1, 0,
-            $db->quote('root'),
-            $db->quote('root'),
-            1,
-            $db->quote('root'),
-            1
-        ];
+        $values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'),1, $db->quote('root'),1);
 
         // Prepare the insert query.
         $query
         ->insert($db->quoteName('#__jem_categories'))
         ->columns($db->quoteName($columns))
         ->values(implode(',', $values));
-
         $db->setQuery($query);
+
         $db->execute();
 
         return $db->insertid();
     }
 
     /**
-     * Try to insert first, ignore if already exists.
+     * try to insert first, update if fails
      *
-     * @param  boolean  $updateNulls
-     * @return int|null
+     * Can be overloaded/supplemented by the child class
+     *
+     * @access public
+     * @param  boolean If false, null object variables are not updated
+     * @return null|string null if successful otherwise returns and error message
      */
     public function insertIgnore($updateNulls = false)
     {
         $ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-
         if ($ret < 0) {
             $this->setError(get_class($this).'::store failed - '.$this->_db->getError());
         }
-
         return $ret;
     }
 
     /**
-     * Insert object into table using INSERT IGNORE.
-     * Empty strings are skipped to avoid invalid DATETIME values.
+     * Inserts a row into a table based on an objects properties, ignore if already exists
      *
-     * @param  string  $table
-     * @param  object  $object
-     * @param  string  $keyName
-     *
-     * @return int
+     * @access protected
+     * @param  string  The name of the table
+     * @param  object  An object whose properties match table fields
+     * @param  string  The name of the primary key. If provided the object property is updated.
+     * @return int number of affected row
      */
     protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
     {
@@ -118,15 +110,8 @@ class JemTableCategory extends Nested
         $fields = [];
         $values = [];
 
-        foreach (get_object_vars($object) as $k => $v) {
-            // Skip internal, complex, null or empty-string values
-            if (
-                $k[0] === '_' ||
-                is_array($v) ||
-                is_object($v) ||
-                $v === null ||
-                $v === ''
-            ) {
+        foreach (get_object_vars($object) as $k => $v) {            
+            if ($k[0] === '_' || is_array($v) || is_object($v) || $v === null || $v === '') {
                 continue;
             }
 
@@ -147,36 +132,34 @@ class JemTableCategory extends Nested
         }
 
         $id = $this->_db->insertid();
-
         if ($keyName && $id) {
             $object->$keyName = $id;
         }
-
         return $this->_db->getAffectedRows();
     }
 
     /**
-     * Overloaded check function.
+     * Overloaded check function
      *
      * @return boolean
+     *
+     * @see    Table::check
+     * @since  11.1
      */
     public function check()
     {
         // Check for a title.
-        if (trim($this->catname) === '') {
+        if (trim($this->catname) == '') {
             $this->setError(Text::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));
             return false;
         }
-
         $this->alias = trim($this->alias);
-
-        if ($this->alias === '') {
+        if (empty($this->alias)) {
             $this->alias = $this->catname;
         }
 
         $this->alias = JemHelper::stringURLSafe($this->alias);
-
-        if (trim(str_replace('-', '', $this->alias)) === '') {
+        if (trim(str_replace('-', '', $this->alias)) == '') {
             $this->alias = Factory::getDate()->format('Y-m-d-H-i-s');
         }
 
@@ -186,10 +169,14 @@ class JemTableCategory extends Nested
     /**
      * Overloaded bind function.
      *
-     * @param  array   $array
-     * @param  string  $ignore
+     * @param  array   $array   named array
+     * @param  string  $ignore  An optional array or space separated list of properties
+     *                          to ignore while binding.
      *
-     * @return mixed
+     * @return mixed   Null if operation was satisfactory, otherwise returns an error
+     *
+     * @see    Table::bind
+     * @since  11.1
      */
     public function bind($array, $ignore = '')
     {
@@ -214,16 +201,15 @@ class JemTableCategory extends Nested
     }
 
     /**
-     * Overloaded store to set created/modified timestamps and user IDs.
+     * Overloaded Table::store to set created/modified and user id.
      *
-     * @param  boolean  $updateNulls
-     * @return boolean
+     * @param  boolean  $updateNulls  True to update fields even if they are null.
+     * @return boolean  True on success.
      */
     public function store($updateNulls = false)
     {
         $date = Factory::getDate();
         $user = JemFactory::getUser();
-
         if ($this->id) {
             // Existing category
             $this->modified_time = $date->toSql();
@@ -233,18 +219,12 @@ class JemTableCategory extends Nested
             $this->created_time = $date->toSql();
             $this->created_user_id = $user->get('id');
         }
+        // Verify that the alias is unique
+        $table = Table::getInstance('Category', 'JEMTable', array('dbo' => Factory::getContainer()->get('DatabaseDriver')));
 
-        // Ensure alias uniqueness within parent
-        $table = Table::getInstance(
-            'Category',
-            'JEMTable',
-            ['dbo' => Factory::getContainer()->get('DatabaseDriver')]
-        );
+        if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
+            && ($table->id != $this->id || $this->id == 0)) {
 
-        if (
-            $table->load(['alias' => $this->alias, 'parent_id' => $this->parent_id]) &&
-            ($table->id != $this->id || $this->id == 0)
-        ) {
             $this->setError(Text::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
             return false;
         }
@@ -253,23 +233,16 @@ class JemTableCategory extends Nested
     }
 
     /**
-     * CSV import validation.
-     *
-     * @return boolean
+     * Check Csv Import
+     * @Todo   add validation
      */
     public function checkCsvImport()
     {
         foreach (get_object_vars($this) as $k => $v) {
-            if (
-                is_array($v) ||
-                is_object($v) ||
-                $v === null ||
-                $k[0] === '_'
-            ) {
+            if (is_array($v) || is_object($v) || $v === null || $k[0] === '_') {
                 continue;
             }
-
-            // Normalize invalid datetime values
+            //Change datetime to null when its value is '000-00-00' (support J4 & J5)
             if (strpos($v, '0000-00-00') !== false) {
                 $this->$k = null;
             }
@@ -279,10 +252,7 @@ class JemTableCategory extends Nested
     }
 
     /**
-     * Store CSV import.
-     *
-     * @param  boolean  $updateNulls
-     * @return boolean
+     * Store Csv Import
      */
     public function storeCsvImport($updateNulls = false)
     {
@@ -298,9 +268,8 @@ class JemTableCategory extends Nested
 
         // If the store failed return false.
         if (!$stored) {
-            $this->setError(
-                Text::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this))
-            );
+            $e = Text::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $stored->getError());
+            $this->setError($e);
             return false;
         }
 

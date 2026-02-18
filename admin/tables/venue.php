@@ -43,7 +43,7 @@ class JemTableVenue extends Table
      */
     public function check()
     {
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
 
         if (trim($this->venue) == '') {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_NAME'));
@@ -145,7 +145,7 @@ class JemTableVenue extends Table
         $user        = JemFactory::getUser();
         $userid      = $user->get('id');
         $app         = Factory::getApplication();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $jemsettings = JemHelper::config();
 
         // Check if we're in the front or back
@@ -199,8 +199,7 @@ class JemTableVenue extends Table
                         $filename = JemImage::sanitize($image_dir, $file['name']);
                         $filepath = $image_dir . $filename;
 
-                        // Use native PHP move_uploaded_file instead of File::upload
-                        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+                        if (File::upload($file['tmp_name'], $filepath)) {
                             $image_to_delete = $this->locimage; // delete previous image
                             $this->locimage = $filename;
                         }
@@ -212,7 +211,7 @@ class JemTableVenue extends Table
                     $this->locimage = '';
                 } elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
                     // venue is a copy so copy locimage too
-                    if (is_file($image_dir . $locimage)) {
+                    if (File::exists($image_dir . $locimage)) {
                         // if it's already within image folder it's safe
                         $this->locimage = $locimage;
                     }
@@ -220,8 +219,8 @@ class JemTableVenue extends Table
             } // end image if
         } // if (!backend)
 
-        $format = pathinfo($image_dir . $this->locimage, PATHINFO_EXTENSION);
-        if (!in_array(strtolower($format), $allowable))
+        $format = File::getExt($image_dir . $this->locimage);
+        if (!in_array($format, $allowable))
         {
             $this->locimage = '';
         }

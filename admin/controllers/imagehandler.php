@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
-use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
@@ -52,13 +51,9 @@ class JemControllerImagehandler extends BaseController
         $app = Factory::getApplication();
         $jemsettings = JemAdmin::config();
 
-        $input = Factory::getApplication()->getInput();
-        $file = $input->files->get('userfile', [], 'array');
-        $task = $input->get('task', '');
+        $file = $app->input->files->get('userfile', [], 'array');
+        $task = $app->input->get('task', '');
 
-        // Set FTP credentials, if given
-
-        ClientHelper::setCredentialsFromRequest('ftp');
 
         //set the target directory
         if ($task == 'venueimgup') {
@@ -109,13 +104,10 @@ class JemControllerImagehandler extends BaseController
 
         $app = Factory::getApplication();
 
-        // Set FTP credentials, if given
-        ClientHelper::setCredentialsFromRequest('ftp');
 
         // Get some data from the request
-        $input = Factory::getApplication()->getInput();
-        $images = $input->get('rm', array(), 'array');
-        $folder = $input->get('folder', '');
+        $images = $app->input->get('rm', array(), 'array');
+        $folder = $app->input->get('folder', '');
 
         if (count($images)) {
             foreach ($images as $image) {
@@ -128,8 +120,8 @@ class JemControllerImagehandler extends BaseController
                 $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
                 if (is_file($fullPath)) {
                     File::delete($fullPath);
-                    if (is_file($fullPaththumb)) {
-                        is_file($fullPaththumb);
+                    if (File::exists($fullPaththumb)) {
+                        File::delete($fullPaththumb);
                     }
                 }
             }

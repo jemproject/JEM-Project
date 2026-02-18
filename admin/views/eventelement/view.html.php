@@ -27,7 +27,7 @@ class JemViewEventelement extends Htmlview {
         $db          = Factory::getContainer()->get('DatabaseDriver');
         $jemsettings = JEMAdmin::config();
         $document    = $app->getDocument();
-        $itemid      = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+        $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
         //get var
         $filter_order     = $app->getUserStateFromRequest('com_jem.eventelement.filter_order',     'filter_order', 'a.dates', 'cmd');

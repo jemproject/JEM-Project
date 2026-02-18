@@ -38,7 +38,7 @@ class JemModelMyattendances extends BaseDatabaseModel
         //get the number of events
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->getInput()->getInt('limitstart', null) === null) {
+        if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myattendances.limitstart', 0);
         }
 
@@ -59,7 +59,7 @@ class JemModelMyattendances extends BaseDatabaseModel
      */
     public function getAttending()
     {
-        $pop = Factory::getApplication()->getInput()->getBool('pop', false);
+        $pop = Factory::getApplication()->input->getBool('pop', false);
 
         // Lets load the content if it doesn't already exist
         if (empty($this->_attending)) {
@@ -169,7 +169,7 @@ class JemModelMyattendances extends BaseDatabaseModel
     protected function _buildOrderByAttending()
     {
         $app  = Factory::getApplication();
-        $task = $app->getInput()->getCmd('task', '');
+        $task = $app->input->getCmd('task', '');
 
         $filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
         $filter_order = InputFilter::getInstance()->clean($filter_order, 'cmd');
@@ -212,7 +212,7 @@ class JemModelMyattendances extends BaseDatabaseModel
 
         // Get the paramaters of the active menu item
         $params   = $app->getParams();
-        $task     = $app->getInput()->getCmd('task', '');
+        $task     = $app->input->getCmd('task', '');
         $settings = JemHelper::globalattribs();
         $user     = JemFactory::getUser();
         // Support Joomla access levels instead of single group id

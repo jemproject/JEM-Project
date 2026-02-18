@@ -67,7 +67,7 @@ class JemViewCategory extends JemAdminView
 
         parent::display($tpl);
 
-        $app->getInput()->set('hidemainmenu', true);
+        $app->input->set('hidemainmenu', true);
         $this->addToolbar();
     }
 

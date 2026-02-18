@@ -39,7 +39,7 @@ class JemControllerAttendee extends BaseController
      */
     public function back()
     {
-        $this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->getInput()->getInt('event', 0));
+        $this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
     }
 
     /**
@@ -54,10 +54,10 @@ class JemControllerAttendee extends BaseController
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $attendee = Table::getInstance('jem_register', '');
-        $attendee->bind(Factory::getApplication()->getInput()->post->getArray(/*get them all*/));
+        $attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
         $attendee->checkin();
 
-        $this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->getInput()->getInt('event', 0));
+        $this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
     }
 
     /**
@@ -72,7 +72,7 @@ class JemControllerAttendee extends BaseController
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Defining JInput
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
 
         // retrieving task "apply"
         $task = $jinput->getCmd('task');
@@ -155,7 +155,7 @@ class JemControllerAttendee extends BaseController
 
     public function selectUser()
     {
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $jinput->set('view', 'userelement');
         parent::display();
     }

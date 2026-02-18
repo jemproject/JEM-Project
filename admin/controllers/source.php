@@ -92,7 +92,7 @@ class JemControllerSource extends BaseController
         // Initialise variables.
         $app      = Factory::getApplication();
         $model    = $this->getModel();
-        $recordId = $app->getInput()->get('id', '');
+        $recordId = $app->input->get('id', '');
         $context  = 'com_jem.edit.source';
 
         if (preg_match('#\.\.#', base64_decode($recordId))) {
@@ -142,7 +142,7 @@ class JemControllerSource extends BaseController
 
         // Initialise variables.
         $app     = Factory::getApplication();
-        $data    = $app->getInput()->get('jform', array(), 'array');
+        $data    = $app->input->get('jform', array(), 'array');
         $context = 'com_jem.edit.source';
         $task    = $this->getTask();
         $model   = $this->getModel();

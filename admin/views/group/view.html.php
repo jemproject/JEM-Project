@@ -47,7 +47,7 @@ class JemViewGroup extends JemAdminView
         //initialise variables
         $jemsettings = JemHelper::config();
         $this->settings    = JemAdmin::config();
-        $task        = $app->getInput()->get('task', '');
+        $task        = $app->input->get('task', '');
         $this->task = $task;
         $url         = Uri::root();
 
@@ -80,7 +80,7 @@ class JemViewGroup extends JemAdminView
      */
     protected function addToolbar()
     {
-        Factory::getApplication()->getInput()->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
 
         $user        = JemFactory::getUser();
         $isNew        = ($this->item->id == 0);

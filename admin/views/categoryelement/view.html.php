@@ -25,7 +25,7 @@ class JemViewCategoryelement extends HtmlView {
         $app         = Factory::getApplication();
         $document   = $app->getDocument();
         $db            = Factory::getContainer()->get('DatabaseDriver');
-        $itemid     = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+        $itemid     = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
         //get vars
         $filter_order        = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');

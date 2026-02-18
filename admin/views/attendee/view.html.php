@@ -23,7 +23,7 @@ class JemViewAttendee extends HtmlView {
         //initialise variables
         $app      = Factory::getApplication();
         $document = $app->getDocument();
-        $jinput   = $app->getInput();
+        $jinput   = $app->input;
 
         $this->jemsettings = JemHelper::config();
 
@@ -64,10 +64,10 @@ class JemViewAttendee extends HtmlView {
      */
     protected function addToolbar()
     {
-        Factory::getApplication()->getInput()->set('hidemainmenu', true);
+        Factory::getApplication()->input->set('hidemainmenu', true);
 
         //get vars
-        $cid        = Factory::getApplication()->getInput()->get('cid', array(), 'array');
+        $cid        = Factory::getApplication()->input->get('cid', array(), 'array');
         $user       = JemFactory::getUser();
         $checkedOut = false; // don't know, table hasn't such a field
         $canDo      = JemHelperBackend::getActions();

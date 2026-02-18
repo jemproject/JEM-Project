@@ -46,7 +46,7 @@ class JemControllerVenues extends AdminController
 
         $app = Factory::getApplication();
         $user = Factory::getApplication()->getIdentity();
-        $jinput = $app->getInput();
+        $jinput = $app->input;
         $cid = $jinput->get('cid',array(),'array');
 
         if (!is_array( $cid ) || count( $cid ) < 1) {

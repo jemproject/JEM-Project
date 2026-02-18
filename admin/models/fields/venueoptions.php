@@ -35,7 +35,7 @@ class JFormFieldVenueoptions extends ListField
         $name = (string) $this->element['name'];
 
         // Let's get the id for the current item
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
 
         // Create SQL
         $db = Factory::getContainer()->get('DatabaseDriver');

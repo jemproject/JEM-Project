@@ -32,7 +32,7 @@ class JemViewHelp extends JemAdminView
         $this->document = $app->getDocument();
 
         //get vars
-        $helpsearch = Factory::getApplication()->getInput()->getString('filter_search', '');
+        $helpsearch = Factory::getApplication()->input->getString('filter_search', '');
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();

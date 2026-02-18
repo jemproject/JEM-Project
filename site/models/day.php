@@ -27,7 +27,7 @@ class JemModelDay extends JemModelEventslist
     {
         parent::__construct();
 
-        $rawday = Factory::getApplication()->getInput()->getInt('id', null);
+        $rawday = Factory::getApplication()->input->getInt('id', null);
         $this->setDate($rawday);
     }
 
@@ -90,12 +90,12 @@ class JemModelDay extends JemModelEventslist
 
         $app               = Factory::getApplication();
         $jemsettings       = JemHelper::config();
-        $itemid            = $app->getInput()->getInt('id', 0) . ':' . $app->getInput()->getInt('Itemid', 0);
+        $itemid            = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
         $params            = $app->getParams();
-        $task              = $app->getInput()->getCmd('task', '');
-        $requestVenueId    = $app->getInput()->getInt('locid', 0);
-        $requestCategoryId = $app->getInput()->getInt('catid', 0);
-        $item              = $app->getInput()->getInt('Itemid', 0);
+        $task              = $app->input->getCmd('task', '');
+        $requestVenueId    = $app->input->getInt('locid', 0);
+        $requestCategoryId = $app->input->getInt('catid', 0);
+        $item              = $app->input->getInt('Itemid', 0);
 
         $locid = $app->getUserState('com_jem.venuecal.locid'.$item);
         if ($locid) {
@@ -103,7 +103,7 @@ class JemModelDay extends JemModelEventslist
         }
 
         // maybe list of venue ids from calendar module
-        $locids = explode(',', $app->getInput()->getString('locids', ''));
+        $locids = explode(',', $app->input->getString('locids', ''));
         foreach ($locids as $id) {
             if ((int)$id > 0) {
                 $venues[] = (int)$id;
@@ -120,7 +120,7 @@ class JemModelDay extends JemModelEventslist
         }
 
         // maybe list of venue ids from calendar module
-        $catids = explode(',', $app->getInput()->getString('catids', ''));
+        $catids = explode(',', $app->input->getString('catids', ''));
         foreach ($catids as $id) {
             if ((int)$id > 1) { // don't accept 'root'
                 $cats[] = (int)$id;
@@ -157,7 +157,7 @@ class JemModelDay extends JemModelEventslist
         }
 
         // maybe top category is given by calendar view
-        $top_category = $app->getInput()->getInt('topcat', 0);
+        $top_category = $app->input->getInt('topcat', 0);
         if ($top_category > 0) { // accept 'root'
             $children = JemCategories::getChilds($top_category);
             if (count($children)) {
@@ -169,7 +169,7 @@ class JemModelDay extends JemModelEventslist
         # limit/start
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->getInput()->getInt('limitstart', null) === null) {
+        if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.day.'.$itemid.'.limitstart', 0);
         }
 
@@ -210,7 +210,7 @@ class JemModelDay extends JemModelEventslist
 
         # published
         /// @todo bring given pub together with eventslist's unpub calculation (_populatePublishState())
-        $pub = explode(',', $app->getInput()->getString('pub', ''));
+        $pub = explode(',', $app->input->getString('pub', ''));
         $published = array();
         // sanitize remote data
         foreach ($pub as $val) {

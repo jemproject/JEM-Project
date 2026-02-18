@@ -35,8 +35,8 @@ class JemViewMyattendances extends JemView
         $uri         = Uri::getInstance();
         $user        = JemFactory::getUser();
         $pathway     = $app->getPathWay();
-        $print       = $app->getInput()->getBool('print', false);
-        $task        = $app->getInput()->getCmd('task', '');
+        $print       = $app->input->getBool('print', false);
+        $task        = $app->input->getCmd('task', '');
 
         // redirect if not logged in
         $this->needLoginFirst = 0;

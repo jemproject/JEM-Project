@@ -72,8 +72,8 @@ class JemControllerCategories extends AdminController
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Get the arrays from the Request
-        $order = Factory::getApplication()->getInput()->post->get('order', array(), 'array');
-        $originalOrder = explode(',', Factory::getApplication()->getInput()->getString('original_order_values', ''));
+        $order = Factory::getApplication()->input->post->get('order', array(), 'array');
+        $originalOrder = explode(',', Factory::getApplication()->input->getString('original_order_values', ''));
 
         // Make sure something has changed
         if ($order !== $originalOrder) {
@@ -94,8 +94,8 @@ class JemControllerCategories extends AdminController
          Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
          // Get items to remove from the request.
-         $cid = Factory::getApplication()->getInput()->get('cid', array(), 'array');
-         $extension = Factory::getApplication()->getInput()->get('extension', '');
+         $cid = Factory::getApplication()->input->get('cid', array(), 'array');
+         $extension = Factory::getApplication()->input->get('extension', '');
 
          if (!is_array($cid) || count($cid) < 1)
          {
@@ -136,7 +136,7 @@ class JemControllerCategories extends AdminController
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-         $cid= Factory::getApplication()->getInput()->post->get('cid', array(), 'array');
+         $cid= Factory::getApplication()->input->post->get('cid', array(), 'array');
 
          if (!is_array($cid) || count($cid) < 1) {
              Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');

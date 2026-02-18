@@ -89,7 +89,7 @@ class JemModelSettings extends AdminModel
         }
 
         // additional data:
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $varmetakey = $jinput->get('meta_keywords','','');
         $data['meta_keywords'] = implode(', ', array_filter($varmetakey));
         $data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.

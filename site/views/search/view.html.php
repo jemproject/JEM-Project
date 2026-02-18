@@ -56,7 +56,7 @@ class JemViewSearch extends JemView
         $filter_date_from = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
         $filter_date_to   = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
         $filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-        $task             = $app->getInput()->getCmd('task', '');
+        $task             = $app->input->getCmd('task', '');
 
         if(empty($filter_continent) && empty($filter_country)){
             $filter_country = $jemsettings->defaultCountry;
@@ -115,10 +115,10 @@ class JemViewSearch extends JemView
         $lists    = $this->_buildSortLists();
 
         if ($lists['filter']) {
-            //$uri->setVar('filter', $app->getInput()->getString('filter', ''));
+            //$uri->setVar('filter', $app->input->getString('filter', ''));
             //$filter        = $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
             $uri->setVar('filter', $lists['filter']);
-            $uri->setVar('filter_type', $app->getInput()->getString('filter_type', ''));
+            $uri->setVar('filter_type', $app->input->getString('filter_type', ''));
         } else {
             $uri->delVar('filter');
             $uri->delVar('filter_type');
@@ -199,17 +199,17 @@ class JemViewSearch extends JemView
     protected function _buildSortLists()
     {
         $app = Factory::getApplication();
-        $task = $app->getInput()->getCmd('task', '');
+        $task = $app->input->getCmd('task', '');
 
-        $filter_order = $app->getInput()->getCmd('filter_order', 'a.dates');
+        $filter_order = $app->input->getCmd('filter_order', 'a.dates');
         $filter_order_DirDefault = 'ASC';
         // Reverse default order for dates in archive mode
         if ($task == 'archive' && $filter_order == 'a.dates') {
             $filter_order_DirDefault = 'DESC';
         }
-        $filter_order_Dir = $app->getInput()->get('filter_order_Dir', $filter_order_DirDefault);
+        $filter_order_Dir = $app->input->get('filter_order_Dir', $filter_order_DirDefault);
         $filter           = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-        $filter_type      = $app->getInput()->getString('filter_type', '');
+        $filter_type      = $app->input->getString('filter_type', '');
 
         $sortselects = array();
         $sortselects[] = HTMLHelper::_('select.option', 'title', Text::_('COM_JEM_TABLE_TITLE'));

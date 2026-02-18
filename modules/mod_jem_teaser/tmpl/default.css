@@ -104,6 +104,27 @@ div#jemmoduleteaser .category {
     padding-top: 4px;
 }
 
+div#jemmoduleteaser .category-link-bgcolor {
+    padding:0.15em 0.4em;
+    margin-right: 0.4em;
+    border-radius:0.25em;
+    text-decoration:none;
+}
+
+div#jemmoduleteaser .category-link-textcolor {
+    text-decoration:none;
+}
+
+div#jemmoduleteaser .category-link {
+    background-color:transparent;
+    box-shadow:0 0 3px rgba(0,0,0,0.5);
+    padding:0.15em 0.4em;
+    border-radius:0.25em;
+    text-decoration:none;
+}
+
+div#jemmoduleteaser .category-link-bgcolor + .catseparator {display:none;}
+
 div#jemmoduleteaser .venue-title {
     position: relative;
     font-size: smaller;

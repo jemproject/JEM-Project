@@ -40,12 +40,12 @@ class JemModelVenueslist extends ListModel
     {
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
-        $jinput      = $app->getInput();
+        $jinput      = $app->input;
         $task        = $jinput->getCmd('task');
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
         /* in J! 3.3.6 limitstart is removed from request - but we need it! */
-        if ($app->getInput()->getInt('limitstart', null) === null) {
+        if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.venueslist.limitstart', 0);
         }
 
@@ -102,7 +102,7 @@ class JemModelVenueslist extends ListModel
     protected function getListQuery()
     {
         $app       = Factory::getApplication();
-        $jinput    = Factory::getApplication()->getInput();
+        $jinput    = Factory::getApplication()->input;
         $task      = $jinput->getCmd('task', '');
         $itemid    = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 

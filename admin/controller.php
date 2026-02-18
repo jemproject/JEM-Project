@@ -35,7 +35,7 @@ class JemController extends BaseController
     {
         // Load the submenu - but not on edit views.
         // if no view found then refert to main
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $view = $jinput->getCmd('view', 'main');
         // add all views you won't see the submenu / sidebar
         //  - on J! 2.5 param 'hidemainmenu' let's not show the submenu
@@ -65,7 +65,7 @@ class JemController extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $id = Factory::getApplication()->getInput()->getInt('id', 0);
+        $id = Factory::getApplication()->input->getInt('id', 0);
 
         $res = JemAttachment::remove($id);
         if (!$res) {

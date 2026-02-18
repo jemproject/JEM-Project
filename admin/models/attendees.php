@@ -36,7 +36,7 @@ class JemModelAttendees extends ListModel
         parent::__construct($config);
 
         $app = Factory::getApplication();
-        $eventid = $app->getInput()->getInt('eventid', 0);
+        $eventid = $app->input->getInt('eventid', 0);
         $this->setId($eventid);
     }
 
@@ -62,7 +62,7 @@ class JemModelAttendees extends ListModel
         $this->setState('limitstart', $limitstart);
 
         //set unlimited if export or print action | task=export or task=print
-        $task = $app->getInput()->getCmd('task');
+        $task = $app->input->getCmd('task');
         $this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 
         $filter_type      = $app->getUserStateFromRequest( 'com_jem.attendees.filter_type',      'filter_type',      0, 'int' );

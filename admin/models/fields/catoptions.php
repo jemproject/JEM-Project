@@ -33,7 +33,7 @@ class JFormFieldCatOptions extends ListField
      */
     public function getInput()
     {
-        $jinput = Factory::getApplication()->getInput();
+        $jinput = Factory::getApplication()->input;
         $currentid = $jinput->getInt('id');
         $attr = '';
         $selectedcats = [];

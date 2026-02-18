@@ -36,7 +36,7 @@ class JemOutput
     {
         $app = Factory::getApplication();
 
-        if ($app->getInput()->get('print','','int')) {
+        if ($app->input->get('print','','int')) {
             return;
         } else {
             echo 'Powered by <a href="https://www.joomlaeventmanager.net" target="_blank" title="Joomla Event Manager">JEM</a>';
@@ -187,7 +187,7 @@ static public function lightbox() {
             $uri       = Uri::getInstance();
             $app = Factory::getApplication();
 
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -222,7 +222,7 @@ static public function lightbox() {
             $settings = JemHelper::globalattribs();
             $uri      = Uri::getInstance();
 
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -258,7 +258,7 @@ static public function lightbox() {
             $settings = JemHelper::globalattribs();
             $uri      = Uri::getInstance();
 
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -352,11 +352,11 @@ static public function lightbox() {
         $jemPath   = $uri->getPath();
 
         if ($settings->get('global_show_archive_icon',1)) {
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
-            $view = $app->getInput()->getWord('view');
+            $view = $app->input->getWord('view');
 
             if (empty($view)) {
                 return; // there must be a view - just to be sure...
@@ -418,7 +418,7 @@ static public function lightbox() {
         if ($allowedtoedit) {
             $app = Factory::getApplication();
 
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -538,7 +538,7 @@ static public function lightbox() {
         if ($allowedtoadd) {
             $app = Factory::getApplication();
 
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -621,7 +621,7 @@ static public function lightbox() {
                 $image = Text::_('COM_JEM_PRINT');
             }
 
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 //button in popup
                 $overlib = Text::_('COM_JEM_PRINT_DESC');
                 $text = Text::_('COM_JEM_PRINT');
@@ -655,7 +655,7 @@ static public function lightbox() {
         $settings    = JemHelper::globalattribs();
 
         if ($settings->get('global_show_email_icon')) {
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -706,7 +706,7 @@ static public function lightbox() {
         $settings = JemHelper::globalattribs();
 
         if ($settings->get('global_show_ical_icon','0')==1) {
-            if ($app->getInput()->get('print','','int')) {
+            if ($app->input->get('print','','int')) {
                 return;
             }
 
@@ -736,7 +736,7 @@ static public function lightbox() {
     {
         $app = Factory::getApplication();
 
-        if (empty($prefix) || $app->getInput()->get('print','','int')) {
+        if (empty($prefix) || $app->input->get('print','','int')) {
             // button in popup or wrong call
             $output = '';
         } else {
@@ -762,7 +762,7 @@ static public function lightbox() {
     {
         $app = Factory::getApplication();
 
-        if (empty($prefix) || $app->getInput()->get('print','','int')) {
+        if (empty($prefix) || $app->input->get('print','','int')) {
             // button in popup or wrong call
             $output = '';
         } else {
@@ -788,7 +788,7 @@ static public function lightbox() {
     {
         $app = Factory::getApplication();
 
-        if (empty($prefix) || $app->getInput()->get('print','','int')) {
+        if (empty($prefix) || $app->input->get('print','','int')) {
             // button in popup or wrong call
             $output = '';
         } else {
@@ -816,7 +816,7 @@ static public function lightbox() {
 
         $image = jemhtml::icon( 'com_jem/export_excel.webp', 'fa fa-fw fa-lg fa-download jem-exportbutton', Text::_('COM_JEM_EXPORT'), NULL, !$app->isClient('site'));
 
-        if ($app->getInput()->get('print','','int')) {
+        if ($app->input->get('print','','int')) {
             //button in popup
             $output = '';
         } else {
@@ -840,12 +840,12 @@ static public function lightbox() {
     static public function backbutton($backlink, $view)
     {
         $app = Factory::getApplication();
-        $id  = $app->getInput()->getInt('id');
-        $fid = $app->getInput()->getInt('Itemid');
+        $id  = $app->input->getInt('id');
+        $fid = $app->input->getInt('Itemid');
 
         $image = jemhtml::icon( 'com_jem/icon-16-back.webp', 'fa fa-fw fa-lg fa-chevron-circle-left jem-backbutton', Text::_('COM_JEM_BACK'), NULL, !$app->isClient('site'));
 
-        if ($app->getInput()->get('print','','int')) {
+        if ($app->input->get('print','','int')) {
             //button in popup
             $output = '';
         } else {
