@@ -326,7 +326,10 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('access_level_locked_venues', '[\"1\"]'),
 ('access_level_locked_categories', '[\"1\"]'),
 ('defaultCategory', '0'),
-('defaultVenue', '0');
+('defaultVenue', '0'),
+('event_show_venue', '1'),
+('event_show_registration', '1'),
+('event_show_registration_counters', '1');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan'),
