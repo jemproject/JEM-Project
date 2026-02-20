@@ -120,9 +120,18 @@
                        label="MOD_JEM_TEASER_CATEGORY_COLOR_LABEL"
                        description="MOD_JEM_TEASER_CATEGORY_COLOR_DESC"
                 >
-                    <option value="none">MOD_JEM_TEASER_CATEGORY_COLOR_NO</option>
-                    <option value="text">MOD_JEM_TEASER_CATEGORY_COLOR_TEXT</option>
-                    <option value="background">MOD_JEM_TEASER_CATEGORY_COLOR_BG</option>
+                    <option value="none">MOD_JEM_TEASER_COLOR_NO</option>
+                    <option value="text">MOD_JEM_TEASER_COLOR_TEXT</option>
+                    <option value="background">MOD_JEM_TEASER_COLOR_BG</option>
+                </field>
+                <field name="venuecolor" type="list"
+                       default="none"
+                       label="MOD_JEM_TEASER_VENUE_COLOR_LABEL"
+                       description="MOD_JEM_TEASER_VENUE_COLOR_DESC"
+                >
+                    <option value="none">MOD_JEM_TEASER_COLOR_NO</option>
+                    <option value="text">MOD_JEM_TEASER_COLOR_TEXT</option>
+                    <option value="background">MOD_JEM_TEASER_COLOR_BG</option>
                 </field>
                 <field name="use_modal" type="radio"
                        default="0"

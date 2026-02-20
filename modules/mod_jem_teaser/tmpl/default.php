@@ -117,13 +117,9 @@ if ($params->get('use_modal', 0)) {
                             </td>
                             <td class="event-vencat">
                                 <div class="block-event-vencat">
-                                    <?php if (!empty($item->venue)) : ?>
-                                        <div class="venue-title">
-                                            <?php if ($item->venuelink) : ?>
-                                                <a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
-                                            <?php else : ?>
-                                                <?php echo $item->venue; ?>
-                                            <?php endif; ?>
+                                    <?php if (!empty($item->venuename)) : ?>
+                                        <div class="venue">
+                                            <?php echo $item->venuename; ?>
                                         </div>
                                     <?php endif; ?>
                                     <?php if (!empty($item->catname)) : ?>

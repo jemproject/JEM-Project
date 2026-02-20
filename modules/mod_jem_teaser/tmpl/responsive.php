@@ -151,11 +151,7 @@ $document->addStyleDeclaration($css);
                                     <?php if (!empty($item->venue)) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
                                             <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                                                <?php if ($item->venuelink) : ?>
-                                                    <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
-                                                <?php else : ?>
-                                                    <?php echo $item->venue; ?>
-                                                <?php endif; ?>
+                                                <?php echo $item->venuename; ?>
                                             </div>
                                         <?php endif; ?>
                                     <?php endif; ?>
