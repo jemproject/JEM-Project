@@ -64,15 +64,15 @@ class JemControllerAttendees extends BaseController
         $msg     = '';
 
         if ($jinput->get('task', 0,'string')=="attendeeadd") {
-            $places = $jinput->getInput()->getInt('places', 0);
+            $places = $jinput->getInt('places', 0);
         } else {
             if ($status == 1)
             {
-                $places = $jinput->getInput()->getInt('addplaces', 0);
+                $places = $jinput->getInt('addplaces', 0);
             }
             else
             {
-                $places = $jinput->getInput()->getInt('cancelplaces', 0);
+                $places = $jinput->getInt('cancelplaces', 0);
             }
         }
 
