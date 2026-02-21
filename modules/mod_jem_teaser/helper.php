@@ -229,7 +229,7 @@ abstract class ModJemTeaserHelper
 
                     // --- generate link ---
                     if ($linkcategory) {
-                        $link = Route::_('index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
+                        $link = Route::_( Uri::root() . 'index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
                         $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
                     } else {
                         $link = null;
@@ -255,8 +255,11 @@ abstract class ModJemTeaserHelper
                         case 'text':
                             if ($color) {
                                 $classes .= ' category-link-textcolor';
-                                $shadow = self::_is_dark($color) ? '0 0 2px rgba(255,255,255,0.6)' : '0 0 2px rgba(0,0,0,0.6)';
-                                $styles = 'color:' . $color . ';text-shadow:' . $shadow . ';';
+                                $isDark = self::_is_dark($color);
+                                $styles = 'color:' . $color . ';';
+                                if (!$isDark) {
+                                    $styles .= 'font-weight:bold;';
+                                }
                             }
                             break;
 
@@ -415,7 +418,7 @@ abstract class ModJemTeaserHelper
 
             // --- generate link ---
             if ($linkvenue) {
-                $link = Route::_('index.php?option=com_jem&view=venue&id=' . $row->locid . ':' . $row->l_alias);
+                $link = Route::_(Uri::root() . 'index.php?option=com_jem&view=venue&id=' . $row->locid . ':' . $row->l_alias);
                 $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
             } else {
                 $link = null;
@@ -425,8 +428,11 @@ abstract class ModJemTeaserHelper
                 case 'text':
                     if ($color) {
                         $classes .= ' venue-link-textcolor';
-                        $shadow = self::_is_dark($color) ? '0 0 2px rgba(255,255,255,0.6)' : '0 0 2px rgba(0,0,0,0.6)';
-                        $styles = 'color:' . $color . ';text-shadow:' . $shadow . ';';
+                        $isDark = self::_is_dark($color);
+                        $styles = 'color:' . $color . ';';
+                        if (!$isDark) {
+                            $styles .= 'font-weight:bold;';
+                        }
                     }
                     break;
 

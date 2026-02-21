@@ -117,9 +117,7 @@ div#jemmoduleteaser .category-link-textcolor {
 
 div#jemmoduleteaser .category-link {
     background-color:transparent;
-    box-shadow:0 0 3px rgba(0,0,0,0.5);
     padding:0.15em 0.4em;
-    border-radius:0.25em;
     text-decoration:none;
 }
 
@@ -135,7 +133,6 @@ div#jemmoduleteaser .venue {
 div#jemmoduleteaser .venue-link-bgcolor {
     padding:0.15em 0.4em;
     margin-right: 0.4em;
-    border-radius:0.25em;
     text-decoration:none;
 }
 
@@ -145,7 +142,6 @@ div#jemmoduleteaser .venue-link-textcolor {
 
 div#jemmoduleteaser .venue-link {
     background-color:transparent;
-    box-shadow:0 0 3px rgba(0,0,0,0.5);
     padding:0.15em 0.4em;
     border-radius:0.25em;
     text-decoration:none;
