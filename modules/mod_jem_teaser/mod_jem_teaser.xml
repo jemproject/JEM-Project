@@ -245,12 +245,12 @@
                     <option value="0">MOD_JEM_TEASER_STATE_MODE_EXACTMATCH</option>
                     <option value="1">MOD_JEM_TEASER_STATE_MODE_CONTAINS</option>
                 </field>
-                <field name="couid" type="list"
+                <field name="couid" type="countrieslist"
                        default=""
                        multiple="true"
-                       removeroot="true"
                        label="MOD_JEM_TEASER_COUNTRIES"
                        description="MOD_JEM_TEASER_COUNTRIES_DESC"
+                       addfieldpath="/modules/mod_jem_teaser/fields"
                 />
             </fieldset>
             <fieldset name="advanced">

@@ -69,7 +69,7 @@ abstract class ModJemTeaserHelper
         $catids = JemHelper::getValidIds($params->get('catid'));
         $venids = JemHelper::getValidIds($params->get('venid'));
         $eventids = JemHelper::getValidIds($params->get('eventid'));
-        $countryids = JemHelper::getValidIds($params->get('couid'));
+        $countryids = $params->get('couid');
         $stateloc      = $params->get('stateloc');
         $stateloc_mode = $params->get('stateloc_mode', 0);
 

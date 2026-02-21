@@ -685,6 +685,18 @@ class JemModelEventslist extends ListModel
             }
         }
 
+        ############################
+        ## FILTER - VENUE COUNTRY ##
+        ############################
+
+        $venueCountry = $this->getState('filter.country_id');
+
+        if ($venueCountry) {
+            $venueCountry = array_map([$db, 'quote'], $venueCountry);
+            $operator = $this->getState('filter.country_id.include', 0) ? 'IN' : 'NOT IN';
+            $query->where('l.country ' . $operator . ' (' . implode(',', $venueCountry) . ')');
+        }
+
         ###################
         ## FILTER-SEARCH ##
         ###################
