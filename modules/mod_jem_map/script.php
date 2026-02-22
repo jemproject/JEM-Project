@@ -31,10 +31,10 @@ class mod_jem_mapInstallerScript
     public function preflight($type, $parent)
     {
         $type = strtolower($type);
-        
+
         // abort if the release being installed is not newer than the currently installed version
         if ($type === 'update') {
-        
+
             // Installed module version (from manifest cache)
             $this->oldRelease = (string) $this->getParam('version');
 

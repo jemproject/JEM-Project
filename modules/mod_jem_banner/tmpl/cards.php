@@ -14,8 +14,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-JemHelper::loadModuleStyleSheet('mod_jem_banner', 'mod_jem_banner_cards');
-
 $app = Factory::getApplication();
 $wa  = $app->getDocument()->getWebAssetManager();
 
@@ -127,7 +125,7 @@ $wa->addInlineStyle($css);
 
                     <div class="event-content">
                         <h3 class="event-title">
-                        <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" style="text-decoration:none;color:inherit;">'.$item->title.'</a>' : $item->title; ?>
+                            <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" style="text-decoration:none;color:inherit;">'.$item->title.'</a>' : $item->title; ?>
                         </h3>
 
                         <div class="event-date-container">

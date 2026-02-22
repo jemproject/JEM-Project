@@ -61,34 +61,31 @@
 .eventcalq td.mod_jemcalq_caltodaylink a:link,
 .eventcalq td.mod_jemcalq_caltodaylink a:visited{
     text-decoration: none;
-    /*    width: 19px;
-        height: 18px; */
     font-weight: bold;
     display: block;
-    color: #608194;
-    border: 2px solid #DF9496;
+    color: #0202c7;
 }
 
 /* Today Event day cell hover */
 .eventcalq td.mod_jemcalq_caltodaylink a:hover {
     text-decoration: none;
-    /*    width: 19px;
-        height: 18px; */
     font-weight: bold;
     display: block;
     color: #FFFFFF;
     background-color: #0066FF;
     border: 2px solid #DF9496;
+    padding: 4px 4px;
 }
 
 /* Non event day cell preperties */
 .eventcalq td.mod_jemcalq_calday {
-    font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
+    font: 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
     border: 1px solid #A2ADBC;
     width: 21px;
     height: 20px;
     text-align: center;
     background-color: #EFEFEF;
+    color: #608194;   
 }
 
 .eventcalq td.mod_jemcalq_calday span.nolink {
@@ -97,14 +94,25 @@
 }
 
 /* Event day cell properties */
-.eventcalq td.mod_jemcalq_caldaylink,
-.eventcalq td.mod_jemcalq_caltodaylink {
+.eventcalq td.mod_jemcalq_caldaylink {
     font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
     border: 1px solid #A2ADBC;
     width: 21px;
     height: 20px;
     text-align: center;
+    color: #000000;
     background-color: #EFEFEF;
+}
+
+.eventcalq td.mod_jemcalq_caltodaylink {
+    font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
+    border: 1px solid #A2ADBC;
+    width: 21px;
+    height: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #C0C0C0;
+    border: 2px solid #EC5A39;
 }
 
 /* Event day cell hover Link / Visited*/
@@ -113,7 +121,8 @@
     text-decoration: none;
     font-weight: bold;
     display: block;
-    color: #608194;
+    font-weight: bold;
+    color: black;
     background-color: #CCE0FF;
     border: 2px solid transparent; /* to get always same cell size */
 }
@@ -208,19 +217,22 @@
     border-color:#DDDDDD;
     background-color: white;
     color: black;
-    font-weight: bold;
     transition: background-color 0.3s;
     position: relative;
 }
 
-.card .mod_jemcalq_caltoday span {
+.mod_jemcalq_caltoday span {
     border-radius: 50%;
     border-color: darkblue;
     border-style: dotted;
 }
 
+.mod_jemcalq_caltodaylink span {
+    background:#0066FF;
+}
 
-.card .mod_jemcalq_caldaylink a:link, .card .mod_jemcalq_caldaylink a:visited {
+
+.mod_jemcalq_caldaylink a:link, .mod_jemcalq_caldaylink a:visited {
     width: 35px;
     height: 35px;
     line-height: 35px;
@@ -234,13 +246,13 @@
 }
 
 /* Quitar bordes de la tabla */
-.card .mod_jemcalq_calendar {
+.mod_jemcalq_calendar {
     border-collapse: collapse;
     border: none;
 }
 
 /* Quitar bordes de celdas */
-.card .mod_jemcalq_calendar td,
-.card .mod_jemcalq_calendar th {
+.mod_jemcalq_calendar td,
+.mod_jemcalq_calendar th {
     border: none;
 }

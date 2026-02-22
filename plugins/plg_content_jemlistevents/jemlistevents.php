@@ -62,6 +62,7 @@ class PlgContentJemlistevents extends CMSPlugin
         'date'        => 'show_date',
         'time'        => 'show_time',
         'enddatetime' => 'show_enddatetime',
+        'eventids'    => 'eventids',
         'catids'      => 'catids',
         'category'    => 'show_category',
         'venueids'    => 'venueids',
@@ -262,6 +263,7 @@ class PlgContentJemlistevents extends CMSPlugin
         $this->filterCategories($model, $parameters);
         $this->filterVenues($model, $parameters);
         $this->filterFeatured($model, $parameters);
+        $this->filterEvents($model, $parameters);
 
         $type = $parameters['type'] ?? 'unfinished';
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -316,6 +318,18 @@ class PlgContentJemlistevents extends CMSPlugin
                     $model->setState('filter.featured', 1);
                     break;
             }
+        }
+    }
+
+    /**
+     * Filter events in the model.
+     */
+    private function filterEvents(BaseDatabaseModel $model, array $parameters): void
+    {
+        if (!empty($parameters['eventids'])) {
+            $included_events = array_map('intval', explode(",", $parameters['eventids']));
+            $model->setState('filter.event_id', $included_events);
+            $model->setState('filter.event_id.include', 1);
         }
     }
 
