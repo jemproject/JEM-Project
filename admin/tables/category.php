@@ -124,13 +124,10 @@ class JemTableCategory extends Nested
         }
 
         $this->_db->setQuery(sprintf($fmtsql, implode(',', $fields), implode(',', $values)));
-
-        try {
-            $this->_db->execute();
-        } catch (\RuntimeException $e) {
+        $results = $this->_db->execute();
+        if ($results === false){
             return -1;
         }
-
         $id = $this->_db->insertid();
         if ($keyName && $id) {
             $object->$keyName = $id;

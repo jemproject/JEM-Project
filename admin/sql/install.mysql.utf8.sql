@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `custom10` varchar(100) NOT NULL DEFAULT '',
     `fulltext` mediumtext NOT NULL,
     `created_by_alias` varchar(255) NOT NULL,
-    `access` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `metadata` text NOT NULL,
     `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
     `attribs` varchar(5120) NOT NULL DEFAULT '',
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `ordering` int(11) NOT NULL DEFAULT '0',
     `publish_up` datetime NULL DEFAULT NULL,
     `publish_down` datetime NULL DEFAULT NULL,
-    `access` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `custom1` varchar(200) NOT NULL DEFAULT '',
     `custom2` varchar(200) NOT NULL DEFAULT '',
     `custom3` varchar(100) NOT NULL DEFAULT '',
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `published` tinyint(1) NOT NULL DEFAULT '0',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
     `checked_out_time` datetime NULL DEFAULT NULL,
-    `access` int(11) unsigned NOT NULL DEFAULT '0',
+    `access` int(11) unsigned NOT NULL DEFAULT '1',
     `groupid` int(11) NOT NULL DEFAULT '0',
     `ordering` int(11) NOT NULL DEFAULT '0',
     `title` varchar(255) NOT NULL,
@@ -153,8 +153,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    KEY `idx_parent` (`parent_id`)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
@@ -225,7 +224,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `description` varchar(255) DEFAULT NULL,
     `icon` varchar(255) DEFAULT NULL,
     `frontend` tinyint(1) NOT NULL DEFAULT '1',
-    `access` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `ordering` int(11) NOT NULL DEFAULT '0',
     `added` datetime NULL DEFAULT NULL,
     `added_by` int(11) NOT NULL DEFAULT '0',

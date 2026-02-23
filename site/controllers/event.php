@@ -53,6 +53,7 @@ class JemControllerEvent extends JemControllerForm
         $user       = JemFactory::getUser();
         $inputCatId = Factory::getApplication()->input->getInt('catid', 0);
         $categoryId = ArrayHelper::getValue($data, 'catid', $inputCatId, 'int');
+
         if ($user->can('add', 'event', false, $categoryId ? $categoryId : false)) {
             return true;
         }
@@ -301,15 +302,16 @@ class JemControllerEvent extends JemControllerForm
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $input = Factory::getApplication()->input;
-        $id  = $input->getInt('rdid', 0);
-        $rid = $input->getInt('regid', 0);
+        $app = Factory::getApplication();
+		$input = $app->getInput();
+        $id    = $input->getInt('rdid', 0);
+        $rid   = $input->getInt('regid', 0);
 
         // Get the model
         $model = $this->getModel('Event', 'JemModel');
 
         $reg = $model->getUserRegistration($id);
-        if ($reg !== false && $reg->id != $rid) {
+        if ($reg !== false && isset($reg->id) && $reg->id != $rid) {
             $msg = Text::_('COM_JEM_ALREADY_REGISTERED') . ' [id: ' . $reg->id . ']';
             $this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
             $this->redirect();
