@@ -28,6 +28,7 @@
     </languages>
 
     <help key="Modules" />
+
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
@@ -67,72 +68,6 @@
                        label="MOD_JEM_TEASER_MAX_TITLE_LENGTH"
                        description="MOD_JEM_TEASER_MAX_TITLE_LENGTH_DESC"
                 />
-                <field name="linkevent" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_LINK_TO_DETAILS"
-                       description="MOD_JEM_TEASER_LINK_TO_DETAILS_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="showimageevent" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_SHOW_IMAGE_EVENT"
-                       description="MOD_JEM_TEASER_SHOW_IMAGE_EVENT_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="showimagevenue" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_SHOW_IMAGE_VENUE"
-                       description="MOD_JEM_TEASER_SHOW_IMAGE_VENUE_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="color" type="list"
-                       default="1"
-                       label="MOD_JEM_TEASER_COLOR"
-                       description="MOD_JEM_TEASER_COLOR_DESC"
-                >
-                    <option value="red">MOD_JEM_TEASER_RED</option>
-                    <option value="blue">MOD_JEM_TEASER_BLUE</option>
-                    <option value="green">MOD_JEM_TEASER_GREEN</option>
-                    <option value="orange">MOD_JEM_TEASER_ORANGE</option>
-                    <option value="venue">MOD_JEM_TEASER_VENUE_COLOR</option>
-                    <option value="category">MOD_JEM_TEASER_CATEGORY_COLOR</option>
-                    <option value="alpha">MOD_JEM_TEASER_FALLBACK_COLOR</option>
-                </field>
-                <field name="fallbackcolor" type="color"
-                       class="inputbox"
-                       default="#EEEEEE"
-                       size="8"
-                       label="MOD_JEM_TEASER_FALLBACK_COLOR"
-                       description="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
-                       showon="color:venue,category,alpha"
-                />
-                <field name="catcolor" type="list"
-                       default="none"
-                       label="MOD_JEM_TEASER_CATEGORY_COLOR_LABEL"
-                       description="MOD_JEM_TEASER_CATEGORY_COLOR_DESC"
-                >
-                    <option value="none">MOD_JEM_TEASER_CATEGORY_COLOR_NO</option>
-                    <option value="text">MOD_JEM_TEASER_CATEGORY_COLOR_TEXT</option>
-                    <option value="background">MOD_JEM_TEASER_CATEGORY_COLOR_BG</option>
-                </field>
-                <field name="use_modal" type="radio"
-                       default="0"
-                       label="MOD_JEM_TEASER_USE_MODAL"
-                       description="MOD_JEM_TEASER_USE_MODAL_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
                 <field name="showdescriptionevent" type="radio"
                        default="1"
                        label="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT"
@@ -166,6 +101,25 @@
                     <option value="0">JNO</option>
                 </field>
 
+                <field name="showimageevent" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_SHOW_IMAGE_EVENT"
+                       description="MOD_JEM_TEASER_SHOW_IMAGE_EVENT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showimagevenue" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_SHOW_IMAGE_VENUE"
+                       description="MOD_JEM_TEASER_SHOW_IMAGE_VENUE_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
                 <field name="datemethod" type="list"
                        default="1"
                        label="MOD_JEM_TEASER_SHOW_DATE_OR_DAY_DIFFERENCE"
@@ -184,7 +138,15 @@
                        label="MOD_JEM_TEASER_TIME_FORMAT"
                        description="MOD_JEM_TEASER_TIME_FORMAT_DESC"
                 />
-
+                <field name="linkevent" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_LINK_TO_DETAILS"
+                       description="MOD_JEM_TEASER_LINK_TO_DETAILS_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="linkcategory" type="radio"
                        default="1"
                        label="MOD_JEM_TEASER_LINK_TO_CATEGORY"
@@ -203,7 +165,55 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="use_modal" type="radio"
+                       default="0"
+                       label="MOD_JEM_TEASER_USE_MODAL"
+                       description="MOD_JEM_TEASER_USE_MODAL_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
 
+                <field name="color" type="list"
+                       default="1"
+                       label="MOD_JEM_TEASER_COLOR"
+                       description="MOD_JEM_TEASER_COLOR_DESC"
+                >
+                    <option value="red">MOD_JEM_TEASER_RED</option>
+                    <option value="blue">MOD_JEM_TEASER_BLUE</option>
+                    <option value="green">MOD_JEM_TEASER_GREEN</option>
+                    <option value="orange">MOD_JEM_TEASER_ORANGE</option>
+                    <option value="venue">MOD_JEM_TEASER_VENUE_COLOR</option>
+                    <option value="category">MOD_JEM_TEASER_CATEGORY_COLOR</option>
+                    <option value="alpha">MOD_JEM_TEASER_FALLBACK_COLOR</option>
+                </field>
+                <field name="fallbackcolor" type="color"
+                       class="inputbox"
+                       default="#EEEEEE"
+                       size="8"
+                       label="MOD_JEM_TEASER_FALLBACK_COLOR"
+                       description="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
+                       showon="color:venue,category,alpha"
+                />
+                <field name="catcolor" type="list"
+                       default="none"
+                       label="MOD_JEM_TEASER_CATEGORY_COLOR_LABEL"
+                       description="MOD_JEM_TEASER_CATEGORY_COLOR_DESC"
+                >
+                    <option value="none">MOD_JEM_TEASER_COLOR_NO</option>
+                    <option value="text">MOD_JEM_TEASER_COLOR_TEXT</option>
+                    <option value="background">MOD_JEM_TEASER_COLOR_BG</option>
+                </field>
+                <field name="venuecolor" type="list"
+                       default="none"
+                       label="MOD_JEM_TEASER_VENUE_COLOR_LABEL"
+                       description="MOD_JEM_TEASER_VENUE_COLOR_DESC"
+                >
+                    <option value="none">MOD_JEM_TEASER_COLOR_NO</option>
+                    <option value="text">MOD_JEM_TEASER_COLOR_TEXT</option>
+                    <option value="background">MOD_JEM_TEASER_COLOR_BG</option>
+                </field>
                 <field name="catid" type="categoryedit"
                        default=""
                        multiple="true"
@@ -235,12 +245,13 @@
                     <option value="0">MOD_JEM_TEASER_STATE_MODE_EXACTMATCH</option>
                     <option value="1">MOD_JEM_TEASER_STATE_MODE_CONTAINS</option>
                 </field>
-                <field name="couid" type="list"
+                <field name="couid" type="countrieslist"
                        default=""
                        multiple="true"
                        removeroot="true"
                        label="MOD_JEM_TEASER_COUNTRIES"
                        description="MOD_JEM_TEASER_COUNTRIES_DESC"
+                       addfieldpath="/modules/mod_jem_teaser/fields"
                 />
             </fieldset>
             <fieldset name="advanced">

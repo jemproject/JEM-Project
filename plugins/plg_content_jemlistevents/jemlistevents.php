@@ -484,11 +484,6 @@ class PlgContentJemlistevents extends CMSPlugin
 
         $html_list = $this->generateTableStart($listevents_id);
 
-        // Check if there are events
-        if (empty($rows)) {
-            $rows = []; // to skip foreach without warning
-        }
-
         $n_event = 0;
         $cols_count = $this->calculateColumnsCount($parameters);
 

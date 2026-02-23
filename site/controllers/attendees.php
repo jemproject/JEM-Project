@@ -50,29 +50,30 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput  = Factory::getApplication()->input;
-        $eventid = $jinput->getInt('id', 0);
-        $status  = $jinput->getInt('status', 0);
-        $checkseries  = $jinput->getString('series', '');
+        $app     = Factory::getApplication();
+        $input  = $app->getInput();
+        $eventid = $input->getInt('id', 0);
+        $status  = $input->getInt('status', 0);
+        $checkseries  = $input->getString('series', '');
         $comment = '';
-        $fid     = $jinput->getInt('Itemid', 0);
-        $uids    = explode(',', $jinput->getString('uids', ''));
+        $fid     = $input->getInt('Itemid', 0);
+        $uids    = explode(',', $input->getString('uids', ''));
         \Joomla\Utilities\ArrayHelper::toInteger($uids);
         $uids    = array_filter($uids);
         $uids    = array_unique($uids);
         $total   = is_array($uids) ? count($uids) : 0;
         $msg     = '';
 
-        if ($jinput->get('task', 0,'string')=="attendeeadd") {
-            $places = $jinput->getInt('places', 0);
+        if ($input->get('task', 0,'string')=="attendeeadd") {
+            $places = $input->getInt('places', 0);
         } else {
             if ($status == 1)
             {
-                $places = $jinput->getInt('addplaces', 0);
+                $places = $input->getInt('addplaces', 0);
             }
             else
             {
-                $places = $jinput->getInt('cancelplaces', 0);
+                $places = $input->getInt('cancelplaces', 0);
             }
         }
 
@@ -184,10 +185,10 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->input;
-        $cid    = $jinput->get('cid', array(), 'array');
-        $id     = $jinput->getInt('id', 0);
-        $fid    = $jinput->getInt('Itemid', 0);
+        $input = Factory::getApplication()->input;
+        $cid    = $input->get('cid', array(), 'array');
+        $id     = $input->getInt('id', 0);
+        $fid    = $input->getInt('Itemid', 0);
         $total  = is_array($cid) ? count($cid) : 0;
 
         if ($total < 1) {
@@ -234,9 +235,9 @@ class JemControllerAttendees extends BaseController
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->input;
-        $id     = $jinput->getInt('id', 0);
-        $fid    = $jinput->getInt('Itemid', 0);
+        $input = Factory::getApplication()->input;
+        $id     = $input->getInt('id', 0);
+        $fid    = $input->getInt('Itemid', 0);
 
         $model = $this->getModel('attendee');
         $model->setId($id);
