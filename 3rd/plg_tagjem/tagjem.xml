@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
     <authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.acymailing.com, https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.0</version>
+    <version>4.4.1</version>
     <description>This plugin enables you to insert events from JEM into any email sent by AcyMailing 5.x</description>
 
     <files>
