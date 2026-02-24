@@ -25,3 +25,14 @@ ALTER TABLE `#__jem_config` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_uni
 ALTER TABLE `#__jem_attachments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `#__jem_countries` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+ALTER TABLE #__jem_attachments ENGINE=InnoDB;
+ALTER TABLE #__jem_categories ENGINE=InnoDB;
+ALTER TABLE #__jem_cats_event_relations ENGINE=InnoDB;
+ALTER TABLE #__jem_events ENGINE=InnoDB;
+ALTER TABLE #__jem_groupmembers ENGINE=InnoDB;
+ALTER TABLE #__jem_groups ENGINE=InnoDB;
+ALTER TABLE #__jem_register ENGINE=InnoDB;
+ALTER TABLE #__jem_config ENGINE=InnoDB;
+ALTER TABLE #__jem_venues ENGINE=InnoDB;
+ALTER TABLE #__jem_countries ENGINE=InnoDB;
+
