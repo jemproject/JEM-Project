@@ -23,32 +23,48 @@ class JemViewMain extends JemAdminView
 
     public function display($tpl = null)
     {
-        //Load pane behavior
+        // Load pane behavior
         jimport('joomla.html.pane');
 
         //initialise variables
-        $app = Factory::getApplication();
+        $app      = Factory::getApplication();
         $document = $app->getDocument();
         $user     = JemFactory::getUser();
 
-        // Get data from the model
-        $events   = $this->get('EventsData');
-        $venue    = $this->get('VenuesData');
-        $category = $this->get('CategoriesData');
+        // Get main model data
+        $events   = $this->get('EventsData')   ?: new stdClass();
+        $venue    = $this->get('VenuesData')   ?: new stdClass();
+        $category = $this->get('CategoriesData') ?: new stdClass();
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        // Load updatecheck model manually
+        require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/updatecheck.php';
+        $updateModel = new JemModelUpdatecheck(['ignore_request' => true]);
+        $updatedata  = $updateModel->getUpdatedata();
 
-        //assign vars to the template
-        $this->events   = $events;
-        $this->venue    = $venue;
-        $this->category = $category;
-        $this->user     = $user;
+        if ($updatedata === false) {
+            $updatedata = new stdClass();
+            $updatedata->failed  = 1;
+            $updatedata->current = null;
+        }
 
-        // add toolbar
+        // Load CSS
+        $wa = $document->getWebAssetManager();
+        if (!$wa->assetExists('style', 'jem.backend')) {
+           $wa->registerStyle('jem.backend', 'com_jem/backend.css');
+        }
+        $wa->useStyle('jem.backend');
+
+        // Assign variables to template
+        $this->events     = $events;
+        $this->venue      = $venue;
+        $this->category   = $category;
+        $this->user       = $user;
+        $this->updatedata = $updatedata;
+
+        // Add toolbar
         $this->addToolbar();
 
+        // Render template
         parent::display($tpl);
     }
 
