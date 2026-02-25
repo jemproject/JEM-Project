@@ -17,17 +17,17 @@ use Joomla\CMS\Button\PublishedButton;
 use Joomla\CMS\Layout\LayoutHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-$user        = JemFactory::getUser();
-$userId        = $user->get('id');
+$user         = JemFactory::getUser();
+$userId       = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
-$listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
+$listDirn     = $this->escape($this->state->get('list.direction'));
+$canOrder     = $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder    = $listOrder=='a.ordering';
 
-$params        = (isset($this->state->params)) ? $this->state->params : new CMSObject();
-$settings    = $this->settings;
-$wa = $this->document->getWebAssetManager();
-$wa->useScript('table.columns');
+$params       = (isset($this->state->params)) ? $this->state->params : new CMSObject();
+$settings     = $this->settings;
+$wa           = $this->document->getWebAssetManager();
+                $wa->useScript('table.columns');
 ?>
 <script>
     $(document).ready(function() {
@@ -45,38 +45,16 @@ $wa->useScript('table.columns');
 </script>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
-    <div id="j-main-container" class="j-main-container">
-        <fieldset id="filter-bar" class=" mb-3">
-            <div class="row">
-                <div class="col-md-1">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="input-group">
-                                <?php echo $this->lists['filter']; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-10">
-                    <div class="row mb-12">
-                      <?php
+    <div class="row">
+        <div class="col-md-12">
+            <div id="j-main-container" class="j-main-container">
+                <?php
                 // Search tools bar
                 echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => ['selectorFieldName' => 'featured']]);
-                ?>
-                        <div class="col-md-3">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
-
-                                <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-                                    <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
+                ?>                        <div class="col-md-6">
                             <?php echo HTMLHelper::_('calendar', $this->state->get('filter_begin'), 'filter_begin', 'filter_begin', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_STARTDATE')));?>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-6">
 
                             <?php echo HTMLHelper::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_ENDDATE') ));?>
                         </div>
@@ -91,15 +69,6 @@ $wa->useScript('table.columns');
                                 <option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
                                 <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
                             </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class=" float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,13 +111,12 @@ $wa->useScript('table.columns');
                     }
 
                     $ordering    = ($listOrder == 'ordering');
-                    $canCreate    = $user->authorise('core.create');
-                    $canEdit    = $user->authorise('core.edit');
-                    $canCheckin    = $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
-                    $canChange    = $user->authorise('core.edit.state') && $canCheckin;
-
-                    $venuelink         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
-                    $published         = HTMLHelper::_('jgrid.published', $row->published, $i, 'events.');
+                    $canCreate   = $user->authorise('core.create');
+                    $canEdit     = $user->authorise('core.edit');
+                    $canCheckin  = $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+                    $canChange   = $user->authorise('core.edit.state') && $canCheckin;
+                    $venuelink   = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
+                    $published   = HTMLHelper::_('jgrid.published', $row->published, $i, 'events.');
                     ?>
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
@@ -211,9 +179,9 @@ $wa->useScript('table.columns');
                         <td class="center">
                             <?php
                             $options = [
-                            'task_prefix' => 'events.',
-                            'disabled' => !$canChange,
-                            'id' => 'state-' . $row->id
+                                'task_prefix' => 'events.',
+                                'disabled' => !$canChange,
+                                'id' => 'state-' . $row->id
                             ];
                             echo (new PublishedButton())->render((int) $row->published, $i, $options, $row->publish_up, $row->publish_down);
                             ?>

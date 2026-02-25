@@ -27,24 +27,26 @@ class JemViewEvents extends JemAdminView
 
     public function display($tpl = null)
     {
-        $app            = Factory::getApplication();
-        $document       = $app->getDocument();
-        $user             = JemFactory::getUser();
-        $settings         = JemHelper::globalattribs();
-        $jemsettings     = JemAdmin::config();
-        $uri            = Uri::getInstance();
-        $url             = $uri->root();
+        $app                 = Factory::getApplication();
+        $document            = $app->getDocument();
+        $user                = JemFactory::getUser();
+        $settings            = JemHelper::globalattribs();
+        $jemsettings         = JemAdmin::config();
+        $uri                 = Uri::getInstance();
+        $url                 = $uri->root();
 
         // Initialise variables.
-        $this->items        = $this->get('Items');
+        $this->items         = $this->get('Items');
         $this->pagination    = $this->get('Pagination');
-        $this->state        = $this->get('State');
+        $this->state         = $this->get('State');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
 
         // Retrieving params
-        $params = $this->state->get('params');
+        $params              = $this->state->get('params');
 
         // highlighter
-        $highlighter = $settings->get('highlight','0');
+        $highlighter         = $settings->get('highlight','0');
 
         // Check for errors.
         $errors = $this->get('Errors');
