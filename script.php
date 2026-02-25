@@ -231,7 +231,7 @@ class com_jemInstallerScript
     {
         $app = Factory::getApplication();
         
-        // Verificar que estamos en Joomla 6
+        // Verify that we are in Joomla 6
         $jversion = new Version();
         $current_version = Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION;
         $devLevel = Version::PATCH_VERSION;
@@ -910,12 +910,12 @@ class com_jemInstallerScript
 
         // check if the each column exists
         foreach ($columnsToCheck as $data) {
-            // Primero verificar si la tabla existe
+            // First check if the table exists
             $tableName = $db->replacePrefix($data['table']);
             $tables = $db->getTableList();
 
             if (in_array($tableName, $tables)) {
-                // La tabla existe, podemos consultar las columnas
+                // The table exists, we can consult the columns
                 $query = "SHOW COLUMNS FROM " . $db->quoteName($data['table']) . " WHERE Field = " . $db->quote($data['column']);
                 $db->setQuery($query);
                 $result = $db->loadResult();
