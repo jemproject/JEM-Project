@@ -302,7 +302,7 @@ class JemControllerEvent extends JemControllerForm
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $input = Factory::getApplication();
+        $app = Factory::getApplication();
 		$input = $app->getInput();
         $id    = $input->getInt('rdid', 0);
         $rid   = $input->getInt('regid', 0);
