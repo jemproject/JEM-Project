@@ -97,8 +97,13 @@ $options = array(
                                             $icon = 'icon-48-update.svg';
 
                                             // If an update is available, use a different icon
-                                            if (!empty($this->updatedata) && $this->updatedata->current == -1) {
-                                                $icon = 'icon-48-update-y.svg';}
+                                            if (
+                                                !empty($this->updatedata)
+                                                && isset($this->updatedata->current)
+                                                && (int) $this->updatedata->current === -1
+                                            ) {
+                                                $icon = 'icon-48-update-y.svg';
+                                            }
                                             $this->quickiconButton($link, $icon, Text::_('COM_JEM_UPDATECHECK_TITLE'));
 
                                             $link = 'index.php?option=com_jem&amp;view=import';
