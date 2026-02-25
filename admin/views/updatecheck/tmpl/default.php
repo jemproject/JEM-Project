@@ -8,6 +8,27 @@
 
 defined('_JEXEC') or die;
 
+$update = $this->updatedata ?? null;
+
+// No update data at all -> treat as connection problem
+if (!$update) {
+    $update = new stdClass();
+    $update->failed = 1;
+} else {
+    // Connection worked if 'failed' not set
+    $update->failed = $update->failed ?? 0;
+}
+
+// Ensure properties exist
+$update->current          = $update->current ?? null;
+$update->versiondetail    = $update->versiondetail ?? '';
+$update->installedversion = $update->installedversion ?? '';
+$update->date             = $update->date ?? '';
+$update->changes          = is_array($update->changes ?? null) ? $update->changes : [];
+$update->notes            = is_array($update->notes ?? null) ? $update->notes : [];
+$update->info             = $update->info ?? '';
+$update->download         = $update->download ?? '';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
@@ -21,7 +42,7 @@ use Joomla\CMS\Router\Route;
     <div id="j-main-container" class="span10">
         <?php endif; ?>
 
-        <?php if ($this->updatedata->failed == 0) : ?>
+        <?php if ($update->failed == 0 && $update->current !== null) : ?>
             <div class="update-info">
                 <?php
                 if ($this->updatedata->current == 0 ) {
@@ -33,7 +54,8 @@ use Joomla\CMS\Router\Route;
                 }
                 ?>
                 <?php
-                if ($this->updatedata->current == 0) {
+                $current = $this->updatedata->current ?? null;
+                if ($current === 0) {
                     echo '<p style="color:green;font-weight: bold;">'.Text::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</p>';
                 } elseif( $this->updatedata->current == -1 ) {
                     echo '<p style="color:red;font-weight: bold;">'.Text::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</p>';
@@ -59,9 +81,12 @@ use Joomla\CMS\Router\Route;
                 <div class="detail-item">
                     <strong><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGES').':'; ?></strong>
                     <span>
-                    <ul><?php
-                        foreach ($this->updatedata->changes as $change) {
-                            echo '<li>'.$change.'</li>';
+                    <ul>
+                    <?php
+                        if (!empty($this->updatedata->changes) && is_array($this->updatedata->changes)) {
+                            foreach ($this->updatedata->changes as $change) {
+                                echo '<li>'.$change.'</li>';
+                            }
                         } ?>
                     </ul>
                     <a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGELOG'); ?></a></span>
@@ -88,8 +113,12 @@ use Joomla\CMS\Router\Route;
                     </ul>
                 </div>
             </div>
-
-        <?php else : ?>
+            
+            <?php elseif ($update->failed == 0 && $update->current === null) : ?>
+                <div class="alert alert-warning">
+                    <?php echo Text::_('COM_JEM_UPDATECHECK_NO_COMPATIBLE_VERSION'); ?>
+                </div>
+            <?php else : ?>
 
             <table class="updatecheck">
                 <tr>
