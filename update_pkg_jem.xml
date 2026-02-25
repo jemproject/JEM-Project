@@ -68,7 +68,7 @@
         <version>4.4.1</version>
         <infourl title="JEM Package">http://www.joomlaeventmanager.net/project/changelog-jem-4</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=129:jem-4-4-0-stable</downloadurl>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-4-4-1-stable</downloadurl>
         </downloads>
         <tags>
             <tag>stable</tag>
@@ -77,18 +77,17 @@
         <maintainerurl>http://www.joomlaeventmanager.net</maintainerurl>
     <targetplatform name="joomla" version="(4\.[01234]|5\.[012345])"/>
         <php_minimum>8.0</php_minimum>
-    <sha256>6161d8ab3ca35f625e526a0a0e117a6054b0d20064962083560629dc6641bb19</sha256>
-    <sha384>5c1678083582bf51d48ce589cf5c4f2a579efa7d5bf13fb39f40688ea4bb3defde6647c022b9e8ae3d994cc93e946217</sha384>
-    <sha512>c156772db8fed7af919552c224a2599c2869871ca7983e6417f8587f7923d96ef63fe99b05159c06e887ceccaa14d7105ad3f7710b7ee21c69e23f8ba1969e9d</sha512>
+    <sha256>d03298e59bcc745581e4d3a7beb64e9d12243e285554ccf4c01492a765c16913</sha256>
+    <sha384>e212798616728e044b123005a0deb1e7df5b1c348ee7732f905067902f4eb12ede6e49063c08ec2d2b039ffec9c26400</sha384>
+    <sha512>be0c5cc93e919f88e80ec4d2e76a8ff7c0e3164c0f0c602c1db2c9586a7180b050e3a59b8f98cf8768734fc226f12ac1210ebd1d17f935b099b9a91882bfc2dc</sha512>
         <!--  additional tags interpreted by JEM Update check (rfu)  -->
         <date>2026-02-23</date>
-        <notes>JEM 4.4.1 for Joomla! 4.4.x and Joomla! 5.x;
+        <notes>JEM 4.4.1 for Joomla! 4.4.x and Joomla! 5.x. JEM for Joomla 6 is coming with version 4.5.0;
         If you are upgrading from JEM 2.x and Joomla 3 and use template overrides please note that all views have been changed and there is a good chance that your overrides won't work as expected.;
             So please check the changes and adapt your files.;
             For migration from JEM on Joomla 3.10.x, don't uninstall, only disable plugin and modules. Versions previous to 2.3.5 will not migrate correctly.</notes>
         <changes>JEM 4.4.1 was released on February 23, 2026;
-        Fix a bug of access fields in JEM tables and set default value to 1 (Public);
-        An other minor fixes;
+        Fix for a bug that caused the events not to be displayed anymore after migration or update.
         Please refer to the changelog for details.
         </changes>
     </update>
@@ -109,7 +108,7 @@
         </tags>
         <maintainer>JEM Team</maintainer>
         <maintainerurl>http://www.joomlaeventmanager.net</maintainerurl>
-        <targetplatform name="joomla" version="(6\.[012345])"/>
+        <targetplatform name="joomla" version="(7\.[012345])"/>
         <php_minimum>8.3</php_minimum>
         <sha256>61c87b780da7c9d37c91ed4866d2daaa036539e0ea00c8c170aea97ea2220006</sha256>
         <sha384>d265c0623ac5b65feaeec719dc90c199a27126dcd6ac4bbb24596050e0db5b01480e1d179a0b86d6c6a2f5bfa5cf75f9</sha384>
