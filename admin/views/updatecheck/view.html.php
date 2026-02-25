@@ -74,7 +74,7 @@ class JemViewUpdatecheck extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
 
         // Use cancel instead of deprecated back
-        ToolbarHelper::cancel('updatecheck.cancel', 'JTOOLBAR_CLOSE');
+        ToolbarHelper::cancel('settings.cancel', 'JTOOLBAR_CLOSE');
         ToolbarHelper::divider();
         ToolBarHelper::help('update', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/check-update');
     }
