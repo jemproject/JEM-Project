@@ -14,6 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Button\PublishedButton;
+use Joomla\CMS\Layout\LayoutHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $user        = JemFactory::getUser();
@@ -58,6 +59,10 @@ $wa->useScript('table.columns');
                 </div>
                 <div class="col-md-10">
                     <div class="row mb-12">
+                      <?php
+                // Search tools bar
+                echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this, 'options' => ['selectorFieldName' => 'featured']]);
+                ?>
                         <div class="col-md-3">
                             <div class="input-group">
                                 <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
