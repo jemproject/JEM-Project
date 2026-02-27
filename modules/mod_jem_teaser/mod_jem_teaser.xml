@@ -217,9 +217,11 @@
                 <field name="catid" type="categoryedit"
                        default=""
                        multiple="true"
-                       removeroot="true"
                        label="MOD_JEM_TEASER_CATEGORY_ID"
                        description="MOD_JEM_TEASER_CATEGORY_ID_DESC"
+                       extension="com_jem"
+                       addfieldprefix="Joomla\Component\Categories\Administrator\Field"
+                       class="advancedSelect"
                 />
                 <field name="venid" type="venueoptions"
                        default=""
