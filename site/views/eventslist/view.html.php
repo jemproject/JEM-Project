@@ -304,20 +304,20 @@ class JemViewEventslist extends JemView
         // Create the pagination object
         $pagination = $this->get('Pagination');
 
-        $this->lists = $lists;
-        $this->rows = $rows;
-        $this->noevents = $noevents;
-        $this->print_link = $print_link;
-        $this->archive_link = $archive_link;
-        $this->params = $params;
-        $this->dellink = $permissions->canAddEvent; // deprecated
-        $this->pagination = $pagination;
-        $this->action = $uri->toString();
-        $this->task = $task;
-        $this->jemsettings = $jemsettings;
-        $this->settings = $settings;
-        $this->permissions = $permissions;
-        $this->pagetitle = $pagetitle;
+        $this->lists         = $lists;
+        $this->rows          = $rows;
+        $this->noevents      = $noevents;
+        $this->print_link    = $print_link;
+        $this->archive_link  = $archive_link;
+        $this->params        = $params;
+        $this->dellink       = $permissions->canAddEvent; // deprecated
+        $this->pagination    = $pagination;
+        $this->action        = $uri->toString();
+        $this->task          = $task;
+        $this->jemsettings   = $jemsettings;
+        $this->settings      = $settings;
+        $this->permissions   = $permissions;
+        $this->pagetitle     = $pagetitle;
         $this->pageclass_sfx = $pageclass_sfx
             ? htmlspecialchars($pageclass_sfx)
             : $pageclass_sfx;
