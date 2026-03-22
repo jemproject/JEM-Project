@@ -17,10 +17,10 @@ use Joomla\CMS\Router\Route;
 
 /**
  * Eventslist-View
-*/
+ */
 class JemViewEventslist extends JemView
 {
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         parent::__construct($config);
 
@@ -33,7 +33,6 @@ class JemViewEventslist extends JemView
      */
     public function display($tpl = null)
     {
-
         // Initialize variables
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
@@ -50,6 +49,21 @@ class JemViewEventslist extends JemView
         $user        = JemFactory::getUser();
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
+        if (method_exists($document, 'getWebAssetManager')) {
+            $wa = $document->getWebAssetManager();
+
+            if (!$wa->assetExists('script', 'com_jem.monthpicker')) {
+                $wa->registerScript(
+                'com_jem.monthpicker',
+                'media/com_jem/js/monthpicker-fallback.js',
+                    [],
+                    ['defer' => true],
+                );
+            }
+
+            $wa->useScript('com_jem.monthpicker');
+        }
+
         // Load css
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();
@@ -64,20 +78,34 @@ class JemViewEventslist extends JemView
         $filter_order_DirDefault = 'ASC';
 
         //Text filter
-        $filter_type = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_type', 'filter_type', 0, 'int');
-        $search = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_search', 'filter_search', '', 'string');
-        $search_month = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_month', 'filter_month', '', 'string');
-
+        $filter_type = $app->getUserStateFromRequest(
+            'com_jem.eventslist.' . $itemid . '.filter_type',
+            'filter_type',
+            0,
+            'int',
+        );
+        $search = $app->getUserStateFromRequest(
+            'com_jem.eventslist.' . $itemid . '.filter_search',
+            'filter_search',
+            '',
+            'string',
+        );
+        $search_month = $app->getUserStateFromRequest(
+            'com_jem.eventslist.' . $itemid . '.filter_month',
+            'filter_month',
+            '',
+            'string',
+        );
 
         //Filter only featured:
         if ($params->get('onlyfeatured')) {
-              $this->getModel()->setState('filter.featured',1);
+            $this->getModel()->setState('filter.featured', 1);
         }
 
         //Get initial order by menu item
-        $tableInitialorderby = $params->get('tableorderby','0');
+        $tableInitialorderby = $params->get('tableorderby', '0');
         if ($tableInitialorderby) {
-            switch ($tableInitialorderby){
+            switch ($tableInitialorderby) {
                 case 0:
                     $tableInitialorderby = 'a.dates';
                     break;
@@ -97,15 +125,38 @@ class JemViewEventslist extends JemView
                     $tableInitialorderby = 'c.catname';
                     break;
             }
-            $filter_order = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', $tableInitialorderby, 'cmd');
-        }else{
-            $filter_order = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+            $filter_order = $app->getUserStateFromRequest(
+                'com_jem.eventslist.' . $itemid . '.filter_order',
+                'filter_order',
+                $tableInitialorderby,
+                'cmd',
+            );
+        } else {
+            $filter_order = $app->getUserStateFromRequest(
+                'com_jem.eventslist.' . $itemid . '.filter_order',
+                'filter_order',
+                'a.dates',
+                'cmd',
+            );
         }
-        $tableInitialDirectionOrder = $params->get('tabledirectionorder','ASC');
+        $tableInitialDirectionOrder = $params->get(
+            'tabledirectionorder',
+            'ASC',
+        );
         if ($tableInitialDirectionOrder) {
-            $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $tableInitialDirectionOrder, 'word');
-        }else{
-            $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+            $filter_order_Dir = $app->getUserStateFromRequest(
+                'com_jem.eventslist.' . $itemid . '.filter_order_Dir',
+                'filter_order_Dir',
+                $tableInitialDirectionOrder,
+                'word',
+            );
+        } else {
+            $filter_order_Dir = $app->getUserStateFromRequest(
+                'com_jem.eventslist.' . $itemid . '.filter_order_Dir',
+                'filter_order_Dir',
+                $filter_order_DirDefault,
+                'word',
+            );
         }
 
         // Reverse default order for dates in archive mode
@@ -115,17 +166,20 @@ class JemViewEventslist extends JemView
 
         // table ordering
         $lists['order_Dir'] = $filter_order_Dir;
-        $lists['order']     = $filter_order;
+        $lists['order'] = $filter_order;
 
         // Get data from model
         $rows = $this->get('Items');
 
         // Are events available?
-        $noevents = (!$rows) ? 1 : 0;
+        $noevents = !$rows ? 1 : 0;
 
         // params
-        $pagetitle     = $params->def('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_EVENTS'));
-        $pageheading   = $params->def('page_heading', $params->get('page_title'));
+        $pagetitle = $params->def(
+            'page_title',
+            $menuitem ? $menuitem->title : Text::_('COM_JEM_EVENTS'),
+        );
+        $pageheading = $params->def('page_heading', $params->get('page_title'));
         $pageclass_sfx = $params->get('pageclass_sfx');
 
         // pathway
@@ -137,28 +191,43 @@ class JemViewEventslist extends JemView
         }
 
         if ($task == 'archive') {
-            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=eventslist&task=archive'));
-            $print_link = $uri->toString() . "?task=archive&print=1";
-            $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+            $pathway->addItem(
+                Text::_('COM_JEM_ARCHIVE'),
+                Route::_(
+                    'index.php?option=com_jem&view=eventslist&task=archive',
+                ),
+            );
+            $print_link = $uri->toString() . '?task=archive&print=1';
+            $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-            $archive_link = Route::_('index.php?option=com_jem&view=eventslist');
+            $archive_link = Route::_(
+                'index.php?option=com_jem&view=eventslist',
+            );
             $params->set('page_heading', $pageheading);
         } else {
-            $print_link = $uri->toString() . "?tmpl=component&print=1";
+            $print_link = $uri->toString() . '?tmpl=component&print=1';
             $archive_link = $uri->toString();
         }
 
         // Add site name to title if param is set
         if ($app->get('sitename_pagetitles', 0) == 1) {
-            $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
+            $pagetitle = Text::sprintf(
+                'JPAGETITLE',
+                $app->get('sitename'),
+                $pagetitle,
+            );
         }
         elseif ($app->get('sitename_pagetitles', 0) == 2) {
-            $pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
+            $pagetitle = Text::sprintf(
+                'JPAGETITLE',
+                $pagetitle,
+                $app->get('sitename'),
+            );
         }
 
         // Set Page title
         $document->setTitle($pagetitle);
-        $document->setMetaData('title' , $pagetitle);
+        $document->setMetaData('title', $pagetitle);
 
         // Check if the user has permission to add things
         $permissions = new stdClass();
@@ -166,31 +235,69 @@ class JemViewEventslist extends JemView
         $permissions->canAddVenue = $user->can('add', 'venue');
 
         // add alternate feed link
-        $link    = 'index.php?option=com_jem&view=eventslist&format=feed';
-        $attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-        $document->addHeadLink(Route::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
-        $attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-        $document->addHeadLink(Route::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
+        $link = 'index.php?option=com_jem&view=eventslist&format=feed';
+        $attribs = ['type' => 'application/rss+xml', 'title' => 'RSS 2.0'];
+        $document->addHeadLink(
+            Route::_($link . '&type=rss'),
+            'alternate',
+            'rel',
+            $attribs,
+        );
+        $attribs = ['type' => 'application/atom+xml', 'title' => 'Atom 1.0'];
+        $document->addHeadLink(
+            Route::_($link . '&type=atom'),
+            'alternate',
+            'rel',
+            $attribs,
+        );
 
         // search filter
-        $filters = array();
+        $filters = [];
 
         if ($jemsettings->showtitle == 1) {
-            $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_TITLE'));
+            $filters[] = HTMLHelper::_(
+                'select.option',
+                '1',
+                Text::_('COM_JEM_TITLE'),
+            );
         }
         if ($jemsettings->showlocate == 1) {
-            $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
+            $filters[] = HTMLHelper::_(
+                'select.option',
+                '2',
+                Text::_('COM_JEM_VENUE'),
+            );
         }
         if ($jemsettings->showcity == 1) {
-            $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
+            $filters[] = HTMLHelper::_(
+                'select.option',
+                '3',
+                Text::_('COM_JEM_CITY'),
+            );
         }
         if ($jemsettings->showcat == 1) {
-            $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
+            $filters[] = HTMLHelper::_(
+                'select.option',
+                '4',
+                Text::_('COM_JEM_CATEGORY'),
+            );
         }
         if ($jemsettings->showstate == 1) {
-            $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
+            $filters[] = HTMLHelper::_(
+                'select.option',
+                '5',
+                Text::_('COM_JEM_STATE'),
+            );
         }
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter_type);
+        $lists['filter'] = HTMLHelper::_(
+            'select.genericlist',
+            $filters,
+            'filter_type',
+            ['size' => '1', 'class' => 'form-select'],
+            'value',
+            'text',
+            $filter_type,
+        );
         $lists['search'] = $search;
         $lists['month'] = $search_month;
 
@@ -211,7 +318,9 @@ class JemViewEventslist extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->pagetitle     = $pagetitle;
-        $this->pageclass_sfx = ($pageclass_sfx ? htmlspecialchars($pageclass_sfx): $pageclass_sfx);
+        $this->pageclass_sfx = $pageclass_sfx
+            ? htmlspecialchars($pageclass_sfx)
+            : $pageclass_sfx;
 
         $this->_prepareDocument();
         parent::display($tpl);
@@ -224,22 +333,27 @@ class JemViewEventslist extends JemView
     {
         // TODO: Refactor with parent _prepareDocument() function
 
-    //    $app   = Factory::getApplication();
-    //    $menus = $app->getMenu();
+        //    $app   = Factory::getApplication();
+        //    $menus = $app->getMenu();
 
-        if ($this->params->get('menu-meta_description'))
-        {
-            $this->document->setDescription($this->params->get('menu-meta_description'));
+        if ($this->params->get('menu-meta_description')) {
+            $this->document->setDescription(
+                $this->params->get('menu-meta_description'),
+            );
         }
 
-        if ($this->params->get('menu-meta_keywords'))
-        {
-            $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+        if ($this->params->get('menu-meta_keywords')) {
+            $this->document->setMetadata(
+                'keywords',
+                $this->params->get('menu-meta_keywords'),
+            );
         }
 
-        if ($this->params->get('robots'))
-        {
-            $this->document->setMetadata('robots', $this->params->get('robots'));
+        if ($this->params->get('robots')) {
+            $this->document->setMetadata(
+                'robots',
+                $this->params->get('robots'),
+            );
         }
     }
 }

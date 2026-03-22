@@ -69,7 +69,7 @@ abstract class ModJemTeaserHelper
         $catids = JemHelper::getValidIds($params->get('catid'));
         $venids = JemHelper::getValidIds($params->get('venid'));
         $eventids = JemHelper::getValidIds($params->get('eventid'));
-        $countryids = JemHelper::getValidIds($params->get('couid'));
+        $countryids = $params->get('couid');
         $stateloc      = $params->get('stateloc');
         $stateloc_mode = $params->get('stateloc_mode', 0);
 
@@ -165,7 +165,9 @@ abstract class ModJemTeaserHelper
         $module_fallback_color = $params->get('fallbackcolor', '#EEEEEE');
         $module_fallback_color_is_dark = self::_is_dark($module_fallback_color);
         $linkcategory = $params->get('linkcategory', 0);
+        $linkvenue = $params->get('linkvenue', 0);
         $module_catcolorMode = $params->get('catcolor', 'none'); // none, text, background
+        $module_venuecolorMode = $params->get('venuecolor', 'none'); // none, text, background
 
         # Loop through the result rows and prepare data
         $lists = array();
@@ -227,13 +229,13 @@ abstract class ModJemTeaserHelper
 
                     // --- generate link ---
                     if ($linkcategory) {
-                        $link = Route::_('index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
+                        $link = Route::_( Uri::root() . 'index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
                         $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
                     } else {
                         $link = null;
                     }
 
-                    // --- name and color ---
+                    // --- name and color category ---
                     $catName = isset($cat->catname) ? $cat->catname : (isset($cat->title) ? $cat->title : '');
                     $escapedName = htmlspecialchars($catName, ENT_COMPAT, 'UTF-8');
 
@@ -245,7 +247,7 @@ abstract class ModJemTeaserHelper
                         $color = $colorRaw;
                     }
 
-                    // --- Generate output ---
+                    // --- Generate output category ---
                     $styles = '';
                     $classes = 'category-link';
 
@@ -253,8 +255,11 @@ abstract class ModJemTeaserHelper
                         case 'text':
                             if ($color) {
                                 $classes .= ' category-link-textcolor';
-                                $shadow = self::_is_dark($color) ? '0 0 2px rgba(255,255,255,0.6)' : '0 0 2px rgba(0,0,0,0.6)';
-                                $styles = 'color:' . $color . ';text-shadow:' . $shadow . ';';
+                                $isDark = self::_is_dark($color);
+                                $styles = 'color:' . $color . ';';
+                                if (!$isDark) {
+                                    $styles .= 'font-weight:bold;';
+                                }
                             }
                             break;
 
@@ -391,6 +396,72 @@ abstract class ModJemTeaserHelper
                     $lists[$i]->color_is_dark = $module_fallback_color_is_dark;
                 }
             }
+
+            # get category colors
+            $coloredVenue = [];
+
+            // --- name and color venues ---
+            $venueName = isset($row->venue) ? $row->venue : '';
+            $escapedName = htmlspecialchars($venueName, ENT_COMPAT, 'UTF-8');
+
+            $colorRaw = isset($row->l_color) ? trim($row->l_color) : '';
+
+            // Only accept valid hex colors (#rgb or #rrggbb) for venue
+            $color = '';
+            if (preg_match('/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/', $colorRaw)) {
+                $color = $colorRaw;
+            }
+
+            // --- Generate output venue ---
+            $styles = '';
+            $classes = 'venue-link';
+
+            // --- generate link ---
+            if ($linkvenue) {
+                $link = Route::_(Uri::root() . 'index.php?option=com_jem&view=venue&id=' . $row->locid . ':' . $row->l_alias);
+                $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
+            } else {
+                $link = null;
+            }
+
+            switch ($module_venuecolorMode) {
+                case 'text':
+                    if ($color) {
+                        $classes .= ' venue-link-textcolor';
+                        $isDark = self::_is_dark($color);
+                        $styles = 'color:' . $color . ';';
+                        if (!$isDark) {
+                            $styles .= 'font-weight:bold;';
+                        }
+                    }
+                    break;
+
+                case 'background':
+                    $classes .= ' venue-link-bgcolor';
+                    if ($color) {
+                        $textColor = self::_is_dark($color) ? '#fff' : '#000';
+                        $styles = 'background-color:' . $color . ';color:' . $textColor . ';padding:0.15em 0.4em;border-radius:0.25em;';
+                    } else {
+                        $styles = 'background-color:transparent;box-shadow:0 0 3px rgba(0,0,0,0.5);padding:0.15em 0.4em;border-radius:0.25em;';
+                    }
+                    break;
+            }
+
+            if ($module_venuecolorMode !== 'none' && $styles) {
+                $styles .= 'text-decoration:none;';
+            }
+
+            $styleAttr = $styles ? ' style="' . $styles . '"' : '';
+            $classAttr = ' class="' . $classes . '"';
+
+            if ($link) {
+                $coloredVenue[] = '<a href="' . $link . '"' . $classAttr . $styleAttr . '>' . $escapedName . '</a>';
+            } else {
+                $coloredVenue[] = '<span' . $classAttr . $styleAttr . '>' . $escapedName . '</span>';
+            }
+
+            $lists[$i]->venuename     = implode('<span class="venueseparator"></span>', $coloredVenue);
+
 
             # user has access
             $lists[$i]->user_has_access_category = $row->user_has_access_category;
