@@ -807,10 +807,14 @@ class JemModelEventslist extends ListModel
      */
     public function getCategories($id)
     {
-        $user     = JemFactory::getUser();
-        $levels   = $user->getAuthorisedViewLevels();
-        $settings = JemHelper::globalattribs();
+        $app         = Factory::getApplication();
+        $user        = JemFactory::getUser();
+        $levels      = $user->getAuthorisedViewLevels();
+        $settings    = JemHelper::globalattribs();
         $jemsettings = JemHelper::config();
+        $params      = $app->getParams();
+
+        $includechildevents = (bool)$params->get('includechildevents', 0);
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -910,8 +914,24 @@ class JemModelEventslist extends ListModel
         # filter set by day-view
         $requestCategoryId = $this->getState('filter.req_catid');
 
-        if ($requestCategoryId) {
-            $query->where('c.id = '.(int)$requestCategoryId);
+        if (!empty($requestCategoryId)) {
+            $idsCat = array_map('intval', explode(',', $requestCategoryId));
+
+            if ($includechildevents) {
+                foreach ($idsCat as $idCat) {
+                    $children = JemCategories::getChilds($idCat);
+                    if (!empty($children)) {
+                        $idsCat = array_merge($idsCat, array_map('intval', $children));
+                    }
+                }
+                $idsCat = array_unique($idsCat);
+            }
+
+            if (count($idsCat) > 1) {
+                $query->where('c.id IN (' . implode(',', $idsCat) . ')');
+            } else {
+                $query->where('c.id = ' . (int)reset($idsCat));
+            }
         }
 
         ###################

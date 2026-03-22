@@ -210,6 +210,7 @@ class JemViewCategory extends JemView
 
             $this->showsubcats      = (bool)$params->get('usecat', 1);
             $this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
+            $this->includechildevents = (bool)$params->get('includechildevents', 0);
 
             $filter_order     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order',     'a.dates', 'cmd');
             $filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',    '', 'word');
