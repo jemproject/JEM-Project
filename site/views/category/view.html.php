@@ -310,7 +310,7 @@ class JemViewCategory extends JemView
             $this->document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
             $document->setMetadata('keywords', $category->meta_keywords);
-            $document->setDescription(strip_tags($category->meta_description));
+            $document->setDescription(strip_tags($category->meta_description ?? ''));
 
             // Check if the user has permission to add things
             $permissions = new stdClass();
