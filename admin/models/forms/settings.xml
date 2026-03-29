@@ -907,6 +907,24 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="event_show_contact_category" type="radio"
+                   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_CATEGORY_LABEL"
+                   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_CATEGORY_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   default="0"
+            >
+                <option    value="1">JYES</option>
+                <option    value="0">JNO</option>
+            </field>
+            <field name="event_show_contact_description" type="radio"
+                   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESCRIPTION_LABEL"
+                   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESCRIPTION_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   default="0"
+            >
+                <option    value="1">JYES</option>
+                <option    value="0">JNO</option>
+            </field>
             <field name="event_show_hits" type="radio"
                 label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"

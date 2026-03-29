@@ -35,6 +35,127 @@ if ($jemsettings->oldevent > 0) {
 }
 
 ?>
+
+<style>
+    .jem-flyer-event,
+    .jem-flyer-venue,
+    #jem img[align="right"],
+    #jem img[align="left"] {
+        display: block;
+        margin: 0 auto 15px auto;
+        float: none !important; /* Prevents text wrapping */
+        max-width: 100%;
+        height: auto;
+    }
+
+    .jem-contact-legacy { margin-top: 20px; width: 100%; }
+
+    .contact-category-title {
+        padding: 10px 0;
+        font-size: 1.3em;
+        border-bottom: 2px solid #d1d6ad;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .contact-item-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .con-main-info { flex: 1; min-width: 200px; margin: 0; }
+    .con-name { font-size: 1.1em; font-weight: bold; display: block; }
+    .con-position { font-style: italic; color: #555; display: block; margin-top: 2px; font-weight: normal; }
+
+    .con-details {
+        flex: 0 0 auto;
+        margin: 0;
+        font-size: 0.9em;
+        color: #333;
+        text-align: right;
+    }
+    .con-details span { display: block; margin-bottom: 4px; }
+
+    .con_description {
+        flex: 1 0 100%;
+        margin: 12px 0 0 0;
+        color: #555;
+        font-size: 0.95em;
+        line-height: 1.5;
+		padding: 0 5px;
+    }
+
+    @media (max-width: 767px) {
+
+        .jem-flyer-event, .jem-flyer-venue,
+        .event_id img, .venue_id img,
+        .venue_id1 div.flyerimage,
+        .venue_id1 div.flyerimage a.flyermodal,
+        .venue_id1 div.flyerimage img {
+            display: block !important;
+            float: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto 20px auto !important;
+            height: auto !important;
+            clear: both !important;
+        }
+
+        .venue_id1 dl.location {
+            display: block !important;
+            width: 100% !important;
+            clear: both !important;
+            overflow: hidden;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .venue_id1 dt {
+            float: left !important;
+            width: 35% !important; /* Label width */
+            font-weight: bold;
+            clear: left !important; /* Force new line for each pair */
+            margin: 5px 0 !important;
+        }
+
+        .venue_id1 dd {
+            float: left !important;
+            width: 65% !important; /* Data width */
+            margin: 5px 0 !important;
+        }
+
+        .contact-item-wrapper { flex-direction: column; align-items: flex-start; }
+
+        .con-main-info, .con-details,
+        .contact-info, .product-owner-section, .contact-details {
+            width: 100% !important;
+            text-align: left !important;
+            float: none !important;
+            margin-bottom: 10px;
+        }
+
+        .con-details span, .contact-details a, .contact-details span {
+            display: block !important;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        img.venue_country_flag {
+            display: inline-block !important;
+            width: auto !important;
+            max-width: 32px !important;
+            vertical-align: middle !important;
+            float: none !important;
+        }
+
+        .event_info, .location { clear: both; display: block; }
+    }
+</style>
+
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
     <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
          itemscope="itemscope" itemtype="https://schema.org/Event">
@@ -110,11 +231,11 @@ if ($jemsettings->oldevent > 0) {
                     ?>
                 </dd>
             <?php endif;
-            
+
             if (empty($this->item->locid)) : ?>
-            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                <meta itemprop="name" content="None"/>
-            </div>
+                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
+                    <meta itemprop="name" content="None"/>
+                </div>
 
             <?php else : ?>
                 <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
@@ -138,39 +259,39 @@ if ($jemsettings->oldevent > 0) {
                     </div>
                 </div>
             <?php endif;
-            
+
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
             <dt class="category"><?php echo $n < 2 ? Text::_('COM_JEM_CATEGORY') : Text::_('COM_JEM_CATEGORIES'); ?>:</dt>
             <dd class="category">
                 <?php
-                    foreach ((array)$this->categories as $i => $category) {
-                        if ($i > 0) {
+                foreach ((array)$this->categories as $i => $category) {
+                    if ($i > 0) {
                         echo ', ';
-                        }
-                           if ($params->get('event_link_category') == 1) {
-                            echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
-                        } else {
-                            echo $this->escape($category->catname);
-                        }
                     }
+                    if ($params->get('event_link_category') == 1) {
+                        echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+                    } else {
+                        echo $this->escape($category->catname);
+                    }
+                }
                 echo '</dd>';
-                    endif;
+                endif;
 
-            for ($cr = 1; $cr <= 10; $cr++) {
+                for ($cr = 1; $cr <= 10; $cr++) {
                 $currentRow = $this->item->{'custom'.$cr};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
                     $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
                 }
                 if ($currentRow) {
-                    ?>
-                    <dt class="custom<?php echo $cr; ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
-                    <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                    <?php
-                }
-            }
-            ?>
+                ?>
+            <dt class="custom<?php echo $cr; ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
+            <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+        <?php
+        }
+        }
+        ?>
 
             <?php if ($params->get('event_show_hits')) : ?>
                 <dt class="hits"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
@@ -253,36 +374,69 @@ if ($jemsettings->oldevent > 0) {
             </div>
         <?php } ?>
 
-        <!--  Contact -->
-        <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
+        <!-- CONTACTS -->
+        <?php
+        $showContactCategory = $params->get('event_show_contact_category');
+        $showContactDesc = $params->get('event_show_contact_description');
+        if ($params->get('event_show_contact') && !empty($this->contacts)) :
+            $displayGroups = array();
+            if ($showContactCategory) {
+                foreach ($this->contacts as $contact) {
+                    $catName = !empty($contact->category_name) ? $contact->category_name : Text::_('COM_JEM_NO_CATEGORY');
+                    $displayGroups[$catName][] = $contact;
+                }
+            } else {
+                $displayGroups['NO_CAT_HEADER'] = $this->contacts;
+            }
+            ?>
 
-            <h2 class="contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
+            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></h2>
 
-            <dl class="location floattext">
-                <dt class="con_name"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
-                <dd class="con_name">
-                    <?php
-                    $contact = $this->item->conname;
-                    if ($params->get('event_link_contact') == true) :
-                        $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid . '&catid=' . $this->item->concatid;
-                        $menu = Factory::getApplication()->getMenu();
-                        $item = $menu->getItems('link', $needle, true);
-                        $cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-                        echo Text::sprintf('COM_JEM_EVENT_CONTACT', HTMLHelper::_('link', Route::_($cntlink2), $contact));
-                    else :
-                        echo Text::sprintf('COM_JEM_EVENT_CONTACT', $contact);
-                    endif;
-                    ?>
-                </dd>
+            <div class="jem-contact-legacy">
+                <?php foreach ($displayGroups as $categoryTitle => $contactList) : ?>
 
-                <?php if ($this->item->contelephone) : ?>
-                    <dt class="con_telephone"><?php echo Text::_('COM_JEM_TELEPHONE'); ?>:</dt>
-                    <dd class="con_telephone">
-                        <?php echo $this->escape($this->item->contelephone); ?>
-                    </dd>
-                <?php endif; ?>
-            </dl>
-        <?php endif ?>
+                    <div class="contact-group">
+                        <?php if ($showContactCategory && $categoryTitle !== 'NO_CAT_HEADER') : ?>
+                            <h3 class="contact-category-title">
+                                <i class="icon-users"></i> <?php echo $this->escape($categoryTitle); ?>
+                            </h3>
+                        <?php endif; ?>
+
+                        <?php foreach ($contactList as $contact) : ?>
+                            <dl class="contact-item-wrapper">
+                                <dt class="con-main-info">
+                                    <span class="con-name"><?php echo $this->escape($contact->conname); ?></span>
+                                    <?php if (!empty($contact->conposition)) : ?>
+                                        <span class="con-position"><?php echo $this->escape($contact->conposition); ?></span>
+                                    <?php endif; ?>
+                                </dt>
+
+                                <dd class="con-details">
+                                    <?php if ($contact->contelephone) : ?>
+                                        <span><i class="icon-phone"></i> <?php echo $this->escape($contact->contelephone); ?></span>
+                                    <?php endif; ?>
+
+                                    <?php if ($contact->conemail) : ?>
+                                        <span><i class="icon-envelope"></i> <?php echo HTMLHelper::_('email.cloak', $contact->conemail); ?></span>
+                                    <?php endif; ?>
+                                </dd>
+							</dl>
+
+                            <?php if ($showContactDesc && !empty($contact->condescription)) : ?>
+								<div class="contact-item-wrapper">
+							        <div class="con_description">
+							            <?php echo $contact->condescription; ?>
+							        </div>
+							    </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+
 
         <?php $this->attachments = $this->item->attachments; ?>
         <?php echo $this->loadTemplate('attachments'); ?>
@@ -300,35 +454,35 @@ if ($jemsettings->oldevent > 0) {
             }
             ?>
 
-            <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
-                <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
-                <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
-                <h2 class="location">
-                    <?php
-                    echo Text::_('COM_JEM_VENUE') ;
-                    $itemid = $this->item ? $this->item->id : 0 ;
-                    echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
-                    echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
-                    ?>
-                </h2>
-                <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+        <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
+            <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+            <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
+            <h2 class="location">
+                <?php
+                echo Text::_('COM_JEM_VENUE') ;
+                $itemid = $this->item ? $this->item->id : 0 ;
+                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
+                echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
+                ?>
+            </h2>
+            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
 
-                <dl class="location">
-                    <dt class="venue"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
-                    <dd class="venue">
-                        <?php
-                        if (!empty($this->item->venueslug)) :
-                            echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                        else :
-                            echo $this->escape($this->item->venue);
-                        endif;
-                        if (!empty($this->item->url)) :
-                            echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
-                        endif;
+            <dl class="location">
+                <dt class="venue"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
+                <dd class="venue">
+                    <?php
+                    if (!empty($this->item->venueslug)) :
+                        echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+                    else :
+                        echo $this->escape($this->item->venue);
+                    endif;
+                    if (!empty($this->item->url)) :
+                        echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+                    endif;
                     echo $venueaccess;
-                        ?>
-                    </dd>
-                </dl>
+                    ?>
+                </dd>
+            </dl>
             <?php if($this->item->user_has_access_venue) : ?>
                 <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext" itemprop="address" itemscope
@@ -432,8 +586,8 @@ if ($jemsettings->oldevent > 0) {
                 <?php $this->attachments = $this->item->vattachments; ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
 
-            </div>
-        <?php endif; ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <!-- Registration -->
@@ -449,7 +603,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 1:
                     //Event with registration (YES with or witout UNTIL)
-                         echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                    echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     echo $this->loadTemplate('attendees');
                     if($this->dateUnregistationUntil) {
                         echo ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . ' ' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2'));
@@ -457,7 +611,7 @@ if ($jemsettings->oldevent > 0) {
                     break;
                 case 2:
                     //Event with date starting registration (FROM with or witout UNTIL)
-                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                    echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                     if($this->dateRegistationFrom > $timeNow) {
                         echo Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . ' ' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                     }else if ($this->allowRegistration) {

@@ -110,7 +110,7 @@ use Joomla\CMS\Factory;
             $contactname = $db->loadResult();
         }
         if ($contactname) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
+            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACTS').': </span>';
             $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
             $contact .= '</div>';
         } else {
