@@ -50,7 +50,7 @@ static public function lightbox() {
     $settings = JemHelper::config();
     $app = Factory::getApplication();
     if ($settings->lightbox == 1) {
-        $document = Factory::getDocument();
+        $document = Factory::getApplication()->getDocument();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
         $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');

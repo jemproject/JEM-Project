@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
 use Joomla\Registry\Registry;
 
-jimport('joomla.database.tablenested');
+// jimport('joomla.database.tablenested');
 
 /**
  * Category Table

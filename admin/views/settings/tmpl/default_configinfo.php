@@ -41,8 +41,6 @@ use Joomla\CMS\Language\Text;
 				  "AcyMailing Tag : insert events from JEM 2.1+" 	=> "COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM",
 				];
 				?>
-                      ];
-                ?>
                 <tr>
                     <th><u><?php echo Text::_('COM_JEM_NAME'); ?></u></th>
                     <th><u><?php echo Text::_('COM_JEM_MAIN_CONFIG_VS'); ?></u></th>

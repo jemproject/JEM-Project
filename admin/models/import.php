@@ -17,7 +17,7 @@ use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
 
-jimport('joomla.application.component.model');
+// jimport('joomla.application.component.model');
 
 /**
  * JEM Component Import Model
@@ -110,7 +110,6 @@ class JemModelImport extends BaseDatabaseModel
      * Helper function to return table fields of a given table
      *
      * @param  string $tablename The name of the table we want to get fields from
-
      * @return array An array with the fields of the table
      */
     private function getFields($tablename)
@@ -133,7 +132,7 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Import data corresponding to fieldsname into categories table
      *
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
@@ -147,7 +146,7 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Import data corresponding to fieldsname into cats_event_relations table
      *
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
@@ -161,7 +160,7 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Import data corresponding to fieldsname into venues table
      *
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
@@ -175,9 +174,10 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Internal import dispatcher
      *
      * @param  string  $tablename  Name of the table where to add the data
+     * @param  string  $prefix     Table class prefix
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
      * @param  boolean $replace    Replace if ID already exists
@@ -222,6 +222,7 @@ class JemModelImport extends BaseDatabaseModel
         if (!empty($presetkey)) {
             $replace = false; // useless without imported key values
         }
+
         // we MUST reset key 'id' ourself
         $pk = $replace ? false : 'id';
 
@@ -230,14 +231,16 @@ class JemModelImport extends BaseDatabaseModel
         $objectname = get_class($object);
         $rootkey = $this->_rootkey();
 
-        $events = array(); // collects cat event relations
+        $events = []; // collects cat event relations
 
         // parse each row
         foreach ($data as $row) {
-            $values = array();
+            $values = [];
+
             if ($presetkey) {
                 $values[$presetkey] = 0;
             }
+
             // parse each specified field and retrieve corresponding value for the record
             foreach ($fieldsname as $k => $field) {
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
@@ -972,8 +975,8 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function copyAttachments()
     {
-        jimport('joomla.filesystem.file');
-        jimport('joomla.filesystem.folder');
+        // jimport('joomla.filesystem.file');
+        // jimport('joomla.filesystem.folder');
 
         $jemsettings = JemHelper::config();
 

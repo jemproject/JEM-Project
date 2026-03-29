@@ -13,7 +13,7 @@ use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
 
-jimport('joomla.application.component.model');
+// jimport('joomla.application.component.model');
 
 
 /**

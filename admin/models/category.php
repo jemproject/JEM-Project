@@ -147,7 +147,7 @@ class JemModelCategory extends AdminModel
 
             // Convert the created and modified dates to local user time for
             // display in the form.
-            jimport('joomla.utilities.date');
+            // jimport('joomla.utilities.date');
             $tz = new DateTimeZone(Factory::getApplication()->getCfg('offset'));
 
             if (intval($result->created_time)) {

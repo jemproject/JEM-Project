@@ -11,11 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
-
-FormHelper::loadFieldClass('list');
 
 /**
  * Category select

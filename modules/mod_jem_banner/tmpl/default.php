@@ -30,7 +30,7 @@ if ($flyer_link_type == 1) {
     $modal = '';
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $widthStyle = $imagewidthmax ? 'width:' . $imagewidthmax . 'px' : 'max-width: 100%';
 
 $css = '

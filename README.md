@@ -1,4 +1,4 @@
-# JEM 5.0.0 alpha 3
+# JEM 5.0.0 alpha 3 (for Joomla! 6 legacy)
 released 2026-02-25
 
 ##  ALPHA – NOT FOR PRODUCTION SITES. 

@@ -20,6 +20,7 @@
 
         <folder>tmpl</folder>
         <folder>language</folder>
+        <folder>fields</folder>
     </files>
 
     <languages>

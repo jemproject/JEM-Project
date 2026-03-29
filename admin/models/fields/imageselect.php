@@ -10,14 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
-
-jimport('joomla.form.formfield');
-jimport('joomla.html.parameter.element');
-
-FormHelper::loadFieldClass('list');
 
 /**
  * Imageselect Field

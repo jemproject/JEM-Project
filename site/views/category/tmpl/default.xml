@@ -58,6 +58,15 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="includechildevents" type="radio"
+                   default="0"
+                   label="COM_JEM_INCLUDE_CHILD_EVENTS"
+                   description="COM_JEM_INCLUDE_CHILD_EVENTS_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
         </fieldset>
     </fields>
 </metadata>

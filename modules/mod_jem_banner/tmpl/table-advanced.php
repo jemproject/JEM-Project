@@ -67,7 +67,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $additionalCSS = '';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
     $additionalCSS = 'order: -1;';

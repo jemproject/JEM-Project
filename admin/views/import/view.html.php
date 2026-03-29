@@ -20,7 +20,7 @@ use Joomla\CMS\Factory;
  */
 
 //Load pane behavior
-jimport('joomla.html.pane');
+// jimport('joomla.html.pane');
 
 class JemViewImport extends JemAdminView
 {

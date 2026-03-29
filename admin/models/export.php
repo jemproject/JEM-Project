@@ -14,7 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
 
-jimport('joomla.application.component.modellist');
+// jimport('joomla.application.component.modellist');
 
 /**
  * JEM Component Export Model

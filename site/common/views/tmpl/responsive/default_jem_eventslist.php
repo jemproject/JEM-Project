@@ -57,7 +57,7 @@ if (JemHelper::jemStringContains($this->params->get('pageclass_sfx'), $imageheig
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $css = '
     #jem .jem-list-img {
         width: ' . $imagewidth . ';

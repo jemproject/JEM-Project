@@ -236,7 +236,7 @@ class JemModelAttendees extends ListModel
         }
         $header[] = Text::_('COM_JEM_ATTENDEES_REGID');
 
-        fputcsv($csv, $header, $separator, $delimiter);
+        fputcsv($csv, $header, $separator, $delimiter, '', "\n");
 
         foreach ($items as $item)
         {
@@ -263,7 +263,7 @@ class JemModelAttendees extends ListModel
             }
             $data[] = $item->uid;
 
-            fputcsv($csv, $data, $separator, $delimiter);
+            fputcsv($csv, $data, $separator, $delimiter, '', "\n"); 
         }
 
         return fclose($csv);

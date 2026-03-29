@@ -24,7 +24,7 @@ class JemViewExport extends JemAdminView
 
     public function display($tpl = null) {
         //Load pane behavior
-        jimport('joomla.html.pane');
+        // jimport('joomla.html.pane');
 
         //initialise variables
         $app = Factory::getApplication();

@@ -36,3 +36,5 @@ ALTER TABLE #__jem_config ENGINE=InnoDB;
 ALTER TABLE #__jem_venues ENGINE=InnoDB;
 ALTER TABLE #__jem_countries ENGINE=InnoDB;
 
+-- update row order
+ALTER TABLE `#__jem_events` CHANGE `fulltext` `fulltext` MEDIUMTEXT NOT NULL AFTER `introtext`;

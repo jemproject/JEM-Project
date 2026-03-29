@@ -58,7 +58,7 @@ class jemmyeventsTab extends cbTabHandler {
         global $_CB_framework;
 
         /* need JEM's language file, e.g. for JEMOutput::formatDateTime() */
-        $lang = Factory::getLanguage();
+        $lang = Factory::getApplication()->getLanguage()
         $lang->load('com_jem', JPATH_BASE.'/components/com_jem');
 
         $UElanguagePath = dirname(__FILE__);

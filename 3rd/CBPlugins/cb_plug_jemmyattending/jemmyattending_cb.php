@@ -55,7 +55,7 @@ class jemmyattendingTab extends cbTabHandler {
     {
         global $_CB_framework;
 
-        $lang = Factory::getLanguage();
+        $lang = Factory::getApplication()->getLanguage()
         $lang->load('com_jem', JPATH_BASE.'/components/com_jem');
 
         $UElanguagePath = dirname(__FILE__);

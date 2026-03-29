@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
 
-jimport('joomla.database.tablenested');
+// jimport('joomla.database.tablenested');
 
 /**
  * JEM categories Model class

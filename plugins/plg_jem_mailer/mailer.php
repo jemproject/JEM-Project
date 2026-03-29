@@ -28,7 +28,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
 // Import library dependencies
-jimport('joomla.utilities.mail');
+// jimport('joomla.utilities.mail');
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');

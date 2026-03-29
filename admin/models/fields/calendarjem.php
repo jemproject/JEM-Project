@@ -5,14 +5,11 @@
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-
-defined('JPATH_PLATFORM') or die;
+ 
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Form\Field\CalendarField;
-
-FormHelper::loadFieldClass('calendar');
 
 /**
  * Form Field class for JEM needs.
@@ -49,10 +46,6 @@ class JFormFieldCalendarJem extends CalendarField
         $date_format = str_replace("%","",$this->format);
         $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
-        $extraData = array(
-            'hint' => $hint,
-        );
-
-        return array_merge($data, $extraData);
+        return array_merge($data, ['hint' => $hint]);
     }
 }

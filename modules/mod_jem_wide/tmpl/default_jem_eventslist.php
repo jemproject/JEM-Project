@@ -46,7 +46,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $css = '
   #jemmodulewide .jem-list-img {
     width: ' . $imagewidth . ';
@@ -168,7 +168,7 @@ $document->addStyleDeclaration($css);
                 <?php if ($params->get('use_modal')) : ?>
             <?php if ($item->eventimageorig) {
                 $image = $item->eventimageorig;
-                $document = Factory::getDocument();
+                $document = Factory::getApplication()->getDocument();
                 $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                 $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                 echo '<script>lightbox.option({

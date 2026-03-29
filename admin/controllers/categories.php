@@ -107,7 +107,7 @@ class JemControllerCategories extends AdminController
              $model = $this->getModel();
 
              // Make sure the item ids are integers
-             jimport('joomla.utilities.arrayhelper');
+             // jimport('joomla.utilities.arrayhelper');
              \Joomla\Utilities\ArrayHelper::toInteger($cid);
 
              // Remove the items.

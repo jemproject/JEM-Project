@@ -10,9 +10,6 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\Form\FormHelper;
-
-FormHelper::loadFieldClass('list');
 
 /**
  * Field: Venueoptions
