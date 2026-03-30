@@ -12,76 +12,103 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+// Extract parameters and configuration
 $highlight_featured = $params->get('highlight_featured');
-$showtitloc = $params->get('showtitloc');
-$linkloc = $params->get('linkloc');
-$linkdet = $params->get('linkdet');
-$showiconcountry = $params->get('showiconcountry');
-$settings = JemHelper::config();
+$showtitle          = $params->get('showtitle');
+$showvenue          = $params->get('showvenue');
+$linkloc             = $params->get('linkloc');
+$linkdet             = $params->get('linkdet');
+$showiconcountry     = $params->get('showiconcountry');
+$settings            = JemHelper::config();
+$baseUri             = Uri::getInstance()->base();
+
+// Prepare flag path and extension once to save resources
+$flagPath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/') ? '' : '/');
+$flagExt  = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 ?>
 
-<div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
-    <?php if (count($list)): ?>
-        <ul class="jemmod">
-            <?php foreach ($list as $item) : ?>
-                <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
-                    <?php if($highlight_featured && $item->featured): ?>
-                    <span class="event-title highlight_featured">
-            <?php else : ?>
-                <span class="event-title">
-            <?php endif; ?>
-                    <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
-                        <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
-                        $flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
-                        $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
-                        echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
-                    <?php endif; ?>
-                    <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
-                        <a href="<?php echo $item->venueurl; ?>">
-              <?php echo $item->venue; ?>
-                </a>
-                    <?php elseif ($showtitloc == 1 && $linkdet == 2) : ?>
-                        <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->title); ?>">
-              <?php echo $item->title; ?>
-                </a>
-                    <?php elseif ($showtitloc == 1 && $linkdet == 1) :
-                        echo $item->title;
+<div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulebasic">
+    <?php if (count($list) > 0) { ?>
+        <ul class="jemmod" style="list-style: none; padding: 0;">
+            <?php foreach ($list as $item) {
+                // Determine if event is featured and set general styles
+                $isFeatured = $highlight_featured && $item->featured;
+                $eventClass = 'event-info' . ($isFeatured ? ' highlight_featured' : '');
+                $boldStyle  = $isFeatured ? 'font-weight: bold;' : 'font-weight: normal;';
+                ?>
+                <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="margin-bottom: 15px;">
 
-                    elseif ($showtitloc == 0 && $linkdet == 1) :
-                        echo $item->venue;
-                    endif; ?>
+                    <div class="jem-event-wrapper" style="display: flex; align-items: flex-start; gap: 12px;">
 
-            </span>
-            <br>
-            <?php if($highlight_featured && $item->featured): ?>
-                <span class="event-title highlight_featured">
-            <?php else : ?>
-                <span class="event-title">
-            <?php endif; ?>
-                    <?php if ($linkdet == 1) : ?>
-                        <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>">
-                <?php echo $item->dateinfo; ?>
-            </a>
-                    <?php else :
-                        echo $item->dateinfo;
-                    endif; ?>
-            </span>
-        <?php echo $item->dateschema; ?>
-        <meta itemprop="name" content="<?php echo $item->title; ?>" />
-       <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-           <meta itemprop="name" content="<?php echo $item->venue; ?>" />
-           <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-            <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-            <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-            <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-            <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-        </div>
-        </div>
+                        <?php // Flag section ?>
+                        <?php if ($showiconcountry == 1 && !empty($item->country)) {
+                            $flagFile = $baseUri . $flagPath . strtolower($item->country) . '.' . $flagExt;
+                            ?>
+                            <div class="jem-flag" style="flex-shrink: 0;">
+                                <img src="<?php echo $flagFile; ?>" alt="<?php echo $item->country . ' ' . Text::_('MOD_JEM_SHOW_FLAG_ICON'); ?>" style="display: block; max-width: 40px; height: auto; padding-top: 5px;">
+                            </div>
+                        <?php } ?>
 
+                        <?php // Content section: Title, Date, and Venue inherit bold style if featured ?>
+                        <div class="jem-event-content <?php echo $eventClass; ?>" style="display: flex; flex-direction: column; line-height: 1.4; <?php echo $boldStyle; ?>">
+
+                            <?php // Line 1: Title ?>
+                            <?php if ($showtitle) { ?>
+                                <div class="event-title">
+                                    <?php if ($linkdet == 2) { ?>
+                                        <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->title); ?>" style="color: inherit; text-decoration: none; font-weight: inherit;">
+                                            <?php echo $item->title; ?>
+                                        </a>
+                                    <?php } else {
+                                        echo $item->title;
+                                    } ?>
+                                </div>
+                            <?php } ?>
+
+                            <?php // Line 2: Date ?>
+                            <div class="event-date" style="font-size: 0.95em;">
+                                <?php if ($linkdet == 1) { ?>
+                                    <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>" style="color: inherit; text-decoration: none; font-weight: inherit;">
+                                        <?php echo $item->dateinfo; ?>
+                                    </a>
+                                <?php } else {
+                                    echo $item->dateinfo;
+                                } ?>
+                            </div>
+
+                            <?php // Line 3: Venue ?>
+                            <?php if ($showvenue) { ?>
+                                <div class="event-venue" style="font-style: italic; font-size: 0.9em;">
+                                    <?php if ($linkloc == 1) { ?>
+                                        <a href="<?php echo $item->venueurl; ?>" style="color: inherit; text-decoration: none; font-weight: inherit;">
+                                            <?php echo $item->venue; ?>
+                                        </a>
+                                    <?php } else {
+                                        echo $item->venue;
+                                    } ?>
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                    </div>
+
+                    <?php // Hidden SEO metadata ?>
+                    <?php echo $item->dateschema; ?>
+                    <meta itemprop="name" content="<?php echo htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8'); ?>" />
+
+                    <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                        <meta itemprop="name" content="<?php echo htmlspecialchars($item->venue, ENT_QUOTES, 'UTF-8'); ?>" />
+                        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                            <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
+                            <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
+                            <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
+                            <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
+                        </div>
+                    </div>
                 </li>
-            <?php endforeach; ?>
+            <?php } ?>
         </ul>
-    <?php else : ?>
-        <?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
-    <?php endif; ?>
+    <?php } else { ?>
+        <p><?php echo Text::_('MOD_JEM_NO_EVENTS'); ?></p>
+    <?php } ?>
 </div>
