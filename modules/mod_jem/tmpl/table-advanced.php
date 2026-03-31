@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 
 // Extract parameters
 $highlight_featured = $params->get('highlight_featured');
+$displayorder       = (int) $params->get('display_order', 0);
 $showtitle          = $params->get('showtitle');
 $showvenue          = $params->get('showvenue');
 $linkloc            = $params->get('linkloc');
@@ -22,10 +23,29 @@ $showiconcountry    = $params->get('showiconcountry');
 $settings           = JemHelper::config();
 $baseUri            = Uri::getInstance()->base();
 
-// Prepare flag resources
+// Prepare flag path and extension
 $flagPathRaw = $settings->flagicons_path;
 $flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
 $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
+
+$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
+
+// --- PREPARE TABLE HEADERS ---
+$headerTitle = '<th style="text-align: left;"><i class="fa-solid fa-calendar-days"></i> '.Text::_('COM_JEM_EVENT').'</th>';
+$headerDate  = '<th><i class="fa-solid fa-calendar-check"></i> '.Text::_('COM_JEM_DATE').'</th>'; // Simplified Date Header
+$headerVenue = '<th><i class="fa-solid fa-location-dot"></i> '.Text::_('COM_JEM_VENUE').'</th>';
+
+function renderOrderedRow($order, $colT, $colD, $colV) {
+    switch ($order) {
+        case 1: return $colT . $colV . $colD;
+        case 2: return $colV . $colT . $colD;
+        case 3: return $colV . $colD . $colT;
+        case 4: return $colD . $colT . $colV;
+        case 5: return $colD . $colV . $colT;
+        case 0:
+        default: return $colT . $colD . $colV;
+    }
+}
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic-tableadvanced">
@@ -33,12 +53,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
         <table class="jemmod" style="width: 100%; border-collapse: collapse;">
             <thead>
             <tr>
-                <th style="text-align: left;"><i class="fa-solid fa-calendar-days"></i> <?php echo Text::_('COM_JEM_EVENT'); ?></th>
-                <th><i class="fa-solid fa-calendar-check"></i> <?php echo Text::_('COM_JEM_STARTDATE'); ?></th>
-                <th><i class="fa-solid fa-hourglass-start"></i> <?php echo Text::_('COM_JEM_STARTTIME'); ?></th>
-                <th><i class="fa-solid fa-calendar-xmark"></i> <?php echo Text::_('COM_JEM_ENDDATE'); ?></th>
-                <th><i class="fa-solid fa-hourglass-end"></i> <?php echo Text::_('COM_JEM_ENDTIME'); ?></th>
-                <th><i class="fa-solid fa-location-dot"></i> <?php echo Text::_('COM_JEM_VENUE'); ?></th>
+                <?php echo renderOrderedRow($displayorder, $headerTitle, $headerDate, $headerVenue); ?>
                 <th><i class="fa-solid fa-link"></i> <?php echo Text::_('COM_JEM_LINK'); ?></th>
             </tr>
             </thead>
@@ -46,46 +61,42 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
             <?php foreach ($list as $item) :
                 $isFeatured = $highlight_featured && $item->featured;
                 $boldStyle  = $isFeatured ? 'font-weight: bold;' : 'font-weight: normal;';
+
+                // Column: Title (includes Flag)
+                $colTitle = '';
+                $flagHtml = '';
+                if (($showiconcountry == 1) && !empty($item->country)) {
+                    $flagfile = $baseUri . $flagPath . strtolower($item->country) . '.' . $flagExt;
+                    $flagHtml = '<img src="' . $flagfile . '" alt="' . $item->country . '" style="max-width: 25px; height: auto; margin-right: 8px; vertical-align: middle; display: inline-block;">';
+                }
+                $titleContent = ($linkdet == 2) ? '<a href="'.$item->link.'" '.$linkStyle.'>'.$item->title.'</a>' : $item->title;
+                $colTitle = '<td style="padding: 8px; text-align: left; vertical-align: middle;">' . $flagHtml . '<span class="event-title">' . $titleContent . '</span></td>';
+
+                // Column: Date (Combines start/end info to keep 3-column logic)
+                $dateContent = ($linkdet == 1) ? '<a href="'.$item->link.'" '.$linkStyle.'>'.$item->dates . ' ' . $item->times . '</a>' : $item->dates . ' ' . $item->times;
+                $colDate = '<td style="padding: 8px 4px; text-align: center;">' . $dateContent . '</td>';
+
+                // Column: Venue
+                $colVenue = '';
+                if ($showvenue) {
+                    $venueContent = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
+                    $colVenue = '<td style="padding: 8px 4px; text-align: center; font-style: italic;">' . $venueContent . '</td>';
+                } else {
+                    $colVenue = '<td></td>'; // Keeps table structure if venue is hidden but order is selected
+                }
                 ?>
+
                 <tr class="event_id<?php echo $item->eventid; ?>" style="border-bottom: 1px solid #eee; <?php echo $boldStyle; ?>">
 
-                    <td style="padding: 8px; text-align: left; vertical-align: middle;">
-                        <?php if (($showiconcountry == 1) && !empty($item->country)) :
-                            $flagfile = $baseUri . $flagPath . strtolower($item->country) . '.' . $flagExt;
-                            echo '<img src="' . $flagfile . '" alt="' . $item->country . '" style="max-width: 30px; height: auto; margin-right: 8px; vertical-align: middle; display: inline-block;">';
-                        endif; ?>
-
-                        <span class="event-title">
-                            <?php if ($linkdet == 2) : ?>
-                                <a href="<?php echo $item->link; ?>" style="font-weight: inherit;"><?php echo $item->title; ?></a>
-                            <?php else : ?>
-                                <?php echo $item->title; ?>
-                            <?php endif; ?>
-                        </span>
-                    </td>
-
-                    <td style="padding: 8px 4px; text-align: center;"><?php echo $item->dates; ?></td>
-                    <td style="padding: 8px 4px; text-align: center;"><?php echo $item->times; ?></td>
-                    <td style="padding: 8px 4px; text-align: center;"><?php echo $item->enddates; ?></td>
-                    <td style="padding: 8px 4px; text-align: center;"><?php echo $item->endtimes; ?></td>
-
-                    <td style="padding: 8px 4px; text-align: center; font-style: italic;">
-                        <?php if ($showvenue) : ?>
-                            <?php if ($linkloc == 1) : ?>
-                                <a href="<?php echo $item->venueurl; ?>" style="font-weight: inherit;"><?php echo $item->venue; ?></a>
-                            <?php else : ?>
-                                <?php echo $item->venue; ?>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </td>
+                    <?php echo renderOrderedRow($displayorder, $colTitle, $colDate, $colVenue); ?>
 
                     <td style="padding: 8px 4px; text-align: center;">
-                        <?php if ($linkdet == 1 || $linkdet == 2) : ?>
+                        <?php if (!empty($item->link)) : ?>
                             <a href="<?php echo $item->link; ?>" title="<?php echo Text::_('COM_JEM_SHOW_DETAILS'); ?>">
                                 <i class="far fa-eye"></i>
                             </a>
                         <?php else : ?>
-                            <?php echo $item->dateinfo; ?>
+                            <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
                         <?php endif; ?>
                     </td>
                 </tr>
