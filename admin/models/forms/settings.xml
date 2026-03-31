@@ -889,6 +889,9 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="spacer3" type="spacer"
+                   hr="true"
+            />
             <field name="event_show_contact" type="radio"
                 label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC"
@@ -916,6 +919,25 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+
+            <field name="contact_fields" type="list"
+                   label="COM_JEM_CONTACT_FIELDS_LABEL"
+                   description="COM_JEM_CONTACT_FIELDS_DESC"
+                   default="position,website,country"
+                   multiple="true"
+                   size="6"
+            >
+                <option value="none">COM_JEM_CONTACT_NONE</option>
+                <option value="position">COM_JEM_CONTACT_FIELD_POSITION</option>
+                <option value="email">COM_JEM_CONTACT_FIELD_EMAIL</option>
+                <option value="address">COM_JEM_CONTACT_FIELD_ADDRESS</option>
+                <option value="phone">COM_JEM_CONTACT_FIELD_PHONE</option>
+                <option value="mobile">COM_JEM_CONTACT_FIELD_MOBILE</option>
+                <option value="website">COM_JEM_CONTACT_FIELD_WEB</option>
+                <option value="city">COM_JEM_CONTACT_FIELD_CITY</option>
+                <option value="state">COM_JEM_CONTACT_FIELD_STATE</option>
+                <option value="country">COM_JEM_CONTACT_FIELD_COUNTRY</option>
+            </field>
             <field name="event_show_contact_description" type="radio"
                    label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESCRIPTION_LABEL"
                    description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESCRIPTION_DESC"
@@ -925,6 +947,18 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="event_show_contact_link" type="radio"
+                   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LINK_LABEL"
+                   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LINK_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="spacer4" type="spacer"
+                   hr="true"
+            />
             <field name="event_show_hits" type="radio"
                 label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"

@@ -303,7 +303,7 @@ class JemModelEvent extends ItemModel
 
         // Get data of contacts
         $query = $db->getQuery(true);
-        $query->select('con.id AS conid, con.name AS conname, con.con_position AS conposition, con.catid AS concatid, con.telephone AS contelephone, con.email_to AS conemail, con.misc as condescription');
+        $query->select('con.id AS conid, con.name AS conname, con.con_position AS conposition, con.catid AS concatid, con.telephone AS contelephone, con.email_to AS conemail, con.address AS conaddress, con.suburb AS concity, con.country AS constate, con.country AS constate, con.webpage AS conwebsite, con.misc as condescription');
         $query->select('cat.title AS category_name, cat.asset_id AS cat_ordering');
         $query->from($db->quoteName('#__contact_details', 'con'));
         $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid'));
