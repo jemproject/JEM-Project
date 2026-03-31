@@ -67,6 +67,18 @@
                        label="MOD_JEM_OFFSET_HOURS"
                        description="MOD_JEM_OFFSET_HOURS_DESC"
                 />
+                <field name="display_order" type="list"
+                       default="0"
+                       label="MOD_JEM_DISPLAY_ORDER"
+                       description="MOD_JEM_DISPLAY_ORDER_DESC"
+                >
+                    <option value="0">MOD_JEM_ORDER_TDV</option>
+                    <option value="1">MOD_JEM_ORDER_TVD</option>
+                    <option value="2">MOD_JEM_ORDER_VTD</option>
+                    <option value="3">MOD_JEM_ORDER_VDT</option>
+                    <option value="4">MOD_JEM_ORDER_DTV</option>
+                    <option value="5">MOD_JEM_ORDER_DVT</option>
+                </field>
                 <field name="showtitle" type="radio"
                        default="1"
                        label="MOD_JEM_TITLE"
@@ -108,7 +120,6 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-
                 <field name="showiconcountry" type="radio"
                        default="0"
                        label="MOD_JEM_SHOW_ICON_COUNTRY_VENUE"
