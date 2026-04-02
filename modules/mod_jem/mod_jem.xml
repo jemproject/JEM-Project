@@ -67,23 +67,22 @@
                        label="MOD_JEM_OFFSET_HOURS"
                        description="MOD_JEM_OFFSET_HOURS_DESC"
                 />
-                <field name="showtitloc" type="list"
-                       default="1"
-                       label="MOD_JEM_TITLE_OR_VENUE"
-                       description="MOD_JEM_TITLE_OR_VENUE_DESC"
+                <field name="display_order" type="list"
+                       default="0"
+                       label="MOD_JEM_DISPLAY_ORDER"
+                       description="MOD_JEM_DISPLAY_ORDER_DESC"
                 >
-                    <option value="0">MOD_JEM_VENUE</option>
-                    <option value="1">MOD_JEM_TITLE</option>
+                    <option value="0">MOD_JEM_ORDER_TDV</option>
+                    <option value="1">MOD_JEM_ORDER_TVD</option>
+                    <option value="2">MOD_JEM_ORDER_VTD</option>
+                    <option value="3">MOD_JEM_ORDER_VDT</option>
+                    <option value="4">MOD_JEM_ORDER_DTV</option>
+                    <option value="5">MOD_JEM_ORDER_DVT</option>
                 </field>
-                <field name="cuttitle" type="text"
-                       default="30"
-                       label="MOD_JEM_MAX_TITLE_LENGTH"
-                       description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
-                />
-                <field name="linkloc" type="radio"
+                <field name="showtitle" type="radio"
                        default="1"
-                       label="MOD_JEM_LINK_TO_VENUE"
-                       description="MOD_JEM_LINK_TO_VENUE_DESC"
+                       label="MOD_JEM_TITLE"
+                       description="MOD_JEM_TITLE_DESC"
                        class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
@@ -97,6 +96,29 @@
                     <option value="0">JNO</option>
                     <option value="1">MOD_JEM_DATE</option>
                     <option value="2">MOD_JEM_TITLE</option>
+                </field>
+                <field name="cuttitle" type="text"
+                       default="30"
+                       label="MOD_JEM_MAX_TITLE_LENGTH"
+                       description="MOD_JEM_MAX_TITLE_LENGTH_DESC"
+                />
+                <field name="showvenue" type="radio"
+                       default="1"
+                       label="MOD_JEM_VENUE"
+                       description="MOD_JEM_VENUE_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="linkloc" type="radio"
+                       default="1"
+                       label="MOD_JEM_LINK_TO_VENUE"
+                       description="MOD_JEM_LINK_TO_VENUE_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
                 </field>
                 <field name="showiconcountry" type="radio"
                        default="0"
