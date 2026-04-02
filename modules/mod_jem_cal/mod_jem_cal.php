@@ -58,7 +58,7 @@ if($Itemid ==0){
 }
 
 # AJAX requires at least J! 3.2.7 (because we use com_ajax)
-$use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');
+// $use_ajax: JVERSION always >= 3.2.7 on J6
 
 # Get switch trigger
 $req_modid = $app->input->getInt('modjemcal_id');
