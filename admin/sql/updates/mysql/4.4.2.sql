@@ -7,4 +7,4 @@
 -- update values
 
 -- update row order
-ALTER TABLE #__jem_events CHANGE fulltext fulltext MEDIUMTEXT NOT NULL AFTER introtext;
+ALTER TABLE #__jem_events CHANGE `fulltext` `fulltext` MEDIUMTEXT NOT NULL AFTER introtext;
