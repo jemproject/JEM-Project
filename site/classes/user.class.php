@@ -450,7 +450,7 @@ abstract class JemUserAbstract extends User
         $authorised = false;
         foreach ($assets as $asset) {
             if ($authorised) { break; }
-            $authorised |= (boolean)$this->authorise('core.manage', $asset);
+            $authorised |= (bool)$this->authorise('core.manage', $asset);
 
             foreach ($action as $act) {
                 if ($authorised) { break; }
