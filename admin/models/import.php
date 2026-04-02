@@ -958,7 +958,7 @@ class JemModelImport extends BaseDatabaseModel
             $fromFolder = JPATH_SITE.'/images/eventlist/'.$folder.'/';
             $toFolder   = JPATH_SITE.'/images/jem/'.$folder.'/';
 
-            if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
+            if (is_dir($fromFolder) && is_dir($toFolder)) {
                 $files = Folder::files($fromFolder, null, false, false);
 
                 foreach ($files as $file) {
@@ -983,11 +983,11 @@ class JemModelImport extends BaseDatabaseModel
         $fromFolder = JPATH_SITE.'/media/com_eventlist/attachments/';
         $toFolder   = JPATH_SITE.'/'.$jemsettings->attachments_path.'/';
 
-        if (!Folder::exists($toFolder)) {
+        if (!is_dir($toFolder)) {
             Folder::create($toFolder);
         }
 
-        if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
+        if (is_dir($fromFolder) && is_dir($toFolder)) {
             $files = Folder::files($fromFolder, null, false, false);
             foreach ($files as $file) {
                 if (!is_file($toFolder.$file)) {
@@ -999,7 +999,7 @@ class JemModelImport extends BaseDatabaseModel
             // so we need to walk through all these subfolders
             $folders = Folder::folders($fromFolder, null, false, false);
             foreach ($folders as $folder) {
-                if (!Folder::exists($toFolder.$folder)) {
+                if (!is_dir($toFolder.$folder)) {
                     Folder::create($toFolder.$folder);
                 }
 

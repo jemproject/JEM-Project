@@ -120,7 +120,7 @@ class JemControllerImagehandler extends BaseController
                 $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
                 if (is_file($fullPath)) {
                     File::delete($fullPath);
-                    if (File::exists($fullPaththumb)) {
+                    if (is_file($fullPaththumb)) {
                         File::delete($fullPaththumb);
                     }
                 }

@@ -257,7 +257,7 @@ class JemTableEvent extends Table
                     $this->datimage = '';
                 } elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
                     // event is a copy so copy datimage too
-                    if (File::exists($image_dir . $datimage)) {
+                    if (is_file($image_dir . $datimage)) {
                         // if it's already within image folder it's safe
                         $this->datimage = $datimage;
                     }

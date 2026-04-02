@@ -211,7 +211,7 @@ class JemTableVenue extends Table
                     $this->locimage = '';
                 } elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
                     // venue is a copy so copy locimage too
-                    if (File::exists($image_dir . $locimage)) {
+                    if (is_file($image_dir . $locimage)) {
                         // if it's already within image folder it's safe
                         $this->locimage = $locimage;
                     }

@@ -71,7 +71,7 @@ class JemAttachment extends CMSObject
                 continue;
             }
 
-            if (!Folder::exists($path)) {
+            if (!is_dir($path)) {
                 // try to create it
                 $res = Folder::create($path);
                 if (!$res) {
