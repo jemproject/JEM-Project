@@ -33,7 +33,7 @@ class mod_jemInstallerScript
         $type = strtolower($type);
 
         if ($type === 'update') {
-        
+
             // Installed module version (from manifest cache)
             $this->oldRelease = (string) $this->getParam('version');
 
@@ -58,7 +58,7 @@ class mod_jemInstallerScript
         if ($type === 'install') {
             return true;
         }
-        if ($type === 'update') {            
+        if ($type === 'update') {
             return true;
         }
         if ($type === 'uninstall') {
