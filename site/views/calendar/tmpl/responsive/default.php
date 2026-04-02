@@ -64,20 +64,23 @@ use Joomla\CMS\Factory;
         }
 
         //get event date
-        $year = date('Y', strtotime($row->dates));
-        $month = date('m', strtotime($row->dates));
-        $day = date('d', strtotime($row->dates));
+        $timestamp = strtotime($row->dates);
+        $year    = date('Y', $timestamp);
+        $month   = date('m', $timestamp);
+        $day     = date('d', $timestamp);
+		$dateKey = $year.$month.$day;
 
-        @$countperday[$year.$month.$day]++;
-        if ($countperday[$year.$month.$day] == $limit+1) {
-            $var1a = Route::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
-            $var1b = Text::_('COM_JEM_AND_MORE');
-            $var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
-            $id = 'eventandmore';
+        $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
 
-            $this->cal->setEventContent($year, $month, $day, $var1c, null, $id);
-            continue;
-        } elseif ($countperday[$year.$month.$day] > $limit+1) {
+        if ($countperday[$dateKey] === $limit + 1) {
+             $url  = Route::_('index.php?option=com_jem&view=day&id=' . $year.$month.$day . $this->param_topcat);
+             $text = Text::_('COM_JEM_AND_MORE');
+             $link = '<a href="' . $url . '">' . $text . '</a>';
+
+             $this->cal->setEventContent($year, $month, $day, $link, null, 'eventandmore');
+             continue;
+
+        } elseif ($countperday[$dateKey] > $limit + 1) {
             continue;
         }
 
@@ -124,7 +127,6 @@ use Joomla\CMS\Factory;
         //initialize variables
         $multicatname = '';
         $colorpic = '';
-        $color = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
