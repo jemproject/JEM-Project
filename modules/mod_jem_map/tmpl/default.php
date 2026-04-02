@@ -307,6 +307,10 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
         if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
         $sef  = Route::_($route, false);
+        $base = Uri::base(true);
+        if (!empty($base) && strpos($sef, $base) === 0) {
+            $sef = substr($sef, strlen($base));
+        }
         $link = Uri::root() . ltrim($sef, '/');
 
         $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
