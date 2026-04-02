@@ -14,19 +14,18 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 
 /**
- * Module-Basic
+ * Module-Basic Helper
  */
 abstract class ModJemHelper
 {
-
     /**
      * Method to get the events
      *
-     * @access public
-     * @return array
+     * @param   object  &$params  Module parameters
+     * @return  array
      */
     public static function getList(&$params)
     {
@@ -37,120 +36,102 @@ abstract class ModJemHelper
         $levels   = $user->getAuthorisedViewLevels();
         $settings = JemHelper::config();
 
-        // Use (short) format saved in module settings or in component settings or format in language file otherwise
+        // Date format logic
         $dateFormat = $params->get('formatdate', '');
         if (empty($dateFormat)) {
-            // on empty format long format will be used but we need short format
             if (isset($settings->formatShortDate) && $settings->formatShortDate) {
                 $dateFormat = $settings->formatShortDate;
             } else {
                 $dateFormat = Text::_('COM_JEM_FORMAT_SHORT_DATE');
             }
         }
+
         $timeFormat = $params->get('formattime', '');
-        $addSuffix  = false;
-        if (empty($timeFormat)) {
-            // on empty format component's format will be used, so also use component's time suffix
-            $addSuffix = true;
-        }
+        $addSuffix  = empty($timeFormat);
 
-        # Retrieve Eventslist model for the data
+        // Retrieve Eventslist model
         $model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
-
-        # Set params for the model
-        # has to go before the getItems function
         $model->setState('params', $params);
 
-        # filter published
-        #  0: unpublished
-        #  1: published
-        #  2: archived
-        # -2: trashed
+        $type = (int) $params->get('type');
 
-        $type = (int)$params->get('type');
-
-        # archived events
+        // Archived events
         if ($type == 2) {
-            $model->setState('filter.published',2);
-            $model->setState('filter.orderby',array('a.dates DESC', 'a.times DESC', 'a.created DESC'));
+            $model->setState('filter.published', 2);
+            $model->setState('filter.orderby', array('a.dates DESC', 'a.times DESC', 'a.created DESC'));
             $cal_from = "";
-        }
-
-        # upcoming or running events, on mistake default to upcoming events
+        } 
+        // Upcoming or running events
         else {
-            $model->setState('filter.published',1);
-            $model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.published', 1);
+            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $offset_minutes = 60 * $params->get('offset_hours', 0);
-
+            $offset_minutes = 60 * (int) $params->get('offset_hours', 0);
             $cal_from = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
             $cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
         }
 
-        $model->setState('filter.calendar_from',$cal_from);
-        $model->setState('filter.groupby','a.id');
+        $model->setState('filter.calendar_from', $cal_from);
+        $model->setState('filter.groupby', 'a.id');
 
-        # filter category's
+        // Filter categories
         $catids = JemHelper::getValidIds($params->get('catid'));
         if ($catids) {
             $model->setState('filter.category_id', $catids);
             $model->setState('filter.category_id.include', true);
         }
 
-        # filter venue's
+        // Filter venues
         $venids = JemHelper::getValidIds($params->get('venid'));
         if ($venids) {
             $model->setState('filter.venue_id', $venids);
             $model->setState('filter.venue_id.include', true);
         }
 
-        # count
-        $count = $params->get('count', '2');
-        $model->setState('list.limit', $count);
+        $model->setState('list.limit', (int) $params->get('count', '2'));
 
-        # Retrieve the available Events
         $events = $model->getItems();
+        $lists  = array();
 
-        # Loop through the result rows and prepare data
-        $i     = -1;
-        $lists = array();
+        if ($events) {
+            $cutLimit = (int) $params->get('cuttitle', '18');
 
-        foreach ($events as $row)
-        {
-            # cut titel
-            $length = mb_strlen($row->title);
+            foreach ($events as $row) {
+                $item = new stdClass();
 
-            if ($length > $params->get('cuttitle', '18')) {
-                $row->title = mb_substr($row->title, 0, $params->get('cuttitle', '18'));
-                $row->title = $row->title.'...';
-            }
+                // Process Title
+                $title = $row->title ?? '';
+                if (mb_strlen($title) > $cutLimit) {
+                    $title = mb_substr($title, 0, $cutLimit) . '...';
+                }
 
-            $lists[++$i]            = new stdClass();
+                $item->eventid     = $row->id;
+                $item->title       = htmlspecialchars($title, ENT_COMPAT, 'UTF-8');
+                $item->link        = Route::_(JemHelperRoute::getEventRoute($row->slug));
+                $item->dates       = $row->dates;
+                $item->times       = $row->times;
+                $item->enddates    = $row->enddates;
+                $item->endtimes    = $row->endtimes;
+                $item->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
+                $item->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true);
 
-            $lists[$i]->eventid     = $row->id;
-            $lists[$i]->title       = htmlspecialchars($row->title ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->link        = Route::_(JemHelperRoute::getEventRoute($row->slug));
-            $lists[$i]->dates       = $row->dates;
-            $lists[$i]->times       = $row->times;
-            $lists[$i]->enddates    = $row->enddates;
-            $lists[$i]->endtimes    = $row->endtimes;
-            $lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+                $item->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
+                $item->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
+                $item->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
+                $item->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
+                $item->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
+                $item->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
+                $item->venueurl    = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
+                $item->featured    = $row->featured;
+				$item->text        = $params->get('showtitle', 0) ? $item->title : ($params->get('showtitle', 0)? $item->venue : $item->dateinfo);
 
-            $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->text        = $params->get('showtitloc', 0) ? $lists[$i]->title : $lists[$i]->venue;
-            $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->venueurl    = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
-            $lists[$i]->featured    = $row->featured;
+                // Provide custom fields safely
+                for ($n = 1; $n <= 10; ++$n) {
+                    $var = 'custom' . $n;
+                    $item->$var = htmlspecialchars($row->$var ?? '', ENT_COMPAT, 'UTF-8');
+                }
 
-            # provide custom fields
-            for ($n = 1; $n <= 10; ++$n) {
-                $var = 'custom'.$n;
-                $lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
+                $lists[] = $item;
             }
         }
 
@@ -160,13 +141,16 @@ abstract class ModJemHelper
     /**
      * Method to get a valid url
      *
-     * @access public
-     * @return string
+     * @param   string  $url  URL to format
+     * @return  string
      */
     protected static function _format_url($url)
     {
-        if(!empty($url) && strtolower(substr($url, 0, 7)) != "https://") {
-            $url = 'https://'.$url;
+        if (!empty($url)) {
+            $url = trim($url);
+            if (stripos($url, 'http://') !== 0 && stripos($url, 'https://') !== 0) {
+                $url = 'https://' . $url;
+            }
         }
         return $url;
     }
