@@ -9,107 +9,101 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+// Extract parameters
 $highlight_featured = $params->get('highlight_featured');
-$showtitloc = $params->get('showtitloc');
-$linkloc = $params->get('linkloc');
-$linkdet = $params->get('linkdet');
-$showiconcountry = $params->get('showiconcountry');
-$settings = JemHelper::config();
+$displayorder       = (int) $params->get('display_order', 0);
+$showtitle          = $params->get('showtitle');
+$showvenue          = $params->get('showvenue');
+$linkloc            = $params->get('linkloc');
+$linkdet            = $params->get('linkdet');
+$showiconcountry    = $params->get('showiconcountry');
+$settings           = JemHelper::config();
+$baseUri            = Uri::getInstance()->base();
+
+// Prepare flag path and extension
+$flagPathRaw = $settings->flagicons_path;
+$flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
+$flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
+
+$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
+
+// --- PREPARE TABLE HEADERS ---
+$headerTitle = '<th style="text-align: left;"><i class="fa-solid fa-calendar-days"></i> '.Text::_('COM_JEM_EVENT').'</th>';
+$headerDate  = '<th><i class="fa-solid fa-calendar-check"></i> '.Text::_('COM_JEM_DATE').'</th>'; // Simplified Date Header
+$headerVenue = '<th><i class="fa-solid fa-location-dot"></i> '.Text::_('COM_JEM_VENUE').'</th>';
+
+function renderOrderedRow($order, $colT, $colD, $colV) {
+    switch ($order) {
+        case 1: return $colT . $colV . $colD;
+        case 2: return $colV . $colT . $colD;
+        case 3: return $colV . $colD . $colT;
+        case 4: return $colD . $colT . $colV;
+        case 5: return $colD . $colV . $colT;
+        case 0:
+        default: return $colT . $colD . $colV;
+    }
+}
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic-tableadvanced">
     <?php if (count($list)): ?>
-        <table class="jemmod">
+        <table class="jemmod" style="width: 100%; border-collapse: collapse;">
             <thead>
-            <th><i class="fa-solid fa-calendar-days"></i><?php echo Text::_('COM_JEM_EVENT'); ?></th>
-            <th><i class="fa-solid fa-calendar-check"></i><?php echo Text::_('COM_JEM_STARTDATE'); ?></th>
-            <th><i class="fa-solid fa-hourglass-start"></i><?php echo Text::_('COM_JEM_STARTTIME'); ?></th>
-            <th><i class="fa-solid fa-calendar-xmark"></i><?php echo Text::_('COM_JEM_ENDDATE'); ?></th>
-            <th><i class="fa-solid fa-hourglass-end"></i><?php echo Text::_('COM_JEM_ENDTIME'); ?></th>
-            <th><i class="fa-solid fa-link"></i><?php echo Text::_('COM_JEM_LINK'); ?></th>
+            <tr>
+                <?php echo renderOrderedRow($displayorder, $headerTitle, $headerDate, $headerVenue); ?>
+                <th><i class="fa-solid fa-link"></i> <?php echo Text::_('COM_JEM_LINK'); ?></th>
+            </tr>
             </thead>
-            <?php foreach ($list as $item) : ?>
-                <tr>
-                    <td>
-                        <?php if($highlight_featured && $item->featured): ?>
-                        <span class="event-title highlight_featured">
-                        <?php else : ?>
-                            <span class="event-title">
-                        <?php endif; ?>
+            <tbody>
+            <?php foreach ($list as $item) :
+                $isFeatured = $highlight_featured && $item->featured;
+                $boldStyle  = $isFeatured ? 'font-weight: bold;' : 'font-weight: normal;';
 
-                                <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
-                                    <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
-                                    $flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
-                                    $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
-                                    echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
-                                <?php endif; ?>
-                                <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
-                                    <a href="<?php echo $item->venueurl; ?>">
-                                    <?php echo $item->text; ?>
-                                </a>
-                                <?php elseif ($showtitloc == 1 && $linkdet == 2) : ?>
-                                    <a href="<?php echo $item->link; ?>">
-                                    <?php echo $item->text; ?>
-                                </a>
-                                <?php
-                                else :
-                                    echo $item->text;
-                                endif;
-                                ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if($highlight_featured && $item->featured): ?>
-                        <span class="event-title highlight_featured">
+                // Column: Title (includes Flag)
+                $colTitle = '';
+                $flagHtml = '';
+                if (($showiconcountry == 1) && !empty($item->country)) {
+                    $flagfile = $baseUri . $flagPath . strtolower($item->country) . '.' . $flagExt;
+                    $flagHtml = '<img src="' . $flagfile . '" alt="' . $item->country . '" style="max-width: 25px; height: auto; margin-right: 8px; vertical-align: middle; display: inline-block;">';
+                }
+                $titleContent = ($linkdet == 2) ? '<a href="'.$item->link.'" '.$linkStyle.'>'.$item->title.'</a>' : $item->title;
+                $colTitle = '<td style="padding: 8px; text-align: left; vertical-align: middle;">' . $flagHtml . '<span class="event-title">' . $titleContent . '</span></td>';
+
+                // Column: Date (Combines start/end info to keep 3-column logic)
+                $dateContent = ($linkdet == 1) ? '<a href="'.$item->link.'" '.$linkStyle.'>'.$item->dates . ' ' . $item->times . '</a>' : $item->dates . ' ' . $item->times;
+                $colDate = '<td style="padding: 8px 4px; text-align: center;">' . $dateContent . '</td>';
+
+                // Column: Venue
+                $colVenue = '';
+                if ($showvenue) {
+                    $venueContent = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
+                    $colVenue = '<td style="padding: 8px 4px; text-align: center; font-style: italic;">' . $venueContent . '</td>';
+                } else {
+                    $colVenue = '<td></td>'; // Keeps table structure if venue is hidden but order is selected
+                }
+                ?>
+
+                <tr class="event_id<?php echo $item->eventid; ?>" style="border-bottom: 1px solid #eee; <?php echo $boldStyle; ?>">
+
+                    <?php echo renderOrderedRow($displayorder, $colTitle, $colDate, $colVenue); ?>
+
+                    <td style="padding: 8px 4px; text-align: center;">
+                        <?php if (!empty($item->link)) : ?>
+                            <a href="<?php echo $item->link; ?>" title="<?php echo Text::_('COM_JEM_SHOW_DETAILS'); ?>">
+                                <i class="far fa-eye"></i>
+                            </a>
                         <?php else : ?>
-                            <span class="event-title">
+                            <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
                         <?php endif; ?>
-                        <?php echo $item->dates; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if($highlight_featured && $item->featured): ?>
-                        <span class="event-title highlight_featured">
-                        <?php else : ?>
-                            <span class="event-title">
-                        <?php endif; ?>
-                        <?php echo $item->times; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if($highlight_featured && $item->featured): ?>
-                        <span class="event-title highlight_featured">
-                        <?php else : ?>
-                            <span class="event-title">
-                        <?php endif; ?>
-                        <?php echo $item->enddates; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if($highlight_featured && $item->featured): ?>
-                        <span class="event-title highlight_featured">
-                        <?php else : ?>
-                            <span class="event-title">
-                        <?php endif; ?>
-                        <?php echo $item->endtimes; ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if ($params->get('linkdet') == 1) : ?>
-                            <a href="<?php echo $item->link; ?>"><div style="text-align: center;"><i class="far fa-eye"></i></div></a>
-                        <?php else :
-                            echo $item->dateinfo;
-                        endif;
-                        ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
+            </tbody>
         </table>
     <?php else : ?>
-        <?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
+        <p><?php echo Text::_('MOD_JEM_NO_EVENTS'); ?></p>
     <?php endif; ?>
 </div>
