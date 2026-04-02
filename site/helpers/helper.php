@@ -519,7 +519,7 @@ class JemHelper
             $countquery_tmpl = ' SELECT id FROM #__jem_categories WHERE image = ';
             $imagequery      = ' SELECT image, COUNT(*) AS count FROM #__jem_categories GROUP BY image';
             break;
-        default;
+        default:
             return false;
         }
 

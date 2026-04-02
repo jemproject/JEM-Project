@@ -134,7 +134,7 @@ class JemModelEventslist extends ListModel
         $whereFrom = null;
         if ($filterDaysBefore > 0) {
             $dateFromValue = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-             $whereFrom = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $dateFromValue . '") >= 0';
+            $whereFrom = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $dateFromValue . '") >= 0';
         }
         if (!empty($whereFrom)) {
             $this->setState('filter.calendar_from', $whereFrom);
@@ -683,6 +683,18 @@ class JemModelEventslist extends ListModel
                     $query->where('l.state REGEXP '.$db->quote(implode('|', $venueState)));
                     break;
             }
+        }
+
+        ############################
+        ## FILTER - VENUE COUNTRY ##
+        ############################
+
+        $venueCountry = $this->getState('filter.country_id');
+
+        if (!empty($venueCountry) && array_filter($venueCountry)) {
+            $venueCountry = array_map([$db, 'quote'], $venueCountry);
+            $operator = $this->getState('filter.country_id.include', 0) ? 'IN' : 'NOT IN';
+            $query->where('l.country ' . $operator . ' (' . implode(',', $venueCountry) . ')');
         }
 
         ###################

@@ -40,8 +40,10 @@ class JemControllerMailto extends JemControllerForm
         $data       = $model->getData();
         $uri        = Uri::getInstance();
         $form       = $model->getForm();
-        $post_link  = $this->input->post->get('link', '', 'post');
-        $currentUri = $uri->toString() . '&link='.$post_link;
+		
+        $input = $app->getInput();
+        $post_link = $input->post->get('link', '', 'raw');
+        $currentUri = $uri->toString() . '&link=' . urlencode($post_link);
 
         if (!$form)
         {
@@ -90,7 +92,7 @@ class JemControllerMailto extends JemControllerForm
         unset($headers, $fields);
 
         $siteName = $app->get('sitename');
-        $link     = JemMailtoHelper::validateHash($this->input->post->get('link', '', 'post'));
+        $link = JemMailtoHelper::validateHash($input->post->get('link', '', 'raw'));
 
         // Verify that this is a local link
         if (!$link || !Uri::isInternal($link))
