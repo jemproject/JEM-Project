@@ -861,6 +861,7 @@ class com_jemInstallerScript
         $folders = array(
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
+            '/plugins/search/jem',
             '/media/com_jem/images/flags/w20-png',
             '/components/com_jem/common/views/tmpl/alternative',
             '/components/com_jem/views/attendees/tmpl/alternative',

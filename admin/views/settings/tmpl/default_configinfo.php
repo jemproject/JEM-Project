@@ -33,7 +33,6 @@ use Joomla\CMS\Language\Text;
 				  "plg_content_jemlistevents" 	=> "COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS",
 				  "plg_content_jemembed" 		=> "COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS",
 				  "plg_finder_jem" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_FINDER",
-				  "plg_search_jem" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_SEARCH",
 				  "plg_jem_comments" 			=> "COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS",
 				  "plg_jem_mailer" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_MAILER",
 				  "plg_jem_demo" 				=> "COM_JEM_MAIN_CONFIG_VS_PLG_DEMO",
