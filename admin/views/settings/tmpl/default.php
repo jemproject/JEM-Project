@@ -442,6 +442,7 @@ function registraoff()
                             <div class="width-50 fltrt">
                                 <?php echo $this->loadTemplate('evvenues'); ?>
                                 <?php echo $this->loadTemplate('evregistration'); ?>
+                                <?php echo $this->loadTemplate('evlinks'); ?>
                             </div>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>

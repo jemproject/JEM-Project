@@ -256,11 +256,35 @@ class JemModelEvent extends ItemModel
         # Get event attachments
         $this->_item[$pk]->attachments = JemAttachment::getAttachments('event' . $this->_item[$pk]->did);
 
+        # Get event links
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('event_id') . ' = ' . (int) $this->_item[$pk]->did)
+            ->order($db->quoteName('ordering') . ' ASC');
+        $db->setQuery($query);
+        $links = $db->loadObjectList();
+
+        if ($links) {
+            foreach ($links as &$link) {
+                // Flatten JSON params into link properties
+                if (!empty($link->params)) {
+                    $linkParams = json_decode($link->params, true);
+                    if (is_array($linkParams)) {
+                        foreach ($linkParams as $key => $value) {
+                            $link->$key = $value;
+                        }
+                    }
+                }
+            }
+        }
+        $this->_item[$pk]->event_links = $links ?: array();
+
         # Get venue attachments
         $this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
         // Define Booked
-        $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('SUM(places)');
         $query->from('#__jem_register');

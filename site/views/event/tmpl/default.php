@@ -222,6 +222,32 @@ if ($jemsettings->oldevent > 0) {
                     } else {
                         echo $this->item->text;
                     }
+					
+                   if (!empty($this->event_links)) : ?>
+                        <div class="jem-event-links mt-3 mb-3">
+                            <div class="d-flex flex-wrap gap-2">
+                                <?php foreach ($this->event_links as $link) : ?>
+                                    <?php
+                                        $target = $link->target ?? '_blank';
+                                        $rel    = ($target === '_blank') ? 'rel="noopener noreferrer"' : '';
+                                    ?>
+                                    <a href="<?php echo $link->url; ?>"
+                                       target="<?php echo $target; ?>"
+                                       class="<?php echo $link->custom_class ?: 'btn btn-outline-primary'; ?>"
+                                       <?php echo $rel; ?>>
+
+                                        <?php if (!empty($link->image)) : ?>
+                                            <img src="<?php echo $link->image; ?>" alt="" style="height: 1.2em;" class="me-1" />
+                                        <?php elseif (!empty($link->icon)) : ?>
+                                            <span class="<?php echo $link->icon; ?> me-1" aria-hidden="true"></span>
+                                        <?php endif; ?>
+
+                                        <?php echo htmlspecialchars($link->title); ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif;
                 }
                 /* optional teaser intro text for guests - NOT SUPPORTED YET */
                 elseif (0 /*$params->get('event_show_noauth') == true and  $user->get('guest')*/ ) {

@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\Database\ParameterType;
 
 require_once __DIR__ . '/admin.php';
 
@@ -118,7 +120,7 @@ class JemModelEvent extends JemModelAdmin
     {
         $jemsettings = JemAdmin::config();
 
-        if ($item = parent::getItem($pk)){
+        if ($item = parent::getItem($pk)) {
             // Convert the params field to an array.
             // (this may throw an exception - but there is nothings we can do)
             $registry = new Registry;
@@ -137,16 +139,43 @@ class JemModelEvent extends JemModelAdmin
             $query = $db->getQuery(true);
             $query->select('SUM(places)');
             $query->from('#__jem_register');
-            $query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
+            $query->where(array('event= ' . $db->quote($item->id), 'status=1', 'waiting=0'));
 
             $db->setQuery($query);
             $res = $db->loadResult();
             $item->booked = $res;
 
-            $files = JemAttachment::getAttachments('event'.$item->id);
+            $files = JemAttachment::getAttachments('event' . $item->id);
             $item->attachments = $files;
 
-            if ($item->id){
+            // Load links of events
+            if ($item->id) {
+                $query = $db->getQuery(true)
+                    ->select('*')
+                    ->from($db->quoteName('#__jem_links'))
+                    ->where($db->quoteName('event_id') . ' = ' . (int) $item->id)
+                    ->order($db->quoteName('ordering') . ' ASC');
+
+                $db->setQuery($query);
+                $links = $db->loadObjectList();
+
+                if ($links) {
+                    foreach ($links as &$link) {
+                        if (!empty($link->params)) {
+                            $linkParams = json_decode($link->params, true);
+                            if (is_array($linkParams)) {
+                                foreach ($linkParams as $key => $value) {
+                                    $link->$key = $value;
+                                }
+                            }
+                        }
+                    }
+                }
+                $item->event_links = $links;
+            }
+            
+
+            if ($item->id) {
                 // Store current recurrence values
                 $item->recurr_bak = new stdClass;
                 foreach (get_object_vars($item) as $k => $v) {
@@ -546,6 +575,22 @@ class JemModelEvent extends JemModelAdmin
                 if (($table->recurrence_number > 0) && ($table->dates != null)) {
                     JemHelper::cleanup(2); // 2 = force on save, needs special attention
                 }
+
+                // Store links event
+                if (isset($data['event_links']))
+                {
+                    if (!$this->validateLinkData($data['event_links']))
+                    {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_VALIDATE_LINKS'));
+                        return false;
+                    }
+
+                    if (!$this->saveLinks($pk, $data['event_links']))
+                    {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+                        return false;
+                    }
+                }
             }
         } else {
             // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
@@ -640,6 +685,151 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return $saved;
+    }
+
+
+    /**
+     * Security validation for the link data (Joomla 5 standard)
+     *
+     * @param   array  $data  The links data
+     * @return  bool          True if valid
+     */
+    public function validateLinkData($data)
+    {
+        if (empty($data)) return true;
+
+        $jemsettings = JemHelper::config();
+
+        $allowedExts = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_extensions ?? 'jpg,jpeg,png,gif,webp,svg'));
+        $allowedSchemes = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_schemes ?? 'http,https,mailto,tel'));
+
+        foreach ($data as $link) {
+            $url = trim($link['url'] ?? '');
+
+            if (empty($url)) {
+                $this->setError(\Joomla\CMS\Language\Text::_('COM_JEM_EVENT_ERROR_URL_REQUIRED'));
+                return false;
+            }
+
+            // 1. VALIDACIÓN DE LA URL (Destino del enlace)
+            $urlScheme = parse_url($url, PHP_URL_SCHEME);
+            if (!$urlScheme || !in_array(strtolower($urlScheme), $allowedSchemes)) {
+                $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
+                return false;
+            }
+
+            if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url)));
+                return false;
+            }
+
+            // 2. VALIDACIÓN DE LA IMAGEN (Solo local)
+            if (!empty($link['image'])) {
+                $img = $link['image'];
+
+                // Extraemos solo el path eliminando query strings de Joomla 5 (?width=...)
+                $imgCleanPath = parse_url($img, PHP_URL_PATH);
+                $cleanPath = \Joomla\CMS\Filesystem\Path::clean($imgCleanPath);
+
+                // Seguridad: Evitar saltos de directorio (../)
+                if (strpos($cleanPath, '..') !== false) {
+                    $this->setError(\Joomla\CMS\Language\Text::_('COM_JEM_EVENT_ERROR_UNSAFE_PATH'));
+                    return false;
+                }
+
+                // Validar extensión permitida
+                $ext = strtolower(\Joomla\CMS\Filesystem\File::getExt($cleanPath));
+                if (!in_array($ext, $allowedExts)) {
+                    $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_EXTENSION', $ext));
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.
+     * Compatible with Joomla 4 and 5.
+     *
+     * @param   int    $pk    The event ID
+     * @param   array  $data  The links data from the subform
+     * @return  bool          True on success
+     */
+    /**
+     * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.
+     * Ordering is forced to integer to avoid SQL Error 1366.
+     *
+     * @param   int    $pk    The event ID
+     * @param   array  $data  The links data from the subform
+     * @return  bool          True on success
+     */
+    public function saveLinks($pk, $data)
+    {
+        $db   = $this->getDbo();
+        $user = \Joomla\CMS\Factory::getUser();
+        $now  = \Joomla\CMS\Factory::getDate()->toSql();
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('event_id') . ' = ' . (int) $pk)
+            ->order($db->quoteName('ordering') . ' ASC');
+
+        $db->setQuery($query);
+        $existingIds = $db->loadColumn() ?: [];
+        $keptIds = [];
+
+        if (!empty($data)) {
+            $rowOrder = 0;
+
+            foreach ($data as $item) {
+                if (empty($item['url'])) continue;
+
+                $link = new \stdClass();
+                $link->event_id = (int) $pk;
+                $link->type     = $item['type'] ?? 'info';
+                $link->title    = $item['title'] ?? '';
+                $link->url      = $item['url'];
+                $link->ordering = (int) $rowOrder++;
+                $link->state    = 1;
+
+                $link->params = json_encode([
+                    'target'       => $item['target'] ?? '_blank',
+                    'icon'         => $item['icon'] ?? '',
+                    'image'        => $item['image'] ?? '',
+                    'custom_class' => $item['custom_class'] ?? ''
+                ]);
+
+                if (!empty($item['id']) && in_array($item['id'], $existingIds)) {
+                    $link->id          = (int) $item['id'];
+                    $link->modified_by = $user->id;
+                    $link->modified    = $now;
+
+                    $db->updateObject('#__jem_links', $link, 'id');
+                    $keptIds[] = $link->id;
+                } else {
+                    $link->created_by  = $user->id;
+                    $link->created     = $now;
+                    $link->modified_by = null;
+                    $link->modified    = null;
+
+                    $db->insertObject('#__jem_links', $link);
+                }
+            }
+        }
+
+        $toDelete = array_diff($existingIds, $keptIds);
+        if (!empty($toDelete)) {
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', array_map('intval', $toDelete)) . ')');
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        return true;
     }
 
 

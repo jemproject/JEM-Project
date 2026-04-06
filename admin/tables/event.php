@@ -37,7 +37,7 @@ class JemTableEvent extends Table
             $array['registra'] = 0 ;
         }
         if(isset($array['contactid'])){
-            $array['contactid'] = (int) $array['contactid'];
+            $array['contactid'] = $array['contactid'];
         }
         if (!isset($array['unregistra'])) {
             $array['unregistra'] = 0 ;
