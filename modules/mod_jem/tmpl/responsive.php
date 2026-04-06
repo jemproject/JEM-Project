@@ -9,106 +9,70 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-// Extract parameters
+$app = Factory::getApplication();
+$document = $app->getDocument();
+$uri = Uri::getInstance();
+
 $highlight_featured = $params->get('highlight_featured');
-$displayorder       = $params->get('display_order', 0);
-$showtitle          = $params->get('showtitle');
-$showvenue          = $params->get('showvenue');
-$linkloc            = $params->get('linkloc');
-$linkdet            = $params->get('linkdet');
-$showiconcountry    = $params->get('showiconcountry');
-$settings           = JemHelper::config();
-$baseUri            = Uri::getInstance()->base();
-
-$flagPathRaw = $settings->flagicons_path;
-$flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
-$flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
-
-$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
+$showtitloc = $params->get('showtitloc');
+$linkloc = $params->get('linkloc');
+$linkdet = $params->get('linkdet');
+$showiconcountry = $params->get('showiconcountry');
+$settings = JemHelper::config();
 ?>
 
-<div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulebasic">
-    <?php if (count($list) > 0) : ?>
-        <ul class="jemmod" style="list-style: none; padding: 0; margin: 0;">
-            <?php foreach ($list as $item) :
-                $isFeatured = $highlight_featured && $item->featured;
-                $eventClass = 'event-info' . ($isFeatured ? ' highlight_featured' : '');
-                $boldStyle  = $isFeatured ? 'font-weight: bold;' : 'font-weight: normal;';
-
-                // Block: Title
-                $blockTitle = '';
-                if ($showtitle) {
-                    $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'" '.$linkStyle.'>'.$item->title.'</a>' : $item->title;
-                    $blockTitle = '<div class="event-title">' . $contentTitle . '</div>';
-                }
-
-                // Block: Date
-                $contentDate = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'" '.$linkStyle.'>'.$item->dateinfo.'</a>' : $item->dateinfo;
-                $blockDate = '<div class="event-date" style="font-size: 0.95em;">' . $contentDate . '</div>';
-
-                // Block: Venue
-                $blockVenue = '';
-                if ($showvenue && !empty($item->venue)) {
-                    $contentVenue = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
-                    $blockVenue = '<div class="event-venue" style="font-style: italic; font-size: 0.9em;">' . $contentVenue . '</div>';
-                }
-                ?>
-                <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px;">
-
-                    <div class="event-icon" style="padding-top: 3px; flex-shrink: 0;">
-                        <i class="far fa-calendar-alt"></i>
-                    </div>
-
-                    <div class="jem-event-wrapper" style="display: flex; align-items: flex-start; gap: 12px; width: 100%;">
-
-                        <?php // Flag Section ?>
-                        <?php if ($showiconcountry == 1 && !empty($item->country)) :
-                            $flagFile = $baseUri . $flagPath . strtolower($item->country) . '.' . $flagExt; ?>
-                            <div class="jem-flag" style="flex-shrink: 0;">
-                                <img src="<?php echo $flagFile; ?>" alt="<?php echo $item->country; ?>" style="display: block; max-width: 40px; height: auto;">
-                            </div>
-                        <?php endif; ?>
-
-                        <?php // Content Section with Dynamic Order ?>
-                        <div class="jem-event-content <?php echo $eventClass; ?>" style="display: flex; flex-direction: column; line-height: 1.4; <?php echo $boldStyle; ?> width: 100%;">
-                            <?php
-                            switch ($displayorder) {
-                                case 1:
-                                    echo $blockTitle . $blockVenue . $blockDate;
-                                    break;
-                                case 2:
-                                    echo $blockVenue . $blockTitle . $blockDate;
-                                    break;
-                                case 3:
-                                    echo $blockVenue . $blockDate . $blockTitle;
-                                    break;
-                                case 4:
-                                    echo $blockDate . $blockTitle . $blockVenue;
-                                    break;
-                                case 5:
-                                    echo $blockDate . $blockVenue . $blockTitle;
-                                    break;
-                                case 0:
-                                default:
-                                    echo $blockTitle . $blockDate . $blockVenue;
-                                    break;
-                            }
-                            ?>
-                        </div>
-                    </div>
-
-                    <?php echo $item->dateschema; ?>
-                    <meta itemprop="name" content="<?php echo htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8'); ?>" />
-                    <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                        <meta itemprop="name" content="<?php echo htmlspecialchars($item->venue, ENT_QUOTES, 'UTF-8'); ?>" />
-                    </div>
+<div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic">
+    <?php if (count($list)): ?>
+        <ul>
+            <?php foreach ($list as $item) : ?>
+                <li>
+                    <i class="far fa-calendar-alt"></i>
+                    <?php if($highlight_featured && $item->featured): ?>
+                    <span class="event-title highlight_featured">
+          <?php else : ?>
+            <span class="event-title">
+          <?php endif; ?>
+                <?php if (($showiconcountry == 1) && !empty($item->country)) : ?>
+                    <?php $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
+                    $flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
+                    $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
+                    echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
+                <?php endif; ?>
+                <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
+                    <a href="<?php echo $item->venueurl; ?>">
+              <?php echo $item->text; ?>
+            </a>
+                <?php elseif ($showtitloc == 1 && $linkdet == 2) : ?>
+                    <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->text); ?>">
+              <?php echo $item->text; ?>
+            </a>
+                <?php else :
+                    echo $item->text;
+                endif; ?>
+        </span>
+        <br>
+        <?php if($highlight_featured && $item->featured): ?>
+            <span class="event-title highlight_featured">
+        <?php else : ?>
+            <span class="event-title">
+        <?php endif; ?>
+                <?php if ($linkdet == 1) : ?>
+                    <a href="<?php echo $item->link; ?>" title="<?php echo strip_tags($item->dateinfo); ?>">
+          <?php echo $item->dateinfo; ?>
+        </a>
+                <?php else :
+                    echo $item->dateinfo;
+                endif; ?>
+        </span>
                 </li>
             <?php endforeach; ?>
         </ul>
     <?php else : ?>
-        <p><?php echo Text::_('MOD_JEM_NO_EVENTS'); ?></p>
+        <?php echo Text::_('COM_JEM_NO_EVENTS'); ?>
     <?php endif; ?>
 </div>

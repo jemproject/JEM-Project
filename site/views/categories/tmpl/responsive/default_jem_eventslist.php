@@ -14,6 +14,7 @@ use Joomla\CMS\Router\Route;
 
 $uri = Uri::getInstance();
 if (empty($this->catrow->events)) { return; }
+
 ?>
 
 <style>

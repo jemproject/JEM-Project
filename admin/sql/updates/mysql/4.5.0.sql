@@ -9,4 +9,6 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 
 -- change values
 
+ALTER TABLE `#__jem_events` MODIFY `contactid` VARCHAR(100);
+
 -- update values

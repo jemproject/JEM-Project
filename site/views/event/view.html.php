@@ -55,6 +55,7 @@ class JemViewEvent extends JemView
         $edit_att            = new \stdClass();
         $this->params      = $app->getParams('com_jem');
         $this->item        = $this->get('Item');
+        $this->contacts    = $this->get('Contacts');
         $this->print       = $app->input->getBool('print', false);
         $this->state       = $this->get('State');
         $this->user        = $user;
@@ -518,20 +519,20 @@ class JemViewEvent extends JemView
         }
 
         $showDateInTitle = $this->item->params->get('show_date_in_title', $this->jemsettings->show_date_in_title ?? 0);
-            if ($showDateInTitle) {
-                // add date to browser title
-                if (!empty($this->item->dates)) {
-                    $startDate = JemOutput::formatdate($this->item->dates);
-                    $title .= ', ' . $startDate;
-                    // add end date to browser title, if availaböe
-                    if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
-                        $endDate = JemOutput::formatdate($this->item->enddates);
-                        $title .= ' - ' . $endDate;
-                    }
-                } else {
-                    $title .= ', ' . Text::_('COM_JEM_OPEN_DATE');
+        if ($showDateInTitle) {
+            // add date to browser title
+            if (!empty($this->item->dates)) {
+                $startDate = JemOutput::formatdate($this->item->dates);
+                $title .= ', ' . $startDate;
+                // add end date to browser title, if availaböe
+                if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
+                    $endDate = JemOutput::formatdate($this->item->enddates);
+                    $title .= ' - ' . $endDate;
                 }
+            } else {
+                $title .= ', ' . Text::_('COM_JEM_OPEN_DATE');
             }
+        }
         $this->document->setTitle($title);
 
         if ($this->params->get('robots')) {

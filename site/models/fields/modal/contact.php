@@ -30,81 +30,78 @@ class JFormFieldModal_Contact extends FormField
      * Method to get the field input markup
      */
     protected function getInput()
-    {
-        $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $wa       = $document->getWebAssetManager();
+{
+    $app      = Factory::getApplication();
+    $document = $app->getDocument();
+    $wa       = $document->getWebAssetManager();
+    
+    // Usamos un ID único para el modal basado en el ID del campo
+    $modalId = 'modal_' . $this->id;
 
-        // Build the script
-        $script = array();
-        $script[] = '    function jSelectContact_'.$this->id.'(id, name, object) {';
-        $script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
-        $script[] = '        document.getElementById("'.$this->id.'_name").value = name;';
-        // $script[] = '        SqueezeBox.close();';
-        $script[] = '        $("#contact-modal").modal("hide");';
-        $script[] = '    }';
+    // Build the script
+    $script = array();
+    $script[] = '    function jSelectContact_'.$this->id.'(id, name, object) {';
+    $script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
+    $script[] = '        document.getElementById("'.$this->id.'_name").value = name;';
+    $script[] = '        bootstrap.Modal.getInstance(document.getElementById("' . $modalId . '")).hide();';
+    $script[] = '    }';
 
-        // Add to document head
-        $wa->addInlineScript(implode("\n", $script));
+    $wa->addInlineScript(implode("\n", $script));
 
-        // Setup variables for display
-        $html = array();
-        $link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosecontact&amp;tmpl=component&amp;function=jSelectContact_'.$this->id;
+    $currentValues = $this->value ? $this->value : '';
+    $link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
+          . '&function=jSelectContact_' . $this->id
+          . '&selected=' . $currentValues; 
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('name');
-        $query->from('#__contact_details');
-        $query->where(array('id='.(int)$this->value));
-        $db->setQuery($query);
+    $db = Factory::getContainer()->get('DatabaseDriver');
+    $contactNames = array();
 
-        try
-        {
-            $contact = $db->loadResult();
+    if (!empty($this->value)) {
+        // Limpiamos los IDs para la consulta
+        $ids = explode(',', $this->value);
+        $ids = array_map('intval', $ids);
+        
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('name'))
+            ->from($db->quoteName('#__contact_details'))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+
+        try {
+            $db->setQuery($query);
+            $contactNames = $db->loadColumn();
         }
-        catch (RuntimeException $e)
-        {
+        catch (RuntimeException $e) {
             $app->enqueueMessage($e->getMessage(), 'warning');
         }
-
-        if (empty($contact)) {
-            $contact = Text::_('COM_JEM_SELECT_CONTACT');
-        }
-        $contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
-
-        // The current contact input field
-        $html[] = '  <input type="text" id="'.$this->id.'_name" class="form-control readonly inputbox valid form-control-success" value="'.$contact.'" style="display:inline-block;" disabled="disabled" size="35" />';
-
-        // The contact select button
-        $html[] = HTMLHelper::_(
-            'bootstrap.renderModal',
-            'contact-modal',
-            array(
-                'url'    => $link.'&amp;'.Session::getFormToken().'=1',
-                'title'  => Text::_('COM_JEM_SELECT'),
-                'width'  => '800px',
-                'height' => '450px',
-                'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
-            )
-        );
-        $html[] ='<button type="button" class="btn btn-success button-select" data-bs-toggle="modal" data-bs-target="#contact-modal">'.Text::_('COM_JEM_SELECT').'</button>';
-
-        // The active contact id field
-        if (0 == (int)$this->value) {
-            $value = '';
-        } else {
-            $value = (int)$this->value;
-        }
-
-        // class='required' for client side validation
-        $class = '';
-        if ($this->required) {
-            $class = ' class="required modal-value"';
-        }
-
-        $html[] = '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
-
-        return implode("\n", $html);
     }
+
+    $displayText = !empty($contactNames) ? implode(', ', $contactNames) : Text::_('COM_JEM_SELECT_CONTACT');
+    $displayText = htmlspecialchars($displayText, ENT_QUOTES, 'UTF-8');
+
+    $html = array();
+    $html[] = '<div class="input-group" style="width: auto; flex-grow: 1;">';
+    $html[] = '  <input type="text" id="'.$this->id.'_name" class="form-control readonly" disabled="disabled" value="'.$displayText.'" readonly size="35" />';
+    $html[] = '  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
+    $html[] = '    <i class="icon-user"></i> ' . Text::_('COM_JEM_SELECT');
+    $html[] = '  </button>';
+    $html[] = '</div>';
+    $html[] = HTMLHelper::_(
+        'bootstrap.renderModal',
+        $modalId,
+        array(
+            'url'    => $link . '&' . Session::getFormToken() . '=1',
+            'title'  => Text::_('COM_JEM_SELECT'),
+            'width'  => '800px',
+            'height' => '450px',
+            'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
+        )
+    );
+
+    // Input Hidden (El que realmente guarda los IDs en la base de datos)
+    $class = $this->required ? ' class="required modal-value"' : '';
+    $html[] = '<input type="hidden" id="' . $this->id . '_id"' . $class . ' name="' . $this->name . '" value="' . htmlspecialchars($currentValues, ENT_QUOTES, 'UTF-8') . '" />';
+
+    return implode("\n", $html);
+}
 }
 ?>

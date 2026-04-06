@@ -23,15 +23,15 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
 <div class="register">
     <dl class="jem-dl floattext">
-        <?php $maxplaces      = (int)$this->item->maxplaces; ?>
-        <?php $reservedplaces = (int)$this->item->reservedplaces; ?>
-        <?php $minbookeduser  = (int)$this->item->minbookeduser; ?>
-        <?php $maxbookeduser  = (int)$this->item->maxbookeduser; ?>
-        <?php $booked         = (int)$this->item->booked; ?>
-        <?php $waitinglist    = (int)$this->item->waitinglist; ?>
+        <?php $maxplaces        = (int)$this->item->maxplaces; ?>
+        <?php $reservedplaces   = (int)$this->item->reservedplaces; ?>
+        <?php $minbookeduser    = (int)$this->item->minbookeduser; ?>
+        <?php $maxbookeduser    = (int)$this->item->maxbookeduser; ?>
+        <?php $booked           = (int)$this->item->booked; ?>
+        <?php $waitinglist      = (int)$this->item->waitinglist; ?>
         <?php $seriesbooking    = (int)$this->item->seriesbooking; ?>
 
-        <?php if ($this->settings->get('event_show_registration_counters','1')) : ?>
+        <?php if($this->settings->get('event_show_registration_counters','1')) : ?>
             <?php if ($maxplaces > 0) : ?>
                 <dt class="register max-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAX_PLACES'); ?>"><?php echo Text::_('COM_JEM_MAX_PLACES'); ?>:</dt>
                 <dd class="register max-places"><?php echo $maxplaces; ?></dd>
@@ -58,6 +58,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                 <dt class="register waitinglist-places hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>"><?php echo Text::_('COM_JEM_WAITING_PLACES'); ?>:</dt>
                 <dd class="register waitinglist-places"><?php echo $this->numWaitingPlaces; ?></dd>
             <?php endif; ?>
+
         <?php endif; /* Not show counters registration */ ?>
 
         <?php
@@ -190,7 +191,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                                     // User has no avatar
                                     else :
                                         $nouseravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
-                                        echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+                                        echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>'. $registedplaces;
                                     endif;
                                 else :
                                     // only show the username with link to profile
@@ -232,10 +233,20 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
             <dt class="register registration hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_YOUR_REGISTRATION'); ?>"><?php echo Text::_('COM_JEM_YOUR_REGISTRATION'); ?>:</dt>
             <dd class="register registration">
                 <?php
+                $uri = Uri::getInstance();
+                $returnUrl = $uri->toString();
+                $urlLogin   = Route::_($uri->root() . 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl));
+
                 if ($this->item->published != 1) {
                     echo Text::_('COM_JEM_WRONG_STATE_FOR_REGISTER');
                 } elseif (!$this->showRegForm) {
-                    echo Text::_('COM_JEM_NOT_ALLOWED_TO_REGISTER');
+                    if(!$this->user->id){ ?>
+                        <button class="btn btn-sm btn-warning text-white px-4 py-2" style="border: none; cursor: pointer; transition: background-color 0.3s;"
+                                type="button" onclick="location.href='<?php echo $urlLogin; ?>'"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+                        <?php
+                    }else{
+                        echo Text::_('COM_JEM_NOT_ALLOWED_TO_REGISTER');
+                    }
                 } else {
                     switch ($this->formhandler) {
                         case 0:
@@ -248,15 +259,11 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             if ($this->item->requestanswer) { ?>
                                 <span class="badge rounded-pill text-light bg-secondary">
                                     <?php echo Text::_('COM_JEM_SEND_UNREGISTRATION');?>
-                                    </span>
-                                <?php
-                            }
-                            $uri = Uri::getInstance();
-                            $returnUrl = $uri->toString();
-                            $urlLogin   = Route::_($uri->root() . 'index.php?option=com_users&view=login&return='.base64_encode($returnUrl)); ?>
-                            <button class="btn btn-sm btn-warning" onclick="location.href='<?php echo $urlLogin; ?>'"
-                                    type="button"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
+                                </span>
+                            <?php } ?>
 
+                            <button class="btn btn-sm btn-warning text-white px-4 py-2" style="border: none; cursor: pointer; transition: background-color 0.3s;"
+                                    type="button" onclick="location.href='<?php echo $urlLogin; ?>'"><?php echo Text::_('COM_JEM_LOGIN_FOR_REGISTER'); ?></button>
                             <?php //insert Breezing Form hack here
                             /*<input class="btn btn-secondary" type="button" value="<?php echo Text::_('COM_JEM_SIGNUPHERE_AS_GUEST'); ?>" onClick="window.location='/index.php?option=com_breezingforms&view=form&Itemid=6089&event=<?php echo $this->item->title; ?>&date=<?php echo $this->item->dates ?>&conemail=<?php echo $this->item->conemail ?>';"/>
                             */?>
