@@ -112,7 +112,7 @@ use Joomla\CMS\Factory;
         // Contact of event - Check if contact_name is not empty (covers NULL or empty strings)
         $contact = '';
         if (!empty($row->contact_name)) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
+            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACTS').': </span>';
             $contact .= $this->escape($row->contact_name);
             $contact .= '</div>';
         } else {

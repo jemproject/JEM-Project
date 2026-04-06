@@ -355,6 +355,8 @@ class JemViewEditevent extends JemView
         /*    $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS')); */ // data security
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
+        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_COUNTRY'));
+        $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_CATEGORY'));
         $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
         // search filter
