@@ -467,7 +467,7 @@ if ($jemsettings->oldevent > 0) {
                                         <?php endif; ?>
                                     </span>
                                     <?php if (in_array('position', $selectedFields) && !empty($contact->conposition)) : ?>
-                                        <span class="con-position"><?php echo $this->escape($contact->conposition); ?></span>
+                                         <span class="con-position"><i class="fas fa-briefcase"></i> <?php echo $this->escape($contact->conposition); ?></span>
                                     <?php endif; ?>
                                 </dt>
 
@@ -493,15 +493,15 @@ if ($jemsettings->oldevent > 0) {
                                     <?php endif; ?>
 
                                     <?php if (in_array('city', $selectedFields) && !empty($contact->concity)) : ?>
-                                        <span><?php echo $this->escape($contact->concity); ?></span>
+                                        <span><i class="fas fa-city"></i> <?php echo $this->escape($contact->concity); ?></span>
                                     <?php endif; ?>
 
                                     <?php if (in_array('state', $selectedFields) && !empty($contact->constate)) : ?>
-                                        <span><?php echo $this->escape($contact->constate); ?></span>
+                                        <span><i class="fas fa-map"></i> <?php echo $this->escape($contact->constate); ?></span>
                                     <?php endif; ?>
 
                                     <?php if (in_array('country', $selectedFields) && !empty($contact->concountry)) : ?>
-                                        <span><?php echo $this->escape($contact->concountry); ?></span>
+                                        <span><i class="fas fa-flag"></i> <?php echo $this->escape($contact->concountry); ?></span>
                                     <?php endif; ?>
                                 </dd>
                             </dl>
@@ -515,7 +515,6 @@ if ($jemsettings->oldevent > 0) {
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
-
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
