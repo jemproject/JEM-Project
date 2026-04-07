@@ -343,7 +343,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     <div class="con_details d-flex flex-wrap" style="font-size: 0.9em; color: #666; gap: 10px 20px;">
 
                                         <?php if (in_array('position', $selectedFields) && !empty($contact->conposition)) : ?>
-                                            <span><i class="fas fa-briefcase"></i> <?php echo $this->escape($contact->conposition); ?></span>
+                                            <span class="con-position"><i class="fas fa-briefcase"></i> <?php echo $this->escape($contact->conposition); ?></span>
                                         <?php endif; ?>
 
                                         <?php if (in_array('phone', $selectedFields) && !empty($contact->contelephone)) : ?>
