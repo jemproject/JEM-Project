@@ -96,22 +96,25 @@ use Joomla\CMS\Factory;
         $eventid = $this->escape($row->id);
 
         //Contact
-        $contactname = '';
-        if($row->contactid) {
+        $contact = '';
+
+        if ($row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->select('name');
-            $query->from('#__contact_details');
-            $query->where(array('id='.(int)$row->contactid));
+            $ids = array_map('intval', explode(',', $row->contactid));
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('name'))
+                ->from($db->quoteName('#__contact_details'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+
             $db->setQuery($query);
-            $contactname = $db->loadResult();
-        }
-        if ($contactname) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACTS').': </span>';
-            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
-            $contact .= '</div>';
-        } else {
-            $contact = '';
+            $contactNames = $db->loadColumn();
+
+            if ($contactNames) {
+                $contact  = '<div class="contact"><span class="text-label">' . Text::_('COM_JEM_CONTACTS') . ': </span>';
+                $contact .= $this->escape(implode(', ', $contactNames));
+                $contact .= '</div>';
+            }
         }
 
         //initialize variables

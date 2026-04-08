@@ -109,14 +109,26 @@ use Joomla\CMS\Factory;
         $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
         $eventid = $this->escape($row->id);
 
-        // Contact of event - Check if contact_name is not empty (covers NULL or empty strings)
+        //Contact
         $contact = '';
-        if (!empty($row->contact_name)) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACTS').': </span>';
-            $contact .= $this->escape($row->contact_name);
-            $contact .= '</div>';
-        } else {
-            $contact = '';
+
+        if ($row->contactid) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $ids = array_map('intval', explode(',', $row->contactid));
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('name'))
+                ->from($db->quoteName('#__contact_details'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+
+            $db->setQuery($query);
+            $contactNames = $db->loadColumn();
+
+            if ($contactNames) {
+                $contact  = '<div class="contact"><span class="text-label">' . Text::_('COM_JEM_CONTACTS') . ': </span>';
+                $contact .= $this->escape(implode(', ', $contactNames));
+                $contact .= '</div>';
+            }
         }
 
         //initialize variables
