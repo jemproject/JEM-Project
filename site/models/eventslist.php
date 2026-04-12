@@ -95,7 +95,11 @@ class JemModelEventslist extends ListModel
         $task        = $app->input->getCmd('task', '');
         $format      = $app->input->getCmd('format', false);
         $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
-        $params      = $app->getParams();
+        $activeMenu = $app->getMenu()->getActive();
+        $params = $activeMenu ? $activeMenu->getParams() : $app->getParams();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $currentItemid = $activeMenu ? $activeMenu->id : $app->input->getInt('Itemid', 0);
+        $itemid        = $app->input->getInt('id', 0) . ':' . $currentItemid;
 
         if (!$task) {
             $task = ($params->get('show_archived_events') ? 'archive' : '');
@@ -103,7 +107,6 @@ class JemModelEventslist extends ListModel
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
-            /* in J! 3.3.6 limitstart is removed from request - but we need it! */
             if ($app->input->get('limitstart', null, 'int') === null) {
                 $app->setUserState('com_jem.eventslist.' . $itemid . '.limitstart', 0);
             }
@@ -111,14 +114,13 @@ class JemModelEventslist extends ListModel
             $limit      = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.limit', 'limit', $jemsettings->display_num, 'int');
             $this->setState('list.limit', $limit);
             $limitstart = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.limitstart', 'limitstart', 0, 'int');
-            // correct start value if required
             $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
             $this->setState('list.start', $limitstart);
         }
 
         # Search - variables
         $search     = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_search', 'filter_search', '', 'string');
-        $this->setState('filter.filter_search', $search); // must be escaped later
+        $this->setState('filter.filter_search', $search);
 
         $filtertype = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
@@ -129,26 +131,34 @@ class JemModelEventslist extends ListModel
         # Search - Filter by setting menu
         $today = new Date('now', $app->get('offset'));
 
-        $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
-        $dateFromValue = null;
-        $whereFrom = null;
-        if ($filterDaysBefore > 0) {
-            $dateFromValue = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-            $whereFrom = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $dateFromValue . '") >= 0';
-        }
-        if (!empty($whereFrom)) {
-            $this->setState('filter.calendar_from', $whereFrom);
-        } else {
-            $this->setState('filter.calendar_from', null);
-        }
+        // Use 'all' as a fallback if the parameter is missing or empty
+        $filterDaysBefore = $params->get('tablefiltereventfrom', 'all');
+        if ($filterDaysBefore === '') { $filterDaysBefore = 'all'; }
 
-        $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
-        $whereTo = null;
-        $dateToValue = null;
-        if ($filterDaysAfter > 0) {
-            $dateToValue = (clone $today)->modify('+' . $filterDaysAfter . ' days')->format('Y-m-d');
-            $whereTo = ' DATEDIFF(a.dates, "' . $dateToValue . '") <= 0';
+        $filterDaysAfter = $params->get('tablefiltereventuntil', 'all');
+        if ($filterDaysAfter === '') { $filterDaysAfter = 'all'; }
+
+        // Persist these values in the User State for pagination
+        $app->setUserState('com_jem.eventslist.' . $itemid . '.tablefiltereventfrom', $filterDaysBefore);
+        $app->setUserState('com_jem.eventslist.' . $itemid . '.tablefiltereventuntil', $filterDaysAfter);
+
+        // Define From logic
+        $where_from = '';
+        if ($filterDaysBefore !== 'all') {
+            $daysBefore = (int)$filterDaysBefore;
+            $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
+            $where_from = '(COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . ')';
         }
+        $this->setState('filter.calendar_from', $where_from);
+
+        $whereTo = '';
+        if ($filterDaysAfter !== 'all') {
+            $daysAfter = (int)$filterDaysAfter;
+            $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
+            $whereTo = '(a.dates <= ' . $db->quote($dateTo) . ')';
+        }
+        $this->setState('filter.calendar_to', (!empty($whereTo) ? $whereTo : null));
+
         if (!empty($whereTo)) {
             $this->setState('filter.calendar_to', $whereTo);
         } else {
@@ -261,6 +271,8 @@ class JemModelEventslist extends ListModel
         }
         $this->setState('filter.groupby', array('a.id'));
     }
+
+
 
     /**
      * Method to get a all list of children categories (subtree) by $id category.
@@ -561,19 +573,18 @@ class JemModelEventslist extends ListModel
         $jubilee_show_past = $this->getState('filter.jubilee_show_past', 0);
         $published = $this->getState('filter.published', 1);
 
-        if($opendates != 2 && $ispublished <2) {
-            // Skip calendar date filtering if: Jubilee filter is active AND show_past_events is enabled
-            // - Published is 2 (archived)
-            // - The Jubilee module handles its own date matching logic
-            if ($calendar_from != '') {
-                $query->where($calendar_from);
+        if($opendates != 2 && $published < 2) {
 
-                # Si también hay un calendar_to, lo añadimos
+            // Check if calendar_from or calendar_to is set
+            if ($calendar_from != '' || $calendar_to != '') {
+                if ($calendar_from != '') {
+                    $query->where($calendar_from);
+                }
                 if ($calendar_to != '') {
                     $query->where($calendar_to);
                 }
             } else {
-                if($published<2) {
+                if($published < 2) {
                     if (empty($jubilee_filter) || !$jubilee_show_past) {
                         if ($cal_month) {
                             // Apply Month filter
@@ -590,21 +601,45 @@ class JemModelEventslist extends ListModel
                             $query->where($where_to);
                             $this->setState('filter.calendar_to', $where_to);
                         } else {
-                            // Apply menu date filters
-                            $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
-                            $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
-                            if (empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
-                                $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-                                $where_from = '( (a.dates >= ' . $db->quote($dateFrom);
-                                $where_from .= ' AND COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . ' )' . $opendates_query . ')';
-                                $query->where($where_from);
-                                $this->setState('filter.calendar_from', $where_from);
+                            // Apply menu parameters date filters
+                            // Retrieve from State to maintain consistency during pagination
+                            $filterDaysBefore = $this->getState('filter.tablefiltereventfrom');
+                            if ($filterDaysBefore === null) {
+                                $filterDaysBefore = isset($params) ? $params->get('tablefiltereventfrom', '') : '';
                             }
-                            if ($filterDaysAfter) {
-                                $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
-                                $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($dateTo) . ') <= 0' . $opendates_query . ')';
+
+                            $filterDaysAfter = $this->getState('filter.tablefiltereventuntil');
+                            if ($filterDaysAfter === null) {
+                                $filterDaysAfter = isset($params) ? $params->get('tablefiltereventuntil', '') : '';
+                            }
+
+                            $taskValue = isset($task) ? $task : '';
+
+                            // Apply from filter
+                            if ($filterDaysBefore !== '') {
+                                if (empty($taskValue) || ($taskValue == 'archive' && (int)$filterDaysBefore > 0)) {
+                                    $daysBefore = (int)$filterDaysBefore;
+                                    // Handle 0 explicitly to avoid modify() issues
+                                    $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
+
+                                    $where_from = '(COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . $opendates_query . ')';
+
+                                    $query->where($where_from);
+                                    $this->setState('filter.calendar_from', $where_from);
+                                    $this->setState('filter.tablefiltereventfrom', $filterDaysBefore);
+                                }
+                            }
+
+                            // Apply until filter
+                            if ($filterDaysAfter !== '') {
+                                $daysAfter = (int)$filterDaysAfter;
+                                // Handle 0 explicitly to avoid modify() issues
+                                $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
+
+                                $where_to = '(a.dates <= ' . $db->quote($dateTo) . $opendates_query . ')';
                                 $query->where($where_to);
                                 $this->setState('filter.calendar_to', $where_to);
+                                $this->setState('filter.tablefiltereventuntil', $filterDaysAfter);
                             }
                         }
                     }
