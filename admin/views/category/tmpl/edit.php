@@ -152,8 +152,6 @@ $wa = $this->document->getWebAssetManager();
                 </div>
             </div>
 
-
-
             <?php  $fieldSets = $this->form->getFieldsets('attribs'); ?>
             <?php foreach ($fieldSets as $name => $fieldSet) : ?>
                 <?php $label = !empty($fieldSet->label) ? $fieldSet->label : 'COM_JEM_'.$name.'_FIELDSET_LABEL'; ?>
