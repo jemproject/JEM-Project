@@ -1025,29 +1025,26 @@ class JemHelper
     /**
      * return initialized calendar tool class for ics export
      *
-     * @return object
+     * @return \Kigkonsult\Icalcreator\Vcalendar
      */
     static public function getCalendarTool()
     {
-        require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
+        require_once JPATH_SITE.'/components/com_jem/classes/icalcreator/autoload.php';
         $timezone_name = JemHelper::getTimeZoneName();
 
-        $vcal = new vcalendar();
-        if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
-            Folder::create(JPATH_SITE.'/cache/com_jem');
-        }
-        $vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
-        $vcal->setProperty("calscale", "GREGORIAN");
-        $vcal->setProperty('method', 'PUBLISH');
+        $vcal = \Kigkonsult\Icalcreator\Vcalendar::factory([
+            \Kigkonsult\Icalcreator\IcalInterface::UNIQUE_ID => 'com_jem',
+        ]);
+        $vcal->setCalscale('GREGORIAN');
+        $vcal->setMethod('PUBLISH');
         if ($timezone_name) {
-            $vcal->setProperty("X-WR-TIMEZONE", $timezone_name);
+            $vcal->setXprop('X-WR-TIMEZONE', $timezone_name);
         }
         return $vcal;
     }
 
     static public function icalAddEvent(&$calendartool, $event)
     {
-        require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
         $jemsettings   = JemHelper::config();
         $timezone_name = JemHelper::getTimeZoneName();
         $config        = Factory::getConfig();
@@ -1072,27 +1069,27 @@ class JemHelper
             $event->enddates = $event->dates;
         }
 
-        // start
+        // validate start date format
         if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->dates, $start_date)) {
             throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'), 0);
         }
 
-        $date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
-
         // all day event if start time is not set
         if (!$event->times) // all day !
         {
-            $dateparam = array('VALUE' => 'DATE');
+            // build start DateTime (date only)
+            $dtStart      = new \DateTime($event->dates);
+            $dtStartParams = ['VALUE' => 'DATE'];
 
-            // for ical all day events, dtend must be send to the next day
-            $event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
+            // for ical all day events, dtend must be the next day
+            $event->enddates = date('Y-m-d', strtotime($event->enddates . ' +1 day'));
 
             if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
             }
 
-            $date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
-            $dateendparam = array('VALUE' => 'DATE');
+            $dtEnd       = new \DateTime($event->enddates);
+            $dtEndParams = ['VALUE' => 'DATE'];
         }
         else // not all day events, there is a start time
         {
@@ -1100,12 +1097,11 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $date['hour'] = $start_time[1];
-            $date['min']  = $start_time[2];
-            $date['sec']  = $start_time[3];
-            $dateparam = array('VALUE' => 'DATE-TIME');
-            if ($jemsettings->ical_tz == 1) {
-                $dateparam['TZID'] = $timezone_name;
+            $tz           = $timezone_name ? new \DateTimeZone($timezone_name) : null;
+            $dtStart      = new \DateTime($event->dates . ' ' . $event->times, $tz);
+            $dtStartParams = ['VALUE' => 'DATE-TIME'];
+            if ($jemsettings->ical_tz == 1 && $timezone_name) {
+                $dtStartParams['TZID'] = $timezone_name;
             }
 
             if (!$event->endtimes || $event->endtimes == '00:00:00') {
@@ -1114,37 +1110,33 @@ class JemHelper
 
             // if same day but end time < start time, change end date to +1 day
             if ($event->enddates == $event->dates &&
-                strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
+                strtotime($event->dates . ' ' . $event->endtimes) < strtotime($event->dates . ' ' . $event->times))
             {
-                $event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
+                $event->enddates = date('Y-m-d', strtotime($event->enddates . ' +1 day'));
             }
 
             if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
             }
 
-            $date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
-
             if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/', $event->endtimes, $end_time)) {
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $date_end['hour'] = $end_time[1];
-            $date_end['min']  = $end_time[2];
-            $date_end['sec']  = $end_time[3];
-            $dateendparam = array('VALUE' => 'DATE-TIME');
-            if ($jemsettings->ical_tz == 1) {
-                $dateendparam['TZID'] = $timezone_name;
+            $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
+            $dtEndParams = ['VALUE' => 'DATE-TIME'];
+            if ($jemsettings->ical_tz == 1 && $timezone_name) {
+                $dtEndParams['TZID'] = $timezone_name;
             }
         }
 
         // item description text
-        $description = $event->title.'\\n';
-        $description .= Text::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
+        $description = $event->title . '\\n';
+        $description .= Text::_('COM_JEM_CATEGORY') . ': ' . implode(', ', $categories) . '\\n';
 
-        $link = $uri->root().JemHelperRoute::getEventRoute($event->slug);
+        $link = $uri->root() . JemHelperRoute::getEventRoute($event->slug);
         $link = Route::_($link);
-        $description .= Text::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
+        $description .= Text::_('COM_JEM_ICS_LINK') . ': ' . $link . '\\n';
 
         // location
         $location = array($event->venue);
@@ -1153,7 +1145,7 @@ class JemHelper
         }
 
         if (isset($event->postalCode) && !empty($event->postalCode) && isset($event->city) && !empty($event->city)) {
-            $location[] = $event->postalCode.' '.$event->city;
+            $location[] = $event->postalCode . ' ' . $event->city;
         } else {
             if (isset($event->postalCode) && !empty($event->postalCode)) {
                 $location[] = $event->postalCode;
@@ -1164,26 +1156,25 @@ class JemHelper
         }
 
         if (isset($event->countryname) && !empty($event->countryname)) {
-            $exp = explode(",",$event->countryname);
+            $exp = explode(",", $event->countryname);
             $location[] = $exp[0];
         }
 
         $location = implode(",", $location);
 
-        $e = new vevent();
-        $e->setProperty('summary', $event->title);
-        $e->setProperty('categories', implode(', ', $categories));
-        $e->setProperty('dtstart', $date, $dateparam);
-        if (count($date_end)) {
-            $e->setProperty('dtend', $date_end, $dateendparam);
+        // Build vevent using iCalcreator v2.41 API
+        $e = $calendartool->newVevent();
+        $e->setSummary($event->title);
+        $e->setCategories(implode(', ', $categories));
+        $e->setDtstart($dtStart, $dtStartParams);
+        $e->setDtend($dtEnd, $dtEndParams);
+        $e->setDescription($description);
+        if ($location !== '') {
+            $e->setLocation($location);
         }
-        $e->setProperty('description', $description);
-        if ($location != '') {
-            $e->setProperty('location', $location);
-        }
-        $e->setProperty('url', $link);
-        $e->setProperty('uid', 'event'.$event->id.'@'.$sitename);
-        $calendartool->addComponent($e); // add component to calendar
+        $e->setUrl($link);
+        $e->setUid('event' . $event->id . '@' . $sitename);
+
         return true;
     }
 
