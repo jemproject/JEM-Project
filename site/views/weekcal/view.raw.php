@@ -37,9 +37,8 @@ class JemViewWeekcal extends HtmlView
             $rows = $this->get('Items');
 
             // initiate new CALENDAR
-            $vcal = JemHelper::getCalendarTool();
-
-            $vcal->setConfig("filename", "events_week_" . $year . str_pad($week, 2, '0', STR_PAD_LEFT) . ".ics");
+            $vcal     = JemHelper::getCalendarTool();
+            $filename = "events_week_" . $year . str_pad($week, 2, '0', STR_PAD_LEFT) . ".ics";
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
@@ -48,7 +47,7 @@ class JemViewWeekcal extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar();
+            $vcal->returnCalendar(false, false, true, $filename);
         }
     }
 }

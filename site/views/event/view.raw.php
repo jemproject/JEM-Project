@@ -39,11 +39,11 @@ class JemViewEvent extends HtmlView
             // check individual iCal Event setting
             if ($params->get('event_show_ical_icon',1)) {
                 // initiate new CALENDAR
-                $vcal = JemHelper::getCalendarTool();
-                $vcal->setConfig( "filename", "event".$row->did.".ics" );
+                $vcal     = JemHelper::getCalendarTool();
+                $filename = "event" . $row->did . ".ics";
                 JemHelper::icalAddEvent($vcal, $row);
                 // generate and redirect output to user browser
-                $vcal->returnCalendar();
+                $vcal->returnCalendar(false, false, true, $filename);
             }
         }
     }
