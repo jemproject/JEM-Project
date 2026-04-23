@@ -138,7 +138,7 @@ class JemModelExport extends ListModel
             $categories[] = "categories";
             $header = array_merge($events, $categories);
 
-            fputcsv($csv, $header, $separator, $delimiter);
+            fputcsv($csv, $header, $separator, $delimiter, '\\');
 
             $query = $this->getListQuery();
             $items = $this->_getList($query);
@@ -148,13 +148,13 @@ class JemModelExport extends ListModel
             }
         } else {
             $header = array_keys($db->getTableColumns('#__jem_events'));
-            fputcsv($csv, $header, $separator, $delimiter);
+            fputcsv($csv, $header, $separator, $delimiter, '\\');
             $query = $this->getListQuery();
             $items = $this->_getList($query);
         }
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            fputcsv($csv, (array) $lines, $separator, $delimiter, '\\');
         }
 
         return fclose($csv);
@@ -197,13 +197,13 @@ class JemModelExport extends ListModel
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $header = array_keys($db->getTableColumns('#__jem_categories'));
-        fputcsv($csv, $header, $separator, $delimiter);
+        fputcsv($csv, $header, $separator, $delimiter, '\\');
 
         $db->setQuery($this->getListQuerycats());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            fputcsv($csv, (array) $lines, $separator, $delimiter, '\\');
         }
 
         return fclose($csv);
@@ -245,13 +245,13 @@ class JemModelExport extends ListModel
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $header = array_keys($db->getTableColumns('#__jem_venues'));
-        fputcsv($csv, $header, $separator, $delimiter);
+        fputcsv($csv, $header, $separator, $delimiter, '\\');
 
         $db->setQuery($this->getListQueryvenues());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            fputcsv($csv, (array) $lines, $separator, $delimiter, '\\');
         }
 
         return fclose($csv);
@@ -293,13 +293,13 @@ class JemModelExport extends ListModel
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
-        fputcsv($csv, $header, $separator, $delimiter);
+        fputcsv($csv, $header, $separator, $delimiter, '\\');
 
         $db->setQuery($this->getListQuerycatsevents());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            fputcsv($csv, (array) $lines, $separator, $delimiter, '\\');
         }
 
         return fclose($csv);
