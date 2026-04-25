@@ -319,7 +319,7 @@ class JemControllerAttendees extends BaseController
             $cols[] = Text::_('COM_JEM_COMMENT');
         }
 
-        fputcsv($export, $cols, $separator, $delimiter);
+        fputcsv($export, $cols, $separator, $delimiter, '\\');
 
         $i = 0;
         foreach ($datas as $data)
@@ -349,7 +349,7 @@ class JemControllerAttendees extends BaseController
                 $cols[] = $comment;
             }
 
-            fputcsv($export, $cols, $separator, $delimiter);
+            fputcsv($export, $cols, $separator, $delimiter, '\\');
         }
 
         fclose($export);

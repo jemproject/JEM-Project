@@ -107,7 +107,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 $this->_data->status = 2;
             }
 
-            return (boolean) $this->_data;
+            return (bool) $this->_data;
         }
         return true;
     }

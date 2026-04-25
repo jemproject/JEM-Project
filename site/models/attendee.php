@@ -97,7 +97,7 @@ class JemModelAttendee extends BaseDatabaseModel
             $this->_db->setQuery($query);
             $this->_data = $this->_db->loadObject();
 
-            return (boolean) $this->_data;
+            return (bool) $this->_data;
         }
 
         return true;
