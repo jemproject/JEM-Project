@@ -9,21 +9,48 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+// Extract parameters
 $highlight_featured = $params->get('highlight_featured');
-$showtitloc = $params->get('showtitloc');
-$linkloc = $params->get('linkloc');
-$linkdet = $params->get('linkdet');
-$showiconcountry = $params->get('showiconcountry');
-$settings = JemHelper::config();
+$displayorder       = (int) $params->get('display_order', 0);
+$showtitle          = $params->get('showtitle');
+$showvenue          = $params->get('showvenue');
+$linkloc            = $params->get('linkloc');
+$linkdet            = $params->get('linkdet');
+$showiconcountry    = $params->get('showiconcountry');
+$settings           = JemHelper::config();
+$baseUri            = Uri::getInstance()->base();
+
+// Prepare flag path and extension
+$flagPathRaw = $settings->flagicons_path;
+$flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
+$flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
+
+$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
+
+// --- PREPARE TABLE HEADERS ---
+$headerTitle = '<th style="text-align: left;"><i class="fa-solid fa-calendar-days"></i> '.Text::_('COM_JEM_EVENT').'</th>';
+$headerDate  = '<th><i class="fa-solid fa-calendar-check"></i> '.Text::_('COM_JEM_DATE').'</th>'; // Simplified Date Header
+$headerVenue = '<th><i class="fa-solid fa-location-dot"></i> '.Text::_('COM_JEM_VENUE').'</th>';
+
+function renderOrderedRow($order, $colT, $colD, $colV) {
+    switch ($order) {
+        case 1: return $colT . $colV . $colD;
+        case 2: return $colV . $colT . $colD;
+        case 3: return $colV . $colD . $colT;
+        case 4: return $colD . $colT . $colV;
+        case 5: return $colD . $colV . $colT;
+        case 0:
+        default: return $colT . $colD . $colV;
+    }
+}
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic-tableadvanced">
     <?php if (count($list)): ?>
-        <table class="jemmod">
+        <table class="jemmod" style="width: 100%; border-collapse: collapse;">
             <thead>
             <th><i class="fa-solid fa-calendar-days"></i><?php echo Text::_('COM_JEM_EVENT'); ?></th>
             <th><i class="fa-solid fa-calendar-check"></i><?php echo Text::_('COM_JEM_STARTDATE'); ?></th>
@@ -64,9 +91,9 @@ $settings = JemHelper::config();
                     </td>
                     <td>
                         <?php if($highlight_featured && $item->featured): ?>
-                        <span class="event-title highlight_featured">
+							<span class="event-title highlight_featured">
                         <?php else : ?>
-                            <span class="event-title">
+                            <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
                         <?php endif; ?>
                         <?php echo $item->dates; ?>
                         </span>
@@ -108,8 +135,9 @@ $settings = JemHelper::config();
                     </td>
                 </tr>
             <?php endforeach; ?>
+            </tbody>
         </table>
     <?php else : ?>
-        <?php echo Text::_('MOD_JEM_NO_EVENTS'); ?>
+        <p><?php echo Text::_('MOD_JEM_NO_EVENTS'); ?></p>
     <?php endif; ?>
 </div>

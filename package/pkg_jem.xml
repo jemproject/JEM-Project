@@ -2,7 +2,7 @@
 <extension type="package" version="4.4" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
-    <creationDate>February 2026</creationDate>
+    <creationDate>March 2026</creationDate>
     <packagename>jem</packagename>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>

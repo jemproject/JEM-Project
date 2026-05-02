@@ -1277,7 +1277,7 @@ div#jem .inline-button-right {
 }
 
 #jem.jem_editevent .edit form select[id^="filter_"], #jem.jem_editevent .edit form select, #jem.jem_editevent .edit form input[id^="filter_"] {
-    min-width: 15%;
+    min-width: 70px;
 }
 
 #jem.jem_editevent .edit form input:not([type="checkbox"]):not([type="file"]) {

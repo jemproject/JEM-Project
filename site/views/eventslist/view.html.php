@@ -38,7 +38,7 @@ class JemViewEventslist extends JemView
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
         $menu        = $app->getMenu();
-        $menuitem    = $menu->getActive();
+        $menuactive  = $menu->getActive();
         $document    = $app->getDocument();
         $params      = $app->getParams();
         $uri         = Uri::getInstance();
@@ -48,6 +48,23 @@ class JemViewEventslist extends JemView
         $pathway     = $app->getPathWay();
         $user        = JemFactory::getUser();
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+        $model = $this->getModel();
+        $model->setState('Itemid', $menuactive->id);
+
+        if (method_exists($document, 'getWebAssetManager')) {
+            $wa = $document->getWebAssetManager();
+
+            if (!$wa->assetExists('script', 'com_jem.monthpicker')) {
+                $wa->registerScript(
+                'com_jem.monthpicker',
+                'media/com_jem/js/monthpicker-fallback.js',
+                    [],
+                    ['defer' => true],
+                );
+            }
+
+            $wa->useScript('com_jem.monthpicker');
+        }
 
         if (method_exists($document, 'getWebAssetManager')) {
             $wa = $document->getWebAssetManager();
@@ -177,17 +194,17 @@ class JemViewEventslist extends JemView
         // params
         $pagetitle = $params->def(
             'page_title',
-            $menuitem ? $menuitem->title : Text::_('COM_JEM_EVENTS'),
+            $menuactive ? $menuactive->title : Text::_('COM_JEM_EVENTS'),
         );
         $pageheading = $params->def('page_heading', $params->get('page_title'));
         $pageclass_sfx = $params->get('pageclass_sfx');
 
         // pathway
-        if ($menuitem) {
+        if ($menuactive) {
             $pathwayKeys = array_keys($pathway->getPathway());
             $lastPathwayEntryIndex = end($pathwayKeys);
-            $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-            //$pathway->setItemName(1, $menuitem->title);
+            $pathway->setItemName($lastPathwayEntryIndex, $menuactive->title);
+            //$pathway->setItemName(1, $menuactive->title);
         }
 
         if ($task == 'archive') {
@@ -303,6 +320,23 @@ class JemViewEventslist extends JemView
 
         // Create the pagination object
         $pagination = $this->get('Pagination');
+        if ($pagination->getAdditionalUrlParam('id') === "0") {
+            $pagination->setAdditionalUrlParam('id', null);
+        }
+        if ($menuactive && isset($menuactive->id)) {
+            $pagination->setAdditionalUrlParam('Itemid', $menuactive->id);
+
+            $currentUrl = $uri->toString();
+            $baseUrl = 'index.php?option=com_jem&view=eventslist&Itemid=' . $menuactive->id;
+
+            if ($task) {
+                $baseUrl .= '&task=' . $task;
+            }
+
+            $pagination->setAdditionalUrlParam('option', 'com_jem');
+            $pagination->setAdditionalUrlParam('view', 'eventslist');
+            $pagination->setAdditionalUrlParam('start', null);
+        }
 
         $this->lists         = $lists;
         $this->rows          = $rows;

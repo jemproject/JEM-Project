@@ -21,6 +21,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 
+
 BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';

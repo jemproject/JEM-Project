@@ -118,8 +118,8 @@
             required="false"
         />
         <field name="contactid"  type="modal_contact"
-            label="COM_JEM_CONTACT"
-            description="COM_JEM_CONTACT"
+            label="COM_JEM_CONTACTS"
+            description="COM_JEM_CONTACTS"
             size="40"
             required="false"
         />

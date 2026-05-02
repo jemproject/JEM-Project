@@ -2,7 +2,7 @@
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_teaser</name>
     <author>JEM Community</author>
-    <creationDate>February 2026</creationDate>
+    <creationDate>March 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
@@ -248,8 +248,7 @@
                 </field>
                 <field name="couid" type="countrieslist"
                        default=""
-                       multiple="true"
-                       removeroot="true"
+                       multiple="true"                       
                        label="MOD_JEM_TEASER_COUNTRIES"
                        description="MOD_JEM_TEASER_COUNTRIES_DESC"
                        addfieldpath="/modules/mod_jem_teaser/fields"
