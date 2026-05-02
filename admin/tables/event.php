@@ -183,6 +183,7 @@ class JemTableEvent extends Table
                 $isAdmin = false;
             }
         }
+
         if (!$isAdmin) {
             $this->created_by = $currentUserId;
         }
