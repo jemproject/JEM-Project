@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -226,9 +226,9 @@ $params        = $this->params;
                     <dt><?php echo $this->form->getLabel('enddates'); ?></dt>
                     <dd><?php echo $this->form->getInput('enddates'); ?></dd>
                     <dt><?php echo $this->form->getLabel('times'); ?></dt>
-                    <dd><?php echo $this->form->getInput('times'); ?></dd>
+                    <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
-                    <dd><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
@@ -239,7 +239,8 @@ $params        = $this->params;
                     } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
-
+                    <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
+                    <dd><?php echo $this->form->getInput('contactid'); ?></dd>
                 </dl>
             </fieldset>
             <!-- EVENTDESCRIPTION -->

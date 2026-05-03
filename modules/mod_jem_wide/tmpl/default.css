@@ -1,0 +1,54 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Latest Events Wide Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+div#jemmodulewide {
+    width: 100%;
+}
+
+div#jemmodulewide .eventset {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px dotted silver;
+}
+
+div#jemmodulewide span.event-title {
+}
+
+div#jemmodulewide span.time {
+    padding-top: 2px;
+}
+
+div#jemmodulewide span.date {
+    padding-top: 2px;
+}
+
+div#jemmodulewide span.category {
+    position: relative;
+    /*font-size: smaller;*/
+}
+
+div#jemmodulewide span.venue-title {
+    position: relative;
+    /*font-size: smaller;*/
+}
+
+div#jemmodulewide .event-image-cell {
+    text-align: center;
+}
+
+div#jemmodulewide .venue-image-cell {
+}
+
+div#jemmodulewide .image-preview {
+    height: 35px;
+    border: 1px solid #CCCCCC;
+    padding: 3px;
+    background-color: white;
+    margin: 3px;
+}

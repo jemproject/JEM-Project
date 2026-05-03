@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -104,7 +104,7 @@ class JemModelVenueelement extends BaseDatabaseModel
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select(array('l.id', 'l.state', 'l.city', 'l.country', 'l.published', 'l.venue', 'l.ordering'));
+        $query->select(array('l.id', 'l.state', 'l.color', 'l.city', 'l.country', 'l.published', 'l.venue', 'l.ordering'));
         $query->from('#__jem_venues as l');
 
         // where

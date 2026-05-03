@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -57,21 +57,24 @@ use Joomla\CMS\Factory;
         }
 
         //get event date
-        $year = date('Y', strtotime($row->dates));
-        $month = date('m', strtotime($row->dates));
-        $day = date('d', strtotime($row->dates));
+        $timestamp = strtotime($row->dates);
+        $year  = date('Y', $timestamp);
+        $month = date('m', $timestamp);
+        $day   = date('d', $timestamp);
+		$dateKey = $year.$month.$day;
 
-        @$countperday[$year.$month.$day]++;
-        if ($countperday[$year.$month.$day] == $limit+1) {
-            $var1a = Route::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
-            $var1b = Text::_('COM_JEM_AND_MORE');
-            $var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
-            $id = 'eventandmore';
+        $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
 
-            $this->cal->setEventContent($year, $month, $day, $var1c, null, $id);
-            continue;
-        } elseif ($countperday[$year.$month.$day] > $limit+1) {
-            continue;
+        if ($countperday[$dateKey] === $limit + 1) {
+             $url  = Route::_('index.php?option=com_jem&view=day&id=' . $year.$month.$day . $this->param_topcat);
+             $text = Text::_('COM_JEM_AND_MORE');
+             $link = '<a href="' . $url . '">' . $text . '</a>';
+
+             $this->cal->setEventContent($year, $month, $day, $link, null, 'eventandmore');
+             continue;
+
+        } elseif ($countperday[$dateKey] > $limit + 1) {
+             continue;
         }
 
         //for time in tooltip
@@ -96,22 +99,25 @@ use Joomla\CMS\Factory;
         $eventid = $this->escape($row->id);
 
         //Contact
-        $contactname = '';
-        if($row->contactid) {
+        $contact = '';
+
+        if ($row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->select('name');
-            $query->from('#__contact_details');
-            $query->where(array('id='.(int)$row->contactid));
+            $ids = array_map('intval', explode(',', $row->contactid));
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('name'))
+                ->from($db->quoteName('#__contact_details'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+
             $db->setQuery($query);
-            $contactname = $db->loadResult();
-        }
-        if ($contactname) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
-            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
-            $contact .= '</div>';
-        } else {
-            $contact = '';
+            $contactNames = $db->loadColumn();
+
+            if ($contactNames) {
+                $contact  = '<div class="contact"><span class="text-label">' . Text::_('COM_JEM_CONTACTS') . ': </span>';
+                $contact .= $this->escape(implode(', ', $contactNames));
+                $contact .= '</div>';
+            }
         }
 
         //initialize variables
@@ -121,7 +127,6 @@ use Joomla\CMS\Factory;
         $ix = 0;
         $content = '';
         $contentend = '';
-        $catcolor = array();
 
         //walk through categories assigned to an event
         $catcolor = array();

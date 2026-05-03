@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -153,19 +153,7 @@ use Joomla\CMS\Language\Text;
       <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
     </div>
   </div>
-    <?php elseif (isset($this->venue->published) && !empty($this->show_status)) : ?>
-    <!-- PUBLISHING STATE -->
-        <dl>
-            <dt class="published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
-            <dd class="published">
-                <?php switch ($this->venue->published) {
-                case  1: echo Text::_('JPUBLISHED');   break;
-                case  0: echo Text::_('JUNPUBLISHED'); break;
-                case  2: echo Text::_('JARCHIVED');    break;
-                case -2: echo Text::_('JTRASHED');     break;
-                } ?>
-            </dd>
-        </dl>
+    
     <?php endif; ?>
 
     <?php

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -110,27 +110,31 @@ use Joomla\CMS\Factory;
         $eventid = $this->escape($row->id);
 
         //Contact
-        $contactname = '';
-        if($row->contactid) {
+        $contact = '';
+
+        if ($row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->select('name');
-            $query->from('#__contact_details');
-            $query->where(array('id='.(int)$row->contactid));
+            $ids = array_map('intval', explode(',', $row->contactid));
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('name'))
+                ->from($db->quoteName('#__contact_details'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+
             $db->setQuery($query);
-            $contactname = $db->loadResult();
-        }
-        if ($contactname) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
-            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
-            $contact .= '</div>';
-        } else {
-            $contact = '';
+            $contactNames = $db->loadColumn();
+
+            if ($contactNames) {
+                $contact  = '<div class="contact"><span class="text-label">' . Text::_('COM_JEM_CONTACTS') . ': </span>';
+                $contact .= $this->escape(implode(', ', $contactNames));
+                $contact .= '</div>';
+            }
         }
 
         //initialize variables
         $multicatname = '';
         $colorpic = '';
+        $color = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
@@ -179,16 +183,13 @@ use Joomla\CMS\Factory;
         if (!empty($catcolor)) {
             if ($categoryColorMarker) {
                 // Build a single multicolor TOP BAR
-                $numColors = count($catcolor);
-                $step = 100 / $numColors;
+                $step = 100 / count($catcolor);
                 $gradientParts = [];
-                $i = 0;
 
-                foreach ($catcolor as $color) {
+                foreach ($catcolor as $i => $c) {
                     $start = $i * $step;
                     $end = ($i + 1) * $step;
-                    $gradientParts[] = "$color $start% $end%";
-                    $i++;
+                    $gradientParts[] = "$c $start% $end%";
                 }
 
                 $gradientCss = "linear-gradient(to right, " . implode(", ", $gradientParts) . ")";
@@ -198,11 +199,9 @@ use Joomla\CMS\Factory;
 
             } else {
                 // Build individual color BLOCKS
-                $colorpic = '';
-                foreach ($catcolor as $color) {
-                    $colorpic .= '<span class="colorpicblock" style="background-color: '.$color.';"></span>';
+                foreach ($catcolor as $c) {
+                    $color .= '<span class="colorpicblock" style="background-color: '.$c.';"></span>';
                 }
-                $color = $colorpic;
             }
         }
 
@@ -246,7 +245,7 @@ use Joomla\CMS\Factory;
             $end   = JemOutput::formattime($row->endtimes,'',false);
 
             switch ($multi_mode) {
-            	case 1:
+                case 1:
                     $timetp .= $multi_icon . ' ' . $start . '<br>';
                     break;
                 case 2:

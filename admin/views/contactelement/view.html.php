@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -12,27 +12,29 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+
 /**
  * View class for the JEM Contactelement screen
  *
  * @package JEM
  *
  */
-class JEMViewContactelement extends HtmlView {
+class JEMViewContactelement extends HtmlView
+{
 
     public function display($tpl = null)
     {
         //initialise variables
         $app = Factory::getApplication();
-        $db            = Factory::getContainer()->get('DatabaseDriver');
-        $document   = $app->getDocument();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $document = $app->getDocument();
 
         //get vars
-        $filter_order        = $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
-        $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-        $filter_type         = $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', 0, 'int');
-        $search             = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
-        $search             = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $filter_order = $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+        $filter_type = $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', 0, 'int');
+        $search = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
+        $search = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
 
         //prepare document
         $document->setTitle(Text::_('COM_JEM_SELECTVENUE'));
@@ -42,7 +44,7 @@ class JEMViewContactelement extends HtmlView {
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Get data from the model
-        $rows         = $this->get('Data');
+        $rows = $this->get('Data');
         $pagination = $this->get('Pagination');
 
         // table ordering
@@ -55,17 +57,20 @@ class JEMViewContactelement extends HtmlView {
         $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS'));
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size' => '1', 'class' => 'inputbox'), 'value', 'text', $filter_type);
 
         // search filter
-        $lists['search']= $search;
+        $lists['search'] = $search;
 
         //assign data to template
-        $this->lists        = $lists;
-        $this->rows            = $rows;
-        $this->pagination    = $pagination;
+        $this->lists = $lists;
+        $this->rows = $rows;
+        $this->pagination = $pagination;
+
+        $this->selection = $app->input->getString('selection', '');
 
         parent::display($tpl);
     }
 }
+
 ?>

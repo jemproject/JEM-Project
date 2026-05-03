@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -94,7 +94,17 @@ $options = array(
                                             $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
 
                                             $link = 'index.php?option=com_jem&amp;view=updatecheck';
-                                            $this->quickiconButton($link, 'icon-48-update.svg', Text::_('COM_JEM_UPDATECHECK_TITLE'));
+                                            $icon = 'icon-48-update.svg';
+
+                                            // If an update is available, use a different icon
+                                            if (
+                                                !empty($this->updatedata)
+                                                && isset($this->updatedata->current)
+                                                && (int) $this->updatedata->current === -1
+                                            ) {
+                                                $icon = 'icon-48-update-y.svg';
+                                            }
+                                            $this->quickiconButton($link, $icon, Text::_('COM_JEM_UPDATECHECK_TITLE'));
 
                                             $link = 'index.php?option=com_jem&amp;view=import';
                                             $this->quickiconButton($link, 'icon-48-tableimport.svg', Text::_('COM_JEM_IMPORT_DATA'));

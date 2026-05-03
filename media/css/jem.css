@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -702,6 +702,10 @@ div.jem_select_users ul.adminformlist input {
     cursor: pointer;
 }
 
+div.jem_editvenue form #jform_color {
+    padding: 0.5em 0.5em 0.5em 44px;
+}
+
 div.jem_editvenue form select {
     margin: 0 0 0.5em 0;
     padding: 0.2em auto 0.2em 0.2em;
@@ -1273,7 +1277,7 @@ div#jem .inline-button-right {
 }
 
 #jem.jem_editevent .edit form select[id^="filter_"], #jem.jem_editevent .edit form select, #jem.jem_editevent .edit form input[id^="filter_"] {
-    min-width: 15%;
+    min-width: 70px;
 }
 
 #jem.jem_editevent .edit form input:not([type="checkbox"]):not([type="file"]) {

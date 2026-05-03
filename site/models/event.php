@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -81,7 +81,7 @@ class JemModelEvent extends ItemModel
                 # Event
                 $query->select(
                     $this->getState('item.select',
-                        'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, ' .
+                        'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, a.contactid,' .
                         'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                         'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
@@ -94,10 +94,6 @@ class JemModelEvent extends ItemModel
                 $name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
                 $query->select($name.' AS author');
                 $query->join('LEFT', '#__users AS u on u.id = a.created_by');
-
-                # Contact
-                $query->select('con.id AS conid, con.name AS conname, con.catid AS concatid, con.telephone AS contelephone, con.email_to AS conemail');
-                $query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
 
                 # Venue
                 $query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
@@ -277,6 +273,55 @@ class JemModelEvent extends ItemModel
         return $this->_item[$pk];
     }
 
+     /**
+     * Method to get contact data of event.
+     *
+     * @param  int  The id of the event.
+     * @return mixed  items data object on success, false on failure.
+     */
+    public function getContacts($id = null)
+    {
+        $id = (!empty($id)) ? (int) $id : (int) $this->getState('event.id');
+
+        if (!$id){
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        // Get contacts of event
+        $query = $db->getQuery(true);
+        $query->select($db->quoteName('contactid'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $id);
+        $db->setQuery($query);
+        $contactIdsPath = $db->loadResult();
+
+        if (empty($contactIdsPath)) {
+            return array();
+        }
+
+        // Get data of contacts
+        $query = $db->getQuery(true);
+        $query->select('con.id AS conid, con.name AS conname, con.con_position AS conposition, con.catid AS concatid, con.telephone AS contelephone, con.mobile AS conmobile,con.email_to AS conemail, con.address AS conaddress, con.suburb AS concity, con.state AS constate, con.country AS concountry, con.webpage AS conwebsite, con.misc as condescription');
+        $query->select('cat.title AS category_name, cat.asset_id AS cat_ordering');
+        $query->from($db->quoteName('#__contact_details', 'con'));
+        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid'));
+        $query->where('FIND_IN_SET(con.id, ' . $db->quote($contactIdsPath) . ')');
+        $query->where($db->quoteName('cat.extension') . ' = ' . $db->quote('com_contact'));
+        $query->order('cat_ordering ASC');
+        $query->order('con.name ASC');
+        $db->setQuery($query);
+
+        try {
+            $res = $db->loadObjectList();
+        }
+        catch (Exception $e) {
+            $res = array();
+        }
+
+        return $res;
+    }
 
     /**
      * Method to get list recurrence events data.
@@ -510,7 +555,7 @@ class JemModelEvent extends ItemModel
         $case_when_c  = ' CASE WHEN ';
         $case_when_c .= $query->charLength('c.alias');
         $case_when_c .= ' THEN ';
-        $id_c = $query->castAsChar('c.id');
+        $id_c = $query->castAs('CHAR', 'c.id');
         $case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
         $case_when_c .= ' ELSE ';
         $case_when_c .= $id_c.' END as catslug';

@@ -1,6 +1,6 @@
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -257,7 +257,7 @@ input#jform_title {
     font-size: 0.909em !important;
 }
 
-#jem select.form-control {
+.com_jem select.form-control {
   background-color: var(--form-control-bg);
 }
 

@@ -2,7 +2,7 @@
 /**
  * @package    My Events
  * @author     JEM Community
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  *
  * Former info:

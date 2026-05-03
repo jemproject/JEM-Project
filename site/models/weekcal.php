@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -58,7 +58,7 @@ class JemModelWeekcal extends JemModelEventslist
         $datetime = new DateTime();
         // If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
         $dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
-        $datetime->setISODate($datetime->format('Y'), $datetime->format('W'), $dayoffset);
+        $datetime->setISODate($datetime->format('o'), $datetime->format('W'), $dayoffset);
         $filter_date_from = $datetime->format('Y-m-d');
         $datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
         $filter_date_to   = $datetime->format('Y-m-d');
@@ -195,7 +195,7 @@ class JemModelWeekcal extends JemModelEventslist
             $datetime = new DateTime();
             # If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
             $dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
-            $datetime->setISODate($datetime->format('Y'), $datetime->format('W'), $dayoffset);
+            $datetime->setISODate($datetime->format('o'), $datetime->format('W'), $dayoffset);
             $startdate = $datetime->format('Y-m-d');
             $datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
             $enddate   = $datetime->format('Y-m-d');

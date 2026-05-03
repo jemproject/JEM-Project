@@ -1,0 +1,197 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Calendar Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2008-2009 Toni Smillie www.qivva.com
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+:root {
+  --jem-cal-day: #f5f5f5;
+  --jem-cal-today: #ffcc00;
+  --jem-cal-sunday: #000000;
+  --jem-cal-badge-color: #ffffff;
+  --jem-cal-badge-background: #fc3d39;
+}
+
+.eventcalq {
+  width: auto!important;
+  max-width: none!important;
+  margin: 0!important;
+}
+
+.mod_jemcalq_calendar-month {
+  margin: 1em 0;
+  gap: 1em;
+  grid-template-columns: 0.5fr 2fr 0.5fr;
+  text-align: center;
+}
+
+.mod_jemcalq_calendar-month a,
+.mod_jemcalq_calendar-month a:not([class]) {
+  text-decoration: none;
+  padding: 0 0.5em;
+}
+
+ul.mod_jemcalq_grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 0.25em;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+ul.mod_jemcalq_grid.daynames {
+  margin-bottom: 1.5em;
+}
+
+.mod_jemcalq_grid.days > li {
+  padding: 0 0 100% 0;
+  margin: 0;
+  position: relative;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.mod_jemcalq_grid > li > .event,
+.mod_jemcalq_grid > li > .hasTooltip,
+.mod_jemcalq_grid > li > .hasTip {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.tooltip a {
+  color: #fff;
+}
+
+.mod_jemcalq_grid > li > .hasTooltip,
+.mod_jemcalq_grid > li > .hasTip {
+  cursor: pointer;
+}
+
+.mod_jemcalq_grid > li > .hasTooltip .day,
+.mod_jemcalq_grid > li > .hasTip .day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mod_jemcalq_grid > li > .hasTooltip .day:hover,
+.mod_jemcalq_grid > li > .hasTip .day:hover {
+  color: initial;
+}
+
+.mod_jemcalq_grid > li > .hasTooltip .badge,
+.mod_jemcalq_grid > li > .hasTip .badge {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(50% + 2px);
+  color: var(--jem-cal-badge-background);
+  font-weight: 400;
+  user-select: none;
+}
+
+.mod_jemcalq_grid > li > .counter {
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  z-index: 99;
+  display: inline-block;
+  padding: 0;
+  text-align: center;
+  color: var(--jem-cal-badge-color);
+  background: var(--jem-cal-badge-background);
+  font-weight: 400;
+  font-size: 9px;
+  line-height: 12px;
+}
+
+li span.hasTooltip {
+  z-index: 9;
+}
+
+li.mod_jemcalq_daynames {
+  aspect-ratio: auto;
+  text-align: center;
+}
+
+li.mod_jemcalq_calday {
+  border: 1px solid  var(--jem-cal-day);
+}
+
+li.mod_jemcalq_calday.link {
+  background: var(--jem-cal-day);
+  border: none;
+}
+
+li.mod_jemcalq_calday.link:hover {
+  background: var(--jem-cal-today);
+}
+
+li.mod_jemcalq_calday:nth-child(7n) {
+  border-color: var(--jem-cal-sunday);
+}
+
+li.mod_jemcalq_caltoday {
+  background: var(--jem-cal-today);
+}
+
+/* POPOVER */
+
+body.site .bs-popover-auto {
+  border: 1.5px solid #000;
+}
+
+body.site .popover-body > .tip {
+  margin: 0.475em 0;
+}
+
+body.site .bs-popover-top > .popover-arrow::before,
+body.site .bs-popover-auto[data-popper-placement^="top"] > .popover-arrow::before {
+  border-top-color: #000;
+}
+
+body.site .bs-popover-top > .popover-arrow::after,
+body.site .bs-popover-auto[data-popper-placement^="top"] > .popover-arrow::after {
+  bottom: 1.5px;
+}
+
+body.site .bs-popover-top > .popover-arrow::before,
+body.site .bs-popover-auto[data-popper-placement^="bottom"] > .popover-arrow::before {
+  border-bottom-color: #000;
+}
+
+body.site .bs-popover-top > .popover-arrow::after,
+body.site .bs-popover-auto[data-popper-placement^="bottom"] > .popover-arrow::after {
+  top: 1.5px;
+}
+
+body.site .bs-popover-top > .popover-arrow::before,
+body.site .bs-popover-auto[data-popper-placement^="left"] > .popover-arrow::before {
+  border-left-color: #000;
+}
+
+body.site .bs-popover-top > .popover-arrow::after,
+body.site .bs-popover-auto[data-popper-placement^="left"] > .popover-arrow::after {
+  right: 1.5px;
+}
+
+body.site .bs-popover-top > .popover-arrow::before,
+body.site .bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::before {
+  border-right-color: #000;
+}
+
+body.site .bs-popover-top > .popover-arrow::after,
+body.site .bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after {
+  left: 1.5px;
+}

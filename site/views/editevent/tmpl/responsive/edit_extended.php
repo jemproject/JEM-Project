@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -14,15 +14,13 @@ use Joomla\CMS\Date\Date;
 ?>
 
 <!-- RECURRENCE START -->
-
 <fieldset class="panelform" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_RECURRENCE'); ?></legend>
     <dl class="adminformlist jem-dl">
         <dt><?php echo $this->form->getLabel('recurrence_type'); ?></dt>
         <dd><?php echo $this->form->getInput('recurrence_type', null, $this->item->recurrence_type); ?></dd>
         <dt> </dt>
-        <dd id="recurrence_output">
-        </dd>
+        <dd id="recurrence_output"></dd>
         <dt> </dt>
         <dd>
             <div id="counter_row" style="display: none;">
@@ -53,13 +51,13 @@ use Joomla\CMS\Date\Date;
                             default:
                                 $anticipation    = $this->jemsettings->recurrence_anticipation_day;
                                 break;
-
                         }
 
                         $limitdate = new Date('now +' . $anticipation . 'month');
-                        $limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+                        $limitdate = '<strong>' . JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '') . '</strong>';
                         echo Text::sprintf(Text::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
-                        ?></small></div>
+                        ?></small>
+                </div>
             </div>
         </dd>
     </dl>
@@ -69,27 +67,14 @@ use Joomla\CMS\Date\Date;
     <input type="hidden" name="recurrence_bylastday" id="recurrence_bylastday" value="<?php echo $this->item->recurrence_bylastday;?>" />
 
     <script>
-
         <!--
         var $select_output = new Array();
-        $select_output[1] = "<?php
-            echo Text::_('COM_JEM_OUTPUT_DAY');
-            ?>";
-        $select_output[2] = "<?php
-            echo Text::_('COM_JEM_OUTPUT_WEEK');
-            ?>";
-        $select_output[3] = "<?php
-            echo Text::_('COM_JEM_OUTPUT_MONTH');
-            ?>";
-        $select_output[4] = "<?php
-            echo Text::_('COM_JEM_OUTPUT_WEEKDAY');
-            ?>";
-        $select_output[5] = "<?php
-            echo Text::_('COM_JEM_OUTPUT_YEAR');
-            ?>";
-        $select_output[6] = "<?php
-            echo Text::_('COM_JEM_OUTPUT_LASTDAY');
-            ?>";
+        $select_output[1] = "<?php echo Text::_('COM_JEM_OUTPUT_DAY'); ?>";
+        $select_output[2] = "<?php echo Text::_('COM_JEM_OUTPUT_WEEK'); ?>";
+        $select_output[3] = "<?php echo Text::_('COM_JEM_OUTPUT_MONTH'); ?>";
+        $select_output[4] = "<?php echo Text::_('COM_JEM_OUTPUT_WEEKDAY'); ?>";
+        $select_output[5] = "<?php echo Text::_('COM_JEM_OUTPUT_YEAR'); ?>";
+        $select_output[6] = "<?php echo Text::_('COM_JEM_OUTPUT_LASTDAY'); ?>";
 
         var $weekday = new Array();
         $weekday[0] = new Array("MO", "<?php echo Text::_('COM_JEM_MONDAY'); ?>");
@@ -109,12 +94,8 @@ use Joomla\CMS\Date\Date;
         $lastday[5]  = new Array("L6", "<?php echo Text::_ ('COM_JEM_LAST_DAY_SIXTH'); ?>");
         $lastday[6]  = new Array("L7", "<?php echo Text::_ ('COM_JEM_LAST_DAY_SEVEN'); ?>");
 
-        var $before_last = "<?php
-            echo Text::_('COM_JEM_BEFORE_LAST');
-            ?>";
-        var $last = "<?php
-            echo Text::_('COM_JEM_LAST');
-            ?>";
+        var $before_last = "<?php echo Text::_('COM_JEM_BEFORE_LAST'); ?>";
+        var $last = "<?php echo Text::_('COM_JEM_LAST'); ?>";
         start_recurrencescript("jform_recurrence_type");
         -->
     </script>
@@ -122,6 +103,7 @@ use Joomla\CMS\Date\Date;
     <?php /* show "old" recurrence settings for information */
     if (!empty($this->item->recurr_bak->recurrence_type)) {
         $recurr_type = '';
+        $recurr_info = '';
         $rlDate = $this->item->recurr_bak->recurrence_limit_date;
         $recurrence_first_id = $this->item->recurr_bak->recurrence_first_id;
         if (!empty($rlDate)) {
@@ -195,16 +177,6 @@ use Joomla\CMS\Date\Date;
 </fieldset>
 <!-- RECURRENCE END -->
 <hr />
-<!-- CONTACT START -->
-<fieldset class="panelform"  style="margin:0">
-    <legend><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_CONTACT'); ?></legend>
-    <dl class="jem-dl">
-        <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
-        <dd><?php echo $this->form->getInput('contactid'); ?></dd>
-    </dl>
-</fieldset>
-<!-- CONTACT END -->
-<hr />
 <!-- REGISTRATION START -->
 <fieldset class="" style="margin:0">
     <legend><?php echo Text::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
@@ -220,10 +192,28 @@ use Joomla\CMS\Date\Date;
         </dl>
         <div id="optional-limited">
             <dl class="adminformlist jem-dl jem-dl-rest">
-                <dt><div id="registra_from"><span id="jform_registra_from2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?></span></div></dt>
-                <dd><div id="registra_from2"><?php echo $this->form->getInput('registra_from'); ?></div> </dd>
-                <dt><div id="registra_until"><span id="jform_registra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL'); ?><?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?></span></div></dt>
-                <dd><div id="registra_until2"><?php echo $this->form->getInput('registra_until'); ?></span></div></dd>
+                <dt>
+                    <div id="registra_from">
+                        <span id="jform_registra_from2">
+                            <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM'); ?>
+                            <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_FROM_POSTFIX'); ?>
+                        </span>
+                    </div>
+                </dt>
+                <dd>
+                    <div id="registra_from2"><?php echo $this->form->getInput('registra_from'); ?></div>
+                </dd>
+                <dt>
+                    <div id="registra_until">
+                        <span id="jform_registra_until2">
+                            <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL'); ?>
+                            <?php echo Text::_('COM_JEM_EVENT_FIELD_REGISTRATION_UNTIL_POSTFIX'); ?>
+                        </span>
+                    </div>
+                </dt>
+                <dd>
+                    <div id="registra_until2"><?php echo $this->form->getInput('registra_until'); ?></div>
+                </dd>
             </dl>
         </div>
         <div id="optional-fields">
@@ -234,15 +224,26 @@ use Joomla\CMS\Date\Date;
                 <?php endif; ?>
                 <dt><?php echo $this->form->getLabel('unregistra'); ?></dt>
                 <dd><?php echo $this->form->getInput('unregistra'); ?></dd>
-                <dt><div id="unregistra_until"><span id="jform_unregistra_until2"><?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL'); ?></span></div></dt>
-                <dd><div id="unregistra_until2"><?php echo $this->form->getInput('unregistra_until'); ?></div></dd>
+                <dt>
+                    <div id="unregistra_until">
+                        <span id="jform_unregistra_until2">
+                            <?php echo Text::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL'); ?>
+                        </span>
+                    </div>
+                </dt>
+                <dd>
+                    <div id="unregistra_until2"><?php echo $this->form->getInput('unregistra_until'); ?></div>
+                </dd>
                 <dt><?php echo $this->form->getLabel('maxplaces'); ?></dt>
                 <dd><?php echo $this->form->getInput('maxplaces'); ?></dd>
                 <dt><?php echo $this->form->getLabel('minbookeduser'); ?></dt>
                 <dd><?php echo $this->form->getInput('minbookeduser'); ?></dd>
                 <dt><?php echo $this->form->getLabel('maxbookeduser'); ?></dt>
                 <dd><?php echo $this->form->getInput('maxbookeduser'); ?></dd>
-                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES');?></label><br></dt>
+                <dt>
+                    <label style='margin-top: 1rem;'><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_RESERVED_PLACES'); ?></label>
+                    <br>
+                </dt>
                 <dd><?php echo $this->form->getInput('reservedplaces'); ?></dd>
                 <dt><?php echo $this->form->getLabel('waitinglist'); ?></dt>
                 <dd><?php echo $this->form->getInput('waitinglist'); ?></dd>
@@ -257,7 +258,10 @@ use Joomla\CMS\Date\Date;
                     <dt><?php echo $this->form->getLabel('invited'); ?></dt>
                     <dd><?php echo $this->form->getInput('invited'); ?></dd>
                 <?php endif; ?>
-                <dt><label style='margin-top: 1rem;'><?php echo Text::_ ('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES');?></label><br></dt>
+                <dt>
+                    <label style='margin-top: 1rem;'><?php echo Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_PLACES'); ?></label>
+                    <br>
+                </dt>
                 <dd><?php echo '<input id="event-booked" class="form-control readonly inputbox" type="text" readonly="true" value="' . $this->item->booked . '" />'; ?></dd>
                 <?php if ($this->item->maxplaces) : ?>
                     <dt><?php echo $this->form->getLabel('avplaces'); ?></dt>

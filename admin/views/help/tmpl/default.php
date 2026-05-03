@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -107,9 +107,35 @@ $options = array(
     <input type="hidden" name="task" value="" />
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+<div id="helpImgModal">
+  <span id="helpModalClose">&times;</span>
+  <img id="modalImg">
+</div>
+
+<script>
+const modal = document.getElementById("helpImgModal");
+const modalImg = document.getElementById("modalImg");
+const close = document.getElementById("helpModalClose");
+
+window.addEventListener("message", (e) => {
+  if (e.data.type === "openImage") {
+    modalImg.src = e.data.src;
+    modal.style.display = "flex";
+  }
+});
+
+close.onclick = () => modal.style.display = "none";
+modal.onclick = e => {
+  if (e.target === modal) modal.style.display = "none";
+};
+</script>
 
 <?php
 $wa = $this->document->getWebAssetManager();
-$wa->useScript('keepalive');
+$wa->registerAndUseStyle(
+    'com_jem.help.modal',
+    'media/com_jem/css/help-modal.css'
+);
 
+$wa->useScript('keepalive');
 ?>

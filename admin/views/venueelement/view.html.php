@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -57,7 +57,7 @@ class JemViewVenueelement extends Htmlview {
         $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));
         $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_STATE'));
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox filter-search-actions__button btn btn-primary js-stools-btn-filter'), 'value', 'text', $filter_type);
 
         // search filter
         $lists['search']= $filter_search;

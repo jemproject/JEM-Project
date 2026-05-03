@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -73,6 +73,9 @@ $wa->useScript('table.columns');
                 <th style="width:20%">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder ); ?>
                 </th>
+                <th style="width:5%" class="center" nowrap="nowrap">
+                    <?php echo Text::_('COM_JEM_COLOR'); ?>
+                </th>
                 <th>
                     <?php echo Text::_('COM_JEM_WEBSITE'); ?>
                 </th>
@@ -140,6 +143,14 @@ $wa->useScript('table.columns');
                         <?php else : ?>
                             <?php echo $this->escape($item->alias); ?>
                         <?php endif; ?>
+                    </td>
+                    <td class="center">
+                        <div class="colorpreview<?php echo ($item->color == '') ? ' transparent-color" title="transparent"' : '" style="background-color:' . $item->color . '"' ?> aria-labelledby="
+                             color-desc-<?php echo $item->id; ?>">
+                        </div>
+                        <div role="tooltip"
+                             id="color-desc-<?php echo $item->id; ?>"><?php echo ($item->color == '') ? 'transparent' : $item->color ?>
+                        </div>
                     </td>
                     <td style="text-align:left">
                         <?php if ($item->url) : ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -94,8 +94,7 @@ function jem_common_show_filter(&$obj)
     return false;
 }
 
-?>
-<?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
+if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
         <div class="jem-row jem-justify-start jem-nowrap">
             <?php echo $this->lists['filter']; ?>
@@ -257,10 +256,8 @@ function jem_common_show_filter(&$obj)
                 <?php else : // Display date as title of jem-event without link ?>
                     <h4>
                         <?php
-                        echo JemOutput::formatShortDateTime($row->dates, $row->times,
-                            $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                            $row->enddates, $row->endtimes);
+                        echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
+                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
                         ?>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
@@ -402,4 +399,40 @@ function jem_common_show_filter(&$obj)
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
     </div>
-<?php endif; ?>
+<?php endif;
+
+// Add Load More Button
+if (!$this->noevents && $this->params->get('show_more_button', 1) && count($this->rows) >= $this->pagination->limit) {
+    // jQuery is loaded, just add Script
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->registerAndUseScript(
+        'com_jem.load-more',
+        'media/com_jem/js/load-more.js',
+        ['jquery'], // Specify jQuery as a dependency
+        ['defer' => true]
+    );
+    
+    $currentOffset = $this->pagination->limitstart;
+    $nextOffset = $currentOffset + $this->pagination->limit;
+    $totalItems = $this->pagination->total;
+    $hasMore = $nextOffset < $totalItems;
+    
+    if ($hasMore) :
+?>
+<div class="jem-load-more-container text-center mt-3">
+    <button 
+        id="jem-load-more-btn" 
+        class="btn btn-primary"
+        data-offset="<?php echo $currentOffset; ?>"
+        data-limit="<?php echo $this->pagination->limit; ?>"
+        data-text-loading="<?php echo Text::_('COM_JEM_LOADING'); ?>"
+        data-text-loadmore="<?php echo Text::_('COM_JEM_LOAD_MORE'); ?>"
+        type="button"
+    >
+        <?php echo Text::_('COM_JEM_LOAD_MORE'); ?>
+    </button>
+</div>
+<?php 
+    endif;
+}
+?>

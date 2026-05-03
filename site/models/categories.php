@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -242,7 +242,7 @@ class JemModelCategories extends BaseDatabaseModel
         if ($task == 'archive') {
             $where = ' WHERE a.published = 2 AND rel.catid = '.$id;
         } else {
-            $ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
+            $ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' OR a.publish_down IS null)';
             $where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
         }
 
@@ -278,11 +278,7 @@ class JemModelCategories extends BaseDatabaseModel
             $where .= ' AND l.access IN (' . implode(',', $levels) . ')';
         }
 
-        $query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.published, a.access,'
-               . ' a.recurrence_type, a.recurrence_first_id,'
-               . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
-               . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
-               . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
+        $query = 'SELECT a.*,'
                . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
                . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
@@ -296,7 +292,7 @@ class JemModelCategories extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-               . ' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
+               . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
                . $where
                . ' ORDER BY a.dates, a.times, a.created DESC'
                ;

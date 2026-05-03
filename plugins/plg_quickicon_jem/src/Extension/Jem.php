@@ -23,8 +23,8 @@ class Jem extends CMSPlugin
                 'linkadd' => 'index.php?option=com_jem&task=event.add',
                 'image'   => 'icon-calendar',
                 'icon'    => 'icon-calendar',
-                'text'    => Text::_('PLG_QUICKICON_JEM_JEM'),
-                'id'      => 'plg_quickicon_jem'
+                'name'    => 'PLG_QUICKICON_JEM_EVENTS',
+                'id'      => 'plg_quickicon_jem',
             ]
         ];
     }

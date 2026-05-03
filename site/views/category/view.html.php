@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -210,6 +210,7 @@ class JemViewCategory extends JemView
 
             $this->showsubcats      = (bool)$params->get('usecat', 1);
             $this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
+            $this->includechildevents = (bool)$params->get('includechildevents', 0);
 
             $filter_order     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order',     'a.dates', 'cmd');
             $filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',    '', 'word');
@@ -309,7 +310,7 @@ class JemViewCategory extends JemView
             $this->document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
             $document->setMetadata('keywords', $category->meta_keywords);
-            $document->setDescription(strip_tags($category->meta_description));
+            $document->setDescription(strip_tags($category->meta_description ?? ''));
 
             // Check if the user has permission to add things
             $permissions = new stdClass();

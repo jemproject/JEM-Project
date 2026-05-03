@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -355,6 +355,8 @@ class JemViewEditevent extends JemView
         /*    $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS')); */ // data security
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
+        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_COUNTRY'));
+        $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_CATEGORY'));
         $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
         // search filter

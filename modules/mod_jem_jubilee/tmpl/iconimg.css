@@ -1,0 +1,27 @@
+/**
+ * @package    JEM
+ * @subpackage JEM Jubilee Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+div#jemmodulejubilee .time {
+    padding-left: 20px;
+    background: url(img/time.webp) 0 center no-repeat;
+}
+
+div#jemmodulejubilee div.date {
+    padding-left: 20px;
+    background: url(img/date.webp) 0 center no-repeat;
+}
+
+div#jemmodulejubilee .category {
+    padding-left: 20px;
+    background: url(img/category.webp) 0 center no-repeat;
+}
+
+div#jemmodulejubilee .venue-title {
+    padding-left: 20px;
+    background: url(img/building.webp) 0 center no-repeat;
+}

@@ -6,7 +6,7 @@
  * @package    JEM
  * @subpackage JEM Listevents Plugin
  * @author     JEM Team <info@joomlaeventmanager.net>, Luis Raposo
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -17,11 +17,12 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\Database\ParameterType;
+use Joomla\CMS\Log\Log;
+use Joomla\Database\DatabaseInterface;
 
-BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
-require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
-require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
+BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
+require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
 
 /**
  * JEM List Events Plugin
@@ -61,6 +62,7 @@ class PlgContentJemlistevents extends CMSPlugin
         'date'        => 'show_date',
         'time'        => 'show_time',
         'enddatetime' => 'show_enddatetime',
+        'eventids'    => 'eventids',
         'catids'      => 'catids',
         'category'    => 'show_category',
         'venueids'    => 'venueids',
@@ -91,7 +93,7 @@ class PlgContentJemlistevents extends CMSPlugin
     {
         parent::__construct($subject, $config);
         $this->loadLanguage();
-        $this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
+        $this->loadLanguage('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem');
     }
 
     /**
@@ -106,7 +108,6 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     public function onContentPrepare(string $context, &$row, &$params, $page = 0): bool
     {
-        $page = (int)$page;
         // Don't run this plugin when the content is being indexed
         if ($context === 'com_finder.indexer') {
             return true;
@@ -129,10 +130,7 @@ class PlgContentJemlistevents extends CMSPlugin
         }
 
         // Find all instances of plugin and put in $matches
-        preg_match_all($regex, $row->text, $matches);
-
-        // Plugin only processes if there are any instances of the plugin in the text
-        if ($matches) {
+        if (preg_match_all($regex, $row->text, $matches)) {
             $this->_process($row, $matches, $regex);
         }
 
@@ -144,9 +142,10 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     private function loadCSS(): void
     {
-        $templateName = Factory::getApplication()->getTemplate();
-        $document = Factory::getApplication()->getDocument();
-        $wa = $document->getWebAssetManager();
+        $app = Factory::getApplication();
+        $wa = $app->getDocument()->getWebAssetManager();
+        $templateName = $app->getTemplate();
+
         $templatePath = JPATH_BASE . '/templates/' . $templateName . '/css/jemlistevents.css';
 
         if (file_exists($templatePath)) {
@@ -176,11 +175,11 @@ class PlgContentJemlistevents extends CMSPlugin
                     continue;
                 }
                 $token = strtolower(trim($pair[0]));
-                if (preg_match('/[ \'"]*(.*)[ \'"]*/', $pair[1], $m)) {
-                    $value = $m[1];
-                    if ($this->isValidOption($token, $value)) {
-                        $params[self::$optionTokens[$token]] = $value;
-                    }
+                // Trim quotes and whitespace from the value
+                $value = trim($pair[1], " '\"");
+
+                if ($this->isValidOption($token, $value)) {
+                    $params[self::$optionTokens[$token]] = $value;
                 }
             }
 
@@ -197,7 +196,7 @@ class PlgContentJemlistevents extends CMSPlugin
     {
         $defaults = [];
         foreach (self::$optionDefaults as $k => $v) {
-            $defaults[$k] = $this->params->def($k, $v);
+            $defaults[$k] = $this->params->get($k, $v);
             if (in_array($k, self::$optionConvert) && is_numeric($defaults[$k])) {
                 $defaults[$k] = ($defaults[$k] == '0') ? 'off' : 'on';
             }
@@ -214,11 +213,11 @@ class PlgContentJemlistevents extends CMSPlugin
     /**
      * Convert the show_featured parameter.
      */
-    private function convertShowFeatured(string $value): string
+    private function convertShowFeatured($value): string
     {
-        if ($value === '0' || $value === 0) {
+        if ($value == '0') {
             return 'off';
-        } elseif ($value === '2' || $value === 2) {
+        } elseif ($value == '2') {
             return 'only';
         } else {
             return 'on'; // Default for 1 or any other value
@@ -264,13 +263,14 @@ class PlgContentJemlistevents extends CMSPlugin
         $this->filterCategories($model, $parameters);
         $this->filterVenues($model, $parameters);
         $this->filterFeatured($model, $parameters);
+        $this->filterEvents($model, $parameters);
 
         $type = $parameters['type'] ?? 'unfinished';
-        $db = Factory::getDbo();
-        $timestamp = time();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $currentTime = date('Y-m-d H:i:s');
 
         try {
-            $this->applyTypeFilter($model, $type, $timestamp);
+            $this->applyTypeFilter($model, $type, $currentTime);
         } catch (\Exception $e) {
             $this->handleError($e);
             $model->setState('filter.published', 1);
@@ -322,11 +322,22 @@ class PlgContentJemlistevents extends CMSPlugin
     }
 
     /**
+     * Filter events in the model.
+     */
+    private function filterEvents(BaseDatabaseModel $model, array $parameters): void
+    {
+        if (!empty($parameters['eventids'])) {
+            $included_events = array_map('intval', explode(",", $parameters['eventids']));
+            $model->setState('filter.event_id', $included_events);
+            $model->setState('filter.event_id.include', 1);
+        }
+    }
+
+    /**
      * Apply type filter to the model.
      */
-    private function applyTypeFilter(BaseDatabaseModel $model, string $type, int $timestamp): void
+    private function applyTypeFilter(BaseDatabaseModel $model, string $type, string $to_date): void
     {
-        $to_date = date('Y-m-d H:i:s', $timestamp);
         $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
         $full_start_datetime = 'CONCAT(a.dates, " ", COALESCE(a.times, "00:00:00"))';
 
@@ -364,10 +375,11 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     private function applyTodayFilter(BaseDatabaseModel $model, string $to_date): void
     {
+        $today = date('Y-m-d', strtotime($to_date));
         $model->setState('filter.published', 1);
         $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $where = ' DATEDIFF (a.dates, "' . $to_date . '") = 0';
-        $model->setState('filter.calendar_to', $where);
+        $model->setState('filter.calendar_from', 'a.dates <= "' . $today . '"');
+        $model->setState('filter.calendar_to', 'COALESCE(a.enddates, a.dates) >= "' . $today . '"');
     }
 
     /**
@@ -377,8 +389,8 @@ class PlgContentJemlistevents extends CMSPlugin
     {
         $model->setState('filter.published', 1);
         $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $where = '(' . $full_end_datetime . ' > "' . $to_date . '")';
-        $model->setState('filter.calendar_to', $where);
+        $model->setState('filter.calendar_from', $full_end_datetime . ' > "' . $to_date . '"');
+        $model->setState('filter.calendar_to', null);
     }
 
     /**
@@ -388,8 +400,8 @@ class PlgContentJemlistevents extends CMSPlugin
     {
         $model->setState('filter.published', 1);
         $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $where = '(' . $full_start_datetime . ' > "' . $to_date . '")';
-        $model->setState('filter.calendar_to', $where);
+        $model->setState('filter.calendar_from', $full_start_datetime . ' > "' . $to_date . '"');
+        $model->setState('filter.calendar_to', null);
     }
 
     /**
@@ -399,8 +411,8 @@ class PlgContentJemlistevents extends CMSPlugin
     {
         $model->setState('filter.published', 1);
         $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';
-        $model->setState('filter.calendar_to', $where);
+        $model->setState('filter.calendar_from', $full_start_datetime . ' <= "' . $to_date . '"');
+        $model->setState('filter.calendar_to', $full_end_datetime . ' >= "' . $to_date . '"');
     }
 
     /**
@@ -446,13 +458,13 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     private function handleError(\Exception $e): void
     {
-        JLog::add(
+        Log::add(
             sprintf('Error in JemListEvents plugin: %s (File: %s, Line: %s)',
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getLine()
             ),
-            JLog::ERROR,
+            Log::ERROR,
             'plg_content_jemlistevents'
         );
 
@@ -467,27 +479,21 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     protected function _display(array $rows, array $parameters, int $listevents_id): string
     {
-        include_once JPATH_BASE."/components/com_jem/helpers/route.php";
+        include_once JPATH_BASE . "/components/com_jem/helpers/route.php";
 
         $html_list = $this->generateTableStart($listevents_id);
-
-        // Check if there are events
-        if (empty($rows)) {
-            $rows = []; // to skip foreach without warning
-        }
 
         $n_event = 0;
         $cols_count = $this->calculateColumnsCount($parameters);
 
         if (count($rows) > 0) {
             $html_list .= $this->generateTableHeader($parameters);
-        }
-
-        foreach ($rows as $event) {
-            $html_list .= $this->generateTableRow($event, $parameters, $n_event, $listevents_id);
-            $n_event++;
-            if ((int)$parameters['max_events'] && ($n_event >= (int)$parameters['max_events'])) {
-                break;
+            foreach ($rows as $event) {
+                $html_list .= $this->generateTableRow($event, $parameters, $n_event, $listevents_id);
+                $n_event++;
+                if ((int)$parameters['max_events'] && ($n_event >= (int)$parameters['max_events'])) {
+                    break;
+                }
             }
         }
 
@@ -529,7 +535,7 @@ class PlgContentJemlistevents extends CMSPlugin
 
         if ($parameters['show_time'] !== 'off' &&
             (($parameters['show_date'] === 'off' && $parameters['show_enddatetime'] !== 'off') ||
-             ($parameters['show_enddatetime'] === 'off'))) {
+                ($parameters['show_enddatetime'] === 'off'))) {
             $html .= '<th>' . Text::_('COM_JEM_STARTTIME_SHORT') . '</th>';
         }
 
@@ -549,7 +555,7 @@ class PlgContentJemlistevents extends CMSPlugin
         if ($parameters['show_category'] !== 'off') $cols_count++;
         if ($parameters['show_time'] !== 'off' &&
             (($parameters['show_date'] === 'off' && $parameters['show_enddatetime'] !== 'off') ||
-             ($parameters['show_enddatetime'] === 'off'))) {
+                ($parameters['show_enddatetime'] === 'off'))) {
             $cols_count++;
         }
         return max(1, $cols_count);
@@ -588,7 +594,7 @@ class PlgContentJemlistevents extends CMSPlugin
         if ($parameters['title'] === 'link') {
             $html .= '<a href="' . $linkdetails . '">';
         }
-        $fulltitle = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
+        $fulltitle = htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8');
         $title = mb_strlen($fulltitle) > $parameters['cut_title'] ? mb_substr($fulltitle, 0, $parameters['cut_title']) . '&nbsp;…' : $fulltitle;
         $html .= $title;
         if ($parameters['title'] === 'link') {

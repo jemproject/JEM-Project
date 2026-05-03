@@ -1,7 +1,8 @@
 <?php
 /**
  * @package    JEM
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @subpackage JEM Banner Module
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
@@ -9,40 +10,80 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 /**
- * Script file of JEM banner module
+ * Script file of JEM component
  */
 class mod_jem_bannerInstallerScript
 {
     /**
-     * Module element name
+     * Module name (extension element)
      */
-    private $name = 'mod_jem_banner';
+    private string $name = 'mod_jem_banner';
+
+    private string $oldRelease = '';
+    private string $newRelease = '';
 
     /**
-     * Preflight method
-     * Called before install/update/uninstall
-     * Not required for installations and updates >= 2.3.6
-     *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * Run before install/update/uninstall
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
-        // No preflight checks required
+        $type = strtolower($type);
+
+        if ($type === 'update') {
+
+            // Installed module version (from manifest cache)
+            $this->oldRelease = (string) $this->getParam('version');
+
+            // Version being installed (manifest)
+            $this->newRelease = (string) $parent->getManifest()->version;
+
+            // Abort if new version is older
+            if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Postflight method
-     * Called after install/update/uninstall
-     * Currently no post-install actions required
-     *
-     * @param string $type   The type of action (install, update, discover_install)
-     * @param object $parent The class calling this method
+     * Run after install/update/uninstall
      */
-    function postflight($type, $parent)
+    public function postflight($type, $parent)
     {
-        // No postflight actions required
+        $type = strtolower($type);
+
+        if ($type === 'install') {
+            return true;
+        }
+        if ($type === 'update') {
+            return true;
+        }
+        if ($type == 'uninstall') {
+            return true;
+        }
+    }
+
+    /**
+     * Get a parameter from the manifest cache
+     */
+    private function getParam(string $name)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select('manifest_cache')
+            ->from('#__extensions')
+            ->where([
+                "type = 'module'",
+                "element = " . $db->quote($this->name)
+            ]);
+
+        $db->setQuery($query);
+        $manifest = json_decode($db->loadResult(), true);
+
+        return $manifest[$name] ?? null;
     }
 }
