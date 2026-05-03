@@ -372,7 +372,9 @@ class JemModelEditevent extends JemModelEvent
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select(array('con.*'));
-        $query->from('#__contact_details As con');
+        $query->select($db->quoteName('cat.title', 'category_title'));
+        $query->from('#__contact_details as con');
+        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid') . ' AND cat.extension = "com_contact"');
 
         // where
         $where = array();
@@ -392,6 +394,12 @@ class JemModelEditevent extends JemModelEvent
                     break;
                 case 4: // Search state
                     $where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+                    break;
+                case 5: // Search country
+                    $where[] = ' LOWER(con.country) LIKE \'%' . $search . '%\' ';
+                    break;
+                case 6: // Search category
+                    $where[] = ' LOWER(cat.title) LIKE \'%' . $search . '%\' ';
                     break;
             }
         }

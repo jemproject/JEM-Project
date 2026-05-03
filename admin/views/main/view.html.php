@@ -36,6 +36,17 @@ class JemViewMain extends JemAdminView
         $venue    = $this->get('VenuesData');
         $category = $this->get('CategoriesData');
 
+        // Load updatecheck model manually
+        require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/updatecheck.php';
+        $updateModel = new JemModelUpdatecheck(['ignore_request' => true]);
+        $updatedata  = $updateModel->getUpdatedata();
+
+        if ($updatedata === false) {
+            $updatedata = new stdClass();
+            $updatedata->failed  = 1;
+            $updatedata->current = null;
+        }
+
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
@@ -45,6 +56,7 @@ class JemViewMain extends JemAdminView
         $this->venue    = $venue;
         $this->category = $category;
         $this->user     = $user;
+        $this->updatedata = $updatedata;
 
         // add toolbar
         $this->addToolbar();

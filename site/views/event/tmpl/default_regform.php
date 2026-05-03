@@ -155,7 +155,7 @@ if ($this->showRegForm && empty($this->print)) :
                 <?php
 
                 //FULL AND WAITLIST
-                    if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && $placesavailableuser !==    0) {
+                if ($this->item->maxplaces && (($this->item->booked + $this->item->reservedplaces) >= $this->item->maxplaces) && $placesavailableuser !==    0) {
                     if ($this->item->waitinglist) {
                         if ($placesBookedUser) {
                             $placesavailableuser = 0;
@@ -328,9 +328,9 @@ if ($this->showRegForm && empty($this->print)) :
             <?php if (!empty($this->jemsettings->regallowcomments)) { ?>
                 <p><?php echo Text::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
                 <p><textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255" <?php echo ($disabledOptions ? 'disabled="disabled"':'');?>><?php
-                    if (is_object($this->registration) && !empty($this->registration->comment)) {
-                        echo htmlspecialchars($this->registration->comment);
-                    } ?></textarea></p>
+                        if (is_object($this->registration) && !empty($this->registration->comment)) {
+                            echo htmlspecialchars($this->registration->comment);
+                        } ?></textarea></p>
             <?php } ?>
             <p>
                 <input class="btn btn-sm btn-primary" type="submit" id="jem_send_attend" name="jem_send_attend"

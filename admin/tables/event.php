@@ -13,6 +13,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\User\User;
 
 /**
  * JEM Event Table
@@ -37,7 +38,7 @@ class JemTableEvent extends Table
             $array['registra'] = 0 ;
         }
         if(isset($array['contactid'])){
-            $array['contactid'] = (int) $array['contactid'];
+            $array['contactid'] = $array['contactid'];
         }
         if (!isset($array['unregistra'])) {
             $array['unregistra'] = 0 ;
@@ -167,6 +168,26 @@ class JemTableEvent extends Table
         if ($date1 > $date2) {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START_DATES'));
             return false;
+        }
+
+        // Check created_by user
+        $currentUser = Factory::getApplication()->getIdentity();
+        $currentUserId = (int) $currentUser->id;
+
+        $createdBy = isset($this->created_by) ? (int) $this->created_by : 0;
+        $isAdmin = false;
+
+        if ($createdBy > 0) {
+            try {
+                $creator = User::getInstance($createdBy);
+                $isAdmin = $creator && !$creator->guest && $creator->authorise('core.admin');
+            } catch (\Throwable $e) {
+                $isAdmin = false;
+            }
+        }
+
+        if (!$isAdmin) {
+            $this->created_by = $currentUserId;
         }
 
         return true;
