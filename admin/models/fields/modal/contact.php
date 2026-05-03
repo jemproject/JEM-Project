@@ -30,17 +30,17 @@ class JFormFieldModal_Contact extends FormField
      */
     protected function getInput()
     {
-        $app      = Factory::getApplication();
+        $app = Factory::getApplication();
         $document = $app->getDocument();
-        $wa       = $document->getWebAssetManager();
+        $wa = $document->getWebAssetManager();
+        $modalId = 'modal_' . $this->id;
 
         // Build the script
         $script = array();
         $script[] = '    function jSelectContact_' . $this->id . '(id, name, object) {';
         $script[] = '        document.getElementById("' . $this->id . '_id").value = id;';
         $script[] = '        document.getElementById("' . $this->id . '_name").value = name;';
-        // $script[] = '        SqueezeBox.close();';
-        $script[] = '        $("#contact-modal").modal("hide");';
+        $script[] = '        bootstrap.Modal.getInstance(document.getElementById("' . $modalId . '")).hide();';
         $script[] = '    }';
 
         // Add to document head
@@ -48,70 +48,62 @@ class JFormFieldModal_Contact extends FormField
 
         // Setup variables for display
         $html = array();
-        $link = 'index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component&amp;function=jSelectContact_' . $this->id;
+        $currentValues = $this->value ? $this->value : '';
+        $link = 'index.php?option=com_jem&view=contactelement&tmpl=component'
+            . '&function=jSelectContact_' . $this->id
+            . '&selection=' . $currentValues;
 
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('GROUP_CONCAT(name SEPARATOR ", ")');
-        $query->from('#__contact_details');
-        $query->where(array('id IN (' . $this->value . ')'));
+        $contactNames = array();
 
-        try {
-            $db->setQuery($query);
-            $contact = $db->loadResult();
-        }
-        catch (RuntimeException $e)
-        {
-            $app->enqueueMessage($e->getMessage(), 'warning');
+        if (!empty($this->value)) {
+            // Clean IDs for the SQL query
+            $ids = explode(',', $this->value);
+            $ids = array_map('intval', $ids);
+
+            $query = $db->getQuery(true);
+            $query->select($db->quoteName('name'));
+            $query->from('#__contact_details');
+            $query->where('id IN (' . implode(',', $ids) . ')');
+
+            try {
+                $db->setQuery($query);
+                $contact = $db->loadColumn();
+            } catch (RuntimeException $e) {
+                $app->enqueueMessage($e->getMessage(), 'warning');
+            }
         }
 
-        if (empty($contact)) {
-            $contact = Text::_('COM_JEM_SELECTCONTACT');
-        }
-        $contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
+        $contactNames = !empty($contact) ? implode(', ', $contact) : Text::_('COM_JEM_SELECT_CONTACT');
+        $contactNames = htmlspecialchars($contactNames, ENT_QUOTES, 'UTF-8');
 
         // The current contact input field
-        $html[] = '<div class="fltlft">';
-        $html[] = '  <input type="text" id="' . $this->id . '_name" value="' . $contact . '" disabled="disabled" size="35" class="form-control valid form-control-success" />';
+        $html = array();
+        $html[] = '<div class="input-group" style="width: auto; flex-grow: 1;">';
+        $html[] = '  <input type="text" id="' . $this->id . '_name" class="form-control readonly" disabled="disabled" value="' . $contactNames . '" readonly size="35" />';
+        $html[] = '  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
+        $html[] = '    <i class="icon-user"></i> ' . Text::_('COM_JEM_SELECT');
+        $html[] = '  </button>';
         $html[] = '</div>';
-
-        // The contact select button
-        $html[] = '<div class="button2-left">';
-        $html[] = '  <div class="blank">';
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
-            'contact-modal',
+            $modalId,
             array(
-                'url' => $link . '&amp;' . Session::getFormToken() . '=1',
+                'url' => $link . '&' . Session::getFormToken() . '=1',
                 'title' => Text::_('COM_JEM_SELECT'),
                 'width' => '800px',
                 'height' => '450px',
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
             )
         );
-        $html[] = '<button type="button" class="btn btn-link btn-primary"  data-bs-toggle="modal" data-bs-target="#contact-modal">' . Text::_(
-                'COM_JEM_SELECT'
-            ) . '
-        </button>';
-        $html[] = '  </div>';
-        $html[] = '</div>';
 
-        // The active contact id field
-        if (0 == $this->value) {
-            $value = '';
-        } else {
-            $value = $this->value;
-        }
 
         // class='required' for client side validation
-        $class = '';
-        if ($this->required) {
-            $class = ' class="required modal-value"';
-        }
-
-        $html[] = '<input type="hidden" id="' . $this->id . '_id"' . $class . ' name="' . $this->name . '" value="' . $value . '" />';
+        $class = $this->required ? ' class="required modal-value"' : '';
+        $html[] = '<input type="hidden" id="' . $this->id . '_id"' . $class . ' name="' . $this->name . '" value="' . htmlspecialchars($currentValues, ENT_QUOTES, 'UTF-8') . '" />';
 
         return implode("\n", $html);
     }
 }
+
 ?>
