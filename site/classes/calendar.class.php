@@ -694,6 +694,9 @@ class JemCalendar
             if (($this->getWeekday($var) == 6) && $this->crSatClass) {
                 $cssClass[] = $this->cssSaturday;
             }
+            if ($eventContent) {
+                $cssClass[] = 'busy';
+            }
             $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.'<span>'.$linktext.'</span></div>'.$eventContent."</td>";
         }
 
