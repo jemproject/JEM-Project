@@ -175,10 +175,10 @@ class JemCalendar
 
         if (version_compare(JVERSION, '5.0.0', '>=')) {
             // Joomla 5
-            $this->yearNavBack=" <i class='fa-solid fa-backward'></i> "; // Previous year
-            $this->yearNavForw=" <i class='fa-solid fa-forward'></i> "; // Next year
-            $this->monthNavBack=" <i class='fa-solid fa-backward-step'></i> "; // Previous month
-            $this->monthNavForw=" <i class='fa-solid fa-forward-step'></i> "; // Next month
+            $this->yearNavBack=" <i class='fa-solid fa-angles-left'></i> "; // Previous year
+            $this->yearNavForw=" <i class='fa-solid fa-angles-right'></i> "; // Next year
+            $this->monthNavBack=" <i class='fa-solid fa-angle-left'></i> "; // Previous month
+            $this->monthNavForw=" <i class='fa-solid fa-angle-right'></i> "; // Next month
         } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
             // Joomla 4
             $this->yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
@@ -694,7 +694,7 @@ class JemCalendar
             if (($this->getWeekday($var) == 6) && $this->crSatClass) {
                 $cssClass[] = $this->cssSaturday;
             }
-            $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
+            $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.'<span>'.$linktext.'</span></div>'.$eventContent."</td>";
         }
 
         return $out;

@@ -34,6 +34,34 @@ if ($jemsettings->oldevent > 0) {
     $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
 
+?>
+<style>
+    .col-category {
+        letter-spacing: 0.5px;
+        color: #444 !important;
+    }
+
+    .con_name a {
+        color: #0d6efd;
+        transition: color 0.2s;
+    }
+
+    .con_name a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    .jem-contact-grouped-container i {
+        color: #999;
+    }
+
+    .contact-group-row:last-child {
+        border-bottom: none;
+    }
+
+</style>
+<?php
+
 $catclasses = '';
 foreach ((array)$this->categories as $category) {
     $catclasses .= ' cat_id' . $this->escape($category->id);
@@ -127,32 +155,32 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     </dt>
                     <dd class="jem-category">
                         <?php
-                    foreach ((array)$this->categories as $i => $category) {
-                        if ($i > 0) {
+                        foreach ((array)$this->categories as $i => $category) {
+                            if ($i > 0) {
                                 echo ', ';
+                            }
+                            if ($params->get('event_link_category') == 1) {
+                                echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+                            } else {
+                                echo $this->escape($category->catname);
+                            }
                         }
-                           if ($params->get('event_link_category') == 1) {
-                            echo '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
-                        } else {
-                            echo $this->escape($category->catname);
-                        }
-                    }
-                    echo '</dd>';
-                            endif;
+                        echo '</dd>';
+                        endif;
 
-                    for ($cr = 1; $cr <= 10; $cr++) {
+                        for ($cr = 1; $cr <= 10; $cr++) {
                         $currentRow = $this->item->{'custom'.$cr};
                         if (preg_match('%^http(s)?://%', $currentRow)) {
                             $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
                         }
                         if ($currentRow) {
-                            ?>
-                            <dt class="jem-custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
-                            <dd class="jem-custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                            <?php
-                        }
-                    }
-                    ?>
+                        ?>
+                    <dt class="jem-custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
+                    <dd class="jem-custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+                <?php
+                }
+                }
+                ?>
 
                     <?php if ($params->get('event_show_hits')) : ?>
                         <dt class="jem-hits hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
@@ -166,11 +194,31 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <dd class="createdby">
                             <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
                             <?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
-                                $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2 . '&catid=' . $this->item->concatid;
-                                $menu = Factory::getApplication()->getMenu();
-                                $item = $menu->getItems('link', $needle, true);
-                                $cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-                                echo Text::sprintf('COM_JEM_EVENT_CREATED_BY', HTMLHelper::_('link', Route::_($cntlink), $author));
+                                $concatid = null;
+
+                                if ($params->get('event_link_author')) {
+                                    $db    = Factory::getContainer()->get('DatabaseDriver');
+                                    $query = $db->getQuery(true)
+                                        ->select($db->quoteName('catid'))
+                                        ->from($db->quoteName('#__contact_details'))
+                                        ->where($db->quoteName('id') . ' = ' . $this->item->contactid2)
+                                        ->where($db->quoteName('published') . ' = 1');
+                                    $db->setQuery($query);
+                                    $concatid = $db->loadResult();
+                                }
+
+                                if ($concatid) {
+                                    $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2 . '&catid=' . $concatid;
+                                    $menu = Factory::getApplication()->getMenu();
+                                    $mItem = $menu->getItems('link', $needle, true);
+                                    $link = Route::_($needle . (!empty($mItem) ? '&Itemid=' . $mItem->id : ''));
+                                    ?>
+                                    <a href="<?php echo $link; ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
+                                        <?php echo $author; ?> <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
+                                    </a>
+                                <?php } else {
+                                    echo Text::sprintf('COM_JEM_EVENT_CREATED_BY', $author);
+                                }
                             else :
                                 echo Text::sprintf('COM_JEM_EVENT_CREATED_BY', $author);
                             endif;
@@ -245,36 +293,105 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             </div>
         <?php } ?>
 
-        <!--  Contact -->
-        <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
+        <!-- CONTACTS -->
+        <?php
+        $showContactCategory = $params->get('event_show_contact_category');
+        $showContactDesc     = $params->get('event_show_contact_description');
+        $selectedFields      = $params->get('contact_fields', ['position', 'website', 'country']);
 
-            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO') ; ?></h2>
+        if ($params->get('event_show_contact') && !empty($this->contacts)) :
 
-            <dl class="jem-dl">
-                <dt class="con_name hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_NAME'); ?>"><?php echo Text::_('COM_JEM_NAME'); ?>:</dt>
-                <dd class="con_name">
-                    <?php
-                    $contact = $this->item->conname;
-                    if ($params->get('event_link_contact') == true) :
-                        $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid . '&catid=' . $this->item->concatid;
-                        $menu = Factory::getApplication()->getMenu();
-                        $item = $menu->getItems('link', $needle, true);
-                        $cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-                        echo Text::sprintf('COM_JEM_EVENT_CONTACT', HTMLHelper::_('link', Route::_($cntlink2), $contact));
-                    else :
-                        echo Text::sprintf('COM_JEM_EVENT_CONTACT', $contact);
-                    endif;
-                    ?>
-                </dd>
+            $displayGroups = array();
+            if ($showContactCategory) {
+                foreach ($this->contacts as $contact) {
+                    $catName = !empty($contact->category_name) ? $contact->category_name : Text::_('COM_JEM_NO_CATEGORY');
+                    $displayGroups[$catName][] = $contact;
+                }
+            } else {
+                $displayGroups['NO_CAT_HEADER'] = $this->contacts;
+            }
+            ?>
 
-                <?php if ($this->item->contelephone) : ?>
-                    <dt class="con_telephone hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TELEPHONE'); ?>"><?php echo Text::_('COM_JEM_TELEPHONE'); ?>:</dt>
-                    <dd class="con_telephone">
-                        <?php echo $this->escape($this->item->contelephone); ?>
-                    </dd>
-                <?php endif; ?>
-            </dl>
-        <?php endif ?>
+            <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></h2>
+
+            <div class="jem-contact-responsive">
+                <?php foreach ($displayGroups as $categoryTitle => $contactList) : ?>
+
+                    <div class="contact-group-row d-flex flex-column flex-md-row mb-4" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
+
+                        <?php if ($showContactCategory) : ?>
+                            <div class="category-label mb-2 mb-md-0" style="flex: 0 0 25%; font-weight: bold; text-transform: uppercase; color: #444;">
+                                <i class="icon-users"></i> <?php echo $this->escape($categoryTitle); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="contacts-list" style="flex: 1;">
+                            <?php foreach ($contactList as $contact) : ?>
+                                <div class="contact-entry mb-4" style="display: flex; flex-direction: column; border-bottom: 1px dashed #ddd; padding-bottom: 15px;">
+
+                                    <div class="con_name" style="font-weight: 600; font-size: 1.1em; margin-bottom: 4px;">
+                                        <?php if ($params->get('event_show_contact_link', 0) && !empty($contact->conid)) : ?>
+                                            <?php $link = Route::_('index.php?option=com_contact&view=contact&id=' . $contact->conid); ?>
+                                            <a href="<?php echo $link; ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
+                                                <?php echo $this->escape($contact->conname); ?> <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
+                                            </a>
+                                        <?php else : ?>
+                                            <?php echo $this->escape($contact->conname); ?>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <div class="con_details d-flex flex-wrap" style="font-size: 0.9em; color: #666; gap: 10px 20px;">
+
+                                        <?php if (in_array('position', $selectedFields) && !empty($contact->conposition)) : ?>
+                                            <span class="con-position"><i class="fas fa-briefcase"></i> <?php echo $this->escape($contact->conposition); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('phone', $selectedFields) && !empty($contact->contelephone)) : ?>
+                                            <span><i class="icon-phone"></i> <?php echo $this->escape($contact->contelephone); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('mobile', $selectedFields) && !empty($contact->conmobile)) : ?>
+                                            <span><i class="fas fa-mobile-alt"></i> <?php echo $this->escape($contact->conmobile); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('email', $selectedFields) && !empty($contact->conemail)) : ?>
+                                            <span><i class="icon-envelope"></i> <?php echo HTMLHelper::_('email.cloak', $contact->conemail); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('website', $selectedFields) && !empty($contact->conwebsite)) : ?>
+                                            <span><i class="fas fa-globe"></i> <a href="<?php echo $this->escape($contact->conwebsite); ?>" target="_blank" rel="noopener"><?php echo Text::_('COM_JEM_CONTACT_FIELD_WEB'); ?></a></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('address', $selectedFields) && !empty($contact->conaddress)) : ?>
+                                            <span><i class="fas fa-map-marker-alt"></i> <?php echo $this->escape($contact->conaddress); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('city', $selectedFields) && !empty($contact->concity)) : ?>
+                                            <span><i class="fas fa-city"></i> <?php echo $this->escape($contact->concity); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('state', $selectedFields) && !empty($contact->constate)) : ?>
+                                            <span><i class="fas fa-map"></i> <?php echo $this->escape($contact->constate); ?></span>
+                                        <?php endif; ?>
+
+                                        <?php if (in_array('country', $selectedFields) && !empty($contact->concountry)) : ?>
+                                            <span><i class="fas fa-flag"></i> <?php echo $this->escape($contact->concountry); ?></span>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <?php if ($showContactDesc && !empty($contact->condescription)) : ?>
+                                        <div class="con_description" style="font-size: 0.95em; color: #555; line-height: 1.5; padding: 10px; background: #fdfdfd; border-left: 3px solid #eee; margin-top: 12px;">
+                                            <?php echo $contact->condescription; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 
         <?php $this->attachments = $this->item->attachments; ?>
         <?php echo $this->loadTemplate('attachments'); ?>
@@ -320,72 +437,72 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     ?>
                                 </dd>
                                 <?php if($this->item->user_has_access_venue) : ?>
-                                <?php if ($this->item->street) : ?>
-                                    <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
-                                    <dd class="venue_street" itemprop="streetAddress">
-                                        <?php echo $this->escape($this->item->street); ?>
-                                    </dd>
-                                <?php endif; ?>
+                                    <?php if ($this->item->street) : ?>
+                                        <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
+                                        <dd class="venue_street" itemprop="streetAddress">
+                                            <?php echo $this->escape($this->item->street); ?>
+                                        </dd>
+                                    <?php endif; ?>
 
-                                <?php if ($this->item->postalCode) : ?>
-                                    <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
-                                    <dd class="venue_postalCode" itemprop="postalCode">
-                                        <?php echo $this->escape($this->item->postalCode); ?>
-                                    </dd>
-                                <?php endif; ?>
+                                    <?php if ($this->item->postalCode) : ?>
+                                        <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
+                                        <dd class="venue_postalCode" itemprop="postalCode">
+                                            <?php echo $this->escape($this->item->postalCode); ?>
+                                        </dd>
+                                    <?php endif; ?>
 
-                                <?php if ($this->item->city) : ?>
-                                    <dt class="venue_city hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_CITY'); ?>"><?php echo Text::_('COM_JEM_CITY'); ?>:</dt>
-                                    <dd class="venue_city" itemprop="addressLocality">
-                                        <?php echo $this->escape($this->item->city); ?>
-                                    </dd>
-                                <?php endif; ?>
+                                    <?php if ($this->item->city) : ?>
+                                        <dt class="venue_city hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_CITY'); ?>"><?php echo Text::_('COM_JEM_CITY'); ?>:</dt>
+                                        <dd class="venue_city" itemprop="addressLocality">
+                                            <?php echo $this->escape($this->item->city); ?>
+                                        </dd>
+                                    <?php endif; ?>
 
-                                <?php if ($this->item->state) : ?>
-                                    <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
-                                    <dd class="venue_state" itemprop="addressRegion">
-                                        <?php echo $this->escape($this->item->state); ?>
-                                    </dd>
-                                <?php endif; ?>
+                                    <?php if ($this->item->state) : ?>
+                                        <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
+                                        <dd class="venue_state" itemprop="addressRegion">
+                                            <?php echo $this->escape($this->item->state); ?>
+                                        </dd>
+                                    <?php endif; ?>
 
-                                <?php if ($this->item->country) : ?>
-                                    <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
-                                    <dd class="venue_country">
-                                        <?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
-                                        <meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
-                                    </dd>
-                                <?php endif; ?>
+                                    <?php if ($this->item->country) : ?>
+                                        <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
+                                        <dd class="venue_country">
+                                            <?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
+                                            <meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
+                                        </dd>
+                                    <?php endif; ?>
 
-                                <!-- PUBLISHING STATE -->
-                                <?php if (!empty($this->showvenuestate) && isset($this->item->locpublished)) : ?>
-                                    <dt class="venue_published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
-                                    <dd class="venue_published">
-                                        <?php switch ($this->item->locpublished) {
-                                            case  1: echo Text::_('JPUBLISHED');   break;
-                                            case  0: echo Text::_('JUNPUBLISHED'); break;
-                                            case  2: echo Text::_('JARCHIVED');    break;
-                                            case -2: echo Text::_('JTRASHED');     break;
-                                        } ?>
-                                    </dd>
-                                <?php endif; ?>
+                                    <!-- PUBLISHING STATE -->
+                                    <?php if (!empty($this->showvenuestate) && isset($this->item->locpublished)) : ?>
+                                        <dt class="venue_published hasTooltip" data-original-title="<?php echo Text::_('JSTATUS'); ?>"><?php echo Text::_('JSTATUS'); ?>:</dt>
+                                        <dd class="venue_published">
+                                            <?php switch ($this->item->locpublished) {
+                                                case  1: echo Text::_('JPUBLISHED');   break;
+                                                case  0: echo Text::_('JUNPUBLISHED'); break;
+                                                case  2: echo Text::_('JARCHIVED');    break;
+                                                case -2: echo Text::_('JTRASHED');     break;
+                                            } ?>
+                                        </dd>
+                                    <?php endif; ?>
 
-                                <?php
-                                for ($cr = 1; $cr <= 10; $cr++) {
-                                    $currentRow = $this->item->{'venue'.$cr};
-                                    if (preg_match('%^http(s)?://%', $currentRow)) {
-                                        $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
+                                    <?php
+                                    for ($cr = 1; $cr <= 10; $cr++) {
+                                        $currentRow = $this->item->{'venue'.$cr};
+                                        if (preg_match('%^http(s)?://%', $currentRow)) {
+                                            $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
+                                        }
+                                        if ($currentRow) {
+                                            ?>
+                                            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
+                                            <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+                                            <?php
+                                        }
                                     }
-                                    if ($currentRow) {
-                                        ?>
-                                        <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
-                                        <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                                        <?php
-                                    }
-                                }
-                                ?>
-                                <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
-                                    <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-                                <?php endif; ?>
+                                    ?>
+                                    <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
+                                        <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </dl>
                         </div>
@@ -418,13 +535,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     <?php endif; /* event_show_detailsadress */ ?>
                 </div>
                 <?php if($this->item->user_has_access_venue) :
-                $event_show_mapserv = $params->get('event_show_mapserv');
-                if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
-                    <div class="jem-map">
-                        <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
-                    </div>
-                <?php endif; ?>
-                <?php if ($event_show_mapserv == 3) : ?>
+                    $event_show_mapserv = $params->get('event_show_mapserv');
+                    if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
+                        <div class="jem-map">
+                            <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($event_show_mapserv == 3) : ?>
                     <div class="jem-map">
                         <input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
                         <input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
@@ -437,13 +554,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     </div>
                 <?php endif; ?>
 
-                <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
+                    <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
                     && $this->item->locdescription != '<br>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
                     </div>
-                    <?php endif; ?>
+                <?php endif; ?>
                 <?php endif; ?>
 
                 <?php $this->attachments = $this->item->vattachments; ?>
@@ -492,7 +609,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         break;
                     case 1:
                         //Event with registration (YES with or witout UNTIL)
-                         echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
                         echo $this->loadTemplate('attendees');
                         if($this->dateUnregistationUntil) {
                             echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';

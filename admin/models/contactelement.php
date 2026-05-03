@@ -100,7 +100,9 @@ class JemModelContactelement extends BaseDatabaseModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select(array('con.*'));
+        $query->select($db->quoteName('cat.title', 'category_title'));
         $query->from('#__contact_details as con');
+        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid') . ' AND cat.extension = "com_contact"');
 
         // where
         $where = array();
