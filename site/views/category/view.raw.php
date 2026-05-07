@@ -41,8 +41,8 @@ class JemViewCategory extends HtmlView
 
             // initiate new CALENDAR
             $category = $model->getCategories($catid);
-            $vcal = JemHelper::getCalendarTool();
-            $vcal->setConfig("filename", "events_category_" . $category[0]->catname . "_". $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics");
+            $vcal     = JemHelper::getCalendarTool();
+            $filename = "events_category_" . $category[0]->catname . "_" . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics";
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
@@ -51,7 +51,7 @@ class JemViewCategory extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar();
+            $vcal->returnCalendar(false, false, true, $filename);
         }
     }
 }
