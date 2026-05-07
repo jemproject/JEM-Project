@@ -174,7 +174,6 @@ class JemTableEvent extends Table
         // Check created_by user
         $currentUser = Factory::getApplication()->getIdentity();
         $currentUserId = (int) $currentUser->id;
-
         $createdBy = isset($this->created_by) ? (int) $this->created_by : 0;
         $isAdmin = false;
 
