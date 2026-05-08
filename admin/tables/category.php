@@ -230,6 +230,11 @@ class JemTableCategory extends Nested
      */
     public function checkCsvImport()
     {
+        $currentUser = Factory::getApplication()->getIdentity();
+        $currentUserId = (int) $currentUser->id;
+
+        $userFactory = Factory::getContainer()->get(UserFactoryInterface::class);
+
         foreach (get_object_vars($this) as $k => $v) {
             if (is_array($v) or is_object($v) or $v === NULL) {
                 continue;
@@ -241,6 +246,21 @@ class JemTableCategory extends Nested
             if(strpos($v, "0000-00-00")!== FALSE){
                 $this->$k = null;
             }
+
+            //Check if creaded_by exist and it is admin
+            if ($k === 'created_by') {
+                $createdBy = (int) $v;
+
+                try {
+                    $creator = $createdBy > 0 ? $userFactory->loadUserById($createdBy) : null;
+                    $isAdmin = $creator && !$creator->guest && $creator->authorise('core.admin');
+                } catch (\Throwable $e) {
+                    $isAdmin = false;
+                }
+
+                if (!$isAdmin) {
+                    $this->$k = $currentUserId;
+                }
         }
         return true;
     }

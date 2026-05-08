@@ -200,7 +200,6 @@
             description="COM_JEM_CONTACTS_DESC"
             size="40"
             required="false"
-            default="0"
         />
     </fieldset>
 

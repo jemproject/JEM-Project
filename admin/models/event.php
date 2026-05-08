@@ -751,14 +751,6 @@ class JemModelEvent extends JemModelAdmin
 
     /**
      * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.
-     * Compatible with Joomla 4 and 5.
-     *
-     * @param   int    $pk    The event ID
-     * @param   array  $data  The links data from the subform
-     * @return  bool          True on success
-     */
-    /**
-     * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.
      * Ordering is forced to integer to avoid SQL Error 1366.
      *
      * @param   int    $pk    The event ID
