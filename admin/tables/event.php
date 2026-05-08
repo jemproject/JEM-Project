@@ -173,10 +173,8 @@ class JemTableEvent extends Table
         // Check created_by user
         $currentUser = Factory::getApplication()->getIdentity();
         $currentUserId = (int) $currentUser->id;
-
         $createdBy = isset($this->created_by) ? (int) $this->created_by : 0;
         $isAdmin = false;
-
         if ($createdBy > 0) {
             try {
                 $creator = User::getInstance($createdBy);
@@ -188,6 +186,11 @@ class JemTableEvent extends Table
 
         if (!$isAdmin) {
             $this->created_by = $currentUserId;
+        }
+
+        // If publish_up does not exist or is empty, use created datetime
+        if (empty($this->publish_up) && !empty($this->created)) {
+            $this->publish_up = $this->created;
         }
 
         return true;
