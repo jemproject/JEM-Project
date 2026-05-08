@@ -773,10 +773,11 @@
 
     <fieldset name="links" addfieldpath="/administrator/components/com_jem/models/links">
         <field name="id" type="hidden" />
+
         <field
                 name="event_links"
                 type="subform"
-                layout="joomla.form.field.subform.repeatable-table"
+                layout="joomla.form.field.subform.repeatable"
                 multiple="true"
                 label="COM_JEM_EVENT_LINKS"
                 hiddenLabel="true"
@@ -785,25 +786,45 @@
             <form>
                 <field name="id" type="hidden" />
 
-                <field name="type" type="list" label="COM_JEM_EVENT_LINK_TYPE" class="input-small">
+                <field name="title" type="text"
+                        label="COM_JEM_EVENT_LINK_TITLE"
+                        class="form-control"
+                />
+
+                <field name="type" type="list"
+                        label="COM_JEM_EVENT_LINK_TYPE"
+                        class="form-select"
+                        default="info"
+                >
                     <option value="info">COM_JEM_EVENT_LINK_TXT_INFO</option>
                     <option value="online">COM_JEM_EVENT_LINK_TXT_ONLINE</option>
                     <option value="request">COM_JEM_EVENT_LINK_TXT_REQUEST</option>
                     <option value="pay">COM_JEM_EVENT_LINK_TXT_PAY</option>
                 </field>
 
-                <field name="title" type="text" label="COM_JEM_EVENT_LINK_TITLE" class="input-medium" />
+                <field name="url" type="url"
+                        label="COM_JEM_EVENT_LINK_URL"
+                        filter="url"
+                        class="form-control"
+                />
 
-                <field name="url" type="url" label="COM_JEM_EVENT_LINK_URL" filter="url" />
-
-                <field name="target" type="list" label="COM_JEM_EVENT_LINK_TARGET" default="_blank">
+                <field name="target" type="list"
+                        label="COM_JEM_EVENT_LINK_TARGET"
+                        default="_blank"
+                        class="form-select"
+                >
                     <option value="_blank">New Window (_blank)</option>
                     <option value="_self">Same Window (_self)</option>
                 </field>
 
-                <field name="icon" type="text" label="COM_JEM_EVENT_LINK_ICON" description="COM_JEM_EVENT_LINK_ICON_DESC" hint="fa fa-link" />
+                <field name="icon" type="jemicons"
+                        label="COM_JEM_EVENT_LINK_ICON"
+                        description="COM_JEM_EVENT_LINK_ICON_DESC"
+                />
 
-                <field name="image" type="media" label="COM_JEM_EVENT_LINK_IMAGE" />
+                <field name="image" type="media"
+                        label="COM_JEM_EVENT_LINK_IMAGE"
+                />
             </form>
         </field>
     </fieldset>
