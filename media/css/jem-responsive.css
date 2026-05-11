@@ -740,3 +740,300 @@ body.com_jem.body-overlayed {
 #jem .jem-event-intro {
     width: 100%;
 }
+
+/* Event links container */
+.jem-event-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 1rem 0;
+}
+
+/* Row layout */
+.jem-event-links.jem-event-links-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Column layout */
+.jem-event-links.jem-event-links-column {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+/* Event link item */
+.jem-event-link {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+
+    width: auto;
+    max-width: 100%;
+
+    min-height: 36px;
+
+    line-height: 1;
+    text-decoration: none !important;
+    box-shadow: none !important;
+
+    box-sizing: border-box;
+    vertical-align: middle;
+
+    transition:
+            background-color .15s ease,
+            color .15s ease,
+            border-color .15s ease,
+            box-shadow .15s ease,
+            transform .12s ease;
+}
+
+/* Remove underline from event links without touching the frame border */
+.jem-event-links a,
+.jem-event-links a:link,
+.jem-event-links a:visited,
+.jem-event-links a:hover,
+.jem-event-links a:focus,
+.jem-event-links a:active,
+.jem-event-link,
+.jem-event-link:hover,
+.jem-event-link:focus,
+.jem-event-link:active {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove underline from inner elements without touching borders */
+.jem-event-link *,
+.jem-event-link:hover *,
+.jem-event-link:focus *,
+.jem-event-link:active * {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Framed link */
+.jem-event-link.jem-event-link-has-frame {
+    border: 1px solid currentColor !important;
+    border-radius: .45rem !important;
+    padding: .45rem .75rem !important;
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    cursor: pointer;
+}
+
+/* Framed link hover */
+.jem-event-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-has-frame:focus {
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12) !important;
+    transform: translateY(-1px);
+}
+
+/* Event link icon */
+.jem-event-link-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+
+    line-height: 1 !important;
+}
+
+/* Event link label */
+.jem-event-link-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    min-height: 1.1rem;
+
+    line-height: 1.1 !important;
+    white-space: nowrap;
+}
+
+/* Event link image */
+.jem-event-link-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.jem-event-link-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* A: Image + Icon + Text */
+.jem-links-order-image-icon-text .jem-event-link-image {
+    order: 1;
+}
+
+.jem-links-order-image-icon-text .jem-event-link-icon {
+    order: 2;
+}
+
+.jem-links-order-image-icon-text .jem-event-link-label {
+    order: 3;
+}
+
+/* B: Icon + Text + Image */
+.jem-links-order-icon-text-image .jem-event-link-icon {
+    order: 1;
+}
+
+.jem-links-order-icon-text-image .jem-event-link-label {
+    order: 2;
+}
+
+.jem-links-order-icon-text-image .jem-event-link-image {
+    order: 3;
+}
+
+/* C: Icon + Image + Text */
+.jem-links-order-icon-image-text .jem-event-link-icon {
+    order: 1;
+}
+
+.jem-links-order-icon-image-text .jem-event-link-image {
+    order: 2;
+}
+
+.jem-links-order-icon-image-text .jem-event-link-label {
+    order: 3;
+}
+
+
+/* Prevent template image rules from enlarging link images */
+.jem-event-links .jem-event-link img.jem-event-link-image {
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+/* Link with image: keep the image inside the frame and aligned */
+.jem-event-link-has-image {
+    align-items: center;
+}
+
+/* Add a little extra internal spacing when image exists */
+.jem-event-link-has-image.jem-event-link-has-frame {
+    padding: .55rem .75rem !important;
+}
+
+/* Responsive event links */
+@media (max-width: 575.98px) {
+    .jem-event-links-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-links-column {
+        flex-direction: column;
+    }
+
+    .jem-event-link {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-link-label {
+        white-space: normal;
+    }
+
+    .jem-event-link-image {
+        max-width: 100%;
+    }
+}
+
+
+/* Normalize each link as a centered inline button */
+.jem-event-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px;
+
+    min-height: 36px;
+    line-height: 1 !important;
+
+    vertical-align: middle;
+}
+
+/* Normalize framed links */
+.jem-event-link.jem-event-link-has-frame {
+    min-height: 36px;
+    padding: .45rem .75rem !important;
+}
+
+/* Center icon vertically */
+.jem-event-link-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    line-height: 1 !important;
+
+    vertical-align: middle;
+}
+
+/* Center label vertically */
+.jem-event-link-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    min-height: 1.1rem;
+    line-height: 1.1 !important;
+
+    vertical-align: middle;
+}
+
+/* Center image vertically when present */
+.jem-event-link-image {
+    display: inline-block !important;
+    align-self: center !important;
+    vertical-align: middle !important;
+}
+
+.jem-links-tab .field-media-wrapper,
+.jem-links-tab .field-media-wrapper .input-group {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+}
+
+.jem-links-tab .field-media-wrapper .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.jem-links-tab .field-media-wrapper .input-group input {
+    min-width: 0 !important;
+    height: 36px !important;
+}
+
+.jem-links-tab .field-media-wrapper .input-group .btn {
+    flex: 0 0 auto;
+    height: 36px !important;
+    min-height: 36px !important;
+    display: inline-flex;
+    align-items: center;
+}
+

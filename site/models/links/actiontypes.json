@@ -1,0 +1,62 @@
+[
+  {
+    "value": "info",
+    "label": "COM_JEM_EVENT_LINK_TXT_INFO",
+    "icon": "fa fa-info-circle"
+  },
+  {
+    "value": "online",
+    "label": "COM_JEM_EVENT_LINK_TXT_ONLINE",
+    "icon": "fa fa-globe"
+  },
+  {
+    "value": "request",
+    "label": "COM_JEM_EVENT_LINK_TXT_REQUEST",
+    "icon": "fa fa-ticket"
+  },
+  {
+    "value": "pay",
+    "label": "COM_JEM_EVENT_LINK_TXT_PAY",
+    "icon": "fa fa-credit-card"
+  },
+  {
+    "value": "price",
+    "label": "COM_JEM_EVENT_LINK_TXT_PRICE",
+    "icon": "fa fa-tag"
+  },
+  {
+    "value": "speaker",
+    "label": "COM_JEM_EVENT_LINK_TXT_SPEAKER",
+    "icon": "fa fa-microphone"
+  },
+  {
+    "value": "workshop",
+    "label": "COM_JEM_EVENT_LINK_TXT_WORKSHOP",
+    "icon": "fa fa-tools"
+  },
+  {
+    "value": "location",
+    "label": "COM_JEM_EVENT_LINK_TXT_LOCATION",
+    "icon": "fa fa-map-marker-alt"
+  },
+  {
+    "value": "calendar",
+    "label": "COM_JEM_EVENT_LINK_TXT_CALENDAR",
+    "icon": "fa fa-calendar"
+  },
+  {
+    "value": "document",
+    "label": "COM_JEM_EVENT_LINK_TXT_DOCUMENT",
+    "icon": "fa fa-file-alt"
+  },
+  {
+    "value": "sponsor",
+    "label": "COM_JEM_EVENT_LINK_TXT_SPONSOR",
+    "icon": "fa fa-handshake"
+  },
+  {
+    "value": "networking",
+    "label": "COM_JEM_EVENT_LINK_TXT_NETWORKING",
+    "icon": "fa fa-users"
+  }
+]

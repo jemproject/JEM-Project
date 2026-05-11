@@ -232,6 +232,22 @@ class JemViewEditevent extends JemView
             $this->form->setFieldAttribute('invited', 'eventid', (int)$this->item->id);
         }
 
+        if (!empty($this->item->event_links)) {
+            $this->form->bind(array(
+                'event_links' => $this->item->event_links,
+            ));
+        }
+
+        if (!empty($this->item->attribs)) {
+            $attribs = json_decode($this->item->attribs, true);
+
+            if (is_array($attribs)) {
+                $this->form->bind(array(
+                    'attribs' => $attribs,
+                ));
+            }
+        }
+
         $this->_prepareDocument();
         parent::display($tpl);
     }

@@ -13,6 +13,7 @@ use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Form\Form;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
@@ -155,7 +156,6 @@ class JemModelEditevent extends JemModelEvent
             $locid = (int) $this->getState('event.locid');
             $date  = $this->getState('event.date');
 
-            // ???
             if (empty($value->catid) && !empty($catid)) {
                 $value->catid = $catid;
             }
@@ -187,6 +187,57 @@ class JemModelEditevent extends JemModelEvent
         $value->articletext = $value->introtext;
         if (!empty($value->fulltext)) {
             $value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;
+        }
+
+        $value->event_links = array();
+
+        if (!empty($value->id) && !$doCopy) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+
+            $query = $db->getQuery(true)
+                ->select(array(
+                    $db->quoteName('id'),
+                    $db->quoteName('event_id'),
+                    $db->quoteName('title'),
+                    $db->quoteName('type'),
+                    $db->quoteName('url'),
+                    $db->quoteName('params'),
+                    $db->quoteName('ordering')
+                ))
+                ->from($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('event_id') . ' = ' . (int) $value->id)
+                ->order($db->quoteName('ordering') . ' ASC');
+
+            $db->setQuery($query);
+            $eventLinks = $db->loadAssocList();
+
+            foreach ($eventLinks as $eventLink) {
+                $params = array();
+
+                if (!empty($eventLink['params'])) {
+                    $decodedParams = json_decode($eventLink['params'], true);
+
+                    if (is_array($decodedParams)) {
+                        $params = $decodedParams;
+                    }
+                }
+
+                $value->event_links[] = array(
+                    'id'           => isset($eventLink['id']) ? (int) $eventLink['id'] : 0,
+                    'title'        => $eventLink['title'] ?? '',
+                    'type'         => $eventLink['type'] ?? 'info',
+                    'url'          => $eventLink['url'] ?? '',
+                    'target'       => $params['target'] ?? '_blank',
+                    'icon'         => $params['icon'] ?? '',
+                    'image'        => $params['image'] ?? '',
+                    'color'        => $params['color'] ?? '#2f6f46',
+                    'frame'        => isset($params['frame']) ? (int) $params['frame'] : 1,
+                    'max_width'    => isset($params['max_width']) ? (int) $params['max_width'] : 120,
+                    'max_height'   => isset($params['max_height']) ? (int) $params['max_height'] : 60,
+                    'custom_class' => $params['custom_class'] ?? '',
+                    'ordering'     => isset($eventLink['ordering']) ? (int) $eventLink['ordering'] : 0,
+                );
+            }
         }
 
         return $value;

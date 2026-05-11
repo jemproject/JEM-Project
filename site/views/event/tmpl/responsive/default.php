@@ -263,29 +263,153 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         echo $this->item->text;
                     }
 
-                   if (!empty($this->event_links)) : ?>
-                        <div class="jem-event-links mt-3 mb-3">
-                            <div class="d-flex flex-wrap gap-2">
-                                <?php foreach ($this->event_links as $link) : ?>
-                                    <?php
-                                        $target = $link->target ?? '_blank';
-                                        $rel    = ($target === '_blank') ? 'rel="noopener noreferrer"' : '';
-                                    ?>
-                                    <a href="<?php echo $link->url; ?>"
-                                       target="<?php echo $target; ?>"
-                                       class="<?php echo $link->custom_class ?: 'btn btn-outline-primary'; ?>"
-                                       <?php echo $rel; ?>>
+                    if (!empty($this->event_links)) : ?>
+                        <?php
+                        // Default icons by action type.
+                        $defaultLinkTypes = array(
+                            'info'    => array('icon' => 'fa fa-info-circle'),
+                            'online'  => array('icon' => 'fa fa-globe'),
+                            'request' => array('icon' => 'fa fa-ticket'),
+                            'pay'     => array('icon' => 'fa fa-credit-card'),
+                            'price'   => array('icon' => 'fa fa-tag')
+                        );
+                        ?>
 
-                                        <?php if (!empty($link->image)) : ?>
-                                            <img src="<?php echo $link->image; ?>" alt="" style="height: 1.2em;" class="me-1" />
-                                        <?php elseif (!empty($link->icon)) : ?>
-                                            <span class="<?php echo $link->icon; ?> me-1" aria-hidden="true"></span>
-                                        <?php endif; ?>
+                        <?php
+                        // Read event links layout from event attribs merged into params.
+                        $linksLayout = 'row';
 
-                                        <?php echo htmlspecialchars($link->title); ?>
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
+                        if (!empty($this->item->params) && is_object($this->item->params) && method_exists($this->item->params, 'get')) {
+                            $linksLayout = (string) $this->item->params->get('links_layout', 'row');
+                        }
+                        if (!in_array($linksLayout, array('row', 'column'), true)) {
+                            $linksLayout = 'row';
+                        }
+
+                        $params = !empty($this->item->params) ? $this->item->params : $this->params;
+
+                        $linksOrder = $params->get('links_order', 'image_icon_text');
+
+                        $allowedOrders = [
+                            'image_icon_text',
+                            'icon_text_image',
+                            'icon_image_text',
+                        ];
+
+                        if (!in_array($linksOrder, $allowedOrders, true)) {
+                            $linksOrder = 'image_icon_text';
+                        }
+
+                        $orderClass = 'jem-links-order-' . str_replace('_', '-', $linksOrder);
+                        ?>
+
+
+                        <div class="jem-event-links jem-event-links-<?php echo $this->escape($linksLayout); ?> <?php echo $this->escape($orderClass); ?>">
+                            <?php foreach ($this->event_links as $link) : ?>
+                                <?php
+                                // Read link values safely.
+                                $url = !empty($link->url) ? trim((string) $link->url) : '';
+
+                                if ($url === '') {
+                                    continue;
+                                }
+
+                                $type      = !empty($link->type) ? trim((string) $link->type) : 'info';
+                                $target    = !empty($link->target) ? trim((string) $link->target) : '_blank';
+                                $label     = !empty($link->title) ? trim((string) $link->title) : '';
+                                $image     = !empty($link->image) ? trim((string) $link->image) : '';
+                                $icon      = !empty($link->icon) ? trim((string) $link->icon) : '';
+                                $color     = !empty($link->color) ? trim((string) $link->color) : '';
+                                $maxWidth  = !empty($link->max_width) ? (int) $link->max_width : 120;
+                                $maxHeight = !empty($link->max_height) ? (int) $link->max_height : 60;
+                                $frameValue = isset($link->frame) ? $link->frame : 0;
+                                $frame = in_array((string) $frameValue, array('1', 'true', 'yes', 'on'), true) ? 1 : 0;
+
+                                // Use the default icon from the action type when no explicit icon is stored.
+                                if ($icon === '' && isset($defaultLinkTypes[$type]['icon'])) {
+                                    $icon = $defaultLinkTypes[$type]['icon'];
+                                }
+
+                                // Remove Joomla media metadata from the image URL if present.
+                                if ($image !== '' && strpos($image, '#') !== false) {
+                                    $imageParts = explode('#', $image, 2);
+                                    $image = $imageParts[0];
+                                }
+
+                                $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
+                                $rel = ($target === '_blank') ? ' rel="noopener noreferrer"' : '';
+
+                                $safeType = preg_replace('/[^a-z0-9_-]/i', '', $type);
+
+                                $linkClasses = array(
+                                    'jem-event-link',
+                                    'jem-event-link-' . $safeType
+                                );
+
+                                if ($frame) {
+                                    $linkClasses[] = 'jem-event-link-has-frame';
+                                }
+
+                                if ($image !== '') {
+                                    $linkClasses[] = 'jem-event-link-has-image';
+                                }
+
+                                if ($label !== '') {
+                                    $linkClasses[] = 'jem-event-link-has-label';
+                                }
+
+                                $linkStyle = array();
+
+                                if ($color !== '' && preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
+                                    $linkStyle[] = 'color: ' . $color;
+                                }
+
+                                $linkStyleAttr = !empty($linkStyle) ? ' style="' . implode('; ', $linkStyle) . '"' : '';
+
+                                $imageStyle = array();
+
+                                if ($maxWidth > 0) {
+                                    $imageStyle[] = 'max-width: ' . $maxWidth . 'px !important';
+                                }
+
+                                if ($maxHeight > 0) {
+                                    $imageStyle[] = 'max-height: ' . $maxHeight . 'px !important';
+                                }
+
+                                $imageStyle[] = 'width: auto !important';
+                                $imageStyle[] = 'height: auto !important';
+                                $imageStyle[] = 'object-fit: contain';
+
+                                $imageStyleAttr = ' style="' . implode('; ', $imageStyle) . '"';
+                                ?>
+
+                                <a
+                                        class="<?php echo $this->escape(implode(' ', $linkClasses)); ?>"
+                                        href="<?php echo $this->escape($url); ?>"
+                                        target="<?php echo $this->escape($target); ?>"
+                                    <?php echo $rel; ?>
+                                    <?php echo $linkStyleAttr; ?>
+                                >
+                                    <?php if ($image !== '') : ?>
+                                        <span class="jem-event-link-image">
+                                            <img
+                                                    src="<?php echo $this->escape($image); ?>"
+                                                    alt="<?php echo $this->escape($label); ?>"
+                                                    loading="lazy"
+                                                <?php echo $imageStyleAttr; ?>
+                                            >
+                                        </span>
+                                    <?php endif; ?>
+
+                                    <?php if ($icon !== '') : ?>
+                                        <span class="jem-event-link-icon <?php echo $this->escape($icon); ?>" aria-hidden="true"></span>
+                                    <?php endif; ?>
+
+                                    <?php if ($label !== '') : ?>
+                                        <span class="jem-event-link-label"><?php echo $this->escape($label); ?></span>
+                                    <?php endif; ?></a>
+
+                            <?php endforeach; ?>
                         </div>
                     <?php endif;
                 }

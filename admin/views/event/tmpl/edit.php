@@ -172,6 +172,10 @@ $params = $params->toArray();
         action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
         class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">
 
+    <config>
+        <inlinehelp button="show"/>
+    </config>
+
     <?php $recurr = empty($this->item->recurr_bak) ? $this->item : $this->item->recurr_bak; ?>
     <?php if (!empty($recurr->recurrence_number) || !empty($recurr->recurrence_type)) : ?>
         <div class="description">

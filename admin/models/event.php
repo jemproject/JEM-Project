@@ -777,9 +777,12 @@ class JemModelEvent extends JemModelAdmin
             $rowOrder = 0;
 
             foreach ($data as $item) {
-                if (empty($item['url'])) continue;
+                if (empty($item['url'])) {
+                    continue;
+                }
 
-                $link = new \stdClass();
+                $link = new stdClass();
+
                 $link->event_id = (int) $pk;
                 $link->type     = $item['type'] ?? 'info';
                 $link->title    = $item['title'] ?? '';
@@ -787,10 +790,36 @@ class JemModelEvent extends JemModelAdmin
                 $link->ordering = (int) $rowOrder++;
                 $link->state    = 1;
 
+                // Normalize additional link configuration.
+                $target = $item['target'] ?? '_blank';
+                $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
+
+                $icon = trim((string) ($item['icon'] ?? ''));
+                $image = trim((string) ($item['image'] ?? ''));
+                $color = trim((string) ($item['color'] ?? ''));
+
+                if ($color !== '' && !preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
+                    $color = '';
+                }
+
+                $frame = isset($item['frame']) ? (int) $item['frame'] : 0;
+                $frame = $frame === 1 ? 1 : 0;
+
+                $maxWidth = isset($item['max_width']) ? (int) $item['max_width'] : 0;
+                $maxHeight = isset($item['max_height']) ? (int) $item['max_height'] : 0;
+
+                $maxWidth = max(0, min($maxWidth, 2000));
+                $maxHeight = max(0, min($maxHeight, 2000));
+
+                // Store additional link configuration in params.
                 $link->params = json_encode([
-                    'target'       => $item['target'] ?? '_blank',
-                    'icon'         => $item['icon'] ?? '',
-                    'image'        => $item['image'] ?? '',
+                    'target'       => $target,
+                    'icon'         => $icon,
+                    'image'        => $image,
+                    'color'        => $color,
+                    'frame'        => $frame,
+                    'max_width'    => $maxWidth,
+                    'max_height'   => $maxHeight,
                     'custom_class' => $item['custom_class'] ?? ''
                 ]);
 

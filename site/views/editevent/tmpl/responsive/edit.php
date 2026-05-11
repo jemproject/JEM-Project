@@ -302,6 +302,11 @@ $params        = $this->params;
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
+            <!-- LINKS TAB -->
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
             <!-- OTHER TAB -->
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other'); ?>

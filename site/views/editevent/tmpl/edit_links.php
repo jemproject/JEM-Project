@@ -1,0 +1,584 @@
+<?php
+/**
+ * @package    JEM
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+$wa->addInlineStyle('
+/* JEM event links admin layout */
+
+.jem-links-tab {
+    max-width: 100%;
+}
+
+.jem-links-tab .adminform-subform {
+    max-width: 100%;
+    overflow-x: visible;
+}
+
+/* Repeatable wrapper */
+.jem-links-tab .subform-repeatable-wrapper,
+.jem-links-tab .subform-repeatable {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+}
+
+/* Global add button */
+.jem-links-tab .subform-repeatable-wrapper > .btn-toolbar,
+.jem-links-tab .subform-repeatable > .btn-toolbar {
+    margin: 0 0 1rem 0 !important;
+    padding: 0 !important;
+}
+
+/* Main repeatable item card */
+.jem-links-tab .subform-repeatable-group {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) minmax(0, 3fr);
+    grid-auto-rows: auto;
+    gap: .65rem 1rem;
+
+    width: calc(100% - 3.5rem);
+    max-width: calc(100% - 3.5rem);
+    box-sizing: border-box;
+
+    margin: 0 3.5rem 1.35rem 0;
+    padding: .75rem 1rem;
+
+    border: 1px solid #d7dce1;
+    border-radius: .5rem;
+    background: #fff;
+
+    overflow: visible !important;
+}
+
+/* Inner action toolbar */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar {
+    position: absolute;
+    top: .45rem;
+    right: -3rem;
+    z-index: 20;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    gap: .35rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: 2.5rem !important;
+    max-width: 2.5rem !important;
+    height: calc(100% - .9rem);
+
+    overflow: visible !important;
+}
+
+/* Inner action button groups */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar > *,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-group {
+    position: static !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    gap: .35rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: 2.5rem !important;
+    max-width: 2.5rem !important;
+
+    overflow: visible !important;
+}
+
+/* Hide the inner add, move up and move down buttons */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-add,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-move-up,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-move-down,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[data-subform-repeatable-group-add],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[data-subform-repeatable-group-move-up],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[data-subform-repeatable-group-move-down],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Add"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Subir"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Bajar"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Move up"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Move down"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-success,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-chevron-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-chevron-down),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-arrow-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-arrow-down),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-chevron-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-chevron-down),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-arrow-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-arrow-down) {
+    display: none !important;
+}
+
+/* Move button: top right outside the card */
+.jem-links-tab .subform-repeatable-group .group-move,
+.jem-links-tab .subform-repeatable-group .sortable-handler,
+.jem-links-tab .subform-repeatable-group .handle {
+    order: 1 !important;
+    align-self: center !important;
+}
+
+/* Remove button: bottom right outside the card */
+.jem-links-tab .subform-repeatable-group .group-remove,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-danger {
+    order: 10 !important;
+    margin-top: auto !important;
+    align-self: center !important;
+}
+
+/* Keep remove and drag buttons visible */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-remove,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-move,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .sortable-handler,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .handle,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-danger,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-primary {
+    display: inline-flex !important;
+    visibility: visible !important;
+}
+
+/* Normalize action buttons */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn,
+.jem-links-tab .subform-repeatable-group .group-remove,
+.jem-links-tab .subform-repeatable-group .group-move,
+.jem-links-tab .subform-repeatable-group .sortable-handler,
+.jem-links-tab .subform-repeatable-group .handle {
+    position: static !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 2.35rem !important;
+    min-width: 2.35rem !important;
+    max-width: 2.35rem !important;
+
+    height: 2.35rem !important;
+    min-height: 2.35rem !important;
+    max-height: 2.35rem !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 1 !important;
+    flex: 0 0 2.35rem !important;
+    transform: none !important;
+
+    border-radius: .25rem !important;
+    overflow: visible !important;
+}
+
+/* Desktop field layout: label and field in the same row */
+.jem-links-tab .subform-repeatable-group .control-group {
+    display: grid !important;
+    grid-template-columns: 95px minmax(0, 1fr);
+    column-gap: .55rem;
+    align-items: center;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+
+    margin: 0;
+    padding: 0;
+}
+
+/* Field labels */
+.jem-links-tab .subform-repeatable-group .control-label {
+    display: flex !important;
+    align-items: center !important;
+
+    float: none !important;
+
+    width: auto !important;
+    max-width: 95px;
+    min-height: 42px;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    font-weight: 600;
+    color: #1d2733;
+    line-height: 1.15;
+}
+
+/* Field controls */
+.jem-links-tab .subform-repeatable-group .controls {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Inputs and selects */
+.jem-links-tab .subform-repeatable-group input,
+.jem-links-tab .subform-repeatable-group select,
+.jem-links-tab .subform-repeatable-group textarea,
+.jem-links-tab .subform-repeatable-group .form-control,
+.jem-links-tab .subform-repeatable-group .form-select,
+.jem-links-tab .subform-repeatable-group .custom-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    box-sizing: border-box;
+}
+
+/* Hide the hidden icon field row */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="hidden"][name$="[icon]"]) {
+    display: none !important;
+}
+
+/* Compact action type field */
+.jem-links-tab .jem-link-type-field {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.jem-links-tab .jem-link-type-field .jem-link-type-select {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.jem-links-tab .jem-link-type-icon-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.35rem;
+    min-width: 2.35rem;
+    height: 42px;
+
+    border: 1px solid #d7dce1;
+    border-radius: .25rem;
+    background: #f8f9fa;
+
+    font-size: 1rem;
+}
+
+/* Compact color field layout */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) .controls {
+    display: grid !important;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: .35rem;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+
+    overflow: hidden;
+}
+
+/* Native color picker */
+.jem-links-tab .subform-repeatable-group input[type="color"] {
+    width: 3rem !important;
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    padding: .1rem !important;
+}
+
+/* Color text value */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) input[type="text"],
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) input[type="color"] + input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+
+    height: 42px !important;
+}
+
+/* Numeric fields */
+.jem-links-tab .subform-repeatable-group input[type="number"] {
+    width: 100% !important;
+    max-width: 7rem !important;
+}
+
+/* Joomla switcher alignment */
+.jem-links-tab .subform-repeatable-group .switcher {
+    margin: 0 !important;
+}
+
+.jem-links-tab .subform-repeatable-group .switcher label {
+    margin-bottom: 0 !important;
+}
+
+/* Media field: hide preview and show only path plus buttons */
+.jem-links-tab .field-media-preview,
+.jem-links-tab .field-media-preview-container {
+    display: none !important;
+}
+
+.jem-links-tab .field-media-wrapper,
+.jem-links-tab .field-media-wrapper .input-group {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+}
+
+.jem-links-tab .field-media-wrapper .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.jem-links-tab .field-media-wrapper .input-group input {
+    min-width: 0 !important;
+    height: 42px !important;
+}
+
+.jem-links-tab .field-media-wrapper .input-group .btn {
+    flex: 0 0 auto;
+    height: 42px !important;
+    min-height: 42px !important;
+}
+
+/* Help text */
+.jem-links-tab .form-text,
+.jem-links-tab .small,
+.jem-links-tab .text-muted {
+    display: block;
+
+    margin-top: .15rem;
+
+    font-size: .8rem;
+    line-height: 1.25;
+}
+
+/* Prevent child elements from forcing the grid width */
+.jem-links-tab .subform-repeatable-group,
+.jem-links-tab .subform-repeatable-group *,
+.jem-links-tab .subform-repeatable-group .control-group,
+.jem-links-tab .subform-repeatable-group .controls {
+    min-width: 0 !important;
+}
+
+/* From this width, labels go above fields to avoid overlap */
+@media (max-width: 1399.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: .75rem 1rem;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-template-columns: 1fr;
+        row-gap: .2rem;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-label {
+        max-width: 100%;
+        min-height: auto;
+    }
+}
+
+/* Single column before fields become too narrow */
+@media (max-width: 899.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr;
+
+        width: calc(100% - 3.25rem);
+        max-width: calc(100% - 3.25rem);
+        margin-right: 3.25rem;
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 575.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr;
+
+        width: calc(100% - 3rem);
+        max-width: calc(100% - 3rem);
+        margin-right: 3rem;
+
+        padding: .75rem;
+    }
+    .jem-links-tab .subform-repeatable-group > .btn-toolbar {
+        top: .45rem;
+        right: -2.65rem;
+        height: calc(100% - .9rem);
+    }
+    .jem-links-tab .field-media-wrapper .input-group {
+        flex-wrap: wrap;
+    }
+    .jem-links-tab .field-media-wrapper .input-group input {
+        flex: 1 1 100%;
+    }
+    .jem-links-tab .field-media-wrapper .input-group .btn {
+        flex: 1 1 auto;
+    }
+}
+
+/* Global links options */
+.jem-links-tab .jem-links-global-options {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    margin: 0 0 1rem 0;
+    padding: .75rem 1rem;
+    border: 1px solid #d7dce1;
+    border-radius: .5rem;
+    background: #fff;
+}
+
+/* Keep global option compact */
+.jem-links-tab .jem-links-global-options .control-group {
+     display: grid !important;
+    grid-template-columns: 150px minmax(220px, 1fr);
+    column-gap: .75rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Global option label */
+.jem-links-tab .jem-links-global-options .control-label {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-weight: 600;
+}
+
+/* Global option controls */
+.jem-links-tab .jem-links-global-options .controls {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.jem-links-tab .jem-links-global-options fieldset,
+.jem-links-tab .subform-repeatable-group fieldset {
+    margin-bottom: 0 !important;
+}
+
+/* Global option switcher alignment */
+.jem-links-tab .jem-links-global-options .switcher {
+    margin: 0 !important;
+}
+
+@media (max-width: 575.98px) {
+    .jem-links-tab .jem-links-global-options .control-group {
+        grid-template-columns: 1fr;
+        row-gap: .35rem;
+    }
+}
+');
+?>
+
+    <div class="row jem-links-tab">
+        <div class="col-12">
+            <div class="adminform-subform">
+
+                <div class="jem-links-global-options">
+                    <?php echo $this->form->renderField('links_layout', 'attribs'); ?>
+                    <?php echo $this->form->renderField('links_order', 'attribs'); ?>
+                </div>
+
+                <?php echo $this->form->renderField('event_links'); ?>
+
+            </div>
+        </div>
+    </div>
+
+<?php
+$this->document->getWebAssetManager()->addInlineScript('
+    document.addEventListener("DOMContentLoaded", function () {
+        const getInlineHelpState = function () {
+            const reference = document.querySelector("#jform_attribs_links_layout-desc, #jform_attribs_links_order-desc");
+
+            if (!reference) {
+                return false;
+            }
+
+            return !reference.classList.contains("d-none")
+                && window.getComputedStyle(reference).display !== "none";
+        };
+
+        const normalizeJemLinksInlineHelp = function () {
+            const showHelp = getInlineHelpState();
+
+            const descriptions = document.querySelectorAll(
+                ".jem-links-tab .subform-repeatable-group [id$=\"-desc\"]"
+            );
+
+            descriptions.forEach(function (description) {
+                description.classList.add("hide-aware-inline-help");
+
+                if (showHelp) {
+                    description.classList.remove("d-none");
+                } else {
+                    description.classList.add("d-none");
+                }
+
+                const text = description.querySelector(".form-text");
+
+                if (text) {
+                    text.classList.remove("hide-aware-inline-help", "d-none");
+                }
+            });
+        };
+
+        normalizeJemLinksInlineHelp();
+
+        document.addEventListener("click", function (event) {
+            const inlineHelpButton = event.target.closest(
+                ".button-inlinehelp, " +
+                ".toolbar-inlinehelp, " +
+                "[data-task=\"inlinehelp\"], " +
+                "[onclick*=\"inlinehelp\"]"
+            );
+
+            if (!inlineHelpButton) {
+                return;
+            }
+
+            setTimeout(normalizeJemLinksInlineHelp, 150);
+        });
+
+        document.addEventListener("subform-row-add", function () {
+            setTimeout(normalizeJemLinksInlineHelp, 150);
+        });
+
+        document.addEventListener("joomla:updated", function () {
+            setTimeout(normalizeJemLinksInlineHelp, 150);
+        });
+    });
+');
+?>
