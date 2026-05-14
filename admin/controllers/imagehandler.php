@@ -113,7 +113,17 @@ class JemControllerImagehandler extends BaseController
 
         // Get some data from the request
         $images = Factory::getApplication()->input->get('rm', array(), 'array');
-        $folder = Factory::getApplication()->input->get('folder', '');
+        $folder = Factory::getApplication()->input->getCmd('folder', '');
+        $allowedFolders = array('events', 'venues', 'categories');
+
+        if (!in_array($folder, $allowedFolders, true)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE'), 'warning');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&tmpl=component');
+            return;
+        }
+
+        $basePath = Path::clean(JPATH_SITE . '/images/jem/' . $folder);
+        $baseCheck = rtrim(strtolower($basePath), '\\/') . DIRECTORY_SEPARATOR;
 
         if (count($images)) {
             foreach ($images as $image) {
@@ -122,8 +132,14 @@ class JemControllerImagehandler extends BaseController
                     continue;
                 }
 
-                $fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-                $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+                $fullPath = Path::clean($basePath . '/' . $image);
+                $fullPaththumb = Path::clean($basePath . '/small/' . $image);
+
+                if (strpos(strtolower($fullPath), $baseCheck) !== 0 || strpos(strtolower($fullPaththumb), $baseCheck) !== 0) {
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
+                    continue;
+                }
+
                 if (is_file($fullPath)) {
                     File::delete($fullPath);
                     if (File::exists($fullPaththumb)) {

@@ -43,6 +43,39 @@ class JemControllerAttendees extends BaseController
     }
 
     /**
+     * Ensure the current user can manage attendees for the event.
+     *
+     * @param  int  $eventId
+     * @return object
+     *
+     * @throws Exception
+     */
+    protected function assertCanManageAttendees($eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId < 1) {
+            throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+        }
+
+        $model = $this->getModel('attendees');
+        $model->setId($eventId);
+        $event = $model->getEvent();
+
+        if (!$event) {
+            throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+        }
+
+        $user = JemFactory::getUser();
+
+        if (!$user->get('id') || !$user->can('edit', 'event', $event->id, $event->created_by)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        return $event;
+    }
+
+    /**
      * addtask
      */
     public function attendeeadd()
@@ -57,6 +90,9 @@ class JemControllerAttendees extends BaseController
         $checkseries  = $input->getString('series', '');
         $comment = '';
         $fid     = $input->getInt('Itemid', 0);
+
+        $this->assertCanManageAttendees($eventid);
+
         $uids    = explode(',', $input->getString('uids', ''));
         \Joomla\Utilities\ArrayHelper::toInteger($uids);
         $uids    = array_filter($uids);
@@ -95,7 +131,6 @@ class JemControllerAttendees extends BaseController
             // If not we have to add the records and than on success send the emails.
             $modelEventItem = $this->getModel('event');
             $modelAttendees = $this->getModel('attendees'); // required to ensure JemModelAttendees is loaded
-            $regs = JemModelAttendees::getRegisteredUsers($eventid);
             $errMsgs = array();
             $errMsg  = '';
             $skip    = 0;
@@ -104,10 +139,14 @@ class JemControllerAttendees extends BaseController
 
             // Get event
             try {
-                $event = $modelEventItem->getItem($eventId);
+                $event = $modelEventItem->getItem($eventid);
             }
             catch (Exception $e) {
                 $event = false;
+            }
+
+            if (!$event) {
+                throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
             }
 
             // If event has 'seriesbooking' active and $series is true then get all recurrence events of series from now (register or unregister)
@@ -123,6 +162,8 @@ class JemControllerAttendees extends BaseController
 
             foreach ($events as $key => $row) {
 
+                $this->assertCanManageAttendees($row->id);
+                $regs = JemModelAttendees::getRegisteredUsers($row->id);
                 $skip = $error = $changed = 0;
 
                 foreach ($uids as $uid) {
@@ -191,6 +232,8 @@ class JemControllerAttendees extends BaseController
         $fid    = $input->getInt('Itemid', 0);
         $total  = is_array($cid) ? count($cid) : 0;
 
+        $this->assertCanManageAttendees($id);
+
         if ($total < 1) {
             throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
         }
@@ -207,7 +250,12 @@ class JemControllerAttendees extends BaseController
         foreach ($cid as $reg_id) {
             $modelAttendeeItem->setId($reg_id);
             $entry = $modelAttendeeItem->getData();
-            if($modelAttendeeList->remove(array($reg_id))) {
+
+            if (empty($entry->id) || (int) $entry->event !== (int) $id) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            if($modelAttendeeList->remove(array($reg_id), $id)) {
                 $res = $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
             } else {
                 $error = true;
@@ -243,6 +291,13 @@ class JemControllerAttendees extends BaseController
         $model->setId($id);
 
         $attendee = $model->getData();
+
+        if (empty($attendee->id)) {
+            throw new Exception(Text::_('COM_JEM_MISSING_ATTENDEE_ID'), 404);
+        }
+
+        $this->assertCanManageAttendees($attendee->event);
+
         $res = $model->toggle();
 
         $type = 'message';
@@ -281,6 +336,9 @@ class JemControllerAttendees extends BaseController
         $app       = Factory::getApplication();
         $params    = $app->getParams();
         $jemconfig = JemConfig::getInstance()->toRegistry();
+        $eventid   = $app->input->getInt('id', 0);
+
+        $this->assertCanManageAttendees($eventid);
 
         $enableemailaddress = $params->get('enableemailaddress', 0);
         $separator         = $jemconfig->get('csv_separator', ';');

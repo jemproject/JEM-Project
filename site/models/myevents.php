@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -148,7 +149,32 @@ class JemModelMyevents extends BaseDatabaseModel
 
         if (is_array($cid) && count($cid)) {
             \Joomla\Utilities\ArrayHelper::toInteger($cid);
-            $cids = implode(',', $cid);
+            $cid = array_filter(array_unique($cid));
+
+            if (empty($cid) || ($publish < -2) || ($publish > 2)) {
+                return false;
+            }
+
+            $query = $this->_db->getQuery(true)
+                ->select(array('id', 'created_by'))
+                ->from($this->_db->quoteName('#__jem_events'))
+                ->where($this->_db->quoteName('id') . ' IN (' . implode(',', $cid) . ')');
+            $this->_db->setQuery($query);
+            $events = $this->_db->loadObjectList('id');
+
+            $allowed = array();
+            foreach ($cid as $id) {
+                if (!empty($events[$id]) && $user->can('publish', 'event', (int) $id, (int) $events[$id]->created_by)) {
+                    $allowed[] = (int) $id;
+                }
+            }
+
+            if (empty($allowed)) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+                return false;
+            }
+
+            $cids = implode(',', $allowed);
 
             $query = 'UPDATE #__jem_events'
                    . ' SET published = '. (int) $publish

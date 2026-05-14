@@ -94,9 +94,12 @@ class JemControllerSource extends BaseController
         $model    = $this->getModel();
         $recordId = $app->input->get('id', '');
         $context  = 'com_jem.edit.source';
+        $decodedId = base64_decode($recordId, true);
 
-        if (preg_match('#\.\.#', base64_decode($recordId))) {
+        if ($decodedId === false || preg_match('#(^|[\\\\/])\\.\\.([\\\\/]|$)#', $decodedId)) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
         }
 
         // Access check.

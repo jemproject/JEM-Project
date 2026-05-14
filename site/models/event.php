@@ -979,6 +979,11 @@ class JemModelEvent extends ItemModel
             $event = false;
         }
 
+        if (!$event) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId . ']');
+            return false;
+        }
+
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
         if($event->recurrence_type){
 
@@ -994,9 +999,10 @@ class JemModelEvent extends ItemModel
         foreach ($events as $e) {
             $reg = $this->getUserRegistration($e->id);
             $errMsg = '';
+            $eventStatus = $status;
 
 
-            if ($status > 0) {
+            if ($eventStatus > 0) {
                 if ($addplaces > 0) {
                     if ($reg) {
                         if ($reg->status > 0) {
@@ -1009,14 +1015,14 @@ class JemModelEvent extends ItemModel
                     }
                     //Detect if the reserve go to waiting list
                     $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                    if ($reg->status != 0 || $reg == null) {
+                    if (!$reg || $reg->status != 0) {
                         if ($e->maxplaces) {
                             $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
                             if ($e->waitinglist && $placesavailableevent <= 0) {
-                                $status = 2;
+                                $eventStatus = 2;
                             }
                         } else {
-                            $status = 1;
+                            $eventStatus = 1;
                         }
                     }
                 } else {
@@ -1026,7 +1032,7 @@ class JemModelEvent extends ItemModel
                 if ($reg) {
                     $places = $reg->places - $cancelplaces;
                     if ($reg->status >= 0 && $places > 0) {
-                        $status = $reg->status;
+                        $eventStatus = $reg->status;
                     }
                 } else {
                     $places = 0;
@@ -1049,11 +1055,12 @@ class JemModelEvent extends ItemModel
             // IP
             $uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-            $result = $this->_doRegister($e->id, $uid, $uip, $status, $places, $comment, $errMsg, $reg->id);
+            $regid = $reg ? (int) $reg->id : 0;
+            $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
             if (!$result) {
                 $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
             } else {
-                Factory::getApplication()->enqueueMessage(($status==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
+                Factory::getApplication()->enqueueMessage(($eventStatus==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
             }
         }
         return $result;

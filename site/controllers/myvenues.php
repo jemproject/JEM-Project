@@ -85,7 +85,8 @@ class JemControllerMyvenues extends BaseController
 
         $model = $this->getModel('myvenues');
         if (!$model->publish($cid, $status)) {
-            echo "<script> alert('" . $model->getError() . "'); window.history.go(-1); </script>\n";
+            $this->setRedirect(JemHelperRoute::getMyVenuesRoute(), $model->getError(), 'error');
+            return;
         }
 
         $total = count($cid);

@@ -12,17 +12,23 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 ?>
+<?php
+$imageName = (string) $this->_tmp_img->name;
+$imageNameAttr = htmlspecialchars($imageName, ENT_QUOTES, 'UTF-8');
+$folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
+$imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
+?>
 <div class="item-image">
     <div class="imgBorder center">
-        <a onclick="window.parent.SelectImage('<?php echo $this->_tmp_img->name; ?>', '<?php echo $this->_tmp_img->name; ?>');">
+        <a onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>);'>
             <div class="image">
-                <img src="../images/jem/<?php echo $this->folder; ?>/<?php echo $this->_tmp_img->name; ?>"  width="<?php echo $this->_tmp_img->width_60; ?>" height="<?php echo $this->_tmp_img->height_60; ?>" alt="<?php echo $this->_tmp_img->name; ?> - <?php echo $this->_tmp_img->size; ?>" />
+                <img src="<?php echo $imageUrl; ?>"  width="<?php echo (int) $this->_tmp_img->width_60; ?>" height="<?php echo (int) $this->_tmp_img->height_60; ?>" alt="<?php echo $imageNameAttr; ?> - <?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?>" />
             </div>
         </a>
     </div>
     <div class="controls">
-        <?php echo $this->_tmp_img->size; ?> -
-        <a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $this->folder; ?>&amp;rm[]=<?php echo $this->_tmp_img->name; ?>&amp;<?php echo Session::getFormToken(); ?>=1">
+        <?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?> -
+        <a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $folderAttr; ?>&amp;rm[]=<?php echo rawurlencode($imageName); ?>&amp;<?php echo Session::getFormToken(); ?>=1">
             <?php echo HTMLHelper::_('image','/media/com_jem/images/publish_r.webp',Text::_('COM_JEM_DELETE_IMAGE'),array('title' => Text::_('COM_JEM_DELETE_IMAGE')),true); ?>
         </a>
     </div>

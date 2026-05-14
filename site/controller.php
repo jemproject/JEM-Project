@@ -135,8 +135,18 @@ class JemController extends BaseController
         
         // Load model according to view
         $model = $this->getModel($viewName);
-        if (!$model) {
+        if (!$model || !method_exists($model, 'getEventsAjax')) {
             $model = $this->getModel('eventslist');
+        }
+
+        if (!$model || !method_exists($model, 'getEventsAjax')) {
+            echo json_encode([
+                'html' => '',
+                'hasMore' => false,
+                'total' => 0,
+                'displayedMonths' => $displayedMonths
+            ]);
+            $app->close();
         }
         
         $result = $model->getEventsAjax($offset, $limit);

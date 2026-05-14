@@ -106,11 +106,11 @@ $wa->addInlineScript('
                 foreach ($this->items as $i => $row) :
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
-                    <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td> <?php // Die ID kann man doch auch als Parameter für "submitName()" nehmen. Dann muss ich nicht erst den Baum entlang hangeln ?>
-                    <td><a href="<?php echo Route::_('index.php?option=com_jem&view=attendee&event='.$row->event . '&id='.$row->id);?>"><?php echo $row->name; ?></a></td>
-                    <td><?php echo $row->username; ?></td>
-                    <td class="email"><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
-                    <td><?php echo $row->uip == 'DISABLED' ? Text::_('COM_JEM_DISABLED') : $row->uip; ?></td>
+                    <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td> <?php // The ID could also be passed to submitName(), avoiding DOM traversal. ?>
+                    <td><a href="<?php echo Route::_('index.php?option=com_jem&view=attendee&event='.(int) $row->event . '&id='.(int) $row->id);?>"><?php echo $this->escape($row->name); ?></a></td>
+                    <td><?php echo $this->escape($row->username); ?></td>
+                    <td class="email"><a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
+                    <td><?php echo $row->uip == 'DISABLED' ? Text::_('COM_JEM_DISABLED') : $this->escape($row->uip); ?></td>
                     <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
                     <td class="center">
                     <a href="<?php echo Route::_('index.php?option=com_users&task=user.edit&id='.$row->uid); ?>"><?php echo $row->uid; ?></a>
@@ -129,11 +129,11 @@ $wa->addInlineScript('
                         ?>
                     </td>
                     <td class="center">
-                        <?php echo $row->places; ?>
+                        <?php echo (int) $row->places; ?>
                     </td>
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                     <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (rtrim(\Joomla\String\StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
-                    <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
+                    <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?></td>
                     <?php endif; ?>
                     <td class="center">
                         <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">

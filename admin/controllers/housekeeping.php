@@ -19,6 +19,16 @@ use Joomla\CMS\Session\Session;
 class JemControllerHousekeeping extends BaseController
 {
     /**
+     * Check whether the current user can run housekeeping tasks.
+     */
+    protected function allowHousekeeping()
+    {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -42,9 +52,11 @@ class JemControllerHousekeeping extends BaseController
     {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         $task = Factory::getApplication()->input->get('task', '');
         $model = $this->getModel('housekeeping');
+        $total = 0;
 
         if ($task == 'cleaneventimg') {
             $total = $model->delete($model::EVENTS);
@@ -71,6 +83,7 @@ class JemControllerHousekeeping extends BaseController
     {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
         $model->cleanupCatsEventRelations();
@@ -88,6 +101,7 @@ class JemControllerHousekeeping extends BaseController
     {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
         $model->truncateAllData();
@@ -109,6 +123,7 @@ class JemControllerHousekeeping extends BaseController
     {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         JemHelper::cleanup(1);
 

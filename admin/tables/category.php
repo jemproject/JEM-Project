@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Registry\Registry;
 
 jimport('joomla.database.tablenested');
@@ -261,6 +262,7 @@ class JemTableCategory extends Nested
                 if (!$isAdmin) {
                     $this->$k = $currentUserId;
                 }
+            }
         }
         return true;
     }

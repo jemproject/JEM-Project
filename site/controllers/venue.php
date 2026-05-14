@@ -71,7 +71,7 @@ class JemControllerVenue extends JemControllerForm
     protected function allowEdit($data = array(), $key = 'id')
     {
         // Initialise variables.
-        $recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+        $recordId = isset($data[$key]) ? (int) $data[$key] : 0;
         $user     = JemFactory::getUser();
 
         if (isset($data['created_by'])) {
