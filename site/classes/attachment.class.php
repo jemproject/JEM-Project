@@ -27,6 +27,23 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 class JemAttachment extends CMSObject
 {
     /**
+     * Resolve an attachment path and ensure it remains inside the configured base directory.
+     */
+    static protected function getSafeAttachmentPath($object, $file)
+    {
+        $jemsettings = JemHelper::config();
+        $basePath = Path::clean(JPATH_SITE.'/'.$jemsettings->attachments_path);
+        $path = Path::clean($basePath.'/'.$object.'/'.$file);
+        $baseCheck = rtrim(strtolower($basePath), '\\/') . DIRECTORY_SEPARATOR;
+
+        if (strpos(strtolower($path), $baseCheck) !== 0) {
+            return false;
+        }
+
+        return $path;
+    }
+
+    /**
      * upload files for the specified object
      *
      * @param  array  data from JInputFiles (as array of n arrays of params, [n][params])
@@ -39,7 +56,12 @@ class JemAttachment extends CMSObject
         $user = JemFactory::getUser();
         $jemsettings = JemHelper::config();
 
-        $path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
+        $path = self::getSafeAttachmentPath($object, '');
+
+        if (!$path) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$object, 'warning');
+            return false;
+        }
 
         if (!(is_array($post_files) && count($post_files))) {
             return false;
@@ -85,7 +107,11 @@ class JemAttachment extends CMSObject
             $sanitizedFilename = JemImage::sanitize($path, $file);
 
             // Make sure that the full file path is safe.
-            $filepath = Path::clean( $path.'/'.$sanitizedFilename);
+            $filepath = self::getSafeAttachmentPath($object, $sanitizedFilename);
+            if (!$filepath) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$object, 'warning');
+                continue;
+            }
             // Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
             // switch off parsing archives for byte sequences looking like a script file extension
             // but keep all other checks running
@@ -146,7 +172,11 @@ class JemAttachment extends CMSObject
     {
         $jemsettings = JemHelper::config();
 
-        $path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
+            $path = self::getSafeAttachmentPath($object, '');
+
+            if (!$path) {
+                return false;
+            }
 
         if (!file_exists($path)) {
             return array();
@@ -195,8 +225,6 @@ class JemAttachment extends CMSObject
      */
     static public function getAttachmentPath($id)
     {
-        $jemsettings = JemHelper::config();
-
         $user = JemFactory::getUser();
         // Support Joomla access levels instead of single group id
         $levels = $user->getAuthorisedViewLevels();
@@ -217,7 +245,11 @@ class JemAttachment extends CMSObject
             throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
         }
 
-        $path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
+        $path = self::getSafeAttachmentPath($res->object, $res->file);
+        if (!$path) {
+            throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
+        }
+
         if (!file_exists($path)) {
             throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
         }
@@ -234,8 +266,6 @@ class JemAttachment extends CMSObject
      */
     static public function remove($id)
     {
-        $jemsettings = JemHelper::config();
-
         $user = JemFactory::getUser();
         // Support Joomla access levels instead of single group id
         $levels = $user->getAuthorisedViewLevels();
@@ -275,13 +305,17 @@ class JemAttachment extends CMSObject
             $created_by = $db->loadResult();
 
             if (!$user->can('edit', $type, $itemid, $created_by)) {
-                JemHelper::addLogEntry("User {$userid} is not permritted to remove attachment " . $res->object, __METHOD__);
+                JemHelper::addLogEntry("User {$userid} is not permitted to remove attachment " . $res->object, __METHOD__);
                 return false;
             }
         }
 
         JemHelper::addLogEntry("User {$userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
-        $path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
+        $path = self::getSafeAttachmentPath($res->object, $res->file);
+        if (!$path) {
+            return false;
+        }
+
         if (file_exists($path)) {
             File::delete($path);
         }

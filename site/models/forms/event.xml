@@ -484,6 +484,12 @@
                         label="COM_JEM_EVENT_LINK_TITLE"
                         class="form-control"
                 />
+                <field name="description" type="textarea"
+                       label="COM_JEM_EVENT_LINK_DESCRIPTION"
+                       rows="2"
+                       filter="safehtml"
+                       class="form-control"
+                />
                 <field name="type" type="jemlinktype"
                         label="COM_JEM_EVENT_LINK_TYPE"
                         default="info"

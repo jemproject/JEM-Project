@@ -248,6 +248,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_links` (
     `event_id` INT(11) NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NULL,
     `url` TEXT NOT NULL,
     `params` TEXT DEFAULT NULL,
     `ordering` INT(11) DEFAULT 0,

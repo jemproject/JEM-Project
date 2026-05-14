@@ -407,92 +407,97 @@ if ($jemsettings->oldevent > 0) {
 
                         <div class="jem-event-links jem-event-links-<?php echo $this->escape($linksLayout); ?> <?php echo $this->escape($orderClass); ?>">
                             <?php foreach ($this->event_links as $link) : ?>
-                                <?php
-                                // Read link values safely.
-                                $url = !empty($link->url) ? trim((string) $link->url) : '';
+                            <?php
+                            // Read link values safely.
+                            $url = !empty($link->url) ? trim((string) $link->url) : '';
 
-                                if ($url === '') {
-                                    continue;
-                                }
+                            if ($url === '') {
+                                continue;
+                            }
 
-                                $type      = !empty($link->type) ? trim((string) $link->type) : 'info';
-                                $target    = !empty($link->target) ? trim((string) $link->target) : '_blank';
-                                $label     = !empty($link->title) ? trim((string) $link->title) : '';
-                                $image     = !empty($link->image) ? trim((string) $link->image) : '';
-                                $icon      = !empty($link->icon) ? trim((string) $link->icon) : '';
-                                $color     = !empty($link->color) ? trim((string) $link->color) : '';
-                                $maxWidth  = !empty($link->max_width) ? (int) $link->max_width : 120;
-                                $maxHeight = !empty($link->max_height) ? (int) $link->max_height : 60;
-                                $frameValue = isset($link->frame) ? $link->frame : 0;
-                                $frame = in_array((string) $frameValue, array('1', 'true', 'yes', 'on'), true) ? 1 : 0;
+                            $type        = !empty($link->type) ? trim((string) $link->type) : 'info';
+                            $target      = !empty($link->target) ? trim((string) $link->target) : '_blank';
+                            $label       = !empty($link->title) ? trim((string) $link->title) : '';
+                            $description = !empty($link->description) ? trim((string) $link->description) : '';
+                            $image       = !empty($link->image) ? trim((string) $link->image) : '';
+                            $icon        = !empty($link->icon) ? trim((string) $link->icon) : '';
+                            $color       = !empty($link->color) ? trim((string) $link->color) : '';
+                            $maxWidth    = !empty($link->max_width) ? (int) $link->max_width : 120;
+                            $maxHeight   = !empty($link->max_height) ? (int) $link->max_height : 60;
+                            $frameValue  = isset($link->frame) ? $link->frame : 0;
+                            $frame       = in_array((string) $frameValue, array('1', 'true', 'yes', 'on'), true) ? 1 : 0;
 
-                                // Use the default icon from the action type when no explicit icon is stored.
-                                if ($icon === '' && isset($defaultLinkTypes[$type]['icon'])) {
-                                    $icon = $defaultLinkTypes[$type]['icon'];
-                                }
+                            // Use the default icon from the action type when no explicit icon is stored.
+                            if ($icon === '' && isset($defaultLinkTypes[$type]['icon'])) {
+                                $icon = $defaultLinkTypes[$type]['icon'];
+                            }
 
-                                // Remove Joomla media metadata from the image URL if present.
-                                if ($image !== '' && strpos($image, '#') !== false) {
-                                    $imageParts = explode('#', $image, 2);
-                                    $image = $imageParts[0];
-                                }
+                            // Remove Joomla media metadata from the image URL if present.
+                            if ($image !== '' && strpos($image, '#') !== false) {
+                                $imageParts = explode('#', $image, 2);
+                                $image = $imageParts[0];
+                            }
 
-                                $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
-                                $rel = ($target === '_blank') ? ' rel="noopener noreferrer"' : '';
+                            $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
+                            $rel = ($target === '_blank') ? ' rel="noopener noreferrer"' : '';
 
-                                $safeType = preg_replace('/[^a-z0-9_-]/i', '', $type);
+                            $safeType = preg_replace('/[^a-z0-9_-]/i', '', $type);
 
-                                $linkClasses = array(
-                                    'jem-event-link',
-                                    'jem-event-link-' . $safeType
-                                );
+                            $linkClasses = array(
+                                'jem-event-link',
+                                'jem-event-link-' . $safeType
+                            );
 
-                                if ($frame) {
-                                    $linkClasses[] = 'jem-event-link-has-frame';
-                                }
+                            if ($frame) {
+                                $linkClasses[] = 'jem-event-link-has-frame';
+                            }
 
-                                if ($image !== '') {
-                                    $linkClasses[] = 'jem-event-link-has-image';
-                                }
+                            if ($image !== '') {
+                                $linkClasses[] = 'jem-event-link-has-image';
+                            }
 
-                                if ($label !== '') {
-                                    $linkClasses[] = 'jem-event-link-has-label';
-                                }
+                            if ($label !== '') {
+                                $linkClasses[] = 'jem-event-link-has-label';
+                            }
 
-                                $linkStyle = array();
+                            if ($description !== '') {
+                                $linkClasses[] = 'jem-event-link-has-description';
+                            }
 
-                                if ($color !== '' && preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
-                                    $linkStyle[] = 'color: ' . $color;
-                                }
+                            $linkStyle = array();
 
-                                $linkStyleAttr = !empty($linkStyle) ? ' style="' . implode('; ', $linkStyle) . '"' : '';
+                            if ($color !== '' && preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
+                                $linkStyle[] = 'color: ' . $color;
+                            }
 
-                                $imageStyle = array();
+                            $linkStyleAttr = !empty($linkStyle) ? ' style="' . implode('; ', $linkStyle) . '"' : '';
 
-                                if ($maxWidth > 0) {
-                                    $imageStyle[] = 'max-width: ' . $maxWidth . 'px !important';
-                                }
+                            $imageStyle = array();
 
-                                if ($maxHeight > 0) {
-                                    $imageStyle[] = 'max-height: ' . $maxHeight . 'px !important';
-                                }
+                            if ($maxWidth > 0) {
+                                $imageStyle[] = 'max-width: ' . $maxWidth . 'px !important';
+                            }
 
-                                $imageStyle[] = 'width: auto !important';
-                                $imageStyle[] = 'height: auto !important';
-                                $imageStyle[] = 'object-fit: contain';
+                            if ($maxHeight > 0) {
+                                $imageStyle[] = 'max-height: ' . $maxHeight . 'px !important';
+                            }
 
-                                $imageStyleAttr = ' style="' . implode('; ', $imageStyle) . '"';
-                                ?>
+                            $imageStyle[] = 'width: auto !important';
+                            $imageStyle[] = 'height: auto !important';
+                            $imageStyle[] = 'object-fit: contain';
 
-                                <a
-                                        class="<?php echo $this->escape(implode(' ', $linkClasses)); ?>"
-                                        href="<?php echo $this->escape($url); ?>"
-                                        target="<?php echo $this->escape($target); ?>"
-                                    <?php echo $rel; ?>
-                                    <?php echo $linkStyleAttr; ?>
-                                >
-                                    <?php if ($image !== '') : ?>
-                                        <span class="jem-event-link-image">
+                            $imageStyleAttr = ' style="' . implode('; ', $imageStyle) . '"';
+                            ?>
+
+                            <a
+                                class="<?php echo $this->escape(implode(' ', $linkClasses)); ?>"
+                                href="<?php echo $this->escape($url); ?>"
+                                target="<?php echo $this->escape($target); ?>"
+                                <?php echo $rel; ?>
+                                <?php echo $linkStyleAttr; ?>
+                            >
+                                <?php if ($image !== '') : ?>
+                                    <span class="jem-event-link-image">
                                             <img
                                                     src="<?php echo $this->escape($image); ?>"
                                                     alt="<?php echo $this->escape($label); ?>"
@@ -500,17 +505,29 @@ if ($jemsettings->oldevent > 0) {
                                                 <?php echo $imageStyleAttr; ?>
                                             >
                                         </span>
-                                    <?php endif; ?>
+                                <?php endif; ?>
 
-                                    <?php if ($icon !== '') : ?>
-                                        <span class="jem-event-link-icon <?php echo $this->escape($icon); ?>" aria-hidden="true"></span>
-                                    <?php endif; ?>
+                                <?php if ($icon !== '') : ?>
+                                    <span class="jem-event-link-icon <?php echo $this->escape($icon); ?>" aria-hidden="true"></span>
+                                <?php endif; ?>
 
-                                    <?php if ($label !== '') : ?>
-                                        <span class="jem-event-link-label"><?php echo $this->escape($label); ?></span>
-                                    <?php endif; ?></a>
+                                <?php if ($label !== '' || $description !== '') : ?>
+                                    <span class="jem-event-link-text">
+                                        <?php if ($label !== '') : ?>
+                                            <span class="jem-event-link-label">
+                                                <?php echo $this->escape($label); ?>
+                                            </span>
+                                        <?php endif; ?>
 
-                            <?php endforeach; ?>
+                                        <?php if ($description !== '') : ?>
+                                            <span class="jem-event-link-description">
+                                                <?php echo nl2br($this->escape($description)); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </span>
+                                <?php endif; ?>
+
+                                <?php endforeach; ?>
                         </div>
                     <?php endif;
                 }

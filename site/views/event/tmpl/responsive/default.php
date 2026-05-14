@@ -317,6 +317,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 $type      = !empty($link->type) ? trim((string) $link->type) : 'info';
                                 $target    = !empty($link->target) ? trim((string) $link->target) : '_blank';
                                 $label     = !empty($link->title) ? trim((string) $link->title) : '';
+                            	$description = !empty($link->description) ? trim((string) $link->description) : '';
                                 $image     = !empty($link->image) ? trim((string) $link->image) : '';
                                 $icon      = !empty($link->icon) ? trim((string) $link->icon) : '';
                                 $color     = !empty($link->color) ? trim((string) $link->color) : '';
@@ -356,6 +357,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
                                 if ($label !== '') {
                                     $linkClasses[] = 'jem-event-link-has-label';
+	                            }
+	                            if ($description !== '') {
+	                                $linkClasses[] = 'jem-event-link-has-description';
                                 }
 
                                 $linkStyle = array();
@@ -405,9 +409,21 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         <span class="jem-event-link-icon <?php echo $this->escape($icon); ?>" aria-hidden="true"></span>
                                     <?php endif; ?>
 
-                                    <?php if ($label !== '') : ?>
-                                        <span class="jem-event-link-label"><?php echo $this->escape($label); ?></span>
-                                    <?php endif; ?></a>
+                                <?php if ($label !== '' || $description !== '') : ?>
+                                    <span class="jem-event-link-text">
+                                        <?php if ($label !== '') : ?>
+                                            <span class="jem-event-link-label">
+                                                <?php echo $this->escape($label); ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if ($description !== '') : ?>
+                                            <span class="jem-event-link-description">
+                                                <?php echo nl2br($this->escape($description)); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </span>
+                                <?php endif; ?>
 
                             <?php endforeach; ?>
                         </div>
