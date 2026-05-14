@@ -10,7 +10,7 @@ class JFormFieldCountrieslist extends ListField
 {
     protected $type = 'Countrieslist';
 
-    // IMPORTANTE: Añadir esta propiedad para campos múltiples
+    // Important: add this property for multiple-selection fields.
     protected $multiple = true;
 
     protected function getOptions()
@@ -28,10 +28,10 @@ class JFormFieldCountrieslist extends ListField
             $db->setQuery($query);
             $countries = $db->loadObjectList();
 
-            // Opción por defecto
+            // Default option.
             $options[] = HTMLHelper::_('select.option', '', Text::_('JSELECT'));
 
-            // Agregar países
+            // Add countries.
             if (!empty($countries)) {
                 foreach ($countries as $country) {
                     $options[] = HTMLHelper::_('select.option', $country->value, $country->text);
@@ -45,10 +45,10 @@ class JFormFieldCountrieslist extends ListField
         return $options;
     }
 
-    // Añadir este método para asegurar el procesamiento del valor
+    // Add this method to ensure the value is processed.
     public function getInput()
     {
-        // Asegurar que el atributo multiple está presente
+        // Ensure that the multiple attribute is present.
         $this->__set('multiple', true);
 
         return parent::getInput();

@@ -97,7 +97,7 @@ class JFormFieldModal_Contact extends FormField
             )
         );
 
-        // Input Hidden (El que realmente guarda los IDs en la base de datos)
+        // Hidden input that stores the IDs in the database.
         $class = $this->required ? ' class="required modal-value"' : '';
         $html[] = '<input type="hidden" id="' . $this->id . '_id"' . $class . ' name="' . $this->name . '" value="' . htmlspecialchars($currentValues, ENT_QUOTES, 'UTF-8') . '" />';
 

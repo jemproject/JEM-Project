@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
+use Joomla\String\StringHelper;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\Database\ParameterType;
 
@@ -700,44 +701,57 @@ class JemModelEvent extends JemModelAdmin
 
         $jemsettings = JemHelper::config();
 
+        // Get allowed image extensions from global configuration (defaults: jpg,jpeg,png,gif,webp,svg)
         $allowedExts = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_extensions ?? 'jpg,jpeg,png,gif,webp,svg'));
+
+        // Get allowed URL schemes from global configuration (defaults: http,https,mailto,tel)
         $allowedSchemes = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_schemes ?? 'http,https,mailto,tel'));
 
+        // Iterate through each link in the data array
         foreach ($data as $link) {
             $url = trim($link['url'] ?? '');
 
+            // Description size validation
+            $description = isset($item['description']) ? trim((string) $item['description']) : '';
+            if (StringHelper::strlen($description) > 255) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_LINK_DESCRIPTION_TOO_LONG'));
+                return false;
+            }
+
+            // Validate that URL is not empty
             if (empty($url)) {
                 $this->setError(\Joomla\CMS\Language\Text::_('COM_JEM_EVENT_ERROR_URL_REQUIRED'));
                 return false;
             }
 
-            // 1. VALIDACIÓN DE LA URL (Destino del enlace)
+            // URL scheme validation (check protocol is allowed)
             $urlScheme = parse_url($url, PHP_URL_SCHEME);
             if (!$urlScheme || !in_array(strtolower($urlScheme), $allowedSchemes)) {
                 $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
                 return false;
             }
 
+            // Validate URL format using PHP's filter_var
             if (!filter_var($url, FILTER_VALIDATE_URL)) {
                 $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url)));
                 return false;
             }
 
-            // 2. VALIDACIÓN DE LA IMAGEN (Solo local)
+            // Image validation (only for local images, not external URLs)
             if (!empty($link['image'])) {
                 $img = $link['image'];
 
-                // Extraemos solo el path eliminando query strings de Joomla 5 (?width=...)
+                // Extract only the path, removing Joomla 5 query strings (e.g., ?width=...)
                 $imgCleanPath = parse_url($img, PHP_URL_PATH);
                 $cleanPath = \Joomla\CMS\Filesystem\Path::clean($imgCleanPath);
 
-                // Seguridad: Evitar saltos de directorio (../)
+                // Security: Prevent directory traversal attacks (../)
                 if (strpos($cleanPath, '..') !== false) {
                     $this->setError(\Joomla\CMS\Language\Text::_('COM_JEM_EVENT_ERROR_UNSAFE_PATH'));
                     return false;
                 }
 
-                // Validar extensión permitida
+                // Validate that the file extension is allowed
                 $ext = strtolower(\Joomla\CMS\Filesystem\File::getExt($cleanPath));
                 if (!in_array($ext, $allowedExts)) {
                     $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_EXTENSION', $ext));
@@ -745,6 +759,7 @@ class JemModelEvent extends JemModelAdmin
                 }
             }
         }
+
         return true;
     }
 
@@ -789,6 +804,8 @@ class JemModelEvent extends JemModelAdmin
                 $link->url      = $item['url'];
                 $link->ordering = (int) $rowOrder++;
                 $link->state    = 1;
+                $description = isset($item['description']) ? trim((string) $item['description']) : '';
+                $link->description = StringHelper::substr($description, 0, 255);
 
                 // Normalize additional link configuration.
                 $target = $item['target'] ?? '_blank';

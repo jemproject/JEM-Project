@@ -13,7 +13,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Database\DatabaseDriver;
-use Joomla\CMS\Date\Date; // Añadido para mejor práctica en Joomla 5
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
