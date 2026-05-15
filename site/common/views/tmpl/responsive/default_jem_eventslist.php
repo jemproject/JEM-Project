@@ -109,7 +109,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php if ($this->settings->get('global_display', 1)) : ?>
-            <div class="jem-limit-smallist">
+            <div class="jem-limit-smallest">
                 <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
                 <?php echo $this->pagination->getLimitBox(); ?>
             </div>

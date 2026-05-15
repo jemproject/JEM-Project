@@ -68,7 +68,7 @@ use Joomla\CMS\Factory;
         $year    = date('Y', $timestamp);
         $month   = date('m', $timestamp);
         $day     = date('d', $timestamp);
-		$dateKey = $year.$month.$day;
+        $dateKey = $year.$month.$day;
 
         $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
 

@@ -9,7 +9,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Cssmanager Controller
@@ -20,8 +22,7 @@ class JemControllerCssmanager extends AdminController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
 
         // Register Extra task
@@ -33,8 +34,7 @@ class JemControllerCssmanager extends AdminController
     /**
      * Proxy for getModel.
      */
-    public function getModel($name = 'Cssmanager', $prefix = 'JemModel', $config = array())
-    {
+    public function getModel($name = 'Cssmanager', $prefix = 'JemModel', $config = array()) {
         $model = parent::getModel($name, $prefix, array('ignore_request' => true));
         return $model;
     }
@@ -42,25 +42,29 @@ class JemControllerCssmanager extends AdminController
     /**
      *
      */
-    public function cancel()
-    {
+    public function cancel() {
         $this->setRedirect('index.php?option=com_jem&view=main');
     }
 
-    public function back()
-    {
+    public function back() {
         $this->setRedirect('index.php?option=com_jem&view=main');
     }
     /**
      *
      */
-    public function linenumber()
-    {
-        $task  = Factory::getApplication()->input->get('task', '');
+    public function linenumber() {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $task  = $app->input->getCmd('task', '');
         $model = $this->getModel();
 
-        switch ($task)
-        {
+        switch ($task) {
             case 'setlinenumber' :
                 $model->setStatusLinenumber(1);
                 break;

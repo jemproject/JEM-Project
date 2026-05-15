@@ -8,6 +8,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 
@@ -96,7 +99,7 @@ class jem_venues extends Table
             return false;
         }
 
-        $alias = JFilterOutput::stringURLSafe($this->venue);
+        $alias = OutputFilter::stringURLSafe($this->venue);
 
         if (empty($this->alias) || $this->alias === $alias) {
             $this->alias = $alias;
@@ -112,7 +115,7 @@ class jem_venues extends Table
             }
         }
 
-        if (JFilterInput::checkAttribute(array ('href', $this->url))) {
+        if (InputFilter::checkAttribute(array ('href', $this->url))) {
             $this->_error = Text::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
             Factory::getApplication()->enqueueMessage($this->_error, 'warning');
             return false;

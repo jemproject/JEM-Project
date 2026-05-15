@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
@@ -81,7 +82,7 @@ class JemTableEvent extends Table
         // Bind the rules.
         /*
         if (isset($array['rules']) && is_array($array['rules'])) {
-            $rules = new JAccessRules($array['rules']);
+            $rules = new Rules($array['rules']);
             $this->setRules($rules);
         }
         */
@@ -236,7 +237,6 @@ class JemTableEvent extends Table
         }
 
         // Check if image was selected
-        jimport('joomla.filesystem.file');
         $image_dir = JPATH_SITE.'/images/jem/events/';
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));

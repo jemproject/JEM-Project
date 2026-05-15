@@ -9,6 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 // Base this model on the backend version.
@@ -43,7 +45,8 @@ class JemModelEditvenue extends JemModelVenue
         $this->setState('venue.from_id', $fromId);
 
         $return = $app->input->get('return', '', 'base64');
-        $this->setState('return_page', base64_decode($return));
+        $decodedReturn = $return ? base64_decode($return, true) : false;
+        $this->setState('return_page', ($decodedReturn && Uri::isInternal($decodedReturn)) ? $decodedReturn : '');
 
         // Load the parameters.
         $params = $app->getParams();
@@ -98,13 +101,14 @@ class JemModelEditvenue extends JemModelVenue
         }
 
         // Convert attrib field to Registry.
-        //$registry = new Registry();
-        //$registry->loadString($value->attribs);
+        $registry = new Registry();
+        $registry->loadString($value->attribs ?? '{}');
+        $value->attribs = $registry->toArray();
 
         $globalregistry = JemHelper::globalattribs();
 
         $value->params = clone $globalregistry;
-        //$value->params->merge($registry);
+        $value->params->merge($registry);
 
         // Compute selected asset permissions.
         //  Check edit permission.
@@ -115,7 +119,7 @@ class JemModelEditvenue extends JemModelVenue
         $value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
         // Get attachments - but not on copied venues
-        $files = JemAttachment::getAttachments('venue' . $value->id);
+        $files = JemAttachment::getAttachments('venue' . $value->id, true);
         $value->attachments = $files;
 
         // Preset values on new venues

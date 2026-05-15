@@ -24,8 +24,7 @@ class JemControllerMyvenues extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -35,16 +34,14 @@ class JemControllerMyvenues extends BaseController
      * @access public
      * @return void
      */
-    public function publish()
-    {
+    public function publish() {
         $this->setStatus(1, 'COM_JEM_VENUE_PUBLISHED');
     }
 
     /**
      * Logic unpublish venues
      */
-    public function unpublish()
-    {
+    public function unpublish() {
         $this->setStatus(0, 'COM_JEM_VENUE_UNPUBLISHED');
     }
 
@@ -55,8 +52,7 @@ class JemControllerMyvenues extends BaseController
      * @return void
      */
     /*
-    public function trash()
-    {
+    public function trash() {
         $this->setStatus(-2, 'COM_JEM_VENUE_TRASHED');
     }
     */
@@ -67,8 +63,7 @@ class JemControllerMyvenues extends BaseController
      * @access protected
      * @return void
      */
-    protected function setStatus($status, $message)
-    {
+    protected function setStatus($status, $message) {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 

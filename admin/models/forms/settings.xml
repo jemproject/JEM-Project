@@ -106,6 +106,17 @@
             <option value="0">COM_JEM_SETTINGS_SUNDAY</option>
             <option value="1">COM_JEM_SETTINGS_MONDAY</option>
         </field>
+        <field name="flagicons_path" type="text"
+            label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
+            description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
+            class="inputbox"
+            default="media/com_jem/images/flags/w80-webp/"
+            size="40"
+            required="true"
+        />
+        <field name="spacer_attachments_start" type="spacer"
+            hr="true"
+        />
         <field name="attachments_path" type="text"
             label="COM_JEM_SETTINGS_ATTACHEMENT_PATH"
             description="COM_JEM_SETTINGS_ATTACHEMENT_PATH_DESC"
@@ -127,14 +138,28 @@
             size="40"
             required="true"
         />
-        <field name="flagicons_path" type="text"
-            label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
-            description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
-            class="inputbox"
-            default="media/com_jem/images/flags/w80-webp/"
-            size="40"
-            required="true"
-        />
+        <field name="attachments_layout" type="radio"
+            label="COM_JEM_SETTINGS_ATTACHEMENT_LAYOUT"
+            description="COM_JEM_SETTINGS_ATTACHEMENT_LAYOUT_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="column"
+            required="false"
+        >
+            <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+            <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+        </field>
+        <field name="attachments_icon_size" type="list"
+            label="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE"
+            description="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_DESC"
+            class="inputbox form-select"
+            default="normal"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="normal">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_NORMAL</option>
+            <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
+            <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
+        </field>
         <field name="spacer2" type="spacer"
             hr="true"
         />

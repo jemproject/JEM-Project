@@ -82,7 +82,7 @@ class JemModelSource extends AdminModel
         $id = $app->getUserState('com_jem.edit.source.id');
 
         // Parse the template id out of the compound reference.
-        $temp = $id ? (base64_decode($id)) : $id;
+        $temp = $id ? base64_decode($id, true) : $id;
         $fileName = $temp;
 
         if(!empty($fileName))

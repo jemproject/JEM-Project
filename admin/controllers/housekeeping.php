@@ -21,8 +21,7 @@ class JemControllerHousekeeping extends BaseController
     /**
      * Check whether the current user can run housekeeping tasks.
      */
-    protected function allowHousekeeping()
-    {
+    protected function allowHousekeeping() {
         if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
@@ -31,8 +30,7 @@ class JemControllerHousekeeping extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
 
         // Register Extra task
@@ -48,8 +46,7 @@ class JemControllerHousekeeping extends BaseController
      * @return void
      *
      */
-    public function delete()
-    {
+    public function delete() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
         $this->allowHousekeeping();
@@ -79,8 +76,7 @@ class JemControllerHousekeeping extends BaseController
      * @return void
      *
      */
-    public function cleanupCatsEventRelations()
-    {
+    public function cleanupCatsEventRelations() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
         $this->allowHousekeeping();
@@ -97,8 +93,7 @@ class JemControllerHousekeeping extends BaseController
     /**
      * Truncates JEM tables with exception of settings table
      */
-    public function truncateAllData()
-    {
+    public function truncateAllData() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
         $this->allowHousekeeping();
@@ -119,8 +114,7 @@ class JemControllerHousekeeping extends BaseController
      * @return void
      *
      */
-    public function triggerarchive()
-    {
+    public function triggerarchive() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
         $this->allowHousekeeping();

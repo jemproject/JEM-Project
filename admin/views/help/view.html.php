@@ -15,8 +15,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Filesystem\Folder;
 
-jimport('joomla.html.pane');
-
 
 /**
  * View class for the JEM Help screen

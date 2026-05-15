@@ -15,6 +15,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Filter\InputFilter;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -27,10 +28,22 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 class JemAttachment extends CMSObject
 {
     /**
+     * Attachment identifiers are stored as type + numeric id, e.g. event12 or venue7.
+     */
+    static protected function isValidObject($object)
+    {
+        return is_string($object) && preg_match('/^[a-z]+[0-9]+$/i', $object);
+    }
+
+    /**
      * Resolve an attachment path and ensure it remains inside the configured base directory.
      */
     static protected function getSafeAttachmentPath($object, $file)
     {
+        if (!self::isValidObject($object)) {
+            return false;
+        }
+
         $jemsettings = JemHelper::config();
         $basePath = Path::clean(JPATH_SITE.'/'.$jemsettings->attachments_path);
         $path = Path::clean($basePath.'/'.$object.'/'.$file);
@@ -41,6 +54,139 @@ class JemAttachment extends CMSObject
         }
 
         return $path;
+    }
+
+    /**
+     * Clean text stored with an attachment to reduce stored XSS risk.
+     */
+    static protected function cleanText($value, $maxLength = 255)
+    {
+        $value = trim((string) $value);
+        $value = InputFilter::getInstance()->clean($value, 'string');
+
+        if (function_exists('mb_substr')) {
+            return mb_substr($value, 0, $maxLength);
+        }
+
+        return substr($value, 0, $maxLength);
+    }
+
+    /**
+     * Return the configured extension matched against the complete filename suffix.
+     */
+    static protected function getAllowedExtension($filename, array $allowed)
+    {
+        $filename = strtolower((string) $filename);
+        usort($allowed, function ($a, $b) {
+            return strlen($b) <=> strlen($a);
+        });
+
+        foreach ($allowed as $extension) {
+            $extension = strtolower(trim((string) $extension));
+
+            if ($extension !== '' && substr($filename, -strlen('.' . $extension)) === '.' . $extension) {
+                return $extension;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Reject file names that contain executable or browser-active extensions.
+     */
+    static protected function hasUnsafeExtension($filename)
+    {
+        $unsafe = array(
+            'php', 'php3', 'php4', 'php5', 'phtml', 'phar',
+            'cgi', 'pl', 'py', 'rb', 'asp', 'aspx', 'jsp',
+            'sh', 'bash', 'cmd', 'bat', 'exe', 'dll', 'so',
+            'js', 'mjs', 'html', 'htm', 'xhtml', 'svg',
+        );
+
+        $parts = explode('.', strtolower((string) $filename));
+        array_shift($parts);
+
+        return (bool) array_intersect($parts, $unsafe);
+    }
+
+    /**
+     * Verify common MIME types for configured attachment extensions.
+     */
+    static protected function hasAllowedMime($tmpFile, $extension)
+    {
+        if (!is_file($tmpFile) || !function_exists('finfo_open')) {
+            return true;
+        }
+
+        $map = array(
+            'txt' => array('text/plain'),
+            'csv' => array('text/plain', 'text/csv', 'application/csv'),
+            'pdf' => array('application/pdf'),
+            'jpg' => array('image/jpeg'),
+            'jpeg' => array('image/jpeg'),
+            'png' => array('image/png'),
+            'gif' => array('image/gif'),
+            'webp' => array('image/webp'),
+            'zip' => array('application/zip', 'application/x-zip-compressed'),
+            'gz' => array('application/gzip', 'application/x-gzip'),
+            'tar.gz' => array('application/gzip', 'application/x-gzip'),
+        );
+
+        $extension = strtolower((string) $extension);
+
+        if (empty($map[$extension])) {
+            return true;
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        if (!$finfo) {
+            return true;
+        }
+
+        $mime = finfo_file($finfo, $tmpFile);
+        finfo_close($finfo);
+
+        return in_array($mime, $map[$extension], true);
+    }
+
+    /**
+     * Return a Font Awesome class that represents the attachment extension.
+     */
+    static public function getIconClass($filename)
+    {
+        $extension = strtolower(pathinfo((string) $filename, PATHINFO_EXTENSION));
+
+        if (in_array($extension, array('jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp'), true)) {
+            return 'fa fa-file-image';
+        }
+
+        if (in_array($extension, array('zip', 'tar', 'gz', 'rar', '7z'), true)) {
+            return 'fa fa-file-archive';
+        }
+
+        if (in_array($extension, array('doc', 'docx', 'odt', 'rtf'), true)) {
+            return 'fa fa-file-word';
+        }
+
+        if (in_array($extension, array('xls', 'xlsx', 'ods', 'csv'), true)) {
+            return 'fa fa-file-excel';
+        }
+
+        if (in_array($extension, array('ppt', 'pptx', 'odp'), true)) {
+            return 'fa fa-file-powerpoint';
+        }
+
+        if ($extension === 'pdf') {
+            return 'fa fa-file-pdf';
+        }
+
+        if (in_array($extension, array('txt', 'md', 'log'), true)) {
+            return 'fa fa-file-alt';
+        }
+
+        return 'fa fa-file';
     }
 
     /**
@@ -69,10 +215,10 @@ class JemAttachment extends CMSObject
 
         $allowed = explode(",", $jemsettings->attachments_types);
         foreach ($allowed as $k => $v) {
-            $allowed[$k] = ($v ?  trim($v) : $v);
+            $allowed[$k] = strtolower($v ? trim($v) : $v);
         }
 
-        $maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
+        $maxsizeinput = max(1, (int) $jemsettings->attachments_maxsize) * 1024; // size in kb
 
         foreach ($post_files as $k => $rec)
         {
@@ -81,14 +227,25 @@ class JemAttachment extends CMSObject
                 continue;
             }
 
+            if (!isset($rec['error']) || $rec['error'] !== UPLOAD_ERR_OK || empty($rec['tmp_name']) || !is_uploaded_file($rec['tmp_name'])) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$file, 'warning');
+                continue;
+            }
+
             // check if the filetype is valid
-            $fileext = strtolower(File::getExt($file));
-            if (!in_array($fileext, $allowed)) {
+            $fileext = self::getAllowedExtension($file, $allowed);
+            if (!$fileext || self::hasUnsafeExtension($file)) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
                 continue;
             }
+
+            if (!self::hasAllowedMime($rec['tmp_name'], $fileext)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
+                continue;
+            }
+
             // check size
-            if ($rec['size'] > $maxsizeinput) {
+            if (empty($rec['size']) || $rec['size'] > $maxsizeinput) {
                 Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $rec['size'], $maxsizeinput), 'warning');
                 continue;
             }
@@ -115,19 +272,28 @@ class JemAttachment extends CMSObject
             // Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
             // switch off parsing archives for byte sequences looking like a script file extension
             // but keep all other checks running
-            File::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
+            if (!File::upload($rec['tmp_name'], $filepath, false, false, array('forbidden_ext_in_content' => true))) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$object, 'warning');
+                continue;
+            }
 
             $table = Table::getInstance('jem_attachments', '');
             $table->file = $sanitizedFilename;
             $table->object = $object;
             if (isset($rec['customname']) && !empty($rec['customname'])) {
-                $table->name = $rec['customname'];
+                $table->name = self::cleanText($rec['customname']);
             }
             if (isset($rec['description']) && !empty($rec['description'])) {
-                $table->description = $rec['description'];
+                $table->description = self::cleanText($rec['description'], 1000);
             }
             if (isset($rec['access'])) {
-                $table->access = intval($rec['access']);
+                $table->access = max(1, intval($rec['access']));
+            }
+            if (isset($rec['ordering'])) {
+                $table->ordering = max(0, (int) $rec['ordering']);
+            }
+            if (isset($rec['frontend'])) {
+                $table->frontend = (int) ((int) $rec['frontend'] === 1);
             }
 
             $table->added = date('Y-m-d H:i:s');
@@ -145,14 +311,42 @@ class JemAttachment extends CMSObject
      * update attachment record in db
      * @param  array (id, name, description, access)
      */
-    static public function update($attach)
+    static public function update($attach, $object = null)
     {
         if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
             return false;
         }
 
         $table = Table::getInstance('jem_attachments', '');
-        $table->load($attach['id']);
+        if (!$table->load((int) $attach['id'])) {
+            return false;
+        }
+
+        if ($object !== null && (!self::isValidObject($object) || $table->object !== $object)) {
+            return false;
+        }
+
+        $attach['id'] = (int) $attach['id'];
+
+        if (array_key_exists('name', $attach)) {
+            $attach['name'] = self::cleanText($attach['name']);
+        }
+
+        if (array_key_exists('description', $attach)) {
+            $attach['description'] = self::cleanText($attach['description'], 1000);
+        }
+
+        if (array_key_exists('access', $attach)) {
+            $attach['access'] = max(1, (int) $attach['access']);
+        }
+
+        if (array_key_exists('ordering', $attach)) {
+            $attach['ordering'] = max(0, (int) $attach['ordering']);
+        }
+        if (array_key_exists('frontend', $attach)) {
+            $attach['frontend'] = (int) ((int) $attach['frontend'] === 1);
+        }
+
         $table->bind($attach);
 
         if (!($table->check() && $table->store())) {
@@ -168,7 +362,7 @@ class JemAttachment extends CMSObject
      * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
      * @return array
      */
-    static public function getAttachments($object)
+    static public function getAttachments($object, $includeUnpublished = null)
     {
         $jemsettings = JemHelper::config();
 
@@ -196,20 +390,28 @@ class JemAttachment extends CMSObject
             return array();
         }
 
+        $app = Factory::getApplication();
+        if ($includeUnpublished === null) {
+            $includeUnpublished = $app->isClient('administrator');
+        }
+
         // Check access level if not a Super User on Backend.
         $user = JemFactory::getUser();
-        if (Factory::getApplication()->isClient('administrator') && $user->authorise('core.manage')) {
+        if ($app->isClient('administrator') && $user->authorise('core.manage')) {
             $qAccess = '';
         } else {
             $levels = $user->getAuthorisedViewLevels();
             $qAccess = '   AND access IN (' . implode(',', $levels) . ')';
         }
 
+        $qPublished = $includeUnpublished ? '' : '   AND frontend = 1';
+
         $query = 'SELECT * '
                . ' FROM #__jem_attachments '
                . ' WHERE file IN ('. implode(',', $fnames) .')'
                . '   AND object = '. $db->Quote($object)
                . $qAccess
+               . $qPublished
                . ' ORDER BY ordering ASC ';
 
         $db->setQuery($query);
@@ -239,6 +441,10 @@ class JemAttachment extends CMSObject
 
         if (!$res) {
             throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
+        }
+
+        if (!Factory::getApplication()->isClient('administrator') && !(int) $res->frontend) {
+            throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
         }
 
         if (!in_array($res->access, $levels)) {

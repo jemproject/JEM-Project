@@ -777,6 +777,18 @@
         <fields name="attribs">
             <fieldset name="event_links_options">
                 <field
+                        name="attachments_layout"
+                        type="radio"
+                        label="COM_JEM_EVENT_ATTACHMENTS_LAYOUT"
+                        description="COM_JEM_EVENT_ATTACHMENTS_LAYOUT_DESC"
+                        default=""
+                        class="btn-group btn-group-yesno"
+                >
+                    <option value="">JGLOBAL_USE_GLOBAL</option>
+                    <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+                    <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+                </field>
+                <field
                         name="links_layout"
                         type="radio"
                         label="COM_JEM_EVENT_LINKS_LAYOUT"
@@ -795,8 +807,11 @@
                         default="image_icon_text"
                 >
                     <option value="image_icon_text">COM_JEM_EVENT_LINKS_ORDER_IMAGE_ICON_TEXT</option>
+                    <option value="image_text_icon">COM_JEM_EVENT_LINKS_ORDER_IMAGE_TEXT_ICON</option>
                     <option value="icon_text_image">COM_JEM_EVENT_LINKS_ORDER_ICON_TEXT_IMAGE</option>
                     <option value="icon_image_text">COM_JEM_EVENT_LINKS_ORDER_ICON_IMAGE_TEXT</option>
+                    <option value="text_image_icon">COM_JEM_EVENT_LINKS_ORDER_TEXT_IMAGE_ICON</option>
+                    <option value="text_icon_image">COM_JEM_EVENT_LINKS_ORDER_TEXT_ICON_IMAGE</option>
                 </field>
             </fieldset>
         </fields>

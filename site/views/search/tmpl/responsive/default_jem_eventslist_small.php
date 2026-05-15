@@ -193,7 +193,7 @@ $uri = Uri::getInstance();
   </dd>
 </dl>
 <?php if ($this->settings->get('global_display',1)) : ?>
-  <div class="jem-limit-smallist">
+  <div class="jem-limit-smallest">
     <?php
       echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
       echo $this->pagination->getLimitBox();

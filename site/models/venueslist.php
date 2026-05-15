@@ -71,6 +71,11 @@ class JemModelVenueslist extends ListModel
         $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_order        = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir    = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('a.city', 'a.venue', 'a.state', 'a.country', 'a.ordering', 'a.id');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.city';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $orderby = $filter_order . ' ' . $filter_order_Dir;
 

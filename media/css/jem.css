@@ -77,7 +77,7 @@ div#jem .hr {
     background-color: #E19832;
 }
 
-input .required {
+input.required {
     background-color: #D5EEFF !important;
 }
 
@@ -213,7 +213,7 @@ div#jem div.clr {
     clear: both;
 }
 
-/* ie fix in coditional comments (html source) */
+/* IE fix in conditional comments (HTML source) */
 div#jem .floattext:after {
     content: ".";
     display: block;
@@ -253,6 +253,15 @@ div#jem h2 img {
     margin-left: 0.3em;
 }
 
+div#jem h2.description,
+div#jem h2.location_desc,
+div#jem div.files > h2.description {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    margin-top: 1.15rem !important;
+    margin-bottom: .65rem !important;
+}
+
 div#jem .jemcomponentheading {
     border-bottom: 0px !important;
 }
@@ -287,9 +296,6 @@ div#jem dd { /* definition description */
 
 div#jem .jcomments dd {
     grid-column: 2;
-}
-
-div#jem .jcomments dd {
     margin-left: 0px;
 }
 
@@ -510,13 +516,13 @@ div#jem table.eventtable td.jem_eventimage {
     vertical-align: top;
 }
 
-div#jem table.eventtable td.jem_eventimage
+div#jem table.eventtable td.jem_eventimage,
 div#jem table.eventtable td.header-td {
     text-align: left;
     vertical-align: top;
 }
 
-/* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
+/* Activate this rule to show date in event lists bold (when two-line mode is chosen) * /
 div#jem table.eventtable tr td span.jem_date-2 {
     font-weight: bold;
 }
@@ -1229,6 +1235,102 @@ div#jem .file td {
     padding: 3px;
 }
 
+div#jem .jem-attachment-description {
+    margin-top: .2rem;
+    color: #555;
+    font-size: .95em;
+    line-height: 1.35;
+}
+
+div#jem .jem-attachment-file-icon {
+    margin-right: .25rem;
+}
+
+div#jem .jem-attachment-icon-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    padding-right: .35rem !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div#jem .jem-attachment-icon-cell .jem-attachment-file-icon {
+    display: inline-block;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+div#jem .jem-attachments-list {
+    display: grid;
+    gap: .7rem;
+}
+
+div#jem .jem-attachments-layout-row {
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    align-items: start;
+    column-gap: 1.25rem;
+    row-gap: .8rem;
+}
+
+div#jem .jem-attachment-row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: .35rem;
+    align-items: center;
+}
+
+div#jem .jem-attachment-content {
+    min-width: 0;
+}
+
+div#jem .jem-attachment-content a.file-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .25rem;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: top;
+}
+
+div#jem .jem-attachment-content .file-name,
+div#jem .jem-attachment-content .jem-file-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+div#jem .jem-attachment-content a.file-name > .fa {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+div#jem .jem-attachments-icons-none .jem-attachment-row {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+div#jem .jem-attachments-icons-none .jem-attachment-icon-cell {
+    display: none;
+}
+
+div#jem .jem-attachment-file-icon-normal {
+    font-size: 1.25rem !important;
+}
+
+div#jem .jem-attachment-file-icon-medium {
+    font-size: 1.6rem !important;
+}
+
+div#jem .jem-attachment-file-icon-large {
+    font-size: 2rem !important;
+}
+
+div#jem dl.jem-dl > dt.jem-attachment-icon-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    margin-right: .35rem;
+}
+
 
 div#jem .inline-button-right {
     float: right;
@@ -1419,6 +1521,29 @@ div#jem .inline-button-right {
     transform: translateY(-1px);
 }
 
+.jem-event-link.jem-event-link-no-link,
+.jem-event-link.jem-event-link-no-link:hover,
+.jem-event-link.jem-event-link-no-link:focus,
+.jem-event-link.jem-event-link-no-link:active {
+    cursor: default !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:focus,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:active {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-icon,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-icon {
+    color: var(--jem-event-link-hover-color, currentColor) !important;
+}
+
 /* Event link icon */
 .jem-event-link-icon {
     display: inline-flex !important;
@@ -1459,48 +1584,10 @@ div#jem .inline-button-right {
     object-fit: contain;
 }
 
-/* A: Image + Icon + Text */
-.jem-links-order-image-icon-text .jem-event-link-image {
-    order: 1;
-}
-
-.jem-links-order-image-icon-text .jem-event-link-icon {
-    order: 2;
-}
-
-.jem-links-order-image-icon-text .jem-event-link-label {
-    order: 3;
-}
-
-/* B: Icon + Text + Image */
-.jem-links-order-icon-text-image .jem-event-link-icon {
-    order: 1;
-}
-
-.jem-links-order-icon-text-image .jem-event-link-label {
-    order: 2;
-}
-
-.jem-links-order-icon-text-image .jem-event-link-image {
-    order: 3;
-}
-
-/* C: Icon + Image + Text */
-.jem-links-order-icon-image-text .jem-event-link-icon {
-    order: 1;
-}
-
-.jem-links-order-icon-image-text .jem-event-link-image {
-    order: 2;
-}
-
-.jem-links-order-icon-image-text .jem-event-link-label {
-    order: 3;
-}
 
 
 /* Prevent template image rules from enlarging link images */
-.jem-event-links .jem-event-link img.jem-event-link-image {
+.jem-event-links .jem-event-link .jem-event-link-image img {
     width: auto !important;
     height: auto !important;
     object-fit: contain !important;
@@ -1542,401 +1629,96 @@ div#jem .inline-button-right {
 }
 
 
-/* Normalize each link as a centered inline button */
-.jem-event-link {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px;
-
-    min-height: 42px;
-    line-height: 1 !important;
-
-    vertical-align: middle;
-}
-
-/* Normalize framed links */
-.jem-event-link.jem-event-link-has-frame {
-    min-height: 42px;
-    padding: .45rem .75rem !important;
-}
-
-/* Center icon vertically */
-.jem-event-link-icon {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: 1.1rem;
-    min-width: 1.1rem;
-    height: 1.1rem;
-    line-height: 1 !important;
-
-    vertical-align: middle;
-}
-
-/* Center label vertically */
-.jem-event-link-label {
-    display: inline-flex !important;
-    align-items: center !important;
-
-    min-height: 1.1rem;
-    line-height: 1.1 !important;
-
-    vertical-align: middle;
-}
-
-/* Center image vertically when present */
-.jem-event-link-image {
-    display: inline-block !important;
-    align-self: center !important;
-    vertical-align: middle !important;
-}
-
-.jem-links-tab .field-media-wrapper,
-.jem-links-tab .field-media-wrapper .input-group {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0 !important;
-}
-
-.jem-links-tab .field-media-wrapper .input-group {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-}
-
-.jem-links-tab .field-media-wrapper .input-group input {
-    min-width: 0 !important;
-    height: 42px !important;
-}
-
-.jem-links-tab .field-media-wrapper .input-group .btn {
-    flex: 0 0 auto;
-    height: 42px !important;
-    min-height: 42px !important;
+/* Event links: keep label and description as one vertical text block */
+#jem .jem-event-links .jem-event-link {
     display: inline-flex;
     align-items: center;
-}
-
-/**
- * @package    JEM
- * @copyright  (C) 2013-2026 joomlaeventmanager.net
- * @copyright  (C) 2005-2009 Christoph Lukes
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
- */
-
-/* --- Existing code hasta aquí (sin cambios) --- */
-
-/* -------------------
-   EVENT LINKS / LINKS TAB FIXES
-   Fix layout for FE edit event: Row/Column, Target, Frame radios
---------------------- */
-
-/* Event links container */
-.jem-event-links {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-
-    width: 100%;
+    gap: 0.45rem;
     max-width: 100%;
-    margin: 1rem 0;
-}
-
-/* Row layout */
-.jem-event-links.jem-event-links-row {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-/* Column layout */
-.jem-event-links.jem-event-links-column {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-}
-
-/* Event link item */
-.jem-event-link {
-    display: inline-flex !important;
-    flex-direction: row;
-    align-items: center !important;
-    justify-content: center;
-    gap: .45rem;
-
-    width: auto;
-    max-width: 100%;
-    min-height: 42px;
-
-    line-height: 1 !important;
     text-decoration: none !important;
-    box-shadow: none !important;
-
-    box-sizing: border-box;
-    vertical-align: middle;
-
-    transition:
-        background-color .15s ease,
-        color .15s ease,
-        border-color .15s ease,
-        box-shadow .15s ease,
-        transform .12s ease;
 }
 
-/* Remove underline from links */
-.jem-event-links a,
-.jem-event-links a:link,
-.jem-event-links a:visited,
-.jem-event-links a:hover,
-.jem-event-links a:focus,
-.jem-event-links a:active,
-.jem-event-link,
-.jem-event-link:hover,
-.jem-event-link:focus,
-.jem-event-link:active {
-    text-decoration: none !important;
-    box-shadow: none !important;
-}
-
-/* Framed link */
-.jem-event-link.jem-event-link-has-frame {
-    border: 1px solid currentColor !important;
-    border-radius: .45rem !important;
-    padding: .45rem .75rem !important;
-    background-color: color-mix(in srgb, currentColor 8%, transparent);
-    cursor: pointer;
-}
-
-/* Framed link hover */
-.jem-event-link.jem-event-link-has-frame:hover,
-.jem-event-link.jem-event-link-has-frame:focus {
-    background-color: color-mix(in srgb, currentColor 16%, transparent);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .12) !important;
-    transform: translateY(-1px);
-}
-
-/* Event link icon */
-.jem-event-link-icon {
+/* This is the important part */
+#jem .jem-event-links .jem-event-link .jem-event-link-text {
     display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: 1.1rem;
-    min-width: 1.1rem;
-    height: 1.1rem;
-
-    line-height: 1 !important;
-}
-
-/* Event link label */
-.jem-event-link-label {
-    display: inline-flex !important;
-    align-items: center !important;
-
-    min-height: 1.1rem;
-
-    line-height: 1.1 !important;
-    white-space: nowrap;
-}
-
-/* Event link image */
-.jem-event-link-image {
-    display: inline-flex;
-    align-items: center;
+    flex-direction: column !important;
+    align-items: flex-start !important;
     justify-content: center;
-    flex: 0 0 auto;
-    overflow: hidden;
-}
-
-.jem-event-link-image img {
-    display: block;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-}
-
-/* -------------------
-   LINKS TAB / REPEATED FIELDS
---------------------- */
-
-/* Repeated link block */
-.jem-links-tab .subform-repeatable-group {
-    position: relative;
-
-    display: grid;
-    grid-template-columns:
-        minmax(280px, 1fr)
-        minmax(260px, 1fr)
-        minmax(260px, 1fr);
-    column-gap: 1rem;
-    row-gap: .75rem;
-
-    width: calc(100% - 3rem);
-    max-width: calc(100% - 3rem);
-
-    margin: 0 3rem 1.25rem 0;
-    padding: .75rem 1rem;
-
-    border: 1px solid #d7dce1;
-    border-radius: .45rem;
-    background: #fff;
-
-    box-sizing: border-box;
-    overflow: visible !important;
-}
-
-/* Each field inside one repeated link */
-.jem-links-tab .subform-repeatable-group .control-group {
-    display: grid !important;
-    grid-template-columns: 95px minmax(0, 1fr);
-    align-items: center;
-    column-gap: .6rem;
-
-    width: 100%;
     min-width: 0;
-
-    margin: 0 !important;
-    padding: 0 !important;
+    text-align: left !important;
+    line-height: 1.25;
 }
 
-/* Labels */
-.jem-links-tab .subform-repeatable-group .control-label {
-    width: 95px !important;
-    min-width: 95px;
-    max-width: 95px;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    font-weight: 600;
-    line-height: 1.15;
-    white-space: nowrap;
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
 }
 
-/* Controls */
-.jem-links-tab .subform-repeatable-group .controls {
-    width: 100%;
-    min-width: 0;
-
-    margin: 0 !important;
-    padding: 0 !important;
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    font-weight: 400 !important;
 }
 
-/* -------------------
-   RADIO BUTTONS AS SEGMENTED CONTROLS
---------------------- */
-.jem-links-tab .btn-group-yesno,
-.jem-links-tab .radio.btn-group,
-.jem-links-tab fieldset.radio {
-    display: inline-flex !important;
-    align-items: center;
-    flex-wrap: nowrap;
-
-    width: 100%;
-    max-width: 100%;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    border: 0 !important;
+/* Label/title */
+#jem .jem-event-links .jem-event-link .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    text-align: left !important;
 }
 
-/* Hide radio inputs */
-.jem-links-tab .btn-group-yesno input[type="radio"],
-.jem-links-tab .radio.btn-group input[type="radio"],
-.jem-links-tab fieldset.radio input[type="radio"] {
-    position: absolute !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+/* Description */
+#jem .jem-event-links .jem-event-link .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400 !important;
+    line-height: 1.25;
+    text-align: left !important;
+    opacity: 0.85;
 }
 
-/* Button labels */
-.jem-links-tab .btn-group-yesno label,
-.jem-links-tab .radio.btn-group label,
-.jem-links-tab fieldset.radio label {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
 
-    flex: 1 1 0;
-    min-width: 0;
-
-    height: 32px;
-
-    margin: 0 !important;
-    padding: 0 .45rem !important;
-
-    border: 1px solid #b7c3cf !important;
-    background: #fff;
-    color: #1f2933;
-
-    font-size: .875rem;
-    font-weight: 500;
-    line-height: 1;
-    white-space: nowrap;
-
-    cursor: pointer;
-    box-sizing: border-box;
+/* Image + Icon + Text */
+#jem .jem-links-order-image-icon-text .jem-event-link-image {
+    order: 1;
 }
 
-/* Remove double border between the two buttons */
-.jem-links-tab .btn-group-yesno label + input + label,
-.jem-links-tab .radio.btn-group label + input + label,
-.jem-links-tab fieldset.radio label + input + label {
-    border-left: 0 !important;
+#jem .jem-links-order-image-icon-text .jem-event-link-icon {
+    order: 2;
 }
 
-/* Selected option */
-.jem-links-tab .btn-group-yesno input[type="radio"]:checked + label,
-.jem-links-tab .radio.btn-group input[type="radio"]:checked + label,
-.jem-links-tab fieldset.radio input[type="radio"]:checked + label {
-    background: #397d32 !important;
-    border-color: #397d32 !important;
-    color: #fff !important;
+#jem .jem-links-order-image-icon-text .jem-event-link-text {
+    order: 3;
 }
 
-/* First and last visual buttons */
-.jem-links-tab .btn-group-yesno label:first-of-type,
-.jem-links-tab .radio.btn-group label:first-of-type,
-.jem-links-tab fieldset.radio label:first-of-type {
-    border-radius: .25rem 0 0 .25rem;
+/* Icon + Text + Image */
+#jem .jem-links-order-icon-text-image .jem-event-link-icon {
+    order: 1;
 }
 
-.jem-links-tab .btn-group-yesno label:last-of-type,
-.jem-links-tab .radio.btn-group label:last-of-type,
-.jem-links-tab fieldset.radio label:last-of-type {
-    border-radius: 0 .25rem .25rem 0;
+#jem .jem-links-order-icon-text-image .jem-event-link-text {
+    order: 2;
 }
 
-/* Remove extra fieldset box and spacing for switches in JEM Links tab */
-.jem-links-tab fieldset {
-    border: 0 !important;        /* quitar borde */
-    padding: 0 !important;       /* quitar padding */
-    margin: 0 !important;        /* quitar margen */
-    min-height: 0 !important;    /* eliminar altura mínima */
-    height: auto !important;
-    overflow: visible !important;
+#jem .jem-links-order-icon-text-image .jem-event-link-image {
+    order: 3;
 }
 
-/* Hide the legend that ocupa espacio */
-.jem-links-tab fieldset legend {
-    display: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 0 !important;
+/* Icon + Image + Text */
+#jem .jem-links-order-icon-image-text .jem-event-link-icon {
+    order: 1;
 }
 
-/* Align buttons inline and remove spacing */
-.jem-links-tab .btn-group.btn-group-yesno {
-    display: inline-flex !important;
-    gap: 0.25rem;               /* espacio entre botones */
-    padding: 0 !important;
-    margin: 0 !important;
+#jem .jem-links-order-icon-image-text .jem-event-link-image {
+    order: 2;
 }
 
-#jem .jem-links-global-options select#jform_attribs_links_order {
-    width: 200px;
+#jem .jem-links-order-icon-image-text .jem-event-link-text {
+    order: 3;
 }
+

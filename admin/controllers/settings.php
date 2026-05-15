@@ -20,8 +20,7 @@ use Joomla\CMS\Session\Session;
 class JemControllerSettings extends BaseController
 {
 
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
 
         // Map the apply task to the save method.
@@ -33,8 +32,7 @@ class JemControllerSettings extends BaseController
      *
      * @return boolean
      */
-    protected function allowEdit()
-    {
+    protected function allowEdit() {
         return JemFactory::getUser()->authorise('core.manage', 'com_jem');
     }
 
@@ -43,8 +41,7 @@ class JemControllerSettings extends BaseController
      *
      * @return boolean
      */
-    protected function allowSave()
-    {
+    protected function allowSave() {
         return $this->allowEdit();
     }
 
@@ -57,8 +54,7 @@ class JemControllerSettings extends BaseController
      *
      * @return object  The model.
      */
-    public function getModel($name = 'Settings', $prefix = 'JemModel', $config = array())
-    {
+    public function getModel($name = 'Settings', $prefix = 'JemModel', $config = array()) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
     }
@@ -70,8 +66,7 @@ class JemControllerSettings extends BaseController
      * @return bool   True on success, false on failure.
      * @since 1.6
      */
-    public function save()
-    {
+    public function save() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
@@ -108,8 +103,7 @@ class JemControllerSettings extends BaseController
             for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
                 if ($errors[$i] instanceof Exception) {
                     $app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                }
-                else {
+                } else {
                     $app->enqueueMessage($errors[$i], 'warning');
                 }
             }
@@ -136,8 +130,7 @@ class JemControllerSettings extends BaseController
         $this->setMessage(Text::_('COM_JEM_SETTINGS_SAVED'));
 
         // Redirect the user and adjust session state based on the chosen task.
-        switch ($task)
-        {
+        switch ($task) {
             case 'apply':
                 // Reset the record data in the session.
                 $app->setUserState($context . '.data', null);
@@ -160,8 +153,7 @@ class JemControllerSettings extends BaseController
     /**
      * Cancel operation
      */
-    public function cancel()
-    {
+    public function cancel() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 

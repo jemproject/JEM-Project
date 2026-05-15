@@ -15,9 +15,6 @@ use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 
-jimport('joomla.form.formfield');
-jimport('joomla.html.parameter.element');
-
 FormHelper::loadFieldClass('list');
 
 /**

@@ -124,8 +124,8 @@ class JemController extends BaseController
         $app = Factory::getApplication();
         $input = $app->input;
         
-        $offset = $input->getInt('offset', 0);
-        $limit = $input->getInt('limit', 10);
+        $offset = max(0, $input->getInt('offset', 0));
+        $limit = min(100, max(1, $input->getInt('limit', 10)));
         $viewName = $input->getCmd('view', 'eventslist');
         
         // Get already displayed months from frontend (as array)

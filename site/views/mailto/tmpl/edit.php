@@ -34,7 +34,7 @@ $params        = $this->params;
     }
 </script>
 
-<div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">
+<div id="jem" class="jem_editevent<?php echo htmlspecialchars($this->pageclass_sfx, ENT_QUOTES, 'UTF-8'); ?>">
     <div class="edit item-page p-3">
         <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&view=mailto&tmpl=component'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
@@ -59,7 +59,7 @@ $params        = $this->params;
                 </fieldset>
 
                 <input type="hidden" name="task" value="" />
-                <input type="hidden" name="link" value="<?php echo $this->link; ?>" />
+                <input type="hidden" name="link" value="<?php echo htmlspecialchars($this->link, ENT_QUOTES, 'UTF-8'); ?>" />
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>
         </form>

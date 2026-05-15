@@ -41,7 +41,9 @@ class JemViewAttendees extends JemView
         }
 
         if ($this->getLayout() == 'addusers') {
-            $this->returnto = base64_decode($app->input->get('return', '', 'base64'));
+            $return = $app->input->get('return', '', 'base64');
+            $decodedReturn = $return ? base64_decode($return, true) : false;
+            $this->returnto = ($decodedReturn && Uri::isInternal($decodedReturn)) ? $decodedReturn : Uri::base();
             $this->_displayaddusers($tpl);
             return;
         }

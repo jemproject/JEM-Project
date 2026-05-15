@@ -104,8 +104,6 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     private function unpack()
     {
-        jimport('joomla.filesystem.archive');
-
         $archive = $this->sampleDataDir . 'sampledata.zip';
 
         // Temporary folder to extract the archive into

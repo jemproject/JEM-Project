@@ -71,11 +71,10 @@ class JemModelMailto extends FormModel
 
         $data = $app->getUserState('jem.mailto.form.data', array());
 
-        $data['link'] = urldecode($app->input->get('link', '', 'BASE64'));
+        $data['link'] = trim($app->input->getString('link', ''));
 
         if ($data['link'] == '')
         {
-            // JError::raiseError(403, Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'));
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 'error');
 
             return false;
@@ -111,11 +110,11 @@ class JemModelMailto extends FormModel
     {
         $input = Factory::getApplication()->input;
 
-        $data['emailto']    = $input->get('emailto', '', 'string');
-        $data['sender']     = $input->get('sender', '', 'string');
-        $data['emailfrom']  = $input->get('emailfrom', '', 'string');
-        $data['subject']    = $input->get('subject', '', 'string');
-        $data['consentbox'] = $input->get('consentbox', '', 'string');
+        $data['emailto']    = $input->post->get('emailto', '', 'string');
+        $data['sender']     = $input->post->get('sender', '', 'string');
+        $data['emailfrom']  = $input->post->get('emailfrom', '', 'string');
+        $data['subject']    = $input->post->get('subject', '', 'string');
+        $data['consentbox'] = $input->post->get('consentbox', '', 'string');
 
         return $data;
     }

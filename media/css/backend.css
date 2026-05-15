@@ -482,11 +482,6 @@ img#imagelib {
 }
 
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
-    background-color: #f9f9f9;
-}
-
 .table-striped tbody tr.row0:hover td,
 .table-striped tbody tr.row1:hover td {
     background-color: var(--table-bg);
@@ -495,7 +490,7 @@ img#imagelib {
 .table-striped.housekeeping tbody tr td:nth-child(1) {padding: 6px 0 6px 6px; width: 60px;}
 
 /* ---------- TABLE, J3 Isis template -------------------------- */
-table {
+.com_jem table {
     max-width: 100%;
     background-color: transparent;
     border-collapse: separate;
@@ -788,18 +783,14 @@ table.table tfoot tr {
     color: #333;
 }
 
-table.table tfoot tr {
-    text-align: center;
-    color: #333;
-}
-
 table.table tfoot td, table.table tfoot th {
     background-color: #f7f7f7;
     border-top: 1px solid #999;
     text-align: center;
 }
 
-[data-bs-theme="dark"] table.table tfoot td, table.table tfoot th {
+[data-bs-theme="dark"] table.table tfoot td,
+[data-bs-theme="dark"] table.table tfoot th {
     background-color: transparent;}
 
 table.table .pagination {
@@ -1217,9 +1208,6 @@ table.adminlist.help-toc {
     white-space: nowrap;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #999;
-}
-
-.label {
     border-radius: 3px;
 }
 

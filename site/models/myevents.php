@@ -15,8 +15,6 @@ use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Registry\Registry;
 
-jimport('joomla.application.component.model');
-
 /**
  * JEM Component JEM Model
  *

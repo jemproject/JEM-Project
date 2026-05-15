@@ -28,16 +28,14 @@ class JemControllerAttendees extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
     /**
      * redirect to events page
      */
-    public function back()
-    {
+    public function back() {
         $this->setRedirect(Route::_(JemHelperRoute::getMyEventsRoute(), false));
         $this->redirect();
     }
@@ -50,8 +48,7 @@ class JemControllerAttendees extends BaseController
      *
      * @throws Exception
      */
-    protected function assertCanManageAttendees($eventId)
-    {
+    protected function assertCanManageAttendees($eventId) {
         $eventId = (int) $eventId;
 
         if ($eventId < 1) {
@@ -78,8 +75,7 @@ class JemControllerAttendees extends BaseController
     /**
      * addtask
      */
-    public function attendeeadd()
-    {
+    public function attendeeadd() {
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
@@ -103,19 +99,16 @@ class JemControllerAttendees extends BaseController
         if ($input->get('task', 0,'string')=="attendeeadd") {
             $places = $input->getInt('places', 0);
         } else {
-            if ($status == 1)
-            {
+            if ($status == 1) {
                 $places = $input->getInt('addplaces', 0);
-            }
-            else
-            {
+            } else {
                 $places = $input->getInt('cancelplaces', 0);
             }
         }
 
-        if($checkseries == "on"){
+        if ($checkseries == "on") {
             $checkseries = 1;
-        }else{
+        } else {
             $checkseries = 0;
         }
 
@@ -140,8 +133,7 @@ class JemControllerAttendees extends BaseController
             // Get event
             try {
                 $event = $modelEventItem->getItem($eventid);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 $event = false;
             }
 
@@ -150,13 +142,13 @@ class JemControllerAttendees extends BaseController
             }
 
             // If event has 'seriesbooking' active and $series is true then get all recurrence events of series from now (register or unregister)
-            if($event->recurrence_type){
-                if(($event->seriesbooking && $checkseries)) {
+            if ($event->recurrence_type) {
+                if (($event->seriesbooking && $checkseries)) {
                     $events = $modelEventItem->getListRecurrenceEventsbyId($eventid, $event->recurrence_first_id, time());
                 }
             }
 
-            if (!isset($events) || !count ($events)){
+            if (!isset($events) || !count ($events)) {
                 $events [] = clone $event;
             }
 
@@ -221,8 +213,7 @@ class JemControllerAttendees extends BaseController
     /**
      * removetask
      */
-    public function attendeeremove()
-    {
+    public function attendeeremove() {
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
@@ -255,14 +246,14 @@ class JemControllerAttendees extends BaseController
                 throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
 
-            if($modelAttendeeList->remove(array($reg_id), $id)) {
+            if ($modelAttendeeList->remove(array($reg_id), $id)) {
                 $res = $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
             } else {
                 $error = true;
             }
         }
         if (!empty($error)) {
-            echo "<script> alert('".$modelAttendeeList->getError()."'); window.history.go(-1); </script>\n";
+            Factory::getApplication()->enqueueMessage($modelAttendeeList->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'warning');
         }
 
         $cache = Factory::getCache('com_jem');
@@ -278,8 +269,7 @@ class JemControllerAttendees extends BaseController
     /**
      * toggletask
      */
-    public function attendeetoggle()
-    {
+    public function attendeetoggle() {
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
@@ -302,8 +292,7 @@ class JemControllerAttendees extends BaseController
 
         $type = 'message';
 
-        if ($res)
-        {
+        if ($res) {
             PluginHelper::importPlugin('jem');
             $dispatcher = JemFactory::getDispatcher();
             $res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($id));
@@ -313,9 +302,7 @@ class JemControllerAttendees extends BaseController
             } else {
                 $msg = Text::_('COM_JEM_ADDED_TO_WAITING');
             }
-        }
-        else
-        {
+        } else {
             $msg = Text::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
             $type = 'error';
         }
@@ -328,8 +315,7 @@ class JemControllerAttendees extends BaseController
      * Exporttask
      * view: attendees
      */
-    public function export()
-    {
+    public function export() {
         // Check for request forgeries
         Session::checkToken('request') or jexit('Invalid Token');
 
@@ -380,8 +366,7 @@ class JemControllerAttendees extends BaseController
         fputcsv($export, $cols, $separator, $delimiter);
 
         $i = 0;
-        foreach ($datas as $data)
-        {
+        foreach ($datas as $data) {
             $cols = array();
 
             $cols[] = ++$i;

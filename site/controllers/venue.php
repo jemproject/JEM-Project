@@ -29,8 +29,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return boolean True if the event can be added, false if not.
      */
-    public function add()
-    {
+    public function add() {
         if (!parent::add()) {
             // Redirect to the return page.
             $this->setRedirect($this->getReturnPage());
@@ -44,8 +43,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return boolean
      */
-    protected function allowAdd($data = array())
-    {
+    protected function allowAdd($data = array()) {
         // Initialise variables.
         $user = JemFactory::getUser();
         // venues don't have a category yet
@@ -68,8 +66,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return boolean
      */
-    protected function allowEdit($data = array(), $key = 'id')
-    {
+    protected function allowEdit($data = array(), $key = 'id') {
         // Initialise variables.
         $recordId = isset($data[$key]) ? (int) $data[$key] : 0;
         $user     = JemFactory::getUser();
@@ -96,8 +93,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return Boolean True if access level checks pass, false otherwise.
      */
-    public function cancel($key = 'a_id')
-    {
+    public function cancel($key = 'a_id') {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
@@ -115,8 +111,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return boolean True if access level check and checkout passes, false otherwise.
      */
-    public function edit($key = null, $urlVar = 'a_id')
-    {
+    public function edit($key = null, $urlVar = 'a_id') {
         $result = parent::edit($key, $urlVar);
 
         return $result;
@@ -127,8 +122,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return boolean True if the venue can be added, false if not.
      */
-    public function copy()
-    {
+    public function copy() {
         if (!parent::add()) {
             // Redirect to the return page.
             $this->setRedirect($this->getReturnPage());
@@ -144,8 +138,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return object The model.
      */
-    public function getModel($name = 'editvenue', $prefix = '', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'editvenue', $prefix = '', $config = array('ignore_request' => true)) {
         $model = parent::getModel($name, $prefix, $config);
 
         return $model;
@@ -159,8 +152,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return string The arguments to append to the redirect URL.
      */
-    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
-    {
+    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id') {
         // Need to override the parent method completely.
         $jinput = Factory::getApplication()->input;
         $tmpl   = $jinput->getCmd('tmpl', '');
@@ -208,16 +200,15 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return string The return URL.
      */
-    protected function getReturnPage()
-    {
+    protected function getReturnPage() {
         $uri    = Uri::getInstance();
         $return = Factory::getApplication()->input->get('return', null, 'base64');
+        $decodedReturn = $return ? base64_decode($return, true) : false;
 
-        if (empty($return) || !Uri::isInternal(base64_decode($return))) {
+        if (empty($decodedReturn) || !Uri::isInternal($decodedReturn)) {
             return $uri->base();
-        }
-        else {
-            return base64_decode($return);
+        } else {
+            return $decodedReturn;
         }
     }
 
@@ -231,8 +222,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return void
      */
-    protected function _postSaveHook($model, $validData = array())
-    {
+    protected function _postSaveHook($model, $validData = array()) {
         $task = $this->getTask();
         if ($task == 'save') {
             $isNew = $model->getState('editvenue.new');
@@ -258,8 +248,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return boolean True if successful, false otherwise.
      */
-    public function save($key = null, $urlVar = 'a_id')
-    {
+    public function save($key = null, $urlVar = 'a_id') {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 

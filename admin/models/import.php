@@ -17,8 +17,6 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
 
-jimport('joomla.application.component.model');
-
 /**
  * JEM Component Import Model
  * @package JEM
@@ -485,8 +483,6 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function getEventlistVersion()
     {
-        jimport( 'joomla.registry.registry' );
-
         $db = $this->_db;
         $query = $db->getQuery('true');
         $query->select('manifest_cache')
@@ -972,9 +968,6 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function copyAttachments()
     {
-        jimport('joomla.filesystem.file');
-        jimport('joomla.filesystem.folder');
-
         $jemsettings = JemHelper::config();
 
         $fromFolder = JPATH_SITE.'/media/com_eventlist/attachments/';

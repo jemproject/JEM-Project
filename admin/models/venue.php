@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/admin.php';
 
@@ -187,7 +188,15 @@ class JemModelVenue extends JemModelAdmin
         $jemsettings = JemAdmin::config();
 
         if ($item = parent::getItem($pk)) {
-            $files = JemAttachment::getAttachments('venue'.$item->id);
+            $registry = new Registry;
+            $registry->loadString($item->attribs ?? '{}');
+            $item->attribs = $registry->toArray();
+
+            $registry = new Registry;
+            $registry->loadString($item->metadata ?? '{}');
+            $item->metadata = $registry->toArray();
+
+            $files = JemAttachment::getAttachments('venue'.$item->id, true);
             $item->attachments = $files;
         }
 
@@ -292,10 +301,14 @@ class JemModelVenue extends JemModelAdmin
                 $attach_name   = $jinput->post->get('attach-name', array(), 'array');
                 $attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
                 $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                $attach_order  = $jinput->post->get('attach-order', array(), 'array');
+                $attach_frontend = $jinput->post->get('attach-frontend', array(), 'array');
                 foreach($attachments as $n => &$a) {
                     $a['customname']  = array_key_exists($n, $attach_access) ? $attach_name[$n]   : '';
                     $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n]  : '';
                     $a['access']      = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                    $a['ordering']    = array_key_exists($n, $attach_order) ? $attach_order[$n] : 0;
+                    $a['frontend']    = array_key_exists($n, $attach_frontend) ? $attach_frontend[$n] : 1;
                 }
                 JemAttachment::postUpload($attachments, 'venue' . $pk);
             }
@@ -306,16 +319,22 @@ class JemModelVenue extends JemModelAdmin
             $old['name']        = $jinput->post->get('attached-name', array(), 'array');
             $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
             $old['access']      = $jinput->post->get('attached-access', array(), 'array');
+            $old['ordering']    = $jinput->post->get('attached-order', array(), 'array');
+            $old['frontend']    = $jinput->post->get('attached-frontend', array(), 'array');
 
             foreach ($old['id'] as $k => $id){
                 $attach = array();
                 $attach['id']          = $id;
-                $attach['name']        = $old['name'][$k];
-                $attach['description'] = $old['description'][$k];
-                if ($allowed) {
+                $attach['name']        = $old['name'][$k] ?? '';
+                $attach['description'] = $old['description'][$k] ?? '';
+                $attach['ordering']    = $old['ordering'][$k] ?? 0;
+                if (array_key_exists($k, $old['frontend'])) {
+                    $attach['frontend'] = $old['frontend'][$k];
+                }
+                if ($allowed && array_key_exists($k, $old['access'])) {
                     $attach['access']  = $old['access'][$k];
                 } // else don't touch this field
-                JemAttachment::update($attach);
+                JemAttachment::update($attach, 'venue' . $pk);
             }
         }
 

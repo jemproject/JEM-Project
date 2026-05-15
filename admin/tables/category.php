@@ -9,13 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Registry\Registry;
-
-jimport('joomla.database.tablenested');
 
 /**
  * Category Table
@@ -186,7 +185,7 @@ class JemTableCategory extends Nested
         }
 
         if (isset($array['rules']) && is_array($array['rules'])) {
-            $rules = new JAccessRules($array['rules']);
+            $rules = new Rules($array['rules']);
             $this->setRules($rules);
         }
 

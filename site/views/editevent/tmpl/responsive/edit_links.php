@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->registerAndUseStyle('com_jem.jem-links-responsive', 'media/com_jem/css/jem-links-responsive.css');
+$wa->registerAndUseStyle('com_jem.jem-links-responsive', 'media/com_jem/css/jem-link-responsive.css');
 $wa->registerAndUseScript('com_jem.jem-links', 'media/com_jem/js/jem-links.js');
 ?>
 

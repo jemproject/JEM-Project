@@ -96,6 +96,11 @@ class JemModelVenueelement extends BaseDatabaseModel
 
         $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
         $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('l.ordering', 'l.venue', 'l.city', 'l.state', 'l.country', 'l.id');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'l.ordering';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', 0, 'int' );
         $search           = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string' );
@@ -115,13 +120,13 @@ class JemModelVenueelement extends BaseDatabaseModel
         if ($search || ($search === "0")) {
             switch ($filter_type) {
                 case 1: /* Search venues */
-                    $where[] = 'LOWER(l.venue) LIKE "%' . $search . '%"';
+                    $where[] = 'LOWER(l.venue) LIKE ' . $db->quote('%' . $search . '%');
                     break;
                 case 2: // Search city
-                    $where[] = 'LOWER(l.city) LIKE "%' . $search . '%"';
+                    $where[] = 'LOWER(l.city) LIKE ' . $db->quote('%' . $search . '%');
                     break;
                 case 3: // Search state
-                    $where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+                    $where[] = 'LOWER(l.state) LIKE ' . $db->quote('%' . $search . '%');
             }
         }
 

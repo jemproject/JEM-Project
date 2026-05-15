@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
+use Joomla\Registry\Registry;
 
 /**
  * JEM Venue Table
@@ -32,6 +33,18 @@ class JemTableVenue extends Table
 
         if (!isset($array['map'])) {
             $array['map'] = 0 ;
+        }
+
+        if (isset($array['attribs']) && is_array($array['attribs'])) {
+            $registry = new Registry;
+            $registry->loadArray($array['attribs']);
+            $array['attribs'] = (string) $registry;
+        }
+
+        if (isset($array['metadata']) && is_array($array['metadata'])) {
+            $registry = new Registry;
+            $registry->loadArray($array['metadata']);
+            $array['metadata'] = (string) $registry;
         }
 
         //don't override without calling base class
@@ -170,7 +183,6 @@ class JemTableVenue extends Table
         }
 
         // Check if image was selected
-        jimport('joomla.filesystem.file');
         $image_dir = JPATH_SITE.'/images/jem/venues/';
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));

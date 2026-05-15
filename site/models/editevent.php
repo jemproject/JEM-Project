@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Registry\Registry;
@@ -49,7 +50,8 @@ class JemModelEditevent extends JemModelEvent
         $this->setState('event.date', $date);
 
         $return = $app->input->get('return', '', 'base64');
-        $this->setState('return_page', base64_decode($return));
+        $decodedReturn = $return ? base64_decode($return, true) : false;
+        $this->setState('return_page', ($decodedReturn && Uri::isInternal($decodedReturn)) ? $decodedReturn : '');
 
         // Load the parameters.
         $params = $app->getParams();
@@ -147,7 +149,7 @@ class JemModelEditevent extends JemModelEvent
         }
 
         // Get attachments - but not on copied events
-        $files = JemAttachment::getAttachments('event' . $value->id);
+        $files = JemAttachment::getAttachments('event' . $value->id, true);
         $value->attachments = $files;
 
         // Preset values on new events
@@ -199,6 +201,7 @@ class JemModelEditevent extends JemModelEvent
                     $db->quoteName('id'),
                     $db->quoteName('event_id'),
                     $db->quoteName('title'),
+                    $db->quoteName('description'),
                     $db->quoteName('type'),
                     $db->quoteName('url'),
                     $db->quoteName('params'),
@@ -225,6 +228,7 @@ class JemModelEditevent extends JemModelEvent
                 $value->event_links[] = array(
                     'id'           => isset($eventLink['id']) ? (int) $eventLink['id'] : 0,
                     'title'        => $eventLink['title'] ?? '',
+                    'description'  => $eventLink['description'] ?? '',
                     'type'         => $eventLink['type'] ?? 'info',
                     'url'          => $eventLink['url'] ?? '',
                     'target'       => $params['target'] ?? '_blank',
