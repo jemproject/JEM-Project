@@ -51,6 +51,45 @@ INSERT INTO `#__jem_cats_event_relations` VALUES (14, 4, 11, 0);
 
 
 --
+-- Event Links Example Data
+--
+
+UPDATE `#__jem_events` SET `attribs` = '{"attachments_layout":"row","links_layout":"row","links_order":"image_icon_text"}' WHERE `id` = 1;
+UPDATE `#__jem_events` SET `attribs` = '{"attachments_layout":"column","links_layout":"column","links_order":"icon_text_image"}' WHERE `id` = 2;
+UPDATE `#__jem_events` SET `attribs` = '{"attachments_layout":"row","links_layout":"row","links_order":"icon_image_text"}' WHERE `id` = 3;
+UPDATE `#__jem_events` SET `attribs` = '{"attachments_layout":"column","links_layout":"column","links_order":"text_image_icon"}' WHERE `id` = 5;
+UPDATE `#__jem_events` SET `attribs` = '{"attachments_layout":"row","links_layout":"row","links_order":"image_text_icon"}' WHERE `id` = 6;
+UPDATE `#__jem_events` SET `attribs` = '{"attachments_layout":"column","links_layout":"row","links_order":"text_icon_image"}' WHERE `id` = 8;
+
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (1, 'info', 'DJ set times', 'Warm-up, headline and closing schedule.', 'https://demo.joomlaeventmanager.net/', '{"target":"_blank","icon":"fa fa-info-circle","image":"images/jem/events/event-dj-night.webp","color":"#2f6f46","frame":1,"max_width":120,"max_height":80,"custom_class":""}', 0, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (1, 'pay', 'Advance tickets', 'Save your place before doors open.', 'https://demo.joomlaeventmanager.net/', '{"target":"_blank","icon":"fa fa-credit-card","image":"","color":"#0b5cad","frame":1,"max_width":120,"max_height":60,"custom_class":""}', 1, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (2, 'price', 'Door sale only', 'This row intentionally has no URL.', '', '{"target":"_self","icon":"fa fa-tag","image":"","color":"#8a5a00","frame":0,"max_width":120,"max_height":60,"custom_class":""}', 0, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (3, 'request', 'Reserve a table', 'Recommended for groups of four or more.', 'https://demo.joomlaeventmanager.net/', '{"target":"_self","icon":"fa fa-ticket","image":"images/jem/events/event-balkan-beatz.webp","color":"#7b2cbf","frame":1,"max_width":140,"max_height":90,"custom_class":""}', 0, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (3, 'online', 'Stream highlights', 'Short recap published after the event.', 'https://demo.joomlaeventmanager.net/', '{"target":"_blank","icon":"fa fa-globe","image":"","color":"#006d77","frame":0,"max_width":120,"max_height":60,"custom_class":""}', 1, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (5, 'speaker', 'Band lineup', 'Three bands and one late guest slot.', 'https://demo.joomlaeventmanager.net/', '{"target":"_blank","icon":"fa fa-microphone","image":"images/jem/events/event-rock-punk.webp","color":"#b00020","frame":0,"max_width":120,"max_height":90,"custom_class":""}', 0, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (5, 'networking', 'Aftershow meetup', 'Informal gathering after the last set.', '', '{"target":"_self","icon":"fa fa-users","image":"","color":"#444444","frame":0,"max_width":120,"max_height":60,"custom_class":""}', 1, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (6, 'workshop', 'Synth workshop', 'Bring headphones and a small controller.', 'https://demo.joomlaeventmanager.net/', '{"target":"_blank","icon":"fa fa-tools","image":"images/jem/events/event-electroschock.webp","color":"#442ad4","frame":1,"max_width":130,"max_height":90,"custom_class":""}', 0, 1, NOW(), 62);
+INSERT INTO `#__jem_links` (`event_id`, `type`, `title`, `description`, `url`, `params`, `ordering`, `state`, `created`, `created_by`) VALUES (8, 'document', 'Travel notes', 'Late-night transport and nearby stops.', 'https://demo.joomlaeventmanager.net/', '{"target":"_blank","icon":"fa fa-file-alt","image":"","color":"#245c4a","frame":0,"max_width":120,"max_height":60,"custom_class":""}', 0, 1, NOW(), 62);
+
+-- --------------------------------------------------------
+
+--
+-- Attachments Example Data
+--
+
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event1', 'dj-night-lineup.txt', 'DJ Night lineup', 'Running order for the main room and second floor.', '', 1, 1, 0, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event1', 'dj-night-technical-rider.pdf', 'Technical rider', 'Sound and lighting notes for the DJ booth.', '', 1, 2, 1, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event2', 'alternative-night-door-policy.txt', 'Door policy', '', '', 1, 1, 0, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event3', 'balkan-beatz-running-order.csv', 'Running order', 'CSV example with stage times.', '', 1, 1, 0, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event3', 'balkan-beatz-press-pack.zip', 'Press pack', 'Archive example for testing zip icons.', '', 1, 1, 1, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event5', 'rock-punk-setlist.txt', 'Draft setlist', 'Unpublished example visible in backend only.', '', 0, 1, 0, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('event6', 'electroschock-workshop-notes.txt', 'Workshop notes', 'Preparation notes for participants.', '', 1, 2, 0, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('venue1', 'douala-house-rules.pdf', 'House rules', 'Venue information shown on venue detail pages.', '', 1, 1, 0, NOW(), 62);
+INSERT INTO `#__jem_attachments` (`object`, `file`, `name`, `description`, `icon`, `frontend`, `access`, `ordering`, `added`, `added_by`) VALUES ('venue3', 'crash-access-map.jpg', 'Access map', 'Entrance and loading area overview.', '', 1, 1, 0, NOW(), 62);
+
+-- --------------------------------------------------------
+
+--
 -- Venue Example Data
 --
 

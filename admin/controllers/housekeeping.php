@@ -91,6 +91,23 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
+     * Regenerates event, venue and category thumbnails using current image settings.
+     */
+    public function resizethumbs() {
+        // Check for request forgeries
+        Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
+
+        $model = $this->getModel('housekeeping');
+        $total = $model->resizeThumbnails();
+
+        $link = 'index.php?option=com_jem&view=housekeeping';
+        $msg = Text::sprintf('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS_DONE', $total);
+
+        $this->setRedirect($link, $msg);
+    }
+
+    /**
      * Truncates JEM tables with exception of settings table
      */
     public function truncateAllData() {
@@ -99,10 +116,14 @@ class JemControllerHousekeeping extends BaseController
         $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
-        $model->truncateAllData();
+        $deleteAttachmentFiles = (bool) Factory::getApplication()->input->getInt('deleteattachments', 0);
+        $deleteImageFiles = (bool) Factory::getApplication()->input->getInt('deleteimages', 0);
+        $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
 
         $link = 'index.php?option=com_jem&view=housekeeping';
-        $msg = Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DONE');
+        $msg = ($deleteAttachmentFiles || $deleteImageFiles)
+            ? Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_AND_FILES_DONE')
+            : Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DONE');
 
         $this->setRedirect($link, $msg);
     }

@@ -271,11 +271,18 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <?php
                         // Default icons by action type.
                         $defaultLinkTypes = array(
-                            'info'    => array('icon' => 'fa fa-info-circle'),
-                            'online'  => array('icon' => 'fa fa-globe'),
-                            'request' => array('icon' => 'fa fa-ticket'),
-                            'pay'     => array('icon' => 'fa fa-credit-card'),
-                            'price'   => array('icon' => 'fa fa-tag')
+                            'info'       => array('icon' => 'fa fa-info-circle', 'label' => 'COM_JEM_EVENT_LINK_TXT_INFO'),
+                            'online'     => array('icon' => 'fa fa-globe', 'label' => 'COM_JEM_EVENT_LINK_TXT_ONLINE'),
+                            'request'    => array('icon' => 'fa fa-ticket', 'label' => 'COM_JEM_EVENT_LINK_TXT_REQUEST'),
+                            'pay'        => array('icon' => 'fa fa-credit-card', 'label' => 'COM_JEM_EVENT_LINK_TXT_PAY'),
+                            'price'      => array('icon' => 'fa fa-tag', 'label' => 'COM_JEM_EVENT_LINK_TXT_PRICE'),
+                            'speaker'    => array('icon' => 'fa fa-microphone', 'label' => 'COM_JEM_EVENT_LINK_TXT_SPEAKER'),
+                            'workshop'   => array('icon' => 'fa fa-tools', 'label' => 'COM_JEM_EVENT_LINK_TXT_WORKSHOP'),
+                            'location'   => array('icon' => 'fa fa-map-marker-alt', 'label' => 'COM_JEM_EVENT_LINK_TXT_LOCATION'),
+                            'calendar'   => array('icon' => 'fa fa-calendar', 'label' => 'COM_JEM_EVENT_LINK_TXT_CALENDAR'),
+                            'document'   => array('icon' => 'fa fa-file-alt', 'label' => 'COM_JEM_EVENT_LINK_TXT_DOCUMENT'),
+                            'sponsor'    => array('icon' => 'fa fa-handshake', 'label' => 'COM_JEM_EVENT_LINK_TXT_SPONSOR'),
+                            'networking' => array('icon' => 'fa fa-users', 'label' => 'COM_JEM_EVENT_LINK_TXT_NETWORKING')
                         );
                         ?>
 
@@ -348,6 +355,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 $rel = ($target === '_blank') ? ' rel="noopener noreferrer"' : '';
 
                                 $safeType = preg_replace('/[^a-z0-9_-]/i', '', $type);
+                                $linkTypeLabel = isset($defaultLinkTypes[$type]['label'])
+                                    ? Text::_($defaultLinkTypes[$type]['label'])
+                                    : ucwords(str_replace(array('-', '_'), ' ', $safeType));
 
                                 $linkClasses = array(
                                     'jem-event-link',
@@ -400,6 +410,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 $imageStyle[] = 'object-fit: contain';
 
                                 $imageStyleAttr = ' style="' . implode('; ', $imageStyle) . '"';
+                                $displayImage = $image !== '' ? JemImage::linkThumbnail($image, $maxWidth, $maxHeight, true) : '';
 
                                 $imageOrder = array_search('image', $linksOrderMap[$linksOrder], true) + 1;
                                 $iconOrder  = array_search('icon', $linksOrderMap[$linksOrder], true) + 1;
@@ -413,12 +424,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
                                 if ($image !== '') {
                                     $linkParts['image'] = '<span class="jem-event-link-image"' . $imageOrderStyle . '>'
-                                        . '<img src="' . $this->escape($image) . '" alt="' . $this->escape($label) . '" loading="lazy"' . $imageStyleAttr . '>'
+                                        . '<img src="' . $this->escape($displayImage) . '" alt="' . $this->escape($label) . '" loading="lazy"' . $imageStyleAttr . '>'
                                         . '</span>';
                                 }
 
                                 if ($icon !== '') {
-                                    $linkParts['icon'] = '<span class="jem-event-link-icon ' . $this->escape($icon) . '" aria-hidden="true"' . $iconOrderStyle . '></span>';
+                                    $linkParts['icon'] = '<span class="jem-event-link-icon hasTooltip ' . $this->escape($icon) . '" role="img" aria-label="' . $this->escape($linkTypeLabel) . '" title="' . $this->escape($linkTypeLabel) . '" data-bs-toggle="tooltip"' . $iconOrderStyle . '></span>';
                                 }
 
                                 if ($label !== '' || $description !== '') {

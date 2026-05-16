@@ -89,6 +89,9 @@ class JemModelSampledata extends BaseDatabaseModel
         // move images in proper directory
         $this->moveImages();
 
+        // move attachments in proper directory
+        $this->moveAttachments();
+
         // delete temporary extraction folder
         if (!$this->deleteTmpFolder()) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
@@ -195,6 +198,10 @@ class JemModelSampledata extends BaseDatabaseModel
         $imagebase = JPATH_ROOT . '/images/jem';
 
         foreach ($this->filelist['files'] as $file) {
+            if (strpos($file, 'attachment-') === 0) {
+                continue;
+            }
+
             $subDirectory = "/";
             if (strpos($file, "event") !== false) {
                 $subDirectory .= "events/";
@@ -215,6 +222,44 @@ class JemModelSampledata extends BaseDatabaseModel
 
             File::copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
         }
+        return true;
+    }
+
+    /**
+     * Copy sample attachments into the configured attachments folder.
+     *
+     * Files in sampledata.zip must be named attachment-event1-filename.ext or
+     * attachment-venue1-filename.ext. The prefix defines the attachment object,
+     * and only filename.ext is stored/copied inside that object folder.
+     *
+     * @return boolean True on success
+     */
+    private function moveAttachments()
+    {
+        $jemsettings = JemHelper::config();
+        $attachmentBase = Path::clean(JPATH_ROOT . '/' . $jemsettings->attachments_path);
+
+        foreach ($this->filelist['files'] as $file) {
+            if (!preg_match('/^attachment-((?:event|venue)\d+)-(.+)$/', $file, $matches)) {
+                continue;
+            }
+
+            $object = $matches[1];
+            $filename = File::makeSafe($matches[2]);
+
+            if ($filename === '') {
+                continue;
+            }
+
+            $destination = Path::clean($attachmentBase . '/' . $object);
+
+            if (!Folder::exists($destination)) {
+                Folder::create($destination);
+            }
+
+            File::copy($this->filelist['folder'] . '/' . $file, $destination . '/' . $filename);
+        }
+
         return true;
     }
 
