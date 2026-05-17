@@ -430,8 +430,19 @@ class JemModelEventslist extends ListModel
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
 
         # Type
-        $query->select(array('jt.name AS type_name', 'jt.icon AS type_icon', 'jt.color AS type_color', 'jt.alias AS type_alias', 'jt.description AS type_description'));
-        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1');
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+        $query->select(array(
+            'jt.name AS type_name',
+            'jt.icon AS type_icon',
+            'jt.color AS type_color',
+            'jt.alias AS type_alias',
+            'jt.description AS type_description',
+            'jt.base_language AS type_base_language',
+            'jt.translation_languages AS type_translation_languages',
+            'jt.translations AS type_translations',
+        ));
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
         # the rest
         $case_when_e = ' CASE WHEN ';
@@ -469,7 +480,7 @@ class JemModelEventslist extends ListModel
         $case_when_c .= ' END as user_has_access_category';
 
         $case_when_t  = ' CASE WHEN ';
-        $case_when_t .= " (a.type_id IS NULL OR a.type_id = 0 OR jt.access IN (" . $levelsList . "))";
+        $case_when_t .= " (a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (" . $levelsList . "))";
         $case_when_t .= ' THEN 1 ';
         $case_when_t .= ' ELSE 0 ';
         $case_when_t .= ' END as user_has_access_type';
@@ -532,7 +543,7 @@ class JemModelEventslist extends ListModel
         }
 
         # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
-        $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.access IN (' . $levelsList . '))');
+        $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (' . $levelsList . '))');
 
         ####################
         ## FILTER-PUBLISH ##

@@ -109,8 +109,10 @@ class JemModelEvent extends ItemModel
                 $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
                 # Type
-                $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description');
-                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1');
+                $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description, jt.base_language AS type_base_language, jt.translation_languages AS type_translation_languages, jt.translations AS type_translations');
+                $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+                $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
                 # Get contact id
                 $subQuery = $db->getQuery(true);
@@ -178,7 +180,7 @@ class JemModelEvent extends ItemModel
                 }
 
                 # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
-                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.access IN ('.implode(',', $levels).'))');
+                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN ('.implode(',', $levels).'))');
 
                 # Filter by published state ==> later.
                 //  It would result in too complicated query.
@@ -420,8 +422,10 @@ class JemModelEvent extends ItemModel
             $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
             # Type
-            $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description');
-            $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
+            $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description, jt.base_language AS type_base_language, jt.translation_languages AS type_translation_languages, jt.translations AS type_translations');
+            $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+            $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+            $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1 AND ' . $typeLanguageCondition);
 
             # Get contact id
             $subQuery = $db->getQuery(true);

@@ -12,6 +12,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
@@ -1284,6 +1285,8 @@ static public function lightbox() {
 
     static public function typeBadge($event)
     {
+        self::translateType($event, 'type_');
+
         if (empty($event->type_name)) {
             return '';
         }
@@ -1330,6 +1333,68 @@ static public function lightbox() {
         }
 
         return trim($text);
+    }
+
+    static public function translateType($type, $prefix = '')
+    {
+        if (!is_object($type)) {
+            return $type;
+        }
+
+        $nameProperty = $prefix . 'name';
+        $descriptionProperty = $prefix . 'description';
+        $translatedName = self::getTypeTranslationValue($type, $prefix, 'name');
+        $translatedDescription = self::getTypeTranslationValue($type, $prefix, 'description');
+
+        if ($translatedName !== '') {
+            $type->{$nameProperty} = $translatedName;
+        }
+
+        if ($translatedDescription !== '') {
+            $type->{$descriptionProperty} = $translatedDescription;
+        }
+
+        return $type;
+    }
+
+    static public function getTypeTranslationValue($type, $prefix, $field)
+    {
+        $translationsProperty = $prefix . 'translations';
+        $languagesProperty = $prefix . 'translation_languages';
+        $baseLanguageProperty = $prefix . 'base_language';
+        $fallbackProperty = $prefix . $field;
+
+        $translations = json_decode((string) ($type->{$translationsProperty} ?? ''), true);
+        if (!is_array($translations)) {
+            $translations = array();
+        }
+
+        $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $defaultLanguage = (string) ComponentHelper::getParams('com_languages')->get('site', '');
+        $baseLanguage = trim((string) ($type->{$baseLanguageProperty} ?? ''));
+        $savedLanguages = array_filter(array_map('trim', explode(',', (string) ($type->{$languagesProperty} ?? ''))));
+        $fallbackValue = trim((string) ($type->{$fallbackProperty} ?? ''));
+
+        $fallbackOrder = array($currentLanguage, $defaultLanguage, 'en-GB');
+        $fallbackOrder = array_merge($fallbackOrder, $savedLanguages, array_keys($translations));
+
+        foreach ($fallbackOrder as $language) {
+            $language = trim((string) $language);
+            if ($fallbackValue !== '' && $baseLanguage !== '' && $language === $baseLanguage) {
+                return $fallbackValue;
+            }
+
+            if ($language === '' || empty($translations[$language]) || !is_array($translations[$language])) {
+                continue;
+            }
+
+            $value = trim((string) ($translations[$language][$field] ?? ''));
+            if ($value !== '') {
+                return $value;
+            }
+        }
+
+        return $fallbackValue;
     }
 
     /**

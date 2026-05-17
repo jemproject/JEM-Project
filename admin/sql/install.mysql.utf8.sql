@@ -271,10 +271,13 @@ CREATE TABLE IF NOT EXISTS `#__jem_links` (
 
 CREATE TABLE IF NOT EXISTS `#__jem_types` (
     `id`                INT(11)          NOT NULL AUTO_INCREMENT,
-    `name`              VARCHAR(100)     NOT NULL DEFAULT '',
-    `alias`             VARCHAR(100)     NOT NULL DEFAULT '',
-    `description`       TEXT             DEFAULT NULL,
-    `entity`            TINYINT(1)       NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue',
+  `name`              VARCHAR(100)     NOT NULL DEFAULT '',
+  `alias`             VARCHAR(100)     NOT NULL DEFAULT '',
+  `description`       TEXT             DEFAULT NULL,
+  `base_language`     CHAR(7)          NOT NULL DEFAULT '',
+  `translation_languages` VARCHAR(255) DEFAULT NULL,
+  `translations`      MEDIUMTEXT       DEFAULT NULL,
+  `entity`            TINYINT(1)       NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue',
     `icon`              VARCHAR(255)     DEFAULT NULL,
     `color`             VARCHAR(7)       DEFAULT NULL,
     `published`         TINYINT(1)       NOT NULL DEFAULT 1,

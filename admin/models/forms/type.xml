@@ -30,6 +30,19 @@
                class="form-control"
         />
 
+        <field name="base_language"
+               type="hidden"
+        />
+
+        <field name="translation_languages"
+               type="hidden"
+        />
+
+        <field name="translations"
+               type="hidden"
+               filter="raw"
+        />
+
         <field name="entity"
                type="list"
                label="COM_JEM_TYPE_FIELD_ENTITY"

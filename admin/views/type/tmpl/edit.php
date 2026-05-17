@@ -28,14 +28,74 @@ HTMLHelper::_('behavior.formvalidator');
                     </div>
 
                     <div class="mb-3">
-                        <?php echo $this->form->getLabel('alias'); ?>
-                        <?php echo $this->form->getInput('alias'); ?>
-                    </div>
-
-                    <div class="mb-3">
                         <?php echo $this->form->getLabel('description'); ?>
                         <?php echo $this->form->getInput('description'); ?>
                     </div>
+
+                    <?php echo $this->form->getInput('base_language'); ?>
+                    <?php echo $this->form->getInput('translation_languages'); ?>
+                    <?php echo $this->form->getInput('translations'); ?>
+
+                    <?php if (!empty($this->typeLanguages)) : ?>
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <?php echo Text::_('COM_JEM_TYPE_TRANSLATIONS'); ?>
+                            </div>
+                            <div class="card-body">
+                                <p class="form-text">
+                                    <?php echo Text::_('COM_JEM_TYPE_TRANSLATIONS_DESC'); ?>
+                                </p>
+                                <?php foreach ($this->typeLanguages as $language) : ?>
+                                    <?php
+                                    $languageCode = (string) $language->code;
+                                    $translation = isset($this->typeTranslations[$languageCode]) && is_array($this->typeTranslations[$languageCode])
+                                        ? $this->typeTranslations[$languageCode]
+                                        : array();
+                                    $translatedName = isset($translation['name']) ? (string) $translation['name'] : '';
+                                    $translatedDescription = isset($translation['description']) ? (string) $translation['description'] : '';
+                                    ?>
+                                    <div class="jem-type-translation border rounded p-3 mb-3"<?php echo $language->is_default ? '' : ' data-language="' . htmlspecialchars($languageCode, ENT_QUOTES, 'UTF-8') . '"'; ?>>
+                                        <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                                            <strong>
+                                                <?php echo htmlspecialchars($language->title, ENT_QUOTES, 'UTF-8'); ?>
+                                                <span class="text-muted">(<?php echo htmlspecialchars($languageCode, ENT_QUOTES, 'UTF-8'); ?>)</span>
+                                            </strong>
+                                            <?php if ($language->is_default) : ?>
+                                                <span class="badge bg-primary"><?php echo Text::_('COM_JEM_TYPE_TRANSLATION_BASE_LANGUAGE'); ?></span>
+                                            <?php elseif (!$language->is_active) : ?>
+                                                <span class="badge bg-secondary"><?php echo Text::_('COM_JEM_TYPE_TRANSLATION_INACTIVE_LANGUAGE'); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <?php if ($language->is_default) : ?>
+                                            <p class="form-text mb-0">
+                                                <?php echo Text::_('COM_JEM_TYPE_TRANSLATION_BASE_LANGUAGE_DESC'); ?>
+                                            </p>
+                                        <?php else : ?>
+                                            <div class="mb-2">
+                                                <label class="form-label" for="jem-type-translation-name-<?php echo htmlspecialchars($languageCode, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?php echo Text::_('COM_JEM_TYPE_TRANSLATION_NAME'); ?>
+                                                </label>
+                                                <input type="text"
+                                                       id="jem-type-translation-name-<?php echo htmlspecialchars($languageCode, ENT_QUOTES, 'UTF-8'); ?>"
+                                                       class="form-control jem-type-translation-name"
+                                                       value="<?php echo htmlspecialchars($translatedName, ENT_QUOTES, 'UTF-8'); ?>"
+                                                       maxlength="100">
+                                            </div>
+                                            <div>
+                                                <label class="form-label" for="jem-type-translation-description-<?php echo htmlspecialchars($languageCode, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?php echo Text::_('COM_JEM_TYPE_TRANSLATION_DESCRIPTION'); ?>
+                                                </label>
+                                                <textarea id="jem-type-translation-description-<?php echo htmlspecialchars($languageCode, ENT_QUOTES, 'UTF-8'); ?>"
+                                                          class="form-control jem-type-translation-description"
+                                                          rows="3"><?php echo htmlspecialchars($translatedDescription, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -270,6 +330,11 @@ HTMLHelper::_('behavior.formvalidator');
                         <?php echo $this->form->getInput('language'); ?>
                     </div>
 
+                    <div class="mb-3">
+                        <?php echo $this->form->getLabel('alias'); ?>
+                        <?php echo $this->form->getInput('alias'); ?>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -321,6 +386,47 @@ HTMLHelper::_('behavior.formvalidator');
     }
 </style>
 <script>
+(function () {
+    var form = document.getElementById('adminForm');
+    var translationsInput = document.getElementById('jform_translations');
+    var languagesInput = document.getElementById('jform_translation_languages');
+
+    if (!form || !translationsInput || !languagesInput) { return; }
+
+    function collectTypeTranslations() {
+        var translations = {};
+        var languages = [];
+
+        document.querySelectorAll('.jem-type-translation[data-language]').forEach(function (container) {
+            var language = container.getAttribute('data-language');
+            var nameInput = container.querySelector('.jem-type-translation-name');
+            var descriptionInput = container.querySelector('.jem-type-translation-description');
+            var name = nameInput ? nameInput.value.trim() : '';
+            var description = descriptionInput ? descriptionInput.value.trim() : '';
+
+            if (!language || (name === '' && description === '')) {
+                return;
+            }
+
+            translations[language] = {
+                name: name,
+                description: description
+            };
+            languages.push(language);
+        });
+
+        translationsInput.value = JSON.stringify(translations);
+        languagesInput.value = languages.join(',');
+    }
+
+    form.addEventListener('submit', collectTypeTranslations);
+    document.querySelectorAll('.jem-type-translation-name, .jem-type-translation-description').forEach(function (field) {
+        field.addEventListener('input', collectTypeTranslations);
+        field.addEventListener('change', collectTypeTranslations);
+    });
+    collectTypeTranslations();
+})();
+
 (function () {
     var input   = document.querySelector('input[name="jform[icon]"]');
     var select  = document.getElementById('jem-icon-style');

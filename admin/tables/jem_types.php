@@ -19,6 +19,9 @@ class jem_types extends Table
     public $name           = '';
     public $alias          = '';
     public $description    = null;
+    public $base_language  = '';
+    public $translation_languages = null;
+    public $translations   = null;
     public $entity         = 1;
     public $icon           = null;
     public $color          = null;
@@ -45,6 +48,14 @@ class jem_types extends Table
             $registry = new Registry;
             $registry->loadArray($array['attribs']);
             $array['attribs'] = (string) $registry;
+        }
+
+        if (isset($array['translations']) && is_array($array['translations'])) {
+            $array['translations'] = json_encode($array['translations'], JSON_UNESCAPED_UNICODE);
+        }
+
+        if (isset($array['translation_languages']) && is_array($array['translation_languages'])) {
+            $array['translation_languages'] = implode(',', array_filter(array_map('trim', $array['translation_languages'])));
         }
 
         return parent::bind($array, $ignore);

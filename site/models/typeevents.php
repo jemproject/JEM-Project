@@ -50,15 +50,26 @@ class JemModelTypeevents extends JemModelEventslist
         $language = $app->getLanguage()->getTag();
         $db       = Factory::getContainer()->get('DatabaseDriver');
         $query    = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description')))
+            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language')))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('id') . ' = ' . $typeId)
             ->where($db->quoteName('entity') . ' = 1')
             ->where($db->quoteName('published') . ' = 1')
             ->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', $levels)) . ')')
-            ->where($db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
+            ->where('('
+                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')');
 
         $db->setQuery($query);
-        return $db->loadObject();
+        $type = $db->loadObject();
+
+        if ($type) {
+            require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+            JemOutput::translateType($type);
+        }
+
+        return $type;
     }
 }

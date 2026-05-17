@@ -31,7 +31,7 @@ class ModJemTypesHelper
 
         $query = $db->getQuery(true)
             ->select(array(
-                't.id', 't.name', 't.alias', 't.icon', 't.color', 't.description',
+                't.id', 't.name', 't.alias', 't.icon', 't.color', 't.description', 't.base_language', 't.translation_languages', 't.translations',
                 'COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) AS event_count',
             ))
             ->from($db->quoteName('#__jem_types', 't'))
@@ -63,8 +63,12 @@ class ModJemTypesHelper
             ->where($db->quoteName('t.entity') . ' = 1')
             ->where($db->quoteName('t.access') . ' IN (' . $levelsList . ')')
             ->where('(' . $db->quoteName('a.id') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR ' . $db->quoteName('v.id') . ' IS NOT NULL)')
-            ->where($db->quoteName('t.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
-            ->group('t.id, t.name, t.alias, t.icon, t.color, t.description')
+            ->where('('
+                . $db->quoteName('t.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('t.base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('t.translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')')
+            ->group('t.id, t.name, t.alias, t.icon, t.color, t.description, t.base_language, t.translation_languages, t.translations')
             ->order($db->quoteName('t.ordering') . ' ASC, ' . $db->quoteName('t.name') . ' ASC');
 
         if ($params->get('hide_empty', 0)) {
@@ -72,7 +76,12 @@ class ModJemTypesHelper
         }
 
         $db->setQuery($query);
-        return $db->loadObjectList();
+        $types = $db->loadObjectList();
+        foreach ($types as $type) {
+            JemOutput::translateType($type);
+        }
+
+        return $types;
     }
 
     /**
@@ -94,12 +103,16 @@ class ModJemTypesHelper
 
         // Load all active types
         $typeQuery = $db->getQuery(true)
-            ->select(array('id', 'name', 'alias', 'icon', 'color', 'description'))
+            ->select(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations'))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('published') . ' = 1')
             ->where($db->quoteName('entity') . ' = 1')
             ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
-            ->where($db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
+            ->where('('
+                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')')
             ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
 
         $db->setQuery($typeQuery);
@@ -107,6 +120,10 @@ class ModJemTypesHelper
 
         if (empty($types)) {
             return array();
+        }
+
+        foreach ($types as $type) {
+            JemOutput::translateType($type);
         }
 
         $result = array();

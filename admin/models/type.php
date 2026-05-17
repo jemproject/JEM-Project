@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
@@ -42,6 +43,11 @@ class JemModelType extends JemModelAdmin
         if (empty($data)) {
             $data = $this->getItem();
         }
+
+        if (empty($data->base_language)) {
+            $data->base_language = $this->getDefaultSiteLanguage();
+        }
+
         return $data;
     }
 
@@ -57,5 +63,48 @@ class JemModelType extends JemModelAdmin
             $table->modified    = $date->toSql();
             $table->modified_by = $user->get('id');
         }
+
+        if (empty($table->base_language)) {
+            $table->base_language = $this->getDefaultSiteLanguage();
+        }
+
+        $translations = json_decode((string) $table->translations, true);
+        if (!is_array($translations)) {
+            $translations = array();
+        }
+
+        $cleanTranslations = array();
+        foreach ($translations as $language => $translation) {
+            if (!is_array($translation)) {
+                continue;
+            }
+
+            $language = trim((string) $language);
+            $name = trim((string) ($translation['name'] ?? ''));
+            $description = trim((string) ($translation['description'] ?? ''));
+
+            if ($language === '' || ($name === '' && $description === '')) {
+                continue;
+            }
+
+            $cleanTranslations[$language] = array(
+                'name' => $name,
+                'description' => $description,
+            );
+        }
+
+        $table->translations = $cleanTranslations ? json_encode($cleanTranslations, JSON_UNESCAPED_UNICODE) : null;
+        $table->translation_languages = $cleanTranslations ? implode(',', array_keys($cleanTranslations)) : null;
+    }
+
+    private function getDefaultSiteLanguage()
+    {
+        $language = (string) ComponentHelper::getParams('com_languages')->get('site', '');
+
+        if ($language === '') {
+            $language = Factory::getApplication()->getLanguage()->getTag();
+        }
+
+        return $language;
     }
 }
