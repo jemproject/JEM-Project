@@ -76,7 +76,8 @@ class JemViewWeekcal extends JemView
 
         // add javascript (using full path - see issue #590)
         // HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
-        $document->addScript($url.'media/com_jem/js/calendar.js');
+        $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+        $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
         $year  = (int)$jinput->getInt('yearID', date("Y"));
         $month  = (int)$jinput->getInt('monthID', date("m"));

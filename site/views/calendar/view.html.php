@@ -77,7 +77,8 @@ class JemViewCalendar extends JemView
         }';
 
         $document->addStyleDeclaration($style);
-        $document->addScript($url.'media/com_jem/js/calendar.js');
+        $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+        $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
         $year  = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));

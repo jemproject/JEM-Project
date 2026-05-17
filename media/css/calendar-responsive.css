@@ -277,6 +277,20 @@ div#jem .rowcolor {
     padding: 5px 0;
 }
 
+#jlcalendarlegend #buttonshowall,
+#jlcalendarlegend #buttonhideall {
+    font-weight: 700;
+    border-width: 2px;
+    margin-right: 10px;
+}
+
+#jlcalendarlegend #buttonshowall.jem-calendar-global-active,
+#jlcalendarlegend #buttonhideall.jem-calendar-global-active {
+    background-color: #1f2933;
+    border-color: #1f2933;
+    color: #ffffff;
+}
+
 #jlcalendarlegend .eventCat {
     cursor: pointer;
     padding: 0px;
@@ -284,6 +298,7 @@ div#jem .rowcolor {
     margin-right: 5px;
     margin-bottom: 5px;
     line-height: 40px;
+    font-weight: 400;
 }
 
 #jlcalendarlegend .eventVenues {
@@ -297,6 +312,7 @@ div#jem .rowcolor {
     margin-right: 5px;
     margin-bottom: 5px;
     line-height: 40px;
+    font-weight: 400;
 }
 
 #jlcalendarlegend .legendb {
@@ -306,14 +322,11 @@ div#jem .rowcolor {
     margin-right: 4px;
 }
 
-#jlcalendarlegend .eventCat.catoff {
+#jlcalendarlegend .eventCat.catoff,
+#jlcalendarlegend .eventVenues.catoff {
     color: lightgrey;
     font-style: italic;
-}
-
-#buttonshowall,
-#buttonhideall {
-    margin-right: 10px;
+    opacity: 0.55;
 }
 
 div#jem td {

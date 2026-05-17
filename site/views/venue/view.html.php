@@ -86,7 +86,8 @@ class JemViewVenue extends JemView
             $document->addStyleDeclaration ($style);
 
             // add javascript (using full path - see issue #590)
-            $document->addScript($url.'media/com_jem/js/calendar.js');
+            $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+            $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
             // Retrieve year/month variables
             $year = $jinput->get('yearID', date("Y"),'int');
             $month = $jinput->get('monthID', date("m"),'int');
