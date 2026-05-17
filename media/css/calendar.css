@@ -138,6 +138,23 @@ div#jem .eventcontenttop.no-padding-top {
     padding: 0px 0px 5px 0px;
 }
 
+div#jem a .eventcontentbuttom {
+    text-decoration: none;
+    color: black;
+}
+
+div#jem .eventcontentbottom {
+    height: 16px;
+    min-height: 16px;
+    text-align: left;
+    padding-top: 2px;
+    top: 60px;
+}
+
+div#jem .eventcontentbottom.no-padding-top {
+    padding: 0px 0px 5px 0px;
+}
+
 div#jem .eventtitle {
     text-align: left;
 }
