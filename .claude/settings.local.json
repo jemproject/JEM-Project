@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(grep -E \"\\\\.\\(php|xml\\)$\")",
-      "Bash(xargs grep -l \"type\")",
-      "Bash(xargs grep -i \"type.*field\\\\|field.*type\")"
-    ]
-  }
-}
