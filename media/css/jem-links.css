@@ -52,6 +52,15 @@
     padding: 0 !important;
 }
 
+/* Alternate background to visually separate link cards */
+.jem-links-tab .subform-repeatable-group:nth-child(odd) {
+    background: #fff;
+}
+
+.jem-links-tab .subform-repeatable-group:nth-child(even) {
+    background: #f4f6f8;
+}
+
 /* Main repeatable item card */
 .jem-links-tab .subform-repeatable-group {
     position: relative;

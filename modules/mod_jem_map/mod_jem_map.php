@@ -22,17 +22,14 @@ $app = Factory::getApplication();
 
 
 # Parameters
-$venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
-$mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.webp');
-
-$venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
-$mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
+$venueMarker = JemMapHelper::resolveMarkerUrl($params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp'), 'media/com_jem/images/marker-red.webp');
+$mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
 
 $height = $params->get('height', '500px');
 $zoom = (int) $params->get('zoom', 8);
 $showDateFilter = (int) $params->get('show_date_filter', 0);
 $showCategoryFilter = (int) $params->get('show_category_filter', 0);
-$dateFilterDefault = $params->get('date_filter_default', 'today');
+$dateFilterDefault = $params->get('date_filter_default', 'all');
 
 // Filter from request (only if backend option is enabled)
 $filterMode = 'all';
@@ -121,22 +118,10 @@ if ($selectedCategoryId > 0) {
 $venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate, $selectedCategoryId);
 
 // Get auto center map
-$centerLat = $centerLng = 0;
-$totalLat = $totalLng= 0;
-$countVenues = 0;
 if($params->get('map_auto_center',1)){
-    foreach ($venues as $venue) {
-        if (!empty($venue->latitude) && !empty($venue->longitude)) {
-            $totalLat += (float)$venue->latitude;
-            $totalLng += (float)$venue->longitude;
-            $countVenues++;
-        }
-    }
-
-    if ($countVenues > 0) {
-        $centerLat = $totalLat / $countVenues;
-        $centerLng = $totalLng / $countVenues   ;
-    }
+    [$centerLat, $centerLng] = JemMapHelper::getCenter($venues);
+} else {
+    $centerLat = $centerLng = 0;
 }
 
 $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);

@@ -58,5 +58,10 @@
     "value": "networking",
     "label": "COM_JEM_EVENT_LINK_TXT_NETWORKING",
     "icon": "fa fa-users"
+  },
+  {
+    "value": "noicon",
+    "label": "COM_JEM_EVENT_LINK_TXT_NOICON",
+    "icon": ""
   }
 ]

@@ -20,3 +20,8 @@
 .category-map-filter{
     padding:2px 5px;
 }
+
+#jem.jem_venuesmap .copyright,
+#jem.jem_eventsmap .copyright {
+    text-align: right;
+}

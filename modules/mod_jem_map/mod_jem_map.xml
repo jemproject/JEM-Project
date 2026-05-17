@@ -71,7 +71,7 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="date_filter_default" type="radio"
-                       default="today"
+                       default="all"
                        label="MOD_JEM_MAP_DATE_FILTER_DEFAULT"
                        description="MOD_JEM_MAP_DATE_FILTER_DEFAULT_DESC"
                        class="inputbox btn-group btn-group-yesno"

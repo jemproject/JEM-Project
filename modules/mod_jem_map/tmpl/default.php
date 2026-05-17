@@ -39,7 +39,7 @@ $youAreHere  = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
 $startLat    = (float) $params->get('map_center_lat', '0');
 $startLng    = (float) $params->get('map_center_lng', '0');
 $startZoom   = (int)   $params->get('map_zoom', '10');
-$heatMapLayer = (int)  $params->get('heat_layer', '0');
+$heatMapLayer = (int)  $params->get('heat_layer', '1');
 $fullScreenMap = (int)  $params->get('full_screen_map', '0');
 $showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || (int) $params->get('show_my_location', '0');
 ?>

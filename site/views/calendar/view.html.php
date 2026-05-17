@@ -38,6 +38,7 @@ class JemViewCalendar extends JemView
         $top_category = (int)$params->get('top_category', 0);
         $jinput       = $app->input;
         $print        = $jinput->getBool('print', false);
+        $task         = $jinput->getCmd('task', '');
 
         $this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
         $url             = Uri::root();

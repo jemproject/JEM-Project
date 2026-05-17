@@ -29,19 +29,48 @@ JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
 $jemsettings = JemHelper::config();
 
 $map_id       = 'leafletmap-' . uniqid();
-$isDateMode  = isset($filterDate) && $filterDate !== null;
-$currentDate = $isDateMode ? $filterDate : '';
+$showDateFilter = (int) $this->showDateFilter;
+$showCategoryFilter = (int) ($this->showCategoryFilter ?? 0);
+$categories   = $this->categories ?? [];
+$selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
+$filterMode   = $this->filterMode;
+$filterDate   = $this->filterDate;
+$isDateMode   = $filterDate !== null;
+$currentDate  = $isDateMode ? $filterDate : '';
 $youAreHere  = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
+$height       = $this->height;
+$centerLat    = (float) $this->centerLat;
+$centerLng    = (float) $this->centerLng;
+$venueMarker  = $this->venueMarker;
+$mylocMarker  = $this->mylocMarker;
+$jemItemid    = (int) $this->jemItemid;
+$events       = $this->eventslist ?? [];
 
-$startLat    = (float) $params->get('map_center_lat', '0');
-$startLng    = (float) $params->get('map_center_lng', '0');
-$startZoom   = (int)   $params->get('map_zoom', '10');
-$heatMapLayer = (int)  $params->get('heat_layer', '0');
-$fullScreenMap = (int)  $params->get('full_screen_map', '0');
+$startLat    = (float) $this->params->get('map_center_lat', '0');
+$startLng    = (float) $this->params->get('map_center_lng', '0');
+$startZoom   = (int)   $this->params->get('map_zoom', '10');
+$heatMapLayer = (int)  $this->params->get('heat_layer', '1');
+$fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
+$showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || (int) $this->params->get('show_my_location', '0');
+$mapType     = (string) $this->params->get('map_type', 'political');
+$tileLayers  = [
+    'political' => [
+        'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'attribution' => '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        'maxZoom' => 19,
+    ],
+    'physical' => [
+        'url' => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        'attribution' => 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+        'maxZoom' => 17,
+    ],
+];
+$tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 ?>
 
-<?php if (!empty($showDateFilter)): ?>
+<?php if ($showControls): ?>
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+        <?php if (!empty($showDateFilter)): ?>
         <?php
         $options = [
             'all'      => 'MOD_JEM_MAP_ALL',
@@ -79,8 +108,26 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         <button type="submit" class="btn btn-primary btn-sm">
             <?= Text::_('MOD_JEM_MAP_APPLY') ?>
         </button>
+        <?php endif; ?>
 
-        <?php if($params->get('show_my_location','0')) { ?>
+        <?php if (!empty($showCategoryFilter)): ?>
+            <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
+                <?= Text::_('MOD_JEM_MAP_CATEGORY_FILTER') ?>
+            </label>
+            <select name="jem_map_filter_catid"
+                    id="jem-map-filter-category-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+
+        <?php if($this->params->get('show_my_location','0')) { ?>
             <!-- Location button -->
             <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
                 <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
@@ -89,7 +136,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
     </form>
 
     <!-- Location help text -->
-    <?php if($params->get('show_my_location','0')) { ?>
+    <?php if($this->params->get('show_my_location','0')) { ?>
         <div class="alert alert-info small mt-2" id="location-help">
             <i class="icon-info"></i>
             <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
@@ -120,7 +167,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.auto-submit').forEach(function(radio) {
             radio.addEventListener('change', function() {
-                if (this.checked) {
+                if (this.matches('select') || this.checked) {
                     this.closest('form').submit();
                 }
             });
@@ -132,9 +179,9 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         (function(){
             var form      = document.querySelector('.jem-date-filter');
             if (!form) return;
-            var rAll      = form.querySelector('input[name="jemfilter"][value="all"]');
-            var rDate     = form.querySelector('input[name="jemfilter"][value="date"]');
-            var dateInput = form.querySelector('input[name="jemdate"]');
+            var rAll      = form.querySelector('input[name="jem_map_filter_mode"][value="all"]');
+            var rDate     = form.querySelector('input[name="jem_map_filter_mode"][value="date"]');
+            var dateInput = form.querySelector('input[name="jem_map_filter_date"]');
             function sync() {
                 var useDate = rDate && rDate.checked;
                 if (dateInput) {
@@ -149,9 +196,9 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         <?php endif; ?>
 
         var map = L.map('<?= $map_id ?>').setView([<?php echo (float) ($centerLat? $centerLat : $startLat); ?>, <?php echo (float)($centerLng? $centerLng : $startLng); ?>], <?php echo (int) $startZoom; ?>);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        L.tileLayer(<?= json_encode($tileLayer['url']) ?>, {
+            maxZoom: <?= (int) $tileLayer['maxZoom'] ?>,
+            attribution: <?= json_encode($tileLayer['attribution']) ?>
         }).addTo(map);
 
         <?php if($fullScreenMap) { ?>
@@ -310,22 +357,26 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
 
         <?php
         $heatPoints = [];
-        foreach ($venues as $v):
-        $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
+        foreach ($events as $v):
+        $route = 'index.php?option=com_jem&view=event&id=' . (int) $v->id . ':' . $v->alias;
         if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
         $sef  = Route::_($route, false);
         $link = Uri::root() . ltrim($sef, '/');
 
+        $eventTitle = htmlspecialchars($v->title, ENT_QUOTES);
         $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
         $city      = htmlspecialchars($v->city, ENT_QUOTES);
         $country   = htmlspecialchars($v->country, ENT_QUOTES);
+        $dateText  = !empty($v->dates) ? htmlspecialchars(JemOutput::formatdate($v->dates), ENT_QUOTES) : '';
+        $timeText  = !empty($v->times) ? htmlspecialchars(JemOutput::formattime($v->times), ENT_QUOTES) : '';
 
         $countryFlagPath = rtrim($jemsettings->flagicons_path, '/');
         $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
         $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
 
-        $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
-            . $city . '<br>'
+        $popupHtml = '<a href="' . $link . '"><strong>' . $eventTitle . '</strong></a><br>'
+            . trim($dateText . ' ' . $timeText) . '<br>'
+            . $venueName . ($city ? ', ' . $city : '') . '<br>'
             . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
             . '<a href="https://maps.google.com/?daddr=' . (float) $v->latitude . ',' . (float) $v->longitude . '">'
             . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';

@@ -324,9 +324,9 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Times
-            if ($_REQUEST['starthours']){
-                $starthours    = $jinput->get('starthours', '', 'int');
-                $startminutes = $jinput->get('startminutes', '', 'int');
+            $starthours = $jinput->get('starthours', 0, 'int');
+            if ($starthours){
+                $startminutes = $jinput->get('startminutes', 0, 'int');
                 if ($startminutes){
                     $data['times'] = str_pad($starthours,2,'0', STR_PAD_LEFT) . ':' . str_pad($startminutes,2,'0', STR_PAD_LEFT) . ':00';
                 } else {
@@ -337,9 +337,9 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Endtimes
-            if ($_REQUEST['endhours']){
-                $endhours   = $jinput->get('endhours', '', 'int');
-                $endminutes = $jinput->get('endminutes', '', 'int');
+            $endhours = $jinput->get('endhours', 0, 'int');
+            if ($endhours){
+                $endminutes = $jinput->get('endminutes', 0, 'int');
 
                 if ($endminutes){
                     $data['endtimes'] = str_pad($endhours,2,'0', STR_PAD_LEFT) . ':' . str_pad($endminutes,2,'0', STR_PAD_LEFT) . ':00';
@@ -1249,7 +1249,7 @@ class JemModelEvent extends JemModelAdmin
 
                 // Insert new categories for id event
                 foreach($cats as $c){
-                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . $c . ',' . $db->quote($eventid) . ',0)');
+                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . (int) $c . ',' . $db->quote($eventid) . ',0)');
                     $db->execute();
                 }
             } else {

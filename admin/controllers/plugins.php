@@ -39,7 +39,8 @@ class JemControllerPlugins extends BaseController
         $query = $db->getQuery(true);
         $query->select(array('count(*)'));
         $query->from('#__extensions AS p');
-        $query->where(array('p.name LIKE '.$db->quote("%jem%"), 'p.type = '.$db->quote("plugin")));
+        $query->where($db->quoteName('p.name') . ' LIKE ' . $db->quote('%jem%'))
+              ->where($db->quoteName('p.type') . ' = ' . $db->quote('plugin'));
 
         $db->setQuery($query);
 

@@ -37,40 +37,89 @@
                 <option value="0">JNO</option>
             </field>
 
-            <field name="venue_markerfile" type="text"
-	           default="images/icons/marker-masker-32.svg"
-                   label="COM_JEM_VENUESMAP_VENUE_MARKER_LABEL"
-                   description="COM_JEM_VENUESMAP_VENUE_MARKER_DESC"/>
-
-            <!-- Nieuw: “Hier ben ik”-marker (SVG/PNG) -->
-            <field name="mylocation_markerfile" type="text"
-	           default="images/icons/marker-icon-red.svg"
-                   label="COM_JEM_VENUESMAP_MYLOC_MARKER_LABEL"
-                   description="COM_JEM_VENUESMAP_MYLOC_MARKER_DESC"/>
-
-            <!-- Optioneel datumfilter -->
-            <field name="show_date_filter" type="radio"
-	           default="1"
-                   label="COM_JEM_VENUESMAP_SHOW_DATE_FILTER_LABEL"
-                   description="COM_JEM_VENUESMAP_SHOW_DATE_FILTER_DESC">
+            <field name="map_auto_center" type="radio"
+                   default="1"
+                   label="COM_JEM_VENUESMAP_AUTO_CENTER_LABEL"
+                   description="COM_JEM_VENUESMAP_AUTO_CENTER_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
 
-            <!-- Itemid voor consistente SEF-URL's -->
+            <field name="map_center_lat" type="text"
+                   default="48.750"
+                   label="COM_JEM_VENUESMAP_CENTER_LATITUDE_LABEL"
+                   description="COM_JEM_VENUESMAP_CENTER_LATITUDE_DESC"/>
+
+            <field name="map_center_lng" type="text"
+                   default="18.917"
+                   label="COM_JEM_VENUESMAP_CENTER_LONGITUDE_LABEL"
+                   description="COM_JEM_VENUESMAP_CENTER_LONGITUDE_DESC"/>
+
+            <field name="map_zoom" type="number"
+                   default="4"
+                   label="COM_JEM_VENUESMAP_ZOOM_LABEL"
+                   description="COM_JEM_VENUESMAP_ZOOM_DESC"
+                   min="0"
+                   max="19"/>
+            <field name="map_type" type="list"
+                   default="physical"
+                   label="COM_JEM_VENUESMAP_TYPE_LABEL"
+                   description="COM_JEM_VENUESMAP_TYPE_DESC"
+            >
+                <option value="political">COM_JEM_MAP_TYPE_POLITICAL</option>
+                <option value="physical">COM_JEM_MAP_TYPE_PHYSICAL</option>
+                <option value="humanitarian">COM_JEM_MAP_TYPE_HUMANITARIAN</option>
+            </field>
+
+            <field name="show_my_location" type="radio"
+                   default="1"
+                   label="COM_JEM_VENUESMAP_SHOW_MY_LOCATION_LABEL"
+                   description="COM_JEM_VENUESMAP_SHOW_MY_LOCATION_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="venue_markerfile" type="text"
+                   default="media/com_jem/images/marker-red.webp"
+                   label="COM_JEM_VENUESMAP_VENUE_MARKER_LABEL"
+                   description="COM_JEM_VENUESMAP_VENUE_MARKER_DESC"/>
+
+            <field name="mylocation_markerfile" type="text"
+                   default="media/com_jem/images/marker-blue.webp"
+                   label="COM_JEM_VENUESMAP_MYLOC_MARKER_LABEL"
+                   description="COM_JEM_VENUESMAP_MYLOC_MARKER_DESC"/>
+
+            <field name="full_screen_map" type="radio"
+                   default="0"
+                   label="COM_JEM_VENUESMAP_FULL_SCREEN_LABEL"
+                   description="COM_JEM_VENUESMAP_FULL_SCREEN_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
             <field name="jem_itemid" type="menuitem"
                    label="COM_JEM_VENUESMAP_JEM_ITEMID_LABEL"
                    description="COM_JEM_VENUESMAP_JEM_ITEMID_DESC"/>
 
             <field name="height" type="text"
-	           default="500px"
+                   default="500px"
                    label="COM_JEM_VENUESMAP_HEIGHT_LABEL"
                    description="COM_JEM_VENUESMAP_HEIGHT_DESC"/>
 
-            <field name="zoom" type="number"
-	           default="8"
-                   label="COM_JEM_VENUESMAP_ZOOM_LABEL"
-                   description="COM_JEM_VENUESMAP_ZOOM_DESC"/>
+            <field name="heat_layer" type="radio"
+                   default="1"
+                   label="COM_JEM_VENUESMAP_HEAT_LAYER_LABEL"
+                   description="COM_JEM_VENUESMAP_HEAT_LAYER_DESC"
+                   class="inputbox btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
 
         </fieldset>
     </fields>

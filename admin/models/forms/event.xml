@@ -825,14 +825,17 @@
                 </field>
                 <field
                         name="links_layout"
-                        type="radio"
+                        type="list"
                         label="COM_JEM_EVENT_LINKS_LAYOUT"
                         description="COM_JEM_EVENT_LINKS_LAYOUT_DESC"
                         default="row"
-                        class="btn-group btn-group-yesno"
                 >
                     <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+                    <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+                    <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
                     <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+                    <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+                    <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
                 </field>
                 <field
                         name="links_order"

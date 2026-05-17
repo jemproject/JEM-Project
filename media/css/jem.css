@@ -677,6 +677,25 @@ div#jem .jem_fright {
     display: inline-block;
 }
 
+#jem #jem_filter.jem-row {
+    gap: 0.5rem;
+}
+
+#jem .jem-nowrap {
+    flex-wrap: nowrap;
+}
+
+#jem .jem-justify-start {
+    justify-content: flex-start;
+}
+
+#jem .jem-limit-smallest {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 #jem .nowrap {
     display: inline-block;
     white-space: nowrap;
@@ -1519,18 +1538,75 @@ div#jem .inline-button-right {
     margin: 1rem 0;
 }
 
-/* Row layout */
+/* Row — natural width, wraps */
 .jem-event-links.jem-event-links-row {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
 }
 
-/* Column layout */
+/* Row full — each item grows to fill the row equally */
+.jem-event-links.jem-event-links-row_full,
+#jem .jem-event-links.jem-event-links-row_full {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.jem-event-links.jem-event-links-row_full .jem-event-link,
+#jem .jem-event-links.jem-event-links-row_full .jem-event-link {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    box-sizing: border-box;
+}
+
+/* Row same size — CSS grid, all items equal width */
+.jem-event-links.jem-event-links-row_uniform,
+#jem .jem-event-links.jem-event-links-row_uniform {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr)) !important;
+    align-items: center !important;
+}
+
+/* Column — natural width */
 .jem-event-links.jem-event-links-column {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: flex-start;
+}
+
+/* Column full — buttons stretch to full container width */
+.jem-event-links.jem-event-links-column_full,
+#jem .jem-event-links.jem-event-links-column_full {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+}
+
+.jem-event-links.jem-event-links-column_full .jem-event-link,
+#jem .jem-event-links.jem-event-links-column_full .jem-event-link {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box;
+}
+
+/* Column same size — all buttons same width as the widest one */
+.jem-event-links.jem-event-links-column_uniform,
+#jem .jem-event-links.jem-event-links-column_uniform {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+}
+
+.jem-event-links.jem-event-links-column_uniform .jem-event-link,
+#jem .jem-event-links.jem-event-links-column_uniform .jem-event-link {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box;
 }
 
 /* Event link item */

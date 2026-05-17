@@ -313,23 +313,23 @@ class plgAcymailingTagjem extends CMSPlugin
                 for ($i = 0, $a = count($rows); $i < $a; $i++) {
                     $row =& $rows[$i];
                     ?>
-                    <tr id="content<?php echo $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
-                        onclick="applyContent(<?php echo $row->id.",'row$k'" ?>);" eventid="<?php echo $row->id ?>" >
+                    <tr id="content<?php echo (int) $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
+                        onclick="applyContent(<?php echo (int) $row->id.",'row$k'" ?>);" eventid="<?php echo (int) $row->id ?>" >
                         <td class="acytdcheckbox"></td>
                         <td>
-                            <?php echo $row->title; ?>
+                            <?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td>
-                            <?php echo strip_tags($row->introtext); ?>
+                            <?php echo htmlspecialchars(strip_tags($row->introtext), ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td align="center">
                             <?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
                         </td>
                         <td>
-                            <?php echo $row->venue; ?>
+                            <?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td align="center">
-                            <?php echo $row->id; ?>
+                            <?php echo (int) $row->id; ?>
                         </td>
                     </tr>
                     <?php

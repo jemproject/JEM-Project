@@ -436,8 +436,11 @@ if ($jemsettings->oldevent > 0) {
         </dl>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br>' || $this->item->introtext != '' && $this->item->introtext != '<br>')) { ?>
-            <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
+        <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
+        <?php if (($params->get('event_show_description','1') && $hasDescription) || !empty($this->event_links)) { ?>
+            <?php if ($params->get('event_show_description','1') && $hasDescription) : ?>
+                <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
+            <?php endif; ?>
             <div class="description event_desc" itemprop="description">
 
                 <?php
@@ -474,7 +477,7 @@ if ($jemsettings->oldevent > 0) {
                         if (!empty($this->item->params) && is_object($this->item->params) && method_exists($this->item->params, 'get')) {
                             $linksLayout = (string) $this->item->params->get('links_layout', 'row');
                         }
-                        if (!in_array($linksLayout, array('row', 'column'), true)) {
+                        if (!in_array($linksLayout, array('row', 'row_full', 'row_uniform', 'column', 'column_full', 'column_uniform'), true)) {
                             $linksLayout = 'row';
                         }
 
@@ -521,8 +524,10 @@ if ($jemsettings->oldevent > 0) {
 
                             $hasLink = !in_array($url, array('', '#'), true);
 
-                            // Use the default icon from the action type when no explicit icon is stored.
-                            if ($icon === '' && isset($defaultLinkTypes[$type]['icon'])) {
+                            // "noicon" type suppresses all icons; otherwise fall back to the type's default.
+                            if ($type === 'noicon') {
+                                $icon = '';
+                            } elseif ($icon === '' && isset($defaultLinkTypes[$type]['icon'])) {
                                 $icon = $defaultLinkTypes[$type]['icon'];
                             }
 

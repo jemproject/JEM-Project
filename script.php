@@ -909,12 +909,12 @@ class com_jemInstallerScript
 
         // check if the each column exists
         foreach ($columnsToCheck as $data) {
-            $query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field ='" . $data['column'] . "'";
+            $query = 'SHOW COLUMNS FROM ' . $db->quoteName($data['table']) . ' WHERE Field = ' . $db->quote($data['column']);
             $db->setQuery($query);
             $result = $db->loadResult();
             if (!$result) {
                 // The column does not exist, so add it
-                $alterQuery = "ALTER TABLE " . $data['table'] . " ADD COLUMN " . $data['column'] . " " . $data['definition'];
+                $alterQuery = 'ALTER TABLE ' . $db->quoteName($data['table']) . ' ADD COLUMN ' . $db->quoteName($data['column']) . ' ' . $data['definition'];
                 $db->setQuery($alterQuery);
                 $db->execute();
             }

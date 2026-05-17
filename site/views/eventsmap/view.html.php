@@ -8,6 +8,11 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+if (is_file(JPATH_SITE . '/components/com_jem/helpers/map.php')) {
+    require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
+}
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -45,6 +50,7 @@ class JemViewEventsMap extends JemView
 
         // Initialize variables
         $app         = Factory::getApplication();
+        $app->getLanguage()->load('mod_jem_map', JPATH_SITE . '/modules/mod_jem_map');
         $document    = $app->getDocument();
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
@@ -80,26 +86,26 @@ class JemViewEventsMap extends JemView
         $novenues = (!$rows) ? 1 : 0;
 
         // *******************************************************************************************
-        $venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
-        $mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.webp');
+        $venueMarker = JemMapHelper::resolveMarkerUrl($params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp'), 'media/com_jem/images/marker-red.webp');
+        $mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
 
-        $venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
-        $mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
-
-        $height         = $params->get('height', '500px');
-        $zoom           = (int) $params->get('zoom', 8);
-        $showDateFilter = (int) $params->get('show_date_filter', 0);
-        $jemItemid      = (int) $params->get('jem_itemid', 0);
+        $height             = $params->get('height', '500px');
+        $zoom               = (int) $params->get('map_zoom', 8);
+        $showDateFilter     = (int) $params->get('show_date_filter', 0);
+        $showCategoryFilter = (int) $params->get('show_category_filter', 0);
+        $dateFilterDefault  = $params->get('date_filter_default', 'all');
+        $jemItemid          = (int) $params->get('jem_itemid', 0);
 
         // Filter from request (only if backend option is enabled)
         $filterMode      = 'all';
         $filterDate      = null;
         $selectedDate    = '';
-        $filterStartDate = null;
-        $filterEndDate   = null;
+        $filterStartDate   = null;
+        $filterEndDate     = null;
+        $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
 
         if ($showDateFilter) {
-            $filterMode = $app->input->get('jem_map_filter_mode', 'all', 'string');
+            $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');
             $filterDate = $app->input->get('jem_map_filter_date', '', 'string');
 
             if ($filterMode == 'date' && $filterDate === null) {
@@ -163,60 +169,29 @@ class JemViewEventsMap extends JemView
             }
         }
 
-        // Fetch venues (JOIN + date filter only if $filterDate is not null)
-        $venues = $this->getVenues($params, $filterStartDate, $filterEndDate);
+        if (!$filterStartDate) {
+            $filterStartDate = Factory::getDate()->format('Y-m-d');
+        }
+
+        $categories = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
+
+        if ($selectedCategoryId > 0) {
+            $validCategoryIds = array_map('intval', array_column($categories, 'id'));
+
+            if (!in_array($selectedCategoryId, $validCategoryIds, true)) {
+                $selectedCategoryId = 0;
+            }
+        }
+
+        // Fetch active events with venues that have valid coordinates.
+        $events = JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate, $selectedCategoryId);
 
         // Get auto center map
-        $centerLat    = 0;
-        $centerLng    = 0;
-        $totalLat     = 0;
-        $totalLng     = 0;
-        $countVenues  = 0;
-
         if ($params->get('map_auto_center', 1)) {
-            foreach ($venues as $venue) {
-                if (!empty($venue->latitude) && !empty($venue->longitude)) {
-                    $totalLat += (float) $venue->latitude;
-                    $totalLng += (float) $venue->longitude;
-                    $countVenues++;
-                }
-            }
-
-            if ($countVenues > 0) {
-                $centerLat = $totalLat / $countVenues;
-                $centerLng = $totalLng / $countVenues;
-            }
+            [$centerLat, $centerLng] = JemMapHelper::getCenter($events);
+        } else {
+            $centerLat = $centerLng = 0;
         }
-
-        // Venues ophalen (JOIN + datumfilter alleen als $filterDate != null)
-        $venues = $this->getVenues($params, $filterDate);
-
-        // Layout renderen
-        //require JModuleHelper::getLayoutPath('mod_leafletmap', $params->get('layout', 'default'));
-
-        // Get Venues
-        $db = Factory::getDbo();
-        $q  = $db->getQuery(true);
-
-        $q->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country')
-            ->from($db->quoteName('#__jem_venues', 'v'))
-            ->where('v.latitude IS NOT NULL')
-            ->where("v.latitude <> ''")
-            ->where('v.longitude IS NOT NULL')
-            ->where("v.longitude <> ''");
-
-        // Only apply JOIN + date filter when filterDate is truly valid (YYYY-MM-DD)
-        if ($filterDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterDate)) {
-            $d = $db->quote($filterDate);
-
-            $q->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON e.locid = v.id');
-            $q->where('(e.dates = ' . $d . ' OR (e.enddates IS NOT NULL AND e.dates <= ' . $d . ' AND ' . $d . ' <= e.enddates))');
-        }
-
-        $q->order('v.venue ASC');
-
-        $db->setQuery($q);
-        $venueslist = $db->loadObjectList();
 
         // *******************************************************************************************
 
@@ -299,8 +274,22 @@ class JemViewEventsMap extends JemView
         $this->show_status   = $permissions->canEditPublishVenue;
         $this->print_link    = $print_link;
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
-        $this->venueslist    = $venueslist;
+        $this->eventslist    = $events;
+        $this->venueslist    = $events;
         $this->height        = $height;
+        $this->venueMarker   = $venueMarker;
+        $this->mylocMarker   = $mylocMarker;
+        $this->zoom          = $zoom;
+        $this->showDateFilter = $showDateFilter;
+        $this->showCategoryFilter = $showCategoryFilter;
+        $this->categories    = $categories;
+        $this->selectedCategoryId = $selectedCategoryId;
+        $this->filterMode    = $filterMode;
+        $this->filterDate    = $filterDate;
+        $this->selectedDate  = $selectedDate;
+        $this->centerLat     = $centerLat;
+        $this->centerLng     = $centerLng;
+        $this->jemItemid     = $jemItemid;
 
         // add toolbar
         $this->addToolbar();
@@ -337,38 +326,21 @@ class JemViewEventsMap extends JemView
      */
     public static function getVenues($params, $filterStartDate, $filterEndDate = null)
     {
-        $db    = Factory::getDbo();
-        $query = $db->getQuery(true);
+        return JemMapHelper::getVenues($params, $filterStartDate, $filterEndDate);
+    }
 
-        $query->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country')
-            ->from($db->quoteName('#__jem_venues', 'v'))
-            ->where([
-                'v.latitude IS NOT NULL',
-                "v.latitude <> ''",
-                'v.longitude IS NOT NULL',
-                "v.longitude <> ''",
-            ]);
-
-        // Apply date filtering only if a start date is provided.
-        if ($filterStartDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterStartDate)) {
-            $query->join('INNER', $db->quoteName('#__jem_events', 'e'), 'e.locid = v.id');
-            $effectiveEventEndDate = 'COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ')';
-            $conditions = [];
-
-            if ($filterEndDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterEndDate)) {
-                $conditions[] = $db->quoteName('e.dates') . ' <= ' . $db->quote($filterEndDate);
-                $conditions[] = $effectiveEventEndDate . ' >= ' . $db->quote($filterStartDate);
-            } else {
-                $conditions[] = $effectiveEventEndDate . ' >= ' . $db->quote($filterStartDate);
-            }
-
-            $query->where($conditions);
-        }
-
-        $query->order($db->quoteName('v.venue') . ' ASC');
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
+    /**
+     * Fetches published events hosted at venues with valid coordinates.
+     *
+     * @param   mixed       $params           Menu parameters.
+     * @param   string|null $filterStartDate  Start date of the requested event range.
+     * @param   string|null $filterEndDate    End date of the requested event range.
+     *
+     * @return  array<object>
+     */
+    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null)
+    {
+        return JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate);
     }
 }
 
