@@ -31,7 +31,7 @@ class ModJemTypesHelper
 
         $query = $db->getQuery(true)
             ->select(array(
-                't.id', 't.name', 't.alias', 't.icon', 't.color',
+                't.id', 't.name', 't.alias', 't.icon', 't.color', 't.description',
                 'COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) AS event_count',
             ))
             ->from($db->quoteName('#__jem_types', 't'))
@@ -64,7 +64,7 @@ class ModJemTypesHelper
             ->where($db->quoteName('t.access') . ' IN (' . $levelsList . ')')
             ->where('(' . $db->quoteName('a.id') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR ' . $db->quoteName('v.id') . ' IS NOT NULL)')
             ->where($db->quoteName('t.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
-            ->group('t.id, t.name, t.alias, t.icon, t.color')
+            ->group('t.id, t.name, t.alias, t.icon, t.color, t.description')
             ->order($db->quoteName('t.ordering') . ' ASC, ' . $db->quoteName('t.name') . ' ASC');
 
         if ($params->get('hide_empty', 0)) {
@@ -94,7 +94,7 @@ class ModJemTypesHelper
 
         // Load all active types
         $typeQuery = $db->getQuery(true)
-            ->select(array('id', 'name', 'alias', 'icon', 'color'))
+            ->select(array('id', 'name', 'alias', 'icon', 'color', 'description'))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('published') . ' = 1')
             ->where($db->quoteName('entity') . ' = 1')

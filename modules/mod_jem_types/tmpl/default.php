@@ -26,13 +26,15 @@ $mode = $params->get('display_mode', 'summary');
                 <?php
                 $link  = Route::_(JemHelperRoute::getTypeeventsRoute($type->id));
                 $name  = htmlspecialchars($type->name, ENT_QUOTES, 'UTF-8');
+                $tooltip = JemOutput::typeDescriptionSummary(isset($type->description) ? $type->description : '');
+                $title = $tooltip !== '' ? ' title="' . htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8') . '"' : '';
                 $style = '';
                 if (!empty($type->color) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $type->color)) {
                     $style = ' style="border-left: 4px solid ' . htmlspecialchars($type->color, ENT_QUOTES, 'UTF-8') . ';"';
                 }
                 ?>
                 <li class="mod-jem-types__item"<?php echo $style; ?>>
-                    <a href="<?php echo htmlspecialchars($link, ENT_QUOTES, 'UTF-8'); ?>" class="mod-jem-types__link">
+                    <a href="<?php echo htmlspecialchars($link, ENT_QUOTES, 'UTF-8'); ?>" class="mod-jem-types__link"<?php echo $title; ?>>
                         <?php if (!empty($type->icon)) : ?>
                             <span class="<?php echo htmlspecialchars($type->icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
                         <?php endif; ?>
@@ -53,10 +55,12 @@ $mode = $params->get('display_mode', 'summary');
             <?php
             $typeLink = Route::_(JemHelperRoute::getTypeeventsRoute($type->id));
             $typeName = htmlspecialchars($type->name, ENT_QUOTES, 'UTF-8');
+            $tooltip = JemOutput::typeDescriptionSummary(isset($type->description) ? $type->description : '');
+            $title = $tooltip !== '' ? ' title="' . htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8') . '"' : '';
             ?>
             <div class="mod-jem-types__group">
                 <h5 class="mod-jem-types__group-title">
-                    <a href="<?php echo htmlspecialchars($typeLink, ENT_QUOTES, 'UTF-8'); ?>">
+                    <a href="<?php echo htmlspecialchars($typeLink, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $title; ?>>
                         <?php if (!empty($type->icon)) : ?>
                             <span class="<?php echo htmlspecialchars($type->icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
                         <?php endif; ?>

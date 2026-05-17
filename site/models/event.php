@@ -109,7 +109,7 @@ class JemModelEvent extends ItemModel
                 $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
                 # Type
-                $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias');
+                $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description');
                 $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1');
 
                 # Get contact id
@@ -420,7 +420,7 @@ class JemModelEvent extends ItemModel
             $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
             # Type
-            $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias');
+            $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description');
             $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
 
             # Get contact id

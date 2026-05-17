@@ -1288,8 +1288,16 @@ static public function lightbox() {
             return '';
         }
 
-        $name  = htmlspecialchars($event->type_name, ENT_QUOTES, 'UTF-8');
-        $style = '';
+        $name       = htmlspecialchars($event->type_name, ENT_QUOTES, 'UTF-8');
+        $tooltip    = self::typeDescriptionSummary(isset($event->type_description) ? $event->type_description : '');
+        $attributes = '';
+        $style      = '';
+
+        if ($tooltip !== '') {
+            $safeTooltip = htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8');
+            $attributes .= ' title="' . $safeTooltip . '" aria-label="' . $name . ': ' . $safeTooltip . '"';
+        }
+
         if (!empty($event->type_color) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $event->type_color)) {
             $style = ' style="background-color:' . htmlspecialchars($event->type_color, ENT_QUOTES, 'UTF-8') . ';"';
         }
@@ -1303,7 +1311,25 @@ static public function lightbox() {
 
         $link = htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($event->type_id)), ENT_QUOTES, 'UTF-8');
 
-        return '<a href="' . $link . '" class="jem-type-badge"' . $style . '>' . $inner . '</a>';
+        return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
+    }
+
+    static public function typeDescriptionSummary($description)
+    {
+        $text = trim(html_entity_decode(strip_tags((string) $description), ENT_QUOTES, 'UTF-8'));
+
+        if ($text === '') {
+            return '';
+        }
+
+        $text = preg_replace('/\s+/', ' ', $text);
+        $periodPosition = strpos($text, '.');
+
+        if ($periodPosition !== false) {
+            $text = substr($text, 0, $periodPosition + 1);
+        }
+
+        return trim($text);
     }
 
     /**

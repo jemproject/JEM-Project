@@ -430,7 +430,7 @@ class JemModelEventslist extends ListModel
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
 
         # Type
-        $query->select(array('jt.name AS type_name', 'jt.icon AS type_icon', 'jt.color AS type_color', 'jt.alias AS type_alias'));
+        $query->select(array('jt.name AS type_name', 'jt.icon AS type_icon', 'jt.color AS type_color', 'jt.alias AS type_alias', 'jt.description AS type_description'));
         $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1');
 
         # the rest
