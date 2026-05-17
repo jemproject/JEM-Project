@@ -183,9 +183,10 @@ class JemViewEditevent extends JemView
         // Load css
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
 
         // Load scripts
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
         $wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
         $wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
@@ -230,6 +231,22 @@ class JemViewEditevent extends JemView
         if ($jemsettings->regallowinvitation == 1) {
             $this->form->setValue('invited', null, implode(',', $this->invited));
             $this->form->setFieldAttribute('invited', 'eventid', (int)$this->item->id);
+        }
+
+        if (!empty($this->item->event_links)) {
+            $this->form->bind(array(
+                'event_links' => $this->item->event_links,
+            ));
+        }
+
+        if (!empty($this->item->attribs)) {
+            $attribs = json_decode($this->item->attribs, true);
+
+            if (is_array($attribs)) {
+                $this->form->bind(array(
+                    'attribs' => $attribs,
+                ));
+            }
         }
 
         $this->_prepareDocument();

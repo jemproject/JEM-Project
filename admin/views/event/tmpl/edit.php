@@ -172,6 +172,10 @@ $params = $params->toArray();
         action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
         class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">
 
+    <config>
+        <inlinehelp button="show"/>
+    </config>
+
     <?php $recurr = empty($this->item->recurr_bak) ? $this->item : $this->item->recurr_bak; ?>
     <?php if (!empty($recurr->recurrence_number) || !empty($recurr->recurrence_type)) : ?>
         <div class="description">
@@ -247,7 +251,10 @@ $params = $params->toArray();
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
             <?php echo $this->loadTemplate('attachments'); ?>
 
-            <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-settings', Text::_('COM_JEM_EVENT_SETTINGS_TAB')); ?>
             <?php echo $this->loadTemplate('settings'); ?>

@@ -136,7 +136,7 @@ function jem_common_show_filter(&$obj) {
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php if ($this->settings->get('global_display', 1)) : ?>
-            <div class="jem-limit-smallist">
+            <div class="jem-limit-smallest">
                 <?php
                 echo '<label for="limit" class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
                 //echo '<span class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';

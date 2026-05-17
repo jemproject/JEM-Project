@@ -318,15 +318,20 @@ class JemModelAttendees extends BaseDatabaseModel
      * Delete registered users
      *
      * @access public
-     * @param  array  $cid  array of attendee IDs
+     * @param  array  $cid      array of attendee IDs
+     * @param  int    $eventId  event ID the attendees must belong to
      * @return true on success
      */
-    public function remove($cid = array())
+    public function remove($cid = array(), $eventId = 0)
     {
         if (is_array($cid) && count($cid))
         {
             \Joomla\Utilities\ArrayHelper::toInteger($cid);
             $query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
+
+            if ((int) $eventId > 0) {
+                $query .= ' AND event = ' . (int) $eventId;
+            }
 
             $this->_db->setQuery($query);
 

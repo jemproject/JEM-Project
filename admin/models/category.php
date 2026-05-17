@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -134,7 +135,6 @@ class JemModelCategory extends AdminModel
 
             // Convert the created and modified dates to local user time for
             // display in the form.
-            jimport('joomla.utilities.date');
             $tz = new DateTimeZone(Factory::getApplication()->getCfg('offset'));
 
             if (intval($result->created_time)) {
@@ -281,7 +281,7 @@ class JemModelCategory extends AdminModel
 
         // Bind the rules.
         if (isset($data['rules'])) {
-            $rules = new JAccessRules($data['rules']);
+            $rules = new Rules($data['rules']);
             $table->setRules($rules);
         }
 

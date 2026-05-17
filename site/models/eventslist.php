@@ -13,7 +13,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Database\DatabaseDriver;
-use Joomla\CMS\Date\Date; // Añadido para mejor práctica en Joomla 5
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -418,8 +418,8 @@ class JemModelEventslist extends ListModel
         $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
         $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.version AS l_version'));
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
-		
-		
+        
+        
 
         # Country
         $query->select(array('ct.name AS countryname'));
@@ -552,10 +552,10 @@ class JemModelEventslist extends ListModel
         switch ($opendates) {
             case 0: // don't show events without start date
             default:
-                $opendates_query = " AND a.dates IS NOT NULL";
+                $opendates_query = "a.dates IS NOT NULL";
                 break;
             case 1: // show all events, with or without start date
-                $opendates_query = " OR a.dates IS NULL";
+                $opendates_query = "";
                 break;
             case 2: // show only events without startdate
                 $opendates_query = " a.dates IS NULL";
@@ -592,12 +592,22 @@ class JemModelEventslist extends ListModel
                             $filter_date_to = date("Y-m-t", strtotime($filter_date_from));
 
                             // Check if event ENDS after or on the start date
-                            $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0 ' . $opendates_query . ')';
+                            $where_from = 'DATEDIFF(IF(a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0';
+                            if (!empty($opendates_query)) {
+                                $where_from = '(' . $where_from . ' AND ' . $opendates_query . ')';
+                            } else {
+                                $where_from = '(' . $where_from . ')';
+                            }
                             $query->where($where_from);
                             $this->setState('filter.calendar_from', $where_from);
 
                             // Check if event STARTS before or on the end date
-                            $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0' . $opendates_query . ')';
+                            $where_to = 'DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0';
+                            if (!empty($opendates_query)) {
+                                $where_to = '(' . $where_to . ' AND ' . $opendates_query . ')';
+                            } else {
+                                $where_to = '(' . $where_to . ')';
+                            }
                             $query->where($where_to);
                             $this->setState('filter.calendar_to', $where_to);
                         } else {
@@ -622,7 +632,12 @@ class JemModelEventslist extends ListModel
                                     // Handle 0 explicitly to avoid modify() issues
                                     $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
 
-                                    $where_from = '(COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . $opendates_query . ')';
+                                    $where_from = 'COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom);
+                                    if (!empty($opendates_query)) {
+                                        $where_from = '(' . $where_from . ' AND ' . $opendates_query . ')';
+                                    } else {
+                                        $where_from = '(' . $where_from . ')';
+                                    }
 
                                     $query->where($where_from);
                                     $this->setState('filter.calendar_from', $where_from);
@@ -636,7 +651,13 @@ class JemModelEventslist extends ListModel
                                 // Handle 0 explicitly to avoid modify() issues
                                 $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
 
-                                $where_to = '(a.dates <= ' . $db->quote($dateTo) . $opendates_query . ')';
+                                $where_to = 'a.dates <= ' . $db->quote($dateTo);
+                                if (!empty($openDatesCondition)) {
+                                    $where_to = '(' . $where_to . ' AND ' . $openDatesCondition . ')';
+                                } else {
+                                    $where_to = '(' . $where_to . ')';
+                                }
+
                                 $query->where($where_to);
                                 $this->setState('filter.calendar_to', $where_to);
                                 $this->setState('filter.tablefiltereventuntil', $filterDaysAfter);

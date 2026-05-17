@@ -204,7 +204,7 @@
     margin: 0;
 }
 
-/* Estilo general de los días */
+/* General day style. */
 .mod_jemcalq_calday span,
 .mod_jemcalq_caltoday span,
 .mod_jemcalq_caldaylink span {
@@ -245,7 +245,7 @@
     border: 2px solid transparent;
 }
 
-/* Quitar bordes de la tabla */
+/* Remove table borders. */
 .mod_jemcalq_calendar {
     border-collapse: collapse;
     border: none;

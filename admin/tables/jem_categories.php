@@ -8,10 +8,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
-
-jimport('joomla.database.tablenested');
 
 /**
  * JEM categories Model class
@@ -82,7 +82,7 @@ class jem_categories extends Nested
             return false;
         }
 
-        $alias = JFilterOutput::stringURLSafe($this->catname);
+        $alias = OutputFilter::stringURLSafe($this->catname);
 
         if (empty($this->alias) || $this->alias === $alias) {
             $this->alias = $alias;

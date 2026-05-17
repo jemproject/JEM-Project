@@ -5,7 +5,7 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+/* Hotfix for SqueezeBox modal overlay destroying images on mobile phones */
 
 body.com_jem #sbox-overlay {
     width: 100% !important;
@@ -123,7 +123,7 @@ body.com_jem.body-overlayed {
     font-size: 1.332rem;
 }
 
-/*Special for the description lable in editevent and editvenue*/
+/* Special for the description label in editevent and editvenue */
 
 #jem #jform_articletext-lbl,
 #jem #jform_locdescription-lbl {
@@ -201,7 +201,7 @@ body.com_jem.body-overlayed {
     justify-content: flex-start;
 }
 
-#jem .jem-limit-smallist {
+#jem .jem-limit-smallest {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -739,4 +739,651 @@ body.com_jem.body-overlayed {
 
 #jem .jem-event-intro {
     width: 100%;
+}
+
+/* Event links container */
+.jem-event-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 1rem 0;
+}
+
+/* Row layout */
+.jem-event-links.jem-event-links-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Column layout */
+.jem-event-links.jem-event-links-column {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+/* Event link item */
+.jem-event-link {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+
+    width: auto;
+    max-width: 100%;
+
+    min-height: 36px;
+
+    line-height: 1;
+    text-decoration: none !important;
+    box-shadow: none !important;
+
+    box-sizing: border-box;
+    vertical-align: middle;
+
+    transition:
+            background-color .15s ease,
+            color .15s ease,
+            border-color .15s ease,
+            box-shadow .15s ease,
+            transform .12s ease;
+}
+
+/* Remove underline from event links without touching the frame border */
+.jem-event-links a,
+.jem-event-links a:link,
+.jem-event-links a:visited,
+.jem-event-links a:hover,
+.jem-event-links a:focus,
+.jem-event-links a:active,
+.jem-event-link,
+.jem-event-link:hover,
+.jem-event-link:focus,
+.jem-event-link:active {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove underline from inner elements without touching borders */
+.jem-event-link *,
+.jem-event-link:hover *,
+.jem-event-link:focus *,
+.jem-event-link:active * {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Framed link */
+.jem-event-link.jem-event-link-has-frame {
+    border: 1px solid currentColor !important;
+    border-radius: .45rem !important;
+    padding: .45rem .75rem !important;
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    cursor: pointer;
+}
+
+/* Framed link hover */
+.jem-event-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-has-frame:focus {
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12) !important;
+    transform: translateY(-1px);
+}
+
+.jem-event-link.jem-event-link-no-link,
+.jem-event-link.jem-event-link-no-link:hover,
+.jem-event-link.jem-event-link-no-link:focus,
+.jem-event-link.jem-event-link-no-link:active {
+    cursor: default !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:focus,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:active {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-icon,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-icon {
+    color: var(--jem-event-link-hover-color, currentColor) !important;
+}
+
+/* Event link icon */
+.jem-event-link-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+
+    line-height: 1 !important;
+}
+
+/* Event link label */
+.jem-event-link-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    min-height: 1.1rem;
+
+    line-height: 1.1 !important;
+    white-space: nowrap;
+}
+
+/* Event link image */
+.jem-event-link-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.jem-event-link-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* A: Image + Icon + Text */
+.jem-links-order-image-icon-text .jem-event-link-image {
+    order: 1;
+}
+
+.jem-links-order-image-icon-text .jem-event-link-icon {
+    order: 2;
+}
+
+.jem-links-order-image-icon-text .jem-event-link-text {
+    order: 3;
+}
+
+/* B: Icon + Text + Image */
+.jem-links-order-icon-text-image .jem-event-link-icon {
+    order: 1;
+}
+
+.jem-links-order-icon-text-image .jem-event-link-text {
+    order: 2;
+}
+
+.jem-links-order-icon-text-image .jem-event-link-image {
+    order: 3;
+}
+
+/* C: Icon + Image + Text */
+.jem-links-order-icon-image-text .jem-event-link-icon {
+    order: 1;
+}
+
+.jem-links-order-icon-image-text .jem-event-link-image {
+    order: 2;
+}
+
+.jem-links-order-icon-image-text .jem-event-link-text {
+    order: 3;
+}
+
+
+/* Prevent template image rules from enlarging link images */
+.jem-event-links .jem-event-link .jem-event-link-image img {
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+/* Link with image: keep the image inside the frame and aligned */
+.jem-event-link-has-image {
+    align-items: center;
+}
+
+/* Add a little extra internal spacing when image exists */
+.jem-event-link-has-image.jem-event-link-has-frame {
+    padding: .55rem .75rem !important;
+}
+
+/* Responsive event links */
+@media (max-width: 575.98px) {
+    .jem-event-links-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-links-column {
+        flex-direction: column;
+    }
+
+    .jem-event-link {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-link-label {
+        white-space: normal;
+    }
+
+    .jem-event-link-image {
+        max-width: 100%;
+    }
+}
+
+
+/* Event links: keep label and description as one vertical text block */
+#jem .jem-event-links .jem-event-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    text-decoration: none !important;
+}
+
+/* This is the important part */
+#jem .jem-event-links .jem-event-link .jem-event-link-text {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    min-width: 0;
+    text-align: left !important;
+    line-height: 1.25;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    font-weight: 400 !important;
+}
+
+/* Label/title */
+#jem .jem-event-links .jem-event-link .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    text-align: left !important;
+}
+
+/* Description */
+#jem .jem-event-links .jem-event-link .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400 !important;
+    line-height: 1.25;
+    text-align: left !important;
+    opacity: 0.85;
+}
+
+#jem h2.description,
+#jem h2.location_desc,
+#jem div.files > h2.description {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    margin-top: 1.15rem !important;
+    margin-bottom: .65rem !important;
+}
+
+/* Attachment file icon column */
+#jem .jem-attachments-list {
+    display: grid;
+    gap: .7rem;
+}
+
+#jem .jem-attachments-layout-row {
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    align-items: start;
+    column-gap: 1.25rem;
+    row-gap: .8rem;
+}
+
+#jem .jem-attachment-row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: .35rem;
+    align-items: center;
+}
+
+#jem .jem-attachment-content {
+    min-width: 0;
+}
+
+#jem .jem-attachment-content a.file-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .25rem;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: top;
+}
+
+#jem .jem-attachment-content .file-name,
+#jem .jem-attachment-content .jem-file-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+#jem .jem-attachment-content a.file-name > .fa {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+#jem .jem-attachments-icons-none .jem-attachment-row {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#jem .jem-attachments-icons-none .jem-attachment-icon-cell {
+    display: none;
+}
+
+#jem .jem-attachment-file-icon-normal {
+    font-size: 1.25rem !important;
+}
+
+#jem .jem-attachment-file-icon-medium {
+    font-size: 1.6rem !important;
+}
+
+#jem .jem-attachment-file-icon-large {
+    font-size: 2rem !important;
+}
+
+/* Attachment edit form overrides for responsive edit layouts */
+#jem .jem-attachments-tab #el-attachments {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tbody {
+    display: block !important;
+    width: 100% !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(11rem, 14rem) !important;
+    gap: .75rem 1rem !important;
+    width: calc(100% - 3.5rem) !important;
+    max-width: calc(100% - 3.5rem) !important;
+    box-sizing: border-box !important;
+    margin: 0 3.5rem 1.25rem 0 !important;
+    padding: .85rem 1rem !important;
+    border: 1px solid #d7dce1 !important;
+    border-radius: .5rem !important;
+    background: #fff !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    border: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    vertical-align: top !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: .75rem 1rem !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td.jem-attachment-actions {
+    position: absolute !important;
+    top: .45rem !important;
+    right: -3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .35rem !important;
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    max-width: 2.5rem !important;
+    justify-content: center !important;
+}
+
+#jem .jem-attachments-tab #el-attachments input[type="text"],
+#jem .jem-attachments-tab #el-attachments input[type="file"],
+#jem .jem-attachments-tab #el-attachments select,
+#jem .jem-attachments-tab #el-attachments .form-control,
+#jem .jem-attachments-tab #el-attachments .form-select,
+#jem .jem-attachments-tab #el-attachments .inputbox {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options fieldset {
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .control-group {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .control-label {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding-right: .25rem !important;
+    white-space: nowrap !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .controls {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group,
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group-yesno {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 28rem !important;
+    margin-bottom: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group > .btn,
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group > label,
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-check + .btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    padding-right: .6rem !important;
+    padding-left: .6rem !important;
+    white-space: nowrap !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options legend {
+    display: none !important;
+}
+
+@container (max-width: 900px) {
+    #jem .jem-attachments-tab #el-attachments tr {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    }
+}
+
+@container (max-width: 620px) {
+    #jem .jem-attachments-tab .jem-attachments-global-options .control-group {
+        flex-wrap: wrap !important;
+    }
+
+    #jem .jem-attachments-tab .jem-attachments-global-options .control-label,
+    #jem .jem-attachments-tab .jem-attachments-global-options .controls {
+        flex: 1 1 100% !important;
+    }
+
+    #jem .jem-attachments-tab .jem-attachments-global-options .btn-group,
+    #jem .jem-attachments-tab .jem-attachments-global-options .btn-group-yesno {
+        max-width: 100% !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-right: 0 !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td.jem-attachment-actions {
+        position: static !important;
+        flex-direction: row !important;
+        width: auto !important;
+        max-width: none !important;
+        justify-content: flex-start !important;
+    }
+}
+
+#jem .jem-dl dt.jem-attachment-icon-cell {
+    width: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    padding: 0 .35rem 0 0 !important;
+    overflow: visible;
+    text-align: center;
+    text-overflow: clip;
+}
+
+#jem .jem-dl dt.jem-attachment-icon-cell .jem-attachment-file-icon {
+    line-height: 1;
+    margin: 0;
+}
+
+/* Keep the disabled upload template hidden in responsive edit layouts. */
+#jem .jem-attachments-tab #el-attachments tr.jem-attachment-template-row,
+#jem .jem-attachments-tab #el-attachments .jem-attachment-template-row {
+    display: none !important;
+}
+
+#jem .jem-attachments-tab fieldset,
+#jem .jem-attachments-tab > fieldset,
+#jem div.current .jem-attachments-tab fieldset,
+#jem div.current .jem-attachments-tab > fieldset {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Compact attachment editor: stack fields vertically beside the fixed Access column. */
+#jem .jem-attachments-tab #el-attachments tr > td:first-child {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    align-content: start !important;
+    gap: .55rem !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div {
+    display: grid !important;
+    grid-template-columns: 8.5rem minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: .35rem .75rem !important;
+    min-width: 0 !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .title {
+    min-height: 2.25rem !important;
+    margin: 0 !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > input,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > select,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-control,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-select,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .inputbox {
+    grid-column: 2 !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .clear-attach-field {
+    grid-column: 3 !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    align-self: center !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row {
+    grid-template-columns: 8.5rem minmax(10rem, 14rem) minmax(0, 1fr) auto !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .attachment-published {
+    grid-column: 2 !important;
+    width: 100% !important;
+    max-width: 14rem !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .clear-attach-field {
+    justify-self: end !important;
+    width: auto !important;
+    min-width: 6rem;
+    margin: 0 !important;
+    white-space: nowrap;
+}
+
+@container (max-width: 620px) {
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > input,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > select,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-control,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-select,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .inputbox,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .clear-attach-field {
+        grid-column: 1 !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .clear-attach-field {
+        grid-column: 1 !important;
+        justify-self: start !important;
+    }
 }

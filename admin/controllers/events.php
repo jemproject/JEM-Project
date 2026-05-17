@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Events Controller
@@ -30,8 +31,7 @@ class JemControllerEvents extends AdminController
      * @param  array  $config  An optional associative array of configuration settings.
      * @see    JController
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
 
         $this->registerTask('unfeatured', 'featured');
@@ -43,14 +43,15 @@ class JemControllerEvents extends AdminController
      * @return void
      * @since  1.6
      */
-    public function featured()
-    {
+    public function featured() {
         // Check for request forgeries
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Initialise variables.
         $user   = JemFactory::getUser();
         $ids    = Factory::getApplication()->input->get('cid', array(), 'array');
+        ArrayHelper::toInteger($ids);
+        $ids = array_filter($ids);
         $values = array('featured' => 1, 'unfeatured' => 0);
         $task   = $this->getTask();
         $value  = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
@@ -58,8 +59,7 @@ class JemControllerEvents extends AdminController
         $glob_auth = $user->can('publish', 'event'); // general permission for all events
 
         // Access checks.
-        foreach ($ids as $i => $id)
-        {
+        foreach ($ids as $i => $id) {
             if (!$glob_auth && !$user->can('publish', 'event', (int)$id)) {
                 // Prune items that you can't change.
                 unset($ids[$i]);
@@ -69,8 +69,7 @@ class JemControllerEvents extends AdminController
 
         if (empty($ids)) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
-        }
-        else {
+        } else {
             // Get the model.
             $model = $this->getModel();
 
@@ -87,8 +86,7 @@ class JemControllerEvents extends AdminController
      * Proxy for getModel.
      *
      */
-    public function getModel($name = 'Event', $prefix = 'JemModel', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'Event', $prefix = 'JemModel', $config = array('ignore_request' => true)) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
     }

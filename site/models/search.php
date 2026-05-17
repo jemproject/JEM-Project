@@ -188,6 +188,12 @@ class JemModelSearch extends BaseDatabaseModel
 
         $filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('a.dates', 'a.title', 'l.venue', 'l.city', 'l.state', 'a.created');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.dates';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
+        $default_order_Dir = strtoupper($default_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         if ($filter_order == 'a.dates') {
             $orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir

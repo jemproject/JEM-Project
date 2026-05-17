@@ -599,26 +599,28 @@ class JemHelper
         }
         $db->setQuery($query);
         $files_used = $db->loadObjectList();
-        $files = array();
+        $usedFiles = array();
         foreach ($files_used as $used) {
-            $files[$used->object.'/'.$used->file] = true;
+            $usedFiles[$used->object.'/'.$used->file] = true;
         }
 
         // Delete unused files and folders (ignore 'index.html')
         foreach ($folders as $folder) {
-            $files = Folder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
-            if (!empty($files)) {
-                foreach ($files as $file) {
-                    if (!array_key_exists($folder.'/'.$file, $files)) {
+            $folderFiles = Folder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
+            if (!empty($folderFiles)) {
+                foreach ($folderFiles as $file) {
+                    if (!array_key_exists($folder.'/'.$file, $usedFiles)) {
                         $res &= File::delete($basepath.'/'.$folder.'/'.$file);
                     }
                 }
             }
-            $files = Folder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
-            if (empty($files)) {
+            $remainingFiles = Folder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
+            if (empty($remainingFiles)) {
                 $res &= Folder::delete($basepath.'/'.$folder);
             }
         }
+
+        return $res;
     }
 
     /**

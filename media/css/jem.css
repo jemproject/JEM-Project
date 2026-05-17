@@ -77,7 +77,7 @@ div#jem .hr {
     background-color: #E19832;
 }
 
-input .required {
+input.required {
     background-color: #D5EEFF !important;
 }
 
@@ -213,7 +213,7 @@ div#jem div.clr {
     clear: both;
 }
 
-/* ie fix in coditional comments (html source) */
+/* IE fix in conditional comments (HTML source) */
 div#jem .floattext:after {
     content: ".";
     display: block;
@@ -253,6 +253,15 @@ div#jem h2 img {
     margin-left: 0.3em;
 }
 
+div#jem h2.description,
+div#jem h2.location_desc,
+div#jem div.files > h2.description {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    margin-top: 1.15rem !important;
+    margin-bottom: .65rem !important;
+}
+
 div#jem .jemcomponentheading {
     border-bottom: 0px !important;
 }
@@ -287,9 +296,6 @@ div#jem dd { /* definition description */
 
 div#jem .jcomments dd {
     grid-column: 2;
-}
-
-div#jem .jcomments dd {
     margin-left: 0px;
 }
 
@@ -510,13 +516,13 @@ div#jem table.eventtable td.jem_eventimage {
     vertical-align: top;
 }
 
-div#jem table.eventtable td.jem_eventimage
+div#jem table.eventtable td.jem_eventimage,
 div#jem table.eventtable td.header-td {
     text-align: left;
     vertical-align: top;
 }
 
-/* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
+/* Activate this rule to show date in event lists bold (when two-line mode is chosen) * /
 div#jem table.eventtable tr td span.jem_date-2 {
     font-weight: bold;
 }
@@ -1229,6 +1235,102 @@ div#jem .file td {
     padding: 3px;
 }
 
+div#jem .jem-attachment-description {
+    margin-top: .2rem;
+    color: #555;
+    font-size: .95em;
+    line-height: 1.35;
+}
+
+div#jem .jem-attachment-file-icon {
+    margin-right: .25rem;
+}
+
+div#jem .jem-attachment-icon-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    padding-right: .35rem !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div#jem .jem-attachment-icon-cell .jem-attachment-file-icon {
+    display: inline-block;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+div#jem .jem-attachments-list {
+    display: grid;
+    gap: .7rem;
+}
+
+div#jem .jem-attachments-layout-row {
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    align-items: start;
+    column-gap: 1.25rem;
+    row-gap: .8rem;
+}
+
+div#jem .jem-attachment-row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: .35rem;
+    align-items: center;
+}
+
+div#jem .jem-attachment-content {
+    min-width: 0;
+}
+
+div#jem .jem-attachment-content a.file-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .25rem;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: top;
+}
+
+div#jem .jem-attachment-content .file-name,
+div#jem .jem-attachment-content .jem-file-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+div#jem .jem-attachment-content a.file-name > .fa {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+div#jem .jem-attachments-icons-none .jem-attachment-row {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+div#jem .jem-attachments-icons-none .jem-attachment-icon-cell {
+    display: none;
+}
+
+div#jem .jem-attachment-file-icon-normal {
+    font-size: 1.25rem !important;
+}
+
+div#jem .jem-attachment-file-icon-medium {
+    font-size: 1.6rem !important;
+}
+
+div#jem .jem-attachment-file-icon-large {
+    font-size: 2rem !important;
+}
+
+div#jem dl.jem-dl > dt.jem-attachment-icon-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    margin-right: .35rem;
+}
+
 
 div#jem .inline-button-right {
     float: right;
@@ -1317,5 +1419,306 @@ div#jem .inline-button-right {
 }
 
 #table-series tr:nth-child(odd){
-    background-color: #fff;
+    background-color: #ffffff;
 }
+
+#jem .jem-event-intro {
+    width: 100%;
+}
+
+/* Event links container */
+.jem-event-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 1rem 0;
+}
+
+/* Row layout */
+.jem-event-links.jem-event-links-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Column layout */
+.jem-event-links.jem-event-links-column {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+/* Event link item */
+.jem-event-link {
+    display: inline-flex !important;
+    flex-direction: row;
+    align-items: center !important;
+    justify-content: center;
+    gap: .45rem;
+
+    width: auto;
+    max-width: 100%;
+    min-height: 42px;
+
+    line-height: 1 !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+
+    box-sizing: border-box;
+    vertical-align: middle;
+
+    transition:
+        background-color .15s ease,
+        color .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .12s ease;
+}
+
+/* Remove underline from event links without touching the frame border */
+.jem-event-links a,
+.jem-event-links a:link,
+.jem-event-links a:visited,
+.jem-event-links a:hover,
+.jem-event-links a:focus,
+.jem-event-links a:active,
+.jem-event-link,
+.jem-event-link:hover,
+.jem-event-link:focus,
+.jem-event-link:active {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove underline from inner elements without touching borders */
+.jem-event-link *,
+.jem-event-link:hover *,
+.jem-event-link:focus *,
+.jem-event-link:active * {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Framed link */
+.jem-event-link.jem-event-link-has-frame {
+    border: 1px solid currentColor !important;
+    border-radius: .45rem !important;
+    padding: .45rem .75rem !important;
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    cursor: pointer;
+}
+
+/* Framed link hover */
+.jem-event-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-has-frame:focus {
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12) !important;
+    transform: translateY(-1px);
+}
+
+.jem-event-link.jem-event-link-no-link,
+.jem-event-link.jem-event-link-no-link:hover,
+.jem-event-link.jem-event-link-no-link:focus,
+.jem-event-link.jem-event-link-no-link:active {
+    cursor: default !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:focus,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:active {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-icon,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-icon {
+    color: var(--jem-event-link-hover-color, currentColor) !important;
+}
+
+/* Event link icon */
+.jem-event-link-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+
+    line-height: 1 !important;
+}
+
+/* Event link label */
+.jem-event-link-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    min-height: 1.1rem;
+
+    line-height: 1.1 !important;
+    white-space: nowrap;
+}
+
+/* Event link image */
+.jem-event-link-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.jem-event-link-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+
+
+/* Prevent template image rules from enlarging link images */
+.jem-event-links .jem-event-link .jem-event-link-image img {
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+/* Link with image: keep the image inside the frame and aligned */
+.jem-event-link-has-image {
+    align-items: center;
+}
+
+/* Add a little extra internal spacing when image exists */
+.jem-event-link-has-image.jem-event-link-has-frame {
+    padding: .55rem .75rem !important;
+}
+
+/* Responsive event links */
+@media (max-width: 575.98px) {
+    .jem-event-links-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-links-column {
+        flex-direction: column;
+    }
+
+    .jem-event-link {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-link-label {
+        white-space: normal;
+    }
+
+    .jem-event-link-image {
+        max-width: 100%;
+    }
+}
+
+
+/* Event links: keep label and description as one vertical text block */
+#jem .jem-event-links .jem-event-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    text-decoration: none !important;
+}
+
+/* This is the important part */
+#jem .jem-event-links .jem-event-link .jem-event-link-text {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    min-width: 0;
+    text-align: left !important;
+    line-height: 1.25;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    font-weight: 400 !important;
+}
+
+/* Label/title */
+#jem .jem-event-links .jem-event-link .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    text-align: left !important;
+}
+
+/* Description */
+#jem .jem-event-links .jem-event-link .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400 !important;
+    line-height: 1.25;
+    text-align: left !important;
+    opacity: 0.85;
+}
+
+
+/* Image + Icon + Text */
+#jem .jem-links-order-image-icon-text .jem-event-link-image {
+    order: 1;
+}
+
+#jem .jem-links-order-image-icon-text .jem-event-link-icon {
+    order: 2;
+}
+
+#jem .jem-links-order-image-icon-text .jem-event-link-text {
+    order: 3;
+}
+
+/* Icon + Text + Image */
+#jem .jem-links-order-icon-text-image .jem-event-link-icon {
+    order: 1;
+}
+
+#jem .jem-links-order-icon-text-image .jem-event-link-text {
+    order: 2;
+}
+
+#jem .jem-links-order-icon-text-image .jem-event-link-image {
+    order: 3;
+}
+
+/* Icon + Image + Text */
+#jem .jem-links-order-icon-image-text .jem-event-link-icon {
+    order: 1;
+}
+
+#jem .jem-links-order-icon-image-text .jem-event-link-image {
+    order: 2;
+}
+
+#jem .jem-links-order-icon-image-text .jem-event-link-text {
+    order: 3;
+}
+

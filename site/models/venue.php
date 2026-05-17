@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/eventslist.php';
 
@@ -191,6 +192,7 @@ class JemModelVenue extends JemModelEventslist
         $query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
                        ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, access, '.
                        ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
+                       ' attribs, '.
                        ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
         $query->from($db->quoteName('#__jem_venues'));
 
@@ -236,6 +238,11 @@ class JemModelVenue extends JemModelEventslist
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
             return false;
         }
+
+        $registry = new Registry;
+        $registry->loadString($_venue->attribs ?? '{}');
+        $_venue->params = JemHelper::globalattribs();
+        $_venue->params->merge($registry);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 

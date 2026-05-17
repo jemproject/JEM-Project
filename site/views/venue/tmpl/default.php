@@ -36,8 +36,9 @@ use Joomla\CMS\Language\Text;
         <p> </p>
     <?php endif; ?>
 
-  <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
-    <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
+  <?php $showPageHeading = (bool) $this->params->get('show_page_heading', 1); ?>
+  <?php if (!$showPageHeading || $this->escape($this->params->get('page_heading')) != $this->escape($this->venue->title)) : ?>
+    <?php if ($showPageHeading) : ?>
       <h2 class="jem-venue-title">
         <?php echo $this->escape($this->venue->title);?>
       </h2>

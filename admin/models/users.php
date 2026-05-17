@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
@@ -106,7 +107,6 @@ class JemModelUsers extends BaseDatabaseModel
         // Lets load the content if it doesn't already exist
         if (empty($this->_pagination))
         {
-            jimport('joomla.html.pagination');
             $this->_pagination = new Pagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
         }
 
@@ -147,8 +147,13 @@ class JemModelUsers extends BaseDatabaseModel
         $filter_order     = $app->getUserStateFromRequest( 'com_jem.users.filter_order', 'filter_order', 'u.name', 'cmd' );
         $filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.users.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-        $filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
-        $filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+        $filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
+        $filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('u.name', 'u.username', 'u.email', 'u.id');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'u.name';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir;
 
@@ -174,7 +179,7 @@ class JemModelUsers extends BaseDatabaseModel
          * Search venues
          */
         if ($search) {
-            $where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
+            $where[] = ' LOWER(u.name) LIKE '.$this->_db->quote('%'.$search.'%');
         }
 
         $where = count($where) ? ' WHERE ' . implode(' AND ', $where) : '';

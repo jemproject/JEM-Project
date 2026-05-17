@@ -11,10 +11,18 @@
 // window.addEvent('domready', function() {
 jQuery(document).ready(function ($) {
 
-    $('.attach-field').on('change', addattach);
-    $('.clear-attach-field').on('click', clearattach);
+    $(document).on('change', '.attach-field', addattach);
+    $(document).on('click', '.clear-attach-field', clearattach);
+    $(document).on('click', '.attachment-add', addAttachmentRow);
+    $(document).on('click', '.attachment-remove-row', removeAttachmentRow);
+    $(document).on('click', '.attachment-move-up', function (event) {
+        moveAttachmentRow(event, -1);
+    });
+    $(document).on('click', '.attachment-move-down', function (event) {
+        moveAttachmentRow(event, 1);
+    });
 
-    $('.attach-remove').on('click', function (event) {
+    $(document).on('click', '.attach-remove', function (event) {
         var event = event || window.event;
         // $(event.target).style.cursor = 'wait'; /* indicate server request */
         // $(event.target).style.cursor = 'wait'; /* indicate server request */
@@ -61,8 +69,8 @@ jQuery(document).ready(function ($) {
             success: function (response) {
 
                 if (response.indexOf('1') > -1) {
-                    // $(clickednode).getParent().getParent().dispose();
-                    $(clickednode).parent().parent().remove();
+                    $(clickednode).closest('tr, .jem-attachment-card').remove();
+                    updateAttachmentOrdering();
                 } else {
                     // $(clickednode).style.cursor = 'not-allowed'; /* remove failed - how to show? */
                     $(clickednode).css({'cursor': 'not-allowed'})
@@ -73,47 +81,79 @@ jQuery(document).ready(function ($) {
 });
 
 function addattach() {
-    // var tbody = $('#el-attachments').getElement('tbody');
-    var tbody = $('#el-attachments tbody');
-    // var rows = tbody.getElements('tr');
-    var rows = tbody.find('tr');
-    var emptyRows = [];
+    updateAttachmentOrdering();
+}
 
-    /* do we have empty rows? */
-    for (var i = 0; i < rows.length; i++) {
-        // var af = rows[i].getElement('.attach-field');
-        var af = $(rows[i]).find('.attach-field')[0];
-        if (af && !(af.files.length > 0)) {
-            emptyRows.push(af);
-            break; /* one is enough, so we can break */
+function addAttachmentRow(event) {
+    var tbody = $('#el-attachments tbody');
+    appendAttachmentRow(tbody);
+    updateAttachmentOrdering();
+}
+
+function appendAttachmentRow(tbody) {
+    var template = tbody.find('tr.jem-attachment-template-row').last();
+
+    if (!template.length) {
+        return;
+    }
+
+    var row = template.clone();
+    row.removeClass('jem-attachment-template-row d-none hidden');
+    row.removeAttr('hidden');
+    row.attr('aria-hidden', 'false');
+    row.find(':input').prop('disabled', false);
+    row.find('.attach-field').val('');
+    row.find('.attach-name').val('');
+    row.find('.attach-desc').val('');
+    row.find('.attachment-order').val('');
+    row.find('.attachment-published').val('1');
+    row.insertBefore(template);
+}
+
+function removeAttachmentRow(event) {
+    var row = $(event.target).closest('tr, .jem-attachment-card');
+    row.remove();
+
+    updateAttachmentOrdering();
+}
+
+function moveAttachmentRow(event, direction) {
+    var row = $(event.target).closest('tr, .jem-attachment-card');
+
+    if (direction < 0) {
+        var previous = row.prevAll('tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)').first();
+        if (previous.length) {
+            row.insertBefore(previous);
+        }
+    } else {
+        var next = row.nextAll('tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)').first();
+        if (next.length) {
+            row.insertAfter(next);
         }
     }
 
+    updateAttachmentOrdering();
+}
 
-    /* if not create one */
-    if (emptyRows.length < 1) {
-        var row = $(rows[rows.length - 1]).clone();
-        // row.getElement('.attach-field').on('change', addattach).value = '';
-        // row.getElement('.clear-attach-field').on('click', clearattach).value = '';
-        row.find('.attach-field').on('change', addattach).val('');
-        row.find('.clear-attach-field').on('click', clearattach).val('');
-        // row.inject(tbody);
-        tbody.append(row);
-    }
+function updateAttachmentOrdering() {
+    $('#el-attachments tbody').find('tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)').each(function (index) {
+        $(this).find('.attachment-order').val(index);
+    });
 }
 
 function clearattach(event) {
     var event = event || window.event;
 
     // var grandpa = $(event.target).getParent().getParent();
-    var grandpa = $(this).parent().parent();
-    // var af = grandpa.getElement('.attach-field');
+    var grandpa = $(event.target).closest('tr, .jem-attachment-card');
+    clearAttachmentRow(grandpa);
+}
+
+function clearAttachmentRow(grandpa) {
     var af = grandpa.find('.attach-field')[0];
     if (af) af.value = '';
-    // var an = grandpa.getElement('.attach-name');
     var an = grandpa.find('.attach-name')[0];
     if (an) an.value = '';
-    // var ad = grandpa.getElement('.attach-desc');
     var ad = grandpa.find('.attach-desc')[0];
     if (ad) ad.value = '';
 }

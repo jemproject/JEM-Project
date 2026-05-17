@@ -386,6 +386,12 @@ class JemViewEvent extends JemView
         //Get itemRoot if item is a recurrence event
         $this->item_root = 0;
 
+        // Get event links from the item
+        $this->event_links = $this->item->event_links ?? array();
+
+        // Get itemRoot if item is a recurrence event
+        $this->item_root = 0;
+
         // Check if this is a recurring event
         if (!empty($this->item->recurrence_type) && !empty($this->item->recurrence_first_id)) {
 
@@ -398,6 +404,19 @@ class JemViewEvent extends JemView
                 // Ensure root item exists and has attachments to inherit
                 if ($this->item_root && !empty($this->item_root->attachments)) {
                     $this->item->attachments = $this->item_root->attachments;
+                }
+            }
+
+            // Inherit links if the current instance is empty
+            if (empty($this->event_links)) {
+
+                // Load root item if not already loaded by attachments logic
+                if (!$this->item_root) {
+                    $this->item_root = $model->getItem($this->item->recurrence_first_id);
+                }
+
+                if ($this->item_root && !empty($this->item_root->event_links)) {
+                    $this->event_links = $this->item_root->event_links;
                 }
             }
         }
@@ -524,7 +543,7 @@ class JemViewEvent extends JemView
             if (!empty($this->item->dates)) {
                 $startDate = JemOutput::formatdate($this->item->dates);
                 $title .= ', ' . $startDate;
-                // add end date to browser title, if availaböe
+                // add end date to browser title, if available
                 if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
                     $endDate = JemOutput::formatdate($this->item->enddates);
                     $title .= ' - ' . $endDate;

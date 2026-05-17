@@ -151,6 +151,11 @@ class JemModelAttendees extends ListModel
         // Add the list ordering clause.
         $orderCol  = $this->state->get('list.ordering');
         $orderDirn = $this->state->get('list.direction');
+        $allowedOrder = array('u.name', 'u.username', 'r.uid', 'r.waiting', 'r.uregdate', 'r.id');
+        if (!in_array($orderCol, $allowedOrder, true)) {
+            $orderCol = 'u.username';
+        }
+        $orderDirn = strtoupper($orderDirn) === 'DESC' ? 'DESC' : 'ASC';
 
         $query->order($db->escape($orderCol.' '.$orderDirn));
 
@@ -182,17 +187,26 @@ class JemModelAttendees extends ListModel
      * @access public
      * @return true on success
      */
-    public function remove($cid = array())
+    public function remove($cid = array(), $eventId = 0)
     {
         if (is_array($cid) && count($cid))
         {
             \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            $cid = array_filter($cid);
+
+            if (empty($cid)) {
+                return true;
+            }
+
             $user = implode(',', $cid);
             $db = Factory::getContainer()->get('DatabaseDriver');
 
             $query = $db->getQuery(true);
             $query->delete($db->quoteName('#__jem_register'));
             $query->where('id IN ('.$user.')');
+            if ($eventId > 0) {
+                $query->where('event = ' . (int)$eventId);
+            }
 
             $db->setQuery($query);
 

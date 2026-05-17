@@ -192,9 +192,9 @@ use Joomla\CMS\HTML\HTMLHelper;
             <?php endif; ?>
 
             <?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br>') : ?>
-            <h2 class="description">
+            <h3 class="description">
                 <?php echo Text::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
-            </h2>
+            </h3>
             <div class="description" itemprop="description">
                 <?php echo $row->locdescription; ?>
             </div>

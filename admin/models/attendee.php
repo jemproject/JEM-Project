@@ -172,10 +172,15 @@ class JemModelAttendee extends BaseDatabaseModel
      */
     public function store($data)
     {
-        $eventid = $data['event'];
-        $userid  = $data['uid'];
+        $eventid = (int)($data['event'] ?? 0);
+        $userid  = (int)($data['uid'] ?? 0);
         $id      = !empty($data['id']) ? (int)$data['id'] : 0;
         $status = $data['status'] ?? false;
+
+        if ($eventid < 1 || $userid < 1) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'), 'warning');
+            return false;
+        }
 
         // Split status and waiting
         if ($status !== false) {
@@ -259,7 +264,7 @@ class JemModelAttendee extends BaseDatabaseModel
                     $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
                     $query->from('#__jem_events as a');
                     $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
-                    $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+                    $query->where('(a.dates > ' . $db->quote($dateFrom) . ' OR a.dates = ' . $db->quote($dateFrom) . ' AND dates >= ' . $db->quote($timeFrom) . ')');
                     $db->setQuery($query);
                     $events = $db->loadObjectList();
                 }
@@ -348,7 +353,7 @@ class JemModelAttendee extends BaseDatabaseModel
      * @param  int   $value Status value: -1 - "not attending", 0 - "invited", 1 - "attending", 2 - "on waiting list"
      * @return boolean      True on success.
      */
-    public function setStatus($pks, $value = 1)
+    public function setStatus($pks, $value = 1, $eventId = 0)
     {
         // Sanitize the ids.
         $pks = (array)$pks;
@@ -374,7 +379,8 @@ class JemModelAttendee extends BaseDatabaseModel
             $db->setQuery(
                     'UPDATE #__jem_register' .
                     ' SET status = '.$status.', waiting = '.$waiting.
-                    ' WHERE id IN ('.implode(',', $pks).')'
+                    ' WHERE id IN ('.implode(',', $pks).')' .
+                    ($eventId > 0 ? ' AND event = ' . (int)$eventId : '')
                     );
             if ($db->execute() === false) {
                 throw new Exception($db->getErrorMsg());

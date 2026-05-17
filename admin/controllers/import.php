@@ -15,8 +15,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
 
 // helper callback function to convert all elements of an array
-function jem_convert_ansi2utf8(&$value, $key)
-{
+function jem_convert_ansi2utf8(&$value, $key) {
     $value = iconv('windows-1252', 'utf-8', $value);
 }
 
@@ -31,35 +30,42 @@ class JemControllerImport extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
-    public function csveventimport()
+    /**
+     * Check whether the current user can import JEM data.
+     *
+     * @return void
+     */
+    private function assertCanImport()
     {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    public function csveventimport() {
         $this->CsvImport('events', 'events');
     }
 
-    public function csvcategoriesimport()
-    {
+    public function csvcategoriesimport() {
         $this->CsvImport('categories', 'categories');
     }
 
-    public function csvvenuesimport()
-    {
+    public function csvvenuesimport() {
         $this->CsvImport('venues', 'venues');
     }
 
-    public function csvcateventsimport()
-    {
+    public function csvcateventsimport() {
         $this->CsvImport('catevents', 'cats_event_relations');
     }
 
-    private function CsvImport($type, $dbname)
-    {
+    private function CsvImport($type, $dbname) {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
 
         $replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
         $object = Table::getInstance('jem_'.$dbname, '');
@@ -76,9 +82,20 @@ class JemControllerImport extends BaseController
         $msg = '';
         $file = Factory::getApplication()->input->files->get('File'.$type, array(), 'array');
 
-        if (empty($file['name']))
-        {
+        if (empty($file['name'])) {
             $msg = Text::_('COM_JEM_IMPORT_SELECT_FILE');
+            $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
+            return;
+        }
+
+        if (!empty($file['error'])) {
+            $msg = Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR');
+            $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
+            return;
+        }
+
+        if (strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)) !== 'csv' || !is_uploaded_file($file['tmp_name'])) {
+            $msg = Text::_('COM_JEM_IMPORT_PARSE_ERROR');
             $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
             return;
         }
@@ -167,19 +184,19 @@ class JemControllerImport extends BaseController
                 if ($result['added']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added']) . "</p>\n";
                 }
-                if ($result['updated']){
+                if ($result['updated']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated']) . "</p>\n";
                 }
-                if ($result['duplicated']){
+                if ($result['duplicated']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_DUPLICATED', $result['duplicated']) . " [Id events: " . $result['duplicatedids'] . "]</p>\n";
                 }
-                if ($result['replaced']){
+                if ($result['replaced']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_REPLACED', $result['replaced']) . " [Id events: " . $result['replacedids'] . "]</p>\n";
                 }
-                if ($result['ignored']){
+                if ($result['ignored']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Id events: " . $result['ignoredids'] . "]</p>\n";
                 }
-                if ($result['error']){
+                if ($result['error']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']) . " [Id events: " . $result['errorids'] . "]</p>\n";
                 }
             }
@@ -196,9 +213,8 @@ class JemControllerImport extends BaseController
      * @param string $value
      * @return string
      */
-    protected function _formatcsvfield($type, $value)
-    {
-        switch($type) {
+    protected function _formatcsvfield($type, $value) {
+        switch ($type) {
             case 'times':
             case 'endtimes':
                 if ($value !== '' && strtoupper($value) !== 'NULL') {
@@ -228,10 +244,10 @@ class JemControllerImport extends BaseController
     /**
      * Imports data from an old Eventlist installation
      */
-    public function eventlistImport()
-    {
+    public function eventlistImport() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
 
         $model = $this->getModel('import');
         $size = 5000;
@@ -259,6 +275,11 @@ class JemControllerImport extends BaseController
 
         $link = 'index.php?option=com_jem&view=import';
         $msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
+
+        if ($table < 0 || $table >= count($tables->eltables)) {
+            $this->setRedirect($link, Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
+            return;
+        }
 
         if ($jinput->get('startToken', 0, 'INT') || ($step === 1)) {
             // Are the JEM tables empty at start? If no, stop import

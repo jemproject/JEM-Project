@@ -176,10 +176,10 @@ class JemCategories
         ## FILTER-ACCESS ##
         ###################
 
-        # Filter by access level - public or with access_level_locked_events active.
-        if($jemsettings->access_level_locked_venues != "[\"1\"]") {
-            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+        # Filter by access level - public or with access_level_locked_categories active.
+        if($jemsettings->access_level_locked_categories != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $query->where('c.access IN ('.implode(',', $newlevels).')');
         } else {
             $query->where('c.access IN ('.implode(',', $levels).')');

@@ -165,6 +165,10 @@ class jem_settings extends Table
     public $events_ical = 0;
     /** @var string */
     public $defaultCountry = null;
+    /** @var int */
+    public $attachments_layout = 'column';
+    /** @var string */
+    public $attachments_icon_size = 'normal';
 
 
     /**

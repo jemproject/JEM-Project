@@ -35,8 +35,7 @@ class JemControllerEvent extends JemControllerForm
      * @see    JController
      *
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
     }
 
@@ -54,8 +53,7 @@ class JemControllerEvent extends JemControllerForm
      *          on J! 3.x it's 'JModelLegacy $model'
      *          one of the bad things making extension developer's life hard.
      */
-    protected function _postSaveHook($model, $validData = array())
-    {
+    protected function _postSaveHook($model, $validData = array()) {
         $isNew = $model->getState('event.new');
         $id    = $model->getState('event.id');
 

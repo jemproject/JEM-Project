@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 
@@ -160,7 +162,7 @@ class jem_events extends Table
             return false;
         }
 
-        $alias = JFilterOutput::stringURLSafe($this->title);
+        $alias = OutputFilter::stringURLSafe($this->title);
 
         if (empty($this->alias) || $this->alias === $alias) {
             $this->alias = $alias;

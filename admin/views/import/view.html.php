@@ -12,15 +12,13 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * View class for the JEM import screen
  *
  * @package JEM
  *
  */
-
-//Load pane behavior
-jimport('joomla.html.pane');
 
 class JemViewImport extends JemAdminView
 {

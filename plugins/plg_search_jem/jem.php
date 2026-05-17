@@ -15,8 +15,6 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Registry\Registry;
 
-jimport('joomla.html.parameter');
-
 
 class plgSearchJEM extends CMSPlugin
 {

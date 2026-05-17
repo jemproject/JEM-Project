@@ -8,6 +8,7 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
@@ -33,7 +34,7 @@ if (!empty($event->conname)) {
     $result .= '<p>';
     $contact = $event->conname;
     $needle = 'index.php?option=com_contact&view=contact&id=' . $event->conid;
-    $menu = JFactory::getApplication()->getMenu();
+    $menu = Factory::getApplication()->getMenu();
     $item = $menu->getItems('link', $needle, true);
     $cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
     $result .= Text::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';

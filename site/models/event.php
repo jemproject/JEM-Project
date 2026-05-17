@@ -99,6 +99,7 @@ class JemModelEvent extends ItemModel
                 $query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
                     'l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
+                    'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
                     'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
@@ -213,6 +214,11 @@ class JemModelEvent extends ItemModel
                 $registry->loadString($data->metadata);
                 $data->metadata = $registry;
 
+                $registry = new Registry;
+                $registry->loadString($data->venue_attribs ?? '{}');
+                $data->venue_params = JemHelper::globalattribs();
+                $data->venue_params->merge($registry);
+
                 $data->categories = $this->getCategories($pk);
 
                 # Compute selected asset permissions.
@@ -252,11 +258,35 @@ class JemModelEvent extends ItemModel
         # Get event attachments
         $this->_item[$pk]->attachments = JemAttachment::getAttachments('event' . $this->_item[$pk]->did);
 
+        # Get event links
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('event_id') . ' = ' . (int) $this->_item[$pk]->did)
+            ->order($db->quoteName('ordering') . ' ASC');
+        $db->setQuery($query);
+        $links = $db->loadObjectList();
+
+        if ($links) {
+            foreach ($links as &$link) {
+                // Flatten JSON params into link properties
+                if (!empty($link->params)) {
+                    $linkParams = json_decode($link->params, true);
+                    if (is_array($linkParams)) {
+                        foreach ($linkParams as $key => $value) {
+                            $link->$key = $value;
+                        }
+                    }
+                }
+            }
+        }
+        $this->_item[$pk]->event_links = $links ?: array();
+
         # Get venue attachments
         $this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
         // Define Booked
-        $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('SUM(places)');
         $query->from('#__jem_register');
@@ -373,6 +403,7 @@ class JemModelEvent extends ItemModel
             $query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
                 'l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
                 'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
+                'l.attribs AS venue_attribs, ' .
                 'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
                 'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
             $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
@@ -438,6 +469,11 @@ class JemModelEvent extends ItemModel
             $registry = new Registry;
             $registry->loadString($data[0]->metadata);
             $data[0]->metadata = $registry;
+
+            $registry = new Registry;
+            $registry->loadString($data[0]->venue_attribs ?? '{}');
+            $data[0]->venue_params = JemHelper::globalattribs();
+            $data[0]->venue_params->merge($registry);
 
             $data[0]->categories = $this->getCategories($pk);
 
@@ -955,6 +991,11 @@ class JemModelEvent extends ItemModel
             $event = false;
         }
 
+        if (!$event) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId . ']');
+            return false;
+        }
+
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
         if($event->recurrence_type){
 
@@ -970,9 +1011,10 @@ class JemModelEvent extends ItemModel
         foreach ($events as $e) {
             $reg = $this->getUserRegistration($e->id);
             $errMsg = '';
+            $eventStatus = $status;
 
 
-            if ($status > 0) {
+            if ($eventStatus > 0) {
                 if ($addplaces > 0) {
                     if ($reg) {
                         if ($reg->status > 0) {
@@ -985,14 +1027,14 @@ class JemModelEvent extends ItemModel
                     }
                     //Detect if the reserve go to waiting list
                     $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                    if ($reg->status != 0 || $reg == null) {
+                    if (!$reg || $reg->status != 0) {
                         if ($e->maxplaces) {
                             $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
                             if ($e->waitinglist && $placesavailableevent <= 0) {
-                                $status = 2;
+                                $eventStatus = 2;
                             }
                         } else {
-                            $status = 1;
+                            $eventStatus = 1;
                         }
                     }
                 } else {
@@ -1002,7 +1044,7 @@ class JemModelEvent extends ItemModel
                 if ($reg) {
                     $places = $reg->places - $cancelplaces;
                     if ($reg->status >= 0 && $places > 0) {
-                        $status = $reg->status;
+                        $eventStatus = $reg->status;
                     }
                 } else {
                     $places = 0;
@@ -1025,11 +1067,12 @@ class JemModelEvent extends ItemModel
             // IP
             $uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-            $result = $this->_doRegister($e->id, $uid, $uip, $status, $places, $comment, $errMsg, $reg->id);
+            $regid = $reg ? (int) $reg->id : 0;
+            $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
             if (!$result) {
                 $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
             } else {
-                Factory::getApplication()->enqueueMessage(($status==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
+                Factory::getApplication()->enqueueMessage(($eventStatus==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
             }
         }
         return $result;

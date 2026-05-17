@@ -11,44 +11,130 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
+
+$attachmentTypes  = array_filter(array_map('trim', explode(',', (string) $this->jemsettings->attachments_types)));
+$attachmentAccept = implode(',', array_map(static function ($extension) {
+    return '.' . ltrim(strtolower($extension), '.');
+}, $attachmentTypes));
+$publishedOptions = array(
+    HTMLHelper::_('select.option', 1, Text::_('JPUBLISHED')),
+    HTMLHelper::_('select.option', 0, Text::_('JUNPUBLISHED')),
+);
+$attachments = is_array($this->item->attachments ?? null) ? $this->item->attachments : array();
+$attachmentsEnabled = (int) $this->jemsettings->attachmentenabled !== 0;
 ?>
-<fieldset class="jem_fldst_attachments">
-    <legend><?php echo Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'); ?></legend>
+
+<div class="jem-attachments-tab">
+<fieldset>
+    <legend><?php echo Text::_('COM_JEM_ATTACHMENTS_LEGEND'); ?></legend>
+
+    <?php if (isset($this->form)) : ?>
+        <div class="jem-attachments-global-options">
+            <?php echo $this->form->renderField('attachments_layout', 'attribs'); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!$attachmentsEnabled && empty($attachments)) : ?>
+        <p class="alert alert-info"><?php echo Text::_('COM_JEM_ATTACHMENTS_FRONTEND_UPLOAD_DISABLED'); ?></p>
+    <?php endif; ?>
+
+    <?php if ($attachmentsEnabled) : ?>
+        <div class="btn-toolbar jem-attachments-toolbar">
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm button btn-success attachment-add" aria-label="<?php echo Text::_('JTOOLBAR_NEW'); ?>">
+                    <span class="icon-plus icon-white" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <table class="adminform" id="el-attachments">
-        <thead>
-        <tr>
-            <th style="width:25%"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></th>
-            <th style="width:15%"><?php echo Text::_('COM_JEM_ATTACHMENT_NAME'); ?></th>
-            <th style="width:40%"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></th>
-            <th style="width:20px"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></th>
-            <th style="width:5px">&nbsp;</th>
-        </tr>
-        </thead>
         <tbody>
-        <?php foreach ($this->row->attachments as $file): ?>
-            <tr>
-                <td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input style="width:200px" type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
-                <td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" style="width:100px" /></td>
-                <td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" style="width:100px" /></td>
-                <td><?php echo HTMLHelper::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox','style'=>'width:100px;','size'=>'3'), 'value', 'text', $file->access); ?></td>
-                <td><?php echo JemOutput::removebutton(Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.Session::getFormToken(),'class' => 'attach-remove','title'=>Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?></td>
+        <?php foreach ($attachments as $i => $file): ?>
+            <tr class="jem-attachment-row jem-attachment-existing-row">
+                <td>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
+                        <input class="readonly form-control" type="text" readonly="readonly" value="<?php echo $this->escape($file->file); ?>" />
+                        <input type="hidden" name="attached-id[]" value="<?php echo (int) $file->id; ?>" />
+                        <input type="hidden" name="attached-order[]" class="attachment-order" value="<?php echo (int) $i; ?>" />
+                    </div>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
+                        <input type="text" name="attached-name[]" class="form-control" value="<?php echo $this->escape($file->name); ?>" />
+                    </div>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
+                        <input type="text" name="attached-desc[]" class="form-control" value="<?php echo $this->escape($file->description); ?>" />
+                    </div>
+                    <div>
+                        <div class="title"><?php echo Text::_('JSTATUS'); ?></div>
+                        <?php
+                        $publishedAttribs = array('class'=>'form-select inputbox attachment-published');
+                        if (!$attachmentsEnabled) {
+                            $publishedAttribs['disabled'] = 'disabled';
+                        }
+                        echo HTMLHelper::_('select.genericlist', $publishedOptions, 'attached-frontend[]', $publishedAttribs, 'value', 'text', (int) $file->frontend);
+                        ?>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
+                        <?php
+                        $attribs = array('class'=>'inputbox form-control', 'size'=>'7');
+                        if (!$attachmentsEnabled) {
+                            $attribs['disabled'] = 'disabled';
+                        }
+                        echo HTMLHelper::_('select.genericlist', $this->access, 'attached-access[]', $attribs, 'value', 'text', $file->access);
+                        ?>
+                    </div>
+                </td>
+                <td class="center jem-attachment-actions">
+                    <?php if ($attachmentsEnabled) : ?>
+                        <button type="button" class="btn btn-sm btn-primary attachment-move-up" aria-label="<?php echo Text::_('JLIB_HTML_MOVE_UP'); ?>"><span class="icon-chevron-up" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-sm btn-primary attachment-move-down" aria-label="<?php echo Text::_('JLIB_HTML_MOVE_DOWN'); ?>"><span class="icon-chevron-down" aria-hidden="true"></span></button>
+                        <button type="button" id="attach-remove<?php echo (int) $file->id; ?>:<?php echo Session::getFormToken(); ?>" class="btn btn-sm btn-danger attach-remove" title="<?php echo Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'); ?>" aria-label="<?php echo Text::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'); ?>"><span class="icon-minus icon-white" aria-hidden="true"></span></button>
+                    <?php endif; ?>
+                </td>
             </tr>
         <?php endforeach; ?>
-        <tr>
-            <td>
-                <input type="file" name="attach[]" class="attach-field" size="10" style="width:200px">
-            </td>
-            <td>
-                <input type="text" name="attach-name[]" value="" />
-            </td>
-            <td>
-                <input type="text" name="attach-desc[]" value="" />
-            </td>
-            <td>
-                <?php echo HTMLHelper::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox','style'=>'width:100px;','size'=>'3'), 'value', 'text', 0); ?>
-            </td>
-            <td>&nbsp;</td>
-        </tr>
+        <?php if ($attachmentsEnabled) : ?>
+            <tr class="jem-attachment-row jem-attachment-upload-row jem-attachment-template-row d-none" aria-hidden="true" hidden>
+                <td style="width: 100%">
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
+                        <input type="file" name="attach[]" class="attach-field" accept="<?php echo $this->escape($attachmentAccept); ?>" disabled="disabled" />
+                        <input type="hidden" name="attach-order[]" class="attachment-order" value="<?php echo count($attachments); ?>" disabled="disabled" />
+                    </div>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
+                        <input type="text" name="attach-name[]" class="attach-name form-control" value="" disabled="disabled" />
+                    </div>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
+                        <input type="text" name="attach-desc[]" class="attach-desc form-control" value="" disabled="disabled" />
+                    </div>
+                    <div class="jem-attachment-status-row">
+                        <div class="title"><?php echo Text::_('JSTATUS'); ?></div>
+                        <?php echo HTMLHelper::_('select.genericlist', $publishedOptions, 'attach-frontend[]', array('class'=>'form-select inputbox attachment-published', 'disabled'=>'disabled'), 'value', 'text', 1); ?>
+                        <button type="button" class="btn btn-primary clear-attach-field"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
+                        <?php echo HTMLHelper::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox form-control', 'size'=>'7', 'disabled'=>'disabled'), 'value', 'text', 1); ?>
+                    </div>
+                </td>
+                <td class="center jem-attachment-actions">
+                    <button type="button" class="btn btn-sm btn-primary attachment-move-up" aria-label="<?php echo Text::_('JLIB_HTML_MOVE_UP'); ?>"><span class="icon-chevron-up" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-sm btn-primary attachment-move-down" aria-label="<?php echo Text::_('JLIB_HTML_MOVE_DOWN'); ?>"><span class="icon-chevron-down" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-sm btn-danger attachment-remove-row" aria-label="<?php echo Text::_('JACTION_DELETE'); ?>"><span class="icon-minus icon-white" aria-hidden="true"></span></button>
+                </td>
+            </tr>
+        <?php endif; ?>
         </tbody>
     </table>
 </fieldset>
+</div>

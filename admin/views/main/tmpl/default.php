@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 $options = array(
     'onActive' => 'function(title, description){
@@ -90,7 +91,7 @@ $options = array(
                                             $link = 'index.php?option=com_jem&amp;view=housekeeping';
                                             $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
 
-                                            $link = 'index.php?option=com_jem&amp;task=sampledata.load';
+                                            $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
                                             $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
 
                                             $link = 'index.php?option=com_jem&amp;view=updatecheck';

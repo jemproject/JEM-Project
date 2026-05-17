@@ -7274,7 +7274,7 @@ class iCalUtilityFunctions {
         $offset = iCalUtilityFunctions::_tz2offset( $datetime['tz'] );
         try {
           $d    = new DateTime( $output, new DateTimeZone( 'UTC' ));
-          if( 0 != $offset ) // adjust för offset
+          if( 0 != $offset ) // adjust for offset
             $d->modify( "$offset seconds" );
           $output = $d->format( 'Ymd\THis' );
         }
@@ -8060,7 +8060,7 @@ class iCalUtilityFunctions {
             $bysetposarr1 = & $bysetposymd1;
             $bysetposarr2 = & $bysetposymd2;
           }
-// echo 'test före out startYMD (weekno)='.$wdateStart['year'].':'.$wdateStart['month'].':'.$wdateStart['day']." ($weekStart) "; // test ###
+// echo 'test before startYMD output (weekno)='.$wdateStart['year'].':'.$wdateStart['month'].':'.$wdateStart['day']." ($weekStart) "; // test ###
           foreach( $recur['BYSETPOS'] as $ix ) {
             if( 0 > $ix ) // both positive and negative BYSETPOS allowed
               $ix = ( count( $bysetposarr1 ) + $ix + 1);

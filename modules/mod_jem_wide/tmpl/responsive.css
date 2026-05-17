@@ -6,7 +6,7 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+/* Hotfix for SqueezeBox modal overlay destroying images on mobile phones */
 #sbox-overlay {
     width: 100% !important;
 }
@@ -98,7 +98,7 @@ body.body-overlayed {
     justify-content: flex-start;
 }
 
-#jemmodulewide .jem-limit-smallist {
+#jemmodulewide .jem-limit-smallest {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
