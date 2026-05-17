@@ -128,7 +128,7 @@ static public function lightbox() {
 
         # Middle block ----------------
 
-        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
+        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('calendar', 'categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
             $buttons[$idx][] = JemOutput::archivebutton($archive_link, $task , $id); // task: archive, id: for '&id='
         }
         if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
