@@ -1096,6 +1096,7 @@ class com_jemInstallerScript
             '#__jem_events',
             '#__jem_groupmembers',
             '#__jem_groups',
+            '#__jem_links',
             '#__jem_register',
             '#__jem_settings',
             '#__jem_config',
