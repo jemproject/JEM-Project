@@ -1744,7 +1744,10 @@ static public function lightbox() {
     {
         $output = array_map(
             function ($category) use ($doLink, $backend) {
-                if ($doLink) {
+                $hasAccess = !isset($category->user_has_access_category) || (bool) $category->user_has_access_category;
+                $lockIcon  = $hasAccess ? '' : ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+
+                if ($doLink && $hasAccess) {
                     if ($backend) {
                         $path = $category->path;
                         $path = str_replace('/', ' &#187; ', $path);
@@ -1759,7 +1762,7 @@ static public function lightbox() {
                 } else {
                     $value = $category->catname;
                 }
-                return $value;
+                return $value . $lockIcon;
             },
             $categories);
 

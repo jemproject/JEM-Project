@@ -59,14 +59,20 @@ class JemMapHelper
 
         if ($dateUsed || $catUsed) {
             $query->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.locid') . ' = ' . $db->quoteName('v.id'));
+            $query->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'));
+            $query->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'));
+            $query->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1');
             $query->where($db->quoteName('e.published') . ' = 1');
+            $query->where($db->quoteName('c.published') . ' = 1');
 
             if (!empty($levels)) {
-                $query->where($db->quoteName('e.access') . ' IN (' . implode(',', array_map('intval', $levels)) . ')');
+                $access = implode(',', array_map('intval', $levels));
+                $query->where($db->quoteName('e.access') . ' IN (' . $access . ')');
+                $query->where($db->quoteName('c.access') . ' IN (' . $access . ')');
+                $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $access . '))');
             }
 
             if ($catUsed) {
-                $query->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'));
                 $query->where($db->quoteName('cr.catid') . ' IN (' . implode(',', array_map('intval', $catids)) . ')');
             }
 
@@ -185,8 +191,12 @@ class JemMapHelper
             ])
             ->from($db->quoteName('#__jem_events', 'e'))
             ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('e.locid'))
+            ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'))
+            ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'))
+            ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1')
             ->where($db->quoteName('e.published') . ' = 1')
             ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('c.published') . ' = 1')
             ->where([
                 'v.latitude IS NOT NULL',
                 "v.latitude <> ''",
@@ -198,10 +208,11 @@ class JemMapHelper
             $access = implode(',', array_map('intval', $levels));
             $query->where($db->quoteName('e.access') . ' IN (' . $access . ')');
             $query->where($db->quoteName('v.access') . ' IN (' . $access . ')');
+            $query->where($db->quoteName('c.access') . ' IN (' . $access . ')');
+            $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $access . '))');
         }
 
         if (!empty($catids)) {
-            $query->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'));
             $query->where($db->quoteName('cr.catid') . ' IN (' . implode(',', array_map('intval', $catids)) . ')');
         }
 
@@ -267,9 +278,12 @@ class JemMapHelper
             ->from($db->quoteName('#__jem_categories', 'c'))
             ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.catid') . ' = ' . $db->quoteName('c.id'))
             ->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('cr.itemid'))
+            ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('e.locid'))
+            ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1')
             ->where($db->quoteName('c.published') . ' = 1')
             ->where($db->quoteName('c.catname') . ' <> ' . $db->quote('root'))
             ->where($db->quoteName('e.published') . ' = 1')
+            ->where($db->quoteName('v.published') . ' = 1')
             ->where('COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ') >= ' . $db->quote($today))
             ->order($db->quoteName('c.lft') . ' ASC');
 
@@ -277,6 +291,8 @@ class JemMapHelper
             $access = implode(',', array_map('intval', $levels));
             $query->where($db->quoteName('c.access') . ' IN (' . $access . ')');
             $query->where($db->quoteName('e.access') . ' IN (' . $access . ')');
+            $query->where($db->quoteName('v.access') . ' IN (' . $access . ')');
+            $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $access . '))');
         }
 
         $db->setQuery($query);

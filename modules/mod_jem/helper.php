@@ -117,6 +117,9 @@ abstract class ModJemHelper
 
         foreach ($events as $row)
         {
+            $hasEventAccess = !isset($row->user_has_access_event) || (bool) $row->user_has_access_event;
+            $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
+
             # cut titel
             $length = mb_strlen($row->title);
 
@@ -129,7 +132,7 @@ abstract class ModJemHelper
 
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->title       = htmlspecialchars($row->title ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->link        = Route::_(JemHelperRoute::getEventRoute($row->slug));
+            $lists[$i]->link        = $hasEventAccess ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : Route::_('index.php?option=com_users&view=login');
             $lists[$i]->dates       = $row->dates;
             $lists[$i]->times       = $row->times;
             $lists[$i]->enddates    = $row->enddates;
@@ -144,7 +147,7 @@ abstract class ModJemHelper
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->venueurl    = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
+            $lists[$i]->venueurl    = ($hasVenueAccess && !empty($row->venueslug)) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
             $lists[$i]->featured    = $row->featured;
 
             # provide custom fields

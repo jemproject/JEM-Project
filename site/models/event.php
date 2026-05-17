@@ -110,7 +110,7 @@ class JemModelEvent extends ItemModel
 
                 # Type
                 $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias');
-                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
+                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1');
 
                 # Get contact id
                 $subQuery = $db->getQuery(true);
@@ -176,6 +176,9 @@ class JemModelEvent extends ItemModel
                 } else {
                     $query->where('(l.id IS null OR l.access IN ('.implode(',', $levels).'))');
                 }
+
+                # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
+                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.access IN ('.implode(',', $levels).'))');
 
                 # Filter by published state ==> later.
                 //  It would result in too complicated query.

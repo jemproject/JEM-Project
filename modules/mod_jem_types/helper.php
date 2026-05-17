@@ -53,15 +53,22 @@ class ModJemTypesHelper
                 ' AND ' . $db->quoteName('c.access') . ' IN (' . $levelsList . ')' .
                 ' AND ' . $db->quoteName('c.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
             )
+            ->join('LEFT',
+                $db->quoteName('#__jem_venues', 'v') . ' ON ' .
+                $db->quoteName('v.id') . ' = ' . $db->quoteName('a.locid') .
+                ' AND ' . $db->quoteName('v.published') . ' = 1' .
+                ' AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')'
+            )
             ->where($db->quoteName('t.published') . ' = 1')
             ->where($db->quoteName('t.entity') . ' = 1')
             ->where($db->quoteName('t.access') . ' IN (' . $levelsList . ')')
+            ->where('(' . $db->quoteName('a.id') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR ' . $db->quoteName('v.id') . ' IS NOT NULL)')
             ->where($db->quoteName('t.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
             ->group('t.id, t.name, t.alias, t.icon, t.color')
             ->order($db->quoteName('t.ordering') . ' ASC, ' . $db->quoteName('t.name') . ' ASC');
 
         if ($params->get('hide_empty', 0)) {
-            $query->having('COUNT(DISTINCT a.id) > 0');
+            $query->having('COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) > 0');
         }
 
         $db->setQuery($query);
@@ -118,6 +125,7 @@ class ModJemTypesHelper
                 ->from($db->quoteName('#__jem_events', 'a'))
                 ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'rel') . ' ON ' . $db->quoteName('rel.itemid') . ' = ' . $db->quoteName('a.id'))
                 ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('rel.catid'))
+                ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('a.locid'))
                 ->where($db->quoteName('a.type_id') . ' = ' . (int) $type->id)
                 ->where($db->quoteName('a.published') . ' = 1')
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
@@ -128,6 +136,7 @@ class ModJemTypesHelper
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where($db->quoteName('c.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
+                ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
                 ->group('a.id, a.title, a.alias, a.dates, a.times, a.enddates, a.endtimes')
                 ->order($db->quoteName('a.dates') . ' ASC')
                 ->setLimit($n);
