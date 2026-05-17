@@ -1,11 +1,12 @@
 <?php
 /**
  * @package    JEM
- * @subpackage JEM Map Module
+ * @subpackage JEM Event Map View
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
  * @copyright https://leafletjs.com/
  * @copyright https://github.com/brunob/leaflet.fullscreen
  * @copyright https://github.com/Leaflet/Leaflet.heat
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -16,109 +17,125 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
-//require needed component classes
-require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
-
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
 
 $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
 $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
+
 $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
 $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
 $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 
-$jemsettings = JemHelper::config();
+JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
 
-$map_id       = 'leafletmap-' . uniqid();
-$isDateMode  = isset($filterDate) && $filterDate !== null;
-$currentDate = $isDateMode ? $filterDate : '';
-$youAreHere  = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
+$jemsettings  = JemHelper::config();
+$map_id        = 'leafletmap-' . uniqid();
+$isDateMode    = isset($filterDate) && $filterDate !== null;
+$currentDate   = $isDateMode ? $filterDate : '';
+$youAreHere    = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
 
-$startLat    = (float) $params->get('map_center_lat', '0');
-$startLng    = (float) $params->get('map_center_lng', '0');
-$startZoom   = (int)   $params->get('map_zoom', '10');
-$heatMapLayer = (int)  $params->get('heat_layer', '0');
-$fullScreenMap = (int)  $params->get('full_screen_map', '0');
+$startLat      = (float) $this->params->get('map_center_lat', '0');
+$startLng      = (float) $this->params->get('map_center_lng', '0');
+$startZoom     = (int)   $this->params->get('map_zoom', '10');
+$heatMapLayer  = (int)  $this->params->get('heat_layer', '0');
+$fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
 ?>
 
-<?php if (!empty($showDateFilter)): ?>
-    <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
-        <?php
-        $options = [
-            'all'      => 'MOD_JEM_MAP_ALL',
-            'today'    => 'MOD_JEM_MAP_TODAY',
-            'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
-            'week'     => 'MOD_JEM_MAP_WEEK',
-            'month'    => 'MOD_JEM_MAP_MONTH',
-            'year'     => 'MOD_JEM_MAP_YEAR',
-            'date'     => 'MOD_JEM_MAP_DATE'
-        ];
-        ?>
-        <div>
-            <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                <?php
-                foreach ($options as $value => $label) {
-                    $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
-                    $isDateField = $value === 'date';
-                    ?>
-                    <?php if ($isDateField) { ?>
-                        <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                            <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
-                                   id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                            <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
-                                <?= Text::_($label) ?>
-                            </label>
-                            <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
-                                   class="form-control form-control-sm" style="width: auto;">
 
-                        </div>
-                    <?php } else { ?>
-                        <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
-                               id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
-                        <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
+<div id="jem" class="jem_venuesmap<?php echo $this->pageclass_sfx; ?>">
+    <div class="buttons">
+        <?php
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        ?>
+    </div>
+
+    <?php
+    if ($this->params->get('show_page_heading', 1)) : ?>
+        <h1 class="componentheading">
+            <?php
+            echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
+    <?php
+    endif; ?>
+
+    <div class="clr"></div>
+
+    <?php if (!empty($showDateFilter)): ?>
+        <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+            <?php
+            $options = [
+                'all'      => 'MOD_JEM_MAP_ALL',
+                'today'    => 'MOD_JEM_MAP_TODAY',
+                'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
+                'week'     => 'MOD_JEM_MAP_WEEK',
+                'month'    => 'MOD_JEM_MAP_MONTH',
+                'year'     => 'MOD_JEM_MAP_YEAR',
+                'date'     => 'MOD_JEM_MAP_DATE'
+            ];
+
+            foreach ($options as $value => $label) {
+                $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
+                $isDateField = $value === 'date';
+                ?>
+                <?php if ($isDateField) { ?>
+                    <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                        <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
+                               id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
+                        <label class="btn btn-outline-primary btn-sm" style="padding-top: 6px;" for="filter-<?= $value ?>">
                             <?= Text::_($label) ?>
                         </label>
-                    <?php } ?>
+                        <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                               class="form-control form-control-sm" style="width: auto;">
+                    </div>
+                <?php } else { ?>
+                    <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
+                           id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
+                    <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
+                        <?= Text::_($label) ?>
+                    </label>
                 <?php } ?>
-                <div class="btn-group btn-group-sm" style="margin:0 0 0 10px;" role="group">
-                    <?php if($params->get('show_my_location','0')) {
-                        echo $categories["category"];
-                    } ?>
-                </div>
+            <?php } ?>
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                <?= Text::_('MOD_JEM_MAP_APPLY') ?>
+            </button>
+
+            <?php if($this->params->get('show_my_location','0')) { ?>
+                <!-- Location button -->
+                <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                    <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
+                </button>
+            <?php } ?>
+            <?php echo HTMLHelper::_('form.token'); ?>
+        </form>
+
+        <!-- Location help text -->
+        <?php if($this->params->get('show_my_location','0')) { ?>
+            <div class="alert alert-info small mt-2" id="location-help">
+                <i class="icon-info"></i>
+                <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm"><?= Text::_('MOD_JEM_MAP_APPLY') ?></button>
 
-
-            <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                <?php if($params->get('show_my_location','0')) { ?>
-                    <!-- Location button -->
-                    <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
-                        <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
-                    </button>
-                <?php } ?>
+            <!-- Permission instructions -->
+            <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
+                <i class="icon-warning"></i>
+                <?= Text::_('MOD_JEM_MAP_PERMISSION_INSTRUCTIONS') ?>
             </div>
-        </div>
-        <?php echo HTMLHelper::_('form.token'); ?>
-    </form>
+        <?php } ?>
+    <?php endif; ?>
 
-    <!-- Location help text -->
-    <?php if($params->get('show_my_location','0')) { ?>
-        <div class="alert alert-info small mt-2" id="location-help">
-            <i class="icon-info"></i>
-            <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
-        </div>
+    <div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
 
-        <!-- Permission instructions -->
-        <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
-            <i class="icon-warning"></i>
-            <?= Text::_('MOD_JEM_MAP_PERMISSION_INSTRUCTIONS') ?>
-        </div>
-    <?php } ?>
-<?php endif; ?>
 
-<div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
+    <!--footer-->  
+    <div class="copyright">
+        <?php
+        echo JemOutput::footer(); ?>
+    </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -130,14 +147,13 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             });
         });
     });
-
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         <?php if (!empty($showDateFilter)): ?>
-        (function(){
-            var form      = document.querySelector('.jem-date-filter');
+        (function () {
+            var form = document.querySelector('.jem-date-filter');
             if (!form) return;
-            var rAll      = form.querySelector('input[name="jemfilter"][value="all"]');
-            var rDate     = form.querySelector('input[name="jemfilter"][value="date"]');
+            var rAll = form.querySelector('input[name="jemfilter"][value="all"]');
+            var rDate = form.querySelector('input[name="jemfilter"][value="date"]');
             var dateInput = form.querySelector('input[name="jemdate"]');
             function sync() {
                 var useDate = rDate && rDate.checked;
@@ -146,8 +162,12 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                     dateInput.required = useDate;
                 }
             }
-            if (rAll)  rAll.addEventListener('change', sync);
-            if (rDate) rDate.addEventListener('change', sync);
+            if (rAll) {
+                rAll.addEventListener('change', sync);
+            }
+            if (rDate) {
+                rDate.addEventListener('change', sync);
+            }
             sync();
         })();
         <?php endif; ?>
@@ -216,10 +236,15 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
 
         // Improved function to center on user location
         function locateUser() {
-            if (!checkGeolocationSupport()) return;
+                if (!checkGeolocationSupport()) {
+                    return;
+                }
 
             // Show loading state
             var locateBtn = document.getElementById('locate-me-btn');
+            if (!locateBtn) {
+                return;
+            }
             var originalText = locateBtn.innerHTML;
             locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
             locateBtn.disabled = true;
@@ -258,7 +283,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                             iconSize: [32, 32],
                             iconAnchor: [16, 32],
                             popupAnchor: [0, -32],
-                            shadowUrl: "media/com_jem/images/marker-shadow.webp",
+                                shadowUrl: 'media/com_jem/images/marker-shadow.png',
                             shadowSize: [32, 32],
                             shadowAnchor: [16, 32]
                         })
@@ -316,12 +341,10 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
         $heatPoints = [];
         foreach ($venues as $v):
         $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
-        if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
-        $sef  = Route::_($route, false);
-        $base = Uri::base(true);
-        if (!empty($base) && strpos($sef, $base) === 0) {
-            $sef = substr($sef, strlen($base));
+        if (!empty($jemItemid)) {
+            $route .= '&Itemid=' . (int) $jemItemid;
         }
+        $sef  = Route::_($route, false);
         $link = Uri::root() . ltrim($sef, '/');
 
         $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
@@ -345,7 +368,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             })
         }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
-        <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
+        <?php $heatPoints[] = ['lat' => (float) $v->latitude, 'lng' => (float) $v->longitude]; ?>
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
@@ -360,6 +383,5 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             maxZoom: 17,
         }).addTo(map);
         <?php } ?>
-
     });
 </script>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_JEM_VENUESMAP_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_VENUESMAP_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="introtext" type="editor"
+                   filter="safehtml"
+                   hide="readmore,pagebreak,module,menu,fields,contact,article"
+                   default=""
+                   rows="8"
+                   cols="30"
+                   height="300px"
+                   label="COM_JEM_INTROTEXT_FIELD"
+                   description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showintrotext" type="radio"
+                   default="0"
+                   label="COM_JEM_DISPLAY_INTROTEXT"
+                   description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showstate" type="radio"
+                   default="0"
+                   label="COM_JEM_SHOWSTATE"
+                   description="COM_JEM_SHOWSTATE_DESC"
+                   class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="venue_markerfile" type="text"
+	           default="images/icons/marker-masker-32.svg"
+                   label="COM_JEM_VENUESMAP_VENUE_MARKER_LABEL"
+                   description="COM_JEM_VENUESMAP_VENUE_MARKER_DESC"/>
+
+            <!-- Nieuw: “Hier ben ik”-marker (SVG/PNG) -->
+            <field name="mylocation_markerfile" type="text"
+	           default="images/icons/marker-icon-red.svg"
+                   label="COM_JEM_VENUESMAP_MYLOC_MARKER_LABEL"
+                   description="COM_JEM_VENUESMAP_MYLOC_MARKER_DESC"/>
+
+            <!-- Optioneel datumfilter -->
+            <field name="show_date_filter" type="radio"
+	           default="1"
+                   label="COM_JEM_VENUESMAP_SHOW_DATE_FILTER_LABEL"
+                   description="COM_JEM_VENUESMAP_SHOW_DATE_FILTER_DESC">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <!-- Itemid voor consistente SEF-URL's -->
+            <field name="jem_itemid" type="menuitem"
+                   label="COM_JEM_VENUESMAP_JEM_ITEMID_LABEL"
+                   description="COM_JEM_VENUESMAP_JEM_ITEMID_DESC"/>
+
+            <field name="height" type="text"
+	           default="500px"
+                   label="COM_JEM_VENUESMAP_HEIGHT_LABEL"
+                   description="COM_JEM_VENUESMAP_HEIGHT_DESC"/>
+
+            <field name="zoom" type="number"
+	           default="8"
+                   label="COM_JEM_VENUESMAP_ZOOM_LABEL"
+                   description="COM_JEM_VENUESMAP_ZOOM_DESC"/>
+
+        </fieldset>
+    </fields>
+</metadata>
