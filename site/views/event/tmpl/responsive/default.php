@@ -144,6 +144,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <?php endif; ?>
                     </span>
                 <?php endif; ?>
+                <?php echo JemOutput::typeBadge($this->item); ?>
             </h1>
         <?php endif; ?>
 
@@ -177,6 +178,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     <?php endif; ?>
                                 </span>
                             <?php endif; ?>
+                            <?php echo JemOutput::typeBadge($this->item); ?>
                         </dd>
                     <?php else : ?>
                         <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />

@@ -1099,6 +1099,7 @@ class com_jemInstallerScript
             '#__jem_register',
             '#__jem_settings',
             '#__jem_config',
+            '#__jem_types',
             '#__jem_venues'
         );
         foreach ($tables as $table) {

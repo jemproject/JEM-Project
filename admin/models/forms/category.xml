@@ -79,6 +79,12 @@
             size="40"
             readonly="true"
         />
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="2"
+            class="form-select"
+        />
     </fieldset>
 
     <field name="access" type="accesslevel"

@@ -234,6 +234,7 @@ $params = $params->toArray();
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>

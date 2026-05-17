@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <fieldset name="details">
+    <fieldset name="details" addfieldpath="/components/com_jem/models/fields">
         <field name="id" type="text"
             default="0"
             readonly="true"
@@ -109,6 +109,12 @@
             label="COM_JEM_COUNTRY"
             description="COM_JEM_COUNTRY_DESC"
             class="select_country"
+        />
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="3"
+            class="form-select"
         />
     </fieldset>
 

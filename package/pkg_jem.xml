@@ -26,6 +26,7 @@
         <file type="module" id="mod_jem_teaser" client="site">mod_jem_teaser.zip</file>
         <file type="module" id="mod_jem_banner" client="site">mod_jem_banner.zip</file>
         <file type="module" id="mod_jem_jubilee" client="site">mod_jem_jubilee.zip</file>
+        <file type="module" id="mod_jem_types" client="site">mod_jem_types.zip</file>
 
         <file type="plugin" id="jem" group="content">plg_content_jem.zip</file>
         <file type="plugin" id="jemlistevents" group="content">plg_content_jemlistevents.zip</file>

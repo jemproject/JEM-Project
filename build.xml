@@ -75,6 +75,7 @@
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_types.zip" basedir="modules/mod_${cfg.name}_types" />
     </target>
 
     <target name="build_3rd" description="packages any 3rd party plugins">

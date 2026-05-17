@@ -56,6 +56,8 @@ class jem_categories extends Nested
     public $maintainers = null;
     /** @var int */
     public $ordering = null;
+    /** @var int */
+    public $type_id = null;
 
 
     /**

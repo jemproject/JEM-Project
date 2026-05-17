@@ -228,6 +228,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
                         <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h3>
 
                 <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
@@ -238,6 +239,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
                         <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
 
                 <?php elseif (($this->jemsettings->showtitle == 0) && ($this->jemsettings->showdetails == 1)) : // Display date as title of jem-event with link ?>
@@ -255,6 +257,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
                         <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
 
                 <?php else : // Display date as title of jem-event without link ?>
@@ -270,6 +273,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
                         <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
                 <?php endif; ?>
 

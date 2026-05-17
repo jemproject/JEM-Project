@@ -101,6 +101,8 @@ class jem_events extends Table
     /** @var string */
     public $ticket_availability = 'instock';
     /** @var int */
+    public $type_id = null;
+    /** @var int */
     public $registra = null;
     /** @var int */
     public $unregistra = null;

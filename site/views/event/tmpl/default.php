@@ -226,6 +226,7 @@ if ($jemsettings->oldevent > 0) {
                         <?php endif; ?>
                     </span>
                 <?php endif; ?>
+                <?php echo JemOutput::typeBadge($this->item); ?>
             </h1>
         <?php endif; ?>
 

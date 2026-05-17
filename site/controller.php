@@ -83,6 +83,7 @@ class JemController extends BaseController
                 case 'venueslist':
                 case 'mailto':
                 case 'weekcal':
+                case 'typeevents':
                     $model = $this->getModel($viewName);
                     break;
                 case 'eventsmap':

@@ -1479,10 +1479,9 @@ class JemHelper
     {
         $jemsettings = JemHelper::config();
         if ($jemsettings->useiconfont == 1) {
-            # This will automaticly search for 'font-awesome.css' if site is in debug mode.
-            # Note: css files must be stored on /media/com_jem/css/ to be conform to Joomla and also allow template overrides.
-            HTMLHelper::_('stylesheet', 'media/vendor/fontawesome-free/css/font-awesome.min.css', array(), true);
-            HTMLHelper::_('stylesheet', 'com_jem/css/jem-icon-font.css', array(), true);
+            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+            $wa->registerAndUseStyle('com_jem.fontawesome', 'com_jem/vendor/fontawesome-free/css/all.min.css');
+            $wa->registerAndUseStyle('com_jem.iconfont',    'com_jem/css/jem-icon-font.css');
         }
     }
 

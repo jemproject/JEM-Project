@@ -79,6 +79,8 @@ class jem_venues extends Table
     public $checked_out_time = null;
     /** @var int */
     public $ordering = null;
+    /** @var int */
+    public $type_id = null;
 
 
     public function __construct(& $db)

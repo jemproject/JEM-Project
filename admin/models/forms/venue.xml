@@ -122,6 +122,12 @@
             description="COM_JEM_GLOBAL_FIELD_COUNTRY_DESC"
             class="select_country m-0"
         />
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="3"
+            class="form-select"
+        />
     </fieldset>
 
     <fieldset name="custom">

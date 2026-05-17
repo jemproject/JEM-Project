@@ -87,7 +87,7 @@ class JemModelEvent extends ItemModel
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                         'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                        'a.hits, a.language, a.event_status, a.ticket_availability, a.recurrence_type, a.recurrence_first_id'));
+                        'a.hits, a.language, a.event_status, a.ticket_availability, a.recurrence_type, a.recurrence_first_id, a.type_id'));
                 $query->from('#__jem_events AS a');
 
                 # Author
@@ -107,6 +107,10 @@ class JemModelEvent extends ItemModel
                 # Join over the category tables
                 $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
                 $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+
+                # Type
+                $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias');
+                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
 
                 # Get contact id
                 $subQuery = $db->getQuery(true);
@@ -387,7 +391,7 @@ class JemModelEvent extends ItemModel
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -411,6 +415,10 @@ class JemModelEvent extends ItemModel
             # Join over the category tables
             $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
             $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+
+            # Type
+            $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias');
+            $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
 
             # Get contact id
             $subQuery = $db->getQuery(true);

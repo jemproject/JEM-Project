@@ -1282,6 +1282,30 @@ static public function lightbox() {
         return $output;
     }
 
+    static public function typeBadge($event)
+    {
+        if (empty($event->type_name)) {
+            return '';
+        }
+
+        $name  = htmlspecialchars($event->type_name, ENT_QUOTES, 'UTF-8');
+        $style = '';
+        if (!empty($event->type_color) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $event->type_color)) {
+            $style = ' style="background-color:' . htmlspecialchars($event->type_color, ENT_QUOTES, 'UTF-8') . ';"';
+        }
+
+        $inner = '';
+        if (!empty($event->type_icon)) {
+            $icon  = htmlspecialchars($event->type_icon, ENT_QUOTES, 'UTF-8');
+            $inner .= '<span class="' . $icon . '" aria-hidden="true"></span> ';
+        }
+        $inner .= $name;
+
+        $link = htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($event->type_id)), ENT_QUOTES, 'UTF-8');
+
+        return '<a href="' . $link . '" class="jem-type-badge"' . $style . '>' . $inner . '</a>';
+    }
+
     /**
      * Creates the flyer
      *

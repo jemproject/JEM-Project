@@ -91,6 +91,27 @@ div#jem h1.componentheading {
     background: #247a3d;
 }
 
+#jem .jem-type-badge,
+.jem-type-badge {
+    display: inline-block;
+    border-radius: 0.25rem;
+    background: #6c757d;
+    color: #fff;
+    font-size: 0.78em;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0.18rem 0.42rem;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#jem .jem-type-badge:hover,
+.jem-type-badge:hover {
+    opacity: 0.85;
+    color: #fff;
+}
+
 #jem .jem-event-image-ribbon-wrap {
     display: inline-block;
     max-width: 100%;
@@ -1564,8 +1585,15 @@ div#jem .inline-button-right {
 .jem-event-links.jem-event-links-row_uniform,
 #jem .jem-event-links.jem-event-links-row_uniform {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr)) !important;
-    align-items: center !important;
+    grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr)) !important;
+    align-items: stretch !important;
+}
+
+.jem-event-links.jem-event-links-row_uniform .jem-event-link,
+#jem .jem-event-links.jem-event-links-row_uniform .jem-event-link {
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box;
 }
 
 /* Column — natural width */

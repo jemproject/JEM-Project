@@ -165,6 +165,7 @@ use Joomla\CMS\Router\Route;
                         endif;
                         echo $eventaccess;
                         echo JemOutput::eventStateBadges($row, true, $showAvailabilityText);
+                        echo JemOutput::typeBadge($row);
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
@@ -185,6 +186,7 @@ use Joomla\CMS\Router\Route;
                         endif;
                         echo $eventaccess;
                         echo JemOutput::eventStateBadges($row, true, $showAvailabilityText);
+                        echo JemOutput::typeBadge($row);
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">

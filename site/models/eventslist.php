@@ -355,6 +355,7 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.featured');
         $id .= ':' . serialize($this->getState('filter.event_id'));
         $id .= ':' . $this->getState('filter.event_id.include');
+        $id .= ':' . $this->getState('filter.type_id');
         $id .= ':' . serialize($this->getState('filter.category_id'));
         $id .= ':' . $this->getState('filter.category_id.include');
         $id .= ':' . serialize($this->getState('filter.venue_id'));
@@ -404,7 +405,7 @@ class JemModelEventslist extends ListModel
             $this->getState('list.select',
                 'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
                 'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
-                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
+                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version,a.type_id'
             )
         );
         $query->from('#__jem_events as a');
@@ -426,6 +427,10 @@ class JemModelEventslist extends ListModel
         # Country
         $query->select(array('ct.name AS countryname'));
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
+
+        # Type
+        $query->select(array('jt.name AS type_name', 'jt.icon AS type_icon', 'jt.color AS type_color', 'jt.alias AS type_alias'));
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1');
 
         # the rest
         $case_when_e = ' CASE WHEN ';
@@ -994,6 +999,15 @@ class JemModelEventslist extends ListModel
             } else {
                 $query->where('c.id = ' . (int)reset($idsCat));
             }
+        }
+
+        ####################
+        ## FILTER-TYPE_ID ##
+        ####################
+
+        $filterTypeId = $this->getState('filter.type_id');
+        if (!empty($filterTypeId)) {
+            $query->where('a.type_id = ' . (int) $filterTypeId);
         }
 
         ###################

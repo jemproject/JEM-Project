@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <fieldset name="details">
+    <fieldset name="details" addfieldpath="/components/com_jem/models/fields">
         <field name="articletext" type="editor"
         class="inputbox"
         label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION"
@@ -153,6 +153,12 @@
             <option value="preorder">COM_JEM_EVENT_AVAILABILITY_PREORDER</option>
             <option value="soldout">COM_JEM_EVENT_AVAILABILITY_SOLDOUT</option>
         </field>
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="1"
+            class="form-select"
+        />
         <field name="publish_up" type="calendar"
             label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
             description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
