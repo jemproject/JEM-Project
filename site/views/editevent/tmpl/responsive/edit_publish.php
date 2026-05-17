@@ -18,6 +18,10 @@ use Joomla\CMS\HTML\HTMLHelper;
 
         <dt><?php echo $this->form->getLabel('published'); ?></dt>
         <dd><?php echo $this->form->getInput('published'); ?></dd>
+        <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
+        <dd><?php echo $this->form->getInput('event_status'); ?></dd>
+        <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
+        <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
         <dt><?php echo $this->form->getLabel('featured'); ?></dt>
         <dd><?php echo $this->form->getInput('featured'); ?></dd>
         <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>

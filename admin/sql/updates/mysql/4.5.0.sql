@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_links` (`id` INT(11) NOT NULL AUTO_INCREMENT,
 
 -- change values
 ALTER TABLE `#__jem_events` MODIFY `contactid` VARCHAR(100);
+ALTER TABLE `#__jem_events` ADD COLUMN `event_status` VARCHAR(30) NOT NULL DEFAULT 'scheduled' AFTER `language`;
+ALTER TABLE `#__jem_events` ADD COLUMN `ticket_availability` VARCHAR(30) NOT NULL DEFAULT 'instock' AFTER `event_status`;
 
 -- update values
 UPDATE `#__jem_events` SET `contactid` = '' WHERE `contactid` = 0;

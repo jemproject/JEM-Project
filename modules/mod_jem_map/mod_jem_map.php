@@ -24,7 +24,6 @@ $app = Factory::getApplication();
 # Parameters
 $venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
 $mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.webp');
-$catsId = $params->get('catsId', '');
 
 $venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
 $mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
@@ -32,6 +31,7 @@ $mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/')
 $height = $params->get('height', '500px');
 $zoom = (int) $params->get('zoom', 8);
 $showDateFilter = (int) $params->get('show_date_filter', 0);
+$showCategoryFilter = (int) $params->get('show_category_filter', 0);
 $dateFilterDefault = $params->get('date_filter_default', 'today');
 
 // Filter from request (only if backend option is enabled)
@@ -41,6 +41,7 @@ $selectedDate = '';
 
 $filterStartDate = null;
 $filterEndDate   = null;
+$selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
 
 if ($showDateFilter) {
     $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');
@@ -107,7 +108,17 @@ if ($showDateFilter) {
 }
 
 // Fetch venues (JOIN + date filter only if $filterDate is not null)
-$venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate);
+$categories = $showCategoryFilter ? ModJemMapHelper::getCategories($params) : array();
+
+if ($selectedCategoryId > 0) {
+    $validCategoryIds = array_map('intval', array_column($categories, 'id'));
+
+    if (!in_array($selectedCategoryId, $validCategoryIds, true)) {
+        $selectedCategoryId = 0;
+    }
+}
+
+$venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate, $selectedCategoryId);
 
 // Get auto center map
 $centerLat = $centerLng = 0;
@@ -128,8 +139,6 @@ if($params->get('map_auto_center',1)){
     }
 }
 
-// Get category list
-$categories = ModJemMapHelper::getCategories($params, $catsId);
 $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
 
 JemHelper::loadModuleStyleSheet($mod_name, $layout);

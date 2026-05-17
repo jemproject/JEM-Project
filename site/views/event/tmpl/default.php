@@ -27,6 +27,38 @@ $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $uri         = Uri::getInstance();
 
+$eventStatusOptions = array(
+    'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled', 'schema' => 'https://schema.org/EventScheduled'),
+    'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled', 'schema' => 'https://schema.org/EventCancelled'),
+    'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed', 'schema' => 'https://schema.org/EventPostponed'),
+    'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled', 'schema' => 'https://schema.org/EventRescheduled'),
+    'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online', 'schema' => 'https://schema.org/EventMovedOnline'),
+);
+$ticketAvailabilityOptions = array(
+    'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available', 'schema' => 'https://schema.org/InStock'),
+    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder', 'schema' => 'https://schema.org/PreOrder'),
+    'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout', 'schema' => 'https://schema.org/SoldOut'),
+    'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist', 'schema' => 'https://schema.org/SoldOut'),
+);
+$eventStatus = !empty($this->item->event_status) && isset($eventStatusOptions[$this->item->event_status]) ? $this->item->event_status : 'scheduled';
+$eventStatusOption = $eventStatusOptions[$eventStatus];
+$eventStatusText = Text::_($eventStatusOption['label']);
+$showEventStatusBadge = $eventStatus !== 'scheduled';
+$ticketAvailability = JemOutput::getEffectiveTicketAvailability($this->item);
+$ticketAvailabilityOption = $ticketAvailabilityOptions[$ticketAvailability];
+$ticketAvailabilityText = Text::_($ticketAvailabilityOption['label']);
+$showTicketAvailabilityText = (bool) $params->get('event_show_availability', 0);
+$showTicketAvailabilityBadge = $showTicketAvailabilityText && $ticketAvailability !== 'instock';
+$eventImageRibbonText = '';
+$eventImageRibbonClass = '';
+if ($showEventStatusBadge) {
+    $eventImageRibbonText = $eventStatusText;
+    $eventImageRibbonClass = $eventStatusOption['class'];
+} elseif ($showTicketAvailabilityBadge) {
+    $eventImageRibbonText = $ticketAvailabilityText;
+    $eventImageRibbonClass = $ticketAvailabilityOption['class'];
+}
+
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {
     $enddate = strtotime($this->item->enddates?:($this->item->dates?:date("Y-m-d")));
@@ -162,6 +194,11 @@ if ($jemsettings->oldevent > 0) {
 
         <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
         <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+        <meta itemprop="eventStatus" content="<?php echo $eventStatusOption['schema']; ?>" />
+        <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
+            <link itemprop="url" href="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+            <link itemprop="availability" href="<?php echo $ticketAvailabilityOption['schema']; ?>" />
+        </div>
 
         <div class="buttons">
             <?php
@@ -179,6 +216,16 @@ if ($jemsettings->oldevent > 0) {
         <?php else : ?>
             <h1 class="componentheading">
                 <?php echo $this->escape($this->item->title); ?>
+                <?php if ($showEventStatusBadge || $showTicketAvailabilityBadge) : ?>
+                    <span class="jem-event-badges">
+                        <?php if ($showEventStatusBadge) : ?>
+                            <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
+                        <?php endif; ?>
+                        <?php if ($showTicketAvailabilityBadge) : ?>
+                            <span class="jem-event-state-badge <?php echo $ticketAvailabilityOption['class']; ?>"><?php echo $this->escape($ticketAvailabilityText); ?></span>
+                        <?php endif; ?>
+                    </span>
+                <?php endif; ?>
             </h1>
         <?php endif; ?>
 
@@ -200,12 +247,31 @@ if ($jemsettings->oldevent > 0) {
         </span>
         </h2>
 
-        <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+        <?php if ($eventImageRibbonText) : ?>
+            <div class="jem-event-image-ribbon-wrap jem-event-image-ribbon-wrap--legacy">
+                <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
+            </div>
+        <?php else : ?>
+            <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+        <?php endif; ?>
 
         <dl class="event_info floattext">
             <?php if ($params->get('event_show_detailstitle',1)) : ?>
                 <dt class="title"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
-                <dd class="title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
+                <dd class="title" itemprop="name">
+                    <?php echo $this->escape($this->item->title); ?>
+                    <?php if ($showEventStatusBadge || $showTicketAvailabilityBadge) : ?>
+                        <span class="jem-event-badges">
+                            <?php if ($showEventStatusBadge) : ?>
+                                <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
+                            <?php endif; ?>
+                            <?php if ($showTicketAvailabilityBadge) : ?>
+                                <span class="jem-event-state-badge <?php echo $ticketAvailabilityOption['class']; ?>"><?php echo $this->escape($ticketAvailabilityText); ?></span>
+                            <?php endif; ?>
+                        </span>
+                    <?php endif; ?>
+                </dd>
             <?php else : ?>
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
             <?php endif; ?>
@@ -300,6 +366,20 @@ if ($jemsettings->oldevent > 0) {
             <?php if ($params->get('event_show_hits')) : ?>
                 <dt class="hits"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
                 <dd class="hits"><?php echo Text::sprintf('COM_JEM_EVENT_HITS', $this->item->hits); ?></dd>
+            <?php endif; ?>
+
+            <?php if ($showEventStatusBadge) : ?>
+                <dt class="event-status"><?php echo Text::_('COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL'); ?>:</dt>
+                <dd class="event-status">
+                    <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
+                </dd>
+            <?php endif; ?>
+
+            <?php if ($showTicketAvailabilityBadge) : ?>
+                <dt class="ticket-availability"><?php echo Text::_('COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL'); ?>:</dt>
+                <dd class="ticket-availability">
+                    <span class="jem-event-state-badge <?php echo $ticketAvailabilityOption['class']; ?>"><?php echo $this->escape($ticketAvailabilityText); ?></span>
+                </dd>
             <?php endif; ?>
 
 

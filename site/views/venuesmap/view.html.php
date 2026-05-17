@@ -186,7 +186,7 @@ class JemViewVenuesMap extends JemView
             $pagetitle = $params->get('page_title', Text::_('COM_JEM_VENUESMAP_PAGETITLE'));
             $pageheading = $params->get('page_heading', $pagetitle);
             $pageclass_sfx = $params->get('pageclass_sfx');
-            $print_link = Route::_('index.php?option=com_jem&view=venuesamp&print=1&tmpl=component');
+            $print_link = Route::_('index.php?option=com_jem&view=venuesmap&print=1&tmpl=component');
         }
 
         $params->set('page_heading', $pageheading);

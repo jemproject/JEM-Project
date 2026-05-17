@@ -63,6 +63,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
     `attribs` varchar(5120) NOT NULL DEFAULT '',
     `language` char(7) NOT NULL DEFAULT '',
+    `event_status` varchar(30) NOT NULL DEFAULT 'scheduled',
+    `ticket_availability` varchar(30) NOT NULL DEFAULT 'instock',
     PRIMARY KEY (`id`),
     KEY `idx_venue` (`locid`),
     KEY `idx_access` (`access`),

@@ -993,6 +993,15 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="event_show_availability" type="radio"
+                label="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="event_show_print_icon" type="radio"
                 label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
                 description="JGLOBAL_SHOW_PRINT_ICON_LABEL_DESC"

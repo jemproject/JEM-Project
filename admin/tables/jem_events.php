@@ -96,6 +96,10 @@ class jem_events extends Table
     public $author_ip = null;
     /** @var int */
     public $published = null;
+    /** @var string */
+    public $event_status = 'scheduled';
+    /** @var string */
+    public $ticket_availability = 'instock';
     /** @var int */
     public $registra = null;
     /** @var int */
@@ -145,6 +149,16 @@ class jem_events extends Table
             || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times))
         {
             $this->endtimes = NULL;
+        }
+
+        $validEventStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
+        if (empty($this->event_status) || !in_array($this->event_status, $validEventStatuses, true)) {
+            $this->event_status = 'scheduled';
+        }
+
+        $validTicketAvailabilities = array('instock', 'preorder', 'soldout');
+        if (empty($this->ticket_availability) || !in_array($this->ticket_availability, $validTicketAvailabilities, true)) {
+            $this->ticket_availability = 'instock';
         }
 
         $this->title = strip_tags(trim($this->title));

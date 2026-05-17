@@ -100,6 +100,7 @@ div[id^='scat'] {
 
 .eventcontentinner {
     cursor: pointer;
+    background-color: yellow;
     border-radius: .5rem;
     margin: 5px;
     overflow: hidden;
@@ -135,6 +136,7 @@ div#jem .eventcontenttop {
     height: 16px;
     min-height: 16px;
     text-align: left;    
+    padding-top: 2px;
     top: 60px;
 }
 
@@ -228,7 +230,6 @@ div#jem .rowcolor {
     justify-content: center;
     padding: 0px 10px;
 }
-
 
 .colorpicbar {
     display: block;

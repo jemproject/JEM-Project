@@ -58,15 +58,6 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="show_date_filter" type="radio"
-                   default="0"
-                   label="COM_JEM_EVENTS_MAP_DATE_FILTER"
-                   description="COM_JEM_EVENTS_MAP_DATE_FILTER_DESC"
-                   class="inputbox btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
             <field name="full_screen_map" type="radio"
                    default="0"
                    label="COM_JEM_EVENTS_MAP_FULL_SCREEN"

@@ -162,6 +162,32 @@
             <option value="2">JARCHIVED</option>
             <option value="-2">JTRASHED</option>
         </field>
+        <field name="event_status" type="list"
+            label="COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL"
+            description="COM_JEM_EVENT_FIELD_EVENT_STATUS_DESC"
+            class="inputbox"
+            size="1"
+            default="scheduled"
+            filter="cmd"
+        >
+            <option value="scheduled">COM_JEM_EVENT_STATUS_SCHEDULED</option>
+            <option value="cancelled">COM_JEM_EVENT_STATUS_CANCELLED</option>
+            <option value="postponed">COM_JEM_EVENT_STATUS_POSTPONED</option>
+            <option value="rescheduled">COM_JEM_EVENT_STATUS_RESCHEDULED</option>
+            <option value="moved_online">COM_JEM_EVENT_STATUS_MOVED_ONLINE</option>
+        </field>
+        <field name="ticket_availability" type="list"
+            label="COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL"
+            description="COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_DESC"
+            class="inputbox"
+            size="1"
+            default="instock"
+            filter="cmd"
+        >
+            <option value="instock">COM_JEM_EVENT_AVAILABILITY_INSTOCK</option>
+            <option value="preorder">COM_JEM_EVENT_AVAILABILITY_PREORDER</option>
+            <option value="soldout">COM_JEM_EVENT_AVAILABILITY_SOLDOUT</option>
+        </field>
         <field name="publish_up" type="calendar"
             label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
             description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
@@ -593,6 +619,15 @@
                 <option value="">JGLOBAL_USE_GLOBAL</option>
                 <option    value="0">JHIDE</option>
                 <option    value="1">JSHOW</option>
+            </field>
+            <field name="event_show_availability" type="list"
+                label="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_DESC"
+                default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
             </field>
             <field name="event_show_print_icon" type="list"
                 label="JGLOBAL_SHOW_PRINT_ICON_LABEL"

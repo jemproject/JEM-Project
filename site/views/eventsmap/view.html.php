@@ -322,7 +322,7 @@ class JemViewEventsMap extends JemView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/views/eventsmap');
+        ToolbarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/views/eventsmap');
     }
 
     /**

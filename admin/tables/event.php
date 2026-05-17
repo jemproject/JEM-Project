@@ -123,6 +123,16 @@ class JemTableEvent extends Table
             $this->endtimes = null;
         }
 
+        $validEventStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
+        if (empty($this->event_status) || !in_array($this->event_status, $validEventStatuses, true)) {
+            $this->event_status = 'scheduled';
+        }
+
+        $validTicketAvailabilities = array('instock', 'preorder', 'soldout');
+        if (empty($this->ticket_availability) || !in_array($this->ticket_availability, $validTicketAvailabilities, true)) {
+            $this->ticket_availability = 'instock';
+        }
+
 
         // Dates
         $db = Factory::getContainer()->get('DatabaseDriver');

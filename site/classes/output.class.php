@@ -128,7 +128,7 @@ static public function lightbox() {
 
         # Middle block ----------------
 
-        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('calendar', 'categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
+        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
             $buttons[$idx][] = JemOutput::archivebutton($archive_link, $task , $id); // task: archive, id: for '&id='
         }
         if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
@@ -1194,6 +1194,90 @@ static public function lightbox() {
         }
 
         $output = jemhtml::icon( $image, $icon, $alt, $attributes, !$app->isClient('site'));
+
+        return $output;
+    }
+
+    /**
+     * Creates public badges and microdata for event status and ticket availability.
+     *
+     * @param object $event            Event row
+     * @param bool   $includeMicrodata Whether to include Schema.org microdata
+     *
+     * @return string
+     */
+    static public function getEffectiveTicketAvailability($event)
+    {
+        $validAvailabilities = array('instock', 'preorder', 'soldout');
+        $ticketAvailability = !empty($event->ticket_availability) && in_array($event->ticket_availability, $validAvailabilities, true) ? $event->ticket_availability : 'instock';
+
+        if ($ticketAvailability !== 'instock') {
+            return $ticketAvailability;
+        }
+
+        $maxplaces = isset($event->maxplaces) ? (int) $event->maxplaces : 0;
+        if ($maxplaces <= 0) {
+            return 'instock';
+        }
+
+        $booked = isset($event->booked) ? (int) $event->booked : (isset($event->regCount) ? (int) $event->regCount : 0);
+        $reserved = isset($event->reservedplaces) ? (int) $event->reservedplaces : (isset($event->reserved) ? (int) $event->reserved : 0);
+
+        if (($booked + $reserved) >= $maxplaces) {
+            return !empty($event->waitinglist) ? 'waitinglist' : 'soldout';
+        }
+
+        return 'instock';
+    }
+
+    static public function eventStateBadges($event, $includeMicrodata = true, $showAvailabilityText = false)
+    {
+        if (empty($event)) {
+            return '';
+        }
+
+        $eventStatusOptions = array(
+            'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled', 'schema' => 'https://schema.org/EventScheduled'),
+            'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled', 'schema' => 'https://schema.org/EventCancelled'),
+            'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed', 'schema' => 'https://schema.org/EventPostponed'),
+            'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled', 'schema' => 'https://schema.org/EventRescheduled'),
+            'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online', 'schema' => 'https://schema.org/EventMovedOnline'),
+        );
+        $ticketAvailabilityOptions = array(
+            'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available', 'schema' => 'https://schema.org/InStock'),
+            'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder', 'schema' => 'https://schema.org/PreOrder'),
+            'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout', 'schema' => 'https://schema.org/SoldOut'),
+            'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist', 'schema' => 'https://schema.org/SoldOut'),
+        );
+
+        $eventStatus = !empty($event->event_status) && isset($eventStatusOptions[$event->event_status]) ? $event->event_status : 'scheduled';
+        $eventStatusOption = $eventStatusOptions[$eventStatus];
+        $ticketAvailability = self::getEffectiveTicketAvailability($event);
+        $ticketAvailabilityOption = $ticketAvailabilityOptions[$ticketAvailability];
+
+        $output = '';
+        if ($includeMicrodata) {
+            $output .= '<meta itemprop="eventStatus" content="' . htmlspecialchars($eventStatusOption['schema'], ENT_QUOTES, 'UTF-8') . '" />';
+            $eventUrl = !empty($event->slug) ? Route::_(JemHelperRoute::getEventRoute($event->slug)) : '';
+            $output .= '<span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>';
+            if ($eventUrl) {
+                $output .= '<link itemprop="url" href="' . htmlspecialchars($eventUrl, ENT_QUOTES, 'UTF-8') . '" />';
+            }
+            $output .= '<link itemprop="availability" href="' . htmlspecialchars($ticketAvailabilityOption['schema'], ENT_QUOTES, 'UTF-8') . '" />';
+            $output .= '</span>';
+        }
+
+        $badges = array();
+        if ($eventStatus !== 'scheduled') {
+            $badges[] = '<span class="jem-event-state-badge ' . $eventStatusOption['class'] . '">' . htmlspecialchars(Text::_($eventStatusOption['label']), ENT_QUOTES, 'UTF-8') . '</span>';
+        }
+        if ($showAvailabilityText && $ticketAvailability !== 'instock') {
+            $badges[] = '<span class="jem-event-state-badge ' . $ticketAvailabilityOption['class'] . '">' . htmlspecialchars(Text::_($ticketAvailabilityOption['label']), ENT_QUOTES, 'UTF-8') . '</span>';
+        }
+
+        if ($badges) {
+            $output .= '<span class="jem-event-badges jem-event-badges--list">' . implode('', $badges) . '</span>';
+        }
 
         return $output;
     }

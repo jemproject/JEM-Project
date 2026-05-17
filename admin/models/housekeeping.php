@@ -227,7 +227,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
     public function truncateAllData($deleteAttachmentFiles = false, $deleteImageFiles = false)
     {
         $result = true;
-        $tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'register', 'venues');
+        $tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'links', 'register', 'venues');
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         if ($deleteImageFiles && !$this->deleteAllImageFiles()) {
@@ -257,14 +257,14 @@ class JemModelHousekeeping extends BaseDatabaseModel
     }
 
     /**
-     * Deletes event, venue and category image files from the JEM image folders.
+     * Deletes event, venue, category and event link image files from the JEM image folders.
      *
      * @return boolean
      */
     private function deleteAllImageFiles()
     {
         $basePath = Path::clean(JPATH_SITE . '/images/jem');
-        $folders = array('events', 'venues', 'categories');
+        $folders = array('events', 'venues', 'categories', 'links');
         $result = true;
 
         foreach ($folders as $folder) {

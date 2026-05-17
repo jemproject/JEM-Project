@@ -110,10 +110,10 @@
                        default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC"/>
-                <field name="show_date_filter" type="radio"
-                       default="1"
-                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
-                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
+                <field name="show_category_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_CATEGORY_FILTER"
+                       description="MOD_JEM_MAP_SHOW_CATEGORY_FILTER_DESC"
                        class="inputbox btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>

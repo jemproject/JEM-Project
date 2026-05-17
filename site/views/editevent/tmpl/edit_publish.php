@@ -19,6 +19,8 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
     <ul class="adminformlist">
 
         <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+        <li><?php echo $this->form->getLabel('event_status'); ?><?php echo $this->form->getInput('event_status'); ?></li>
+        <li><?php echo $this->form->getLabel('ticket_availability'); ?><?php echo $this->form->getInput('ticket_availability'); ?></li>
         <li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
         <li><?php echo $this->form->getLabel('publish_up'); ?><?php echo $this->form->getInput('publish_up'); ?></li>
         <li><?php echo $this->form->getLabel('publish_down'); ?><?php echo $this->form->getInput('publish_down'); ?></li>

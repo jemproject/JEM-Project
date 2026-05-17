@@ -2,7 +2,7 @@
 /**
  * @package    JEM
  * @subpackage JEM Map Module
- * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright https://leafletjs.com/
  * @copyright https://github.com/brunob/leaflet.fullscreen
  * @copyright https://github.com/Leaflet/Leaflet.heat
@@ -41,10 +41,12 @@ $startLng    = (float) $params->get('map_center_lng', '0');
 $startZoom   = (int)   $params->get('map_zoom', '10');
 $heatMapLayer = (int)  $params->get('heat_layer', '0');
 $fullScreenMap = (int)  $params->get('full_screen_map', '0');
+$showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || (int) $params->get('show_my_location', '0');
 ?>
 
-<?php if (!empty($showDateFilter)): ?>
+<?php if ($showControls): ?>
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+        <?php if (!empty($showDateFilter)): ?>
         <?php
         $options = [
             'all'      => 'MOD_JEM_MAP_ALL',
@@ -55,51 +57,57 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             'year'     => 'MOD_JEM_MAP_YEAR',
             'date'     => 'MOD_JEM_MAP_DATE'
         ];
-        ?>
-        <div>
-            <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                <?php
-                foreach ($options as $value => $label) {
-                    $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
-                    $isDateField = $value === 'date';
-                    ?>
-                    <?php if ($isDateField) { ?>
-                        <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                            <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
-                                   id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                            <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
-                                <?= Text::_($label) ?>
-                            </label>
-                            <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
-                                   class="form-control form-control-sm" style="width: auto;">
-
-                        </div>
-                    <?php } else { ?>
-                        <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
-                               id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
-                        <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
-                            <?= Text::_($label) ?>
-                        </label>
-                    <?php } ?>
-                <?php } ?>
-                <div class="btn-group btn-group-sm" style="margin:0 0 0 10px;" role="group">
-                    <?php if($params->get('show_my_location','0')) {
-                        echo $categories["category"];
-                    } ?>
+        foreach ($options as $value => $label) {
+            $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
+            $isDateField = $value === 'date';
+            ?>
+            <?php if ($isDateField) { ?>
+                <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                    <input type="radio" class="btn-check" name="jem_map_filter_mode" value="<?= $value ?>"
+                           id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
+                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
+                        <?= Text::_($label) ?>
+                    </label>
+                    <input type="date" name="jem_map_filter_date" id="jem_map_filter_date_selected" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                           class="form-control form-control-sm" style="width: auto;">
                 </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm"><?= Text::_('MOD_JEM_MAP_APPLY') ?></button>
+            <?php } else { ?>
+                <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
+                       id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
+                <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
+                    <?= Text::_($label) ?>
+                </label>
+            <?php } ?>
+        <?php } ?>
 
+            <button type="submit" class="btn btn-primary btn-sm">
+                <?= Text::_('MOD_JEM_MAP_APPLY') ?>
+            </button>
+        <?php endif; ?>
 
-            <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                <?php if($params->get('show_my_location','0')) { ?>
-                    <!-- Location button -->
-                    <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
-                        <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
-                    </button>
-                <?php } ?>
-            </div>
-        </div>
+        <?php if (!empty($showCategoryFilter)): ?>
+            <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
+                <?= Text::_('MOD_JEM_MAP_CATEGORY_FILTER') ?>
+            </label>
+            <select name="jem_map_filter_catid"
+                    id="jem-map-filter-category-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === (int) $selectedCategoryId) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+
+        <?php if($params->get('show_my_location','0')) { ?>
+            <!-- Location button -->
+            <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
+            </button>
+        <?php } ?>
         <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
@@ -124,7 +132,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.auto-submit').forEach(function(radio) {
             radio.addEventListener('change', function() {
-                if (this.checked) {
+                if (this.matches('select') || this.checked) {
                     this.closest('form').submit();
                 }
             });

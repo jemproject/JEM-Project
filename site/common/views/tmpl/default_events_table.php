@@ -50,6 +50,7 @@ use Joomla\CMS\Router\Route;
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
 <?php $showiconsineventtitle = $this->params->get('showiconsineventtitle',1); ?>
 <?php $showiconsineventdata = $this->params->get('showiconsineventdata',1); ?>
+<?php $showAvailabilityText = (bool) $this->params->get('event_show_availability',0); ?>
 
 <div class="table-responsive">
     <table class="eventtable table table-striped" style="width:<?php echo !empty($this->jemsettings->tablewidth) ? $this->jemsettings->tablewidth : '100%'; ?>;">
@@ -163,6 +164,7 @@ use Joomla\CMS\Router\Route;
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
                         echo $eventaccess;
+                        echo JemOutput::eventStateBadges($row, true, $showAvailabilityText);
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
@@ -182,6 +184,7 @@ use Joomla\CMS\Router\Route;
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
                         echo $eventaccess;
+                        echo JemOutput::eventStateBadges($row, true, $showAvailabilityText);
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">

@@ -40,7 +40,7 @@ class JemViewCalendar extends JemView
         $print        = $jinput->getBool('print', false);
 
         $this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
-        $url          = Uri::root();
+        $url             = Uri::root();
 		$uri          = Uri::getInstance();
 
         // Load css
@@ -87,19 +87,15 @@ class JemViewCalendar extends JemView
 
         $rows = $this->get('Items');
 
-
         $itemid  = $jinput->getInt('Itemid', 0);
         $partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
         $url_base = 'index.php?option=com_jem&view=calendar';
         $ical_link = $partDate;
-
-
         // Set Page title
         $pagetitle = $params->def('page_title', $menuitem->title);
         $params->def('page_heading', $pagetitle);
         $pageclass_sfx = $params->get('pageclass_sfx');
-
         // pathway
         $pathway = $app->getPathWay();
         if ($menuitem) {
@@ -108,7 +104,6 @@ class JemViewCalendar extends JemView
             $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
             //$pathway->setItemName(1, $menuitem->title);
         }
-
         if ($task == 'archive') {
             $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=calendar&id='.$id.'&task=archive'));
             $print_link = Route::_($url_base . $partItemid. $partDate . '&task=archive&print=1&tmpl=component');
@@ -138,8 +133,15 @@ class JemViewCalendar extends JemView
         $permissions->canAddEvent = $user->can('add', 'event', false, false, $catIds);
         $permissions->canAddVenue = $user->can('add', 'venue', false, false, $catIds);
 
+        $itemid  = $jinput->getInt('Itemid', 0);
 
+        $partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
+        $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
+        $url_base = 'index.php?option=com_jem&view=calendar';
 
+        $print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
+        $ical_link = $partDate;
+        //http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
 
         // init calendar
         $cal = new JemCalendar($year, $month, 0);

@@ -150,6 +150,7 @@ function jem_common_show_filter(&$obj) {
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
 <?php $showiconsineventtitle = $this->params->get('showiconsineventtitle',1); ?>
 <?php $showiconsineventdata = $this->params->get('showiconsineventdata',1); ?>
+<?php $showAvailabilityText = (bool) $this->params->get('event_show_availability',0); ?>
 
 <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
@@ -264,6 +265,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
+                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                         </h4>
                     </div>
                 <?php else : ?>
@@ -280,6 +282,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
+                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
@@ -297,6 +300,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
+                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                         </h4>
                     </div>
                 <?php else : ?>

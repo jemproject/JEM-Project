@@ -104,13 +104,6 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
 <?php endif; ?>
 
 <div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
-<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-<input type="hidden" name="boxchecked" value="0" />
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="option" value="com_jem" />
-<?php echo HTMLHelper::_('form.token'); ?>
-</form>
 
 <?php if ($this->params->get('showfootertext')) : ?>
     <div class="description no_space floattext">
@@ -261,7 +254,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
                             iconSize: [32, 32],
                             iconAnchor: [16, 32],
                             popupAnchor: [0, -32],
-                            shadowUrl: "media/com_jem/images/marker-shadow.png",
+                            shadowUrl: "media/com_jem/images/marker-shadow.webp",
                             shadowSize: [32, 32],
                             shadowAnchor: [16, 32]
                         })

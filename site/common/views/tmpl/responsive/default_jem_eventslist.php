@@ -120,6 +120,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
 <?php $showiconsineventtitle = $this->params->get('showiconsineventtitle',1); ?>
 <?php $showiconsineventdata = $this->params->get('showiconsineventdata',1); ?>
+<?php $showAvailabilityText = (bool) $this->params->get('event_show_availability',0); ?>
 
 <div class="jem-misc jem-row">
     <div class="jem-sort jem-row jem-justify-start jem-nowrap">
@@ -226,6 +227,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                     </h3>
 
                 <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
@@ -235,6 +237,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                     </h4>
 
                 <?php elseif (($this->jemsettings->showtitle == 0) && ($this->jemsettings->showdetails == 1)) : // Display date as title of jem-event with link ?>
@@ -251,6 +254,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                     </h4>
 
                 <?php else : // Display date as title of jem-event without link ?>
@@ -265,6 +269,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                     </h4>
                 <?php endif; ?>
 

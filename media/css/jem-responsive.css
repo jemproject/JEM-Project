@@ -33,6 +33,81 @@ body.com_jem.body-overlayed {
     font-size: 1.332rem;
 }
 
+#jem .jem-event-badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-left: 0.45rem;
+    vertical-align: middle;
+}
+
+#jem .jem-event-state-badge {
+    display: inline-block;
+    border-radius: 0.25rem;
+    color: #fff;
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 0.18rem 0.42rem;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+#jem .jem-event-state-badge--cancelled,
+#jem .jem-event-state-badge--soldout {
+    background: #b3261e;
+}
+
+#jem .jem-event-state-badge--postponed,
+#jem .jem-event-state-badge--preorder,
+#jem .jem-event-state-badge--waitinglist {
+    background: #b55b00;
+}
+
+#jem .jem-event-state-badge--rescheduled {
+    background: #2456a5;
+}
+
+#jem .jem-event-state-badge--moved-online {
+    background: #247a3d;
+}
+
+#jem .jem-event-image-ribbon-wrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+    vertical-align: top;
+}
+
+#jem .jem-event-image-ribbon-wrap .flyerimage {
+    float: none !important;
+    display: block;
+}
+
+#jem .jem-event-image-ribbon-wrap img {
+    display: block;
+    max-width: 100%;
+}
+
+#jem .jem-event-image-ribbon {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    left: -2.6rem;
+    line-height: 1.2;
+    min-width: 9.6rem;
+    opacity: 0.88;
+    padding: 0.32rem 1rem;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    top: 1.2rem;
+    transform: rotate(-45deg);
+    z-index: 2;
+}
+
 #jem .buttons {
     float: right;
 }
