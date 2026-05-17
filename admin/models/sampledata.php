@@ -368,6 +368,13 @@ class JemModelSampledata extends BaseDatabaseModel
         $db->setQuery($query);
         $db->execute();
 
+        $query = $db->getQuery(true);
+        $query->update('#__jem_types');
+        $query->set('created_by = '.$db->quote((int)$result));
+        $query->where(array('created_by = 62'));
+        $db->setQuery($query);
+        $db->execute();
+
         return true;
     }
 }
