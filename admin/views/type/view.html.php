@@ -125,7 +125,7 @@ class JemViewType extends JemAdminView
         $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
         $canDo      = JemHelperBackend::getActions();
 
-        ToolbarHelper::title($isNew ? Text::_('COM_JEM_TYPE_ADD') : Text::_('COM_JEM_TYPE_EDIT'), 'tag');
+        ToolbarHelper::title($isNew ? Text::_('COM_JEM_ADD_TYPE') : Text::_('COM_JEM_TYPE_EDIT'), 'tag');
 
         if (!$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'))) {
             ToolbarHelper::apply('type.apply');

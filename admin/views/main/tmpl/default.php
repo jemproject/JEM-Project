@@ -84,7 +84,7 @@ $options = array(
                                         $this->quickiconButton($link, 'icon-48-types.svg', Text::_('COM_JEM_TYPES'));
 
                                         $link = 'index.php?option=com_jem&amp;task=type.add';
-                                        $this->quickiconButton($link, 'icon-48-typesedit.svg', Text::_('COM_JEM_TYPE_ADD'));
+                                        $this->quickiconButton($link, 'icon-48-typesedit.svg', Text::_('COM_JEM_ADD_TYPE'));
 
                                         $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
                                         $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));

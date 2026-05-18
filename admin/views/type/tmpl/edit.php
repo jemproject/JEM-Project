@@ -21,6 +21,9 @@ HTMLHelper::_('behavior.formvalidator');
         <div class="col-md-9">
             <div class="card mb-3">
                 <div class="card-body">
+                    <h2 class="h3 mb-3">
+                        <?php echo empty($this->item->id) ? Text::_('COM_JEM_ADD_TYPE') : Text::_('COM_JEM_TYPE_EDIT'); ?>
+                    </h2>
 
                     <div class="mb-3">
                         <?php echo $this->form->getLabel('name'); ?>
