@@ -16,6 +16,49 @@ table.month, table.week {
     width: 100%;
 }
 
+#jem .jem-calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0.75rem 0 1rem;
+}
+
+#jem .jem-calendar-nav-title,
+#jem .monthname {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+#jem .jem-calendar-nav-link,
+#jem .monthnavigation a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    min-height: 2rem;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+#jem .monthnavigation {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.45rem 0.35rem;
+}
+
+#jem .monthname {
+    padding: 0.45rem 0.35rem;
+}
+
+#jem .jem-calendar-nav-icon img,
+#jem img.jem-calendar-nav-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
 @media screen and (min-width: 801px)  {
 table.month, table.week {
     border: 1px solid #000;

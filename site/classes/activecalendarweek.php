@@ -28,6 +28,7 @@ class ActiveCalendarWeek extends JEMCalendar {
     */
     var $cssWeeksTable="week";
     var $cssMonthWeek="monthweek";
+    var $weekNavigation=false;
     /*
     ----------------------
     @START PUBLIC METHODS
@@ -51,11 +52,22 @@ class ActiveCalendarWeek extends JEMCalendar {
     */
     function showWeeks($numberOfWeeks=1) {
         $out=$this->mkWeeksHead();
+        $out.=$this->mkWeekNavigation();
         $out.=$this->mkWeekDayz();
         $out.=$this->mkWeeksBody($numberOfWeeks);
         $out.=$this->mkWeeksFoot();
 
         return $out;
+    }
+
+    function setWeekNavigation($title, $previousLink, $nextLink, $previousIcon, $nextIcon) {
+        $this->weekNavigation = array(
+            'title' => $title,
+            'previous' => $previousLink,
+            'next' => $nextLink,
+            'previousIcon' => $previousIcon,
+            'nextIcon' => $nextIcon,
+        );
     }
     /*
     ********************************************************************************
@@ -113,6 +125,29 @@ class ActiveCalendarWeek extends JEMCalendar {
     */
     function mkWeeksHead() {
         return "<table class=\"".$this->cssWeeksTable."\">\n";
+    }
+
+    function mkWeekNavigation() {
+        if (!$this->weekNavigation) {
+            return '';
+        }
+
+        $previousColspan = $this->weekNum ? 3 : 2;
+        $nextColspan = 2;
+        $titleColspan = 3;
+
+        $out = '<tr>';
+        $out .= '<td class="monthnavigation" colspan="' . $previousColspan . '">';
+        $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['previous'] . '" rel="prev">';
+        $out .= $this->weekNavigation['previousIcon'] . '</a></td>';
+        $out .= '<td class="monthname" colspan="' . $titleColspan . '">';
+        $out .= $this->weekNavigation['title'] . '</td>';
+        $out .= '<td class="monthnavigation" colspan="' . $nextColspan . '">';
+        $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['next'] . '" rel="next">';
+        $out .= $this->weekNavigation['nextIcon'] . '</a></td>';
+        $out .= "</tr>\n";
+
+        return $out;
     }
     /*
     ********************************************************************************
