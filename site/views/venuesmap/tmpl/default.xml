@@ -64,13 +64,12 @@
                    min="0"
                    max="19"/>
             <field name="map_type" type="list"
-                   default="physical"
+                   default="political"
                    label="COM_JEM_VENUESMAP_TYPE_LABEL"
                    description="COM_JEM_VENUESMAP_TYPE_DESC"
-            >
+           >
                 <option value="political">COM_JEM_MAP_TYPE_POLITICAL</option>
                 <option value="physical">COM_JEM_MAP_TYPE_PHYSICAL</option>
-                <option value="humanitarian">COM_JEM_MAP_TYPE_HUMANITARIAN</option>
             </field>
 
             <field name="show_my_location" type="radio"

@@ -46,7 +46,7 @@ $startLng = (float) $this->params->get('map_center_lng', '0');
 $startZoom = (int) $this->params->get('map_zoom', '10');
 $fullScreenMap = (int) $this->params->get('full_screen_map', '0');
 $showMyLocation = (int) $this->params->get('show_my_location', '0');
-$mapType = (string) $this->params->get('map_type', 'physical');
+$mapType = (string) $this->params->get('map_type', 'political');
 $tileLayers = [
     'political' => [
         'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -59,7 +59,7 @@ $tileLayers = [
         'maxZoom' => 17,
     ],
 ];
-$tileLayer = $tileLayers[$mapType] ?? $tileLayers['physical'];
+$tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 
 ?>
 
