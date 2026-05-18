@@ -97,6 +97,7 @@ class JemViewCalendar extends JemView
         // Set Page title
         $pagetitle = $params->def('page_title', $menuitem->title);
         $params->def('page_heading', $pagetitle);
+        $pageheading = $params->get('page_heading', $pagetitle);
         $pageclass_sfx = $params->get('pageclass_sfx');
         // pathway
         $pathway = $app->getPathWay();
@@ -107,15 +108,15 @@ class JemViewCalendar extends JemView
             //$pathway->setItemName(1, $menuitem->title);
         }
         if ($task == 'archive') {
-            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=calendar&id='.$id.'&task=archive'));
+            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_($url_base . $partItemid . $partDate . '&task=archive'));
             $print_link = Route::_($url_base . $partItemid. $partDate . '&task=archive&print=1&tmpl=component');
             $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
-            $archive_link = Route::_('index.php?option=com_jem&view=calendar');
+            $archive_link = Route::_($url_base . $partItemid . $partDate);
             $params->set('page_heading', $pageheading);
         } else {
             $print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
-            $archive_link = Route::_('index.php?option=com_jem&view=calendar&task=archive');
+            $archive_link = Route::_($url_base . $partItemid . $partDate);
         }
 
         // Add site name to title if param is set
@@ -141,7 +142,7 @@ class JemViewCalendar extends JemView
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
         $url_base = 'index.php?option=com_jem&view=calendar';
 
-        $print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
+        $print_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : '') . '&print=1&tmpl=component');
         $ical_link = $partDate;
         //http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
 
@@ -163,6 +164,7 @@ class JemViewCalendar extends JemView
         $this->print         = $print;
         $this->ical_link    = $ical_link;
         $this->archive_link  = $archive_link;
+        $this->task          = $task;
 
         parent::display($tpl);
     }
