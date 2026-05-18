@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
-        <g id="Types-v2" serif:id="Types v2">
-            <!-- Large tag shape (blue outline, same stroke as other icons) -->
-            <path d="M14,14 L14,52 L46,83 C47.17,84.17 49.08,84.17 50.25,83 L83,50.25 C84.17,49.08 84.17,47.17 83,46 L52,14 Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linejoin:round;"/>
-            <!-- Small hole / rivet at top-left of tag -->
-            <circle cx="30" cy="30" r="5" style="fill:none;stroke:rgb(114,149,177);stroke-width:4px;"/>
-            <!-- Orange stripe / label line 1 -->
-            <path d="M42,44 L68,70" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;"/>
-            <!-- Orange stripe / label line 2 -->
-            <path d="M50,36 L76,62" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;"/>
+        <g id="Types---edit-v2" serif:id="Types + edit v2">
+            <path d="M14.678,14.972L14.678,52.972L46.678,83.972C47.848,85.142 49.758,85.142 50.928,83.972L83.678,51.222C84.848,50.052 84.848,48.142 83.678,46.972L52.678,14.972L14.678,14.972Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+            <circle cx="29.351" cy="29.461" r="5" style="fill:none;stroke:rgb(114,149,177);stroke-width:4px;stroke-linejoin:miter;"/>
+            <g>
+                <path d="M42.82,43.274L68.82,69.274" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                <path d="M49.184,36.91L75.114,62.841" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                <path d="M55.548,30.546L81.548,56.546" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+            </g>
         </g>
     </g>
 </svg>

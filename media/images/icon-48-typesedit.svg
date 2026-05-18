@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:2;">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
-        <g id="Typesedit-v2" serif:id="Typesedit v2">
-            <!-- Large tag shape (blue outline) — slightly smaller to leave room for badge -->
-            <path d="M14,14 L14,50 L43,79 C44.17,80.17 46.08,80.17 47.25,79 L79,47.25 C80.17,46.08 80.17,44.17 79,43 L50,14 Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linejoin:round;"/>
-            <!-- Small hole / rivet -->
-            <circle cx="29" cy="29" r="5" style="fill:none;stroke:rgb(114,149,177);stroke-width:4px;"/>
-            <!-- Orange stripe 1 -->
-            <path d="M40,42 L63,65" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;"/>
-            <!-- Orange stripe 2 -->
-            <path d="M48,34 L71,57" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;"/>
-            <!-- Green plus badge (bottom-right) -->
-            <circle cx="79.5" cy="79.5" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
-            <text x="71.57px" y="89px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
+        <g id="Types---edit-v2" serif:id="Types + edit v2">
+            <path d="M14.678,14.972L14.678,52.972L46.678,83.972C47.848,85.142 49.758,85.142 50.928,83.972L83.678,51.222C84.848,50.052 84.848,48.142 83.678,46.972L52.678,14.972L14.678,14.972Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+            <circle cx="29.351" cy="29.461" r="5" style="fill:none;stroke:rgb(114,149,177);stroke-width:4px;stroke-linejoin:miter;"/>
+            <g>
+                <path d="M42.82,43.274L68.82,69.274" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                <path d="M49.184,36.91L75.114,62.841" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                <path d="M55.548,30.546L81.548,56.546" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+            </g>
+            <g>
+                <circle cx="81.166" cy="81.611" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+                <g transform="matrix(27,0,0,27,89.0077,91.1059)">
+                </g>
+                <text x="73.24px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
+            </g>
         </g>
     </g>
 </svg>
