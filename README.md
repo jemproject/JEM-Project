@@ -1,11 +1,11 @@
-# JEM 4.4.2 (the Joomla Event Manager)
-released 2026-03-17
+# JEM 4.5.0beta1 (the Joomla Event Manager)
+released 2026-05-18
 
 Based on
 - jemproject/JEM-Project
 - Egnarts94/JEM-Project Responsive JEM
 
-JEM 4.4.2 is compatible with Joomla 5 (and 4)
+JEM 4.5.0 is compatible with Joomla 5 (and 4)
 
 ## To install
 Download the installation package from https://www.joomlaeventmanager.net/download or install it in Joomla via the web installer.
