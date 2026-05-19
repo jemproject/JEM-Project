@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
@@ -35,6 +37,54 @@ function jem_common_show_filter(&$obj) {
   }
   return false;
 }
+
+if (!function_exists('jem_venueslist_country_name')) {
+    function jem_venueslist_country_name($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        return JemHelperCountries::getCountryName($country) ?: $country;
+    }
+}
+
+if (!function_exists('jem_venueslist_country_flag')) {
+    function jem_venueslist_country_flag($country, $countryName)
+    {
+        $flagSrc = JemHelperCountries::getIsoFlag((string) $country);
+
+        if (!$flagSrc) {
+            return '';
+        }
+
+        $alt = htmlspecialchars((string) $countryName, ENT_QUOTES, 'UTF-8');
+        $src = htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8');
+
+        return '<img src="' . $src . '" alt="' . $alt . '" title="' . $alt . '" class="venue_country_flag jem-venueslist-country-flag" style="width:20px;height:auto;margin-right:6px;vertical-align:middle;" />';
+    }
+}
+
+if (!function_exists('jem_venueslist_default_display_order')) {
+    function jem_venueslist_default_display_order($params)
+    {
+        $orders = array(
+            'venue_city_country' => array('venue', 'city', 'country'),
+            'venue_country_city' => array('venue', 'country', 'city'),
+            'city_venue_country' => array('city', 'venue', 'country'),
+            'city_country_venue' => array('city', 'country', 'venue'),
+            'country_venue_city' => array('country', 'venue', 'city'),
+            'country_city_venue' => array('country', 'city', 'venue'),
+        );
+        $order = (string) $params->get('display_order', 'venue_city_country');
+
+        return $orders[$order] ?? $orders['venue_city_country'];
+    }
+}
+
+$displayOrder = jem_venueslist_default_display_order($this->params);
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
     <div id="jem_filter" class="floattext">
@@ -60,27 +110,33 @@ function jem_common_show_filter(&$obj) {
     <div class="table table-responsive table-striped table-hover table-sm">
     <table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
         <colgroup>
-            <col style="width: 20%" class="jem_col_city" />
-    <?php if ($this->params->get('showstate')) : ?>
-            <col style="width: 20%" class="jem_col_state" />
-    <?php endif; ?>
-            <?php if ($this->jemsettings->showlocate == 1) : ?>
-            <col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
-            <?php endif; ?>
+            <?php foreach ($displayOrder as $field) : ?>
+                <?php if ($field === 'venue') : ?>
+                    <col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
+                <?php elseif ($field === 'city') : ?>
+                    <col style="width: 20%" class="jem_col_city" />
+                    <?php if ($this->params->get('showstate')) : ?>
+                        <col style="width: 20%" class="jem_col_state" />
+                    <?php endif; ?>
+                <?php elseif ($field === 'country') : ?>
+                    <col style="width: 20%" class="jem_col_country" />
+                <?php endif; ?>
+            <?php endforeach; ?>
         </colgroup>
         <thead>
             <tr>
-                <th id="jem_city" class="sectiontableheader" style="text-align: left;"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-    <?php if ($this->params->get('showstate')) : ?>
-                <th id="jem_state" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-    <?php endif; ?>
-
-
-
-                <th id="jem_location" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-
-
-
+                <?php foreach ($displayOrder as $field) : ?>
+                    <?php if ($field === 'venue') : ?>
+                        <th id="jem_location" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                    <?php elseif ($field === 'city') : ?>
+                        <th id="jem_city" class="sectiontableheader" style="text-align: left;"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                        <?php if ($this->params->get('showstate')) : ?>
+                            <th id="jem_state" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                        <?php endif; ?>
+                    <?php elseif ($field === 'country') : ?>
+                        <th id="jem_country" class="sectiontableheader" style="text-align: left;"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </tr>
         </thead>
 
@@ -99,24 +155,33 @@ function jem_common_show_filter(&$obj) {
                     } ?>
                     <tr class="venue_id<?php echo $this->escape($row->id); ?>">
                     <?php $odd = 1 - $odd; ?>
-                    <td headers="jem_city" style="text-align: left; vertical-align: top;"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-                <?php if ($this->params->get('showstate')) : ?>
-                    <td headers="jem_state" style="text-align: left; vertical-align: top;">
-                        <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
-                    </td>
-                <?php endif; ?>
-
-                    <td headers="jem_location" style="text-align: left; vertical-align: top;">
-                        <?php
-                        if ($this->jemsettings->showlinkvenue == 1) :
-                            echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-                        else :
-                            echo $row->id ? $this->escape($row->venue) : '-';
-                        endif;
-                        echo JemOutput::publishstateicon($row);
-                            echo $venueaccess;
-                        ?>
-                    </td>
+                    <?php foreach ($displayOrder as $field) : ?>
+                        <?php if ($field === 'venue') : ?>
+                            <td headers="jem_location" style="text-align: left; vertical-align: top;">
+                                <?php
+                                if ($this->jemsettings->showlinkvenue == 1) :
+                                    echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+                                else :
+                                    echo $row->id ? $this->escape($row->venue) : '-';
+                                endif;
+                                echo JemOutput::publishstateicon($row);
+                                echo $venueaccess;
+                                ?>
+                            </td>
+                        <?php elseif ($field === 'city') : ?>
+                            <td headers="jem_city" style="text-align: left; vertical-align: top;"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+                            <?php if ($this->params->get('showstate')) : ?>
+                                <td headers="jem_state" style="text-align: left; vertical-align: top;">
+                                    <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+                                </td>
+                            <?php endif; ?>
+                        <?php elseif ($field === 'country') : ?>
+                            <td headers="jem_country" style="text-align: left; vertical-align: top;">
+                                <?php $countryName = jem_venueslist_country_name($row->country ?? ''); ?>
+                                <?php echo $countryName !== '' ? jem_venueslist_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?>
+                            </td>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </tr>
 
             <?php endforeach; ?>
