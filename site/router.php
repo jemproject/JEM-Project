@@ -74,6 +74,7 @@ class JemRouter extends RouterView
             'venuesmap',
             'venues',
             'typeevents',
+            'typevenues',
             'weekcal'
         ];
 

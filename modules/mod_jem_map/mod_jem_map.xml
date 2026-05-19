@@ -39,11 +39,11 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="map_center_lat" type="text"
-                       default="48.750"
+                       default="54.526"
                        label="MOD_JEM_MAP_CENTER_LATITUDE"
                        description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"/>
                 <field name="map_center_lng" type="text"
-                       default="18.917"
+                       default="15.255"
                        label="MOD_JEM_MAP_CENTER_LONGITUDE"
                        description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"/>
                 <field name="map_zoom" type="number"

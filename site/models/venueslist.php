@@ -97,6 +97,7 @@ class JemModelVenueslist extends ListModel
         $id .= ':' . $this->getState('list.limit');
         $id .= ':' . $this->getState('filter.filter_search');
         $id .= ':' . $this->getState('filter.filter_type');
+        $id .= ':' . (int) $this->getState('filter.type_id');
         $id .= ':' . serialize($this->getState('filter.orderby'));
 
         return parent::getStoreId($id);
@@ -216,6 +217,12 @@ class JemModelVenueslist extends ListModel
                     }
                 }
             }
+        }
+
+        $typeId = (int) $this->getState('filter.type_id');
+
+        if ($typeId > 0) {
+            $query->where('a.type_id = ' . $typeId);
         }
 
         ####################

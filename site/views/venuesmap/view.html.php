@@ -88,7 +88,7 @@ class JemViewVenuesMap extends JemView
         $venueMarker = JemMapHelper::resolveMarkerUrl($params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp'), 'media/com_jem/images/marker-red.webp');
         $mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
         $height             = $params->get('height', '500px');
-        $zoom               = (int) $params->get('map_zoom', 8);
+        $zoom               = (int) $params->get('map_zoom', 4);
         $selectedCountry    = trim($app->input->getString('jem_map_filter_country', ''));
         $selectedCity       = trim($app->input->getString('jem_map_filter_city', ''));
         $selectedCategoryId = $app->input->getInt('jem_map_filter_catid', 0);

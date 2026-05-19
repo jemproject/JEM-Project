@@ -109,6 +109,10 @@ div#jem h1.componentheading {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
+#jem .jem-event-badges + .jem-type-badge {
+    margin-left: 0.35rem;
+}
+
 #jem .jem-type-badge:hover,
 .jem-type-badge:hover {
     filter: brightness(0.93);
@@ -892,6 +896,38 @@ div#jem #jem_filter {
     background: #FFA500;
 }
 
+div#jem #jem_filter.floattext {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter.floattext .jem_fleft,
+div#jem #jem_filter.floattext .jem_fright {
+    float: none;
+}
+
+div#jem #jem_filter.floattext .jem_fleft,
+div#jem #jem_filter.floattext .jem_fright,
+div#jem #jem_filter.floattext > div {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0;
+}
+
+div#jem #jem_filter.floattext .jem_fleft {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+div#jem #jem_filter.floattext .jem_fright {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
 div#jem .jem_fleft {
     float: left;
 }
@@ -934,6 +970,50 @@ div#jem .jem_fright {
 
 #jem #jem_filter.jem-row {
     gap: 0.5rem;
+}
+
+div#jem #jem_filter select,
+div#jem #jem_filter .form-select,
+div#jem #jem_filter input[type="text"],
+div#jem #jem_filter .form-control,
+div#jem #jem_filter button,
+div#jem #jem_filter .btn {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+div#jem #jem_filter.floattext input#filter_search,
+div#jem #jem_filter.floattext input[name="filter_search"] {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+    width: auto;
+}
+
+@media (max-width: 60rem) {
+    div#jem #jem_filter.floattext {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem #jem_filter.floattext .jem_fleft,
+    div#jem #jem_filter.floattext .jem_fright,
+    div#jem #jem_filter.floattext > div {
+        flex: 1 1 100%;
+    }
+
+    div#jem #jem_filter.floattext .jem_fright {
+        margin-left: 0;
+    }
+
+    div#jem #jem_filter.floattext input#filter_search,
+    div#jem #jem_filter.floattext input[name="filter_search"] {
+        flex: 1 1 12rem;
+        min-width: 0;
+    }
 }
 
 div#jem #jem_filter.jem-events-filter {

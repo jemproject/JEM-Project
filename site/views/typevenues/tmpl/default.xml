@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_TYPEVENUES_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+
+    <fields name="request">
+        <fieldset name="request">
+            <field
+                name="id"
+                type="sql"
+                label="COM_JEM_TYPE_FIELD_TYPE"
+                description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+                query="SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 3 ORDER BY ordering ASC, name ASC"
+                key_field="value"
+                value_field="text"
+                required="true"
+            />
+        </fieldset>
+    </fields>
+
+    <fields name="params">
+        <fieldset name="basic">
+            <field name="showstate" type="radio"
+                default="0"
+                label="COM_JEM_SHOWSTATE"
+                description="COM_JEM_SHOWSTATE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showvenuecalendar" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK"
+                description="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="display_order" type="list"
+                default="venue_city_country"
+                label="COM_JEM_VENUESLIST_DISPLAY_ORDER"
+                description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC"
+            >
+                <option value="venue_city_country">COM_JEM_VENUESLIST_ORDER_VENUE_CITY_COUNTRY</option>
+                <option value="venue_country_city">COM_JEM_VENUESLIST_ORDER_VENUE_COUNTRY_CITY</option>
+                <option value="city_venue_country">COM_JEM_VENUESLIST_ORDER_CITY_VENUE_COUNTRY</option>
+                <option value="city_country_venue">COM_JEM_VENUESLIST_ORDER_CITY_COUNTRY_VENUE</option>
+                <option value="country_venue_city">COM_JEM_VENUESLIST_ORDER_COUNTRY_VENUE_CITY</option>
+                <option value="country_city_venue">COM_JEM_VENUESLIST_ORDER_COUNTRY_CITY_VENUE</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

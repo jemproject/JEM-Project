@@ -48,12 +48,12 @@
             </field>
 
             <field name="map_center_lat" type="text"
-                   default="48.750"
+                   default="54.526"
                    label="COM_JEM_VENUESMAP_CENTER_LATITUDE_LABEL"
                    description="COM_JEM_VENUESMAP_CENTER_LATITUDE_DESC"/>
 
             <field name="map_center_lng" type="text"
-                   default="18.917"
+                   default="15.255"
                    label="COM_JEM_VENUESMAP_CENTER_LONGITUDE_LABEL"
                    description="COM_JEM_VENUESMAP_CENTER_LONGITUDE_DESC"/>
 

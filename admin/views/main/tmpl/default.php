@@ -100,6 +100,9 @@ $options = array(
                                             $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
                                             $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
 
+                                            $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
+                                            $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
+
                                             $link = 'index.php?option=com_jem&amp;view=updatecheck';
                                             $icon = 'icon-48-update.svg';
 
