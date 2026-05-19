@@ -13,6 +13,81 @@ use Joomla\CMS\Language\Text;
 ?>
 
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+    <style>
+        #jem.jem_venue > .flyerimage {
+            float: right !important;
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 0 1rem 1rem;
+        }
+
+        #jem.jem_venue > .flyerimage img,
+        #jem.jem_venue > .flyerimage a {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #jem.jem_venue .jem-venue-description-break {
+            clear: both;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row {
+            display: flex !important;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row > .jem-row,
+        #jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+            display: flex !important;
+            flex: 0 1 auto;
+            flex-wrap: nowrap;
+            align-items: center;
+            width: auto !important;
+            margin-bottom: 0;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row > .jem-row:first-child {
+            flex: 1 1 auto;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row input#filter_search {
+            flex: 1 1 14rem;
+            width: auto !important;
+            min-width: 10rem;
+            max-width: 18rem;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row input#filter_month {
+            width: 13rem !important;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+            margin-left: auto;
+        }
+
+        @media (max-width: 60rem) {
+            #jem.jem_venue #jem_filter.jem-row {
+                flex-wrap: wrap;
+                align-items: stretch;
+            }
+
+            #jem.jem_venue #jem_filter.jem-row > .jem-row,
+            #jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+                flex: 1 1 100%;
+            }
+
+            #jem.jem_venue #jem_filter.jem-row input#filter_search {
+                max-width: none;
+            }
+
+            #jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+                margin-left: 0;
+            }
+        }
+    </style>
     <div class="buttons">
         <?php
         $btn_params = array('id' => $this->venue->slug, 'slug' => $this->venue->slug, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
@@ -157,6 +232,7 @@ use Joomla\CMS\Language\Text;
     <?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
               $this->venuedescription != '<br>') : ?>
 
+        <div class="jem-venue-description-break"></div>
         <h2 class="description"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
         <div class="description no_space floattext" itemprop="description">
             <?php echo $this->venuedescription; ?>

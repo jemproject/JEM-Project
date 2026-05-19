@@ -21,6 +21,13 @@ jQuery(document).ready(function ($) {
         }
         var ufr = document.getElementById('userfile-remove');
         if (ufr) {
+            var panel = ufr.closest('.jem-image-upload-panel');
+            if (panel) {
+                var preview = panel.querySelector('.jem-image-current');
+                if (preview) {
+                    preview.style.display = 'none';
+                }
+            }
             ufr.style.display = 'none';
         }
         var ri = document.getElementById('removeimage');
@@ -29,6 +36,34 @@ jQuery(document).ready(function ($) {
         }
     });
 
+    $('#jform_userfile').on('change', function () {
+        var fileInput = this;
+        var previewWrap = document.querySelector('.jem-image-selected-preview');
+        var previewImage = document.getElementById('jem-selected-venue-image-preview');
+
+        if (!previewWrap || !previewImage) {
+            return;
+        }
+
+        if (!fileInput.files || !fileInput.files[0]) {
+            previewImage.removeAttribute('src');
+            previewWrap.hidden = true;
+            return;
+        }
+
+        if (!fileInput.files[0].type || fileInput.files[0].type.indexOf('image/') !== 0) {
+            previewImage.removeAttribute('src');
+            previewWrap.hidden = true;
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            previewImage.src = event.target.result;
+            previewWrap.hidden = false;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    });
 
 });
 

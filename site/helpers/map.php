@@ -34,7 +34,7 @@ class JemMapHelper
         $country  = trim((string) $country);
         $city     = trim((string) $city);
 
-        $query->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country')
+        $query->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time')
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->where($db->quoteName('v.published') . ' = 1')
             ->where([

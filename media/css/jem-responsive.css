@@ -356,6 +356,91 @@ body.com_jem.body-overlayed {
 #jem_filter #filter_country,
 #jem_filter #filter_city {min-width: 250px;}
 
+div#jem #jem_filter.jem-events-filter {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-search,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-month,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-actions,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-search {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+div#jem #jem_filter.jem-events-filter label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+div#jem #jem_filter.jem-events-filter select,
+div#jem #jem_filter.jem-events-filter input,
+div#jem #jem_filter.jem-events-filter .inputbox,
+div#jem #jem_filter.jem-events-filter .form-control,
+div#jem #jem_filter.jem-events-filter .form-select,
+div#jem #jem_filter.jem-events-filter button,
+div#jem #jem_filter.jem-events-filter .btn {
+    box-sizing: border-box;
+    min-height: 2.6rem;
+    margin: 0;
+}
+
+div#jem #jem_filter.jem-events-filter select,
+div#jem #jem_filter.jem-events-filter .form-select {
+    width: auto;
+}
+
+div#jem #jem_filter.jem-events-filter input#filter_search {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+    width: auto;
+}
+
+div#jem #jem_filter.jem-events-filter input#filter_month {
+    flex: 0 0 13rem;
+    width: 13rem;
+}
+
+@media (max-width: 60rem) {
+    div#jem #jem_filter.jem-events-filter {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-search,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-month,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-actions,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+        flex: 1 1 100%;
+    }
+
+    div#jem #jem_filter.jem-events-filter input#filter_search,
+    div#jem #jem_filter.jem-events-filter input#filter_month {
+        flex: 1 1 12rem;
+        width: auto;
+    }
+
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+        margin-left: 0;
+    }
+}
+
 #jem .jem-misc {
     padding: 10px 0;
 }
@@ -425,6 +510,90 @@ body.com_jem.body-overlayed {
 
 #jem .jem-dl dd.time-input select {
     width: 95px;
+}
+
+#jem.jem_venue > .flyerimage {
+    float: right !important;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 0 1rem 1rem;
+}
+
+#jem.jem_venue > .flyerimage img,
+#jem.jem_venue > .flyerimage a,
+#jem.jem_venue .jem-img .flyerimage img,
+#jem.jem_venue .jem-img .flyerimage a {
+    max-width: 100%;
+    height: auto;
+}
+
+#jem.jem_venue .jem-img .flyerimage {
+    float: none !important;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+}
+
+#jem.jem_venue h2.description {
+    clear: both;
+}
+
+#jem.jem_venue #jem_filter.jem-row {
+    display: flex !important;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#jem.jem_venue #jem_filter.jem-row > .jem-row,
+#jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+    display: flex !important;
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: auto !important;
+    margin-bottom: 0;
+}
+
+#jem.jem_venue #jem_filter.jem-row > .jem-row:first-child {
+    flex: 1 1 auto;
+}
+
+#jem.jem_venue #jem_filter.jem-row input#filter_search {
+    flex: 1 1 14rem;
+    width: auto !important;
+    min-width: 10rem;
+    max-width: 18rem;
+}
+
+#jem.jem_venue #jem_filter.jem-row input#filter_month {
+    width: 13rem !important;
+}
+
+#jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+    margin-left: auto;
+}
+
+@media (max-width: 60rem) {
+    #jem.jem_venue #jem_filter.jem-row {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    #jem.jem_venue #jem_filter.jem-row > .jem-row,
+    #jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+        flex: 1 1 100%;
+    }
+
+    #jem.jem_venue #jem_filter.jem-row input#filter_search {
+        max-width: none;
+    }
+
+    #jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+        margin-left: 0;
+    }
 }
 
 #jem form input::-webkit-outer-spin-button,

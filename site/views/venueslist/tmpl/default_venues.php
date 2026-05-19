@@ -13,6 +13,7 @@ require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 ?>
 
 <style>
@@ -67,6 +68,31 @@ if (!function_exists('jem_venueslist_country_flag')) {
     }
 }
 
+if (!function_exists('jem_venueslist_default_venue_page_link')) {
+    function jem_venueslist_default_venue_page_link($row)
+    {
+        $slug = (int) $row->id . ':' . ($row->alias ?? '');
+
+        return Route::_('index.php?option=com_jem&view=venue&layout=default&id=' . $slug);
+    }
+}
+
+if (!function_exists('jem_venueslist_default_venue_calendar_link')) {
+    function jem_venueslist_default_venue_calendar_link($row)
+    {
+        $slug = (int) $row->id . ':' . ($row->alias ?? '');
+
+        return Route::_('index.php?option=com_jem&view=venue&layout=calendar&id=' . $slug);
+    }
+}
+
+if (!function_exists('jem_venueslist_default_venue_edit_link')) {
+    function jem_venueslist_default_venue_edit_link($row)
+    {
+        return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $row->id . '&return=' . base64_encode(Uri::getInstance()->toString()));
+    }
+}
+
 if (!function_exists('jem_venueslist_default_display_order')) {
     function jem_venueslist_default_display_order($params)
     {
@@ -85,11 +111,24 @@ if (!function_exists('jem_venueslist_default_display_order')) {
 }
 
 $displayOrder = jem_venueslist_default_display_order($this->params);
+$showCalendarColumn = (bool) $this->params->get('showvenuecalendar', 1);
+$mediaRoot = rtrim(Uri::root(true), '/');
+$calendarIcon = $mediaRoot . '/media/com_jem/images/el.webp';
+$editIcon = $mediaRoot . '/media/com_jem/images/calendar_edit.webp';
+$user = JemFactory::getUser();
+$showEditColumn = false;
+
+foreach ((array) $this->rows as $venueRow) {
+    if ($user->can('edit', 'venue', (int) $venueRow->id, (int) ($venueRow->created_by ?? 0))) {
+        $showEditColumn = true;
+        break;
+    }
+}
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-    <div id="jem_filter" class="floattext">
+    <div id="jem_filter" class="floattext jem-venueslist-filter">
        <?php if ($this->settings->get('global_show_filter',1)) : ?>
-        <div class="jem_fleft">
+        <div class="jem_fleft jem-venueslist-filter-search">
             <label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
             <?php echo $this->lists['filter'].'&nbsp;'; ?>
             <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
@@ -99,7 +138,7 @@ $displayOrder = jem_venueslist_default_display_order($this->params);
     <?php endif; ?>
 
     <?php if ($this->settings->get('global_display',1)) : ?>
-    <div class="jem_fright">
+    <div class="jem_fright jem-venueslist-filter-limit">
         <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
         <?php echo $this->pagination->getLimitBox(); ?>
     </div>
@@ -122,6 +161,12 @@ $displayOrder = jem_venueslist_default_display_order($this->params);
                     <col style="width: 20%" class="jem_col_country" />
                 <?php endif; ?>
             <?php endforeach; ?>
+            <?php if ($showCalendarColumn) : ?>
+                <col style="width: 1%" class="jem_col_calendar" />
+            <?php endif; ?>
+            <?php if ($showEditColumn) : ?>
+                <col style="width: 1%" class="jem_col_edit" />
+            <?php endif; ?>
         </colgroup>
         <thead>
             <tr>
@@ -137,6 +182,12 @@ $displayOrder = jem_venueslist_default_display_order($this->params);
                         <th id="jem_country" class="sectiontableheader" style="text-align: left;"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php endif; ?>
                 <?php endforeach; ?>
+                <?php if ($showCalendarColumn) : ?>
+                    <th id="jem_calendar" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
+                <?php endif; ?>
+                <?php if ($showEditColumn) : ?>
+                    <th id="jem_edit" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></th>
+                <?php endif; ?>
             </tr>
         </thead>
 
@@ -152,7 +203,9 @@ $displayOrder = jem_venueslist_default_display_order($this->params);
                     if (!$row->user_has_access_venue) {
                         // show a closed lock icon
                         $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
-                    } ?>
+                    }
+                    $canEditVenue = $user->can('edit', 'venue', (int) $row->id, (int) ($row->created_by ?? 0));
+                    ?>
                     <tr class="venue_id<?php echo $this->escape($row->id); ?>">
                     <?php $odd = 1 - $odd; ?>
                     <?php foreach ($displayOrder as $field) : ?>
@@ -160,7 +213,7 @@ $displayOrder = jem_venueslist_default_display_order($this->params);
                             <td headers="jem_location" style="text-align: left; vertical-align: top;">
                                 <?php
                                 if ($this->jemsettings->showlinkvenue == 1) :
-                                    echo $row->id != 0 ? "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+                                    echo $row->id != 0 ? "<a href='".jem_venueslist_default_venue_page_link($row)."'>".$this->escape($row->venue)."</a>" : '-';
                                 else :
                                     echo $row->id ? $this->escape($row->venue) : '-';
                                 endif;
@@ -182,6 +235,22 @@ $displayOrder = jem_venueslist_default_display_order($this->params);
                             </td>
                         <?php endif; ?>
                     <?php endforeach; ?>
+                        <?php if ($showCalendarColumn) : ?>
+                            <td headers="jem_calendar" class="center" style="text-align: center; vertical-align: top;">
+                                <a href="<?php echo htmlspecialchars(jem_venueslist_default_venue_calendar_link($row), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
+                                    <img src="<?php echo htmlspecialchars($calendarIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_CALENDAR'); ?>" class="jem-venuesmap-action-icon" />
+                                </a>
+                            </td>
+                        <?php endif; ?>
+                        <?php if ($showEditColumn) : ?>
+                            <td headers="jem_edit" class="center" style="text-align: center; vertical-align: top;">
+                                <?php if ($canEditVenue) : ?>
+                                    <a href="<?php echo htmlspecialchars(jem_venueslist_default_venue_edit_link($row), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                        <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
                 </tr>
 
             <?php endforeach; ?>

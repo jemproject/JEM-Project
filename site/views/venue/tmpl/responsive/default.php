@@ -18,6 +18,63 @@ use Joomla\CMS\Language\Text;
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
+    <style>
+        #jem.jem_venue #jem_filter.jem-row {
+            display: flex !important;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row > .jem-row,
+        #jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+            display: flex !important;
+            flex: 0 1 auto;
+            flex-wrap: nowrap;
+            align-items: center;
+            width: auto !important;
+            margin-bottom: 0;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row > .jem-row:first-child {
+            flex: 1 1 auto;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row input#filter_search {
+            flex: 1 1 14rem;
+            width: auto !important;
+            min-width: 10rem;
+            max-width: 18rem;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row input#filter_month {
+            width: 13rem !important;
+        }
+
+        #jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+            margin-left: auto;
+        }
+
+        @media (max-width: 60rem) {
+            #jem.jem_venue #jem_filter.jem-row {
+                flex-wrap: wrap;
+                align-items: stretch;
+            }
+
+            #jem.jem_venue #jem_filter.jem-row > .jem-row,
+            #jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+                flex: 1 1 100%;
+            }
+
+            #jem.jem_venue #jem_filter.jem-row input#filter_search {
+                max-width: none;
+            }
+
+            #jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+                margin-left: 0;
+            }
+        }
+    </style>
 
     <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
     <h1 class="componentheading">

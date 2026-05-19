@@ -60,6 +60,37 @@ $tileLayers = [
     ],
 ];
 $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
+$currentUri = Uri::getInstance()->toString();
+$user = JemFactory::getUser();
+$mediaRoot = rtrim(Uri::root(true), '/');
+$calendarIcon = $mediaRoot . '/media/com_jem/images/el.webp';
+$editIcon = $mediaRoot . '/media/com_jem/images/calendar_edit.webp';
+
+$buildVenuePageLink = static function ($venue) use ($jemItemid) {
+    $slug = (int) $venue->id . ':' . $venue->alias;
+    $route = 'index.php?option=com_jem&view=venue&layout=default&id=' . $slug;
+
+    if (!empty($jemItemid)) {
+        $route .= '&Itemid=' . (int) $jemItemid;
+    }
+
+    return Route::_($route);
+};
+
+$buildVenueCalendarLink = static function ($venue) use ($jemItemid) {
+    $slug = (int) $venue->id . ':' . $venue->alias;
+    $route = 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $slug;
+
+    if (!empty($jemItemid)) {
+        $route .= '&Itemid=' . (int) $jemItemid;
+    }
+
+    return Route::_($route);
+};
+
+$buildVenueEditLink = static function ($venue) use ($currentUri) {
+    return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $venue->id . '&return=' . base64_encode($currentUri));
+};
 
 ?>
 
@@ -157,6 +188,54 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 
 
     <div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
+
+    <?php if (!empty($this->venueslist)) : ?>
+        <div class="table table-responsive table-striped table-hover table-sm jem-venuesmap-list">
+            <table class="eventtable table table-striped" style="width:100%;" summary="<?php echo Text::_('COM_JEM_VENUESMAP_PAGETITLE'); ?>">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_VENUE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_CITY'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
+                        <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($this->venueslist as $venue) : ?>
+                        <?php
+                        $venueName = $this->escape($venue->venue);
+                        $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
+                        $canEditVenue = $user->can('edit', 'venue', (int) $venue->id, (int) ($venue->created_by ?? 0));
+                        ?>
+                        <tr>
+                            <td>
+                                <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                    <?php echo $venueName; ?>
+                                </a>
+                            </td>
+                            <td><?php echo $venue->city !== '' ? $this->escape($venue->city) : '-'; ?></td>
+                            <td><?php echo $countryName !== '' ? $this->escape($countryName) : '-'; ?></td>
+                            <td class="center">
+                                <a href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
+                                    <img src="<?php echo htmlspecialchars($calendarIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_CALENDAR'); ?>" class="jem-venuesmap-action-icon" />
+                                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
+                                </a>
+                            </td>
+                            <td class="center">
+                                <?php if ($canEditVenue) : ?>
+                                    <a href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                        <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                        <span class="visually-hidden"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></span>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 
     <!--footer-->
     <div class="copyright">
@@ -338,12 +417,7 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
         $heatPoints = [];
         $mapBounds = [];
         foreach ($this->venueslist as $v):
-        $route = 'index.php?option=com_jem&view=venue&id=' . (int)$v->id . ':' . $v->alias;
-        if (!empty($jemItemid)) {
-            $route .= '&Itemid=' . (int)$jemItemid;
-        }
-        $sef = Route::_($route, false);
-        $link = Uri::root() . ltrim($sef, '/');
+        $link = htmlspecialchars($buildVenuePageLink($v), ENT_QUOTES, 'UTF-8');
 
         $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
         $city = htmlspecialchars($v->city, ENT_QUOTES);

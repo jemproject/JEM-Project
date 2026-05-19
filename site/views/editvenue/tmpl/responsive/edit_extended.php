@@ -9,35 +9,45 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 
 <!-- IMAGE -->
 <?php if ($this->item->locimage || $this->jemsettings->imageenabled != 0) : ?>
-    <fieldset class="jem_fldst_image">
+    <fieldset class="jem_fldst_image jem-image-upload-panel">
         <legend><?php echo Text::_('COM_JEM_EDITVENUE_IMAGE_LEGEND'); ?></legend>
-        <?php if ($this->jemsettings->imageenabled != 0) : ?>
-            <dl class="adminformlist jem-dl">
-                <dt><?php echo $this->form->getLabel('userfile'); ?></dt>
+        <dl class="adminformlist jem-dl jem-image-upload-list">
+            <dt><?php echo $this->form->getLabel('userfile'); ?></dt>
+            <dd class="jem-image-upload-control">
                 <?php if ($this->item->locimage) : ?>
-                    <dd>
+                    <div class="jem-image-current">
+                        <div class="jem-image-panel-title"><?php echo Text::_('COM_JEM_EDITVENUE_CURRENT_IMAGE'); ?></div>
                         <?php echo JEMOutput::flyer($this->item, $this->limage, 'venue', 'locimage'); ?>
-                        <input type="hidden" name="locimage" id="locimage" value="<?php echo $this->item->locimage; ?>" />
-                    </dd>
-                    <dt> </dt>
+                    </div>
+                    <input type="hidden" name="locimage" id="locimage" value="<?php echo $this->escape($this->item->locimage); ?>" />
                 <?php endif; ?>
-                <dd><?php echo $this->form->getInput('userfile'); ?></dd>
-                <dt> </dt>
-                <dd><button type="button" class="button3 btn" onclick="document.getElementById('jform_userfile').value = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
-                <?php if ($this->item->locimage) : ?>
-                    <dt><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
-                    <dd><?php
-                        echo HTMLHelper::image('media/com_jem/images/publish_r.webp', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' =>'btn')); ?>
-                    </dd>
+
+                <?php if ($this->jemsettings->imageenabled != 0) : ?>
+                    <div class="jem-image-file-control">
+                        <?php echo $this->form->getInput('userfile'); ?>
+                    </div>
+                    <div class="jem-image-selected-preview" hidden>
+                        <div class="jem-image-panel-title"><?php echo Text::_('COM_JEM_EDITVENUE_SELECTED_IMAGE'); ?></div>
+                        <img id="jem-selected-venue-image-preview" src="" alt="<?php echo Text::_('COM_JEM_EDITVENUE_SELECTED_IMAGE'); ?>" />
+                    </div>
+                    <div class="jem-image-actions">
+                        <button type="button" class="button3 btn btn-secondary btn-sm" onclick="document.getElementById('jform_userfile').value = ''; document.getElementById('jform_userfile').dispatchEvent(new Event('change'))"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                        <?php if ($this->item->locimage) : ?>
+                            <button type="button" id="userfile-remove" class="button3 btn btn-secondary btn-sm jem-image-remove" data-id="<?php echo (int) $this->item->id; ?>" data-type="venues" title="<?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>">
+                                <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                    <input type="hidden" name="removeimage" id="removeimage" value="0" />
+                <?php elseif (!$this->item->locimage) : ?>
+                    <span class="jem-image-empty"><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                 <?php endif; ?>
-            </dl>
-            <input type="hidden" name="removeimage" id="removeimage" value="0" />
-        <?php endif; ?>
+            </dd>
+        </dl>
     </fieldset>
 <?php endif; ?>

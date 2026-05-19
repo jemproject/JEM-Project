@@ -26,9 +26,9 @@ use Joomla\CMS\Router\Route;
 </script>
 
 <?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
-    <div id="jem_filter" class="floattext">
+    <div id="jem_filter" class="floattext jem-events-filter">
         <?php if ($this->settings->get('global_show_filter',1)) : ?>
-            <div class="jem_fleft">
+            <div class="jem_fleft jem-events-filter-search">
                 <?php echo $this->lists['filter'].'&nbsp;'; ?>
                 <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
                 <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
@@ -39,7 +39,7 @@ use Joomla\CMS\Router\Route;
         <?php endif; ?>
 
         <?php if ($this->settings->get('global_display',1)) : ?>
-            <div class="jem_fright">
+            <div class="jem_fright jem-events-filter-limit">
                 <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
                 <?php echo $this->pagination->getLimitBox(); ?>
             </div>
