@@ -23,5 +23,9 @@
 
 #jem.jem_venuesmap .copyright,
 #jem.jem_eventsmap .copyright {
-    text-align: right;
+    clear: both;
+    float: none;
+    width: 100%;
+    margin: 1em 0;
+    text-align: center;
 }

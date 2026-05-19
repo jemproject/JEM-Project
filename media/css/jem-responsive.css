@@ -282,7 +282,11 @@ body.com_jem.body-overlayed {
 
 #jem .copyright {
     font-size: 0.9em;
-    text-align: right;
+    clear: both;
+    float: none;
+    width: 100%;
+    margin: 1em 0;
+    text-align: center;
     color: #808080;
 }
 
