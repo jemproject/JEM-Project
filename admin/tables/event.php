@@ -53,6 +53,10 @@ class JemTableEvent extends Table
             $array['requestanswer'] = 0 ;
         }
 
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
         // Search for the {readmore} tag and split the text up accordingly.
         if (isset($array['articletext'])) {
             $array['articletext'] = preg_replace('/(\r\n)*<hr id=\'system-readmore\'>(\r\n)*/', '<hr id=\'system-readmore\'>', $array['articletext']);

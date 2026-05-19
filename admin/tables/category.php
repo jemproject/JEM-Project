@@ -172,6 +172,10 @@ class JemTableCategory extends Nested
      */
     public function bind($array, $ignore = '')
     {
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
         if (isset($array['params']) && is_array($array['params'])) {
             $registry = new Registry;
             $registry->loadArray($array['params']);

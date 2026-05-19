@@ -289,6 +289,9 @@ class JemModelEvent extends JemModelAdmin
         $data['metadata']     = $data['metadata'] ?? '';
         $data['attribs']      = $data['attribs'] ?? '';
         $data['ordering']     = $data['ordering'] ?? '';
+        if (array_key_exists('type_id', $data) && $data['type_id'] === '') {
+            $data['type_id'] = null;
+        }
 
         // convert international date formats...
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -646,7 +649,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update

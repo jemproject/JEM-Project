@@ -35,6 +35,10 @@ class JemTableVenue extends Table
             $array['map'] = 0 ;
         }
 
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
         if (isset($array['attribs']) && is_array($array['attribs'])) {
             $registry = new Registry;
             $registry->loadArray($array['attribs']);
