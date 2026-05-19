@@ -75,7 +75,7 @@ use Joomla\CMS\Language\Text;
                                 <div style="clear: both"></div>
                                 <input class="btn btn-primary selectcat" type="button" name="selectall" value="<?php echo Text::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
                                 <input class="btn btn-primary selectcat" type="button" name="unselectall" value="<?php echo Text::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();">
-                                <input id="csvexport" class="btn btn-success" type="submit" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;">
+                                <input class="btn btn-success csvexport" type="submit" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;">
                             </div>
                     </fieldset>
 
@@ -89,15 +89,23 @@ use Joomla\CMS\Language\Text;
                         <ul class="adminformlist">
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CATEGORIES'); ?></label>
-                                <input type="submit" id="csvexport" class="btn btn-success" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;">
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_VENUES'); ?></label>
-                                <input type="submit" id="csvexport" class="btn btn-success" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;">
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></label>
-                                <input type="submit" id="csvexport" class="btn btn-success" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;">
+                            </li>
+                            <li>
+                                <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_ATTACHMENTS'); ?></label>
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportattachments';return true;">
+                            </li>
+                            <li>
+                                <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_TYPES'); ?></label>
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exporttypes';return true;">
                             </li>
                         </ul>
                     </fieldset>

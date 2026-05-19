@@ -296,8 +296,8 @@ class JemAttachment extends CMSObject
                 $table->frontend = (int) ((int) $rec['frontend'] === 1);
             }
 
-            $table->added = date('Y-m-d H:i:s');
-            $table->added_by = $user->get('id');
+            $table->created = date('Y-m-d H:i:s');
+            $table->created_by = $user->get('id');
 
             if (!($table->check() && $table->store())) {
                 \Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError(), 'warning');
@@ -480,7 +480,7 @@ class JemAttachment extends CMSObject
         // then get info for files from db
         $db = Factory::getContainer()->get('DatabaseDriver');
 
-        $query = 'SELECT file, object, added_by '
+        $query = 'SELECT file, object, created_by '
                . ' FROM #__jem_attachments '
                . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
 
@@ -492,7 +492,7 @@ class JemAttachment extends CMSObject
         }
 
         // check permission
-        if (empty($userid) || ($userid != $res->added_by)) {
+        if (empty($userid) || ($userid != $res->created_by)) {
             if (strncasecmp($res->object, 'event', 5) == 0) {
                 $type = 'event';
                 $itemid = (int)substr($res->object, 5);

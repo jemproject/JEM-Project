@@ -65,6 +65,8 @@ class JemModelSampledata extends BaseDatabaseModel
             return false;
         }
 
+        $this->ensureSampleDataSchema();
+
         $scriptfile = $this->sampleDataDir . 'sampledata.sql';
         // load sql file
         if (!($buffer = file_get_contents($scriptfile))) {
@@ -98,6 +100,142 @@ class JemModelSampledata extends BaseDatabaseModel
         }
 
         return true;
+    }
+
+    /**
+     * Ensure tables touched by the demo SQL have the current 4.5 sample-data columns.
+     *
+     * This keeps sample data loading resilient on upgraded sites where Joomla may
+     * already have the old 4.4.x types or attachments schema.
+     *
+     * @return void
+     */
+    private function ensureSampleDataSchema()
+    {
+        $this->ensureTypesSchema();
+        $this->ensureAttachmentsSchema();
+        $this->ensureLinksSchema();
+    }
+
+    /**
+     * @return void
+     */
+    private function ensureTypesSchema()
+    {
+        $columns = $this->getTableColumns('#__jem_types');
+
+        if (empty($columns)) {
+            return;
+        }
+
+        if (isset($columns['type']) && !isset($columns['entity'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_types` CHANGE `type` `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue'");
+            unset($columns['type']);
+            $columns['entity'] = true;
+        }
+
+        $definitions = array(
+            'alias'                 => "`alias` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`",
+            'description'           => "`description` TEXT DEFAULT NULL AFTER `alias`",
+            'base_language'         => "`base_language` CHAR(7) NOT NULL DEFAULT '' AFTER `description`",
+            'translation_languages' => "`translation_languages` VARCHAR(255) DEFAULT NULL AFTER `base_language`",
+            'translations'          => "`translations` MEDIUMTEXT DEFAULT NULL AFTER `translation_languages`",
+            'entity'                => "`entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue' AFTER `translations`",
+            'color'                 => "`color` VARCHAR(7) DEFAULT NULL AFTER `icon`",
+            'published'             => "`published` TINYINT(1) NOT NULL DEFAULT 1 AFTER `color`",
+            'ordering'              => "`ordering` INT(11) NOT NULL DEFAULT 0 AFTER `published`",
+            'access'                => "`access` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `ordering`",
+            'language'              => "`language` CHAR(7) NOT NULL DEFAULT '*' AFTER `access`",
+            'checked_out'           => "`checked_out` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`",
+            'checked_out_time'      => "`checked_out_time` DATETIME NULL DEFAULT NULL AFTER `checked_out`",
+            'created'               => "`created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `checked_out_time`",
+            'created_by'            => "`created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `created`",
+            'modified'              => "`modified` DATETIME NULL DEFAULT NULL AFTER `created_by`",
+            'modified_by'           => "`modified_by` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `modified`",
+            'attribs'               => "`attribs` TEXT DEFAULT NULL AFTER `modified_by`",
+        );
+
+        foreach ($definitions as $name => $definition) {
+            if (!isset($columns[$name])) {
+                $this->executeSchemaQuery("ALTER TABLE `#__jem_types` ADD COLUMN " . $definition);
+                $columns[$name] = true;
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function ensureAttachmentsSchema()
+    {
+        $columns = $this->getTableColumns('#__jem_attachments');
+
+        if (empty($columns)) {
+            return;
+        }
+
+        if (isset($columns['added']) && !isset($columns['created'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_attachments` CHANGE `added` `created` DATETIME NULL DEFAULT NULL");
+            unset($columns['added']);
+            $columns['created'] = true;
+        }
+
+        if (isset($columns['added_by']) && !isset($columns['created_by'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL DEFAULT 0");
+            unset($columns['added_by']);
+            $columns['created_by'] = true;
+        }
+
+        if (!isset($columns['created'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_attachments` ADD COLUMN `created` DATETIME NULL DEFAULT NULL AFTER `ordering`");
+        }
+
+        if (!isset($columns['created_by'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_attachments` ADD COLUMN `created_by` INT(11) NOT NULL DEFAULT 0 AFTER `created`");
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function ensureLinksSchema()
+    {
+        $columns = $this->getTableColumns('#__jem_links');
+
+        if (empty($columns)) {
+            return;
+        }
+
+        if (!isset($columns['created'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_links` ADD COLUMN `created` DATETIME DEFAULT CURRENT_TIMESTAMP AFTER `state`");
+        }
+
+        if (!isset($columns['created_by'])) {
+            $this->executeSchemaQuery("ALTER TABLE `#__jem_links` ADD COLUMN `created_by` INT(11) NOT NULL DEFAULT 0 AFTER `created`");
+        }
+    }
+
+    /**
+     * @param  string  $table
+     * @return array
+     */
+    private function getTableColumns($table)
+    {
+        try {
+            return $this->_db->getTableColumns($table, false);
+        } catch (\Exception $e) {
+            return array();
+        }
+    }
+
+    /**
+     * @param  string  $query
+     * @return void
+     */
+    private function executeSchemaQuery($query)
+    {
+        $this->_db->setQuery($query);
+        $this->_db->execute();
     }
 
     /**

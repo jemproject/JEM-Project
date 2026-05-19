@@ -63,6 +63,8 @@ class jem_types extends Table
 
     public function check()
     {
+        $this->name = trim((string) $this->name);
+
         if (!trim($this->name)) {
             $this->setError(Text::_('COM_JEM_TYPE_ERROR_NAME_REQUIRED'));
             return false;
@@ -71,6 +73,25 @@ class jem_types extends Table
         $alias = OutputFilter::stringURLSafe($this->name);
         if (empty($this->alias) || $this->alias === $alias) {
             $this->alias = $alias;
+        }
+
+        $this->entity = (int) $this->entity;
+        if (!in_array($this->entity, array(1, 2, 3), true)) {
+            $this->entity = 1;
+        }
+
+        $this->published = (int) (bool) $this->published;
+        $this->ordering  = (int) $this->ordering;
+        $this->access    = max(1, (int) $this->access);
+        $this->created_by = (int) $this->created_by;
+        $this->modified_by = (int) $this->modified_by;
+
+        if (!empty($this->translations)) {
+            json_decode((string) $this->translations);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->setError(Text::_('COM_JEM_TYPE_ERROR_INVALID_TRANSLATIONS'));
+                return false;
+            }
         }
 
         if (empty($this->created)) {

@@ -233,8 +233,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `frontend` tinyint(1) NOT NULL DEFAULT '1',
     `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `ordering` int(11) NOT NULL DEFAULT '0',
-    `added` datetime NULL DEFAULT NULL,
-    `added_by` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NULL DEFAULT NULL,
+    `created_by` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 

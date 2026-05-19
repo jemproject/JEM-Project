@@ -99,6 +99,39 @@ use Joomla\CMS\Language\Text;
                 <div class="clr"></div>
             </div>
 
+            <hr />
+            <div>
+                <fieldset class="adminform">
+                    <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_TYPES'));?></strong></legend>
+                    <?php echo Text::_("COM_JEM_IMPORT_TYPES_DESC"); ?><br>
+                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_TYPE_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->typefields); ?></div></div><br>
+
+                    <div style="display:inline-block"><label for="replace_types"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label></div>
+                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_types', 'class="inputbox"', 0); ?></div><br><br>
+
+                    <label for="file"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
+                    <input type="file" id="types-file-upload" accept="text/*" name="Filetypes" />
+                    <input type="submit" id="types-file-upload-submit" value="<?php echo Text::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvtypesimport';return true;"/>
+                </fieldset>
+                <div class="clr"></div>
+            </div>
+            <hr />
+            <div>
+                <fieldset class="adminform">
+                    <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_ATTACHMENTS'));?></strong></legend>
+                    <?php echo Text::_("COM_JEM_IMPORT_ATTACHMENTS_DESC"); ?><br>
+                    <a onclick="return showblock(this);" class="import-fieldinfo"> <?php echo Text::_("COM_JEM_IMPORT_SHOW_ATTACHMENT_COLUMNS");?></a><div style="display: none;"><div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->attachmentfields); ?></div></div><br>
+
+                    <div style="display:inline-block"><label for="replace_attachments"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label></div>
+                    <div style="display:inline-block"><?php echo HTMLHelper::_('select.booleanlist', 'replace_attachments', 'class="inputbox"', 0); ?></div><br><br>
+
+                    <label for="file"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
+                    <input type="file" id="attachments-file-upload" accept="text/*" name="Fileattachments" />
+                    <input type="submit" id="attachments-file-upload-submit" value="<?php echo Text::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvattachmentsimport';return true;"/>
+                </fieldset>
+                <div class="clr"></div>
+            </div>
+
             <?php echo HTMLHelper::_('form.token'); ?>
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="view" value="import" />

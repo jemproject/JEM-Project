@@ -62,6 +62,14 @@ class JemControllerImport extends BaseController
         $this->CsvImport('catevents', 'cats_event_relations');
     }
 
+    public function csvattachmentsimport() {
+        $this->CsvImport('attachments', 'attachments');
+    }
+
+    public function csvtypesimport() {
+        $this->CsvImport('types', 'types');
+    }
+
     private function CsvImport($type, $dbname) {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
@@ -188,16 +196,16 @@ class JemControllerImport extends BaseController
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated']) . "</p>\n";
                 }
                 if ($result['duplicated']) {
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_DUPLICATED', $result['duplicated']) . " [Id events: " . $result['duplicatedids'] . "]</p>\n";
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_DUPLICATED', $result['duplicated']) . " [Ids: " . $result['duplicatedids'] . "]</p>\n";
                 }
                 if ($result['replaced']) {
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_REPLACED', $result['replaced']) . " [Id events: " . $result['replacedids'] . "]</p>\n";
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_REPLACED', $result['replaced']) . " [Ids: " . $result['replacedids'] . "]</p>\n";
                 }
                 if ($result['ignored']) {
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Id events: " . $result['ignoredids'] . "]</p>\n";
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Ids: " . $result['ignoredids'] . "]</p>\n";
                 }
                 if ($result['error']) {
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']) . " [Id events: " . $result['errorids'] . "]</p>\n";
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']) . " [Ids: " . $result['errorids'] . "]</p>\n";
                 }
             }
             $this->setRedirect('index.php?option=com_jem&view=import', $msg);

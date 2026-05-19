@@ -851,7 +851,8 @@ input.selectcat {
     margin-bottom: 3px;
 }
 
-input#csvexport {
+input#csvexport,
+input.csvexport {
     background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;

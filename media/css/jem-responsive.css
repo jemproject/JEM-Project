@@ -371,7 +371,7 @@ div#jem #jem_filter.floattext .jem_fright {
     margin-left: auto;
 }
 
-#jem_filter div {
+#jem_filter:not(.jem-search-filter) div {
     margin-bottom: 2px;
 }
 
@@ -437,6 +437,122 @@ div#jem #jem_filter.floattext input[name="filter_search"] {
 #jem_filter #filter_continent,
 #jem_filter #filter_country,
 #jem_filter #filter_city {min-width: 250px;}
+
+div#jem .jem-search-filter #filter_continent,
+div#jem .jem-search-filter #filter_country,
+div#jem .jem-search-filter #filter_city {
+    min-width: 0;
+}
+
+/* ── Search Filter ── */
+div#jem .jem-search-filter {
+    container-type: inline-size;
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    background: #fff;
+    margin-bottom: 1.25rem;
+}
+
+div#jem .jem-search-filter-heading {
+    font-weight: 700;
+    margin: 0 0 1rem;
+}
+
+div#jem .jem-filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+/* Grid rows */
+div#jem .jem-search-filter-grid {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+/* Default (narrow): stack / auto cols */
+div#jem .jem-search-filter-grid-top  { grid-template-columns: 1fr; }
+div#jem .jem-search-filter-grid-four { grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+div#jem .jem-search-filter-grid-two  { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
+
+/* Container ≥ 480px: top row splits keywords / event-type */
+@container (min-width: 480px) {
+    div#jem .jem-search-filter-grid-top {
+        grid-template-columns: minmax(0, 3fr) minmax(10rem, 1fr);
+    }
+}
+
+/* Container ≥ 640px: four-grid expands with auto-fit (adapts to visible items) */
+@container (min-width: 640px) {
+    div#jem .jem-search-filter-grid-four {
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+}
+
+/* Controls fill their grid cell */
+div#jem .jem-search-filter select,
+div#jem .jem-search-filter input[type="date"],
+div#jem .jem-search-filter .form-select,
+div#jem .jem-search-filter .form-control {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keywords input-group: type-selector + text field inline */
+div#jem .jem-search-filter .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+div#jem .jem-search-filter .input-group > .form-select {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 6rem;
+    max-width: 10rem;
+}
+div#jem .jem-search-filter .input-group > .form-control {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+}
+
+/* Footer: limit left, buttons right */
+div#jem .jem-search-filter-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+div#jem .jem-search-filter-limit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+div#jem .jem-search-filter-limit .jem-filter-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+div#jem .jem-search-filter-limit select {
+    width: auto;
+    min-width: 5rem;
+    flex: 0 0 auto;
+}
+div#jem .jem-search-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+div#jem .jem-search-filter-actions .btn {
+    width: auto;
+    min-width: 4rem;
+}
 
 div#jem #jem_filter.jem-events-filter {
     display: flex;

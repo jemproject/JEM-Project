@@ -82,6 +82,24 @@ class JemControllerExport extends AdminController
         jexit();
     }
 
+    public function exportattachments() {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
+
+        $this->sendHeaders("attachments.csv", "text/csv");
+        $this->getModel()->getCsvattachments();
+        jexit();
+    }
+
+    public function exporttypes() {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
+
+        $this->sendHeaders("types.csv", "text/csv");
+        $this->getModel()->getCsvtypes();
+        jexit();
+    }
+
     private function sendHeaders($filename = 'export.csv', $contentType = 'text/plain') {
         // TODO: Use UTF-8
         // We have to fix the model->getCsv* methods too!

@@ -15,50 +15,18 @@ CREATE TABLE IF NOT EXISTS `#__jem_links` (`id` INT(11) NOT NULL AUTO_INCREMENT,
 ALTER TABLE `#__jem_events` MODIFY `contactid` VARCHAR(100);
 ALTER TABLE `#__jem_events` ADD COLUMN `event_status` VARCHAR(30) NOT NULL DEFAULT 'scheduled' AFTER `language`;
 ALTER TABLE `#__jem_events` ADD COLUMN `ticket_availability` VARCHAR(30) NOT NULL DEFAULT 'instock' AFTER `event_status`;
+ALTER TABLE `#__jem_events` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ticket_availability`;
+ALTER TABLE `#__jem_events` ADD KEY `idx_type` (`type_id`);
+ALTER TABLE `#__jem_venues` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`;
+ALTER TABLE `#__jem_venues` ADD KEY `idx_type` (`type_id`);
+ALTER TABLE `#__jem_categories` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `modified_user_id`;
+ALTER TABLE `#__jem_categories` ADD KEY `idx_type` (`type_id`);
+ALTER TABLE `#__jem_attachments` CHANGE `added` `created` DATETIME NULL DEFAULT NULL;
+ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL DEFAULT 0;
 
 -- update values
 UPDATE `#__jem_events` SET `contactid` = '' WHERE `contactid` = 0;
 UPDATE `#__menu` SET `params` = REPLACE(`params`, '"tablefiltereventuntil":"0"', '"tablefiltereventuntil":""') WHERE `link` LIKE '%com_jem&view=eventslist%' AND `params` LIKE '%"tablefiltereventuntil":"0"%';
 UPDATE `#__jem_config` SET `value` = 'txt,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,ics,jpg,jpeg,gif,png,webp,zip,tar.gz' WHERE `keyname` =  'attachments_types'  AND `value` = 'txt,pdf,jpg,jpeg,gif,png,zip,tar.gz';
 
-
--- Extend #__jem_types: rename entity column, add all management fields
-ALTER TABLE `#__jem_types`
-    CHANGE `type` `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue',
-    ADD COLUMN `alias`            VARCHAR(100)         NOT NULL DEFAULT '' AFTER `name`,
-    ADD COLUMN `description`      TEXT                 DEFAULT NULL        AFTER `alias`,
-    ADD COLUMN `base_language`    CHAR(7)              NOT NULL DEFAULT '' AFTER `description`,
-    ADD COLUMN `translation_languages` VARCHAR(255)    DEFAULT NULL        AFTER `base_language`,
-    ADD COLUMN `translations`     MEDIUMTEXT           DEFAULT NULL        AFTER `translation_languages`,
-    ADD COLUMN `color`            VARCHAR(7)           DEFAULT NULL        AFTER `icon`,
-    ADD COLUMN `published`        TINYINT(1)           NOT NULL DEFAULT 1  AFTER `color`,
-    ADD COLUMN `ordering`         INT(11)              NOT NULL DEFAULT 0  AFTER `published`,
-    ADD COLUMN `access`           INT(10) UNSIGNED     NOT NULL DEFAULT 1  AFTER `ordering`,
-    ADD COLUMN `language`         CHAR(7)              NOT NULL DEFAULT '*' AFTER `access`,
-    ADD COLUMN `checked_out`      INT(11) UNSIGNED     NULL DEFAULT NULL   AFTER `language`,
-    ADD COLUMN `checked_out_time` DATETIME             NULL DEFAULT NULL   AFTER `checked_out`,
-    ADD COLUMN `created`          DATETIME             NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `checked_out_time`,
-    ADD COLUMN `created_by`       INT(11) UNSIGNED     NOT NULL DEFAULT 0  AFTER `created`,
-    ADD COLUMN `modified`         DATETIME             NULL DEFAULT NULL   AFTER `created_by`,
-    ADD COLUMN `modified_by`      INT(11) UNSIGNED     NOT NULL DEFAULT 0  AFTER `modified`,
-    ADD COLUMN `attribs`          TEXT                 DEFAULT NULL        AFTER `modified_by`,
-    ADD KEY `idx_entity`    (`entity`),
-    ADD KEY `idx_published` (`published`),
-    ADD KEY `idx_access`    (`access`),
-    ADD KEY `idx_checkout`  (`checked_out`);
-
--- Add type_id to events
-ALTER TABLE `#__jem_events`
-    ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ticket_availability`,
-    ADD KEY `idx_type` (`type_id`);
-
--- Add type_id to venues
-ALTER TABLE `#__jem_venues`
-    ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`,
-    ADD KEY `idx_type` (`type_id`);
-
--- Add type_id to categories
-ALTER TABLE `#__jem_categories`
-    ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `modified_user_id`,
-    ADD KEY `idx_type` (`type_id`);
-
+ALTER TABLE `#__jem_types` CHANGE `type` `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue', ADD COLUMN `alias` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`, ADD COLUMN `description` TEXT DEFAULT NULL AFTER `alias`, ADD COLUMN `base_language` CHAR(7) NOT NULL DEFAULT '' AFTER `description`, ADD COLUMN `translation_languages` VARCHAR(255) DEFAULT NULL AFTER `base_language`, ADD COLUMN `translations` MEDIUMTEXT DEFAULT NULL AFTER `translation_languages`, ADD COLUMN `color` VARCHAR(7) DEFAULT NULL AFTER `icon`, ADD COLUMN `published` TINYINT(1) NOT NULL DEFAULT 1 AFTER `color`, ADD COLUMN `ordering` INT(11) NOT NULL DEFAULT 0 AFTER `published`, ADD COLUMN `access` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `ordering`, ADD COLUMN `language` CHAR(7) NOT NULL DEFAULT '*' AFTER `access`, ADD COLUMN `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`, ADD COLUMN `checked_out_time` DATETIME NULL DEFAULT NULL AFTER `checked_out`, ADD COLUMN `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `checked_out_time`, ADD COLUMN `created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `created`, ADD COLUMN `modified` DATETIME NULL DEFAULT NULL AFTER `created_by`, ADD COLUMN `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `modified`, ADD COLUMN `attribs` TEXT DEFAULT NULL AFTER `modified_by`, ADD KEY `idx_entity` (`entity`), ADD KEY `idx_published` (`published`), ADD KEY `idx_access` (`access`), ADD KEY `idx_checkout` (`checked_out`);
