@@ -89,7 +89,7 @@ class JemAttachment extends CMSObject
             // Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
             // switch off parsing archives for byte sequences looking like a script file extension
             // but keep all other checks running
-            File::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
+            File::upload($rec['tmp_name'], $filepath, false, false, array('forbidden_ext_in_content' => false));
 
             $table = Table::getInstance('jem_attachments', '');
             $table->file = $sanitizedFilename;
