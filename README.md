@@ -1,4 +1,4 @@
-# JEM 4.5.0beta2 (the Joomla Event Manager)
+# JEM 4.5.0beta3 (the Joomla Event Manager)
 released 2026-05-20
 
 Based on
