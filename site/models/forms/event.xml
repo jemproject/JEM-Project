@@ -479,14 +479,37 @@
 
     <fields name="attribs">
         <fieldset name="event_links_options">
-            <field name="attachments_layout" type="radio"
+            <field name="attachments_layout" type="list"
                     label="COM_JEM_EVENT_ATTACHMENTS_LAYOUT"
                     default=""
-                    class="btn-group btn-group-yesno"
+                    class="form-select"
             >
                 <option value="">JGLOBAL_USE_GLOBAL</option>
                 <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+                <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+                <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
                 <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+                <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+                <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
+            </field>
+            <field name="attachments_icon_size" type="list"
+                    label="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE"
+                    default=""
+                    class="form-select"
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="none">JNO</option>
+                <option value="normal">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_NORMAL</option>
+                <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
+                <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
+            </field>
+            <field name="attachments_frame" type="radio"
+                    label="COM_JEM_EVENT_ATTACHMENTS_FRAME"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
 
             <field name="links_layout" type="list"

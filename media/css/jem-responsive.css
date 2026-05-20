@@ -1578,15 +1578,74 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
 
 /* Attachment file icon column */
 #jem .jem-attachments-list {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: .7rem;
 }
 
 #jem .jem-attachments-layout-row {
-    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
-    align-items: start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
     column-gap: 1.25rem;
     row-gap: .8rem;
+}
+
+#jem .jem-attachments-layout-row .jem-attachment-row {
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-row_full {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+#jem .jem-attachments-layout-row_full .jem-attachment-row {
+    flex: 1 1 min(18rem, 100%);
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-row_uniform {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    align-items: stretch;
+    width: 100%;
+}
+
+#jem .jem-attachments-layout-row_uniform .jem-attachment-row {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-column {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#jem .jem-attachments-layout-column_full {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#jem .jem-attachments-layout-column_full .jem-attachment-row {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-column_uniform {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+}
+
+#jem .jem-attachments-layout-column_uniform .jem-attachment-row {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #jem .jem-attachment-row {
@@ -1619,6 +1678,20 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
 #jem .jem-attachment-content a.file-name > .fa {
     flex: 0 0 auto;
     white-space: nowrap;
+}
+
+#jem .jem-attachments-frame .jem-attachment-row {
+    padding: .45rem .65rem;
+    border: 1px solid #9fb4d4;
+    border-radius: .25rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
+
+#jem .jem-attachments-frame .jem-attachment-row:hover,
+#jem .jem-attachments-frame .jem-attachment-row:focus-within {
+    border-color: #5f82b7;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
 }
 
 #jem .jem-attachments-icons-none .jem-attachment-row {
@@ -1722,22 +1795,27 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
 
 #jem .jem-attachments-tab .jem-attachments-global-options .control-group {
     display: flex !important;
+    flex: 0 1 auto !important;
     flex-wrap: nowrap !important;
     align-items: center !important;
-    gap: 1.5rem !important;
-    width: 100% !important;
+    gap: .6rem !important;
+    width: auto !important;
+    max-width: 100% !important;
     margin: 0 !important;
 }
 
 #jem .jem-attachments-tab .jem-attachments-global-options .control-label {
     flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
     margin: 0 !important;
     padding-right: .25rem !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
 }
 
 #jem .jem-attachments-tab .jem-attachments-global-options .controls {
-    flex: 1 1 auto !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
     min-width: 0 !important;
     margin: 0 !important;
 }
@@ -1745,18 +1823,21 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
 #jem .jem-attachments-tab .jem-attachments-global-options .btn-group,
 #jem .jem-attachments-tab .jem-attachments-global-options .btn-group-yesno {
     display: flex !important;
-    width: 100% !important;
-    max-width: 28rem !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: 100% !important;
     margin-bottom: 0 !important;
 }
 
 #jem .jem-attachments-tab .jem-attachments-global-options .btn-group > .btn,
 #jem .jem-attachments-tab .jem-attachments-global-options .btn-group > label,
 #jem .jem-attachments-tab .jem-attachments-global-options .btn-check + .btn {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
     padding-right: .6rem !important;
     padding-left: .6rem !important;
+    text-align: center !important;
     white-space: nowrap !important;
 }
 
@@ -1786,6 +1867,8 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
 
     #jem .jem-attachments-tab .jem-attachments-global-options .btn-group,
     #jem .jem-attachments-tab .jem-attachments-global-options .btn-group-yesno {
+        flex-wrap: wrap !important;
+        width: max-content !important;
         max-width: 100% !important;
     }
 

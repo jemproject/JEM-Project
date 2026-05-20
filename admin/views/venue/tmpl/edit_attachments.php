@@ -26,10 +26,12 @@ $attachments = is_array($this->item->attachments ?? null) ? $this->item->attachm
 
 <div class="jem-attachments-tab">
 <?php if (isset($this->form)) : ?>
-    <div class="jem-attachments-global-options">
-        <?php echo $this->form->renderField('attachments_layout', 'attribs'); ?>
-    </div>
-<?php endif; ?>
+        <div class="jem-attachments-global-options">
+            <?php echo $this->form->renderField('attachments_layout', 'attribs'); ?>
+            <?php echo $this->form->renderField('attachments_icon_size', 'attribs'); ?>
+            <?php echo $this->form->renderField('attachments_frame', 'attribs'); ?>
+        </div>
+    <?php endif; ?>
 <div class="btn-toolbar jem-attachments-toolbar">
     <div class="btn-group">
         <button type="button" class="btn btn-sm button btn-success attachment-add" aria-label="<?php echo Text::_('JTOOLBAR_NEW'); ?>">
@@ -56,7 +58,7 @@ $attachments = is_array($this->item->attachments ?? null) ? $this->item->attachm
                     <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
                     <input type="text" name="attached-desc[]" class="form-control valid form-control-success w-75" value="<?php echo $this->escape($file->description); ?>" />
                 </div>
-                <div>
+                <div class="jem-attachment-status-row">
                     <div class="title"><?php echo Text::_('JSTATUS'); ?></div>
                     <?php echo HTMLHelper::_('select.genericlist', $publishedOptions, 'attached-frontend[]', array('class'=>'form-select inputbox attachment-published'), 'value', 'text', (int) $file->frontend); ?>
                 </div>

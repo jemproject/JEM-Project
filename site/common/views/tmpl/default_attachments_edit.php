@@ -31,6 +31,8 @@ $attachmentsEnabled = (int) $this->jemsettings->attachmentenabled !== 0;
     <?php if (isset($this->form)) : ?>
         <div class="jem-attachments-global-options">
             <?php echo $this->form->renderField('attachments_layout', 'attribs'); ?>
+            <?php echo $this->form->renderField('attachments_icon_size', 'attribs'); ?>
+            <?php echo $this->form->renderField('attachments_frame', 'attribs'); ?>
         </div>
     <?php endif; ?>
 
@@ -67,7 +69,7 @@ $attachmentsEnabled = (int) $this->jemsettings->attachmentenabled !== 0;
                         <div class="title"><?php echo Text::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
                         <input type="text" name="attached-desc[]" class="form-control" value="<?php echo $this->escape($file->description); ?>" />
                     </div>
-                    <div>
+                    <div class="jem-attachment-status-row">
                         <div class="title"><?php echo Text::_('JSTATUS'); ?></div>
                         <?php
                         $publishedAttribs = array('class'=>'form-select inputbox attachment-published');

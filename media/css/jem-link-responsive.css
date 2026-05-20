@@ -770,7 +770,7 @@
 /* Keep global option compact */
 .jem-links-tab .jem-links-global-options .control-group {
     display: grid !important;
-    grid-template-columns: 150px minmax(220px, 1fr);
+    grid-template-columns: max-content max-content;
     column-gap: .75rem;
     align-items: center;
     margin: 0;
@@ -781,16 +781,32 @@
 .jem-links-tab .jem-links-global-options .control-label {
     display: flex !important;
     align-items: center !important;
+    height: 2.625rem !important;
     margin: 0 !important;
     padding: 0 !important;
     font-weight: 600;
+    line-height: 2.625rem !important;
+    white-space: nowrap;
 }
 
 /* Global option controls */
 .jem-links-tab .jem-links-global-options .controls {
-    display: block !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 2.625rem !important;
     margin: 0 !important;
     padding: 0 !important;
+}
+
+.jem-links-tab .jem-links-global-options .control-label label {
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+.jem-links-tab .jem-links-global-options select,
+.jem-links-tab .jem-links-global-options .form-select {
+    height: 2.625rem !important;
+    line-height: 1.2 !important;
 }
 
 .jem-links-tab .jem-links-global-options .controls fieldset {
@@ -1130,6 +1146,7 @@
     align-items: center !important;
     min-height: 42px !important;
     margin: 0 !important;
+    line-height: 1 !important;
 }
 
 #jem .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) {

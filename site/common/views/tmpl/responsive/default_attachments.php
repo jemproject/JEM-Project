@@ -21,17 +21,23 @@ if (!empty($this->attachmentParams) && is_object($this->attachmentParams) && met
 } elseif (!empty($this->venue->params) && is_object($this->venue->params) && method_exists($this->venue->params, 'get')) {
     $itemParams = $this->venue->params;
 }
+$attachmentLayouts = array('row', 'row_full', 'row_uniform', 'column', 'column_full', 'column_uniform');
 $attachmentLayoutOverride = $itemParams ? (string) $itemParams->get('attachments_layout', '') : '';
-$attachmentLayout = in_array($attachmentLayoutOverride, array('row', 'column'), true)
+$attachmentLayout = in_array($attachmentLayoutOverride, $attachmentLayouts, true)
     ? $attachmentLayoutOverride
-    : (isset($jemsettings->attachments_layout) && in_array($jemsettings->attachments_layout, array('row', 'column'), true)
+    : (isset($jemsettings->attachments_layout) && in_array($jemsettings->attachments_layout, $attachmentLayouts, true)
     ? $jemsettings->attachments_layout
     : 'column');
-$attachmentIconSize = isset($jemsettings->attachments_icon_size)
+$attachmentIconOverride = $itemParams ? (string) $itemParams->get('attachments_icon_size', '') : '';
+$attachmentIconSize = in_array($attachmentIconOverride, array('none', 'normal', 'medium', 'large'), true)
+    ? $attachmentIconOverride
+    : (isset($jemsettings->attachments_icon_size)
     ? (string) $jemsettings->attachments_icon_size
-    : (!isset($jemsettings->attachments_show_icon) || (int) $jemsettings->attachments_show_icon === 1 ? 'normal' : 'none');
+    : (!isset($jemsettings->attachments_show_icon) || (int) $jemsettings->attachments_show_icon === 1 ? 'normal' : 'none'));
 $attachmentIconSize = in_array($attachmentIconSize, array('none', 'normal', 'medium', 'large'), true) ? $attachmentIconSize : 'normal';
 $showAttachmentIcon = $attachmentIconSize !== 'none';
+$attachmentsFrame = $itemParams ? (int) $itemParams->get('attachments_frame', 0) : 0;
+$attachmentsFrameClass = $attachmentsFrame === 1 ? ' jem-attachments-frame' : '';
 
 if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
     <hr class="jem-hr" style="display: none;" />
@@ -41,7 +47,7 @@ if (isset($this->attachments) && is_array($this->attachments) && (count($this->a
         <?php else : ?>
             <h2 class="description"><?php echo Text::_('COM_JEM_FILE') ; ?></h2>
         <?php endif; ?>
-        <div class="jem-attachments-list jem-attachments-layout-<?php echo $this->escape($attachmentLayout); ?> jem-attachments-icons-<?php echo $this->escape($attachmentIconSize); ?>">
+        <div class="jem-attachments-list jem-attachments-layout-<?php echo $this->escape($attachmentLayout); ?> jem-attachments-icons-<?php echo $this->escape($attachmentIconSize); ?><?php echo $attachmentsFrameClass; ?>">
             <?php foreach ($this->attachments as $file) : ?>
                 <?php
                 $fileIcon = $showAttachmentIcon
