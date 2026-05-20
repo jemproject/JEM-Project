@@ -85,8 +85,8 @@ class JemModelSampledata extends BaseDatabaseModel
             }
         }
 
-        // assign admin userid to created_events
-        $this->assignAdminId();
+        // Assign the current manager as creator for all sample records.
+        $this->assignCurrentUserId();
 
         // move images in proper directory
         $this->moveImages();
@@ -466,52 +466,28 @@ class JemModelSampledata extends BaseDatabaseModel
 
 
     /**
-     * Assign admin-id to created events
+     * Assign current user id to sample records.
      *
      * @return boolean True if data exists
      */
-    private function assignAdminId()
+    private function assignCurrentUserId()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $user = JemFactory::getUser();
+        $userId = (int) $user->get('id');
 
-        $query = $db->getQuery(true);
-        $query->select("id");
-        $query->from('#__users');
-        $query->where('name LIKE "Super User"');
-        $db->setQuery($query);
-        $result = $db->loadResult();
-
-        if ($result == null) {
-            // use current user as fallback if user is allowed to manage JEM
-            $user = JemFactory::getUser();
-            if ($user->authorise('core.manage', 'com_jem')) {
-                $result = $user->get('id');
-            }
-            if (empty($result)) {
-                return false;
-            }
+        if (!$userId || !$user->authorise('core.manage', 'com_jem')) {
+            return false;
         }
 
-        $query = $db->getQuery(true);
-        $query->update('#__jem_events');
-        $query->set('created_by = '.$db->quote((int)$result));
-        $query->where(array('created_by = 62'));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_venues');
-        $query->set('created_by = '.$db->quote((int)$result));
-        $query->where(array('created_by = 62'));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_types');
-        $query->set('created_by = '.$db->quote((int)$result));
-        $query->where(array('created_by = 62'));
-        $db->setQuery($query);
-        $db->execute();
+        foreach (array('#__jem_events', '#__jem_venues', '#__jem_types', '#__jem_links', '#__jem_attachments') as $table) {
+            $query = $db->getQuery(true);
+            $query->update($table);
+            $query->set('created_by = ' . $db->quote($userId));
+            $query->where(array('created_by = 62'));
+            $db->setQuery($query);
+            $db->execute();
+        }
 
         return true;
     }
