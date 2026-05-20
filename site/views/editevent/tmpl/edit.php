@@ -225,6 +225,9 @@ $params        = $this->params;
                     } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
                     <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
+                    <li><?php echo $this->form->getLabel('event_status'); ?><?php echo $this->form->getInput('event_status'); ?></li>
+                    <li><?php echo $this->form->getLabel('ticket_availability'); ?><?php echo $this->form->getInput('ticket_availability'); ?></li>
+                    <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
                 </ul>
             </fieldset>
             <!-- EVENTDESCRIPTION -->

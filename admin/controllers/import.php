@@ -14,9 +14,31 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
 
-// helper callback function to convert all elements of an array
-function jem_convert_ansi2utf8(&$value, $key) {
-    $value = iconv('windows-1252', 'utf-8', $value);
+// helper callback function to normalise all CSV values to UTF-8
+function jem_normalise_csv_utf8(&$value, $key) {
+    if ($value === null || $value === '') {
+        return;
+    }
+
+    $value = (string) $value;
+
+    if ($key === 0) {
+        $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
+        if (strncmp($value, $bom, 3) === 0) {
+            $value = substr($value, 3);
+        }
+    }
+
+    $isUtf8 = function_exists('mb_check_encoding')
+        ? mb_check_encoding($value, 'UTF-8')
+        : (bool) preg_match('//u', $value);
+
+    if (!$isUtf8) {
+        $converted = iconv('windows-1252', 'UTF-8//IGNORE', $value);
+        if ($converted !== false) {
+            $value = $converted;
+        }
+    }
 }
 
 /**
@@ -116,11 +138,11 @@ class JemControllerImport extends BaseController
                 return;
             }
 
-            // search for bom - then it is utf-8
+            // search for bom - then it is explicitly utf-8
             $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
             $fc = fread($handle, 3);
-            $convert = strncmp($fc, $bom, 3) !== 0;
-            if ($convert) {
+            $hasBom = strncmp($fc, $bom, 3) === 0;
+            if (!$hasBom) {
                 // no bom - rewind file
                 fseek($handle, 0);
             }
@@ -130,11 +152,11 @@ class JemControllerImport extends BaseController
             if (($data = fgetcsv($handle, 1000, $separator, $delimiter)) !== false) {
                 $numfields = count($data);
 
-                // convert from ansi to utf-8 if required
-                if ($convert) {
+                // normalise to utf-8; UTF-8 without BOM must not be converted again
+                if (!$hasBom) {
                     $msg .= "<p>".Text::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
-                    array_walk($data, 'jem_convert_ansi2utf8');
                 }
+                array_walk($data, 'jem_normalise_csv_utf8');
 
                 for ($c = 0; $c < $numfields; $c++) {
                     // here, we make sure that the field match one of the fields of jem_venues table or special fields,
@@ -167,10 +189,8 @@ class JemControllerImport extends BaseController
                 if ($numfields != $num) {
                     $msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
                 } else {
-                    // convert from ansi to utf-8 if required
-                    if ($convert) {
-                        array_walk($data, 'jem_convert_ansi2utf8');
-                    }
+                    // normalise to utf-8; UTF-8 without BOM must not be converted again
+                    array_walk($data, 'jem_normalise_csv_utf8');
 
                     $r = array();
                     // only extract columns with validated header, from previous step.

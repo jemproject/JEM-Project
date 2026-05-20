@@ -241,6 +241,12 @@ $params        = $this->params;
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
                     <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
                     <dd><?php echo $this->form->getInput('contactid'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
+                    <dd><?php echo $this->form->getInput('event_status'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
+                    <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
+                    <dd><?php echo $this->form->getInput('type_id'); ?></dd>
                 </dl>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
