@@ -12,6 +12,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/attachmentdisplay.php';
+
 $jemsettings = JemHelper::config();
 $itemParams = null;
 if (!empty($this->attachmentParams) && is_object($this->attachmentParams) && method_exists($this->attachmentParams, 'get')) {
@@ -21,23 +23,20 @@ if (!empty($this->attachmentParams) && is_object($this->attachmentParams) && met
 } elseif (!empty($this->venue->params) && is_object($this->venue->params) && method_exists($this->venue->params, 'get')) {
     $itemParams = $this->venue->params;
 }
-$attachmentLayouts = array('row', 'row_full', 'row_uniform', 'column', 'column_full', 'column_uniform');
 $attachmentLayoutOverride = $itemParams ? (string) $itemParams->get('attachments_layout', '') : '';
-$attachmentLayout = in_array($attachmentLayoutOverride, $attachmentLayouts, true)
-    ? $attachmentLayoutOverride
-    : (isset($jemsettings->attachments_layout) && in_array($jemsettings->attachments_layout, $attachmentLayouts, true)
-    ? $jemsettings->attachments_layout
-    : 'column');
+$attachmentLayout = JemAttachmentDisplayHelper::resolveLayout(
+    $attachmentLayoutOverride,
+    $jemsettings->attachments_layout ?? ''
+);
 $attachmentIconOverride = $itemParams ? (string) $itemParams->get('attachments_icon_size', '') : '';
-$attachmentIconSize = in_array($attachmentIconOverride, array('none', 'normal', 'medium', 'large'), true)
-    ? $attachmentIconOverride
-    : (isset($jemsettings->attachments_icon_size)
-    ? (string) $jemsettings->attachments_icon_size
-    : (!isset($jemsettings->attachments_show_icon) || (int) $jemsettings->attachments_show_icon === 1 ? 'normal' : 'none'));
-$attachmentIconSize = in_array($attachmentIconSize, array('none', 'normal', 'medium', 'large'), true) ? $attachmentIconSize : 'normal';
+$attachmentIconSize = JemAttachmentDisplayHelper::resolveIconSize(
+    $attachmentIconOverride,
+    $jemsettings->attachments_icon_size ?? null,
+    $jemsettings->attachments_show_icon ?? 1
+);
 $showAttachmentIcon = $attachmentIconSize !== 'none';
 $attachmentsFrame = $itemParams ? (int) $itemParams->get('attachments_frame', 0) : 0;
-$attachmentsFrameClass = $attachmentsFrame === 1 ? ' jem-attachments-frame' : '';
+$attachmentsFrameClass = JemAttachmentDisplayHelper::frameClass($attachmentsFrame);
 ?>
 
 <?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>

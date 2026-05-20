@@ -12,6 +12,8 @@ tmp/
 *.bak
 *.swp
 *~.nib
+vendor/
+.phpunit.cache/
 local.properties
 .classpath
 .settings/

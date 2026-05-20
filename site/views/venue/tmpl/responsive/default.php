@@ -8,10 +8,11 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 ?>
-<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . (int) $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
     <div class="buttons">
         <?php
         $btn_params = array('id' => $this->venue->slug, 'slug' => $this->venue->slug, 'task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
@@ -117,13 +118,13 @@ use Joomla\CMS\Language\Text;
         <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
           <dt class="title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE').':'; ?></dt>
           <dd class="title">
-            <?php echo $this->venue->title;?>
+            <?php echo $this->escape($this->venue->title);?>
           </dd>
 
           <?php if (($this->settings->get('global_show_detlinkvenue', 1)) && (!empty($this->venue->url))) : ?>
           <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WEBSITE'); ?>"><?php echo Text::_('COM_JEM_WEBSITE'); ?>:</dt>
           <dd class="venue">
-            <a href="<?php echo $this->venue->url; ?>" target="_blank"><?php echo $this->venue->urlclean; ?></a>
+            <a href="<?php echo $this->escape($this->venue->url); ?>" target="_blank"><?php echo $this->escape($this->venue->urlclean); ?></a>
           </dd>
           <?php endif; ?>
 
@@ -158,8 +159,8 @@ use Joomla\CMS\Language\Text;
           <?php if ($this->venue->country) : ?>
           <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
           <dd class="venue_country">
-            <?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
-            <meta itemprop="addressCountry" content="<?php echo $this->venue->country; ?>" />
+            <?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->escape($this->venue->country); ?>
+            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->venue->country); ?>" />
           </dd>
           <?php endif; ?>
 
@@ -225,13 +226,13 @@ use Joomla\CMS\Language\Text;
             <?php endif; ?>
 
             <?php if ($global_show_mapserv == 3) : ?>
-                <input type="hidden" id="latitude" value="<?php echo $this->venue->latitude; ?>">
-                <input type="hidden" id="longitude" value="<?php echo $this->venue->longitude; ?>">
-                <input type="hidden" id="venue" value="<?php echo $this->venue->venue; ?>">
-                <input type="hidden" id="street" value="<?php echo $this->venue->street; ?>">
-                <input type="hidden" id="city" value="<?php echo $this->venue->city; ?>">
-                <input type="hidden" id="state" value="<?php echo $this->venue->state; ?>">
-                <input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode; ?>">
+                <input type="hidden" id="latitude" value="<?php echo $this->escape($this->venue->latitude); ?>">
+                <input type="hidden" id="longitude" value="<?php echo $this->escape($this->venue->longitude); ?>">
+                <input type="hidden" id="venue" value="<?php echo $this->escape($this->venue->venue); ?>">
+                <input type="hidden" id="street" value="<?php echo $this->escape($this->venue->street); ?>">
+                <input type="hidden" id="city" value="<?php echo $this->escape($this->venue->city); ?>">
+                <input type="hidden" id="state" value="<?php echo $this->escape($this->venue->state); ?>">
+                <input type="hidden" id="postalCode" value="<?php echo $this->escape($this->venue->postalCode); ?>">
                 <?php echo JemOutput::mapicon($this->venue, null, $this->settings); ?>
             <?php endif; ?>
         </div>
@@ -260,7 +261,8 @@ use Joomla\CMS\Language\Text;
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="view" value="venue" />
-            <input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
+            <input type="hidden" name="id" value="<?php echo (int) $this->venue->id; ?>" />
+            <?php echo HTMLHelper::_('form.token'); ?>
         </form>
 
         <!--pagination-->

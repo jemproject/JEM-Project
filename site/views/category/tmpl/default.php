@@ -105,6 +105,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <input type="hidden" name="view" value="category" />
         <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
         <input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!--pagination-->

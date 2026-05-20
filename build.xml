@@ -45,12 +45,34 @@
         <zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
             <exclude name="${cfg.buildDir}/**" />
             <exclude name=".settings/**" />
+            <exclude name=".phpunit.cache/**" />
+            <exclude name=".agents/**" />
+            <exclude name=".claude/**" />
+            <exclude name=".codex/**" />
+            <exclude name=".cursor/**" />
+            <exclude name=".github/copilot/**" />
+            <exclude name=".env" />
+            <exclude name=".env.*" />
             <exclude name=".*" />
+            <exclude name="*.pem" />
+            <exclude name="*.key" />
+            <exclude name="*.crt" />
+            <exclude name="*.pfx" />
+            <exclude name="*.sql" />
+            <exclude name="*.bak" />
+            <exclude name="*.orig" />
+            <exclude name="*.log" />
             <exclude name="build.*" />
             <exclude name="3rd/**" />
+            <exclude name="composer.json" />
+            <exclude name="composer.lock" />
             <exclude name="modules/**" />
             <exclude name="package/**" />
+            <exclude name="phpunit.xml" />
+            <exclude name="phpunit.xml.dist" />
             <exclude name="plugins/**" />
+            <exclude name="tests/**" />
+            <exclude name="vendor/**" />
         </zip>
     </target>
 

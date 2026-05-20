@@ -34,7 +34,6 @@ document.addEventListener("change", function(event) {
     }
 });
 
-$this->document->getWebAssetManager()->addInlineScript('
 document.addEventListener("DOMContentLoaded", function () {
     const getInlineHelpState = function () {
         const reference = document.querySelector("#jform_attribs_links_layout-desc, #jform_attribs_links_order-desc");
@@ -96,4 +95,3 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(normalizeJemLinksInlineHelp, 150);
     });
 });
-');

@@ -105,4 +105,5 @@ use Joomla\CMS\HTML\HTMLHelper;
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+<?php echo HTMLHelper::_('form.token'); ?>
 </form>

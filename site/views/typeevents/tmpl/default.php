@@ -7,6 +7,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 ?>
 
@@ -34,6 +35,7 @@ use Joomla\CMS\Language\Text;
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="view" value="typeevents"/>
         <input type="hidden" name="id" value="<?php echo (int) $this->type->id; ?>"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">

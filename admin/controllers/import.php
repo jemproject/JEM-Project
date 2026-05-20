@@ -14,32 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
 
-// helper callback function to normalise all CSV values to UTF-8
-function jem_normalise_csv_utf8(&$value, $key) {
-    if ($value === null || $value === '') {
-        return;
-    }
-
-    $value = (string) $value;
-
-    if ($key === 0) {
-        $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
-        if (strncmp($value, $bom, 3) === 0) {
-            $value = substr($value, 3);
-        }
-    }
-
-    $isUtf8 = function_exists('mb_check_encoding')
-        ? mb_check_encoding($value, 'UTF-8')
-        : (bool) preg_match('//u', $value);
-
-    if (!$isUtf8) {
-        $converted = iconv('windows-1252', 'UTF-8//IGNORE', $value);
-        if ($converted !== false) {
-            $value = $converted;
-        }
-    }
-}
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 
 /**
  * JEM Component Import Controller

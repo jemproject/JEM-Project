@@ -69,13 +69,14 @@ class JemModelVenue extends JemModelAdmin
             $db = Factory::getContainer()->get('DatabaseDriver');
             foreach ($pks as $pk)
             {
+                $pk = (int) $pk;
                 $result = array();
 
                 $query = $db->getQuery(true);
                 $query->select(array('COUNT(e.locid) as AssignedEvents'));
                 $query->from($db->quoteName('#__jem_venues').' AS v');
                 $query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
-                $query->where(array('v.id = '.$pk));
+                $query->where(array('v.id = ' . $pk));
                 $query->group('v.id');
                 $db->setQuery($query);
                 $assignedEvents = $db->loadResult();

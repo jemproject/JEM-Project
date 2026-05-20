@@ -115,9 +115,9 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <dd class="venue_country">
                     <?php if ($row->country) :
                         $countryimg = JemHelperCountries::getCountryFlag($row->country);
-                        echo $countryimg ? $countryimg : $row->country;
+                        echo $countryimg ? $countryimg : $this->escape($row->country);
                     endif; ?>
-                    <meta itemprop="addressCountry" content="<?php echo $row->country; ?>" />
+                    <meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" />
                 </dd>
                 <?php endif; ?>
 
@@ -180,14 +180,14 @@ use Joomla\CMS\HTML\HTMLHelper;
             <?php endif; ?>
 
             <?php if ($this->settings->get('global_show_mapserv')== 3) : ?>
-                <input type="hidden" id="latitude" value="<?php echo $row->latitude;?>">
-                <input type="hidden" id="longitude" value="<?php echo $row->longitude;?>">
+                <input type="hidden" id="latitude" value="<?php echo $this->escape($row->latitude);?>">
+                <input type="hidden" id="longitude" value="<?php echo $this->escape($row->longitude);?>">
 
-                <input type="hidden" id="venue" value="<?php echo $row->venue;?>">
-                <input type="hidden" id="street" value="<?php echo $row->street;?>">
-                <input type="hidden" id="city" value="<?php echo $row->city;?>">
-                <input type="hidden" id="state" value="<?php echo $row->state;?>">
-                <input type="hidden" id="postalCode" value="<?php echo $row->postalCode;?>">
+                <input type="hidden" id="venue" value="<?php echo $this->escape($row->venue);?>">
+                <input type="hidden" id="street" value="<?php echo $this->escape($row->street);?>">
+                <input type="hidden" id="city" value="<?php echo $this->escape($row->city);?>">
+                <input type="hidden" id="state" value="<?php echo $this->escape($row->state);?>">
+                <input type="hidden" id="postalCode" value="<?php echo $this->escape($row->postalCode);?>">
                 <?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>
             <?php endif; ?>
 

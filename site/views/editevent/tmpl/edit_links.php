@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
 $wa->registerAndUseStyle('com_jem.jem-links', 'media/com_jem/css/jem-links.css');
+$wa->registerAndUseScript('com_jem.jem-links', 'media/com_jem/js/jem-links.js');
 ?>
 
     <div class="row jem-links-tab">

@@ -7,6 +7,8 @@
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx; ?>">
@@ -51,6 +53,7 @@ defined('_JEXEC') or die;
         <input type="hidden" name="task" value="<?php
         echo $this->task; ?>"/>
         <input type="hidden" name="view" value="eventslist"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">

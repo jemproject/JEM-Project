@@ -192,20 +192,6 @@ class JemModelSettings extends AdminModel
             if (array_key_exists('GD Version', $gd_info)) {
                 $gd_version = $gd_info['GD Version'];
             }
-        } else {
-            ob_start();
-            if (phpinfo(INFO_MODULES)) {
-                $info = strip_tags(ob_get_contents());
-            }
-            ob_end_clean();
-            preg_match('/gd support\w*(.*)/i', $info, $gd_sup);
-            preg_match('/gd version\w*(.*)/i', $info, $gd_ver);
-            if (count($gd_ver) > 0) {
-                $gd_version = trim($gd_ver[1]);
-            }
-            if (count($gd_sup) > 0) {
-                $gd_version .= ' (' . trim($gd_sup[1]) . ')';
-            }
         }
 
         $config->vs_gd = $gd_version;
