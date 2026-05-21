@@ -6,9 +6,12 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
+namespace Joomla\Module\JemMap\Site\Helper;
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
@@ -46,4 +49,8 @@ class ModJemMapHelper
     {
         return JemMapHelper::getCategories($params);
     }
+}
+
+if (!class_exists('ModJemMapHelper', false)) {
+    class_alias(ModJemMapHelper::class, 'ModJemMapHelper');
 }

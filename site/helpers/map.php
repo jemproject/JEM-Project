@@ -5,14 +5,19 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
+namespace Joomla\Component\Jem\Site\Helper;
+
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Uri\Uri;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
 /**
  * Shared map data helper for JEM map module and map menu views.
  */
-if (!class_exists('JemMapHelper')) {
 class JemMapHelper
 {
     /**
@@ -27,6 +32,10 @@ class JemMapHelper
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
         $levels   = $user->getAuthorisedViewLevels();
+        $settings = \JemHelper::config();
+        $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
+        $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $query    = $db->getQuery(true);
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
         $dateUsed = self::isDate($filterStartDate);
@@ -44,9 +53,8 @@ class JemMapHelper
                 "v.longitude <> ''",
             ]);
 
-        if (!empty($levels)) {
-            $access = implode(',', array_map('intval', $levels));
-            $query->where($db->quoteName('v.access') . ' IN (' . $access . ')');
+        if ($venueAccess !== '') {
+            $query->where($db->quoteName('v.access') . ' IN (' . $venueAccess . ')');
         }
 
         if ($country !== '') {
@@ -64,12 +72,19 @@ class JemMapHelper
             $query->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1');
             $query->where($db->quoteName('e.published') . ' = 1');
             $query->where($db->quoteName('c.published') . ' = 1');
+            self::applyPublishWindow($query, 'e');
 
-            if (!empty($levels)) {
-                $access = implode(',', array_map('intval', $levels));
-                $query->where($db->quoteName('e.access') . ' IN (' . $access . ')');
-                $query->where($db->quoteName('c.access') . ' IN (' . $access . ')');
-                $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $access . '))');
+            if ($eventAccess !== '') {
+                $query->where($db->quoteName('e.access') . ' IN (' . $eventAccess . ')');
+            }
+
+            if ($categoryAccess !== '') {
+                $query->where($db->quoteName('c.access') . ' IN (' . $categoryAccess . ')');
+            }
+
+            $typeAccess = self::accessList($levels);
+            if ($typeAccess !== '') {
+                $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $typeAccess . '))');
             }
 
             if ($catUsed) {
@@ -95,6 +110,8 @@ class JemMapHelper
         $db     = Factory::getDbo();
         $user   = Factory::getApplication()->getIdentity();
         $levels = $user->getAuthorisedViewLevels();
+        $settings = \JemHelper::config();
+        $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
         $query  = $db->getQuery(true);
 
         $query->select('DISTINCT ' . $db->quoteName('country'))
@@ -109,8 +126,8 @@ class JemMapHelper
             ])
             ->order($db->quoteName('country') . ' ASC');
 
-        if (!empty($levels)) {
-            $query->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', $levels)) . ')');
+        if ($venueAccess !== '') {
+            $query->where($db->quoteName('access') . ' IN (' . $venueAccess . ')');
         }
 
         $db->setQuery($query);
@@ -134,6 +151,8 @@ class JemMapHelper
         $db     = Factory::getDbo();
         $user   = Factory::getApplication()->getIdentity();
         $levels = $user->getAuthorisedViewLevels();
+        $settings = \JemHelper::config();
+        $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
         $query  = $db->getQuery(true);
 
         $query->select('DISTINCT ' . $db->quoteName('city'))
@@ -149,8 +168,8 @@ class JemMapHelper
             ])
             ->order($db->quoteName('city') . ' ASC');
 
-        if (!empty($levels)) {
-            $query->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', $levels)) . ')');
+        if ($venueAccess !== '') {
+            $query->where($db->quoteName('access') . ' IN (' . $venueAccess . ')');
         }
 
         $db->setQuery($query);
@@ -168,6 +187,10 @@ class JemMapHelper
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
         $levels   = $user->getAuthorisedViewLevels();
+        $settings = \JemHelper::config();
+        $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
+        $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $query    = $db->getQuery(true);
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
 
@@ -204,12 +227,23 @@ class JemMapHelper
                 "v.longitude <> ''",
             ]);
 
-        if (!empty($levels)) {
-            $access = implode(',', array_map('intval', $levels));
-            $query->where($db->quoteName('e.access') . ' IN (' . $access . ')');
-            $query->where($db->quoteName('v.access') . ' IN (' . $access . ')');
-            $query->where($db->quoteName('c.access') . ' IN (' . $access . ')');
-            $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $access . '))');
+        self::applyPublishWindow($query, 'e');
+
+        if ($eventAccess !== '') {
+            $query->where($db->quoteName('e.access') . ' IN (' . $eventAccess . ')');
+        }
+
+        if ($venueAccess !== '') {
+            $query->where($db->quoteName('v.access') . ' IN (' . $venueAccess . ')');
+        }
+
+        if ($categoryAccess !== '') {
+            $query->where($db->quoteName('c.access') . ' IN (' . $categoryAccess . ')');
+        }
+
+        $typeAccess = self::accessList($levels);
+        if ($typeAccess !== '') {
+            $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $typeAccess . '))');
         }
 
         if (!empty($catids)) {
@@ -239,7 +273,9 @@ class JemMapHelper
         $db     = Factory::getDbo();
         $user   = Factory::getApplication()->getIdentity();
         $levels = $user->getAuthorisedViewLevels();
-        $catids = JemHelper::getValidIds($params->get('catid'));
+        $settings = \JemHelper::config();
+        $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
+        $catids = \JemHelper::getValidIds($params->get('catid'));
         $query  = $db->getQuery(true);
 
         $query->select($db->quoteName(['id', 'catname']))
@@ -248,8 +284,8 @@ class JemMapHelper
             ->where($db->quoteName('catname') . ' <> ' . $db->quote('root'))
             ->order($db->quoteName('lft') . ' ASC');
 
-        if (!empty($levels)) {
-            $query->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', $levels)) . ')');
+        if ($categoryAccess !== '') {
+            $query->where($db->quoteName('access') . ' IN (' . $categoryAccess . ')');
         }
 
         if (!empty($catids)) {
@@ -271,10 +307,14 @@ class JemMapHelper
         $db     = Factory::getDbo();
         $user   = Factory::getApplication()->getIdentity();
         $levels = $user->getAuthorisedViewLevels();
+        $settings = \JemHelper::config();
+        $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
+        $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $today  = Factory::getDate()->format('Y-m-d');
         $query  = $db->getQuery(true);
 
-        $query->select('DISTINCT ' . $db->quoteName(['c.id', 'c.catname', 'c.lft']))
+        $query->select('DISTINCT ' . implode(', ', $db->quoteName(['c.id', 'c.catname', 'c.lft'])))
             ->from($db->quoteName('#__jem_categories', 'c'))
             ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.catid') . ' = ' . $db->quoteName('c.id'))
             ->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('cr.itemid'))
@@ -287,12 +327,23 @@ class JemMapHelper
             ->where('COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ') >= ' . $db->quote($today))
             ->order($db->quoteName('c.lft') . ' ASC');
 
-        if (!empty($levels)) {
-            $access = implode(',', array_map('intval', $levels));
-            $query->where($db->quoteName('c.access') . ' IN (' . $access . ')');
-            $query->where($db->quoteName('e.access') . ' IN (' . $access . ')');
-            $query->where($db->quoteName('v.access') . ' IN (' . $access . ')');
-            $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $access . '))');
+        self::applyPublishWindow($query, 'e');
+
+        if ($categoryAccess !== '') {
+            $query->where($db->quoteName('c.access') . ' IN (' . $categoryAccess . ')');
+        }
+
+        if ($eventAccess !== '') {
+            $query->where($db->quoteName('e.access') . ' IN (' . $eventAccess . ')');
+        }
+
+        if ($venueAccess !== '') {
+            $query->where($db->quoteName('v.access') . ' IN (' . $venueAccess . ')');
+        }
+
+        $typeAccess = self::accessList($levels);
+        if ($typeAccess !== '') {
+            $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $typeAccess . '))');
         }
 
         $db->setQuery($query);
@@ -338,7 +389,7 @@ class JemMapHelper
         }
 
         $path = ltrim($marker, '/');
-        $rootPath = trim((string) parse_url(\Joomla\CMS\Uri\Uri::root(), PHP_URL_PATH), '/');
+        $rootPath = trim((string) parse_url(Uri::root(), PHP_URL_PATH), '/');
 
         if ($rootPath !== '' && strpos($path, $rootPath . '/') === 0) {
             $path = substr($path, strlen($rootPath) + 1);
@@ -362,17 +413,17 @@ class JemMapHelper
         }
 
         foreach (array_unique($candidates) as $candidate) {
-            if (\Joomla\CMS\Filesystem\File::exists(JPATH_SITE . '/' . $candidate)) {
-                return rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . '/' . $candidate;
+            if (File::exists(JPATH_SITE . '/' . $candidate)) {
+                return rtrim(Uri::root(), '/') . '/' . $candidate;
             }
         }
 
-        return rtrim(\Joomla\CMS\Uri\Uri::root(), '/') . '/' . $fallback;
+        return rtrim(Uri::root(), '/') . '/' . $fallback;
     }
 
     private static function getFilterCategoryIds($params, $selectedCategoryId = 0)
     {
-        $catids = JemHelper::getValidIds($params->get('catid'));
+        $catids = \JemHelper::getValidIds($params->get('catid'));
 
         if ($selectedCategoryId > 0) {
             if (empty($catids) || in_array($selectedCategoryId, $catids, true)) {
@@ -404,9 +455,37 @@ class JemMapHelper
         }
     }
 
+    private static function applyPublishWindow($query, $eventAlias)
+    {
+        $db = Factory::getDbo();
+        $now = Factory::getDate()->toSql();
+
+        $query->where($db->quoteName($eventAlias . '.publish_up') . ' <= ' . $db->quote($now));
+        $query->where('(' . $db->quoteName($eventAlias . '.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName($eventAlias . '.publish_down') . ' IS NULL)');
+    }
+
+    private static function accessList(array $levels, $lockedLevels = '["1"]')
+    {
+        $levels = array_map('intval', $levels);
+
+        if ($lockedLevels !== '["1"]') {
+            $extraLevels = json_decode((string) $lockedLevels, true);
+            if (is_array($extraLevels)) {
+                $levels = array_merge($levels, array_map('intval', $extraLevels));
+            }
+        }
+
+        $levels = array_values(array_unique(array_filter($levels)));
+
+        return $levels ? implode(',', $levels) : '';
+    }
+
     private static function isDate($date)
     {
         return is_string($date) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date);
     }
 }
+
+if (!class_exists('JemMapHelper', false)) {
+    class_alias(JemMapHelper::class, 'JemMapHelper');
 }

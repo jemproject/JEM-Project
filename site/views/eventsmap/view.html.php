@@ -19,6 +19,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Date\Date;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 
 use Joomla\CMS\Router\Route;

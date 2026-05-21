@@ -18,6 +18,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 /**
  * View: VenuesMap
