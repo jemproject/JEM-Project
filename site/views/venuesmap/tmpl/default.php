@@ -92,6 +92,15 @@ $buildVenueEditLink = static function ($venue) use ($currentUri) {
     return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $venue->id . '&return=' . base64_encode($currentUri));
 };
 
+$editableVenues = [];
+$showEditColumn = false;
+
+foreach (($this->venueslist ?? []) as $venue) {
+    $venueId = (int) $venue->id;
+    $editableVenues[$venueId] = $user->can('edit', 'venue', $venueId, (int) ($venue->created_by ?? 0));
+    $showEditColumn = $showEditColumn || $editableVenues[$venueId];
+}
+
 ?>
 
 
@@ -198,7 +207,9 @@ $buildVenueEditLink = static function ($venue) use ($currentUri) {
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_CITY'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
                         <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
-                        <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></th>
+                        <?php if ($showEditColumn) : ?>
+                            <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -206,7 +217,7 @@ $buildVenueEditLink = static function ($venue) use ($currentUri) {
                         <?php
                         $venueName = $this->escape($venue->venue);
                         $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
-                        $canEditVenue = $user->can('edit', 'venue', (int) $venue->id, (int) ($venue->created_by ?? 0));
+                        $canEditVenue = $editableVenues[(int) $venue->id] ?? false;
                         ?>
                         <tr>
                             <td>
@@ -222,14 +233,16 @@ $buildVenueEditLink = static function ($venue) use ($currentUri) {
                                     <span class="visually-hidden"><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
                                 </a>
                             </td>
-                            <td class="center">
-                                <?php if ($canEditVenue) : ?>
-                                    <a href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
-                                        <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
-                                        <span class="visually-hidden"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></span>
-                                    </a>
-                                <?php endif; ?>
-                            </td>
+                            <?php if ($showEditColumn) : ?>
+                                <td class="center">
+                                    <?php if ($canEditVenue) : ?>
+                                        <a href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                            <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                            <span class="visually-hidden"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></span>
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
