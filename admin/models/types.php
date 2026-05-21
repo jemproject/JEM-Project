@@ -20,6 +20,7 @@ class JemModelTypes extends ListModel
                 'name', 'a.name',
                 'alias', 'a.alias',
                 'entity', 'a.entity',
+                'access', 'a.access', 'access_level',
                 'published', 'a.published',
                 'ordering', 'a.ordering',
                 'created', 'a.created',
@@ -56,7 +57,9 @@ class JemModelTypes extends ListModel
         $query = $db->getQuery(true);
 
         $query->select('a.*')
-              ->from($db->quoteName('#__jem_types', 'a'));
+              ->select($db->quoteName('vl.title', 'access_level'))
+              ->from($db->quoteName('#__jem_types', 'a'))
+              ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'));
 
         $search = $this->getState('filter_search');
         if (!empty($search)) {

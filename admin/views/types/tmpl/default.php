@@ -92,6 +92,9 @@ $entityLabels = array(
                     <th style="width:6%" class="center">
                         <?php echo Text::_('COM_JEM_TYPE_FIELD_COLOR'); ?>
                     </th>
+                    <th style="width:10%">
+                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
+                    </th>
                     <th style="width:8%" class="center">
                         <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
@@ -132,6 +135,9 @@ $entityLabels = array(
                             <span style="display:inline-block;width:24px;height:24px;border-radius:4px;background:<?php echo $this->escape($item->color); ?>;border:1px solid #ccc;" title="<?php echo $this->escape($item->color); ?>"></span>
                         <?php endif; ?>
                     </td>
+                    <td>
+                        <?php echo $this->escape($item->access_level); ?>
+                    </td>
                     <td class="center">
                         <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'types.', $canEditState); ?>
                     </td>
@@ -141,7 +147,7 @@ $entityLabels = array(
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($this->items)) : ?>
-                <tr><td colspan="7" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
+                <tr><td colspan="8" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
             <?php endif; ?>
             </tbody>
         </table>
