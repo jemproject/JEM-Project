@@ -175,8 +175,14 @@ class JemViewEvent extends JemView
 
         // Check the view access to the event (the model has already computed the values).
         if (!$item->params->get('access-view')) { // && !$item->params->get('show_noauth') &&  $user->get('guest')) { - not supported yet
-            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            return;
+            if ($user->get('guest') || !$user->get('id')) {
+                $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode(Uri::getInstance()->toString()), false));
+
+                return;
+            }
+
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         if ($item->params->get('show_intro', '1') == '1') {

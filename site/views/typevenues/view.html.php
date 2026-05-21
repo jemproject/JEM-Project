@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 class JemViewTypevenues extends JemView
@@ -45,6 +46,17 @@ class JemViewTypevenues extends JemView
 
         if (!$typeObj) {
             throw new \Exception(Text::_('JERROR_PAGE_NOT_FOUND'), 404);
+        }
+
+        if (empty($typeObj->user_has_access_type)) {
+            if ($user->get('guest') || !$user->get('id')) {
+                $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                return;
+            }
+
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         $rows       = $this->get('Items');

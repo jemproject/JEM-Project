@@ -101,6 +101,20 @@ class JemViewCategory extends JemView
             $category = $this->get('Category', 'CategoryCal');
             $rows     = $this->get('Items', 'CategoryCal');
 
+            if (empty($category)) {
+                $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
+                return false;
+            } elseif (!$category->user_has_access_category) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
             // Set Page title
             $pagetitle = $params->def('page_title', $menuitem->title);
             $params->def('page_heading', $params->get('page_title'));
@@ -193,8 +207,14 @@ class JemViewCategory extends JemView
                 $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
                 return false;
             } else if(!$category->user_has_access_category) {
-                $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-                return false;
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
 
             // are events available?

@@ -16,7 +16,8 @@ class JemModelTypevenues extends JemModelVenueslist
     protected function populateState($ordering = null, $direction = null)
     {
         $app    = Factory::getApplication();
-        $typeId = $app->input->getInt('id', 0);
+        $params = $app->getParams('com_jem');
+        $typeId = $app->input->getInt('id', 0) ?: (int) $params->get('id', 0);
 
         parent::populateState($ordering, $direction);
 
@@ -34,15 +35,16 @@ class JemModelTypevenues extends JemModelVenueslist
         $app      = Factory::getApplication();
         $user     = JemFactory::getUser();
         $levels   = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
         $language = $app->getLanguage()->getTag();
         $db       = Factory::getContainer()->get('DatabaseDriver');
         $query    = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language')))
+            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
+            ->select('CASE WHEN ' . $db->quoteName('access') . ' IN (' . $levelsList . ') THEN 1 ELSE 0 END AS ' . $db->quoteName('user_has_access_type'))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('id') . ' = ' . $typeId)
             ->where($db->quoteName('entity') . ' = 3')
             ->where($db->quoteName('published') . ' = 1')
-            ->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', $levels)) . ')')
             ->where('('
                 . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
                 . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
