@@ -68,6 +68,9 @@ class JemModelType extends JemModelAdmin
             $table->base_language = $this->getDefaultSiteLanguage();
         }
 
+        $color = trim((string) $table->color);
+        $table->color = preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : '';
+
         $translations = json_decode((string) $table->translations, true);
         if (!is_array($translations)) {
             $translations = array();

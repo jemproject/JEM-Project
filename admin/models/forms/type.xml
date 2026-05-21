@@ -69,7 +69,8 @@
                type="color"
                label="COM_JEM_TYPE_FIELD_COLOR"
                description="COM_JEM_TYPE_FIELD_COLOR_DESC"
-               default="#3a86ff"
+               default="none"
+               keywords="none"
         />
 
         <field name="published"
