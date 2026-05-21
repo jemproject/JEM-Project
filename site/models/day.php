@@ -27,7 +27,7 @@ class JemModelDay extends JemModelEventslist
     {
         parent::__construct();
 
-        $rawday = Factory::getApplication()->input->getInt('id', null);
+        $rawday = Factory::getApplication()->input->getInt('id', 0);
         $this->setDate($rawday);
     }
 

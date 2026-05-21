@@ -59,6 +59,8 @@ class JemControllerFrontendmenu extends BaseController
         $items = array(
             array('Events List', 'events-list', 'index.php?option=com_jem&view=eventslist', $groups['events']),
             array('Submit Event', 'submit-event', 'index.php?option=com_jem&view=editevent', $groups['events']),
+            array('Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
+            array('Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
             array('Monthly Calendar', 'monthly-calendar', 'index.php?option=com_jem&view=calendar', $groups['calendars']),
             array('Weekly Calendar', 'weekly-calendar', 'index.php?option=com_jem&view=weekcal', $groups['calendars']),
             array('Venues List', 'venues-list', 'index.php?option=com_jem&view=venueslist', $groups['venues']),
@@ -224,6 +226,7 @@ class JemControllerFrontendmenu extends BaseController
         $existing = $this->getExistingMenuItem($menutype, $alias, $parentId);
 
         if ($existing) {
+            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId);
             return (int) $existing;
         }
 
@@ -275,6 +278,22 @@ class JemControllerFrontendmenu extends BaseController
         $db->setQuery($query);
 
         return (int) $db->loadResult();
+    }
+
+    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__menu'))
+            ->set($db->quoteName('title') . ' = ' . $db->quote($title))
+            ->set($db->quoteName('link') . ' = ' . $db->quote($link))
+            ->set($db->quoteName('type') . ' = ' . $db->quote($type))
+            ->set($db->quoteName('component_id') . ' = ' . (int) $componentId)
+            ->where($db->quoteName('id') . ' = ' . (int) $id)
+            ->where($db->quoteName('client_id') . ' = 0');
+        $db->setQuery($query);
+        $db->execute();
     }
 
     protected function getComponentId()
