@@ -126,6 +126,20 @@
                        label="MOD_JEM_MAP_CATEGORY_ID"
                        description="MOD_JEM_MAP_CATEGORY_ID_DESC"
                 />
+                <field name="show_country_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_COUNTRY_FILTER"
+                       description="MOD_JEM_MAP_SHOW_COUNTRY_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="default_country" type="countryoptions"
+                       default="0"
+                       label="MOD_JEM_MAP_DEFAULT_COUNTRY"
+                       description="MOD_JEM_MAP_DEFAULT_COUNTRY_DESC"
+                />
                 <field name="height" type="text" default="500px"
                        label="MOD_JEM_MAP_HEIGHT"
                        description="MOD_JEM_MAP_HEIGHT_DESC"

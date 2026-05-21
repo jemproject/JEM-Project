@@ -38,6 +38,8 @@ $centerLng = (float) $this->centerLng;
 $countries = $this->countries ?? [];
 $cities = $this->cities ?? [];
 $categories = $this->categories ?? [];
+$showCountryFilter = (int) ($this->showCountryFilter ?? 1);
+$showCategoryFilter = (int) ($this->showCategoryFilter ?? 1);
 $selectedCountry = (string) ($this->selectedCountry ?? '');
 $selectedCity = (string) ($this->selectedCity ?? '');
 $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
@@ -124,54 +126,60 @@ foreach (($this->venueslist ?? []) as $venue) {
     <div class="clr"></div>
 
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
-        <label for="jem-map-filter-country-<?= $map_id ?>" class="form-label mb-0">
-            <?= Text::_('COM_JEM_COUNTRY') ?>
-        </label>
-        <select name="jem_map_filter_country"
-                id="jem-map-filter-country-<?= $map_id ?>"
-                class="form-select form-select-sm auto-submit"
-                style="width: auto;">
-            <option value=""><?= Text::_('COM_JEM_SELECT_COUNTRY') ?></option>
-            <?php foreach ($countries as $country): ?>
-                <?php $countryValue = (string) $country->country; ?>
-                <?php $countryName = JemHelperCountries::getCountryName($countryValue) ?: $countryValue; ?>
-                <option value="<?= htmlspecialchars($countryValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryValue === $selectedCountry) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <?php if ($showCountryFilter) : ?>
+            <label for="jem-map-filter-country-<?= $map_id ?>" class="form-label mb-0">
+                <?= Text::_('COM_JEM_COUNTRY') ?>
+            </label>
+            <select name="jem_map_filter_country"
+                    id="jem-map-filter-country-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value=""><?= Text::_('COM_JEM_SELECT_COUNTRY') ?></option>
+                <?php foreach ($countries as $country): ?>
+                    <?php
+                    $countryValue = (string) $country->country;
+                    $countryName = !empty($country->country_name) ? (string) $country->country_name : $countryValue;
+                    ?>
+                    <option value="<?= htmlspecialchars($countryValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryValue === $selectedCountry) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
-        <label for="jem-map-filter-city-<?= $map_id ?>" class="form-label mb-0">
-            <?= Text::_('COM_JEM_CITY') ?>
-        </label>
-        <select name="jem_map_filter_city"
-                id="jem-map-filter-city-<?= $map_id ?>"
-                class="form-select form-select-sm auto-submit"
-                style="width: auto;"
-                <?= ($selectedCountry === '') ? 'disabled' : '' ?>>
-            <option value=""><?= Text::_('COM_JEM_SELECT_CITY') ?></option>
-            <?php foreach ($cities as $city): ?>
-                <?php $cityValue = (string) $city->city; ?>
-                <option value="<?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($cityValue === $selectedCity) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+            <label for="jem-map-filter-city-<?= $map_id ?>" class="form-label mb-0">
+                <?= Text::_('COM_JEM_CITY') ?>
+            </label>
+            <select name="jem_map_filter_city"
+                    id="jem-map-filter-city-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;"
+                    <?= ($selectedCountry === '') ? 'disabled' : '' ?>>
+                <option value=""><?= Text::_('COM_JEM_SELECT_CITY') ?></option>
+                <?php foreach ($cities as $city): ?>
+                    <?php $cityValue = (string) $city->city; ?>
+                    <option value="<?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($cityValue === $selectedCity) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
 
-        <label for="jem-map-filter-category-<?= $map_id ?>" class="form-label mb-0">
-            <?= Text::_('COM_JEM_CATEGORY') ?>
-        </label>
-        <select name="jem_map_filter_catid"
-                id="jem-map-filter-category-<?= $map_id ?>"
-                class="form-select form-select-sm auto-submit"
-                style="width: auto;">
-            <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
-            <?php foreach ($categories as $category): ?>
-                <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <?php if ($showCategoryFilter) : ?>
+            <label for="jem-map-filter-category-<?= $map_id ?>" class="form-label mb-0">
+                <?= Text::_('COM_JEM_CATEGORY') ?>
+            </label>
+            <select name="jem_map_filter_catid"
+                    id="jem-map-filter-category-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
     </form>
 
     <?php if (!empty($showMyLocation)): ?>

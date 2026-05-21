@@ -130,6 +130,20 @@
                    label="COM_JEM_EVENTS_MAP_CATEGORY_ID"
                    description="COM_JEM_EVENTS_MAP_CATEGORY_ID_DESC"
             />
+            <field name="show_country_filter" type="radio"
+                   default="0"
+                   label="COM_JEM_EVENTS_MAP_SHOW_COUNTRY_FILTER"
+                   description="COM_JEM_EVENTS_MAP_SHOW_COUNTRY_FILTER_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="default_country" type="countryoptions"
+                   default="0"
+                   label="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY"
+                   description="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY_DESC"
+            />
             <field name="jem_itemid" type="menuitem"
                    label="COM_JEM_EVENTS_MAP_JEM_ITEMID"
                    description="COM_JEM_EVENTS_MAP_JEM_ITEMID_DESC" />

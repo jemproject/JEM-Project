@@ -34,8 +34,11 @@ $jemsettings  = JemHelper::config();
 $map_id        = 'leafletmap-' . uniqid();
 $showDateFilter = (int) $this->showDateFilter;
 $showCategoryFilter = (int) ($this->showCategoryFilter ?? 0);
+$showCountryFilter = (int) ($this->showCountryFilter ?? 0);
 $categories    = $this->categories ?? [];
+$countries     = $this->countries ?? [];
 $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
+$selectedCountry = (string) ($this->selectedCountry ?? '');
 $filterMode    = $this->filterMode;
 $filterDate    = $this->filterDate;
 $isDateMode    = $filterDate !== null;
@@ -54,7 +57,7 @@ $startLng      = (float) $this->params->get('map_center_lng', '0');
 $startZoom     = (int)   $this->params->get('map_zoom', '10');
 $heatMapLayer  = (int)  $this->params->get('heat_layer', '1');
 $fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
-$showControls  = !empty($showDateFilter) || !empty($showCategoryFilter) || (int) $this->params->get('show_my_location', '0');
+$showControls  = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');
 $mapType       = (string) $this->params->get('map_type', 'political');
 $tileLayers    = [
     'political' => [
@@ -93,6 +96,27 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 
     <?php if ($showControls): ?>
         <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+            <?php if (!empty($showCountryFilter)): ?>
+                <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
+                    <?= Text::_('MOD_JEM_MAP_COUNTRY_FILTER') ?>
+                </label>
+                <select name="jem_map_filter_country"
+                        id="jem-map-filter-country-<?= $map_id ?>"
+                        class="form-select form-select-sm auto-submit"
+                        style="width: auto;">
+                    <option value=""><?= Text::_('MOD_JEM_MAP_ALL_COUNTRIES') ?></option>
+                    <?php foreach ($countries as $country): ?>
+                        <?php
+                        $countryCode = (string) $country->country;
+                        $countryName = !empty($country->country_name) ? (string) $country->country_name : $countryCode;
+                        ?>
+                        <option value="<?= htmlspecialchars($countryCode, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryCode === (string) $selectedCountry) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
+
             <?php if (!empty($showDateFilter)): ?>
             <?php
             $options = [

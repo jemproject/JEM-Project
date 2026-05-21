@@ -182,7 +182,7 @@ class JemMapHelper
      *
      * @return  array<object>
      */
-    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0)
+    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '')
     {
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
@@ -193,6 +193,7 @@ class JemMapHelper
         $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $query    = $db->getQuery(true);
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
+        $country  = trim((string) $country);
 
         $query->select([
                 'DISTINCT e.id',
@@ -248,6 +249,10 @@ class JemMapHelper
 
         if (!empty($catids)) {
             $query->where($db->quoteName('cr.catid') . ' IN (' . implode(',', array_map('intval', $catids)) . ')');
+        }
+
+        if ($country !== '') {
+            $query->where($db->quoteName('v.country') . ' = ' . $db->quote($country));
         }
 
         self::applyDateRange($query, 'e', $filterStartDate, $filterEndDate);
