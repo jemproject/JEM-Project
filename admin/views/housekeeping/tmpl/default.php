@@ -63,6 +63,20 @@ use Joomla\CMS\Session\Session;
                         <?php echo Text::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG_DESC'); ?>
                     </td>
                 </tr>
+            <!-- RESIZE THUMBNAILS -->
+                <tr>
+                    <td>
+                        <div class="linkicon">
+                            <a href="index.php?option=com_jem&amp;task=housekeeping.resizethumbs&amp;<?php echo Session::getFormToken(); ?>=1">
+                                <?php echo HTMLHelper::_('image', 'com_jem/icon-48-resizethumbs.svg', Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS'), NULL, true); ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                    <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS'); ?></h3>
+                        <?php echo Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS_DESC'); ?>
+                    </td>
+                </tr>
             <!-- CLEAN TRIGGER ARCHIVE -->
                 <tr>
                     <td>
@@ -96,7 +110,7 @@ use Joomla\CMS\Session\Session;
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="return confirm('<?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
+                            <a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="return jemConfirmTruncateAllData(this);">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-truncatealldata.svg', Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'), NULL, true); ?>
                             </a>
                         </div>
@@ -112,3 +126,20 @@ use Joomla\CMS\Session\Session;
             </div>
         <?php endif; ?>
 </form>
+<script>
+    function jemConfirmTruncateAllData(link) {
+        if (!confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM')); ?>)) {
+            return false;
+        }
+
+        if (confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_IMAGES_CONFIRM')); ?>)) {
+            link.href += '&deleteimages=1';
+        }
+
+        if (confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_ATTACHMENTS_CONFIRM')); ?>)) {
+            link.href += '&deleteattachments=1';
+        }
+
+        return true;
+    }
+</script>

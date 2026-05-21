@@ -106,6 +106,17 @@
             <option value="0">COM_JEM_SETTINGS_SUNDAY</option>
             <option value="1">COM_JEM_SETTINGS_MONDAY</option>
         </field>
+        <field name="flagicons_path" type="text"
+            label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
+            description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
+            class="inputbox"
+            default="media/com_jem/images/flags/w80-webp/"
+            size="40"
+            required="true"
+        />
+        <field name="spacer_attachments_start" type="spacer"
+            hr="true"
+        />
         <field name="attachments_path" type="text"
             label="COM_JEM_SETTINGS_ATTACHEMENT_PATH"
             description="COM_JEM_SETTINGS_ATTACHEMENT_PATH_DESC"
@@ -127,14 +138,32 @@
             size="40"
             required="true"
         />
-        <field name="flagicons_path" type="text"
-            label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
-            description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
-            class="inputbox"
-            default="media/com_jem/images/flags/w80-webp/"
-            size="40"
-            required="true"
-        />
+        <field name="attachments_layout" type="list"
+            label="COM_JEM_SETTINGS_ATTACHEMENT_LAYOUT"
+            description="COM_JEM_SETTINGS_ATTACHEMENT_LAYOUT_DESC"
+            class="inputbox form-select"
+            default="column"
+            required="false"
+        >
+            <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+            <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+            <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
+            <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+            <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+            <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
+        </field>
+        <field name="attachments_icon_size" type="list"
+            label="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE"
+            description="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_DESC"
+            class="inputbox form-select"
+            default="normal"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="normal">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_NORMAL</option>
+            <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
+            <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
+        </field>
         <field name="spacer2" type="spacer"
             hr="true"
         />
@@ -968,6 +997,15 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="event_show_availability" type="radio"
+                label="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="event_show_print_icon" type="radio"
                 label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
                 description="JGLOBAL_SHOW_PRINT_ICON_LABEL_DESC"
@@ -1450,6 +1488,19 @@
                 <option value="0">COM_JEM_LINK_PROFILE</option>
                 <option value="1">COM_JEM_LINK_AVATAR</option>
             </field>
+        </fieldset>
+
+        <fieldset name="evregistration" label="COM_JEM_SETTINGS_EVENT_LINKS">
+            <field name="allowed_link_extensions" type="text"
+                    label="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_LABEL"
+                    description="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_DESC"
+                    default="jpg,jpeg,png,gif,webp,svg"
+            />
+            <field name="allowed_link_schemes" type="text"
+                    label="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_SCHEMES_LABEL"
+                    description="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_SCHEMES_DESC"
+                    default="http,https,mailto,tel"
+            />
         </fieldset>
 
         <field name="global_show_ownedvenuesonly" type="radio"

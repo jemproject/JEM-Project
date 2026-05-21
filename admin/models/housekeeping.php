@@ -56,7 +56,6 @@ class JemModelHousekeeping extends BaseDatabaseModel
     public function delete($type)
     {
         // Set FTP credentials, if given
-        // jimport('joomla.client.helper');
         ClientHelper::setCredentialsFromRequest('ftp');
 
         // Get some data from the request
@@ -112,13 +111,134 @@ class JemModelHousekeeping extends BaseDatabaseModel
     }
 
     /**
+     * Regenerates thumbnails for assigned event, venue, category and event link images.
+     *
+     * @return int Number of regenerated thumbnails.
+     */
+    public function resizeThumbnails()
+    {
+        $jemsettings = JemHelper::config();
+        $width = max(1, (int) $jemsettings->imagewidth);
+        $height = max(1, (int) $jemsettings->imagehight);
+        $count = 0;
+
+        foreach (array(JemModelHousekeeping::EVENTS, JemModelHousekeeping::VENUES, JemModelHousekeeping::CATEGORIES) as $type) {
+            $folder = $this->map[$type]['folder'];
+            $images = array_unique(array_filter((array) $this->getAssigned($type)));
+            $sourceBase = Path::clean(JPATH_SITE . '/images/jem/' . $folder);
+            $thumbBase = Path::clean($sourceBase . '/small');
+
+            if (!Folder::exists($thumbBase)) {
+                Folder::create($thumbBase);
+            }
+
+            foreach ($images as $image) {
+                if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
+                    JemHelper::addLogEntry('Skipping unsafe image path while regenerating thumbnails: ' . $image, __METHOD__, Log::WARNING);
+                    continue;
+                }
+
+                $source = Path::clean($sourceBase . '/' . $image);
+                $thumb = Path::clean($thumbBase . '/' . $image);
+
+                if (!is_file($source)) {
+                    continue;
+                }
+
+                if (File::exists($thumb) && !File::delete($thumb)) {
+                    JemHelper::addLogEntry('Unable to remove old thumbnail: ' . $thumb, __METHOD__, Log::WARNING);
+                    continue;
+                }
+
+                JemImage::thumb($source, $thumb, $width, $height);
+
+                if (File::exists($thumb)) {
+                    $count++;
+                }
+            }
+        }
+
+        return $count + $this->resizeLinkThumbnails();
+    }
+
+    /**
+     * Regenerates thumbnails for event link images.
+     *
+     * @return int Number of regenerated thumbnails.
+     */
+    private function resizeLinkThumbnails()
+    {
+        $thumbBase = Path::clean(JPATH_SITE . '/images/jem/links/small');
+        $count = 0;
+        $seen = array();
+
+        if (Folder::exists($thumbBase)) {
+            $files = Folder::files($thumbBase, '.', false, true, array('index.html'), array());
+
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    File::delete($file);
+                }
+            }
+        } else {
+            Folder::create($thumbBase);
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('params'))
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('params') . ' IS NOT NULL')
+            ->where($db->quoteName('params') . ' <> ' . $db->quote(''));
+
+        $db->setQuery($query);
+        $linkParams = $db->loadColumn() ?: array();
+
+        foreach ($linkParams as $paramsJson) {
+            $params = json_decode($paramsJson, true);
+
+            if (!is_array($params) || empty($params['image'])) {
+                continue;
+            }
+
+            $image = trim((string) $params['image']);
+            $maxWidth = isset($params['max_width']) ? (int) $params['max_width'] : 120;
+            $maxHeight = isset($params['max_height']) ? (int) $params['max_height'] : 60;
+            $key = $image . '|' . $maxWidth . '|' . $maxHeight;
+
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $thumb = JemImage::linkThumbnail($image, $maxWidth, $maxHeight, true);
+
+            if (strpos($thumb, 'images/jem/links/small/') === 0) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
      * Truncates JEM tables with exception of settings table
      */
-    public function truncateAllData()
+    public function truncateAllData($deleteAttachmentFiles = false, $deleteImageFiles = false)
     {
         $result = true;
-        $tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'register', 'venues');
+        $tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'links', 'register', 'types', 'venues');
         $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if ($deleteImageFiles && !$this->deleteAllImageFiles()) {
+            JemHelper::addLogEntry('Error deleting image files while truncating JEM data', __METHOD__, Log::ERROR);
+            $result = false;
+        }
+
+        if ($deleteAttachmentFiles && !$this->deleteAllAttachmentFiles()) {
+            JemHelper::addLogEntry('Error deleting attachment files while truncating JEM data', __METHOD__, Log::ERROR);
+            $result = false;
+        }
 
         foreach ($tables as $table) {
             $db->setQuery('TRUNCATE #__jem_'.$table);
@@ -132,6 +252,75 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
         $categoryTable = $this->getTable('category', 'JemTable');
         $categoryTable->addRoot();
+
+        return $result;
+    }
+
+    /**
+     * Deletes event, venue, category and event link image files from the JEM image folders.
+     *
+     * @return boolean
+     */
+    private function deleteAllImageFiles()
+    {
+        $basePath = Path::clean(JPATH_SITE . '/images/jem');
+        $folders = array('events', 'venues', 'categories', 'links');
+        $result = true;
+
+        foreach ($folders as $folder) {
+            $path = Path::clean($basePath . '/' . $folder);
+
+            if (!Folder::exists($path)) {
+                continue;
+            }
+
+            $files = Folder::files($path, '.', true, true, array('index.html'), array());
+
+            foreach ($files as $file) {
+                if (is_file($file) && !File::delete($file)) {
+                    $result = false;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Deletes attachment object folders from the configured attachments path.
+     *
+     * @return boolean
+     */
+    private function deleteAllAttachmentFiles()
+    {
+        $jemsettings = JemHelper::config();
+        $relativePath = trim((string) $jemsettings->attachments_path);
+
+        if ($relativePath === '') {
+            return true;
+        }
+
+        $basePath = Path::clean(JPATH_SITE . '/' . $relativePath);
+        $sitePath = rtrim(Path::clean(JPATH_SITE), '\\/');
+
+        if ($basePath === $sitePath || !Folder::exists($basePath)) {
+            return true;
+        }
+
+        $folders = Folder::folders($basePath, '.', false, true, array('.', '..'));
+        $result = true;
+
+        foreach ($folders as $folder) {
+            $object = basename($folder);
+
+            if (!preg_match('/^[a-z]+[0-9]+$/i', $object)) {
+                continue;
+            }
+
+            if (!Folder::delete($folder)) {
+                $result = false;
+            }
+        }
 
         return $result;
     }

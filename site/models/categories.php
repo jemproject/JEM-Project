@@ -254,7 +254,7 @@ class JemModelCategories extends BaseDatabaseModel
         # Filter by access level - public or with access_level_locked_events active.
         if($jemsettings->access_level_locked_events != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_events, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where .= ' AND a.access IN (' . implode(',', $newlevels) . ')';
         } else {
             $where .= ' AND a.access IN (' . implode(',', $levels) . ')';
@@ -263,7 +263,7 @@ class JemModelCategories extends BaseDatabaseModel
         # Filter by access level - public or with access_level_locked_categories active.
         if($jemsettings->access_level_locked_categories != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where .= ' AND c.access IN (' . implode(',', $newlevels) . ')';
         } else {
             $where .= ' AND c.access IN (' . implode(',', $levels) . ')';
@@ -272,7 +272,7 @@ class JemModelCategories extends BaseDatabaseModel
         # Filter by access level - public or with access_level_locked_venues active.
         if($jemsettings->access_level_locked_venues != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where .= ' AND l.access IN (' . implode(',', $newlevels) . ')';
         } else {
             $where .= ' AND l.access IN (' . implode(',', $levels) . ')';
@@ -436,10 +436,10 @@ class JemModelCategories extends BaseDatabaseModel
         ## FILTER-ACCESS ##
         ###################
 
-        # Filter by access level - public or with access_level_locked_venues active.
+        # Filter by access level - public or with access_level_locked_categories active.
         if($jemsettings->access_level_locked_categories != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where_access = ' AND c.access IN ('.implode(',', $newlevels).')';
         } else {
             $where_access = ' AND c.access IN ('.implode(',', $levels).')';

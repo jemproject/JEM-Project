@@ -45,7 +45,9 @@ class JemViewMailto extends HtmlView
 
         $this->state = $this->get('State');
         $this->params = $this->state->get('params');
-        $this->link = urldecode($app->input->get('link', '', 'BASE64'));
+        $link = trim($app->input->getString('link', ''));
+        $resolvedLink = JemMailtoHelper::validateHash($link) ?: $link;
+        $this->link = ($resolvedLink && Uri::isInternal($resolvedLink)) ? $link : '';
 
         $layout = $app->input->get('layout', 'edit');
 

@@ -24,8 +24,7 @@ class JemControllerMyevents extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -35,8 +34,7 @@ class JemControllerMyevents extends BaseController
      * @access public
      * @return void
      */
-    public function publish()
-    {
+    public function publish() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
@@ -53,7 +51,8 @@ class JemControllerMyevents extends BaseController
 
         $model = $this->getModel('myevents');
         if (!$model->publish($cid, 1)) {
-            echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+            $this->setRedirect(JemHelperRoute::getMyEventsRoute(), $model->getError(), 'error');
+            return;
         }
 
         $total = count($cid);
@@ -65,8 +64,7 @@ class JemControllerMyevents extends BaseController
     /**
      * Logic for canceling an event and proceed to add a venue
      */
-    public function unpublish()
-    {
+    public function unpublish() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
@@ -83,7 +81,8 @@ class JemControllerMyevents extends BaseController
 
         $model = $this->getModel('myevents');
         if (!$model->publish($cid, 0)) {
-            echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+            $this->setRedirect(JemHelperRoute::getMyEventsRoute(), $model->getError(), 'error');
+            return;
         }
 
         $total = count($cid);
@@ -98,8 +97,7 @@ class JemControllerMyevents extends BaseController
      * @access public
      * @return void
      */
-    public function trash()
-    {
+    public function trash() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
@@ -116,7 +114,8 @@ class JemControllerMyevents extends BaseController
 
         $model = $this->getModel('myevents');
         if (!$model->publish($cid, -2)) {
-            echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+            $this->setRedirect(JemHelperRoute::getMyEventsRoute(), $model->getError(), 'error');
+            return;
         }
 
         $total = count($cid);

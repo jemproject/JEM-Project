@@ -95,21 +95,21 @@ function jem_common_show_filter(&$obj)
 }
 
 if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-    <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-        <div class="jem-row jem-justify-start jem-nowrap">
+    <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-events-filter">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-search">
             <?php echo $this->lists['filter']; ?>
             <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
         </div>
-        <div class="jem-row jem-justify-start jem-nowrap">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-month">
             <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
             <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
         </div>
-        <div class="jem-row jem-justify-start jem-nowrap">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php if ($this->settings->get('global_display', 1)) : ?>
-            <div class="jem-limit-smallist">
+            <div class="jem-limit-smallest jem-events-filter-limit">
                 <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
                 <?php echo $this->pagination->getLimitBox(); ?>
             </div>
@@ -120,6 +120,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
 <?php $showiconsineventtitle = $this->params->get('showiconsineventtitle',1); ?>
 <?php $showiconsineventdata = $this->params->get('showiconsineventdata',1); ?>
+<?php $showAvailabilityText = (bool) $this->params->get('event_show_availability',0); ?>
 
 <div class="jem-misc jem-row">
     <div class="jem-sort jem-row jem-justify-start jem-nowrap">
@@ -226,6 +227,8 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h3>
 
                 <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
@@ -235,6 +238,8 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
 
                 <?php elseif (($this->jemsettings->showtitle == 0) && ($this->jemsettings->showdetails == 1)) : // Display date as title of jem-event with link ?>
@@ -251,6 +256,8 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
 
                 <?php else : // Display date as title of jem-event without link ?>
@@ -265,6 +272,8 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
                         <?php echo $eventaccess; ?>
+                        <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
                 <?php endif; ?>
 
@@ -389,12 +398,12 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
     <?php endif; ?>
 </ul>
 <?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
-    <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-        <div class="jem-row jem-justify-start jem-nowrap">
+    <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-events-filter">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-search">
             <?php echo $this->lists['filter']; ?>
             <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
         </div>
-        <div class="jem-row jem-justify-start jem-nowrap">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>

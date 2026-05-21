@@ -19,8 +19,6 @@ $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 
-// jimport('joomla.html.html.tabs');
-
 // Create shortcut to parameters.
 $params        = $this->item->params;
 //$settings = json_decode($this->item->attribs);

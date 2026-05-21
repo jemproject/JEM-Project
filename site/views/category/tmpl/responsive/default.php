@@ -33,8 +33,9 @@ use Joomla\CMS\HTML\HTMLHelper;
         <p> </p>
     <?php endif; ?>
 
-  <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
-    <?php if ($this->params->get('show_page_heading', 1)) : ?>
+  <?php $showPageHeading = (bool) $this->params->get('show_page_heading', 1); ?>
+  <?php if (!$showPageHeading || $this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
+    <?php if ($showPageHeading) : ?>
       <h2 class="jem-category-title">
         <?php echo $this->escape($this->category->title);?>
       </h2>
@@ -100,6 +101,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <input type="hidden" name="view" value="category" />
         <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
         <input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!--pagination-->

@@ -14,11 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
 
-// helper callback function to convert all elements of an array
-function jem_convert_ansi2utf8(&$value, $key)
-{
-    $value = iconv('windows-1252', 'utf-8', $value);
-}
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 
 /**
  * JEM Component Import Controller
@@ -31,39 +27,52 @@ class JemControllerImport extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
-    public function csveventimport()
+    /**
+     * Check whether the current user can import JEM data.
+     *
+     * @return void
+     */
+    private function assertCanImport()
     {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    public function csveventimport() {
         $this->CsvImport('events', 'events');
     }
 
-    public function csvcategoriesimport()
-    {
+    public function csvcategoriesimport() {
         $this->CsvImport('categories', 'categories');
     }
 
-    public function csvvenuesimport()
-    {
+    public function csvvenuesimport() {
         $this->CsvImport('venues', 'venues');
     }
 
-    public function csvcateventsimport()
-    {
+    public function csvcateventsimport() {
         $this->CsvImport('catevents', 'cats_event_relations');
     }
 
-    private function CsvImport($type, $dbname)
-    {
+    public function csvattachmentsimport() {
+        $this->CsvImport('attachments', 'attachments');
+    }
+
+    public function csvtypesimport() {
+        $this->CsvImport('types', 'types');
+    }
+
+    private function CsvImport($type, $dbname) {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
-		
-		$app = Factory::getApplication();
+        $this->assertCanImport();
 
-        $replace = $app->input->post->getInt('replace_'.$type, 0);
+        $replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
         $object = Table::getInstance('jem_'.$dbname, '');
         $object_fields = get_object_vars($object);
         $jemconfig = JemConfig::getInstance()->toRegistry();
@@ -76,11 +85,22 @@ class JemControllerImport extends BaseController
         }
 
         $msg = '';
-        $file = $app->input->files->get('File'.$type, array(), 'array');
+        $file = Factory::getApplication()->input->files->get('File'.$type, array(), 'array');
 
-        if (empty($file['name']))
-        {
+        if (empty($file['name'])) {
             $msg = Text::_('COM_JEM_IMPORT_SELECT_FILE');
+            $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
+            return;
+        }
+
+        if (!empty($file['error'])) {
+            $msg = Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR');
+            $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
+            return;
+        }
+
+        if (strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)) !== 'csv' || !is_uploaded_file($file['tmp_name'])) {
+            $msg = Text::_('COM_JEM_IMPORT_PARSE_ERROR');
             $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
             return;
         }
@@ -93,11 +113,11 @@ class JemControllerImport extends BaseController
                 return;
             }
 
-            // search for bom - then it is utf-8
+            // search for bom - then it is explicitly utf-8
             $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
             $fc = fread($handle, 3);
-            $convert = strncmp($fc, $bom, 3) !== 0;
-            if ($convert) {
+            $hasBom = strncmp($fc, $bom, 3) === 0;
+            if (!$hasBom) {
                 // no bom - rewind file
                 fseek($handle, 0);
             }
@@ -107,11 +127,11 @@ class JemControllerImport extends BaseController
             if (($data = fgetcsv($handle, 1000, $separator, $delimiter)) !== false) {
                 $numfields = count($data);
 
-                // convert from ansi to utf-8 if required
-                if ($convert) {
+                // normalise to utf-8; UTF-8 without BOM must not be converted again
+                if (!$hasBom) {
                     $msg .= "<p>".Text::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
-                    array_walk($data, 'jem_convert_ansi2utf8');
                 }
+                array_walk($data, 'jem_normalise_csv_utf8');
 
                 for ($c = 0; $c < $numfields; $c++) {
                     // here, we make sure that the field match one of the fields of jem_venues table or special fields,
@@ -144,10 +164,8 @@ class JemControllerImport extends BaseController
                 if ($numfields != $num) {
                     $msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
                 } else {
-                    // convert from ansi to utf-8 if required
-                    if ($convert) {
-                        array_walk($data, 'jem_convert_ansi2utf8');
-                    }
+                    // normalise to utf-8; UTF-8 without BOM must not be converted again
+                    array_walk($data, 'jem_normalise_csv_utf8');
 
                     $r = array();
                     // only extract columns with validated header, from previous step.
@@ -169,20 +187,20 @@ class JemControllerImport extends BaseController
                 if ($result['added']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added']) . "</p>\n";
                 }
-                if ($result['updated']){
+                if ($result['updated']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated']) . "</p>\n";
                 }
-                if ($result['duplicated']){
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_DUPLICATED', $result['duplicated']) . " [Id events: " . $result['duplicatedids'] . "]</p>\n";
+                if ($result['duplicated']) {
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_DUPLICATED', $result['duplicated']) . " [Ids: " . $result['duplicatedids'] . "]</p>\n";
                 }
-                if ($result['replaced']){
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_REPLACED', $result['replaced']) . " [Id events: " . $result['replacedids'] . "]</p>\n";
+                if ($result['replaced']) {
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_REPLACED', $result['replaced']) . " [Ids: " . $result['replacedids'] . "]</p>\n";
                 }
-                if ($result['ignored']){
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Id events: " . $result['ignoredids'] . "]</p>\n";
+                if ($result['ignored']) {
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored']) . " [Ids: " . $result['ignoredids'] . "]</p>\n";
                 }
-                if ($result['error']){
-                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']) . " [Id events: " . $result['errorids'] . "]</p>\n";
+                if ($result['error']) {
+                    $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']) . " [Ids: " . $result['errorids'] . "]</p>\n";
                 }
             }
             $this->setRedirect('index.php?option=com_jem&view=import', $msg);
@@ -198,9 +216,8 @@ class JemControllerImport extends BaseController
      * @param string $value
      * @return string
      */
-    protected function _formatcsvfield($type, $value)
-    {
-        switch($type) {
+    protected function _formatcsvfield($type, $value) {
+        switch ($type) {
             case 'times':
             case 'endtimes':
                 if ($value !== '' && strtoupper($value) !== 'NULL') {
@@ -230,10 +247,10 @@ class JemControllerImport extends BaseController
     /**
      * Imports data from an old Eventlist installation
      */
-    public function eventlistImport()
-    {
+    public function eventlistImport() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
 
         $model = $this->getModel('import');
         $size = 5000;
@@ -248,23 +265,26 @@ class JemControllerImport extends BaseController
         $tables->eltables  = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
         $tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
 
-		$app = Factory::getApplication();
-
-		$step = $app->input->get('step', 0, 'INT');
-		$current = $app->input->get('current', 0, 'INT');
-		$total = $app->input->get('total', 0, 'INT');
-		$table = $app->input->get('table', 0, 'INT');
-
-		$prefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
-		$copyImages = $app->getUserStateFromRequest('com_jem.import.elimport.copyImages', 'copyImages', 0, 'int');
-		$copyAttachments = $app->getUserStateFromRequest('com_jem.import.elimport.copyAttachments', 'copyAttachments', 0, 'int');
-		$fromJ15 = $app->getUserStateFromRequest('com_jem.import.elimport.fromJ15', 'fromJ15', '0', 'int');
-
+        $app = Factory::getApplication();
+        $jinput = $app->input;
+        $step = $jinput->get('step', 0, 'INT');
+        $current = $jinput->get->get('current', 0, 'INT');
+        $total = $jinput->get->get('total', 0, 'INT');
+        $table = $jinput->get->get('table', 0, 'INT');
+        $prefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
+        $copyImages = $app->getUserStateFromRequest('com_jem.import.elimport.copyImages', 'copyImages', 0, 'int');
+        $copyAttachments = $app->getUserStateFromRequest('com_jem.import.elimport.copyAttachments', 'copyAttachments', 0, 'int');
+        $fromJ15 = $app->getUserStateFromRequest('com_jem.import.elimport.fromJ15', 'fromJ15', '0', 'int'); // import from Joomla! 1.5 site?
 
         $link = 'index.php?option=com_jem&view=import';
         $msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
-        if ($app->input->get('startToken', 0, 'INT') || ($step === 1)) {
+        if ($table < 0 || $table >= count($tables->eltables)) {
+            $this->setRedirect($link, Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
+            return;
+        }
+
+        if ($jinput->get('startToken', 0, 'INT') || ($step === 1)) {
             // Are the JEM tables empty at start? If no, stop import
             if ($model->getExistingJemData()) {
                 $this->setRedirect($link);

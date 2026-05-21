@@ -45,24 +45,46 @@
         <zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
             <exclude name="${cfg.buildDir}/**" />
             <exclude name=".settings/**" />
+            <exclude name=".phpunit.cache/**" />
+            <exclude name=".agents/**" />
+            <exclude name=".claude/**" />
+            <exclude name=".codex/**" />
+            <exclude name=".cursor/**" />
+            <exclude name=".github/copilot/**" />
+            <exclude name=".env" />
+            <exclude name=".env.*" />
             <exclude name=".*" />
+            <exclude name="*.pem" />
+            <exclude name="*.key" />
+            <exclude name="*.crt" />
+            <exclude name="*.pfx" />
+            <exclude name="*.sql" />
+            <exclude name="*.bak" />
+            <exclude name="*.orig" />
+            <exclude name="*.log" />
             <exclude name="build.*" />
             <exclude name="3rd/**" />
+            <exclude name="composer.json" />
+            <exclude name="composer.lock" />
             <exclude name="modules/**" />
             <exclude name="package/**" />
+            <exclude name="phpunit.xml" />
+            <exclude name="phpunit.xml.dist" />
             <exclude name="plugins/**" />
+            <exclude name="tests/**" />
+            <exclude name="vendor/**" />
         </zip>
     </target>
 
     <target name="build_plugins" description="packages any plugins">
         <!-- add all plugin directories here -->
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}embed.zip" basedir="plugins/plg_content_${cfg.name}embed" />
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents" />
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}" />
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments" />
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer" />
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_search_${cfg.name}.zip" basedir="plugins/plg_search_${cfg.name}" />
     </target>
 
     <target name="build_modules" description="packages any modules">
@@ -70,11 +92,11 @@
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_calajax.zip" basedir="modules/mod_${cfg.name}_calajax" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
         <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_types.zip" basedir="modules/mod_${cfg.name}_types" />
     </target>
 
     <target name="build_3rd" description="packages any 3rd party plugins">

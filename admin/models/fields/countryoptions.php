@@ -9,6 +9,14 @@
 defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Form\FormHelper;
+
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
+
+FormHelper::loadFieldClass('list');
+
+
 
 /**
  * CountryOptions Field class.

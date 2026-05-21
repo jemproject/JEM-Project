@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
@@ -158,7 +159,32 @@ class JemModelMyvenues extends BaseDatabaseModel
         // simple checks, good enough here
         if (is_array($cid) && count($cid) && ($publish >= -2) && ($publish <= 2)) {
             \Joomla\Utilities\ArrayHelper::toInteger($cid);
-            $cids = implode(',', $cid);
+            $cid = array_filter(array_unique($cid));
+
+            if (empty($cid)) {
+                return false;
+            }
+
+            $query = $this->_db->getQuery(true)
+                ->select(array('id', 'created_by'))
+                ->from($this->_db->quoteName('#__jem_venues'))
+                ->where($this->_db->quoteName('id') . ' IN (' . implode(',', $cid) . ')');
+            $this->_db->setQuery($query);
+            $venues = $this->_db->loadObjectList('id');
+
+            $allowed = array();
+            foreach ($cid as $id) {
+                if (!empty($venues[$id]) && $user->can('publish', 'venue', (int) $id, (int) $venues[$id]->created_by)) {
+                    $allowed[] = (int) $id;
+                }
+            }
+
+            if (empty($allowed)) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+                return false;
+            }
+
+            $cids = implode(',', $allowed);
 
             $query = 'UPDATE #__jem_venues'
                    . ' SET published = ' . (int)$publish

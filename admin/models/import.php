@@ -16,8 +16,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
-
-// jimport('joomla.application.component.model');
+use Joomla\CMS\User\User;
 
 /**
  * JEM Component Import Model
@@ -107,6 +106,26 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
+     * Get the table fields of the attachments table
+     *
+     * @return array An array with the fields of the attachments table
+     */
+    public function getAttachmentFields()
+    {
+        return $this->getFields('#__jem_attachments');
+    }
+
+    /**
+     * Get the table fields of the types table
+     *
+     * @return array An array with the fields of the types table
+     */
+    public function getTypeFields()
+    {
+        return $this->getFields('#__jem_types');
+    }
+
+    /**
      * Helper function to return table fields of a given table
      *
      * @param  string $tablename The name of the table we want to get fields from
@@ -174,7 +193,170 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Internal import dispatcher
+     * Import data corresponding to fieldsname into attachments table.
+     * jem_attachments extends Table (not JemTable), so insertIgnore() is not available.
+     *
+     * @param  array   $fieldsname Name of the fields
+     * @param  array   $data       The records
+     * @param  boolean $replace    Replace if ID already exists
+     *
+     * @return array   Number of records inserted and updated
+     */
+    public function attachmentsimport($fieldsname, &$data, $replace = true)
+    {
+        return $this->importSimpleTable('jem_attachments', '#__jem_attachments', $fieldsname, $data, $replace);
+    }
+
+    /**
+     * Import data corresponding to fieldsname into types table.
+     * jem_types extends Table (not JemTable), so insertIgnore() is not available.
+     *
+     * @param  array   $fieldsname Name of the fields
+     * @param  array   $data       The records
+     * @param  boolean $replace    Replace if ID already exists
+     *
+     * @return array   Number of records inserted and updated
+     */
+    public function typesimport($fieldsname, &$data, $replace = true)
+    {
+        return $this->importSimpleTable('jem_types', '#__jem_types', $fieldsname, $data, $replace);
+    }
+
+    /**
+     * Import helper for tables that extend bare Table (no insertIgnore()).
+     * Uses select-then-update-or-insert logic for replace mode.
+     *
+     * @param  string  $tableclass  Table class name for Table::getInstance()
+     * @param  string  $tablename   DB table name with #__ prefix
+     * @param  array   $fieldsname  Name of the fields
+     * @param  array   $data        The records
+     * @param  boolean $replace     Replace if ID already exists
+     *
+     * @return array   Number of records inserted and updated
+     */
+    private function importSimpleTable($tableclass, $tablename, $fieldsname, &$data, $replace = true)
+    {
+        $rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => '',
+                     'duplicated' => 0, 'duplicatedids' => '', 'replaced' => 0, 'replacedids' => '',
+                     'error' => 0, 'errorids' => '');
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $hasIdField = in_array('id', $fieldsname);
+        if (!$hasIdField) {
+            $replace = false;
+        }
+        $pk = $replace ? false : 'id';
+
+        foreach ($data as $row) {
+            $values = array();
+            if (!$hasIdField) {
+                $values['id'] = 0;
+            }
+            foreach ($fieldsname as $k => $field) {
+                $values[$field] = ($field !== $pk) ? $row[$k] : 0;
+            }
+
+            $this->normaliseImportedManagerUserIds($values);
+
+            $object = Table::getInstance($tableclass, '');
+            $object->bind($values);
+
+            if (!$object->check()) {
+                $this->setError($object->getError());
+                echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+                $rec['error']++;
+                $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                continue;
+            }
+
+            if ($replace) {
+                $checkQuery = $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName($tablename))
+                    ->where($db->quoteName('id') . ' = ' . (int) $object->id);
+                $db->setQuery($checkQuery);
+                $exists = (bool) $db->loadResult();
+
+                if ($exists) {
+                    if (!$object->store()) {
+                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+                        $rec['error']++;
+                        $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                        continue;
+                    }
+                    $rec['updated']++;
+                } else {
+                    try {
+                        $rowData = (object) get_object_vars($object);
+                        $db->insertObject($tablename, $rowData, 'id');
+                        $rec['added']++;
+                    } catch (\Exception $e) {
+                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
+                        $rec['error']++;
+                        $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                    }
+                }
+            } else {
+                if (!$object->store()) {
+                    echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
+                    $rec['error']++;
+                    $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                    continue;
+                }
+                $rec['added']++;
+            }
+        }
+
+        return $rec;
+    }
+
+    /**
+     * Keep imported creator/editor ids tied to users allowed to manage JEM.
+     *
+     * @param  array  $values  Row values prepared for binding
+     *
+     * @return void
+     */
+    private function normaliseImportedManagerUserIds(array &$values)
+    {
+        $currentUserId = (int) Factory::getApplication()->getIdentity()->id;
+
+        if (array_key_exists('created_by', $values) && !$this->isImportManagerUser((int) $values['created_by'])) {
+            $values['created_by'] = $currentUserId;
+        }
+
+        if (!empty($values['modified_by']) && !$this->isImportManagerUser((int) $values['modified_by'])) {
+            $values['modified_by'] = $currentUserId;
+        }
+    }
+
+    /**
+     * Checks whether an imported user id belongs to an administrator or JEM manager.
+     *
+     * @param  int  $userId
+     *
+     * @return bool
+     */
+    private function isImportManagerUser($userId)
+    {
+        if ($userId <= 0) {
+            return false;
+        }
+
+        try {
+            $user = User::getInstance($userId);
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        return $user
+            && !$user->guest
+            && ($user->authorise('core.admin') || $user->authorise('core.manage', 'com_jem'));
+    }
+
+    /**
+     * Import data corresponding to fieldsname into events table
      *
      * @param  string  $tablename  Name of the table where to add the data
      * @param  string  $prefix     Table class prefix
@@ -488,8 +670,6 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function getEventlistVersion()
     {
-        jimport( 'joomla.registry.registry' );
-
         $db = $this->_db;
         $query = $db->getQuery('true');
         $query->select('manifest_cache')
@@ -673,8 +853,14 @@ class JemModelImport extends BaseDatabaseModel
                 }
 
                 // Check user id
-                if (empty($row->added_by) || !in_array($row->added_by, $valid_user_ids)) {
-                    $row->added_by = $current_user_id;
+                $addedBy = isset($row->added_by) ? $row->added_by : (isset($row->created_by) ? $row->created_by : null);
+                if (empty($addedBy) || !in_array($addedBy, $valid_user_ids)) {
+                    $addedBy = $current_user_id;
+                }
+                // Map EL field names to JEM field names
+                $row->created_by = $addedBy;
+                if (isset($row->added)) {
+                    $row->created = $row->added;
                 }
             }
         }
@@ -975,9 +1161,6 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function copyAttachments()
     {
-        // jimport('joomla.filesystem.file');
-        // jimport('joomla.filesystem.folder');
-
         $jemsettings = JemHelper::config();
 
         $fromFolder = JPATH_SITE.'/media/com_eventlist/attachments/';

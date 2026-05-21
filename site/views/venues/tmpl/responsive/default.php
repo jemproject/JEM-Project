@@ -95,9 +95,9 @@ use Joomla\CMS\Language\Text;
             <dd class="venue_country">
               <?php if ($row->country) :
                 $countryimg = JemHelperCountries::getCountryFlag($row->country);
-                echo $countryimg ? $countryimg : $row->country;
+                echo $countryimg ? $countryimg : $this->escape($row->country);
               endif; ?>
-              <meta itemprop="addressCountry" content="<?php echo $row->country; ?>" />
+              <meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" />
             </dd>
             <?php endif; ?>
           </dl>

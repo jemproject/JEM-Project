@@ -14,6 +14,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
+use Joomla\String\StringHelper;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\Database\ParameterType;
 
 require_once __DIR__ . '/admin.php';
 
@@ -131,7 +134,7 @@ class JemModelEvent extends JemModelAdmin
     {
         $jemsettings = JemAdmin::config();
 
-        if ($item = parent::getItem($pk)){
+        if ($item = parent::getItem($pk)) {
             // Convert the params field to an array.
             // (this may throw an exception - but there is nothings we can do)
             $registry = new Registry;
@@ -150,16 +153,43 @@ class JemModelEvent extends JemModelAdmin
             $query = $db->getQuery(true);
             $query->select('SUM(places)');
             $query->from('#__jem_register');
-            $query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
+            $query->where(array('event= ' . $db->quote($item->id), 'status=1', 'waiting=0'));
 
             $db->setQuery($query);
             $res = $db->loadResult();
             $item->booked = $res;
 
-            $files = JemAttachment::getAttachments('event'.$item->id);
+            $files = JemAttachment::getAttachments('event' . $item->id, true);
             $item->attachments = $files;
 
-            if ($item->id){
+            // Load links of events
+            if ($item->id) {
+                $query = $db->getQuery(true)
+                    ->select('*')
+                    ->from($db->quoteName('#__jem_links'))
+                    ->where($db->quoteName('event_id') . ' = ' . (int) $item->id)
+                    ->order($db->quoteName('ordering') . ' ASC');
+
+                $db->setQuery($query);
+                $links = $db->loadObjectList();
+
+                if ($links) {
+                    foreach ($links as &$link) {
+                        if (!empty($link->params)) {
+                            $linkParams = json_decode($link->params, true);
+                            if (is_array($linkParams)) {
+                                foreach ($linkParams as $key => $value) {
+                                    $link->$key = $value;
+                                }
+                            }
+                        }
+                    }
+                }
+                $item->event_links = $links;
+            }
+            
+
+            if ($item->id) {
                 // Store current recurrence values
                 $item->recurr_bak = new stdClass;
                 foreach (get_object_vars($item) as $k => $v) {
@@ -272,6 +302,9 @@ class JemModelEvent extends JemModelAdmin
         $data['metadata']     = $data['metadata'] ?? '';
         $data['attribs']      = $data['attribs'] ?? '';
         $data['ordering']     = $data['ordering'] ?? '';
+        if (array_key_exists('type_id', $data) && $data['type_id'] === '') {
+            $data['type_id'] = null;
+        }
 
         // convert international date formats...
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -307,9 +340,9 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Times
-            if ($_REQUEST['starthours']){
-                $starthours    = $jinput->get('starthours', '', 'int');
-                $startminutes = $jinput->get('startminutes', '', 'int');
+            $starthours = $jinput->get('starthours', 0, 'int');
+            if ($starthours){
+                $startminutes = $jinput->get('startminutes', 0, 'int');
                 if ($startminutes){
                     $data['times'] = str_pad($starthours,2,'0', STR_PAD_LEFT) . ':' . str_pad($startminutes,2,'0', STR_PAD_LEFT) . ':00';
                 } else {
@@ -320,9 +353,9 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Endtimes
-            if ($_REQUEST['endhours']){
-                $endhours   = $jinput->get('endhours', '', 'int');
-                $endminutes = $jinput->get('endminutes', '', 'int');
+            $endhours = $jinput->get('endhours', 0, 'int');
+            if ($endhours){
+                $endminutes = $jinput->get('endminutes', 0, 'int');
 
                 if ($endminutes){
                     $data['endtimes'] = str_pad($endhours,2,'0', STR_PAD_LEFT) . ':' . str_pad($endminutes,2,'0', STR_PAD_LEFT) . ':00';
@@ -361,8 +394,8 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Contact
-            if($data['contactid'] == ''){
-                $data['contactid'] = 0;
+            if (!JemHelper::isContactComponentEnabled() || empty($data['contactid'])) {
+                $data['contactid'] = '';
             }
 
             // Times <= Endtimes
@@ -529,12 +562,40 @@ class JemModelEvent extends JemModelAdmin
                     $attach_name = $jinput->post->get('attach-name', array(), 'array');
                     $attach_descr = $jinput->post->get('attach-desc', array(), 'array');
                     $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                    $attach_order = $jinput->post->get('attach-order', array(), 'array');
+                    $attach_frontend = $jinput->post->get('attach-frontend', array(), 'array');
                     foreach ($attachments as $n => &$a) {
                         $a['customname'] = array_key_exists($n, $attach_access) ? $attach_name[$n] : '';
                         $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n] : '';
                         $a['access'] = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                        $a['ordering'] = array_key_exists($n, $attach_order) ? $attach_order[$n] : 0;
+                        $a['frontend'] = array_key_exists($n, $attach_frontend) ? $attach_frontend[$n] : 1;
                     }
                     JemAttachment::postUpload($attachments, 'event' . $pk);
+                }
+
+                // Update existing attachments, but only when they belong to this event.
+                $old = array();
+                $old['id'] = $jinput->post->get('attached-id', array(), 'array');
+                $old['name'] = $jinput->post->get('attached-name', array(), 'array');
+                $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
+                $old['access'] = $jinput->post->get('attached-access', array(), 'array');
+                $old['ordering'] = $jinput->post->get('attached-order', array(), 'array');
+                $old['frontend'] = $jinput->post->get('attached-frontend', array(), 'array');
+
+                foreach ($old['id'] as $k => $id) {
+                    $attach = array();
+                    $attach['id'] = $id;
+                    $attach['name'] = $old['name'][$k] ?? '';
+                    $attach['description'] = $old['description'][$k] ?? '';
+                    $attach['ordering'] = $old['ordering'][$k] ?? 0;
+                    if (array_key_exists($k, $old['frontend'])) {
+                        $attach['frontend'] = $old['frontend'][$k];
+                    }
+                    if ($allowed && array_key_exists($k, $old['access'])) {
+                        $attach['access'] = $old['access'][$k];
+                    } // else don't touch this field
+                    JemAttachment::update($attach, 'event' . $pk);
                 }
 
                 // Store cats
@@ -558,6 +619,22 @@ class JemModelEvent extends JemModelAdmin
                 $table->load($pk);
                 if (($table->recurrence_number > 0) && ($table->dates != null)) {
                     JemHelper::cleanup(2); // 2 = force on save, needs special attention
+                }
+
+                // Store links event
+                if (isset($data['event_links']))
+                {
+                    if (!$this->validateLinkData($data['event_links']))
+                    {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_VALIDATE_LINKS'));
+                        return false;
+                    }
+
+                    if (!$this->saveLinks($pk, $data['event_links']))
+                    {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+                        return false;
+                    }
                 }
             }
         } else {
@@ -585,7 +662,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update
@@ -616,7 +693,7 @@ class JemModelEvent extends JemModelAdmin
                 $this->setState($this->getName() . '.id', $table->id);
             }
 
-			// Update  and new attachment file
+            // Update  and new attachment file
             $allowed = $backend || ($jemsettings->attachmentenabled > 0);
 
             if ($allowed) {
@@ -625,10 +702,14 @@ class JemModelEvent extends JemModelAdmin
                 $attach_name = $jinput->post->get('attach-name', array(), 'array');
                 $attach_descr = $jinput->post->get('attach-desc', array(), 'array');
                 $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                $attach_order = $jinput->post->get('attach-order', array(), 'array');
+                $attach_frontend = $jinput->post->get('attach-frontend', array(), 'array');
                 foreach ($attachments as $n => &$a) {
                     $a['customname'] = array_key_exists($n, $attach_access) ? $attach_name[$n] : '';
                     $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n] : '';
                     $a['access'] = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                    $a['ordering'] = array_key_exists($n, $attach_order) ? $attach_order[$n] : 0;
+                    $a['frontend'] = array_key_exists($n, $attach_frontend) ? $attach_frontend[$n] : 1;
                 }
                 JemAttachment::postUpload($attachments, 'event' . $this->eventid);
             }
@@ -639,20 +720,217 @@ class JemModelEvent extends JemModelAdmin
             $old['name'] = $jinput->post->get('attached-name', array(), 'array');
             $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
             $old['access'] = $jinput->post->get('attached-access', array(), 'array');
+            $old['ordering'] = $jinput->post->get('attached-order', array(), 'array');
+            $old['frontend'] = $jinput->post->get('attached-frontend', array(), 'array');
 
             foreach ($old['id'] as $k => $id) {
                 $attach = array();
                 $attach['id'] = $id;
-                $attach['name'] = $old['name'][$k];
-                $attach['description'] = $old['description'][$k];
-                if ($allowed) {
+                $attach['name'] = $old['name'][$k] ?? '';
+                $attach['description'] = $old['description'][$k] ?? '';
+                $attach['ordering'] = $old['ordering'][$k] ?? 0;
+                if (array_key_exists($k, $old['frontend'])) {
+                    $attach['frontend'] = $old['frontend'][$k];
+                }
+                if ($allowed && array_key_exists($k, $old['access'])) {
                     $attach['access'] = $old['access'][$k];
                 } // else don't touch this field
-                JemAttachment::update($attach);
+                JemAttachment::update($attach, 'event' . $this->eventid);
             }
         }
 
         return $saved;
+    }
+
+
+    /**
+     * Security validation for the link data (Joomla 5 standard)
+     *
+     * @param   array  $data  The links data
+     * @return  bool          True if valid
+     */
+    public function validateLinkData($data)
+    {
+        if (empty($data)) return true;
+
+        $jemsettings = JemHelper::config();
+
+        // Get allowed image extensions from global configuration (defaults: jpg,jpeg,png,gif,webp,svg)
+        $allowedExts = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_extensions ?? 'jpg,jpeg,png,gif,webp,svg'));
+
+        // Get allowed URL schemes from global configuration (defaults: http,https,mailto,tel)
+        $allowedSchemes = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_schemes ?? 'http,https,mailto,tel'));
+
+        // Iterate through each link in the data array
+        foreach ($data as $link) {
+            $url = trim($link['url'] ?? '');
+            $title = isset($link['title']) ? trim((string) $link['title']) : '';
+            $icon = isset($link['icon']) ? trim((string) $link['icon']) : '';
+            $image = isset($link['image']) ? trim((string) $link['image']) : '';
+
+            // Description size validation
+            $description = isset($link['description']) ? trim((string) $link['description']) : '';
+            if (StringHelper::strlen($description) > 255) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_LINK_DESCRIPTION_TOO_LONG'));
+                return false;
+            }
+
+            if ($url === '' && $title === '' && $description === '' && $icon === '' && $image === '') {
+                continue;
+            }
+
+            // Empty URL means "display without an active link".
+            if ($url === '') {
+                continue;
+            }
+
+            // URL scheme validation (check protocol is allowed)
+            $urlScheme = parse_url($url, PHP_URL_SCHEME);
+            if (!$urlScheme || !in_array(strtolower($urlScheme), $allowedSchemes)) {
+                $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
+                return false;
+            }
+
+            // Validate URL format using PHP's filter_var
+            if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url)));
+                return false;
+            }
+
+            // Image validation (only for local images, not external URLs)
+            if (!empty($link['image'])) {
+                $img = $image;
+
+                // Extract only the path, removing Joomla 5 query strings (e.g., ?width=...)
+                $imgCleanPath = parse_url($img, PHP_URL_PATH);
+                $cleanPath = \Joomla\CMS\Filesystem\Path::clean($imgCleanPath);
+
+                // Security: Prevent directory traversal attacks (../)
+                if (strpos($cleanPath, '..') !== false) {
+                    $this->setError(\Joomla\CMS\Language\Text::_('COM_JEM_EVENT_ERROR_UNSAFE_PATH'));
+                    return false;
+                }
+
+                // Validate that the file extension is allowed
+                $ext = strtolower(\Joomla\CMS\Filesystem\File::getExt($cleanPath));
+                if (!in_array($ext, $allowedExts)) {
+                    $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_EXTENSION', $ext));
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.
+     * Ordering is forced to integer to avoid SQL Error 1366.
+     *
+     * @param   int    $pk    The event ID
+     * @param   array  $data  The links data from the subform
+     * @return  bool          True on success
+     */
+    public function saveLinks($pk, $data)
+    {
+        $db   = $this->getDbo();
+        $user = \Joomla\CMS\Factory::getUser();
+        $now  = \Joomla\CMS\Factory::getDate()->toSql();
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('event_id') . ' = ' . (int) $pk)
+            ->order($db->quoteName('ordering') . ' ASC');
+
+        $db->setQuery($query);
+        $existingIds = $db->loadColumn() ?: [];
+        $keptIds = [];
+
+        if (!empty($data)) {
+            $rowOrder = 0;
+
+            foreach ($data as $item) {
+                $url = isset($item['url']) ? trim((string) $item['url']) : '';
+                $title = isset($item['title']) ? trim((string) $item['title']) : '';
+                $description = isset($item['description']) ? trim((string) $item['description']) : '';
+                $icon = trim((string) ($item['icon'] ?? ''));
+                $image = trim((string) ($item['image'] ?? ''));
+
+                if ($url === '' && $title === '' && $description === '' && $icon === '' && $image === '') {
+                    continue;
+                }
+
+                $link = new stdClass();
+
+                $link->event_id = (int) $pk;
+                $link->type     = $item['type'] ?? 'info';
+                $link->title    = $title;
+                $link->url      = $url;
+                $link->ordering = (int) $rowOrder++;
+                $link->state    = 1;
+                $link->description = StringHelper::substr($description, 0, 255);
+
+                // Normalize additional link configuration.
+                $target = $item['target'] ?? '_blank';
+                $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
+
+                $color = trim((string) ($item['color'] ?? ''));
+
+                if ($color !== '' && !preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
+                    $color = '';
+                }
+
+                $frame = isset($item['frame']) ? (int) $item['frame'] : 0;
+                $frame = $frame === 1 ? 1 : 0;
+
+                $maxWidth = isset($item['max_width']) ? (int) $item['max_width'] : 0;
+                $maxHeight = isset($item['max_height']) ? (int) $item['max_height'] : 0;
+
+                $maxWidth = max(0, min($maxWidth, 2000));
+                $maxHeight = max(0, min($maxHeight, 2000));
+
+                // Store additional link configuration in params.
+                $link->params = json_encode([
+                    'target'       => $target,
+                    'icon'         => $icon,
+                    'image'        => $image,
+                    'color'        => $color,
+                    'frame'        => $frame,
+                    'max_width'    => $maxWidth,
+                    'max_height'   => $maxHeight,
+                    'custom_class' => $item['custom_class'] ?? ''
+                ]);
+
+                if (!empty($item['id']) && in_array($item['id'], $existingIds)) {
+                    $link->id          = (int) $item['id'];
+                    $link->modified_by = $user->id;
+                    $link->modified    = $now;
+
+                    $db->updateObject('#__jem_links', $link, 'id');
+                    $keptIds[] = $link->id;
+                } else {
+                    $link->created_by  = $user->id;
+                    $link->created     = $now;
+                    $link->modified_by = null;
+                    $link->modified    = null;
+
+                    $db->insertObject('#__jem_links', $link);
+                }
+            }
+        }
+
+        $toDelete = array_diff($existingIds, $keptIds);
+        if (!empty($toDelete)) {
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', array_map('intval', $toDelete)) . ')');
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        return true;
     }
 
 
@@ -987,7 +1265,7 @@ class JemModelEvent extends JemModelAdmin
 
                 // Insert new categories for id event
                 foreach($cats as $c){
-                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . $c . ',' . $db->quote($eventid) . ',0)');
+                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . (int) $c . ',' . $db->quote($eventid) . ',0)');
                     $db->execute();
                 }
             } else {

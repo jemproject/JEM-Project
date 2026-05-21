@@ -14,6 +14,7 @@
 defined ('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Version;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
@@ -93,8 +94,8 @@ class Pkg_JemInstallerScript
         $this->enablePlugin('content', 'jem');
         $this->enablePlugin('content', 'jemlistevents');
         $this->enablePlugin('quickicon', 'jem');
+        $this->uninstallPlugin('search', 'jem');
     //    $this->enablePlugin('finder', 'jem');
-    //    $this->enablePlugin('search', 'jem');
     //    $this->enablePlugin('jem', 'mailer');
 
         # ajax calendar module doesn't fully work on Joomla! 2.5
@@ -112,6 +113,15 @@ class Pkg_JemInstallerScript
         }
         $plugin->enabled = 1;
         return $plugin->store();
+    }
+
+    function uninstallPlugin($group, $element) {
+        $plugin = Table::getInstance('extension');
+        if (!$plugin->load(array('type'=>'plugin', 'folder'=>$group, 'element'=>$element))) {
+            return false;
+        }
+
+        return Installer::getInstance()->uninstall('plugin', (int) $plugin->extension_id);
     }
 
     function disableModule($element) {

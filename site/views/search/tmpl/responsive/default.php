@@ -8,6 +8,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 ?>
 
@@ -44,6 +45,7 @@ use Joomla\CMS\Language\Text;
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
             <input type="hidden" name="view" value="search" />
+            <?php echo HTMLHelper::_('form.token'); ?>
         </p>
     </form>
 

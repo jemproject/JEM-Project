@@ -83,7 +83,15 @@ class JemController extends BaseController
                 case 'venueslist':
                 case 'mailto':
                 case 'weekcal':
+                case 'typeevents':
+                case 'typevenues':
                     $model = $this->getModel($viewName);
+                    break;
+                case 'eventsmap':
+                    $model = $this->getModel('eventslist');
+                    break;
+                case 'venuesmap':
+                    $model = $this->getModel('venueslist');
                     break;
                 default:
                     $model = $this->getModel('eventslist');
@@ -124,8 +132,8 @@ class JemController extends BaseController
         $app = Factory::getApplication();
         $input = $app->input;
         
-        $offset = $input->getInt('offset', 0);
-        $limit = $input->getInt('limit', 10);
+        $offset = max(0, $input->getInt('offset', 0));
+        $limit = min(100, max(1, $input->getInt('limit', 10)));
         $viewName = $input->getCmd('view', 'eventslist');
         
         // Get already displayed months from frontend (as array)
@@ -135,8 +143,18 @@ class JemController extends BaseController
         
         // Load model according to view
         $model = $this->getModel($viewName);
-        if (!$model) {
+        if (!$model || !method_exists($model, 'getEventsAjax')) {
             $model = $this->getModel('eventslist');
+        }
+
+        if (!$model || !method_exists($model, 'getEventsAjax')) {
+            echo json_encode([
+                'html' => '',
+                'hasMore' => false,
+                'total' => 0,
+                'displayedMonths' => $displayedMonths
+            ]);
+            $app->close();
         }
         
         $result = $model->getEventsAjax($offset, $limit);

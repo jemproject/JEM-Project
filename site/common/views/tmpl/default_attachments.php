@@ -11,37 +11,70 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
+
+require_once JPATH_SITE . '/components/com_jem/helpers/attachmentdisplay.php';
+
+$jemsettings = JemHelper::config();
+$itemParams = null;
+if (!empty($this->attachmentParams) && is_object($this->attachmentParams) && method_exists($this->attachmentParams, 'get')) {
+    $itemParams = $this->attachmentParams;
+} elseif (!empty($this->item->params) && is_object($this->item->params) && method_exists($this->item->params, 'get')) {
+    $itemParams = $this->item->params;
+} elseif (!empty($this->venue->params) && is_object($this->venue->params) && method_exists($this->venue->params, 'get')) {
+    $itemParams = $this->venue->params;
+}
+$attachmentLayoutOverride = $itemParams ? (string) $itemParams->get('attachments_layout', '') : '';
+$attachmentLayout = JemAttachmentDisplayHelper::resolveLayout(
+    $attachmentLayoutOverride,
+    $jemsettings->attachments_layout ?? ''
+);
+$attachmentIconOverride = $itemParams ? (string) $itemParams->get('attachments_icon_size', '') : '';
+$attachmentIconSize = JemAttachmentDisplayHelper::resolveIconSize(
+    $attachmentIconOverride,
+    $jemsettings->attachments_icon_size ?? null,
+    $jemsettings->attachments_show_icon ?? 1
+);
+$showAttachmentIcon = $attachmentIconSize !== 'none';
+$attachmentsFrame = $itemParams ? (int) $itemParams->get('attachments_frame', 0) : 0;
+$attachmentsFrameClass = JemAttachmentDisplayHelper::frameClass($attachmentsFrame);
 ?>
 
 <?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
     <div class="files">
         <h2 class="description"><?php echo Text::_('COM_JEM_FILES'); ?></h2>
-        <table class="file">
-            <tbody>
+        <div class="jem-attachments-list jem-attachments-layout-<?php echo $this->escape($attachmentLayout); ?> jem-attachments-icons-<?php echo $this->escape($attachmentIconSize); ?><?php echo $attachmentsFrameClass; ?>">
             <?php foreach ($this->attachments as $file) : ?>
-                <tr>
-                    <td>
-                        <?php
-                        $overlib = Text::_('COM_JEM_FILE').': '.$this->escape($file->file);
-                        if (!empty($file->name)) {
-                            $overlib .= '<br>'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
-                        }
-                        if (!empty($file->description)) {
-                            $overlib .= '<br>'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
-                        }
-                        ?>
+                <?php
+                $fileIcon = $showAttachmentIcon
+                    ? '<span class="jem-attachment-file-icon jem-attachment-file-icon-' . $this->escape($attachmentIconSize) . ' ' . $this->escape(JemAttachment::getIconClass($file->file)) . '" aria-hidden="true"></span>'
+                    : '';
+                ?>
+                <div class="jem-attachment-row">
+                    <div class="jem-attachment-icon-cell"><?php echo $fileIcon; ?></div>
+                    <div class="jem-attachment-content">
+                    <?php
+                    $overlib = Text::_('COM_JEM_FILE').': '.$this->escape($file->file);
+                    if (!empty($file->name)) {
+                        $overlib .= '<br>'.Text::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
+                    }
+                    if (!empty($file->description)) {
+                        $overlib .= '<br>'.Text::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
+                    }
+                    ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_DOWNLOAD'), $overlib, 'file-dl-icon file-name'); ?>>
                     <?php
-                    $filename    = $this->escape($file->name ? $file->name : $file->file);
-                    $image        = HTMLHelper::_('image','com_jem/download_16.webp', Text::_('COM_JEM_DOWNLOAD'),NULL,true)." "."<span class=file-name>".$filename."</span>";
-                    $attribs    = array('class'=>'file-name');
-                    echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.Session::getFormToken().'=1',$image,$attribs);
+                    $filename = $this->escape($file->name ? $file->name : $file->file);
+                    $linkText = '<span class="file-name">' . $filename . '</span> <span class="fa fa-download" aria-hidden="true"></span>';
+                    $attribs = array('class'=>'file-name');
+                    echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.Session::getFormToken().'=1',$linkText,$attribs);
                     ?>
                 </span>
-                    </td>
-                </tr>
+                        <?php if (!empty($file->description)) : ?>
+                            <div class="jem-attachment-description"><?php echo nl2br($this->escape($file->description)); ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             <?php endforeach; ?>
-            </tbody>
-        </table>
+        </div>
     </div>
 <?php endif;

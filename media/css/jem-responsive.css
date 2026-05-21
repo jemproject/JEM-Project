@@ -5,7 +5,7 @@
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
-/* Hoftix for SqueezeBox Modal overlay destroying images on mobile phones */
+/* Hotfix for SqueezeBox modal overlay destroying images on mobile phones */
 
 body.com_jem #sbox-overlay {
     width: 100% !important;
@@ -31,6 +31,110 @@ body.com_jem.body-overlayed {
 #jem h1.componentheading i.fa,
 #jem h1.componentheading i.fas {
     font-size: 1.332rem;
+}
+
+#jem .jem-event-badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-left: 0.45rem;
+    vertical-align: middle;
+}
+
+#jem .jem-event-state-badge {
+    display: inline-block;
+    border-radius: 0.25rem;
+    color: #fff;
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 0.18rem 0.42rem;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+#jem .jem-event-state-badge--cancelled,
+#jem .jem-event-state-badge--soldout {
+    background: #b3261e;
+}
+
+#jem .jem-event-state-badge--postponed,
+#jem .jem-event-state-badge--preorder,
+#jem .jem-event-state-badge--waitinglist {
+    background: #b55b00;
+}
+
+#jem .jem-event-state-badge--rescheduled {
+    background: #2456a5;
+}
+
+#jem .jem-event-state-badge--moved-online {
+    background: #247a3d;
+}
+
+#jem .jem-type-badge,
+.jem-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    background: #6c757d;
+    color: #fff;
+    font-size: 0.66em;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0.18rem 0.58rem;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+#jem .jem-event-badges + .jem-type-badge {
+    margin-left: 0.35rem;
+}
+
+#jem .jem-type-badge:hover,
+.jem-type-badge:hover {
+    filter: brightness(0.93);
+    color: #fff;
+    text-decoration: none;
+}
+
+#jem .jem-event-image-ribbon-wrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+    vertical-align: top;
+}
+
+#jem .jem-event-image-ribbon-wrap .flyerimage {
+    float: none !important;
+    display: block;
+}
+
+#jem .jem-event-image-ribbon-wrap img {
+    display: block;
+    max-width: 100%;
+}
+
+#jem .jem-event-image-ribbon {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    left: -2.6rem;
+    line-height: 1.2;
+    min-width: 9.6rem;
+    opacity: 0.88;
+    padding: 0.32rem 1rem;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    top: 1.2rem;
+    transform: rotate(-45deg);
+    z-index: 2;
 }
 
 #jem .buttons {
@@ -123,7 +227,7 @@ body.com_jem.body-overlayed {
     font-size: 1.332rem;
 }
 
-/*Special for the description lable in editevent and editvenue*/
+/* Special for the description label in editevent and editvenue */
 
 #jem #jform_articletext-lbl,
 #jem #jform_locdescription-lbl {
@@ -182,7 +286,11 @@ body.com_jem.body-overlayed {
 
 #jem .copyright {
     font-size: 0.9em;
-    text-align: right;
+    clear: both;
+    float: none;
+    width: 100%;
+    margin: 1em 0;
+    text-align: center;
     color: #808080;
 }
 
@@ -201,7 +309,7 @@ body.com_jem.body-overlayed {
     justify-content: flex-start;
 }
 
-#jem .jem-limit-smallist {
+#jem .jem-limit-smallest {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -231,7 +339,39 @@ body.com_jem.body-overlayed {
     background-color: #ffa500;
 }
 
-#jem_filter div {
+div#jem #jem_filter.floattext {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter.floattext .jem_fleft,
+div#jem #jem_filter.floattext .jem_fright {
+    float: none;
+}
+
+div#jem #jem_filter.floattext .jem_fleft,
+div#jem #jem_filter.floattext .jem_fright,
+div#jem #jem_filter.floattext > div {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0;
+}
+
+div#jem #jem_filter.floattext .jem_fleft {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+div#jem #jem_filter.floattext .jem_fright {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+#jem_filter:not(.jem-search-filter) div {
     margin-bottom: 2px;
 }
 
@@ -248,13 +388,256 @@ body.com_jem.body-overlayed {
 
 #jem_filter button {
     margin-right: 5px;
-    --btn-padding-x: 0.8rem;
-    --btn-padding-y: 0.4rem;
+}
+
+div#jem #jem_filter select,
+div#jem #jem_filter .form-select,
+div#jem #jem_filter input[type="text"],
+div#jem #jem_filter .form-control,
+div#jem #jem_filter button,
+div#jem #jem_filter .btn {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+div#jem #jem_filter.floattext input#filter_search,
+div#jem #jem_filter.floattext input[name="filter_search"] {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+    width: auto;
+}
+
+@media (max-width: 60rem) {
+    div#jem #jem_filter.floattext {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem #jem_filter.floattext .jem_fleft,
+    div#jem #jem_filter.floattext .jem_fright,
+    div#jem #jem_filter.floattext > div {
+        flex: 1 1 100%;
+    }
+
+    div#jem #jem_filter.floattext .jem_fright {
+        margin-left: 0;
+    }
+
+    div#jem #jem_filter.floattext input#filter_search,
+    div#jem #jem_filter.floattext input[name="filter_search"] {
+        flex: 1 1 12rem;
+        min-width: 0;
+    }
 }
 
 #jem_filter #filter_continent,
 #jem_filter #filter_country,
 #jem_filter #filter_city {min-width: 250px;}
+
+div#jem .jem-search-filter #filter_continent,
+div#jem .jem-search-filter #filter_country,
+div#jem .jem-search-filter #filter_city {
+    min-width: 0;
+}
+
+/* ── Search Filter ── */
+div#jem .jem-search-filter {
+    container-type: inline-size;
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    background: #fff;
+    margin-bottom: 1.25rem;
+}
+
+div#jem .jem-search-filter-heading {
+    font-weight: 700;
+    margin: 0 0 1rem;
+}
+
+div#jem .jem-filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+/* Grid rows */
+div#jem .jem-search-filter-grid {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+/* Default (narrow): stack / auto cols */
+div#jem .jem-search-filter-grid-top  { grid-template-columns: 1fr; }
+div#jem .jem-search-filter-grid-four { grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+div#jem .jem-search-filter-grid-two  { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
+
+/* Container ≥ 480px: top row splits keywords / event-type */
+@container (min-width: 480px) {
+    div#jem .jem-search-filter-grid-top {
+        grid-template-columns: minmax(0, 3fr) minmax(10rem, 1fr);
+    }
+}
+
+/* Container ≥ 640px: four-grid expands with auto-fit (adapts to visible items) */
+@container (min-width: 640px) {
+    div#jem .jem-search-filter-grid-four {
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+}
+
+/* Controls fill their grid cell */
+div#jem .jem-search-filter select,
+div#jem .jem-search-filter input[type="date"],
+div#jem .jem-search-filter .form-select,
+div#jem .jem-search-filter .form-control {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keywords input-group: type-selector + text field inline */
+div#jem .jem-search-filter .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+div#jem .jem-search-filter .input-group > .form-select {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 6rem;
+    max-width: 10rem;
+}
+div#jem .jem-search-filter .input-group > .form-control {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+}
+
+/* Footer: limit left, buttons right */
+div#jem .jem-search-filter-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+div#jem .jem-search-filter-limit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+div#jem .jem-search-filter-limit .jem-filter-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+div#jem .jem-search-filter-limit select {
+    width: auto;
+    min-width: 5rem;
+    flex: 0 0 auto;
+}
+div#jem .jem-search-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+div#jem .jem-search-filter-actions .btn {
+    width: auto;
+    min-width: 4rem;
+}
+
+div#jem #jem_filter.jem-events-filter {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-search,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-month,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-actions,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-search {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+div#jem #jem_filter.jem-events-filter label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+div#jem #jem_filter.jem-events-filter select,
+div#jem #jem_filter.jem-events-filter input,
+div#jem #jem_filter.jem-events-filter .inputbox,
+div#jem #jem_filter.jem-events-filter .form-control,
+div#jem #jem_filter.jem-events-filter .form-select,
+div#jem #jem_filter.jem-events-filter button,
+div#jem #jem_filter.jem-events-filter .btn {
+    box-sizing: border-box;
+    min-height: 2.6rem;
+    margin: 0;
+}
+
+div#jem #jem_filter.jem-events-filter select,
+div#jem #jem_filter.jem-events-filter .form-select {
+    width: auto;
+}
+
+div#jem #jem_filter.jem-events-filter input#filter_search {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+    width: auto;
+}
+
+div#jem #jem_filter.jem-events-filter input#filter_month {
+    flex: 0 0 13rem;
+    width: 13rem;
+}
+
+@media (max-width: 60rem) {
+    div#jem #jem_filter.jem-events-filter {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-search,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-month,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-actions,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+        flex: 1 1 100%;
+    }
+
+    div#jem #jem_filter.jem-events-filter input#filter_search,
+    div#jem #jem_filter.jem-events-filter input#filter_month {
+        flex: 1 1 12rem;
+        width: auto;
+    }
+
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+        margin-left: 0;
+    }
+}
 
 #jem .jem-misc {
     padding: 10px 0;
@@ -325,6 +708,90 @@ body.com_jem.body-overlayed {
 
 #jem .jem-dl dd.time-input select {
     width: 95px;
+}
+
+#jem.jem_venue > .flyerimage {
+    float: right !important;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 0 1rem 1rem;
+}
+
+#jem.jem_venue > .flyerimage img,
+#jem.jem_venue > .flyerimage a,
+#jem.jem_venue .jem-img .flyerimage img,
+#jem.jem_venue .jem-img .flyerimage a {
+    max-width: 100%;
+    height: auto;
+}
+
+#jem.jem_venue .jem-img .flyerimage {
+    float: none !important;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+}
+
+#jem.jem_venue h2.description {
+    clear: both;
+}
+
+#jem.jem_venue #jem_filter.jem-row {
+    display: flex !important;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#jem.jem_venue #jem_filter.jem-row > .jem-row,
+#jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+    display: flex !important;
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: auto !important;
+    margin-bottom: 0;
+}
+
+#jem.jem_venue #jem_filter.jem-row > .jem-row:first-child {
+    flex: 1 1 auto;
+}
+
+#jem.jem_venue #jem_filter.jem-row input#filter_search {
+    flex: 1 1 14rem;
+    width: auto !important;
+    min-width: 10rem;
+    max-width: 18rem;
+}
+
+#jem.jem_venue #jem_filter.jem-row input#filter_month {
+    width: 13rem !important;
+}
+
+#jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+    margin-left: auto;
+}
+
+@media (max-width: 60rem) {
+    #jem.jem_venue #jem_filter.jem-row {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    #jem.jem_venue #jem_filter.jem-row > .jem-row,
+    #jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+        flex: 1 1 100%;
+    }
+
+    #jem.jem_venue #jem_filter.jem-row input#filter_search {
+        max-width: none;
+    }
+
+    #jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+        margin-left: 0;
+    }
 }
 
 #jem form input::-webkit-outer-spin-button,
@@ -739,4 +1206,798 @@ body.com_jem.body-overlayed {
 
 #jem .jem-event-intro {
     width: 100%;
+}
+
+/* Event links container */
+.jem-event-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 1rem 0;
+}
+
+/* Row — natural width, wraps */
+.jem-event-links.jem-event-links-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Row full — each item grows to fill the row equally */
+.jem-event-links.jem-event-links-row_full,
+#jem .jem-event-links.jem-event-links-row_full {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.jem-event-links.jem-event-links-row_full .jem-event-link,
+#jem .jem-event-links.jem-event-links-row_full .jem-event-link {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    box-sizing: border-box;
+}
+
+/* Row same size — CSS grid, all items equal width */
+.jem-event-links.jem-event-links-row_uniform,
+#jem .jem-event-links.jem-event-links-row_uniform {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr)) !important;
+    align-items: stretch !important;
+}
+
+.jem-event-links.jem-event-links-row_uniform .jem-event-link,
+#jem .jem-event-links.jem-event-links-row_uniform .jem-event-link {
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box;
+}
+
+/* Column — natural width */
+.jem-event-links.jem-event-links-column {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+/* Column full — buttons stretch to full container width */
+.jem-event-links.jem-event-links-column_full,
+#jem .jem-event-links.jem-event-links-column_full {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+}
+
+.jem-event-links.jem-event-links-column_full .jem-event-link,
+#jem .jem-event-links.jem-event-links-column_full .jem-event-link {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box;
+}
+
+/* Column same size — all buttons same width as the widest one */
+.jem-event-links.jem-event-links-column_uniform,
+#jem .jem-event-links.jem-event-links-column_uniform {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+}
+
+.jem-event-links.jem-event-links-column_uniform .jem-event-link,
+#jem .jem-event-links.jem-event-links-column_uniform .jem-event-link {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box;
+}
+
+/* Event link item */
+.jem-event-link {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+
+    width: auto;
+    max-width: 100%;
+
+    min-height: 36px;
+
+    line-height: 1;
+    text-decoration: none !important;
+    box-shadow: none !important;
+
+    box-sizing: border-box;
+    vertical-align: middle;
+
+    transition:
+            background-color .15s ease,
+            color .15s ease,
+            border-color .15s ease,
+            box-shadow .15s ease,
+            transform .12s ease;
+}
+
+/* Remove underline from event links without touching the frame border */
+.jem-event-links a,
+.jem-event-links a:link,
+.jem-event-links a:visited,
+.jem-event-links a:hover,
+.jem-event-links a:focus,
+.jem-event-links a:active,
+.jem-event-link,
+.jem-event-link:hover,
+.jem-event-link:focus,
+.jem-event-link:active {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove underline from inner elements without touching borders */
+.jem-event-link *,
+.jem-event-link:hover *,
+.jem-event-link:focus *,
+.jem-event-link:active * {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Framed link */
+.jem-event-link.jem-event-link-has-frame {
+    border: 1px solid currentColor !important;
+    border-radius: .45rem !important;
+    padding: .45rem .75rem !important;
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    cursor: pointer;
+}
+
+/* Framed link hover */
+.jem-event-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-has-frame:focus {
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12) !important;
+    transform: translateY(-1px);
+}
+
+.jem-event-link.jem-event-link-no-link,
+.jem-event-link.jem-event-link-no-link:hover,
+.jem-event-link.jem-event-link-no-link:focus,
+.jem-event-link.jem-event-link-no-link:active {
+    cursor: default !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:focus,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:active {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-icon,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-icon {
+    color: var(--jem-event-link-hover-color, currentColor) !important;
+}
+
+/* Event link icon */
+.jem-event-link-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+
+    line-height: 1 !important;
+}
+
+/* Event link label */
+.jem-event-link-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    min-height: 1.1rem;
+
+    line-height: 1.1 !important;
+    white-space: nowrap;
+}
+
+/* Event link image */
+.jem-event-link-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.jem-event-link-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* A: Image + Icon + Text */
+.jem-links-order-image-icon-text .jem-event-link-image {
+    order: 1;
+}
+
+.jem-links-order-image-icon-text .jem-event-link-icon {
+    order: 2;
+}
+
+.jem-links-order-image-icon-text .jem-event-link-text {
+    order: 3;
+}
+
+/* B: Icon + Text + Image */
+.jem-links-order-icon-text-image .jem-event-link-icon {
+    order: 1;
+}
+
+.jem-links-order-icon-text-image .jem-event-link-text {
+    order: 2;
+}
+
+.jem-links-order-icon-text-image .jem-event-link-image {
+    order: 3;
+}
+
+/* C: Icon + Image + Text */
+.jem-links-order-icon-image-text .jem-event-link-icon {
+    order: 1;
+}
+
+.jem-links-order-icon-image-text .jem-event-link-image {
+    order: 2;
+}
+
+.jem-links-order-icon-image-text .jem-event-link-text {
+    order: 3;
+}
+
+
+/* Prevent template image rules from enlarging link images */
+.jem-event-links .jem-event-link .jem-event-link-image img {
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+/* Link with image: keep the image inside the frame and aligned */
+.jem-event-link-has-image {
+    align-items: center;
+}
+
+/* Add a little extra internal spacing when image exists */
+.jem-event-link-has-image.jem-event-link-has-frame {
+    padding: .55rem .75rem !important;
+}
+
+/* Responsive event links */
+@media (max-width: 575.98px) {
+    .jem-event-links-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-links-column {
+        flex-direction: column;
+    }
+
+    .jem-event-link {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-link-label {
+        white-space: normal;
+    }
+
+    .jem-event-link-image {
+        max-width: 100%;
+    }
+}
+
+
+/* Event links: keep label and description as one vertical text block */
+#jem .jem-event-links .jem-event-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    text-decoration: none !important;
+}
+
+/* This is the important part */
+#jem .jem-event-links .jem-event-link .jem-event-link-text {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    min-width: 0;
+    text-align: left !important;
+    line-height: 1.25;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    font-weight: 400 !important;
+}
+
+/* Label/title */
+#jem .jem-event-links .jem-event-link .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    text-align: left !important;
+}
+
+/* Description */
+#jem .jem-event-links .jem-event-link .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400 !important;
+    line-height: 1.25;
+    text-align: left !important;
+    opacity: 0.85;
+}
+
+#jem h2.description,
+#jem h2.location_desc,
+#jem div.files > h2.description {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    margin-top: 1.15rem !important;
+    margin-bottom: .65rem !important;
+}
+
+/* Attachment file icon column */
+#jem .jem-attachments-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .7rem;
+}
+
+#jem .jem-attachments-layout-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    column-gap: 1.25rem;
+    row-gap: .8rem;
+}
+
+#jem .jem-attachments-layout-row .jem-attachment-row {
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-row_full {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+#jem .jem-attachments-layout-row_full .jem-attachment-row {
+    flex: 1 1 min(18rem, 100%);
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-row_uniform {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    align-items: stretch;
+    width: 100%;
+}
+
+#jem .jem-attachments-layout-row_uniform .jem-attachment-row {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-column {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#jem .jem-attachments-layout-column_full {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#jem .jem-attachments-layout-column_full .jem-attachment-row {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#jem .jem-attachments-layout-column_uniform {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+}
+
+#jem .jem-attachments-layout-column_uniform .jem-attachment-row {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#jem .jem-attachment-row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: .35rem;
+    align-items: center;
+}
+
+#jem .jem-attachment-content {
+    min-width: 0;
+}
+
+#jem .jem-attachment-content a.file-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .25rem;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: top;
+}
+
+#jem .jem-attachment-content .file-name,
+#jem .jem-attachment-content .jem-file-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+#jem .jem-attachment-content a.file-name > .fa {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+#jem .jem-attachments-frame .jem-attachment-row {
+    padding: .45rem .65rem;
+    border: 1px solid #9fb4d4;
+    border-radius: .25rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
+
+#jem .jem-attachments-frame .jem-attachment-row:hover,
+#jem .jem-attachments-frame .jem-attachment-row:focus-within {
+    border-color: #5f82b7;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
+}
+
+#jem .jem-attachments-icons-none .jem-attachment-row {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#jem .jem-attachments-icons-none .jem-attachment-icon-cell {
+    display: none;
+}
+
+#jem .jem-attachment-file-icon-normal {
+    font-size: 1.25rem !important;
+}
+
+#jem .jem-attachment-file-icon-medium {
+    font-size: 1.6rem !important;
+}
+
+#jem .jem-attachment-file-icon-large {
+    font-size: 2rem !important;
+}
+
+/* Attachment edit form overrides for responsive edit layouts */
+#jem .jem-attachments-tab #el-attachments {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tbody {
+    display: block !important;
+    width: 100% !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(11rem, 14rem) !important;
+    gap: .75rem 1rem !important;
+    width: calc(100% - 3.5rem) !important;
+    max-width: calc(100% - 3.5rem) !important;
+    box-sizing: border-box !important;
+    margin: 0 3.5rem 1.25rem 0 !important;
+    padding: .85rem 1rem !important;
+    border: 1px solid #d7dce1 !important;
+    border-radius: .5rem !important;
+    background: #fff !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    border: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    vertical-align: top !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: .75rem 1rem !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td.jem-attachment-actions {
+    position: absolute !important;
+    top: .45rem !important;
+    right: -3rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .35rem !important;
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    max-width: 2.5rem !important;
+    justify-content: center !important;
+}
+
+#jem .jem-attachments-tab #el-attachments input[type="text"],
+#jem .jem-attachments-tab #el-attachments input[type="file"],
+#jem .jem-attachments-tab #el-attachments select,
+#jem .jem-attachments-tab #el-attachments .form-control,
+#jem .jem-attachments-tab #el-attachments .form-select,
+#jem .jem-attachments-tab #el-attachments .inputbox {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options fieldset {
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .control-group {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: .6rem !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .control-label {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding-right: .25rem !important;
+    white-space: normal !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .controls {
+    flex: 0 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group,
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group-yesno {
+    display: flex !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: 100% !important;
+    margin-bottom: 0 !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group > .btn,
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-group > label,
+#jem .jem-attachments-tab .jem-attachments-global-options .btn-check + .btn {
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    padding-right: .6rem !important;
+    padding-left: .6rem !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+
+#jem .jem-attachments-tab .jem-attachments-global-options legend {
+    display: none !important;
+}
+
+@container (max-width: 900px) {
+    #jem .jem-attachments-tab #el-attachments tr {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    }
+}
+
+@container (max-width: 620px) {
+    #jem .jem-attachments-tab .jem-attachments-global-options .control-group {
+        flex-wrap: wrap !important;
+    }
+
+    #jem .jem-attachments-tab .jem-attachments-global-options .control-label,
+    #jem .jem-attachments-tab .jem-attachments-global-options .controls {
+        flex: 1 1 100% !important;
+    }
+
+    #jem .jem-attachments-tab .jem-attachments-global-options .btn-group,
+    #jem .jem-attachments-tab .jem-attachments-global-options .btn-group-yesno {
+        flex-wrap: wrap !important;
+        width: max-content !important;
+        max-width: 100% !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-right: 0 !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td.jem-attachment-actions {
+        position: static !important;
+        flex-direction: row !important;
+        width: auto !important;
+        max-width: none !important;
+        justify-content: flex-start !important;
+    }
+}
+
+#jem .jem-dl dt.jem-attachment-icon-cell {
+    width: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    padding: 0 .35rem 0 0 !important;
+    overflow: visible;
+    text-align: center;
+    text-overflow: clip;
+}
+
+#jem .jem-dl dt.jem-attachment-icon-cell .jem-attachment-file-icon {
+    line-height: 1;
+    margin: 0;
+}
+
+/* Keep the disabled upload template hidden in responsive edit layouts. */
+#jem .jem-attachments-tab #el-attachments tr.jem-attachment-template-row,
+#jem .jem-attachments-tab #el-attachments .jem-attachment-template-row {
+    display: none !important;
+}
+
+#jem .jem-attachments-tab fieldset,
+#jem .jem-attachments-tab > fieldset,
+#jem div.current .jem-attachments-tab fieldset,
+#jem div.current .jem-attachments-tab > fieldset {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Compact attachment editor: stack fields vertically beside the fixed Access column. */
+#jem .jem-attachments-tab #el-attachments tr > td:first-child {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    align-content: start !important;
+    gap: .55rem !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div {
+    display: grid !important;
+    grid-template-columns: 8.5rem minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: .35rem .75rem !important;
+    min-width: 0 !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .title {
+    min-height: 2.25rem !important;
+    margin: 0 !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > input,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > select,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-control,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-select,
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .inputbox {
+    grid-column: 2 !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .clear-attach-field {
+    grid-column: 3 !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    align-self: center !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row {
+    grid-template-columns: 8.5rem minmax(10rem, 14rem) minmax(0, 1fr) auto !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .attachment-published {
+    grid-column: 2 !important;
+    width: 100% !important;
+    max-width: 14rem !important;
+}
+
+#jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .clear-attach-field {
+    justify-self: end !important;
+    width: auto !important;
+    min-width: 6rem;
+    margin: 0 !important;
+    white-space: nowrap;
+}
+
+@container (max-width: 620px) {
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > input,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > select,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-control,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .form-select,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .inputbox,
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > div > .clear-attach-field {
+        grid-column: 1 !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .clear-attach-field {
+        grid-column: 1 !important;
+        justify-self: start !important;
+    }
 }

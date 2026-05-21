@@ -63,14 +63,18 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
     `attribs` varchar(5120) NOT NULL DEFAULT '',
     `language` char(7) NOT NULL DEFAULT '',
+    `event_status` varchar(30) NOT NULL DEFAULT 'scheduled',
+    `ticket_availability` varchar(30) NOT NULL DEFAULT 'instock',
+    `type_id` int(11) unsigned NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_venue` (`locid`),
     KEY `idx_access` (`access`),
     KEY `idx_checkout` (`checked_out`),
     KEY `idx_pubstate` (`published`),
     KEY `idx_createdby` (`created_by`),
-    KEY `idx_language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    KEY `idx_language` (`language`),
+    KEY `idx_type` (`type_id`)
+    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -115,13 +119,15 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `custom10` varchar(100) NOT NULL DEFAULT '',
     `attribs` varchar(5120) DEFAULT NULL,
     `language` char(7) DEFAULT NULL,
+    `type_id` int(11) unsigned NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_access` (`access`),
     KEY `idx_checkout` (`checked_out`),
     KEY `idx_pubstate` (`published`),
     KEY `idx_createdby` (`created_by`),
-    KEY `idx_language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    KEY `idx_language` (`language`),
+    KEY `idx_type` (`type_id`)
+    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -151,6 +157,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `metadata` varchar(2048) DEFAULT NULL,
     `modified_time` datetime NULL DEFAULT NULL,
     `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `type_id` int(11) unsigned NULL DEFAULT NULL,
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
@@ -226,8 +233,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `frontend` tinyint(1) NOT NULL DEFAULT '1',
     `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `ordering` int(11) NOT NULL DEFAULT '0',
-    `added` datetime NULL DEFAULT NULL,
-    `added_by` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NULL DEFAULT NULL,
+    `created_by` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -241,6 +248,55 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     PRIMARY KEY (`id`),
     KEY `iso2` (`iso2`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `#__jem_links` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `event_id` INT(11) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NULL,
+    `url` TEXT NOT NULL,
+    `params` TEXT DEFAULT NULL,
+    `ordering` INT(11) DEFAULT 0,
+    `state` TINYINT(1) DEFAULT 1,
+    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `created_by` INT(11) NOT NULL,
+    `modified` DATETIME DEFAULT NULL,
+    `modified_by` INT(11) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_event_id` (`event_id`),
+    INDEX `idx_state` (`state`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__jem_types` (
+    `id`                INT(11)          NOT NULL AUTO_INCREMENT,
+  `name`              VARCHAR(100)     NOT NULL DEFAULT '',
+  `alias`             VARCHAR(100)     NOT NULL DEFAULT '',
+  `description`       TEXT             DEFAULT NULL,
+  `base_language`     CHAR(7)          NOT NULL DEFAULT '',
+  `translation_languages` VARCHAR(255) DEFAULT NULL,
+  `translations`      MEDIUMTEXT       DEFAULT NULL,
+  `entity`            TINYINT(1)       NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue',
+    `icon`              VARCHAR(255)     DEFAULT NULL,
+    `color`             VARCHAR(7)       DEFAULT NULL,
+    `published`         TINYINT(1)       NOT NULL DEFAULT 1,
+    `ordering`          INT(11)          NOT NULL DEFAULT 0,
+    `access`            INT(10) UNSIGNED NOT NULL DEFAULT 1,
+    `language`          CHAR(7)          NOT NULL DEFAULT '*',
+    `checked_out`       INT(11) UNSIGNED NULL DEFAULT NULL,
+    `checked_out_time`  DATETIME         NULL DEFAULT NULL,
+    `created`           DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by`        INT(11) UNSIGNED NOT NULL DEFAULT 0,
+    `modified`          DATETIME         NULL DEFAULT NULL,
+    `modified_by`       INT(11) UNSIGNED NOT NULL DEFAULT 0,
+    `attribs`           TEXT             DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_entity`    (`entity`),
+    KEY `idx_published` (`published`),
+    KEY `idx_access`    (`access`),
+    KEY `idx_checkout`  (`checked_out`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('oldevent', '2'),
@@ -302,7 +358,9 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('ical_tz', '1'),
 ('attachments_path', 'media/com_jem/attachments'),
 ('attachments_maxsize', '1000'),
-('attachments_types', 'txt,pdf,jpg,jpeg,gif,png,zip,tar.gz'),
+('attachments_types', 'txt,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,ics,jpg,jpeg,gif,png,webp,zip,tar.gz'),
+('attachments_layout', 'column'),
+('attachments_icon_size', 'normal'),
 ('recurrence_anticipation_day', '3'),
 ('recurrence_anticipation_week', '12'),
 ('recurrence_anticipation_month', '60'),

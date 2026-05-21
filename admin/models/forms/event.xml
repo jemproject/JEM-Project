@@ -162,6 +162,38 @@
             <option value="2">JARCHIVED</option>
             <option value="-2">JTRASHED</option>
         </field>
+        <field name="event_status" type="list"
+            label="COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL"
+            description="COM_JEM_EVENT_FIELD_EVENT_STATUS_DESC"
+            class="inputbox"
+            size="1"
+            default="scheduled"
+            filter="cmd"
+        >
+            <option value="scheduled">COM_JEM_EVENT_STATUS_SCHEDULED</option>
+            <option value="cancelled">COM_JEM_EVENT_STATUS_CANCELLED</option>
+            <option value="postponed">COM_JEM_EVENT_STATUS_POSTPONED</option>
+            <option value="rescheduled">COM_JEM_EVENT_STATUS_RESCHEDULED</option>
+            <option value="moved_online">COM_JEM_EVENT_STATUS_MOVED_ONLINE</option>
+        </field>
+        <field name="ticket_availability" type="list"
+            label="COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL"
+            description="COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_DESC"
+            class="inputbox"
+            size="1"
+            default="instock"
+            filter="cmd"
+        >
+            <option value="instock">COM_JEM_EVENT_AVAILABILITY_INSTOCK</option>
+            <option value="preorder">COM_JEM_EVENT_AVAILABILITY_PREORDER</option>
+            <option value="soldout">COM_JEM_EVENT_AVAILABILITY_SOLDOUT</option>
+        </field>
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="1"
+            class="form-select"
+        />
         <field name="publish_up" type="calendar"
             label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
             description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
@@ -200,7 +232,6 @@
             description="COM_JEM_CONTACTS_DESC"
             size="40"
             required="false"
-            default="0"
         />
     </fieldset>
 
@@ -595,6 +626,15 @@
                 <option    value="0">JHIDE</option>
                 <option    value="1">JSHOW</option>
             </field>
+            <field name="event_show_availability" type="list"
+                label="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_DESC"
+                default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
             <field name="event_show_print_icon" type="list"
                 label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
                 description="JGLOBAL_SHOW_PRINT_ICON_LABEL_DESC"
@@ -771,4 +811,165 @@
             filter="string"
             cols="30" rows="2" />
     </fields>
+
+    <fieldset name="links" addfieldpath="/administrator/components/com_jem/models/links">
+        <field name="id" type="hidden" />
+
+        <fields name="attribs">
+            <fieldset name="event_links_options">
+                <field
+                        name="attachments_layout"
+                        type="list"
+                        label="COM_JEM_EVENT_ATTACHMENTS_LAYOUT"
+                        description="COM_JEM_EVENT_ATTACHMENTS_LAYOUT_DESC"
+                        default=""
+                        class="form-select"
+                >
+                    <option value="">JGLOBAL_USE_GLOBAL</option>
+                    <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+                    <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+                    <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
+                    <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+                    <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+                    <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
+                </field>
+                <field
+                        name="attachments_icon_size"
+                        type="list"
+                        label="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE"
+                        description="COM_JEM_EVENT_ATTACHMENTS_ICON_SIZE_DESC"
+                        default=""
+                        class="form-select"
+                >
+                    <option value="">JGLOBAL_USE_GLOBAL</option>
+                    <option value="none">JNO</option>
+                    <option value="normal">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_NORMAL</option>
+                    <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
+                    <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
+                </field>
+                <field
+                        name="attachments_frame"
+                        type="radio"
+                        label="COM_JEM_EVENT_ATTACHMENTS_FRAME"
+                        description="COM_JEM_EVENT_ATTACHMENTS_FRAME_DESC"
+                        default="0"
+                        class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field
+                        name="links_layout"
+                        type="list"
+                        label="COM_JEM_EVENT_LINKS_LAYOUT"
+                        description="COM_JEM_EVENT_LINKS_LAYOUT_DESC"
+                        default="row"
+                >
+                    <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+                    <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+                    <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
+                    <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+                    <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+                    <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
+                </field>
+                <field
+                        name="links_order"
+                        type="list"
+                        label="COM_JEM_EVENT_LINKS_ORDER_LABEL"
+                        description="COM_JEM_EVENT_LINKS_ORDER_DESC"
+                        default="image_icon_text"
+                >
+                    <option value="image_icon_text">COM_JEM_EVENT_LINKS_ORDER_IMAGE_ICON_TEXT</option>
+                    <option value="image_text_icon">COM_JEM_EVENT_LINKS_ORDER_IMAGE_TEXT_ICON</option>
+                    <option value="icon_text_image">COM_JEM_EVENT_LINKS_ORDER_ICON_TEXT_IMAGE</option>
+                    <option value="icon_image_text">COM_JEM_EVENT_LINKS_ORDER_ICON_IMAGE_TEXT</option>
+                    <option value="text_image_icon">COM_JEM_EVENT_LINKS_ORDER_TEXT_IMAGE_ICON</option>
+                    <option value="text_icon_image">COM_JEM_EVENT_LINKS_ORDER_TEXT_ICON_IMAGE</option>
+                </field>
+            </fieldset>
+        </fields>
+
+        <field name="event_links" type="subform"
+               layout="joomla.form.field.subform.repeatable"
+               multiple="true"
+               label="COM_JEM_EVENT_LINKS"
+               hiddenLabel="true"
+               buttons="add,remove,move"
+        >
+            <form>
+                <config>
+                    <inlinehelp button="show"/>
+                </config>
+
+                <field name="id" type="hidden" />
+
+                <field name="title" type="text"
+                       label="COM_JEM_EVENT_LINK_TITLE"
+                       description="COM_JEM_EVENT_LINK_TITLE_DESC"
+                       class="form-control"
+                />
+                <field name="description" type="textarea"
+                       label="COM_JEM_EVENT_LINK_DESCRIPTION"
+                       rows="2"
+                       filter="safehtml"
+                       class="form-control"
+                />
+                <field name="type" type="jemlinktype"
+                       label="COM_JEM_EVENT_LINK_TYPE"
+                       description="COM_JEM_EVENT_LINK_TYPE_DESC"
+                       default="info"
+                />
+                <field name="color" type="color"
+                       label="COM_JEM_EVENT_LINK_COLOR"
+                       description="COM_JEM_EVENT_LINK_COLOR_DESC"
+                       default="#2f6f46"
+                />
+                <field name="url" type="url"
+                       label="COM_JEM_EVENT_LINK_URL"
+                       description="COM_JEM_EVENT_LINK_URL_DESC"
+                       filter="url"
+                       class="form-control"
+                />
+                <field name="target" type="radio"
+                       label="COM_JEM_EVENT_LINK_TARGET"
+                       description="COM_JEM_EVENT_LINK_TARGET_DESC"
+                       default="_blank"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="_blank">COM_JEM_EVENT_LINK_TARGET_NEW_TAB</option>
+                    <option value="_self">COM_JEM_EVENT_LINK_TARGET_SAME_TAB</option>
+                </field>
+                <field name="frame" type="radio"
+                       label="COM_JEM_EVENT_LINK_FRAME"
+                       description="COM_JEM_EVENT_LINK_FRAME_DESC"
+                       default="1"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="image" type="media"
+                       label="COM_JEM_EVENT_LINK_IMAGE"
+                       description="COM_JEM_EVENT_LINK_IMAGE_DESC"
+                />
+                <field name="max_width" type="number"
+                       label="COM_JEM_EVENT_LINK_MAX_IMAGE_WIDTH"
+                       description="COM_JEM_EVENT_LINK_MAX_IMAGE_WIDTH_DESC"
+                       default="120"
+                       min="0"
+                       step="1"
+                       class="form-control"
+                />
+                <field name="max_height" type="number"
+                       label="COM_JEM_EVENT_LINK_MAX_IMAGE_HEIGHT"
+                       description="COM_JEM_EVENT_LINK_MAX_IMAGE_HEIGHT_DESC"
+                       default="60"
+                       min="0"
+                       step="1"
+                       class="form-control"
+                />
+                <field name="icon" type="hidden" />
+            </form>
+        </field>
+    </fieldset>
 </form>

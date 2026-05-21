@@ -39,6 +39,8 @@ class JemModelWeekcal extends JemModelEventslist
         $startdayonly  = $params->get('show_only_start', false);
         $numberOfWeeks = $params->get('nrweeks', '1');
         $firstweekday  = $params->get('firstweekday', 1);
+        $year          = (int) $app->input->getInt('yearID', date('o'));
+        $week          = (int) $app->input->getInt('weekID', date('W'));
 
         # params
         $this->setState('params', $params);
@@ -56,9 +58,10 @@ class JemModelWeekcal extends JemModelEventslist
         $offset = $config->get('offset');
         date_default_timezone_set($offset);
         $datetime = new DateTime();
-        // If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
-        $dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
-        $datetime->setISODate($datetime->format('o'), $datetime->format('W'), $dayoffset);
+        $datetime->setISODate($year, $week, 1);
+        if ((int) $firstweekday === 0) {
+            $datetime->modify('-1 day');
+        }
         $filter_date_from = $datetime->format('Y-m-d');
         $datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
         $filter_date_to   = $datetime->format('Y-m-d');
@@ -190,12 +193,15 @@ class JemModelWeekcal extends JemModelEventslist
             $offset = $config->get('offset');
             $firstweekday  = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
             $numberOfWeeks = $params->get('nrweeks', '1');
+            $year          = (int) $app->input->getInt('yearID', date('o'));
+            $week          = (int) $app->input->getInt('weekID', date('W'));
 
             date_default_timezone_set($offset);
             $datetime = new DateTime();
-            # If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
-            $dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
-            $datetime->setISODate($datetime->format('o'), $datetime->format('W'), $dayoffset);
+            $datetime->setISODate($year, $week, 1);
+            if ((int) $firstweekday === 0) {
+                $datetime->modify('-1 day');
+            }
             $startdate = $datetime->format('Y-m-d');
             $datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
             $enddate   = $datetime->format('Y-m-d');

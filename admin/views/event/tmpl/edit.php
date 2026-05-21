@@ -172,6 +172,10 @@ $params = $params->toArray();
         action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
         class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">
 
+    <config>
+        <inlinehelp button="show"/>
+    </config>
+
     <?php $recurr = empty($this->item->recurr_bak) ? $this->item : $this->item->recurr_bak; ?>
     <?php if (!empty($recurr->recurrence_number) || !empty($recurr->recurrence_type)) : ?>
         <div class="description">
@@ -226,8 +230,15 @@ $params = $params->toArray();
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
+                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
+                    <?php else : ?>
+                        <input type="hidden" name="jform[contactid]" value="" />
+                    <?php endif; ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
@@ -247,7 +258,10 @@ $params = $params->toArray();
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
             <?php echo $this->loadTemplate('attachments'); ?>
 
-            <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-settings', Text::_('COM_JEM_EVENT_SETTINGS_TAB')); ?>
             <?php echo $this->loadTemplate('settings'); ?>

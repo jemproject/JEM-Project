@@ -2,12 +2,12 @@
 <extension type="module" version="4.0" client="site" method="upgrade">
     <name>mod_jem_map</name>
     <author>JEM Community</author>
-    <creationDate>March 2026</creationDate>
+    <creationDate>May 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0-alpha3</version>
+    <version>5.0.0-beta1</version>
     <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -39,11 +39,11 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="map_center_lat" type="text"
-                       default="48.750"
+                       default="54.526"
                        label="MOD_JEM_MAP_CENTER_LATITUDE"
                        description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"/>
                 <field name="map_center_lng" type="text"
-                       default="18.917"
+                       default="15.255"
                        label="MOD_JEM_MAP_CENTER_LONGITUDE"
                        description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"/>
                 <field name="map_zoom" type="number"
@@ -71,7 +71,7 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="date_filter_default" type="radio"
-                       default="today"
+                       default="all"
                        label="MOD_JEM_MAP_DATE_FILTER_DEFAULT"
                        description="MOD_JEM_MAP_DATE_FILTER_DEFAULT_DESC"
                        class="inputbox btn-group btn-group-yesno"
@@ -110,10 +110,10 @@
                        default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
                        description="MOD_JEM_MAP_MYLOC_MARKER_DESC"/>
-                <field name="show_date_filter" type="radio"
-                       default="1"
-                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
-                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
+                <field name="show_category_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_CATEGORY_FILTER"
+                       description="MOD_JEM_MAP_SHOW_CATEGORY_FILTER_DESC"
                        class="inputbox btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
@@ -125,6 +125,20 @@
                        removeroot="true"
                        label="MOD_JEM_MAP_CATEGORY_ID"
                        description="MOD_JEM_MAP_CATEGORY_ID_DESC"
+                />
+                <field name="show_country_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_COUNTRY_FILTER"
+                       description="MOD_JEM_MAP_SHOW_COUNTRY_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="default_country" type="countryoptions"
+                       default="0"
+                       label="MOD_JEM_MAP_DEFAULT_COUNTRY"
+                       description="MOD_JEM_MAP_DEFAULT_COUNTRY_DESC"
                 />
                 <field name="height" type="text" default="500px"
                        label="MOD_JEM_MAP_HEIGHT"

@@ -58,6 +58,7 @@ class JemRouter extends RouterView
             'calendar',
             'eventslist',
             'event',
+            'eventsmap',
             'categories',
             'category',
             'attendees',
@@ -70,7 +71,10 @@ class JemRouter extends RouterView
             'search',
             'venue',
             'venueslist',
+            'venuesmap',
             'venues',
+            'typeevents',
+            'typevenues',
             'weekcal'
         ];
 

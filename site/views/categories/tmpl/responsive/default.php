@@ -11,6 +11,10 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+
+$buildCategoryEventsLink = static function ($category) {
+    return Route::_(JemHelperRoute::getCategoryRoute($category->slug) . '&layout=default');
+};
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
@@ -90,7 +94,7 @@ use Joomla\CMS\Router\Route;
                 }
                 ?>
                 <div class="jem-readmore">
-                    <a href="<?php echo Route::_($row->linktarget); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR_SHOWALL'); ?>">
+                    <a href="<?php echo $buildCategoryEventsLink($row); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR_SHOWALL'); ?>">
                         <button class="buttonfilter btn">
                             <?php echo Text::_('COM_JEM_CALENDAR_SHOWALL') ?>
                             <?php if ($row->assignedevents > 1) :

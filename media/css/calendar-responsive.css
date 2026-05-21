@@ -16,6 +16,49 @@ table.month, table.week {
     width: 100%;
 }
 
+#jem .jem-calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0.75rem 0 1rem;
+}
+
+#jem .jem-calendar-nav-title,
+#jem .monthname {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+#jem .jem-calendar-nav-link,
+#jem .monthnavigation a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    min-height: 2rem;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+#jem .monthnavigation {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.45rem 0.35rem;
+}
+
+#jem .monthname {
+    padding: 0.45rem 0.35rem;
+}
+
+#jem .jem-calendar-nav-icon img,
+#jem img.jem-calendar-nav-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
 @media screen and (min-width: 801px)  {
 table.month, table.week {
     border: 1px solid #000;
@@ -135,9 +178,16 @@ div#jem a .eventcontenttop {
 div#jem .eventcontenttop {
     height: 16px;
     min-height: 16px;
-    text-align: left;
+    text-align: left;    
     padding-top: 2px;
     top: 60px;
+}
+
+div#jem .eventcontentbottom {
+    text-align: left;
+    margin-bottom: -8px;
+    margin-top: 5px;
+    bottom: 0px;
 }
 
 div#jem .eventcontenttop.no-padding-top {
@@ -145,20 +195,15 @@ div#jem .eventcontenttop.no-padding-top {
 }
 
 div#jem .eventtitle {
+    min-height: 30px;
+    margin: 2px 2px 0;
     text-align: left;
+    word-wrap: break-word;
 }
 
 div#jem .rowcolor {
     height: 10px;
     text-align: right;
-}
-
-div#jem .eventtitle {
-    min-height: 30px;
-    word-wrap: break-word;
-    margin-right: 2px;
-    margin-left: 2px;
-    margin-top: 2px;
 }
 
 /* *** CALENDAR WEEK ADDITIONS END *** */
@@ -223,6 +268,9 @@ div#jem .eventtitle {
 }
 
 .colorpicbartext {
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
     padding: 0px 10px;
 }
 
@@ -234,22 +282,56 @@ div#jem .eventtitle {
     border-top-right-radius: 5px;
 }
 
-.colorpicblocktext {
-    padding-left: 5px;
-}
 .colorpicbartext {
+    padding: 0px 10px;
     display: inline-block;
     align-items: center;
     justify-content: center;
 }
 
+.colorpicbarbottom {
+    display: block;
+    width: 100%;
+    height: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.colorpicbarbottom-leyend {
+    display: block;
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.colorpicblocktext {
+    padding-left: 5px;
+}
 #jlcalendarlegend {
     clear: both;
     margin-top: 4px;
 }
 
 #jlcalendarlegend .calendarButtons, #jlcalendarlegend .calendarLegends {
-    padding: 10px 0;
+    padding: 5px 0;
+}
+
+#jlcalendarlegend #buttonshowall,
+#jlcalendarlegend #buttonhideall {
+    font-weight: 700;
+    border-width: 2px;
+    margin-right: 10px;
+}
+
+#jlcalendarlegend #buttonshowall.jem-calendar-global-active,
+#jlcalendarlegend #buttonhideall.jem-calendar-global-active {
+    background-color: #1f2933;
+    border-color: #1f2933;
+    color: #ffffff;
 }
 
 #jlcalendarlegend .eventCat {
@@ -259,6 +341,21 @@ div#jem .eventtitle {
     margin-right: 5px;
     margin-bottom: 5px;
     line-height: 40px;
+    font-weight: 400;
+}
+
+#jlcalendarlegend .eventVenues {
+    cursor: pointer;
+    padding: 0px;
+    padding-bottom: 5px;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    border: 1px solid darkslategrey;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    line-height: 40px;
+    font-weight: 400;
 }
 
 #jlcalendarlegend .legendb {
@@ -268,14 +365,11 @@ div#jem .eventtitle {
     margin-right: 4px;
 }
 
-#jlcalendarlegend .eventCat.catoff {
+#jlcalendarlegend .eventCat.catoff,
+#jlcalendarlegend .eventVenues.catoff {
     color: lightgrey;
     font-style: italic;
-}
-
-#buttonshowall,
-#buttonhideall {
-    margin-right: 10px;
+    opacity: 0.55;
 }
 
 div#jem td {
@@ -338,10 +432,8 @@ div#jem td {
 }
 
 div#jem .monthnavigation { /* delete complete construct */
-    font-size: 18pt;
     font-weight: bold;
     border: 0px;
-    padding-bottom: 10px;
     vertical-align: middle;
 }
 
@@ -349,8 +441,6 @@ div#jem .monthnavigation a {text-decoration: none;}
 
 div#jem .monthname { /*delete complete construct */
     border: 0px;
-    font-size: 16pt;
-    padding-bottom: 10px;
     vertical-align: middle;
 }
 

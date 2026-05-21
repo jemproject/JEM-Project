@@ -47,5 +47,62 @@
                 description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_DESC"
             />
         </fieldset>
+
+        <fieldset name="filter_fields" label="COM_JEM_SEARCH_FILTER_FIELDS">
+            <field name="filter_show_eventtype" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_EVENTTYPE"
+                description="COM_JEM_SEARCH_SHOW_FILTER_EVENTTYPE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_category" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_CATEGORY"
+                description="COM_JEM_SEARCH_SHOW_FILTER_CATEGORY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_venue" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_VENUE"
+                description="COM_JEM_SEARCH_SHOW_FILTER_VENUE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_continent" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_CONTINENT"
+                description="COM_JEM_SEARCH_SHOW_FILTER_CONTINENT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_country" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_COUNTRY"
+                description="COM_JEM_SEARCH_SHOW_FILTER_COUNTRY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="filter_show_dates" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_FILTER_DATES"
+                description="COM_JEM_SEARCH_SHOW_FILTER_DATES_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
     </fields>
 </metadata>

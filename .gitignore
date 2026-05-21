@@ -5,12 +5,15 @@
 *.pydevproject
 .project
 .metadata
+.claude
 bin/
 tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
+vendor/
+.phpunit.cache/
 local.properties
 .classpath
 .settings/

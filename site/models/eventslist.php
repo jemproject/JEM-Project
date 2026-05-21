@@ -13,7 +13,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Database\DatabaseDriver;
-use Joomla\CMS\Date\Date; // Añadido para mejor práctica en Joomla 5
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -45,6 +45,8 @@ class JemModelEventslist extends ListModel
                 'access', 'a.access', 'access_level',
                 'created', 'a.created',
                 'created_by', 'a.created_by',
+                'event_status', 'a.event_status',
+                'ticket_availability', 'a.ticket_availability',
                 'ordering', 'a.ordering',
                 'featured', 'a.featured',
                 'language', 'a.language',
@@ -353,6 +355,7 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.featured');
         $id .= ':' . serialize($this->getState('filter.event_id'));
         $id .= ':' . $this->getState('filter.event_id.include');
+        $id .= ':' . $this->getState('filter.type_id');
         $id .= ':' . serialize($this->getState('filter.category_id'));
         $id .= ':' . $this->getState('filter.category_id.include');
         $id .= ':' . serialize($this->getState('filter.venue_id'));
@@ -392,6 +395,7 @@ class JemModelEventslist extends ListModel
         $jemsettings = JemHelper::config();
         $user        = JemFactory::getUser();
         $levels      = $user->getAuthorisedViewLevels();
+        $levelsList  = implode(',', array_map('intval', $levels));
 
         # Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -401,8 +405,8 @@ class JemModelEventslist extends ListModel
         $query->select(
             $this->getState('list.select',
                 'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-                'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
-                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
+                'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
+                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version,a.type_id'
             )
         );
         $query->from('#__jem_events as a');
@@ -418,12 +422,27 @@ class JemModelEventslist extends ListModel
         $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
         $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.version AS l_version'));
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
-		
-		
+        
+        
 
         # Country
         $query->select(array('ct.name AS countryname'));
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
+
+        # Type
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+        $query->select(array(
+            'jt.name AS type_name',
+            'jt.icon AS type_icon',
+            'jt.color AS type_color',
+            'jt.alias AS type_alias',
+            'jt.description AS type_description',
+            'jt.base_language AS type_base_language',
+            'jt.translation_languages AS type_translation_languages',
+            'jt.translations AS type_translations',
+        ));
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
         # the rest
         $case_when_e = ' CASE WHEN ';
@@ -443,24 +462,30 @@ class JemModelEventslist extends ListModel
         $case_when_l .= $id_l . ' END as venueslug';
 
         $case_when_a = ' CASE WHEN ';
-        $case_when_a .= " a.access IN (" . implode(',', $levels) . ")";
+        $case_when_a .= " a.access IN (" . $levelsList . ")";
         $case_when_a .= ' THEN 1 ';
         $case_when_a .= ' ELSE 0 ';
         $case_when_a .= ' END as user_has_access_event';
 
         $case_when_v = ' CASE WHEN ';
-        $case_when_v .= " l.access IN (" . implode(',', $levels) . ")";
+        $case_when_v .= " (l.id IS NULL OR l.access IN (" . $levelsList . "))";
         $case_when_v .= ' THEN 1 ';
         $case_when_v .= ' ELSE 0 ';
         $case_when_v .= ' END as user_has_access_venue';
 
         $case_when_c  = ' CASE WHEN ';
-        $case_when_c .= " c.access IN (" . implode(',',$levels) . ")";
+        $case_when_c .= " c.access IN (" . $levelsList . ")";
         $case_when_c .= ' THEN 1 ';
         $case_when_c .= ' ELSE 0 ';
         $case_when_c .= ' END as user_has_access_category';
 
-        $query->select(array($case_when_e, $case_when_l, $case_when_a, $case_when_v, $case_when_c));
+        $case_when_t  = ' CASE WHEN ';
+        $case_when_t .= " (a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (" . $levelsList . "))";
+        $case_when_t .= ' THEN 1 ';
+        $case_when_t .= ' ELSE 0 ';
+        $case_when_t .= ' END as user_has_access_type';
+
+        $query->select(array($case_when_e, $case_when_l, $case_when_a, $case_when_v, $case_when_c, $case_when_t));
 
         # join over the category-tables
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -505,8 +530,20 @@ class JemModelEventslist extends ListModel
             $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $query->where('a.access IN (' . implode(',', $newlevels) . ')');
         } else {
-            $query->where('a.access IN (' . implode(',', $levels) . ')');
+            $query->where('a.access IN (' . $levelsList . ')');
         }
+
+        # Filter by venue access level - public or with access_level_locked_venues active.
+        if ($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
+            $query->where('(l.id IS NULL OR l.access IN (' . implode(',', array_map('intval', $newlevels)) . '))');
+        } else {
+            $query->where('(l.id IS NULL OR l.access IN (' . $levelsList . '))');
+        }
+
+        # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
+        $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (' . $levelsList . '))');
 
         ####################
         ## FILTER-PUBLISH ##
@@ -992,6 +1029,15 @@ class JemModelEventslist extends ListModel
             } else {
                 $query->where('c.id = ' . (int)reset($idsCat));
             }
+        }
+
+        ####################
+        ## FILTER-TYPE_ID ##
+        ####################
+
+        $filterTypeId = $this->getState('filter.type_id');
+        if (!empty($filterTypeId)) {
+            $query->where('a.type_id = ' . (int) $filterTypeId);
         }
 
         ###################

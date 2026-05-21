@@ -143,9 +143,13 @@ class JemModelCategoryCal extends JemModelEventslist
         // Let parent create a new query object.
         $query = parent::getListQuery();
 
-       // If no contact exists, cn.name will be NULL
-       $query->select('cn.name AS contact_name')
-             ->leftJoin('#__contact_details AS cn ON cn.id = a.contactid');
+       if (JemHelper::isContactComponentEnabled()) {
+           // If no contact exists, cn.name will be NULL
+           $query->select('cn.name AS contact_name')
+                 ->leftJoin('#__contact_details AS cn ON cn.id = a.contactid');
+       } else {
+           $query->select('NULL AS contact_name');
+       }
 
         // here we can extend the query of the Eventslist model
         $query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');

@@ -25,6 +25,19 @@ use Joomla\CMS\HTML\HTMLHelper;
     </h1>
     <?php endif; ?>
 
+    <?php $showPageHeading = (bool) $this->params->get('show_page_heading', 1); ?>
+    <?php if (!$showPageHeading || $this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
+        <?php if ($showPageHeading) : ?>
+            <h2 class="jem-category-title">
+                <?php echo $this->escape($this->category->title); ?>
+            </h2>
+        <?php else : ?>
+            <h1 class="jem-category-title">
+                <?php echo $this->escape($this->category->title); ?>
+            </h1>
+        <?php endif; ?>
+    <?php endif; ?>
+
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
@@ -92,6 +105,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <input type="hidden" name="view" value="category" />
         <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
         <input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!--pagination-->

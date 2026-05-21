@@ -148,12 +148,12 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     </div>
 
                     <div class="jem-event-info-small jem-attendee-name">
-                        <?php echo $row->$namefield; ?>
+                        <?php echo $this->escape($row->$namefield); ?>
                     </div>
 
                     <?php if ($this->enableemailaddress == 1) :?>
                         <div class="jem-event-info-small jem-attendee-email">
-                            <a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a>
+                            <a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a>
                         </div>
                     <?php endif; ?>
 
@@ -173,19 +173,19 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         ?>
                     </div>
                     <div class="jem-event-info-small jem-attendee-places">
-                        <?php echo $row->places; ?>
+                        <?php echo (int) $row->places; ?>
                     </div>
 
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                         <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
                         <div class="jem-event-info-small jem-attendee-comment">
-                            <?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
+                            <?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?>
                         </div>
                     <?php endif;?>
 
                     <div class="jem-event-info-small jem-attendee-remove">
                         <div class="center">
-                            <a href="<?php echo Route::_($del_link.'&cid[]='.$row->id); ?>">
+                            <a href="<?php echo Route::_($del_link.'&cid[]='.(int) $row->id); ?>">
                                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
                             </a>
                         </div>

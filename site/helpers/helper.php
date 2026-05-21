@@ -53,6 +53,16 @@ class JemHelper
     }
 
     /**
+     * Returns true when Joomla's core Contacts component is available.
+     *
+     * @return boolean
+     */
+    static public function isContactComponentEnabled()
+    {
+        return ComponentHelper::isEnabled('com_contact');
+    }
+
+    /**
      * Pulls settings from database and stores in an static object
      *
      * @return object
@@ -599,26 +609,28 @@ class JemHelper
         }
         $db->setQuery($query);
         $files_used = $db->loadObjectList();
-        $files = array();
+        $usedFiles = array();
         foreach ($files_used as $used) {
-            $files[$used->object.'/'.$used->file] = true;
+            $usedFiles[$used->object.'/'.$used->file] = true;
         }
 
         // Delete unused files and folders (ignore 'index.html')
         foreach ($folders as $folder) {
-            $files = Folder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
-            if (!empty($files)) {
-                foreach ($files as $file) {
-                    if (!array_key_exists($folder.'/'.$file, $files)) {
+            $folderFiles = Folder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
+            if (!empty($folderFiles)) {
+                foreach ($folderFiles as $file) {
+                    if (!array_key_exists($folder.'/'.$file, $usedFiles)) {
                         $res &= File::delete($basepath.'/'.$folder.'/'.$file);
                     }
                 }
             }
-            $files = Folder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
-            if (empty($files)) {
+            $remainingFiles = Folder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
+            if (empty($remainingFiles)) {
                 $res &= Folder::delete($basepath.'/'.$folder);
             }
         }
+
+        return $res;
     }
 
     /**
@@ -1468,10 +1480,9 @@ class JemHelper
     {
         $jemsettings = JemHelper::config();
         if ($jemsettings->useiconfont == 1) {
-            # This will automaticly search for 'font-awesome.css' if site is in debug mode.
-            # Note: css files must be stored on /media/com_jem/css/ to be conform to Joomla and also allow template overrides.
-            HTMLHelper::_('stylesheet', 'media/vendor/fontawesome-free/css/font-awesome.min.css', array(), true);
-            HTMLHelper::_('stylesheet', 'com_jem/css/jem-icon-font.css', array(), true);
+            $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+            $wa->registerAndUseStyle('com_jem.fontawesome', 'com_jem/vendor/fontawesome-free/css/all.min.css');
+            $wa->registerAndUseStyle('com_jem.iconfont',    'com_jem/css/jem-icon-font.css');
         }
     }
 

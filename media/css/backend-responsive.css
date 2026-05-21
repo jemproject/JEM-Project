@@ -447,18 +447,13 @@ img#imagelib {
 }
 
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
-    background-color: #F9F9F9;
-}
-
 .table-striped tbody tr.row0:hover td,
 .table-striped tbody tr.row1:hover td {
     background-color: #e8f6fe;
 }
 
 /* ---------- TABLE, J3 Isis template -------------------------- */
-table {
+.com_jem table {
     max-width: 100%;
     background-color: transparent;
     border-collapse: separate;
@@ -746,11 +741,6 @@ table.table tfoot tr {
     color: #333;
 }
 
-table.table tfoot tr {
-    text-align: center;
-    color: #333;
-}
-
 table.table tfoot td, table.table tfoot th {
     background-color: #F7F7F7;
     border-top: 1px solid #999;
@@ -861,7 +851,8 @@ input.selectcat {
     margin-bottom: 3px;
 }
 
-input#csvexport {
+input#csvexport,
+input.csvexport {
     background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;
@@ -1181,9 +1172,6 @@ table.adminlist.help-toc {
     white-space: nowrap;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #999;
-}
-
-.label {
     border-radius: 3px;
 }
 

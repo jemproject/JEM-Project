@@ -14,6 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
 $uri = Uri::getInstance();
+$flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
 ?>
 
 <script>
@@ -26,49 +27,16 @@ $uri = Uri::getInstance();
         form.submit(view);
     }
 
-  function clearForm() {
-    var node = null;
-    node = document.getElementById('filter_type');
-    if (node != null) {
-      node.value='title';
-    }
-    node = null;
-    node = document.getElementById('filter_search');
-    if (node != null) {
-      node.value='';
-    }
-    node = null;
-    node = document.getElementById('filter_category');
-    if (node != null) {
-      node.value='1';
-    }
-    node = null;
-    node = document.getElementById('filter_date_from');
-    if (node != null) {
-      node.value='';
-    }
-    node = null;
-    node = document.getElementById('filter_date_to');
-    if (node != null) {
-      node.value='';
-    }
-    node = null;
-    node = document.getElementById('filter_continent');
-    if (node != null) {
-      node.value='';
-    }
-    node = null;
-    node = document.getElementById('filter_country');
-    if (node != null) {
-      node.value='';
-    }
-    node = null;
-    node = document.getElementById('filter_city');
-    if (node != null) {
-      node.value='';
-    }
-    node = null;
-    return;
+  function jem_search_clear() {
+    var f = document.getElementById('adminForm');
+    f.filter_search.value = '';
+    f.filter_date_from.value = '';
+    f.filter_date_to.value = '';
+    ['filter_category', 'filter_type_id', 'filter_venue_id', 'filter_continent', 'filter_country'].forEach(function(n) {
+        var el = f.elements[n];
+        if (el && el.options) { el.selectedIndex = 0; }
+    });
+    f.submit();
   }
 </script>
 
@@ -142,65 +110,91 @@ $uri = Uri::getInstance();
     <?php endif; ?>
   }
 </style>
-<div id="jem_filter" class="floattext">
-<dl class="jem-dl">
-  <dt>
-    <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
-  </dt>
-  <dd>
-    <?php echo  $this->lists['filter_types']; ?>
-    <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-  </dd>
-  <dt>
-    <?php echo '<label for="category">'.Text::_('COM_JEM_CATEGORY').'</label>'; ?>
-  </dt>
-  <dd>
-    <?php echo $this->lists['categories']; ?>
-  </dd>
-  <dt>
-    <?php echo '<label for="date">'.Text::_('COM_JEM_SEARCH_DATE').'</label>'; ?>
-  </dt>
-  <dd>
-    <div class="jem-row jem-nowrap jem-justify-start"><?php echo text::_('COM_JEM_SEARCH_FROM'); ?>&nbsp;<?php echo $this->lists['date_from'];?></div>
-    <div class="jem-row jem-nowrap jem-justify-start"><?php echo text::_('COM_JEM_SEARCH_TO'); ?>&nbsp;<?php echo $this->lists['date_to'];?></div>
-  </dd>
-  <dt>
-    <?php echo '<label for="continent">'.Text::_('COM_JEM_CONTINENT').'</label>'; ?>
-  </dt>
-  <dd>
-    <?php echo $this->lists['continents'];?>
-  </dd>
-  <?php if ($this->filter_continent): ?>
-    <dt>
-      <?php echo '<label for="country">'.Text::_('COM_JEM_COUNTRY').'</label>'; ?>
-    </dt>
-    <dd>
-      <?php echo $this->lists['countries'];?>
-    </dd>
-  <?php endif; ?>
-  <?php if ($this->filter_continent && $this->filter_country): ?>
-    <dt>
-      <?php echo '<label for="city">'.Text::_('COM_JEM_CITY').'</label>';?>
-    </dt>
-    <dd>
-      <?php echo $this->lists['cities'];?>
-    </dd>
-  <?php endif; ?>
-  <dt></dt>
-  <dd>
-    <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-    <button class="btn btn-secondary" type="button" onclick="clearForm();this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-  </dd>
-</dl>
-<?php if ($this->settings->get('global_display',1)) : ?>
-  <div class="jem-limit-smallist">
-    <?php
-      echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-      echo $this->pagination->getLimitBox();
-    ?>
-  </div>
-<?php endif; ?>
-  </div>
+<div id="jem_filter" class="jem-search-filter mb-3">
+    <h5 class="jem-search-filter-heading"><?php echo Text::_('COM_JEM_SEARCH_EVENTS_HEADING'); ?></h5>
+
+    <!-- KEYWORDS + EVENT TYPE -->
+    <div class="jem-search-filter-grid<?php echo $this->filter_show_eventtype ? ' jem-search-filter-grid-top' : ''; ?>">
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_KEYWORDS'); ?></div>
+            <div class="input-group">
+                <?php echo $this->lists['filter_types']; ?>
+                <input type="text" name="filter_search" id="filter_search"
+                       value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8'); ?>"
+                       class="form-control"
+                       placeholder="<?php echo Text::_('COM_JEM_SEARCH_TYPE_TO_SEARCH'); ?>"
+                       onchange="document.getElementById('adminForm').submit();" />
+            </div>
+        </div>
+        <?php if ($this->filter_show_eventtype): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_EVENT_TYPE'); ?></div>
+            <?php echo $this->lists['event_types']; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- CATEGORY / VENUES / CONTINENT / COUNTRY -->
+    <?php if ($this->filter_show_category || $this->filter_show_venue || $this->filter_show_continent || $this->filter_show_country): ?>
+    <div class="jem-search-filter-grid jem-search-filter-grid-four">
+        <?php if ($this->filter_show_category): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_CATEGORY'); ?></div>
+            <?php echo $this->lists['categories']; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($this->filter_show_venue): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_VENUES'); ?></div>
+            <?php echo $this->lists['venues']; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($this->filter_show_continent): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_CONTINENT'); ?></div>
+            <?php echo $this->lists['continents']; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($this->filter_show_country): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_COUNTRY'); ?></div>
+            <?php echo $this->lists['countries']; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- DATE RANGE -->
+    <?php if ($this->filter_show_dates): ?>
+    <div style="margin-bottom:1rem">
+        <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_DATE_RANGE'); ?></div>
+        <div class="jem-search-filter-grid jem-search-filter-grid-two">
+            <input type="date" name="filter_date_from" id="filter_date_from"
+                   class="form-control"
+                   value="<?php echo htmlspecialchars($this->filter_date_from, ENT_QUOTES, 'UTF-8'); ?>" />
+            <input type="date" name="filter_date_to" id="filter_date_to"
+                   class="form-control"
+                   value="<?php echo htmlspecialchars($this->filter_date_to, ENT_QUOTES, 'UTF-8'); ?>" />
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- LIMIT + buttons -->
+    <div class="jem-search-filter-footer">
+        <div class="jem-search-filter-limit">
+            <span class="jem-filter-label"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?>:</span>
+            <?php echo $this->pagination->getLimitBox(); ?>
+        </div>
+        <div class="jem-search-filter-actions">
+            <button class="btn btn-secondary" type="button" onclick="jem_search_clear();">
+                <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+            </button>
+            <button class="btn btn-primary" type="submit">
+                <?php echo Text::_('COM_JEM_SEARCH_SUBMIT'); ?>
+            </button>
+        </div>
+    </div>
+</div>
 <div class="jem-sort jem-sort-small">
   <div class="jem-list-row jem-small-list">
     <div id="jem_date" class="sectiontableheader"><i class="far fa-clock" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
@@ -214,7 +208,7 @@ $uri = Uri::getInstance();
       <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
     <?php endif; ?>
     <?php if ($this->jemsettings->showstate == 1) : ?>
-      <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <div id="jem_state" class="sectiontableheader"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'c.name', $this->lists['order_Dir'], $this->lists['order']); ?></div>
     <?php endif; ?>
     <?php if ($this->jemsettings->showcat == 1) : ?>
       <div id="jem_category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
@@ -299,13 +293,15 @@ $uri = Uri::getInstance();
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showstate == 1) : ?>
-              <?php if (!empty($row->state)) : ?>
-                <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                  <i class="fa fa-map" aria-hidden="true"></i>
-                  <?php echo $this->escape($row->state); ?>
+              <?php if (!empty($row->country)) : ?>
+                <?php $countryName = $this->escape($row->country_name ?: $row->country); ?>
+                <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$countryName; ?>">
+                  <i class="fa fa-flag" aria-hidden="true"></i>
+                  <img src="<?php echo $flagBase . strtolower($row->country); ?>.webp" style="height:1em;vertical-align:middle;margin-right:4px;" alt="<?php echo $countryName; ?>">
+                  <?php echo $countryName; ?>
                 </div>
               <?php else : ?>
-                <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
+                <div class="jem-event-info-small jem-event-state"><i class="fa fa-flag" aria-hidden="true"></i> -</div>
               <?php endif; ?>
             <?php endif; ?>
 

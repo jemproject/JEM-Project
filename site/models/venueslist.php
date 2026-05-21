@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\ListModel;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
+
 /**
  * Model-Venueslist
  */
@@ -71,6 +73,11 @@ class JemModelVenueslist extends ListModel
         $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_order        = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir    = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('a.city', 'a.venue', 'a.state', 'a.country', 'a.ordering', 'a.id');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.city';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $orderby = $filter_order . ' ' . $filter_order_Dir;
 
@@ -90,6 +97,7 @@ class JemModelVenueslist extends ListModel
         $id .= ':' . $this->getState('list.limit');
         $id .= ':' . $this->getState('filter.filter_search');
         $id .= ':' . $this->getState('filter.filter_type');
+        $id .= ':' . (int) $this->getState('filter.type_id');
         $id .= ':' . serialize($this->getState('filter.orderby'));
 
         return parent::getStoreId($id);
@@ -148,6 +156,7 @@ class JemModelVenueslist extends ListModel
         # define variables
         $filter = $this->getState('filter.filter_type');
         $search = $this->getState('filter.filter_search'); // not escaped
+        $rawSearch = trim((string) $search);
 
         ###################
         ## FILTER-ACCESS ##
@@ -185,9 +194,35 @@ class JemModelVenueslist extends ListModel
                         case 5:
                             $query->where('a.state LIKE '.$search);
                             break;
+                        case 6:
+                            $countryCodes = array();
+
+                            foreach (JemHelperCountries::getCountries() as $iso3 => $country) {
+                                $countryName = explode(',', $country['name'])[0];
+
+                                if (stripos($countryName, $rawSearch) !== false || stripos($country['iso2'], $rawSearch) !== false || stripos($iso3, $rawSearch) !== false) {
+                                    $countryCodes[] = $db->quote($country['iso2']);
+                                    $countryCodes[] = $db->quote($iso3);
+                                }
+                            }
+
+                            $countryWhere = array('a.country LIKE ' . $search);
+
+                            if ($countryCodes) {
+                                $countryWhere[] = 'a.country IN (' . implode(',', array_unique($countryCodes)) . ')';
+                            }
+
+                            $query->where('(' . implode(' OR ', $countryWhere) . ')');
+                            break;
                     }
                 }
             }
+        }
+
+        $typeId = (int) $this->getState('filter.type_id');
+
+        if ($typeId > 0) {
+            $query->where('a.type_id = ' . $typeId);
         }
 
         ####################

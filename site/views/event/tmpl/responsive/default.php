@@ -27,6 +27,38 @@ $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $uri         = Uri::getInstance();
 
+$eventStatusOptions = array(
+    'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled', 'schema' => 'https://schema.org/EventScheduled'),
+    'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled', 'schema' => 'https://schema.org/EventCancelled'),
+    'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed', 'schema' => 'https://schema.org/EventPostponed'),
+    'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled', 'schema' => 'https://schema.org/EventRescheduled'),
+    'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online', 'schema' => 'https://schema.org/EventMovedOnline'),
+);
+$ticketAvailabilityOptions = array(
+    'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available', 'schema' => 'https://schema.org/InStock'),
+    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder', 'schema' => 'https://schema.org/PreOrder'),
+    'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout', 'schema' => 'https://schema.org/SoldOut'),
+    'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist', 'schema' => 'https://schema.org/SoldOut'),
+);
+$eventStatus = !empty($this->item->event_status) && isset($eventStatusOptions[$this->item->event_status]) ? $this->item->event_status : 'scheduled';
+$eventStatusOption = $eventStatusOptions[$eventStatus];
+$eventStatusText = Text::_($eventStatusOption['label']);
+$showEventStatusBadge = $eventStatus !== 'scheduled';
+$ticketAvailability = JemOutput::getEffectiveTicketAvailability($this->item);
+$ticketAvailabilityOption = $ticketAvailabilityOptions[$ticketAvailability];
+$ticketAvailabilityText = Text::_($ticketAvailabilityOption['label']);
+$showTicketAvailabilityText = (bool) $params->get('event_show_availability', 0);
+$showTicketAvailabilityBadge = $showTicketAvailabilityText && $ticketAvailability !== 'instock';
+$eventImageRibbonText = '';
+$eventImageRibbonClass = '';
+if ($showEventStatusBadge) {
+    $eventImageRibbonText = $eventStatusText;
+    $eventImageRibbonClass = $eventStatusOption['class'];
+} elseif ($showTicketAvailabilityBadge) {
+    $eventImageRibbonText = $ticketAvailabilityText;
+    $eventImageRibbonClass = $ticketAvailabilityOption['class'];
+}
+
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {
     $enddate = strtotime($this->item->enddates?:($this->item->dates?:date("Y-m-d")));
@@ -82,6 +114,11 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
         <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
         <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+        <meta itemprop="eventStatus" content="<?php echo $eventStatusOption['schema']; ?>" />
+        <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
+            <link itemprop="url" href="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+            <link itemprop="availability" href="<?php echo $ticketAvailabilityOption['schema']; ?>" />
+        </div>
 
         <div class="buttons">
             <?php
@@ -93,6 +130,21 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php if ($this->params->get('show_page_heading', 1)) : ?>
             <h1 class="componentheading">
                 <?php echo $this->escape($this->params->get('page_heading')); ?>
+            </h1>
+        <?php else : ?>
+            <h1 class="componentheading">
+                <?php echo $this->escape($this->item->title); ?>
+                <?php if ($showEventStatusBadge || $showTicketAvailabilityBadge) : ?>
+                    <span class="jem-event-badges">
+                        <?php if ($showEventStatusBadge) : ?>
+                            <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
+                        <?php endif; ?>
+                        <?php if ($showTicketAvailabilityBadge) : ?>
+                            <span class="jem-event-state-badge <?php echo $ticketAvailabilityOption['class']; ?>"><?php echo $this->escape($ticketAvailabilityText); ?></span>
+                        <?php endif; ?>
+                    </span>
+                <?php endif; ?>
+                <?php echo JemOutput::typeBadge($this->item); ?>
             </h1>
         <?php endif; ?>
 
@@ -114,7 +166,20 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <dl class="jem-dl">
                     <?php if ($params->get('event_show_detailstitle',1)) : ?>
                         <dt class="jem-title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
-                        <dd class="jem-title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
+                        <dd class="jem-title" itemprop="name">
+                            <?php echo $this->escape($this->item->title); ?>
+                            <?php if ($showEventStatusBadge || $showTicketAvailabilityBadge) : ?>
+                                <span class="jem-event-badges">
+                                    <?php if ($showEventStatusBadge) : ?>
+                                        <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($showTicketAvailabilityBadge) : ?>
+                                        <span class="jem-event-state-badge <?php echo $ticketAvailabilityOption['class']; ?>"><?php echo $this->escape($ticketAvailabilityText); ?></span>
+                                    <?php endif; ?>
+                                </span>
+                            <?php endif; ?>
+                            <?php echo JemOutput::typeBadge($this->item); ?>
+                        </dd>
                     <?php else : ?>
                         <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
                     <?php endif; ?>
@@ -187,13 +252,27 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <dd class="jem-hits"><?php echo Text::sprintf('COM_JEM_EVENT_HITS', $this->item->hits); ?></dd>
                     <?php endif; ?>
 
+                    <?php if ($showEventStatusBadge) : ?>
+                        <dt class="jem-event-status hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL'); ?>:</dt>
+                        <dd class="jem-event-status">
+                            <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
+                        </dd>
+                    <?php endif; ?>
+
+                    <?php if ($showTicketAvailabilityBadge) : ?>
+                        <dt class="jem-ticket-availability hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL'); ?>:</dt>
+                        <dd class="jem-ticket-availability">
+                            <span class="jem-event-state-badge <?php echo $ticketAvailabilityOption['class']; ?>"><?php echo $this->escape($ticketAvailabilityText); ?></span>
+                        </dd>
+                    <?php endif; ?>
+
 
                     <!-- AUTHOR -->
                     <?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
                         <dt class="createdby hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
                         <dd class="createdby">
                             <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
-                            <?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
+                            <?php if (JemHelper::isContactComponentEnabled() && !empty($this->item->contactid2) && $params->get('event_link_author') == true) :
                                 $concatid = null;
 
                                 if ($params->get('event_link_author')) {
@@ -246,14 +325,24 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 }
             </style>
             <div class="jem-img">
-                <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                <?php if ($eventImageRibbonText) : ?>
+                    <div class="jem-event-image-ribbon-wrap">
+                        <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                        <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
+                    </div>
+                <?php else : ?>
+                    <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- DESCRIPTION -->
-        <?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br>' || $this->item->introtext != '' && $this->item->introtext != '<br>')) { ?>
-            <h2 class="jem-description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
-            <div class="jem-description event_desc" itemprop="description">
+        <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
+        <?php if (($params->get('event_show_description','1') && $hasDescription) || !empty($this->event_links)) { ?>
+            <?php if ($params->get('event_show_description','1') && $hasDescription) : ?>
+                <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
+            <?php endif; ?>
+            <div class="description event_desc" itemprop="description">
 
                 <?php
                 if ($params->get('access-view')) {
@@ -262,6 +351,211 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     } else {
                         echo $this->item->text;
                     }
+
+                    if (!empty($this->event_links)) : ?>
+                        <?php
+                        // Default icons by action type.
+                        $defaultLinkTypes = array(
+                            'info'       => array('icon' => 'fa fa-info-circle', 'label' => 'COM_JEM_EVENT_LINK_TXT_INFO'),
+                            'online'     => array('icon' => 'fa fa-globe', 'label' => 'COM_JEM_EVENT_LINK_TXT_ONLINE'),
+                            'request'    => array('icon' => 'fa fa-ticket', 'label' => 'COM_JEM_EVENT_LINK_TXT_REQUEST'),
+                            'pay'        => array('icon' => 'fa fa-credit-card', 'label' => 'COM_JEM_EVENT_LINK_TXT_PAY'),
+                            'price'      => array('icon' => 'fa fa-tag', 'label' => 'COM_JEM_EVENT_LINK_TXT_PRICE'),
+                            'speaker'    => array('icon' => 'fa fa-microphone', 'label' => 'COM_JEM_EVENT_LINK_TXT_SPEAKER'),
+                            'workshop'   => array('icon' => 'fa fa-tools', 'label' => 'COM_JEM_EVENT_LINK_TXT_WORKSHOP'),
+                            'location'   => array('icon' => 'fa fa-map-marker-alt', 'label' => 'COM_JEM_EVENT_LINK_TXT_LOCATION'),
+                            'calendar'   => array('icon' => 'fa fa-calendar', 'label' => 'COM_JEM_EVENT_LINK_TXT_CALENDAR'),
+                            'document'   => array('icon' => 'fa fa-file-alt', 'label' => 'COM_JEM_EVENT_LINK_TXT_DOCUMENT'),
+                            'sponsor'    => array('icon' => 'fa fa-handshake', 'label' => 'COM_JEM_EVENT_LINK_TXT_SPONSOR'),
+                            'networking' => array('icon' => 'fa fa-users', 'label' => 'COM_JEM_EVENT_LINK_TXT_NETWORKING')
+                        );
+                        ?>
+
+                        <?php
+                        // Read event links layout from event attribs merged into params.
+                        $linksLayout = 'row';
+
+                        if (!empty($this->item->params) && is_object($this->item->params) && method_exists($this->item->params, 'get')) {
+                            $linksLayout = (string) $this->item->params->get('links_layout', 'row');
+                        }
+                        if (!in_array($linksLayout, array('row', 'row_full', 'row_uniform', 'column', 'column_full', 'column_uniform'), true)) {
+                            $linksLayout = 'row';
+                        }
+
+                        $params = !empty($this->item->params) ? $this->item->params : $this->params;
+
+                        $linksOrder = $params->get('links_order', 'image_icon_text');
+
+                        $linksOrderMap = [
+                            'image_icon_text' => ['image', 'icon', 'text'],
+                            'image_text_icon' => ['image', 'text', 'icon'],
+                            'icon_text_image' => ['icon', 'text', 'image'],
+                            'icon_image_text' => ['icon', 'image', 'text'],
+                            'text_image_icon' => ['text', 'image', 'icon'],
+                            'text_icon_image' => ['text', 'icon', 'image'],
+                        ];
+
+                        if (!isset($linksOrderMap[$linksOrder])) {
+                            $linksOrder = 'image_icon_text';
+                        }
+
+                        $orderClass = 'jem-links-order-' . str_replace('_', '-', $linksOrder);
+                        ?>
+
+                        <div class="jem-event-links jem-event-links-<?php echo $this->escape($linksLayout); ?> <?php echo $this->escape($orderClass); ?>">
+                            <?php foreach ($this->event_links as $link) : ?>
+                                <?php
+                                // Read link values safely.
+                                $url = !empty($link->url) ? trim((string) $link->url) : '';
+                                $type      = !empty($link->type) ? trim((string) $link->type) : 'info';
+                                $target    = !empty($link->target) ? trim((string) $link->target) : '_blank';
+                                $label     = !empty($link->title) ? trim((string) $link->title) : '';
+                                $description = !empty($link->description) ? trim((string) $link->description) : '';
+                                $image     = !empty($link->image) ? trim((string) $link->image) : '';
+                                $icon      = !empty($link->icon) ? trim((string) $link->icon) : '';
+                                $color     = !empty($link->color) ? trim((string) $link->color) : '';
+                                $maxWidth  = !empty($link->max_width) ? (int) $link->max_width : 120;
+                                $maxHeight = !empty($link->max_height) ? (int) $link->max_height : 60;
+                                $frameValue = isset($link->frame) ? $link->frame : 0;
+                                $frame = in_array((string) $frameValue, array('1', 'true', 'yes', 'on'), true) ? 1 : 0;
+
+                                if ($url === '' && $label === '' && $description === '' && $image === '' && $icon === '') {
+                                    continue;
+                                }
+
+                                $hasLink = !in_array($url, array('', '#'), true);
+
+                                // "noicon" type suppresses all icons; otherwise fall back to the type's default.
+                                if ($type === 'noicon') {
+                                    $icon = '';
+                                } elseif ($icon === '' && isset($defaultLinkTypes[$type]['icon'])) {
+                                    $icon = $defaultLinkTypes[$type]['icon'];
+                                }
+
+                                // Remove Joomla media metadata from the image URL if present.
+                                if ($image !== '' && strpos($image, '#') !== false) {
+                                    $imageParts = explode('#', $image, 2);
+                                    $image = $imageParts[0];
+                                }
+
+                                $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
+                                $rel = ($target === '_blank') ? ' rel="noopener noreferrer"' : '';
+
+                                $safeType = preg_replace('/[^a-z0-9_-]/i', '', $type);
+                                $linkTypeLabel = isset($defaultLinkTypes[$type]['label'])
+                                    ? Text::_($defaultLinkTypes[$type]['label'])
+                                    : ucwords(str_replace(array('-', '_'), ' ', $safeType));
+
+                                $linkClasses = array(
+                                    'jem-event-link',
+                                    'jem-event-link-' . $safeType
+                                );
+
+                                if ($frame) {
+                                    $linkClasses[] = 'jem-event-link-has-frame';
+                                }
+
+                                if (!$hasLink) {
+                                    $linkClasses[] = 'jem-event-link-no-link';
+                                }
+
+                                if ($image !== '') {
+                                    $linkClasses[] = 'jem-event-link-has-image';
+                                }
+
+                                if ($label !== '') {
+                                    $linkClasses[] = 'jem-event-link-has-label';
+                                }
+                                if ($description !== '') {
+                                    $linkClasses[] = 'jem-event-link-has-description';
+                                }
+
+                                $linkStyle = array();
+
+                                if ($color !== '' && preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
+                                    if (!$frame && $hasLink) {
+                                        $linkStyle[] = '--jem-event-link-hover-color: ' . $color;
+                                    } else {
+                                        $linkStyle[] = 'color: ' . $color;
+                                    }
+                                }
+
+                                $linkStyleAttr = !empty($linkStyle) ? ' style="' . implode('; ', $linkStyle) . '"' : '';
+
+                                $imageStyle = array();
+
+                                if ($maxWidth > 0) {
+                                    $imageStyle[] = 'max-width: ' . $maxWidth . 'px !important';
+                                }
+
+                                if ($maxHeight > 0) {
+                                    $imageStyle[] = 'max-height: ' . $maxHeight . 'px !important';
+                                }
+
+                                $imageStyle[] = 'width: auto !important';
+                                $imageStyle[] = 'height: auto !important';
+                                $imageStyle[] = 'object-fit: contain';
+
+                                $imageStyleAttr = ' style="' . implode('; ', $imageStyle) . '"';
+                                $displayImage = $image !== '' ? JemImage::linkThumbnail($image, $maxWidth, $maxHeight, true) : '';
+
+                                $imageOrder = array_search('image', $linksOrderMap[$linksOrder], true) + 1;
+                                $iconOrder  = array_search('icon', $linksOrderMap[$linksOrder], true) + 1;
+                                $textOrder  = array_search('text', $linksOrderMap[$linksOrder], true) + 1;
+
+                                $imageOrderStyle = ' style="order: ' . (int) $imageOrder . ' !important"';
+                                $iconOrderStyle  = ' style="order: ' . (int) $iconOrder . ' !important"';
+                                $textOrderStyle  = ' style="order: ' . (int) $textOrder . ' !important"';
+
+                                $linkParts = array();
+
+                                if ($image !== '') {
+                                    $linkParts['image'] = '<span class="jem-event-link-image"' . $imageOrderStyle . '>'
+                                        . '<img src="' . $this->escape($displayImage) . '" alt="' . $this->escape($label) . '" loading="lazy"' . $imageStyleAttr . '>'
+                                        . '</span>';
+                                }
+
+                                if ($icon !== '') {
+                                    $linkParts['icon'] = '<span class="jem-event-link-icon hasTooltip ' . $this->escape($icon) . '" role="img" aria-label="' . $this->escape($linkTypeLabel) . '" title="' . $this->escape($linkTypeLabel) . '" data-bs-toggle="tooltip"' . $iconOrderStyle . '></span>';
+                                }
+
+                                if ($label !== '' || $description !== '') {
+                                    $textHtml = '<span class="jem-event-link-text"' . $textOrderStyle . '>';
+
+                                    if ($label !== '') {
+                                        $textHtml .= '<strong class="jem-event-link-label">' . $this->escape($label) . '</strong>';
+                                    }
+
+                                    if ($description !== '') {
+                                        $textHtml .= '<span class="jem-event-link-description">' . nl2br($this->escape($description)) . '</span>';
+                                    }
+
+                                    $textHtml .= '</span>';
+                                    $linkParts['text'] = $textHtml;
+                                }
+
+                                $partOrder = $linksOrderMap[$linksOrder];
+
+                                $tagName = $hasLink ? 'a' : 'span';
+                                ?>
+
+                                <<?php echo $tagName; ?>
+                                        class="<?php echo $this->escape(implode(' ', $linkClasses)); ?>"
+                                    <?php if ($hasLink) : ?>
+                                            href="<?php echo $this->escape($url); ?>"
+                                            target="<?php echo $this->escape($target); ?>"
+                                        <?php echo $rel; ?>
+                                    <?php endif; ?>
+                                    <?php echo $linkStyleAttr; ?>
+                                >
+                                    <?php foreach ($partOrder as $partName) : ?>
+                                        <?php echo $linkParts[$partName] ?? ''; ?>
+                                    <?php endforeach; ?>
+                            </<?php echo $tagName; ?>>
+
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif;
                 }
                 /* optional teaser intro text for guests - NOT SUPPORTED YET */
                 elseif (0 /*$params->get('event_show_noauth') == true and  $user->get('guest')*/ ) {
@@ -299,7 +593,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         $showContactDesc     = $params->get('event_show_contact_description');
         $selectedFields      = $params->get('contact_fields', ['position', 'website', 'country']);
 
-        if ($params->get('event_show_contact') && !empty($this->contacts)) :
+        if (JemHelper::isContactComponentEnabled() && $params->get('event_show_contact') && !empty($this->contacts)) :
 
             $displayGroups = array();
             if ($showContactCategory) {
@@ -564,7 +858,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php endif; ?>
 
                 <?php $this->attachments = $this->item->vattachments; ?>
+                <?php $this->attachmentParams = $this->item->venue_params ?? null; ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
+                <?php unset($this->attachmentParams); ?>
 
             </div>
 

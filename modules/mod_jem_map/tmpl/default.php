@@ -39,12 +39,35 @@ $youAreHere  = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
 $startLat    = (float) $params->get('map_center_lat', '0');
 $startLng    = (float) $params->get('map_center_lng', '0');
 $startZoom   = (int)   $params->get('map_zoom', '10');
-$heatMapLayer = (int)  $params->get('heat_layer', '0');
+$heatMapLayer = (int)  $params->get('heat_layer', '1');
 $fullScreenMap = (int)  $params->get('full_screen_map', '0');
+$showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $params->get('show_my_location', '0');
 ?>
 
-<?php if (!empty($showDateFilter)): ?>
+<?php if ($showControls): ?>
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+        <?php if (!empty($showCountryFilter)): ?>
+            <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
+                <?= Text::_('MOD_JEM_MAP_COUNTRY_FILTER') ?>
+            </label>
+            <select name="jem_map_filter_country"
+                    id="jem-map-filter-country-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value=""><?= Text::_('MOD_JEM_MAP_ALL_COUNTRIES') ?></option>
+                <?php foreach ($countries as $country): ?>
+                    <?php
+                    $countryCode = (string) $country->country;
+                    $countryName = !empty($country->country_name) ? (string) $country->country_name : $countryCode;
+                    ?>
+                    <option value="<?= htmlspecialchars($countryCode, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryCode === (string) $selectedCountry) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+
+        <?php if (!empty($showDateFilter)): ?>
         <?php
         $options = [
             'all'      => 'MOD_JEM_MAP_ALL',
@@ -55,14 +78,13 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             'year'     => 'MOD_JEM_MAP_YEAR',
             'date'     => 'MOD_JEM_MAP_DATE'
         ];
-
         foreach ($options as $value => $label) {
             $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
             $isDateField = $value === 'date';
             ?>
             <?php if ($isDateField) { ?>
                 <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                    <input type="radio" class="btn-check" id="jem_map_filter_date" name="jem_map_filter_mode" value="<?= $value ?>"
+                    <input type="radio" class="btn-check" name="jem_map_filter_mode" value="<?= $value ?>"
                            id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
                     <label class="btn btn-outline-primary btn-sm" style="padding-top: 4px;" for="filter-<?= $value ?>">
                         <?= Text::_($label) ?>
@@ -79,9 +101,27 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
             <?php } ?>
         <?php } ?>
 
-        <button type="submit" class="btn btn-primary btn-sm">
-            <?= Text::_('MOD_JEM_MAP_APPLY') ?>
-        </button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <?= Text::_('MOD_JEM_MAP_APPLY') ?>
+            </button>
+        <?php endif; ?>
+
+        <?php if (!empty($showCategoryFilter)): ?>
+            <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
+                <?= Text::_('MOD_JEM_MAP_CATEGORY_FILTER') ?>
+            </label>
+            <select name="jem_map_filter_catid"
+                    id="jem-map-filter-category-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === (int) $selectedCategoryId) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
 
         <?php if($params->get('show_my_location','0')) { ?>
             <!-- Location button -->
@@ -113,7 +153,7 @@ $fullScreenMap = (int)  $params->get('full_screen_map', '0');
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.auto-submit').forEach(function(radio) {
             radio.addEventListener('change', function() {
-                if (this.checked) {
+                if (this.matches('select') || this.checked) {
                     this.closest('form').submit();
                 }
             });

@@ -11,7 +11,7 @@ defined('JPATH_BASE') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 
-// jimport('joomla.html.html');
+//JFormHelper::loadFieldClass('list');
 
 
 /**

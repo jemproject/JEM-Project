@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>JEM - Types Module</name>
+    <author>JEM Community</author>
+    <creationDate>May 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.5.0beta2</version>
+    <description>MOD_JEM_TYPES_XML_DESCRIPTION</description>
+
+    <files>
+        <filename module="mod_jem_types">mod_jem_types.php</filename>
+        <filename>helper.php</filename>
+        <filename>index.html</filename>
+
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jem_types.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_types.sys.ini</language>
+    </languages>
+    <help key="Modules" />
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="display_mode" type="list"
+                    label="MOD_JEM_TYPES_DISPLAY_MODE"
+                    description="MOD_JEM_TYPES_DISPLAY_MODE_DESC"
+                    default="summary"
+                >
+                    <option value="summary">MOD_JEM_TYPES_MODE_SUMMARY</option>
+                    <option value="topn">MOD_JEM_TYPES_MODE_TOPN</option>
+                </field>
+
+                <field name="top_n" type="number"
+                    label="MOD_JEM_TYPES_TOP_N"
+                    description="MOD_JEM_TYPES_TOP_N_DESC"
+                    default="3"
+                    min="1"
+                    max="20"
+                    showon="display_mode:topn"
+                />
+
+                <field name="hide_empty" type="radio"
+                    label="MOD_JEM_TYPES_HIDE_EMPTY"
+                    description="MOD_JEM_TYPES_HIDE_EMPTY_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="show_when_empty" type="radio"
+                    label="MOD_JEM_TYPES_SHOW_WHEN_EMPTY"
+                    description="MOD_JEM_TYPES_SHOW_WHEN_EMPTY_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    description="JFIELD_ALT_LAYOUT_DESC"
+                    validate="moduleLayout"
+                />
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"
+                    rows="3"
+                    filter="string"
+                />
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    description="COM_MODULES_FIELD_CACHING_DESC"
+                    default="1"
+                    filter="integer"
+                >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    description="COM_MODULES_FIELD_CACHE_TIME_DESC"
+                    default="900"
+                    filter="integer"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

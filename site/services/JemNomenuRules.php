@@ -221,6 +221,26 @@ class JemNomenuRules implements RulesInterface
                 }
                 break;
 
+            case 'typeevents':
+                {
+                    if (isset($segments[1])) {
+                        $id = explode(':', $segments[1]);
+                        $vars['id'] = $id[0];
+                    }
+                    $vars['view'] = 'typeevents';
+                }
+                break;
+
+            case 'typevenues':
+                {
+                    if (isset($segments[1])) {
+                        $id = explode(':', $segments[1]);
+                        $vars['id'] = $id[0];
+                    }
+                    $vars['view'] = 'typevenues';
+                }
+                break;
+
             default:
                 {
                     $vars['view'] = $segments[0];

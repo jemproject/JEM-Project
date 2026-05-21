@@ -13,6 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Contact modal field for the front area.
@@ -32,6 +33,12 @@ class JFormFieldModal_Contact extends FormField
     protected function getInput()
     {
         $app      = Factory::getApplication();
+        $currentValues = ComponentHelper::isEnabled('com_contact') ? ($this->value ? $this->value : '') : '';
+
+        if (!ComponentHelper::isEnabled('com_contact')) {
+            return '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="" />';
+        }
+
         $document = $app->getDocument();
         $wa       = $document->getWebAssetManager();
 
@@ -48,7 +55,6 @@ class JFormFieldModal_Contact extends FormField
 
         $wa->addInlineScript(implode("\n", $script));
 
-        $currentValues = $this->value ? $this->value : '';
         $link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
             . '&function=jSelectContact_' . $this->id
             . '&selected=' . $currentValues;
@@ -97,7 +103,7 @@ class JFormFieldModal_Contact extends FormField
             )
         );
 
-        // Input Hidden (El que realmente guarda los IDs en la base de datos)
+        // Hidden input that stores the IDs in the database.
         $class = $this->required ? ' class="required modal-value"' : '';
         $html[] = '<input type="hidden" id="' . $this->id . '_id"' . $class . ' name="' . $this->name . '" value="' . htmlspecialchars($currentValues, ENT_QUOTES, 'UTF-8') . '" />';
 

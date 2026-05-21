@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/eventslist.php';
 
@@ -183,6 +184,7 @@ class JemModelVenue extends JemModelEventslist
     {
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
         $jemsettings = JemHelper::config();
 
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -191,11 +193,12 @@ class JemModelVenue extends JemModelEventslist
         $query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
                        ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, access, '.
                        ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
+                       ' attribs, '.
                        ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
         $query->from($db->quoteName('#__jem_venues'));
 
         $case_when_a  = ' CASE WHEN ';
-        $case_when_a .= " access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= " access IN (" . $levelsList . ")";
         $case_when_a .= ' THEN 1 ';
         $case_when_a .= ' ELSE 0 ';
         $case_when_a .= ' END as user_has_access_venue';
@@ -206,9 +209,9 @@ class JemModelVenue extends JemModelEventslist
         if($jemsettings->access_level_locked_venues != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
             $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
-            $query->where('access IN ('.implode(',', $newlevels).')');
+            $query->where('access IN ('.implode(',', array_map('intval', $newlevels)).')');
         } else {
-            $query->where('access IN ('.implode(',', $levels).')');
+            $query->where('access IN ('.$levelsList.')');
         }
 
         $query->where('id = '.(int)$this->_id);
@@ -232,10 +235,12 @@ class JemModelVenue extends JemModelEventslist
         if (empty($_venue)) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
             return false;
-        }else if(!$_venue->user_has_access_venue) {
-            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            return false;
         }
+
+        $registry = new Registry;
+        $registry->loadString($_venue->attribs ?? '{}');
+        $_venue->params = JemHelper::globalattribs();
+        $_venue->params->merge($registry);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 

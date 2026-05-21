@@ -10,6 +10,8 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Form\FormField;
 
+//JFormHelper::loadFieldClass('list');
+
 /**
  * CountryOptions Field class.
  *

@@ -24,6 +24,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+require_once JPATH_SITE . '/administrator/components/com_jem/helpers/html/jemhtml.php';
+
 #[AllowDynamicProperties]
 class JemCalendar
 {
@@ -173,21 +175,17 @@ class JemCalendar
         ********************************************************************************
         */
 
-        if (version_compare(JVERSION, '5.0.0', '>=')) {
-            // Joomla 5
-            $this->yearNavBack=" <i class='fa-solid fa-angles-left'></i> "; // Previous year
-            $this->yearNavForw=" <i class='fa-solid fa-angles-right'></i> "; // Next year
-            $this->monthNavBack=" <i class='fa-solid fa-angle-left'></i> "; // Previous month
-            $this->monthNavForw=" <i class='fa-solid fa-angle-right'></i> "; // Next month
-        } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-            // Joomla 4
-            $this->yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
-            $this->yearNavForw=" &gt;&gt; "; // Next year, this could be an image link
-            $this->monthNavBack=" &lt;&lt; "; // Previous month, this could be an image link
-            $this->monthNavForw=" &gt;&gt; "; // Next month, this could be an image link
-        }
+        $this->yearNavBack = $this->getNavigationIcon('prev.webp', 'fa-solid fa-angles-left', Text::_('JPREV'));
+        $this->yearNavForw = $this->getNavigationIcon('next.webp', 'fa-solid fa-angles-right', Text::_('JNEXT'));
+        $this->monthNavBack = $this->getNavigationIcon('prev.webp', 'fa-solid fa-angle-left', Text::_('JPREV'));
+        $this->monthNavForw = $this->getNavigationIcon('next.webp', 'fa-solid fa-angle-right', Text::_('JNEXT'));
         $this->selBtn="Go"; // value of the date picker button (if enabled)
         $this->monthYearDivider=" "; // the divider between month and year in the month`s title
+    }
+
+    private function getNavigationIcon($image, $icon, $alt)
+    {
+        return jemhtml::icon('com_jem/' . $image, $icon . ' jem-calendar-nav-icon', $alt, array('class' => 'jem-calendar-nav-icon'));
     }
     /*
     ********************************************************************************
@@ -508,7 +506,7 @@ class JemCalendar
             $out.=$this->getMonthName().$this->monthYearDivider.$this->actyear;
             $out.="</td></tr>\n";
         } else {
-            $out = "<tr><td class=\"".$this->cssMonthNav."\" colspan=\"2\" style=\"text-align:right;\">";
+            $out = "<tr><td class=\"".$this->cssMonthNav."\" colspan=\"2\">";
             if ($this->actmonth==1) { // january
                 $out.=$this->mkUrl($this->actyear-1,"12");
             } else {
@@ -517,7 +515,7 @@ class JemCalendar
             $out .= $this->monthNavBack."</a></td>";
             $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-4)."\">";
             $out .= $this->getMonthName().$this->monthYearDivider.$this->actyear."</td>";
-            $out .= "<td class=\"".$this->cssMonthNav."\" colspan=\"2\" style=\"text-align:left;\">";
+            $out .= "<td class=\"".$this->cssMonthNav."\" colspan=\"2\">";
             if ($this->actmonth==12) { //december
                 $out.=$this->mkUrl($this->actyear+1,"1");
             }
@@ -694,6 +692,9 @@ class JemCalendar
             if (($this->getWeekday($var) == 6) && $this->crSatClass) {
                 $cssClass[] = $this->cssSaturday;
             }
+            if ($eventContent) {
+                $cssClass[] = 'busy';
+            }
             $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.'<span>'.$linktext.'</span></div>'.$eventContent."</td>";
         }
 
@@ -723,8 +724,8 @@ class JemCalendar
         } else {
             $glueNav="&amp;";
         }
-        $yearNavLink  = empty($this->urlNav) ? '' : "<a href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
-        $monthNavLink = empty($this->urlNav) ? '' : "<a href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
+        $yearNavLink  = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\" href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
+        $monthNavLink = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\" href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
         $dayLink      = empty($this->url)  ? $day : "<a href=\"".Route::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
         if ($year &&  $month &&  $day) return $dayLink;
         if ($year && !$month && !$day) return $yearNavLink;

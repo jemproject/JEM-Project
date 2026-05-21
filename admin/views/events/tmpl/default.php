@@ -27,6 +27,20 @@ $params        = (isset($this->state->params)) ? $this->state->params : new CMSO
 $settings    = $this->settings;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns');
+
+$eventStatusOptions = array(
+    'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'icon' => 'fa fa-calendar', 'class' => 'bg-secondary'),
+    'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'icon' => 'fa fa-ban', 'class' => 'bg-danger'),
+    'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'icon' => 'fa fa-clock', 'class' => 'bg-warning text-dark'),
+    'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'icon' => 'fa fa-refresh', 'class' => 'bg-primary'),
+    'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'icon' => 'fa fa-globe', 'class' => 'bg-success'),
+);
+
+$ticketAvailabilityOptions = array(
+    'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'icon' => 'fa fa-check-circle', 'class' => 'bg-success'),
+    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'icon' => 'fa fa-hourglass-half', 'class' => 'bg-info text-dark'),
+    'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'icon' => 'fa fa-times-circle', 'class' => 'bg-danger'),
+);
 ?>
 <script>
     $(document).ready(function() {
@@ -109,6 +123,8 @@ $wa->useScript('table.columns');
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTTIME_SHORT', 'a.times', $listDirn, $listOrder ); ?></th>
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
+                    <th class="nowrap center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL', 'a.event_status', $listDirn, $listOrder ); ?></th>
+                    <th class="nowrap center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL', 'a.ticket_availability', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
                     <th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
                     <th style="width: 1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
@@ -174,6 +190,30 @@ $wa->useScript('table.columns');
                             <?php else : ?>
                                 <?php echo $this->escape($row->alias); ?>
                             <?php endif; ?>
+                        </td>
+                        <td class="center">
+                            <?php
+                            $eventStatus = empty($row->event_status) ? 'scheduled' : $row->event_status;
+                            $eventStatus = isset($eventStatusOptions[$eventStatus]) ? $eventStatus : 'scheduled';
+                            $eventStatusOption = $eventStatusOptions[$eventStatus];
+                            $eventStatusText = Text::_($eventStatusOption['label']);
+                            ?>
+                            <span class="badge <?php echo $eventStatusOption['class']; ?>" title="<?php echo $this->escape($eventStatusText); ?>" aria-label="<?php echo $this->escape($eventStatusText); ?>">
+                                <span class="<?php echo $eventStatusOption['icon']; ?>" aria-hidden="true"></span>
+                                <?php echo $this->escape($eventStatusText); ?>
+                            </span>
+                        </td>
+                        <td class="center">
+                            <?php
+                            $ticketAvailability = empty($row->ticket_availability) ? 'instock' : $row->ticket_availability;
+                            $ticketAvailability = isset($ticketAvailabilityOptions[$ticketAvailability]) ? $ticketAvailability : 'instock';
+                            $ticketAvailabilityOption = $ticketAvailabilityOptions[$ticketAvailability];
+                            $ticketAvailabilityText = Text::_($ticketAvailabilityOption['label']);
+                            ?>
+                            <span class="badge <?php echo $ticketAvailabilityOption['class']; ?>" title="<?php echo $this->escape($ticketAvailabilityText); ?>" aria-label="<?php echo $this->escape($ticketAvailabilityText); ?>">
+                                <span class="<?php echo $ticketAvailabilityOption['icon']; ?>" aria-hidden="true"></span>
+                                <?php echo $this->escape($ticketAvailabilityText); ?>
+                            </span>
                         </td>
                         <td class="venue">
                             <?php if ($row->venue) : ?>

@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
@@ -53,6 +54,10 @@ class JemTableEvent extends Table
             $array['requestanswer'] = 0 ;
         }
 
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
         // Search for the {readmore} tag and split the text up accordingly.
         if (isset($array['articletext'])) {
             $array['articletext'] = preg_replace('/(\r\n)*<hr id=\'system-readmore\'>(\r\n)*/', '<hr id=\'system-readmore\'>', $array['articletext']);
@@ -82,7 +87,7 @@ class JemTableEvent extends Table
         // Bind the rules.
         /*
         if (isset($array['rules']) && is_array($array['rules'])) {
-            $rules = new JAccessRules($array['rules']);
+            $rules = new Rules($array['rules']);
             $this->setRules($rules);
         }
         */
@@ -121,6 +126,16 @@ class JemTableEvent extends Table
 
         if (empty($this->endtimes)) {
             $this->endtimes = null;
+        }
+
+        $validEventStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
+        if (empty($this->event_status) || !in_array($this->event_status, $validEventStatuses, true)) {
+            $this->event_status = 'scheduled';
+        }
+
+        $validTicketAvailabilities = array('instock', 'preorder', 'soldout');
+        if (empty($this->ticket_availability) || !in_array($this->ticket_availability, $validTicketAvailabilities, true)) {
+            $this->ticket_availability = 'instock';
         }
 
 
@@ -176,7 +191,6 @@ class JemTableEvent extends Table
         $currentUserId = (int) $currentUser->id;
         $createdBy = isset($this->created_by) ? (int) $this->created_by : 0;
         $isAdmin = false;
-
         if ($createdBy > 0) {
             try {
                 $creator = User::getInstance($createdBy);
@@ -188,6 +202,11 @@ class JemTableEvent extends Table
 
         if (!$isAdmin) {
             $this->created_by = $currentUserId;
+        }
+
+        // If publish_up does not exist or is empty, use created datetime
+        if (empty($this->publish_up) && !empty($this->created)) {
+            $this->publish_up = $this->created;
         }
 
         return true;

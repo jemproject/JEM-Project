@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
@@ -21,6 +23,74 @@ require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
  */
 class JemImage
 {
+    /**
+     * Build or return a thumbnail for an event link image.
+     *
+     * @param   string   $image      Relative local image path.
+     * @param   integer  $maxWidth   Maximum thumbnail width.
+     * @param   integer  $maxHeight  Maximum thumbnail height.
+     * @param   boolean  $create     Create the thumbnail when missing.
+     *
+     * @return  string  Relative thumbnail path, or the original image path on fallback.
+     */
+    static public function linkThumbnail($image, $maxWidth = 0, $maxHeight = 0, $create = true)
+    {
+        $image = trim((string) $image);
+
+        if ($image === '') {
+            return '';
+        }
+
+        if (strpos($image, '#') !== false) {
+            $image = explode('#', $image, 2)[0];
+        }
+
+        if (preg_match('#^(?:https?:)?//#i', $image)) {
+            return $image;
+        }
+
+        $image = ltrim($image, '/\\');
+        $maxWidth = max(0, min((int) $maxWidth, 2000));
+        $maxHeight = max(0, min((int) $maxHeight, 2000));
+
+        if ($maxWidth < 1 && $maxHeight < 1) {
+            return $image;
+        }
+
+        $sitePath = rtrim(Path::clean(JPATH_SITE), '\\/');
+        $source = Path::clean(JPATH_SITE . '/' . $image);
+
+        if (strpos(strtolower($source), strtolower($sitePath) . DIRECTORY_SEPARATOR) !== 0 || !is_file($source)) {
+            return $image;
+        }
+
+        if (!@getimagesize($source)) {
+            return $image;
+        }
+
+        $extension = strtolower(File::getExt($image));
+        $basename = File::makeSafe(pathinfo($image, PATHINFO_FILENAME));
+
+        if ($extension === '' || $basename === '') {
+            return $image;
+        }
+
+        $thumbName = sha1($image . '|' . $maxWidth . '|' . $maxHeight) . '-' . $basename . '.' . $extension;
+        $thumbRelative = 'images/jem/links/small/' . $thumbName;
+        $thumbFolder = Path::clean(JPATH_SITE . '/images/jem/links/small');
+        $thumbPath = Path::clean(JPATH_SITE . '/' . $thumbRelative);
+
+        if (!File::exists($thumbPath) && $create) {
+            if (!Folder::exists($thumbFolder)) {
+                Folder::create($thumbFolder);
+            }
+
+            JemImage::thumb($source, $thumbPath, $maxWidth, $maxHeight);
+        }
+
+        return File::exists($thumbPath) ? $thumbRelative : $image;
+    }
+
     static public function thumb($name,$filename,$new_w,$new_h)
     {
         // load the image manipulation class
@@ -122,26 +192,9 @@ class JemImage
             $gd_ver = $match[0];
             return $match[0];
         }
-        // If phpinfo() is disabled use a specified / fail-safe choice...
-        if (preg_match('/phpinfo/', ini_get('disable_functions'))) {
-            if ($user_ver == 2) {
-                $gd_ver = 2;
-                return 2;
-            } else {
-                $gd_ver = 1;
-                return 1;
-            }
-        }
-        // ...otherwise use phpinfo().
-        ob_start();
-        phpinfo(8);
-        $info = ob_get_contents();
-        ob_end_clean();
-        $info = stristr($info, 'gd version');
-        preg_match('/\d/', $info, $match);
-        $gd_ver = $match[0];
+        $gd_ver = ($user_ver == 2) ? 2 : 1;
 
-        return $match[0];
+        return $gd_ver;
     }
 
     /**

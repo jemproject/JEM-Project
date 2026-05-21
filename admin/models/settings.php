@@ -197,7 +197,9 @@ class JemModelSettings extends AdminModel
         $gd_version = '?';
         if (function_exists('gd_info')) {
             $gd_info = gd_info();
-            $gd_version = $gd_info['GD Version'] ?? '?';
+            if (array_key_exists('GD Version', $gd_info)) {
+                $gd_version = $gd_info['GD Version'];
+            }
         }
         $config->vs_gd = $gd_version;
 
@@ -210,14 +212,13 @@ class JemModelSettings extends AdminModel
         $db->setQuery($query);
         $extensions = $db->loadObjectList('name');
 
-        $known_extensions = [
-            'pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
-            'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map',
-            'plg_content_jem', 'plg_content_jemlistevents', 'plg_content_jemembed',
-            'plg_finder_jem',
-            'plg_quickicon_jem', 'Quick Icon - JEM',
-            'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo'
-        ];
+        $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
+                                  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map',
+                                  'plg_content_jem', 'plg_content_jemlistevents', 'plg_content_jemembed',
+                                  'plg_finder_jem',
+                                  'plg_quickicon_jem', 'Quick Icon - JEM',
+                                  'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
+                                  'AcyMailing Tag : insert events from JEM 2.1+');
 
         foreach ($extensions as $name => $extension) {
             if (in_array($name, $known_extensions)) {

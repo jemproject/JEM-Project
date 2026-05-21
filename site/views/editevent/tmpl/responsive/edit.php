@@ -239,8 +239,18 @@ $params        = $this->params;
                     } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
-                    <dd><?php echo $this->form->getInput('contactid'); ?></dd>
+                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                        <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
+                        <dd><?php echo $this->form->getInput('contactid'); ?></dd>
+                    <?php else : ?>
+                        <input type="hidden" name="jform[contactid]" value="" />
+                    <?php endif; ?>
+                    <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
+                    <dd><?php echo $this->form->getInput('event_status'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
+                    <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
+                    <dd><?php echo $this->form->getInput('type_id'); ?></dd>
                 </dl>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
@@ -295,12 +305,15 @@ $params        = $this->params;
 
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
-                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
-                <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments'); ?>
-                <?php echo $this->loadTemplate('attachments'); ?>
-                <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php endif; ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
+            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments'); ?>
+            <?php echo $this->loadTemplate('attachments'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+            <!-- LINKS TAB -->
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
             <!-- OTHER TAB -->
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>

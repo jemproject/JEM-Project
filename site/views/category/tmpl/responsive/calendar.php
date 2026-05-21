@@ -18,7 +18,7 @@ use Joomla\CMS\Factory;
     <div class="buttons">
         <?php
         $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link);
-        echo JemOutput::createButtonBar($this->getName().'-cal', $this->permissions, $btn_params);
+        echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
 
@@ -112,7 +112,7 @@ use Joomla\CMS\Factory;
         //Contact
         $contact = '';
 
-        if ($row->contactid) {
+        if (JemHelper::isContactComponentEnabled() && $row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $ids = array_map('intval', explode(',', $row->contactid));
 

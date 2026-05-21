@@ -17,7 +17,10 @@ use Joomla\CMS\Factory;
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
         <?php
-        $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
+        if (!$this->params->get('show_archived_events', 0)) {
+            $btn_params['show'] = array('archive');
+        }
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
@@ -37,12 +40,15 @@ use Joomla\CMS\Factory;
 
     <?php
     $countcatevents = array ();
+    $countvenueevents = array();
     $countperday = array();
     $limit = $this->params->get('daylimit', 10);
     $evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
+    $eventbackgroundcolor = $this->params->get('eventbackgroundcolor', '#FFF8E1');
     $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
     $showtime = $this->settings->get('global_show_timedetails', 1);
     $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
+    $displayLegend = (int)$this->params->get('displayLegend', 1);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
@@ -61,7 +67,7 @@ use Joomla\CMS\Factory;
         $year  = date('Y', $timestamp);
         $month = date('m', $timestamp);
         $day   = date('d', $timestamp);
-		$dateKey = $year.$month.$day;
+        $dateKey = $year.$month.$day;
 
         $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
 
@@ -101,7 +107,7 @@ use Joomla\CMS\Factory;
         //Contact
         $contact = '';
 
-        if ($row->contactid) {
+        if (JemHelper::isContactComponentEnabled() && $row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $ids = array_map('intval', explode(',', $row->contactid));
 
@@ -126,7 +132,8 @@ use Joomla\CMS\Factory;
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
-        $contentend = '';
+        $eventFilterClasses = array();
+        $venueId = (int) $row->locid;
 
         //walk through categories assigned to an event
         $catcolor = array();
@@ -135,9 +142,8 @@ use Joomla\CMS\Factory;
             // Currently only one id possible...so simply just pick one up...
             $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
-            // Wrap a div for each category around the event for show/hide toggler
-            $content    .= '<div id="catz" class="cat'.$category->id.'">';
-            $contentend .= '</div>';
+            // Collect category classes for the show/hide toggler.
+            $eventFilterClasses['cat' . (int) $category->id] = 'cat' . (int) $category->id;
 
             // Attach category color in front of the catname
             if ($category->color) {
@@ -162,6 +168,18 @@ use Joomla\CMS\Factory;
                     $countcatevents[$category->id] = 1;
                 } else {
                     $countcatevents[$category->id]++;
+                }
+            }
+        }
+
+        if ($venueId > 0) {
+            $eventFilterClasses['venue' . $venueId] = 'venue' . $venueId;
+
+            if (!isset($row->multi) || ($row->multi == 'first')) {
+                if (!array_key_exists($venueId, $countvenueevents)) {
+                    $countvenueevents[$venueId] = 1;
+                } else {
+                    $countvenueevents[$venueId]++;
                 }
             }
         }
@@ -353,12 +371,23 @@ use Joomla\CMS\Factory;
             $featuredstyle="border-color:" . $featuredbordercolor;
         }
 
+        $venueColor = !empty($row->l_color) ? $row->l_color : (!empty($row->venuecolor) ? $row->venuecolor : '');
+        $venueColorBar = '';
+        if ($categoryColorMarker && $venueColor) {
+            $venueColorBar  = '<div class="eventcontentbottom">';
+            $venueColorBar .= '<div class="colorpicbarbottom" style="background:' . $this->escape($venueColor) . ';"></div>';
+            $venueColorBar .= '</div>';
+        }
+
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
+        $content .= '<div class="event-filter ' . implode(' ', $eventFilterClasses) . '" data-categories="' . $this->escape(implode(' ', array_filter($eventFilterClasses, static function ($class) { return strpos($class, 'cat') === 0; }))) . '" data-venue="' . ($venueId > 0 ? 'venue' . $venueId : '') . '">';
         $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 ps-0 pe-0 ' : '') . '" style="' . $featuredstyle;
         $style = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
             $style = '; background-color:' . array_pop($catcolor);
+        } elseif ($eventbackgroundcolor) {
+            $style = '; background-color:' . $eventbackgroundcolor;
         }
         $content .= $style . '" onclick="location.href=\'' . $detaillink . '\'">';
         $divClass = $categoryColorMarker ? 'eventcontenttextbar' : 'eventcontenttextblock';
@@ -369,7 +398,7 @@ use Joomla\CMS\Factory;
 
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $eventaccess . $contentend . '</div></div>';
+        $content .= $eventaccess . $venueColorBar . '</div></div></div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;
@@ -380,8 +409,12 @@ use Joomla\CMS\Factory;
         $this->cal->enableNewEventLinks($html);
     }
 
-    $displayLegend = (int)$this->params->get('displayLegend', 1);
-    if ($displayLegend == 2) : ?>
+    $this->calendarLegendDisplayLegend = $displayLegend;
+    $this->calendarLegendCountCatEvents = $countcatevents;
+    $this->calendarLegendCountVenueEvents = $countvenueevents;
+    $this->calendarLegendCategoryColorMarker = $categoryColorMarker;
+
+    if (in_array($displayLegend, array(2, 4, 6), true)) : ?>
     <!-- Calendar legend above -->
     <div id="jlcalendarlegend">
 
@@ -398,46 +431,7 @@ use Joomla\CMS\Factory;
         </div>
         <div class="clr"></div>
 
-    <!-- Calendar Legend -->
-        <div class="calendarLegends">
-            <?php
-            if ($this->params->get('displayLegend')) {
-
-                ##############
-                ## FOR EACH ##
-                ##############
-
-                $counter = array();
-
-                # walk through events
-                foreach ($this->rows as $row) {
-                    foreach ($row->categories as $cat) {
-
-                        # sort out dupes for the counter (catid-legend)
-                        if (!in_array($cat->id, $counter)) {
-                            # add cat id to cat counter
-                            $counter[] = $cat->id;
-
-                            # build legend
-                            if (array_key_exists($cat->id, $countcatevents)) {
-                            ?>
-                                <div class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
-                                    <?php
-                                        if (!empty($cat->color)) {
-                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock';
-                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
-                                        }
-                                        echo $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
-                                    ?>
-                                </div>
-                            <?php
-                            }
-                        }
-                    }
-                }
-            }
-            ?>
-        </div>
+        <?php include __DIR__ . '/default_legend.php'; ?>
     </div>
     <?php endif; ?>
 
@@ -446,7 +440,7 @@ use Joomla\CMS\Factory;
     echo $this->cal->showMonth();
     ?>
 
-    <?php if (($displayLegend == 1) || ($displayLegend == 0)) : ?>
+    <?php if (in_array($displayLegend, array(0, 1, 3, 5), true)) : ?>
     <!-- Calendar legend below -->
     <div id="jlcalendarlegend">
 
@@ -463,49 +457,7 @@ use Joomla\CMS\Factory;
         </div>
         <div class="clr"></div>
 
-    <!-- Calendar Legend -->
-        <div class="calendarLegends mt-4">
-            <?php
-            if ($displayLegend == 1) {
-
-                ##############
-                ## FOR EACH ##
-                ##############
-
-                $counter = array();
-
-                # walk through events
-                foreach ($this->rows as $row) {
-                    foreach ($row->categories as $cat) {
-
-                        # sort out dupes for the counter (catid-legend)
-                        if (!in_array($cat->id, $counter)) {
-                            # add cat id to cat counter
-                            $counter[] = $cat->id;
-
-                            # build legend
-                            if (array_key_exists($cat->id, $countcatevents)) {
-                            ?>
-                                <div class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
-                                    <?php
-                                        if (!empty($cat->color)) {
-                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock ms-2';
-                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
-                                        }
-
-                                        $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
-                                        $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
-                                        echo '<span class="' . $textClass . '">' . $text . '</span>';
-                                        ?>
-                                </div>
-                            <?php
-                            }
-                        }
-                    }
-                }
-            }
-            ?>
-        </div>
+        <?php include __DIR__ . '/default_legend.php'; ?>
     </div>
     <?php endif; ?>
 

@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
+use Joomla\Registry\Registry;
 
 /**
  * JEM Venue Table
@@ -32,6 +33,22 @@ class JemTableVenue extends Table
 
         if (!isset($array['map'])) {
             $array['map'] = 0 ;
+        }
+
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
+        if (isset($array['attribs']) && is_array($array['attribs'])) {
+            $registry = new Registry;
+            $registry->loadArray($array['attribs']);
+            $array['attribs'] = (string) $registry;
+        }
+
+        if (isset($array['metadata']) && is_array($array['metadata'])) {
+            $registry = new Registry;
+            $registry->loadArray($array['metadata']);
+            $array['metadata'] = (string) $registry;
         }
 
         //don't override without calling base class

@@ -175,6 +175,9 @@ abstract class ModJemTeaserHelper
 
         foreach ($events as $row)
         {
+            $hasEventAccess = !isset($row->user_has_access_event) || (bool) $row->user_has_access_event;
+            $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
+
             # create thumbnails if needed and receive imagedata
             $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
@@ -186,7 +189,7 @@ abstract class ModJemTeaserHelper
             $lists[++$i] = new stdClass();
 
             # check view access
-            if (in_array($row->access, $levels)) {
+            if ($hasEventAccess) {
                 # We know that user has the privilege to view the event
                 $lists[$i]->link = Route::_(JemHelperRoute::getEventRoute($row->slug));
                 $lists[$i]->linkText = Text::_('MOD_JEM_TEASER_READMORE');
@@ -228,7 +231,9 @@ abstract class ModJemTeaserHelper
                     }
 
                     // --- generate link ---
-                    if ($linkcategory) {
+                    $hasCategoryAccess = !isset($cat->user_has_access_category) || (bool) $cat->user_has_access_category;
+
+                    if ($linkcategory && $hasCategoryAccess) {
                         $link = Route::_( Uri::root() . 'index.php?option=com_jem&view=category&id=' . $catId . ':' . $catAlias);
                         $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
                     } else {
@@ -300,8 +305,8 @@ abstract class ModJemTeaserHelper
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->venuecolor  = !empty($row->venuecolor) ? $row->venuecolor : '';
-            $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
-            $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
+            $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
             $lists[$i]->showimagevenue   = $params->get('showimagevenue', 1);
             $lists[$i]->showdescriptionevent   = $params->get('showdescriptionevent', 1);
@@ -417,7 +422,7 @@ abstract class ModJemTeaserHelper
             $classes = 'venue-link';
 
             // --- generate link ---
-            if ($linkvenue) {
+            if ($linkvenue && $hasVenueAccess) {
                 $link = Route::_(Uri::root() . 'index.php?option=com_jem&view=venue&id=' . $row->locid . ':' . $row->l_alias);
                 $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
             } else {

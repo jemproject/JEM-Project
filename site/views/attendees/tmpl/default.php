@@ -132,9 +132,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
                         <!--td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td-->
-                        <td><?php echo $row->$namefield; ?></td>
+                        <td><?php echo $this->escape($row->$namefield); ?></td>
                         <?php if ($this->enableemailaddress == 1) : ?>
-                        <td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
+                        <td><a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
                         <?php endif; ?>
                         <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
                         <td class="center">
@@ -148,13 +148,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                             }
                             ?>
                         </td>
-                        <td class="center"><?php echo $row->places; ?></td>
+                        <td class="center"><?php echo (int) $row->places; ?></td>
                         <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                         <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
-                        <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
+                        <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?></td>
                         <?php endif;?>
                         <td class="center">
-                            <a href="<?php echo Route::_($del_link.'&cid[]='.$row->id); ?>">
+                            <a href="<?php echo Route::_($del_link.'&cid[]='.(int) $row->id); ?>">
                                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
                             </a>
                         </td>

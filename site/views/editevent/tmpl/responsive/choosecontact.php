@@ -80,7 +80,7 @@ $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type'
         align-items: center;
         gap: 3px;
         min-width: 85px;
-		margin-right: 10px;
+        margin-right: 10px;
     }
     .jem-limit-group select { width: 100% !important; min-width: 55px !important; }
 
@@ -136,29 +136,29 @@ $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type'
         </div>
 
         <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px;">
-			<?php if (empty($this->rows)) : ?>
+            <?php if (empty($this->rows)) : ?>
                 <li style="text-align: center;"><div><?php echo Text::_('COM_JEM_NOCONTACTS'); ?></div></li>
             <?php else :?>
-	            <?php foreach ($this->rows as $i => $row) : ?>
-	                <?php
-	                $isChecked = in_array((string)$row->id, $currentSelectedIds) ? ' checked="checked"' : '';
-	                $rowClass = !empty($isChecked) ? ' jem-selected-row' : '';
-	                ?>
-	                <li class="<?php echo ($i % 2 == 0 ? 'row0' : 'row1') . $rowClass; ?>" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-	                    <div style="width: 40px; text-align: center;">
-	                        <input type="checkbox" id="cb<?php echo $i; ?>" name="cid[]" value="<?php echo $row->id; ?>" data-name="<?php echo $this->escape(addslashes($row->name)); ?>" <?php echo $isChecked; ?> />
-	                    </div>
-	                    <div style="width: 35px; font-size: 12px; color: #999;"><?php echo $this->pagination->getRowOffset($i); ?></div>
-	                    <div style="flex: 2; padding-left:10px;">
-	                        <a style="cursor:pointer; text-decoration: none; color: #337ab7; font-weight: 500;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');">
-	                            <?php echo $this->escape($row->name); ?>
-	                        </a>
-	                    </div>
-	                    <div style="flex: 1.2; font-size: 13px; color: #666;"><?php echo $this->escape($row->category_title); ?></div>
-	                    <div style="flex: 1; font-size: 13px; color: #888;"><?php echo $this->escape($row->suburb); ?></div>
-	                    <div style="flex: 1; font-size: 13px; color: #888; font-style: italic;"><?php echo $this->escape($row->country); ?></div>
-	                </li>
-	            <?php endforeach; ?>
+                <?php foreach ($this->rows as $i => $row) : ?>
+                    <?php
+                    $isChecked = in_array((string)$row->id, $currentSelectedIds) ? ' checked="checked"' : '';
+                    $rowClass = !empty($isChecked) ? ' jem-selected-row' : '';
+                    ?>
+                    <li class="<?php echo ($i % 2 == 0 ? 'row0' : 'row1') . $rowClass; ?>" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                        <div style="width: 40px; text-align: center;">
+                            <input type="checkbox" id="cb<?php echo $i; ?>" name="cid[]" value="<?php echo $row->id; ?>" data-name="<?php echo $this->escape(addslashes($row->name)); ?>" <?php echo $isChecked; ?> />
+                        </div>
+                        <div style="width: 35px; font-size: 12px; color: #999;"><?php echo $this->pagination->getRowOffset($i); ?></div>
+                        <div style="flex: 2; padding-left:10px;">
+                            <a style="cursor:pointer; text-decoration: none; color: #337ab7; font-weight: 500;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');">
+                                <?php echo $this->escape($row->name); ?>
+                            </a>
+                        </div>
+                        <div style="flex: 1.2; font-size: 13px; color: #666;"><?php echo $this->escape($row->category_title); ?></div>
+                        <div style="flex: 1; font-size: 13px; color: #888;"><?php echo $this->escape($row->suburb); ?></div>
+                        <div style="flex: 1; font-size: 13px; color: #888; font-style: italic;"><?php echo $this->escape($row->country); ?></div>
+                    </li>
+                <?php endforeach; ?>
             <?php endif; ?>
         </ul>
 

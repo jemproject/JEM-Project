@@ -210,6 +210,40 @@ abstract class JEMHelperRoute
         return self::getRouteWithoutId('myvenues');
     }
 
+    public static function getTypeeventsRoute($id)
+    {
+        $settings      = JEMHelper::globalattribs();
+        $defaultItemid = $settings->get('default_Itemid');
+
+        $needles = array('typeevents' => array((int) $id));
+        $link    = 'index.php?option=com_jem&view=typeevents&id=' . (int) $id;
+
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid=' . $item;
+        } elseif (isset($defaultItemid)) {
+            $link .= '&Itemid=' . $defaultItemid;
+        }
+
+        return $link;
+    }
+
+    public static function getTypevenuesRoute($id)
+    {
+        $settings      = JEMHelper::globalattribs();
+        $defaultItemid = $settings->get('default_Itemid');
+
+        $needles = array('typevenues' => array((int) $id));
+        $link    = 'index.php?option=com_jem&view=typevenues&id=' . (int) $id;
+
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid=' . $item;
+        } elseif (isset($defaultItemid)) {
+            $link .= '&Itemid=' . $defaultItemid;
+        }
+
+        return $link;
+    }
+
 
     /**
      * Determines the Itemid

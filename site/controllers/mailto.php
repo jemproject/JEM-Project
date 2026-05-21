@@ -25,14 +25,13 @@ class JemControllerMailto extends JemControllerForm
     protected $_id = 0;
 
 
-    public function getModel($name = 'mailto', $prefix = '', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'mailto', $prefix = '', $config = array('ignore_request' => true)) {
         $model = parent::getModel($name, $prefix, $config);
 
         return $model;
     }
 
-    public function save($key = NULL, $urlVar = NULL){
+    public function save($key = NULL, $urlVar = NULL) {
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $app        = Factory::getApplication();
@@ -40,28 +39,24 @@ class JemControllerMailto extends JemControllerForm
         $data       = $model->getData();
         $uri        = Uri::getInstance();
         $form       = $model->getForm();
-		
+        
         $input = $app->getInput();
-        $post_link = $input->post->get('link', '', 'raw');
-        $currentUri = $uri->toString() . '&link=' . urlencode($post_link);
+        $post_link = trim($input->post->getString('link', ''));
+        $currentUri = $uri->toString() . '&link=' . rawurlencode($post_link);
 
-        if (!$form)
-        {
+        if (!$form) {
             $app->enqueueMessage($model->getError(), 'error');
 
             return false;
         }
 
-        if (!$model->validate($form, $data))
-        {
+        if (!$model->validate($form, $data)) {
             $errors = $model->getErrors();
 
-            foreach ($errors as $error)
-            {
+            foreach ($errors as $error) {
                 $errorMessage = $error;
 
-                if ($error instanceof Exception)
-                {
+                if ($error instanceof Exception) {
                     $errorMessage = $error->getMessage();
                 }
 
@@ -69,6 +64,7 @@ class JemControllerMailto extends JemControllerForm
             }
 
             $this->setRedirect($currentUri);
+            return false;
         }
 
         $headers = array (
@@ -78,13 +74,12 @@ class JemControllerMailto extends JemControllerForm
             'bcc:',
             'cc:'
         );
-        foreach ($data as $key => $value)
-        {
-            foreach ($headers as $header)
-            {
-                if (is_string($value) && strpos($value, $header) !== false)
-                {
+        foreach ($data as $key => $value) {
+            foreach ($headers as $header) {
+                if (is_string($value) && strpos($value, $header) !== false) {
                     $app->enqueueMessage(403, 'error');
+                    $this->setRedirect($currentUri);
+                    return false;
                 }
             }
         }
@@ -92,37 +87,34 @@ class JemControllerMailto extends JemControllerForm
         unset($headers, $fields);
 
         $siteName = $app->get('sitename');
-        $link = JemMailtoHelper::validateHash($input->post->get('link', '', 'raw'));
+        $link = JemMailtoHelper::validateHash($post_link) ?: $post_link;
 
         // Verify that this is a local link
-        if (!$link || !Uri::isInternal($link))
-        {
+        if (!$link || !Uri::isInternal($link)) {
             // Non-local url...
             $app->enqueueMessage( Text::_('COM_JEM_MAILTO_EMAIL_NOT_SENT'), 'error');
             $this->setRedirect($currentUri);
+            return false;
         }
 
         $subject_default = Text::sprintf('COM_JEM_MAILTO_SENT_BY', $data['sender']);
         $subject         = $data['subject'] !== '' ? $data['subject'] : $subject_default;
         $error = false;
 
-        if (!$data['emailto'] || !JMailHelper::isEmailAddress($data['emailto']))
-        {
+        if (!$data['emailto'] || !JMailHelper::isEmailAddress($data['emailto'])) {
             $error = Text::sprintf('COM_JEM_MAILTO_EMAIL_INVALID', $data['emailto']);
 
             $app->enqueueMessage( $error, 'error');
         }
 
         // Check for a valid from address
-        if (!$data['emailfrom'] || !JMailHelper::isEmailAddress($data['emailfrom']))
-        {
+        if (!$data['emailfrom'] || !JMailHelper::isEmailAddress($data['emailfrom'])) {
             $error = Text::sprintf('COM_JEM_MAILTO_EMAIL_INVALID', $data['emailfrom']);
 
             $app->enqueueMessage( $error, 'error');
         }
 
-        if ($error)
-        {
+        if ($error) {
             return $this->setRedirect($currentUri);
             return false;
         }
@@ -147,13 +139,12 @@ class JemControllerMailto extends JemControllerForm
         $mailer->setBody($body);
         $mailer->isHTML();
         try{
-            if (!$mailer->send())
-            {
+            if (!$mailer->send()) {
                 $app->enqueueMessage( Text::_('COM_JEM_MAILTO_EMAIL_NOT_SENT'), 'error');
                 $this->setRedirect($currentUri);
                 return false;
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $app->enqueueMessage($e->getMessage(), 'notice');
             $this->setRedirect($currentUri);
             return false;

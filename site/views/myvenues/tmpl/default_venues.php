@@ -24,36 +24,26 @@ use Joomla\CMS\Router\Route;
     }
 </script>
 
-<style>
-div#jem_filter select {
-    width: auto;
-    margin-right:10px;
-    border: 1px solid #808080;
-    background-color: #C6CCBE;
-    cursor: pointer;
-}
-</style>
-
 <?php if (!$this->params->get('show_page_heading', 1)) : /* hide this if page heading is shown */ ?>
-    <h2><?php echo Text::_('COM_JEM_MY_VENUES'); ?></h2>
+    <h1 class="componentheading"><?php echo Text::_('COM_JEM_MY_VENUES'); ?></h1>
 <?php endif; ?>
 
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
     <?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
-    <div id="jem_filter" class="floattext">
+    <div id="jem_filter" class="d-flex flex-wrap align-items-center gap-2 mb-2">
         <?php if ($this->settings->get('global_show_filter',1)) : ?>
-        <div class="jem_fleft">
-            <label for="filter"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
-            <?php echo $this->lists['filter'].'&nbsp;'; ?>
-            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
-            <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+        <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+            <label for="filter" class="mb-0"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
+            <?php echo $this->lists['filter']; ?>
+            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control form-control-sm" style="flex:1 1 8rem;min-width:6rem;max-width:20rem;" onchange="document.adminForm.submit();" />
+            <button class="btn btn-primary btn-sm" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php endif; ?>
 
         <?php if ($this->settings->get('global_display',1)) : ?>
-        <div class="jem_fright">
-            <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            <label for="limit" class="mb-0"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
             <?php echo $this->pagination->getLimitBox(); ?>
         </div>
         <?php endif; ?>

@@ -12,15 +12,13 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * View class for the JEM import screen
  *
  * @package JEM
  *
  */
-
-//Load pane behavior
-// jimport('joomla.html.pane');
 
 class JemViewImport extends JemAdminView
 {
@@ -35,12 +33,16 @@ class JemViewImport extends JemAdminView
         $catfields   = $this->get('CategoryFields');
         $venuefields = $this->get('VenueFields');
         $cateventsfields = $this->get('CateventsFields');
+        $attachmentfields = $this->get('AttachmentFields');
+        $typefields = $this->get('TypeFields');
 
         //assign vars to the template
         $this->eventfields         = $eventfields;
-        $this->catfields         = $catfields;
+        $this->catfields           = $catfields;
         $this->venuefields         = $venuefields;
         $this->cateventsfields     = $cateventsfields;
+        $this->attachmentfields    = $attachmentfields;
+        $this->typefields          = $typefields;
 
         $this->eventlistVersion = $this->get('EventlistVersion');
         $this->eventlistTables     = $this->get('EventlistTablesCount');

@@ -31,8 +31,7 @@ class JemControllerCategory extends FormController
      *
      * @see    JController
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
     }
 
@@ -44,8 +43,7 @@ class JemControllerCategory extends FormController
      * @return  boolean
      *
      */
-    protected function allowAddDisabled($data = array())
-    {
+    protected function allowAddDisabled($data = array()) {
         $user = JemFactory::getUser();
         return ($user->authorise('core.create', $this->extension) || count($user->getAuthorisedCategories($this->extension, 'core.create')));
     }
@@ -59,38 +57,32 @@ class JemControllerCategory extends FormController
      * @return  boolean
      *
      */
-    protected function allowEditDisabled($data = array(), $key = 'parent_id')
-    {
+    protected function allowEditDisabled($data = array(), $key = 'parent_id') {
         // Initialise variables.
         $recordId = (int) isset($data[$key]) ? $data[$key] : 0;
         $user = JemFactory::getUser();
         $userId = $user->get('id');
 
         // Check general edit permission first.
-        if ($user->authorise('core.edit', $this->extension))
-        {
+        if ($user->authorise('core.edit', $this->extension)) {
             return true;
         }
 
         // Check specific edit permission.
-        if ($user->authorise('core.edit', $this->extension . '.category.' . $recordId))
-        {
+        if ($user->authorise('core.edit', $this->extension . '.category.' . $recordId)) {
             return true;
         }
 
         // Fallback on edit.own.
         // First test if the permission is available.
-        if ($user->authorise('core.edit.own', $this->extension . '.category.' . $recordId) || $user->authorise('core.edit.own', $this->extension))
-        {
+        if ($user->authorise('core.edit.own', $this->extension . '.category.' . $recordId) || $user->authorise('core.edit.own', $this->extension)) {
             // Now test the owner is the user.
             $ownerId = (int) isset($data['created_user_id']) ? $data['created_user_id'] : 0;
-            if (empty($ownerId) && $recordId)
-            {
+            if (empty($ownerId) && $recordId) {
                 // Need to do a lookup from the model.
                 $record = $this->getModel()->getItem($recordId);
 
-                if (empty($record))
-                {
+                if (empty($record)) {
                     return false;
                 }
 
@@ -98,8 +90,7 @@ class JemControllerCategory extends FormController
             }
 
             // If the owner matches 'me' then do the test.
-            if ($ownerId == $userId)
-            {
+            if ($ownerId == $userId) {
                 return true;
             }
         }
@@ -114,8 +105,7 @@ class JemControllerCategory extends FormController
      * @return  boolean     True if successful, false otherwise and internal error is set.
      *
      */
-    public function batchDisabled($model = null)
-    {
+    public function batchDisabled($model = null) {
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Set the model
@@ -136,8 +126,7 @@ class JemControllerCategory extends FormController
      * @return  string  The arguments to append to the redirect URL.
      *
      */
-    protected function getRedirectToItemAppendDisabled($recordId = null, $urlVar = 'id')
-    {
+    protected function getRedirectToItemAppendDisabled($recordId = null, $urlVar = 'id') {
         $append = parent::getRedirectToItemAppend($recordId);
         $append .= '&extension=' . $this->extension;
 
@@ -150,8 +139,7 @@ class JemControllerCategory extends FormController
      * @return  string  The arguments to append to the redirect URL.
      *
      */
-    protected function getRedirectToListAppendDisabled()
-    {
+    protected function getRedirectToListAppendDisabled() {
         $append = parent::getRedirectToListAppend();
         $append .= '&extension=' . $this->extension;
 

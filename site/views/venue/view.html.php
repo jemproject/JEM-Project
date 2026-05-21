@@ -73,6 +73,17 @@ class JemViewVenue extends JemView
                 return false;
             }
 
+            if (empty($venue->user_has_access_venue)) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
             $evlinkcolor = $params->get('eventlinkcolor');
             $evbackgroundcolor = $params->get('eventbackgroundcolor');
             $currentdaycolor = $params->get('currentdaycolor');
@@ -86,7 +97,8 @@ class JemViewVenue extends JemView
             $document->addStyleDeclaration ($style);
 
             // add javascript (using full path - see issue #590)
-            $document->addScript($url.'media/com_jem/js/calendar.js');
+            $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+            $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
             // Retrieve year/month variables
             $year = $jinput->get('yearID', date("Y"),'int');
             $month = $jinput->get('monthID', date("m"),'int');
@@ -197,6 +209,17 @@ class JemViewVenue extends JemView
             if (empty($venue)) {
                 $app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
                 return false;
+            }
+
+            if (empty($venue->user_has_access_venue)) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
 
             // are events available?

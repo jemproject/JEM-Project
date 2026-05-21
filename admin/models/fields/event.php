@@ -14,6 +14,8 @@ use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 
+FormHelper::loadFieldClass('list');
+
 /**
  * Renders an event element
  *

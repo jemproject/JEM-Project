@@ -37,6 +37,29 @@
                 <option value="0">JNO</option>
             </field>
 
+            <field name="showvenuecalendar" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK"
+                description="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="display_order" type="list"
+                default="venue_city_country"
+                label="COM_JEM_VENUESLIST_DISPLAY_ORDER"
+                description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC"
+            >
+                <option value="venue_city_country">COM_JEM_VENUESLIST_ORDER_VENUE_CITY_COUNTRY</option>
+                <option value="venue_country_city">COM_JEM_VENUESLIST_ORDER_VENUE_COUNTRY_CITY</option>
+                <option value="city_venue_country">COM_JEM_VENUESLIST_ORDER_CITY_VENUE_COUNTRY</option>
+                <option value="city_country_venue">COM_JEM_VENUESLIST_ORDER_CITY_COUNTRY_VENUE</option>
+                <option value="country_venue_city">COM_JEM_VENUESLIST_ORDER_COUNTRY_VENUE_CITY</option>
+                <option value="country_city_venue">COM_JEM_VENUESLIST_ORDER_COUNTRY_CITY_VENUE</option>
+            </field>
+
         </fieldset>
     </fields>
 </metadata>

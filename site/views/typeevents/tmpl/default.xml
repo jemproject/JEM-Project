@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_TYPEEVENTS_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+
+    <fields name="request">
+        <fieldset name="request">
+            <field
+                name="id"
+                type="sql"
+                label="COM_JEM_TYPE_FIELD_TYPE"
+                description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+                query="SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 1 ORDER BY ordering ASC, name ASC"
+                key_field="value"
+                value_field="text"
+                required="true"
+            />
+        </fieldset>
+    </fields>
+
+    <fields name="params">
+        <fieldset name="basic">
+            <field name="show_introtext_events" type="radio"
+                default="0"
+                label="COM_JEM_SHOW_INTROTEXT_EVENTS"
+                description="COM_JEM_SHOW_INTROTEXT_EVENTS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="showmonthrow" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_MONTH_ROW"
+                description="COM_JEM_DISPLAY_MONTH_ROW_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

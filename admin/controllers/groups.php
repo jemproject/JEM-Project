@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * JEM Component Groups Controller
@@ -30,8 +31,7 @@ class JemControllerGroups extends AdminController
      * Proxy for getModel.
      *
      */
-    public function getModel($name = 'Group', $prefix = 'JemModel', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'Group', $prefix = 'JemModel', $config = array('ignore_request' => true)) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
     }
@@ -43,24 +43,35 @@ class JemControllerGroups extends AdminController
      * @return void
      *
      */
-    public function remove()
-    {
+    public function remove() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-        $jinput = Factory::getApplication()->input;
+        $app = Factory::getApplication();
+        if (!$app->getIdentity()->authorise('core.delete', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $jinput = $app->input;
         $cid = $jinput->get('cid',  0, 'array');
 
         if (!is_array($cid) || count($cid) < 1) {
             throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
         }
 
+        ArrayHelper::toInteger($cid);
+        $cid = array_filter($cid);
         $total = count($cid);
+
+        if ($total < 1) {
+            throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
+        }
 
         $model = $this->getModel('groups');
 
-        if(!$model->delete($cid)) {
-            echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+        if (!$model->delete($cid)) {
+            $this->setRedirect('index.php?option=com_jem&view=groups', $model->getError(), 'error');
+            return;
         }
 
         $msg = $total.' '.Text::_('COM_JEM_GROUPS_DELETED');

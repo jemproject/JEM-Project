@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 $options = array(
     'onActive' => 'function(title, description){
@@ -79,6 +80,12 @@ $options = array(
                                         $link = 'index.php?option=com_jem&amp;task=group.add';
                                         $this->quickiconButton($link, 'icon-48-groupedit.svg', Text::_('COM_JEM_GROUP_ADD'));
 
+                                        $link = 'index.php?option=com_jem&amp;view=types';
+                                        $this->quickiconButton($link, 'icon-48-types.svg', Text::_('COM_JEM_TYPES'));
+
+                                        $link = 'index.php?option=com_jem&amp;task=type.add';
+                                        $this->quickiconButton($link, 'icon-48-typesedit.svg', Text::_('COM_JEM_ADD_TYPE'));
+
                                         $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
                                         $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
 
@@ -90,8 +97,11 @@ $options = array(
                                             $link = 'index.php?option=com_jem&amp;view=housekeeping';
                                             $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
 
-                                            $link = 'index.php?option=com_jem&amp;task=sampledata.load';
+                                            $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
                                             $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
+
+                                            $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
+                                            $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
 
                                             $link = 'index.php?option=com_jem&amp;view=updatecheck';
                                             $icon = 'icon-48-update.svg';

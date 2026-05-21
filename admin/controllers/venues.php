@@ -28,8 +28,7 @@ class JemControllerVenues extends AdminController
     /**
      * Proxy for getModel.
      */
-    public function getModel($name = 'Venue', $prefix = 'JemModel', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'Venue', $prefix = 'JemModel', $config = array('ignore_request' => true)) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
     }
@@ -39,13 +38,16 @@ class JemControllerVenues extends AdminController
      *
      * @access public
      */
-    public function remove()
-    {
+    public function remove() {
         // Check for token
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
         $app = Factory::getApplication();
-        $user = Factory::getApplication()->getIdentity();
+        $user = $app->getIdentity();
+        if (!$user->authorise('core.delete', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $jinput = $app->input;
         $cid = $jinput->get('cid',array(),'array');
 
@@ -55,19 +57,21 @@ class JemControllerVenues extends AdminController
             $model = $this->getModel('venue');
 
             ArrayHelper::toInteger($cid);
+            $cid = array_filter($cid);
+
+            if (empty($cid)) {
+                throw new Exception(Text::_('COM_JEM_SELECT_AN_ITEM_TO_DELETE'), 500);
+            }
 
             // trigger delete function in the model
             $result = $model->delete($cid);
-            if($result['removed'])
-            {
+            if ($result['removed']) {
                 $app->enqueueMessage(Text::plural($this->text_prefix.'_N_ITEMS_DELETED',$result['removedCount']));
             }
-            if($result['error'])
-            {
+            if ($result['error']) {
                 $app->enqueueMessage(Text::_('COM_JEM_VENUES_UNABLETODELETE'),'warning');
 
-                foreach ($result['error'] AS $error)
-                {
+                foreach ($result['error'] AS $error) {
                     $html = array();
                     $html[] = '<span class="label label-info">'.$error[0].'</span>';
                     $html[] = '<br>';

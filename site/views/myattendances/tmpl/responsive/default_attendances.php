@@ -301,6 +301,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <input type="hidden" name="boxchecked" value="0" />
     <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
     <input type="hidden" name="option" value="com_jem" />
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 

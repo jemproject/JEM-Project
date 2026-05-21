@@ -15,7 +15,7 @@ use Joomla\CMS\Router\Route;
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
            /* hide this if page heading is shown */     ?>
-<h2><?php echo Text::_('COM_JEM_MY_VENUES'); ?></h2>
+<h1 class="componentheading"><?php echo Text::_('COM_JEM_MY_VENUES'); ?></h1>
 <?php endif; ?>
 
 <style>

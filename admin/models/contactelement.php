@@ -13,8 +13,6 @@ use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
 
-// jimport('joomla.application.component.model');
-
 
 /**
  * Contactelement-Model
@@ -71,6 +69,10 @@ class JemModelContactelement extends BaseDatabaseModel
      */
     public function getData()
     {
+        if (!JemHelper::isContactComponentEnabled()) {
+            return array();
+        }
+
         $query      = $this->buildQuery();
         $pagination = $this->getPagination();
 
@@ -150,6 +152,10 @@ class JemModelContactelement extends BaseDatabaseModel
     {
         $limit      = $this->getState('limit');
         $limitstart = $this->getState('limitstart');
+
+        if (!JemHelper::isContactComponentEnabled()) {
+            return new Pagination(0, $limitstart, $limit);
+        }
 
         $query = $this->buildQuery();
         $total = $this->_getListCount($query);

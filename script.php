@@ -61,6 +61,8 @@ class com_jemInstallerScript
             $imageDir . '/categories/small',
             $imageDir . '/events',
             $imageDir . '/events/small',
+            $imageDir . '/links',
+            $imageDir . '/links/small',
             $imageDir . '/venues',
             $imageDir . '/venues/small'
         );
@@ -906,27 +908,22 @@ class com_jemInstallerScript
         $columnsToCheck = [
             ['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
             ['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
-            ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"]
+            ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"],
+            ['table' => '#__jem_attachments','column' => 'description',   'definition' => "VARCHAR(255) DEFAULT NULL AFTER `name`"],
+            ['table' => '#__jem_attachments','column' => 'frontend',      'definition' => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `icon`"],
+            ['table' => '#__jem_attachments','column' => 'ordering',      'definition' => "INT(11) NOT NULL DEFAULT '0' AFTER `access`"]
         ];
 
         // check if the each column exists
         foreach ($columnsToCheck as $data) {
-            // First check if the table exists
-            $tableName = $db->replacePrefix($data['table']);
-            $tables = $db->getTableList();
-
-            if (in_array($tableName, $tables)) {
-                // The table exists, we can consult the columns
-                $query = "SHOW COLUMNS FROM " . $db->quoteName($data['table']) . " WHERE Field = " . $db->quote($data['column']);
-                $db->setQuery($query);
-                $result = $db->loadResult();
-
-                if (!$result) {
-                    // The column does not exist, so add it
-                    $alterQuery = "ALTER TABLE " . $db->quoteName($data['table']) . " ADD COLUMN " . $db->quoteName($data['column']) . " " . $data['definition'];
-                    $db->setQuery($alterQuery);
-                    $db->execute();
-                }
+            $query = 'SHOW COLUMNS FROM ' . $db->quoteName($data['table']) . ' WHERE Field = ' . $db->quote($data['column']);
+            $db->setQuery($query);
+            $result = $db->loadResult();
+            if (!$result) {
+                // The column does not exist, so add it
+                $alterQuery = 'ALTER TABLE ' . $db->quoteName($data['table']) . ' ADD COLUMN ' . $db->quoteName($data['column']) . ' ' . $data['definition'];
+                $db->setQuery($alterQuery);
+                $db->execute();
             }
         }    
     }
@@ -964,9 +961,11 @@ class com_jemInstallerScript
             '#__jem_events',
             '#__jem_groupmembers',
             '#__jem_groups',
+            '#__jem_links',
             '#__jem_register',
             '#__jem_settings',
             '#__jem_config',
+            '#__jem_types',
             '#__jem_venues'
         );
         foreach ($tables as $table) {

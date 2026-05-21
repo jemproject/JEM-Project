@@ -13,6 +13,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 
+FormHelper::loadFieldClass('list');
+
 /**
  * Imageselect Field
  *

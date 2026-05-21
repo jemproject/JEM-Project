@@ -86,6 +86,11 @@ class JemModelUserelement extends BaseDatabaseModel
 
         $filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('u.name', 'u.username', 'u.email', 'u.id');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'u.name';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $search           = $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string' );
         $search           = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );
@@ -104,13 +109,12 @@ class JemModelUserelement extends BaseDatabaseModel
          * Search name
          */
         if ($search) {
-            $where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
+            $where[] = ' LOWER(u.name) LIKE '.$db->quote('%'.$search.'%');
         }
 
         $query->where($where);
 
         // ordering
-        $orderby = '';
         $orderby = $filter_order.' '.$filter_order_Dir;
 
         $query->order($orderby);

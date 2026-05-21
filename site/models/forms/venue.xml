@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-    <fieldset name="details">
+    <fieldset name="details" addfieldpath="/components/com_jem/models/fields">
         <field name="id" type="text"
             default="0"
             readonly="true"
@@ -29,11 +29,12 @@
                label="COM_JEM_VENUE_COLOR"
                description="COM_JEM_VENUE_COLOR"
         />
-        <field name="url" type="text"
+        <field name="url" type="url"
             class="inputbox"
             size="40"
             label="COM_JEM_WEBSITE"
             description="COM_JEM_WEBSITE_DESC"
+            filter="url"
         />
         <field name="street" type="text"
             id="street"
@@ -109,6 +110,12 @@
             label="COM_JEM_COUNTRY"
             description="COM_JEM_COUNTRY_DESC"
             class="select_country"
+        />
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="3"
+            class="form-select"
         />
     </fieldset>
 
@@ -244,6 +251,43 @@
             filter="unset"
         />
     </fieldset>
+
+    <fields name="attribs">
+        <fieldset name="venue_attachments_options">
+            <field name="attachments_layout" type="list"
+                    label="COM_JEM_EVENT_ATTACHMENTS_LAYOUT"
+                    default=""
+                    class="form-select"
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+                <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+                <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
+                <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+                <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+                <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
+            </field>
+            <field name="attachments_icon_size" type="list"
+                    label="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE"
+                    default=""
+                    class="form-select"
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="none">JNO</option>
+                <option value="normal">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_NORMAL</option>
+                <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
+                <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
+            </field>
+            <field name="attachments_frame" type="radio"
+                    label="COM_JEM_EVENT_ATTACHMENTS_FRAME"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+    </fields>
 
     <fieldset name="meta"
               label="JGLOBAL_FIELDSET_METADATA_OPTIONS"

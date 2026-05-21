@@ -208,6 +208,9 @@ abstract class ModJemBannerHelper
                 continue; // skip removed events
             }
 
+            $hasEventAccess = !isset($row->user_has_access_event) || (bool) $row->user_has_access_event;
+            $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
+
             # create thumbnails if needed and receive imagedata
             $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
@@ -219,7 +222,7 @@ abstract class ModJemBannerHelper
             $lists[++$i] = new stdClass();
 
             # check view access
-            if (in_array($row->access, $levels)) {
+            if ($hasEventAccess) {
                 # We know that user has the privilege to view the event
                 $lists[$i]->link = Route::_(JemHelperRoute::getEventRoute($row->slug));
                 $lists[$i]->linkText = Text::_('MOD_JEM_BANNER_READMORE');
@@ -245,8 +248,8 @@ abstract class ModJemBannerHelper
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
-            $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
+            $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
 
             # time/date
             /* depending on settongs we need:
