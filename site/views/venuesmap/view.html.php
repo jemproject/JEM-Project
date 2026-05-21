@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
 if (is_file(JPATH_SITE . '/components/com_jem/helpers/map.php')) {
     require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
 }
@@ -90,11 +91,25 @@ class JemViewVenuesMap extends JemView
         $mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
         $height             = $params->get('height', '500px');
         $zoom               = (int) $params->get('map_zoom', 4);
-        $selectedCountry    = trim($app->input->getString('jem_map_filter_country', ''));
-        $selectedCity       = trim($app->input->getString('jem_map_filter_city', ''));
-        $selectedCategoryId = $app->input->getInt('jem_map_filter_catid', 0);
+        $showCountryFilter  = (int) $params->get('show_country_filter', 1);
+        $showCategoryFilter = (int) $params->get('show_category_filter', 1);
+        $defaultCountry     = trim((string) $params->get('default_country', ''));
+        if ($defaultCountry === '0') {
+            $defaultCountry = '';
+        }
+        $selectedCountry    = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
+        $selectedCity       = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
+        $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
         $countries          = JemMapHelper::getVenueCountries();
-        $categories         = JemMapHelper::getUpcomingEventCategories();
+        $categories         = $showCategoryFilter ? JemMapHelper::getUpcomingEventCategories() : [];
+        foreach ($countries as $country) {
+            $countryCode = (string) $country->country;
+            $countryName = JemHelperCountries::getCountryName($countryCode);
+            $country->country_name = $countryName ?: $countryCode;
+        }
+        usort($countries, static function ($a, $b) {
+            return strcasecmp((string) $a->country_name, (string) $b->country_name);
+        });
         $validCountries     = array_map(static function ($country) {
             return (string) $country->country;
         }, $countries);
@@ -228,6 +243,8 @@ class JemViewVenuesMap extends JemView
         $this->jemItemid = (int) $params->get('jem_itemid', 0);
         $this->centerLat = $centerLat;
         $this->centerLng = $centerLng;
+        $this->showCountryFilter = $showCountryFilter;
+        $this->showCategoryFilter = $showCategoryFilter;
         $this->countries = $countries;
         $this->cities = $cities;
         $this->categories = $categories;

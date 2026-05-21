@@ -1,0 +1,436 @@
+/**
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+#jem.jem_day_timetable .jem-timetable {
+    --jem-timetable-line: #c9d3d0;
+    --jem-timetable-panel: #ffffff;
+    --jem-timetable-ink: #1f2a2a;
+    --jem-timetable-muted: #637070;
+    --jem-timetable-soft: #f3f6f5;
+    display: grid;
+    gap: 0.85rem;
+    margin: 1rem 0 1.5rem;
+    color: var(--jem-timetable-ink);
+}
+
+#jem.jem_day_timetable .jem-timetable-item {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 8rem) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: stretch;
+    position: relative;
+}
+
+#jem.jem_day_timetable .jem-timetable-item::before {
+    content: "";
+    position: absolute;
+    top: 0.65rem;
+    bottom: -0.85rem;
+    left: calc(min(8rem, max(5.5rem, 18vw)) + 0.5rem);
+    width: 1px;
+    background: var(--jem-timetable-line);
+}
+
+#jem.jem_day_timetable .jem-timetable-item:last-child::before {
+    bottom: 0.65rem;
+}
+
+#jem.jem_day_timetable .jem-timetable-time {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-top: 0.6rem;
+    line-height: 1.15;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#jem.jem_day_timetable .jem-timetable-start {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+#jem.jem_day_timetable .jem-timetable-end {
+    margin-top: 0.25rem;
+    color: var(--jem-timetable-muted);
+    font-size: 0.86rem;
+}
+
+#jem.jem_day_timetable .jem-timetable-card {
+    display: grid;
+    grid-template-columns: 0.45rem minmax(0, 1fr);
+    overflow: hidden;
+    min-width: 0;
+    border: 1px solid rgba(31, 42, 42, 0.14);
+    border-radius: 8px;
+    background: var(--jem-timetable-panel);
+    box-shadow: 0 0.45rem 1.2rem rgba(31, 42, 42, 0.08);
+}
+
+#jem.jem_day_timetable .jem-timetable-card-bar {
+    background: var(--jem-timetable-accent);
+}
+
+#jem.jem_day_timetable .jem-timetable-card-content {
+    padding: 0.85rem 1rem;
+    min-width: 0;
+}
+
+#jem.jem_day_timetable .jem-timetable-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+#jem.jem_day_timetable .jem-timetable-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--jem-timetable-ink);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-decoration: none;
+}
+
+#jem.jem_day_timetable a.jem-timetable-title:hover,
+#jem.jem_day_timetable a.jem-timetable-title:focus {
+    color: var(--jem-timetable-accent);
+    text-decoration: underline;
+}
+
+#jem.jem_day_timetable .jem-timetable-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    margin-top: 0.55rem;
+    color: var(--jem-timetable-muted);
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+#jem.jem_day_timetable .jem-timetable-meta span {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+}
+
+#jem.jem_day_timetable .jem-timetable-meta span + span::before {
+    content: "";
+    display: inline-block;
+    width: 0.35rem;
+    height: 0.35rem;
+    margin-right: 0.75rem;
+    border-radius: 50%;
+    background: var(--jem-timetable-line);
+}
+
+#jem.jem_day_timetable .jem-timetable-empty {
+    padding: 1rem;
+    border: 1px solid rgba(31, 42, 42, 0.14);
+    border-radius: 8px;
+    background: var(--jem-timetable-soft);
+}
+
+#jem.jem_day_timetable .jem-timetable-navigation {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.8rem 0 0;
+    max-width: 100%;
+    padding: 0.45rem 8rem;
+    border: 1px solid rgba(31, 42, 42, 0.18);
+    border-bottom: 0;
+    background: #ffffff;
+}
+
+#jem.jem_day_timetable .jem-timetable-nav-title {
+    min-width: 0;
+    padding: 0.25rem 0.7rem;
+    color: #111111;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+}
+
+#jem.jem_day_timetable .jem-timetable-nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid #2b5fc7;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #2b5fc7;
+    font-size: 1.1rem;
+    line-height: 1;
+    text-decoration: none;
+}
+
+#jem.jem_day_timetable .jem-timetable-nav-link:hover,
+#jem.jem_day_timetable .jem-timetable-nav-link:focus {
+    background: #eef3ff;
+    color: #1f4fab;
+    text-decoration: none;
+}
+
+#jem.jem_day_timetable .jem-timetable-navigation + .jem-timetable-horizontal {
+    margin-top: 0;
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal {
+    --jem-timetable-label-width: 8rem;
+    --jem-timetable-line: #d7d7d7;
+    --jem-timetable-subtle-line: #e7ecea;
+    --jem-timetable-rail: #e4e4e4;
+    --jem-timetable-venue-bg: #eef3f2;
+    --jem-timetable-venue-color: #dce8e6;
+    overflow-x: visible;
+    margin: 1rem 0 1.5rem;
+    padding-bottom: 0.4rem;
+    background: #f7f7f7;
+    border: 1px solid #d7d7d7;
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-stage {
+    min-width: 0;
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-header,
+#jem.jem_day_timetable .jem-timetable-horizontal-row {
+    display: grid;
+    grid-template-columns: var(--jem-timetable-label-width) minmax(0, 1fr);
+}
+
+#jem.jem_day_timetable .jem-timetable-corner,
+#jem.jem_day_timetable .jem-timetable-venue {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0.45rem 0.6rem;
+    background:
+        linear-gradient(90deg, var(--jem-timetable-venue-color) 0 0.35rem, transparent 0.35rem),
+        color-mix(in srgb, var(--jem-timetable-venue-color) 28%, #ffffff);
+    color: #1f2a2a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
+    border-right: 1px solid rgba(31, 42, 42, 0.14);
+    box-shadow: inset 0 -1px 0 var(--jem-timetable-subtle-line);
+}
+
+#jem.jem_day_timetable .jem-timetable-corner {
+    min-height: 3.2rem;
+    background: #2f3f42;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    box-shadow:
+        inset -1px 0 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.14);
+}
+
+#jem.jem_day_timetable .jem-timetable-timegrid {
+    display: grid;
+    grid-template-columns: repeat(var(--jem-timetable-slots), minmax(0, 1fr));
+    min-width: 0;
+    background: var(--jem-timetable-rail);
+}
+
+#jem.jem_day_timetable .jem-timetable-venuegrid {
+    display: grid;
+    grid-template-columns: repeat(var(--jem-timetable-slots), minmax(7rem, 1fr));
+    min-width: 0;
+    background: var(--jem-timetable-rail);
+}
+
+#jem.jem_day_timetable .jem-timetable-grid-time {
+    min-height: 3.2rem;
+    border-left: 1px solid var(--jem-timetable-subtle-line);
+    box-shadow: inset 0 -1px 0 var(--jem-timetable-subtle-line);
+    color: #111111;
+    font-size: 0.72rem;
+    line-height: 1;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#jem.jem_day_timetable .jem-timetable-grid-time-last {
+    display: none;
+}
+
+#jem.jem_day_timetable .jem-timetable-grid-venue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.2rem;
+    min-width: 0;
+    padding: 0.35rem;
+    border-left: 1px solid var(--jem-timetable-subtle-line);
+    box-shadow: inset 0 -1px 0 var(--jem-timetable-subtle-line);
+    background:
+        linear-gradient(180deg, var(--jem-timetable-venue-color) 0 0.3rem, transparent 0.3rem),
+        color-mix(in srgb, var(--jem-timetable-venue-color) 24%, #ffffff);
+    color: #1f2a2a;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#jem.jem_day_timetable .jem-timetable-grid-venue-strong {
+    background: var(--jem-timetable-venue-color);
+    color: var(--jem-timetable-venue-text, #111111);
+    box-shadow:
+        inset 1px 0 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+
+#jem.jem_day_timetable .jem-timetable-track {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--jem-timetable-slots), minmax(0, 1fr));
+    min-height: 3.25rem;
+    min-width: 0;
+    padding: 0.38rem 0;
+    background-color: color-mix(in srgb, var(--jem-timetable-venue-color) 18%, #f6f7f7);
+    background-image: repeating-linear-gradient(
+        to right,
+        transparent 0,
+        transparent calc((100% / var(--jem-timetable-slots)) - 1px),
+        rgba(255, 255, 255, 0.95) calc((100% / var(--jem-timetable-slots)) - 1px),
+        rgba(255, 255, 255, 0.95) calc(100% / var(--jem-timetable-slots))
+    );
+}
+
+#jem.jem_day_timetable .jem-timetable-track-all-day {
+    background-color: #b7b9bc;
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-venues-top .jem-timetable-track {
+    min-height: 3.7rem;
+}
+
+#jem.jem_day_timetable .jem-timetable-venue-cell {
+    z-index: 0;
+    min-width: 0;
+    min-height: 100%;
+    background: #f7f7f7;
+    border-left: 1px solid var(--jem-timetable-line);
+    box-shadow: inset 0 -1px 0 var(--jem-timetable-line);
+    grid-row: 1;
+}
+
+#jem.jem_day_timetable .jem-timetable-venue-strong {
+    background: var(--jem-timetable-venue-color);
+    color: var(--jem-timetable-venue-text, #111111);
+    box-shadow:
+        inset -1px 0 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-venues-top .jem-timetable-track {
+    background-color: transparent;
+    background-image: none;
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-venues-top .jem-timetable-block {
+    grid-row: 1;
+}
+
+#jem.jem_day_timetable .jem-timetable-block {
+    --jem-timetable-event-text: #111111;
+    z-index: 1;
+    position: absolute;
+    top: 0.38rem;
+    bottom: 0.38rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    min-height: 2.1rem;
+    margin: 0 0.1rem;
+    padding: 0.25rem 0.45rem;
+    background: var(--jem-timetable-accent);
+    color: var(--jem-timetable-event-text);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-venues-top .jem-timetable-block,
+#jem.jem_day_timetable .jem-timetable-track-all-day .jem-timetable-block {
+    position: static;
+}
+
+#jem.jem_day_timetable .jem-timetable-block:hover,
+#jem.jem_day_timetable .jem-timetable-block:focus {
+    color: var(--jem-timetable-event-text);
+    outline: 2px solid #111111;
+    outline-offset: 1px;
+    text-decoration: none;
+}
+
+#jem.jem_day_timetable .jem-timetable-block-title,
+#jem.jem_day_timetable .jem-timetable-block-time {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#jem.jem_day_timetable .jem-timetable-block-time {
+    margin-top: 0.15rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    #jem.jem_day_timetable .jem-timetable-horizontal {
+        --jem-timetable-label-width: 6.5rem;
+    }
+
+    #jem.jem_day_timetable .jem-timetable-navigation {
+        padding: 0.45rem;
+    }
+
+    #jem.jem_day_timetable .jem-timetable-item {
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+    }
+
+    #jem.jem_day_timetable .jem-timetable-item::before {
+        display: none;
+    }
+
+    #jem.jem_day_timetable .jem-timetable-time {
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 0.55rem;
+        padding-top: 0;
+        text-align: left;
+    }
+
+    #jem.jem_day_timetable .jem-timetable-end::before {
+        content: "- ";
+    }
+
+    #jem.jem_day_timetable .jem-timetable-card-content {
+        padding: 0.8rem;
+    }
+}

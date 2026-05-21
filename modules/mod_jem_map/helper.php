@@ -31,13 +31,14 @@ class ModJemMapHelper
      * @param   string|null $filterStartDate    The start date of the filter range ('YYYY-MM-DD'). If null, no date filter is applied.
      * @param   string|null $filterEndDate      The end date of the filter range ('YYYY-MM-DD'). If null, the range is open-ended (from start date to infinity).
      * @param   int         $selectedCategoryId Category selected in the frontend filter.
+     * @param   string      $country            Country selected in the module settings.
      *
      * @return  array<object> An array of venue objects.
      * @throws  \Exception if a database error occurs.
      */
-    public static function getVenues($params, $filterStartDate, $filterEndDate = null, $selectedCategoryId = 0)
+    public static function getVenues($params, $filterStartDate, $filterEndDate = null, $selectedCategoryId = 0, $country = '')
     {
-        return JemMapHelper::getVenues($params, $filterStartDate, $filterEndDate, $selectedCategoryId);
+        return JemMapHelper::getVenues($params, $filterStartDate, $filterEndDate, $selectedCategoryId, $country);
     }
 
     /**
@@ -48,6 +49,16 @@ class ModJemMapHelper
     public static function getCategories($params)
     {
         return JemMapHelper::getCategories($params);
+    }
+
+    /**
+     * Fetch countries available for the frontend filter.
+     *
+     * @return  array<object>
+     */
+    public static function getVenueCountries()
+    {
+        return JemMapHelper::getVenueCountries();
     }
 }
 

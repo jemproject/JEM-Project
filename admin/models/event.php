@@ -382,7 +382,7 @@ class JemModelEvent extends JemModelAdmin
 
             // Contact
             if (!JemHelper::isContactComponentEnabled() || empty($data['contactid'])) {
-                $data['contactid'] = null;
+                $data['contactid'] = '';
             }
 
             // Times <= Endtimes

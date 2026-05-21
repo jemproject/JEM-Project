@@ -60,6 +60,9 @@ class JemViewDay extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        if ($this->getLayout() === 'timetable') {
+            JemHelper::loadCss('timetable');
+        }
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
 
@@ -81,6 +84,7 @@ class JemViewDay extends JemView
         // Get data from model
         $rows = $this->get('Items');
         $day  = $this->get('Day');
+        $isTimetableLayout = ($this->getLayout() === 'timetable');
 
         $daydate     = JemOutput::formatdate($day);
         $showdaydate = true; // show by default
@@ -98,9 +102,13 @@ class JemViewDay extends JemView
       //$pathway->setItemName(1, $menuitem->title);
         } else {
             // TODO: If we can integrate $daydate into page_heading we should set $showdaydate to false.
-            $pagetitle   = Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
+            $pagetitle   = $isTimetableLayout ? Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE') : Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
             $params->set('page_heading', $pagetitle);
             $pathway->addItem($pagetitle);
+        }
+
+        if ($isTimetableLayout && $params->get('page_heading') === Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY')) {
+            $params->set('page_heading', Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE'));
         }
         $pageclass_sfx = $params->get('pageclass_sfx');
 
@@ -173,6 +181,7 @@ class JemViewDay extends JemView
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
         $this->permissions   = $permissions;
+        $this->day           = $day;
         $this->daydate       = $daydate;
         $this->showdaydate   = $showdaydate; // if true daydate will be shown as h2 sub heading
         $this->pageclass_sfx =$pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

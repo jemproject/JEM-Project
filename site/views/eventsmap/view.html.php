@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
 if (is_file(JPATH_SITE . '/components/com_jem/helpers/map.php')) {
     require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
 }
@@ -94,7 +95,12 @@ class JemViewEventsMap extends JemView
         $zoom               = (int) $params->get('map_zoom', 8);
         $showDateFilter     = (int) $params->get('show_date_filter', 0);
         $showCategoryFilter = (int) $params->get('show_category_filter', 0);
+        $showCountryFilter  = (int) $params->get('show_country_filter', 0);
         $dateFilterDefault  = $params->get('date_filter_default', 'all');
+        $defaultCountry     = trim((string) $params->get('default_country', ''));
+        if ($defaultCountry === '0') {
+            $defaultCountry = '';
+        }
         $jemItemid          = (int) $params->get('jem_itemid', 0);
 
         // Filter from request (only if backend option is enabled)
@@ -104,6 +110,7 @@ class JemViewEventsMap extends JemView
         $filterStartDate   = null;
         $filterEndDate     = null;
         $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+        $selectedCountry    = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
 
         if ($showDateFilter) {
             $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');
@@ -175,6 +182,16 @@ class JemViewEventsMap extends JemView
         }
 
         $categories = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
+        $countries = $showCountryFilter ? JemMapHelper::getVenueCountries() : [];
+
+        foreach ($countries as $country) {
+            $countryCode = (string) $country->country;
+            $countryName = JemHelperCountries::getCountryName($countryCode);
+            $country->country_name = $countryName ?: $countryCode;
+        }
+        usort($countries, static function ($a, $b) {
+            return strcasecmp((string) $a->country_name, (string) $b->country_name);
+        });
 
         if ($selectedCategoryId > 0) {
             $validCategoryIds = array_map('intval', array_column($categories, 'id'));
@@ -184,8 +201,18 @@ class JemViewEventsMap extends JemView
             }
         }
 
+        if ($selectedCountry !== '') {
+            $validCountries = array_map(static function ($country) {
+                return (string) $country->country;
+            }, $countries);
+
+            if ($showCountryFilter && !in_array($selectedCountry, $validCountries, true)) {
+                $selectedCountry = '';
+            }
+        }
+
         // Fetch active events with venues that have valid coordinates.
-        $events = JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate, $selectedCategoryId);
+        $events = JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate, $selectedCategoryId, $selectedCountry);
 
         // Get auto center map
         if ($params->get('map_auto_center', 1)) {
@@ -283,8 +310,11 @@ class JemViewEventsMap extends JemView
         $this->zoom          = $zoom;
         $this->showDateFilter = $showDateFilter;
         $this->showCategoryFilter = $showCategoryFilter;
+        $this->showCountryFilter = $showCountryFilter;
         $this->categories    = $categories;
+        $this->countries     = $countries;
         $this->selectedCategoryId = $selectedCategoryId;
+        $this->selectedCountry = $selectedCountry;
         $this->filterMode    = $filterMode;
         $this->filterDate    = $filterDate;
         $this->selectedDate  = $selectedDate;
@@ -339,9 +369,9 @@ class JemViewEventsMap extends JemView
      *
      * @return  array<object>
      */
-    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null)
+    public static function getEvents($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '')
     {
-        return JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate);
+        return JemMapHelper::getEvents($params, $filterStartDate, $filterEndDate, $selectedCategoryId, $country);
     }
 }
 
