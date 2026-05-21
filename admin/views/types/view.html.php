@@ -10,13 +10,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\HTML\HTMLHelper;
 
 class JemViewTypes extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     public function display($tpl = null)
     {

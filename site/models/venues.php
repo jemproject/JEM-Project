@@ -9,7 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-
+
+use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/eventslist.php';
 
 /**
@@ -307,7 +308,7 @@ class JemModelVenues extends JemModelEventslist
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && count($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');

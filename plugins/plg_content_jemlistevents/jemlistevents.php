@@ -18,8 +18,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
-use Joomla\Database\DatabaseInterface;
-use Joomla\Database\ParameterType;
 
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');

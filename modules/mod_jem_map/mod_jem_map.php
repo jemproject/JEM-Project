@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Date\Date;
 use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 use Joomla\Module\JemMap\Site\Helper\ModJemMapHelper;

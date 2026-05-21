@@ -6,6 +6,13 @@
         <link href="../css/help.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/plugins" target="_blank">Plugins</a>
+        </div>
         <h1>Edit Venue</h1>
         <h3>Description</h3>
         <div>
@@ -29,6 +36,10 @@
         <p><strong>Text field:</strong> This is for the Venue description. You can use Plugins in this field.</p>
         <h3>Advanced publishing area</h3>
         <p><strong>Published:</strong> Select Yes to publish the venue or No to unpublish. Published venues are displayed on the Frontend and you can assign events to them.</p>
+        <p><strong>Access:</strong> Select the Joomla access level required to view or use this venue.</p>
+        <p><strong>Type:</strong> Assign an optional Venue type. Only types configured for Venues are shown. Default: no type.</p>
+        <p><strong>Website:</strong> Enter the venue website. The URL field validates and stores a web address.</p>
+        <p><strong>Color:</strong> Optional display color for the venue where layouts support type or venue color markers.</p>
         <p><strong>Custom Fields:</strong> You can enter up to 10 custom fields here. Here you can enter a maximum of 10 custom fields for a venue. <br>
             Empty fields are not displayed in the frontend. You can give the fields specific names using language overrides. <br>
             If you want to do that, proceed as follows:<br>
@@ -37,6 +48,20 @@
             If you want to use the language string for both backend and frontend, then don't forget to click the 'for both locations' checkbox.
         </p>
         <p><strong>Image:</strong> Choose an image for this venue (flyer) or upload it.</p>
+        <h3>Attachment display options</h3>
+        <p><strong>Attachments layout:</strong>
+            Overrides the global attachment layout for this venue. Options are Use Global, row, full row, uniform row, column, full column or uniform column. Default: Use Global.
+        </p>
+        <p><strong>Attachment icon size:</strong>
+            Overrides the global attachment icon size. Options are Use Global, No icon, Normal, Medium or Large. Default: Use Global.
+        </p>
+        <p><strong>Attachment frame:</strong>
+            Adds a visual frame around attachment output. Default: No.
+        </p>
+        <h3>Publishing details</h3>
+        <p><strong>Created by / Created date:</strong> Stores the user and date for the first creation of the venue. Created date defaults to now.</p>
+        <p><strong>Version:</strong> Read-only revision counter.</p>
+        <p><strong>Modified / Modified by:</strong> Read-only information updated after later edits.</p>
         <p><strong>Metadata information:</strong> Enter or edit (if needed) the Meta Description and the Meta Keywords of the venue here.</p>
         <p><strong>Geodata:</strong> If you want JEM to display a map in the Frontend, then check the 'add a map link' checkbox. <br>
             In order to find the venue on the map you have 2 options:

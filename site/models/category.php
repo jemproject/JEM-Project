@@ -23,7 +23,8 @@ require_once __DIR__ . '/eventslist.php';
 class JemModelCategory extends JemModelEventslist
 {
     protected $_id            = null;
-    //protected $_data        = null;
+    protected $_data        = null;
+    protected $_date        = null;
     //protected $_childs    = null;
     //protected $_category    = null;
     //protected $_pagination= null;
@@ -32,6 +33,8 @@ class JemModelCategory extends JemModelEventslist
     //protected $_siblings    = null;
     protected $_children    = null;
     protected $_parent    = null;
+    protected $_rightsibling = null;
+    protected $_leftsibling = null;
 
     /**
      * Constructor
@@ -122,7 +125,7 @@ class JemModelCategory extends JemModelEventslist
 
         # limit/start
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.category.'.$itemid.'.limitstart', 0);
         }

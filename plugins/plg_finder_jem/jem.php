@@ -10,14 +10,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
 use Joomla\Component\Finder\Administrator\Indexer\Indexer;
 use Joomla\Component\Finder\Administrator\Indexer\Result;
-use Joomla\Database\DatabaseInterface;
-use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
 
 /**
@@ -413,7 +409,7 @@ class plgFinderJEM extends Adapter
     /**
      * Method to check the existing access level for categories
      *
-     * @param   JTable  $row  A JTable object
+     * @param   object  $row  The category row object.
      *
      * @return  void
      *

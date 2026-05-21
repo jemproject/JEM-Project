@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\String\StringHelper;
 
 /**
  * View class: Attendees
@@ -34,7 +35,7 @@ class JemViewAttendees extends JemAdminView
         $filter_status    = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
         $filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',   'filter_type',    0, 'int');
         $filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-        $filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
+        $filter_search    = $db->escape(trim(StringHelper::strtolower($filter_search)));
 
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
@@ -145,6 +146,6 @@ class JemViewAttendees extends JemAdminView
         ToolbarHelper::spacer();
         ToolbarHelper::custom('attendees.back', 'back', 'back', Text::_('COM_JEM_ATT_BACK'), false);
         ToolbarHelper::divider();
-        ToolbarHelper::help('registereduser', true);
+        ToolbarHelper::help('registereduser', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/attendees');
     }
 }

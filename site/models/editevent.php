@@ -14,7 +14,7 @@ use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
-use Joomla\CMS\Form\Form;
+use Joomla\String\StringHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
@@ -297,7 +297,7 @@ class JemModelEditevent extends JemModelEvent
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -429,7 +429,7 @@ class JemModelEditevent extends JemModelEvent
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');

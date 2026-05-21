@@ -70,7 +70,7 @@ class JFormFieldModal_Users extends FormField
 
 
             // if ($error = $db->getErrorMsg()) {
-            //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($error, 'warning');
+            //     Factory::getApplication()->enqueueMessage($error, 'warning');
             // }
             try
             {
@@ -78,7 +78,7 @@ class JFormFieldModal_Users extends FormField
             }
             catch (RuntimeException $e)
             {
-                \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
             }
         } else {
             $count = 0;

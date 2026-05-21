@@ -22,7 +22,7 @@ This document maps the requested JEM test areas to the current test layers.
 
 ## Needs Joomla Integration
 
-These tests need a Joomla 5 runtime and should be implemented under `tests/Joomla`:
+These tests need a Joomla 6 runtime and should be implemented under `tests/Joomla`:
 
 - Model CRUD: create, update, delete, publish, unpublish, feature, load invalid IDs, required field failures, date validation, duplicate alias/name validation, and relation loading for events, venues, categories, attachments, and links.
 - Controller flows: add, edit, save, delete, publish, CSV import, redirects, error messages, and 403 behavior.

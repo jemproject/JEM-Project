@@ -204,7 +204,13 @@ foreach (($this->venueslist ?? []) as $venue) {
 
 
 
-    <div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
+    <div id="<?= $map_id ?>" class="jem-venuesmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>; min-height:300px;"></div>
+
+    <?php if (empty($this->venueslist)) : ?>
+        <div class="alert alert-info small mt-2">
+            <?php echo Text::_('COM_JEM_NOVENUES'); ?>
+        </div>
+    <?php endif; ?>
 
     <?php if (!empty($this->venueslist)) : ?>
         <div class="table table-responsive table-striped table-hover table-sm jem-venuesmap-list">
@@ -296,20 +302,39 @@ foreach (($this->venueslist ?? []) as $venue) {
             });
         });
 
+        var mapElement = document.getElementById('<?= $map_id ?>');
+        if (!mapElement) {
+            return;
+        }
+
+        if (typeof L === 'undefined') {
+            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('COM_JEM_VENUESMAP_MAP_UNAVAILABLE') ?></div>';
+            return;
+        }
+
         var map = L.map('<?= $map_id ?>').setView([<?php echo (float) ($centerLat? $centerLat : $startLat); ?>, <?php echo (float)($centerLng? $centerLng : $startLng); ?>], <?php echo (int) $startZoom; ?>);
         L.tileLayer(<?= json_encode($tileLayer['url']) ?>, {
             maxZoom: <?= (int) $tileLayer['maxZoom'] ?>,
             attribution: <?= json_encode($tileLayer['attribution']) ?>
         }).addTo(map);
 
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 0);
+        window.addEventListener('load', function() {
+            map.invalidateSize();
+        });
+
         <?php if ($fullScreenMap) : ?>
-        L.control.fullscreen({
-            position: 'topleft',
-            title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
-            titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
-            content: null,
-            forceSeparateButton: true
-        }).addTo(map);
+        if (L.control && typeof L.control.fullscreen === 'function') {
+            L.control.fullscreen({
+                position: 'topleft',
+                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
+                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                content: null,
+                forceSeparateButton: true
+            }).addTo(map);
+        }
         <?php endif; ?>
 
         var locationMarker = null;
@@ -468,11 +493,13 @@ foreach (($this->venueslist ?? []) as $venue) {
             return [p.lat, p.lng, 1];
         });
 
-        L.heatLayer(heatPoints, {
-            radius: 25,
-            blur: 10,
-            maxZoom: 17
-        }).addTo(map);
+        if (typeof L.heatLayer === 'function' && heatPoints.length) {
+            L.heatLayer(heatPoints, {
+                radius: 25,
+                blur: 10,
+                maxZoom: 17
+            }).addTo(map);
+        }
         <?php endif; ?>
 
         <?php if ($selectedCountry !== '' && !empty($mapBounds)) : ?>

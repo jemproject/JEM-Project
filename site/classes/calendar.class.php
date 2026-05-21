@@ -26,7 +26,6 @@ use Joomla\CMS\Router\Route;
 
 require_once JPATH_SITE . '/administrator/components/com_jem/helpers/html/jemhtml.php';
 
-#[AllowDynamicProperties]
 class JemCalendar
 {
     /*
@@ -122,6 +121,31 @@ class JemCalendar
     */
     var $startYear=1971;
     var $endYear=2037;
+    var $timetoday=false;
+    var $selectedday=-2;
+    var $selectedyear=false;
+    var $selectedmonth=false;
+    var $unixtime=false;
+    var $daytoday=false;
+    var $monthtoday=false;
+    var $yeartoday=false;
+    var $actday=false;
+    var $actmonth=false;
+    var $actyear=false;
+    var $has31days=false;
+    var $isSchalt=false;
+    var $maxdays=false;
+    var $firstday=false;
+    var $GMTDiff='none';
+    var $yearNavBack=false;
+    var $yearNavForw=false;
+    var $monthNavBack=false;
+    var $monthNavForw=false;
+    var $selBtn='Go';
+    var $monthYearDivider=' ';
+    var $weekNumTitle='';
+    var $showNoMonthDays=false;
+    var $eventID=false;
     /*
     ----------------------
     @START PUBLIC METHODS
@@ -419,7 +443,7 @@ class JemCalendar
     var $calEventContentId=[];
     var $calInit=0;
     var $weekNum=false;
-    var $WeekUrl=false;
+    var $weekUrl=false;
     var $javaScriptWeek=false;
 
     /*

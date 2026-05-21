@@ -19,9 +19,9 @@ use Joomla\CMS\Uri\Uri;
  */
 class JemViewCategory extends JemAdminView
 {
-    protected $form;
-    protected $item;
-    protected $state;
+    public $form;
+    public $item;
+    public $state;
 
     /**
      * Display the view

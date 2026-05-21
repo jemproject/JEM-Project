@@ -18,9 +18,9 @@ use Joomla\CMS\Factory;
  */
 class JemViewCategories extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     /**
      * Display the view

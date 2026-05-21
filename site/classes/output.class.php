@@ -18,6 +18,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
+use Joomla\String\StringHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -437,13 +438,7 @@ static public function lightbox() {
             // On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
             $showIcon = $settings->get('global_show_icons', 1);
 
-            if (version_compare(JVERSION, '5.0.0', '>=')) {
-                // Joomla 5 with Font Awesome 6
-                $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
-            } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-                // Joomla 4 with Font Awesome 5
-                $iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
-            }
+            $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
 
             switch ($view)
             {
@@ -862,7 +857,7 @@ static public function lightbox() {
     }
 
     /**
-     * Creates attributes for a tooltip depending on Joomla version
+     * Creates tooltip attributes.
      *
      * @param  string  $title   translated title of the tooltip
      * @param  string  $text    translated text of the tooltip
@@ -874,8 +869,6 @@ static public function lightbox() {
     {
         $result = array();
 
-        // on Joomla! 3.3+ we must use the new tooltips
-        // HTMLHelper::_('bootstrap.tooltip');
         $result = 'class="'.$classes.' hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText($title, $text, 0).'"';
         if (!empty($position) && (array_search($position, array('top', 'bottom', 'left', 'right')) !== false)) {
             $result .= ' data-placement="'.$position.'"';
@@ -920,7 +913,7 @@ static public function lightbox() {
         $output = null;
         $attributes = null;
 
-        $data->country = \Joomla\String\StringHelper::strtoupper($data->country);
+        $data->country = StringHelper::strtoupper($data->country);
 
         if ($data->latitude == 0.000000) {
             $data->latitude = null;
@@ -1092,15 +1085,8 @@ static public function lightbox() {
             return null;
         }
 
-        if (version_compare(JVERSION, '5.0.0', '>=')) {
-            // Joomla 5 with Font Awesome 6
-            $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
-        } else {
-            // Joomla 4 with Font Awesome 5
-            $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
-        }
+        $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
+        $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
 
         $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 

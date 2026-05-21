@@ -17,7 +17,9 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Date\Date;
-
+use Joomla\String\StringHelper;
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * Category Model
  */
@@ -416,7 +418,7 @@ class JemModelCategory extends AdminModel
     {
         // $value comes as {parent_id}.{extension}
         $parts = explode('.', $value);
-        $parentId = (int) \Joomla\Utilities\ArrayHelper::getValue($parts, 0, 1);
+        $parentId = (int) ArrayHelper::getValue($parts, 0, 1);
 
         $table = $this->getTable();
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -680,7 +682,7 @@ class JemModelCategory extends AdminModel
         if (!empty($children)) {
             // Remove any duplicates and sanitize ids.
             $children = array_unique($children);
-            \Joomla\Utilities\ArrayHelper::toInteger($children);
+            ArrayHelper::toInteger($children);
 
             // Check for a database error.
             // if ($db->getErrorNum()) {
@@ -731,8 +733,8 @@ class JemModelCategory extends AdminModel
         // Alter the title & alias
         $table = $this->getTable();
         while ($table->load(array('alias' => $alias, 'parent_id' => $parent_id))) {
-            $title = \Joomla\String\StringHelper::increment($title);
-            $alias = \Joomla\String\StringHelper::increment($alias, 'dash');
+            $title = StringHelper::increment($title);
+            $alias = StringHelper::increment($alias, 'dash');
         }
 
         return array($title, $alias);
@@ -768,7 +770,7 @@ class JemModelCategory extends AdminModel
      */
     public function delete(&$cids)
     {
-        \Joomla\Utilities\ArrayHelper::toInteger($cids);
+        ArrayHelper::toInteger($cids);
 
         // Add all children to the list
         foreach ($cids as $id) {

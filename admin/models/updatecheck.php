@@ -26,7 +26,7 @@ class JemModelUpdatecheck extends BaseDatabaseModel
     {
         parent::__construct($config, $factory);
         
-        // Set the dispatcher for Joomla 5/6 compatibility
+        // Set the dispatcher for Joomla 6 compatibility
         if (method_exists($this, 'setDispatcher')) {
             $this->setDispatcher(Factory::getApplication()->getDispatcher());
         }
@@ -39,53 +39,93 @@ class JemModelUpdatecheck extends BaseDatabaseModel
     {
         $installedversion = JemHelper::getParam(1, 'version', 1, 'com_jem');
         $updateFile       = "https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml";
-        $checkFile        = self::CheckFile($updateFile);
         $updatedata       = new stdClass();
 
-        if ($checkFile) {
-            $xml = simplexml_load_string(file_get_contents($updateFile));
-            $jversion = JVERSION;
-            foreach($xml->update as $updatexml) {
-                $version = $updatexml->targetplatform["version"]->__toString();
-                if (preg_match('/^' . $version . '/', $jversion)) {
-                    //version to check, not visible in table
-                    $updatedata->version = $updatexml->version;
+        $updatedata->failed           = 0;
+        $updatedata->installedversion = $installedversion;
+        $updatedata->current          = null;
 
-                    //in table
-                    $updatedata->versiondetail    = $updatexml->version;
-                    $updatedata->date             = JemOutput::formatdate($updatexml->date);
-                    $updatedata->info             = $updatexml->infourl;
-                    $updatedata->download         = $updatexml->downloads->downloadurl;
-                    $updatedata->notes            = explode(';', $updatexml->notes);
-                    $updatedata->changes          = explode(';', $updatexml->changes);
-                    $updatedata->failed           = 0;
-                    $updatedata->installedversion = $installedversion;
-                    $updatedata->current          = version_compare($installedversion, $updatedata->version);
+        $updateXml = self::fetchUpdateXml($updateFile);
+
+        if ($updateXml !== false) {
+            $xml = simplexml_load_string($updateXml);
+
+            if ($xml !== false && isset($xml->update)) {
+                $jversion = JVERSION;
+                $selectedUpdate = null;
+                $latestUpdate = null;
+
+                foreach ($xml->update as $updatexml) {
+                    if ($latestUpdate === null || version_compare((string) $updatexml->version, (string) $latestUpdate->version, 'gt')) {
+                        $latestUpdate = $updatexml;
+                    }
+
+                    $versionPattern = (string) $updatexml->targetplatform['version'];
+
+                    if ($versionPattern !== '' && preg_match('/^' . str_replace('/', '\/', $versionPattern) . '/', $jversion) === 1) {
+                        if ($selectedUpdate === null || version_compare((string) $updatexml->version, (string) $selectedUpdate->version, 'gt')) {
+                            $selectedUpdate = $updatexml;
+                        }
+                    }
                 }
+
+                $selectedUpdate = $selectedUpdate ?: $latestUpdate;
+
+                if ($selectedUpdate !== null) {
+                    $this->assignUpdateData($updatedata, $selectedUpdate, $installedversion);
+                }
+            } else {
+                $updatedata->failed = 1;
             }
         } else {
-            $updatedata->failed           = 1;
-            $updatedata->installedversion = $installedversion;
+            $updatedata->failed = 1;
         }
 
         return $updatedata;
     }
 
     /**
-     * Check to see if update-file exists
+     * @param  stdClass          $updatedata
+     * @param  SimpleXMLElement  $updatexml
+     * @param  string            $installedversion
+     * @return void
      */
-    protected static function CheckFile($filename)
+    private function assignUpdateData($updatedata, $updatexml, $installedversion)
+    {
+        $version = (string) $updatexml->version;
+
+        $updatedata->version          = $version;
+        $updatedata->versiondetail    = $version;
+        $updatedata->date             = JemOutput::formatdate($updatexml->date);
+        $updatedata->info             = (string) $updatexml->infourl;
+        $updatedata->download         = (string) $updatexml->downloads->downloadurl;
+        $updatedata->notes            = explode(';', (string) $updatexml->notes);
+        $updatedata->changes          = explode(';', (string) $updatexml->changes);
+        $updatedata->failed           = 0;
+        $updatedata->installedversion = $installedversion;
+        $updatedata->current          = version_compare($installedversion, $version);
+    }
+
+    protected static function fetchUpdateXml($filename)
     {
         $ext =  File::getExt($filename);
-        if ($ext == 'xml') {
-            if (@file_get_contents($filename, 0, null, 0, 1)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        if ($ext != 'xml') {
             return false;
         }
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'timeout' => 5,
+            ),
+            'ssl' => array(
+                'verify_peer'      => true,
+                'verify_peer_name' => true,
+            ),
+        ));
+
+        $contents = @file_get_contents($filename, false, $context);
+
+        return ($contents === false || trim($contents) === '') ? false : $contents;
     }
 }
 ?>

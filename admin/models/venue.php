@@ -13,6 +13,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
+use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
 
@@ -28,7 +29,7 @@ class JemModelVenue extends JemModelAdmin
     {
         parent::__construct($config, $factory);
         
-        // Set the dispatcher for Joomla 5/6 compatibility
+        // Set the dispatcher for Joomla 6 compatibility
         if (method_exists($this, 'setDispatcher')) {
             $this->setDispatcher(Factory::getApplication()->getDispatcher());
         }
@@ -295,7 +296,7 @@ class JemModelVenue extends JemModelAdmin
 
         //uppercase needed by mapservices
         if ($data['country']) {
-            $data['country'] = \Joomla\String\StringHelper::strtoupper($data['country']);
+            $data['country'] = StringHelper::strtoupper($data['country']);
         }
 
         // Save the venue

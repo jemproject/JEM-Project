@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
@@ -35,6 +34,7 @@ use Joomla\CMS\Language\Text;
                 <?php echo Text::_("COM_JEM_IMPORT_FIRSTROW"); ?><br>
             </div>
             <hr />
+            <div class="jem-import-grid">
             <div>
                 <fieldset class="adminform">
                     <legend><strong><?php echo mb_strtoupper(Text::_('COM_JEM_IMPORT_VENUES'));?></strong></legend>
@@ -130,6 +130,8 @@ use Joomla\CMS\Language\Text;
                     <input type="submit" id="attachments-file-upload-submit" value="<?php echo Text::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvattachmentsimport';return true;"/>
                 </fieldset>
                 <div class="clr"></div>
+            </div>
+
             </div>
 
             <?php echo HTMLHelper::_('form.token'); ?>

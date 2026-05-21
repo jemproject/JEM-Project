@@ -11,7 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component Groups Model
  *
@@ -22,7 +23,7 @@ class JemModelGroups extends ListModel
      * Constructor.
      *
      * @param  array An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array())
     {
@@ -152,7 +153,7 @@ class JemModelGroups extends ListModel
     {
         if (is_array($cid) && count($cid))
         {
-            \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            ArrayHelper::toInteger($cid);
             $cids = implode(',', $cid);
 
             $query = 'DELETE FROM #__jem_groups'

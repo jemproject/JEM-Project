@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component JEM Model
@@ -22,6 +23,7 @@ use Joomla\CMS\Filter\InputFilter;
 class JemModelMyattendances extends BaseDatabaseModel
 {
     protected $_attending = null;
+    protected $_cats = null;
     protected $_total_attending = null;
     protected $_pagination_attending = null;
 
@@ -37,7 +39,7 @@ class JemModelMyattendances extends BaseDatabaseModel
 
         //get the number of events
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myattendances.limitstart', 0);
         }
@@ -220,7 +222,7 @@ class JemModelMyattendances extends BaseDatabaseModel
 
         $filter   = $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', 0, 'int');
         $search   = $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
-        $search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search   = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
         // First thing we need to do is to select only needed events

@@ -18,6 +18,7 @@ require_once __DIR__ . '/eventslist.php';
 class JemModelCalendar extends JemModelEventslist
 {
     protected $_date = 0;
+    protected $show_archived_events = 0;
 
     /**
      * Constructor

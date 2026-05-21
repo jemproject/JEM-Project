@@ -14,9 +14,9 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Filesystem\File;
-use Joomla\Filesystem\Path;
 use Joomla\CMS\User\User;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Event Table
  */
@@ -402,7 +402,7 @@ class JemTableEvent extends Table
         $k = $this->_tbl_key;
 
         // Sanitize input.
-        \Joomla\Utilities\ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
         $userId = (int) $userId;
         $state = (int) $state;
 
@@ -476,9 +476,7 @@ class JemTableEvent extends Table
      *
      * @return boolean  True on success.
      *
-     * @note   With Joomla 3.1+ we should use an observer instead but J! 2.5 doesn't provide this.
-     *         Also on J! 2.5 $pk is a single key while on J! 3.x it's a list of keys.
-     *         We know the key is 'id', so keep it simple.
+     * @note   Keep this table-level hook for JEM relation cleanup.
      */
     public function delete($pk = null)
     {

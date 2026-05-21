@@ -8,11 +8,10 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\String\StringHelper;
 
 /**
  * View class for the JEM userelement screen
@@ -36,7 +35,7 @@ class JEMViewUserElement extends HtmlView {
         $filter_order        = $app->getUserStateFromRequest('com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd');
         $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
         $search             = $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string');
-        $search             = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search             = $db->escape(trim(StringHelper::strtolower($search)));
 
         // prepare the document
         $document->setTitle(Text::_('COM_JEM_SELECTATTENDEE'));

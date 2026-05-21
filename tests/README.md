@@ -32,7 +32,7 @@ The fast suites are portable. They do not need a web server, a Joomla installati
 
 ### Joomla Integration Tests
 
-The `test:joomla*` suites need a local Joomla 5 installation with JEM installed. Configure the Joomla root with the `JEM_TEST_JOOMLA_ROOT` environment variable. This value must point to the folder that contains Joomla's `configuration.php`.
+The `test:joomla*` suites need a local Joomla 6 installation with JEM installed. Configure the Joomla root with the `JEM_TEST_JOOMLA_ROOT` environment variable. This value must point to the folder that contains Joomla's `configuration.php`.
 
 Current Joomla integration tests are read-only. They boot Joomla, inspect schema/configuration, instantiate models/tables, and validate table-level normalization without storing records.
 
@@ -235,8 +235,8 @@ vendor/bin/phpunit --list-tests
 
 ## Joomla Version Compatibility
 
-This suite is currently introduced for the Joomla 5 version of JEM. Tests should prefer JEM-owned contracts over Joomla internals so they can be adapted when the project migrates to JEM 5.0.0 for Joomla 6.
+This suite targets JEM 5.x for Joomla 6 only. Tests should prefer JEM-owned contracts over Joomla internals so future Joomla 6 minors remain easy to review.
 
-Static and pure unit tests should remain mostly portable. Joomla bootstrap, database, functional, and visual tests should be isolated in their own suites because they are expected to need review during the Joomla 6 migration.
+Static and pure unit tests should remain mostly portable. Joomla bootstrap, database, functional, and visual tests should stay isolated in their own suites.
 
 Future phases can add separate suites for Joomla bootstrap integration, database integration, functional backend/site flows, and visual/responsive UX checks.

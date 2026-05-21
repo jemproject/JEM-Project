@@ -29,7 +29,7 @@ class JemControllerVenue extends JemControllerForm
      * Constructor.
      *
      * @param    array An optional associative array of configuration settings.
-     * @see        JController
+     * @see        FormController
      */
     public function __construct($config = array()) {
         parent::__construct($config);
@@ -40,7 +40,7 @@ class JemControllerVenue extends JemControllerForm
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.
      *
-     * @param   JModel(Legacy)  $model      The data model object.
+     * @param   object          $model      The data model object.
      * @param   array           $validData  The validated data.
      *
      * @return  void

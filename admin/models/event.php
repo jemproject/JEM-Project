@@ -14,10 +14,11 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
 use Joomla\String\StringHelper;
-use Joomla\CMS\Filesystem\Path;
-use Joomla\Database\ParameterType;
-
+
+use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
 
 /**
@@ -32,7 +33,7 @@ class JemModelEvent extends JemModelAdmin
     {
         parent::__construct($config, $factory);
         
-        // Set the dispatcher for Joomla 5/6 compatibility
+        // Set the dispatcher for Joomla 6 compatibility
         if (method_exists($this, 'setDispatcher')) {
             $this->setDispatcher(Factory::getApplication()->getDispatcher());
         }
@@ -744,7 +745,7 @@ class JemModelEvent extends JemModelAdmin
 
 
     /**
-     * Security validation for the link data (Joomla 5 standard)
+     * Security validation for the link data.
      *
      * @param   array  $data  The links data
      * @return  bool          True if valid
@@ -787,13 +788,13 @@ class JemModelEvent extends JemModelAdmin
             // URL scheme validation (check protocol is allowed)
             $urlScheme = parse_url($url, PHP_URL_SCHEME);
             if (!$urlScheme || !in_array(strtolower($urlScheme), $allowedSchemes)) {
-                $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
                 return false;
             }
 
             // Validate URL format using PHP's filter_var
             if (!filter_var($url, FILTER_VALIDATE_URL)) {
-                $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url)));
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url)));
                 return false;
             }
 
@@ -801,20 +802,20 @@ class JemModelEvent extends JemModelAdmin
             if (!empty($link['image'])) {
                 $img = $image;
 
-                // Extract only the path, removing Joomla 5 query strings (e.g., ?width=...)
+                // Extract only the path, removing Joomla media query strings (e.g., ?width=...)
                 $imgCleanPath = parse_url($img, PHP_URL_PATH);
-                $cleanPath = \Joomla\CMS\Filesystem\Path::clean($imgCleanPath);
+                $cleanPath = Path::clean($imgCleanPath);
 
                 // Security: Prevent directory traversal attacks (../)
                 if (strpos($cleanPath, '..') !== false) {
-                    $this->setError(\Joomla\CMS\Language\Text::_('COM_JEM_EVENT_ERROR_UNSAFE_PATH'));
+                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_UNSAFE_PATH'));
                     return false;
                 }
 
                 // Validate that the file extension is allowed
-                $ext = strtolower(\Joomla\CMS\Filesystem\File::getExt($cleanPath));
+                $ext = strtolower(File::getExt($cleanPath));
                 if (!in_array($ext, $allowedExts)) {
-                    $this->setError(\Joomla\CMS\Language\Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_EXTENSION', $ext));
+                    $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_EXTENSION', $ext));
                     return false;
                 }
             }
@@ -835,8 +836,8 @@ class JemModelEvent extends JemModelAdmin
     public function saveLinks($pk, $data)
     {
         $db   = $this->getDbo();
-        $user = \Joomla\CMS\Factory::getUser();
-        $now  = \Joomla\CMS\Factory::getDate()->toSql();
+        $user = Factory::getUser();
+        $now  = Factory::getDate()->toSql();
 
         $query = $db->getQuery(true)
             ->select($db->quoteName('id'))
@@ -1208,7 +1209,7 @@ class JemModelEvent extends JemModelAdmin
     {
         // Sanitize the ids.
         $pks = (array)$pks;
-        \Joomla\Utilities\ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
 
         if (empty($pks)) {
             $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));

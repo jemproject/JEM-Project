@@ -74,6 +74,53 @@ final class AdminCodeContractsTest extends TestCase
         );
     }
 
+    public function testFrontendMenuGeneratorUsesAliasThatDoesNotCollideWithExistingMainMenuItems(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString("'JEM', 'jem-frontend'", $code);
+        self::assertStringContainsString("array('jem')", $code);
+        self::assertStringContainsString('array_merge(array($alias), $legacyAliases)', $code);
+        self::assertStringContainsString("->where(\$db->quoteName('alias') . ' IN ('", $code);
+    }
+
+    public function testFrontendMenuGeneratorIncludesMapViews(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString("array('Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', \$groups['events'])", $code);
+        self::assertStringContainsString("array('Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', \$groups['venues'])", $code);
+    }
+
+    public function testFrontendMenuGeneratorDoesNotCreateSampleCategoryLinksToRootCategory(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString('$category = $this->getRandomCategoryRecord();', $code);
+        self::assertStringContainsString('protected function getRandomCategoryRecord()', $code);
+        self::assertStringContainsString("->from(\$db->quoteName('#__jem_categories'))", $code);
+        self::assertStringContainsString("->where(\$db->quoteName('id') . ' > 1')", $code);
+        self::assertStringContainsString("->where(\$db->quoteName('alias') . ' <> ' . \$db->quote('root'))", $code);
+        self::assertStringContainsString("->where(\$db->quoteName('catname') . ' <> ' . \$db->quote('root'))", $code);
+        self::assertStringContainsString("\$this->unpublishGeneratedMenuItems(\$menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));", $code);
+        self::assertStringContainsString("'index.php?option=com_jem&view=category&layout=calendar&id=' . \$this->slug(\$category)", $code);
+    }
+
+    public function testFrontendMenuGeneratorRepairsExistingGeneratedAliasesAcrossTheMenuType(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString('$existing = (int) $db->loadResult();', $code);
+        self::assertMatchesRegularExpression(
+            '/if\s*\(\$existing\)\s*\{\s*return\s+\$existing;\s*\}/',
+            $code
+        );
+        self::assertMatchesRegularExpression(
+            '/->where\(\$db->quoteName\(\'menutype\'\).*?->where\(\$db->quoteName\(\'alias\'\).*?->where\(\$db->quoteName\(\'client_id\'\).*?\$db->setQuery\(\$query,\s*0,\s*1\);/s',
+            $code
+        );
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
@@ -137,4 +184,5 @@ final class AdminCodeContractsTest extends TestCase
             self::relativePath($path) . ' should define ' . $expectedClass . ' ignoring camel-case word boundaries.'
         );
     }
+
 }

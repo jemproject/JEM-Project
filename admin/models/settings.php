@@ -27,7 +27,7 @@ class JemModelSettings extends AdminModel
     {
         parent::__construct($config, $factory);
         
-        // Set the dispatcher for Joomla 5/6 compatibility
+        // Set the dispatcher for Joomla 6 compatibility
         if (method_exists($this, 'setDispatcher')) {
             $this->setDispatcher(Factory::getApplication()->getDispatcher());
         }
@@ -212,8 +212,8 @@ class JemModelSettings extends AdminModel
         $db->setQuery($query);
         $extensions = $db->loadObjectList('name');
 
-        $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal', 'mod_jem_calajax',
-                                  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map',
+        $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal',
+                                  'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map', 'mod_jem_types',
                                   'plg_content_jem', 'plg_content_jemlistevents', 'plg_content_jemembed',
                                   'plg_finder_jem',
                                   'plg_quickicon_jem', 'Quick Icon - JEM',

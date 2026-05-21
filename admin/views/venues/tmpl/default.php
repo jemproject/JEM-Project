@@ -12,7 +12,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\String\StringHelper;
 
 $user        = JemFactory::getUser();
 $userId        = $user->get('id');
@@ -138,8 +138,8 @@ $wa->useScript('table.columns');
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if (\Joomla\String\StringHelper::strlen($item->alias) > 25) : ?>
-                            <?php echo $this->escape(\Joomla\String\StringHelper::substr($item->alias, 0 , 25)).'...'; ?>
+                        <?php if (StringHelper::strlen($item->alias) > 25) : ?>
+                            <?php echo $this->escape(StringHelper::substr($item->alias, 0 , 25)).'...'; ?>
                         <?php else : ?>
                             <?php echo $this->escape($item->alias); ?>
                         <?php endif; ?>
@@ -155,8 +155,8 @@ $wa->useScript('table.columns');
                     <td style="text-align:left">
                         <?php if ($item->url) : ?>
                             <a href="<?php echo $this->escape($item->url); ?>" target="_blank">
-                                <?php if (\Joomla\String\StringHelper::strlen($item->url) > 25) : ?>
-                                    <?php echo $this->escape(\Joomla\String\StringHelper::substr($item->url, 0 , 25)).'...'; ?>
+                                <?php if (StringHelper::strlen($item->url) > 25) : ?>
+                                    <?php echo $this->escape(StringHelper::substr($item->url, 0 , 25)).'...'; ?>
                                 <?php else : ?>
                                     <?php echo $this->escape($item->url); ?>
                                 <?php endif; ?>

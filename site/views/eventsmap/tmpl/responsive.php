@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
 
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
@@ -49,9 +48,9 @@ $mylocMarker  = $this->mylocMarker;
 $jemItemid    = (int) $this->jemItemid;
 $events       = $this->eventslist ?? [];
 
-$startLat    = (float) $this->params->get('map_center_lat', '0');
-$startLng    = (float) $this->params->get('map_center_lng', '0');
-$startZoom   = (int)   $this->params->get('map_zoom', '10');
+$startLat    = (float) $this->params->get('map_center_lat', '54.526');
+$startLng    = (float) $this->params->get('map_center_lng', '15.255');
+$startZoom   = (int)   $this->params->get('map_zoom', '4');
 $heatMapLayer = (int)  $this->params->get('heat_layer', '1');
 $fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
 $showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');

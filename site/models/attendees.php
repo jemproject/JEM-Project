@@ -12,7 +12,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-
+use Joomla\String\StringHelper;
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component attendees Model
  *
@@ -86,7 +88,7 @@ class JemModelAttendees extends BaseDatabaseModel
 
         $this->_reguser = $settings->get('global_regname', '1');
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.attendees.limitstart', 0);
         }
@@ -251,7 +253,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
         $filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
         $search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-        $search         = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search         = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
         $where[] = 'r.event = '.$this->_db->Quote($this->_id);
@@ -326,7 +328,7 @@ class JemModelAttendees extends BaseDatabaseModel
     {
         if (is_array($cid) && count($cid))
         {
-            \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            ArrayHelper::toInteger($cid);
             $query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
 
             if ((int) $eventId > 0) {
@@ -444,7 +446,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $filter_order_Dir = '';
         $filter_type      = '1';
         $search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');

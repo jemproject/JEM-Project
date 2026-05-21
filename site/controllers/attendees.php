@@ -16,7 +16,8 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Log\Log;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component Attendees Controller
  *
@@ -90,7 +91,7 @@ class JemControllerAttendees extends BaseController
         $this->assertCanManageAttendees($eventid);
 
         $uids    = explode(',', $input->getString('uids', ''));
-        \Joomla\Utilities\ArrayHelper::toInteger($uids);
+        ArrayHelper::toInteger($uids);
         $uids    = array_filter($uids);
         $uids    = array_unique($uids);
         $total   = is_array($uids) ? count($uids) : 0;

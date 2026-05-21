@@ -46,7 +46,7 @@ class JemModelVenueslist extends ListModel
         $task        = $jinput->getCmd('task');
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.venueslist.limitstart', 0);
         }

@@ -13,7 +13,8 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 /**
  * Event-Model
  */
@@ -26,7 +27,11 @@ class JemModelEvent extends ItemModel
      */
     protected $_context = 'com_jem.event';
 
+    protected $_item = null;
+
     protected $_registers = null;
+
+    protected $_registerid = null;
 
     /**
      * Method to auto-populate the model state.
@@ -694,7 +699,7 @@ class JemModelEvent extends ItemModel
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && count($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');

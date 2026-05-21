@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
@@ -19,8 +18,8 @@ use Joomla\CMS\MVC\View\HtmlView;
 class JemViewMailto extends HtmlView
 {
 
-    protected $form = null;
-    protected $canDo;
+    public $form = null;
+    public $canDo;
 
     /**
      * Display the Hello World view

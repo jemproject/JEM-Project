@@ -9,8 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->registerAndUseStyle('com_jem.jem-links-responsive', 'media/com_jem/css/jem-link-responsive.css');

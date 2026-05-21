@@ -10,7 +10,8 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * Field: Venueoptions
  */
@@ -48,7 +49,7 @@ class JFormFieldVenueoptions extends ListField
         }
         elseif (is_array($published))
         {
-            \Joomla\Utilities\ArrayHelper::toInteger($published);
+            ArrayHelper::toInteger($published);
             $query->where('l.published IN (' . implode(',', $published) . ')');
         }
 

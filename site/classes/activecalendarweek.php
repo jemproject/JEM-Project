@@ -29,6 +29,7 @@ class ActiveCalendarWeek extends JEMCalendar {
     var $cssWeeksTable="week";
     var $cssMonthWeek="monthweek";
     var $weekNavigation=false;
+    var $GMT="none";
     /*
     ----------------------
     @START PUBLIC METHODS

@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
@@ -21,9 +20,9 @@ use Joomla\CMS\Factory;
  */
 class JemViewSettings extends JemAdminView
 {
-    protected $form;
+    public $form;
     protected $data;
-    protected $state;
+    public $state;
 
     public function display($tpl = null)
     {

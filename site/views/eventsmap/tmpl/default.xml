@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
     <layout title="COM_JEM_EVENTSMAP_VIEW_DEFAULT_TITLE">
         <message>
@@ -36,11 +36,11 @@
                 <option value="0">JNO</option>
             </field>
             <field name="map_center_lat" type="text"
-                   default="48.750"
+                   default="54.526"
                    label="COM_JEM_EVENTS_MAP_CENTER_LATITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LATITUDE_DESC"/>
             <field name="map_center_lng" type="text"
-                   default="18.917"
+                   default="15.255"
                    label="COM_JEM_EVENTS_MAP_CENTER_LONGITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LONGITUDE_DESC"/>
             <field name="map_zoom" type="number"

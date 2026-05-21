@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component search Model
@@ -256,9 +257,9 @@ class JemModelSearch extends BaseDatabaseModel
 
         if ($filter) {
             // clean filter variables
-            $filter      = \Joomla\String\StringHelper::strtolower($filter);
+            $filter      = StringHelper::strtolower($filter);
             $filter      = $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
-            $filter_type = \Joomla\String\StringHelper::strtolower($filter_type);
+            $filter_type = StringHelper::strtolower($filter_type);
 
             switch ($filter_type) {
                 case 'title' :
@@ -515,13 +516,13 @@ class JemModelSearch extends BaseDatabaseModel
         }
         catch (RuntimeException $e)
         {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 
         // Check for a database error.
         // if ($db->getErrorNum())
         // {
-        //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+        //     Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
         // }
 
         if (!$mitems) {

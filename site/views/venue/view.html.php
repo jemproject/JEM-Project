@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\String\StringHelper;
 
 /**
  * Venue-View
@@ -326,8 +327,8 @@ class JemViewVenue extends JemView
             }
 
             // prepare the url for output
-            if (\Joomla\String\StringHelper::strlen($venue->url) > 35) {
-                $venue->urlclean = $this->escape(\Joomla\String\StringHelper::substr($venue->url, 0, 35)) . '...';
+            if (StringHelper::strlen($venue->url) > 35) {
+                $venue->urlclean = $this->escape(StringHelper::substr($venue->url, 0, 35)) . '...';
             } else {
                 $venue->urlclean = $this->escape($venue->url);
             }

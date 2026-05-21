@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
 ?>
 <?php
 $imageName = (string) $this->_tmp_img->name;
@@ -33,6 +34,6 @@ $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawu
         </a>
     </div>
     <div class="imageinfo">
-        <?php echo $this->escape(\Joomla\String\StringHelper::substr($this->_tmp_img->name, 0, 10) . (\Joomla\String\StringHelper::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
+        <?php echo $this->escape(StringHelper::substr($this->_tmp_img->name, 0, 10) . (StringHelper::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
     </div>
 </div>

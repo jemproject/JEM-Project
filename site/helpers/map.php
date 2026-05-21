@@ -10,8 +10,8 @@ namespace Joomla\Component\Jem\Site\Helper;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Filesystem\File;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
@@ -491,6 +491,3 @@ class JemMapHelper
     }
 }
 
-if (!class_exists('JemMapHelper', false)) {
-    class_alias(JemMapHelper::class, 'JemMapHelper');
-}

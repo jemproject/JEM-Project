@@ -17,6 +17,7 @@ require_once __DIR__ . '/eventslist.php';
  */
 class JemModelWeekcal extends JemModelEventslist
 {
+    protected $_currentweek = null;
 
     /**
      * Constructor

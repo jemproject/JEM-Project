@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\String\StringHelper;
 
 /**
  * Categoryelement-Model
@@ -76,7 +77,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
         $filter_state     = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
         $search           = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-        $search           = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $db->escape(trim(StringHelper::strtolower($search)));
 
         $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
         $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');

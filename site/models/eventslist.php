@@ -1002,7 +1002,7 @@ class JemModelEventslist extends ListModel
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && !empty($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');
@@ -1217,7 +1217,7 @@ class JemModelEventslist extends ListModel
             $where_pub[] = '(' . $tbl . 'published ' . ($show_archived_events? '>=':'=') . (int)$published . ')';
         }
         elseif (is_array($published) && !empty($published)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($published);
+            ArrayHelper::toInteger($published);
             $published = implode(',', $published);
             $where_pub[] = '(' . $tbl . 'published IN (' . $published . '))';
         }

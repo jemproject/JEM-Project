@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project> <!-- For Eclipse -->
 <project name="JEM" default="build" basedir=".">
     <description>Ant Build File for JEM by diesl. Based on Ant build file by Evan Fillman (mole84)</description>
@@ -31,9 +32,7 @@
     <target name="build_package" depends="build_plugins, build_modules, build_component" description="packages the final package file">
         <zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip">
             <zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
-            <zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages">
-                <exclude name="plg_quickicon_${cfg.name}.zip" />
-            </zipfileset>
+            <zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages" />
             <zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages">
                 <exclude name="mod_${cfg.name}_calajax.zip" />
             </zipfileset>
@@ -58,11 +57,14 @@
             <exclude name="*.key" />
             <exclude name="*.crt" />
             <exclude name="*.pfx" />
-            <exclude name="*.sql" />
             <exclude name="*.bak" />
             <exclude name="*.orig" />
             <exclude name="*.log" />
+            <exclude name="*.code-workspace" />
+            <exclude name="pkg_*.zip" />
             <exclude name="build.*" />
+            <exclude name="_old*/**" />
+            <exclude name="old*/**" />
             <exclude name="3rd/**" />
             <exclude name="composer.json" />
             <exclude name="composer.lock" />

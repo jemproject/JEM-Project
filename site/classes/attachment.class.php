@@ -13,7 +13,6 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\Filesystem\Path;
 use Joomla\Filter\InputFilter;
 
@@ -25,7 +24,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  *
  * @package JEM
  */
-class JemAttachment extends CMSObject
+class JemAttachment
 {
     /**
      * Attachment identifiers are stored as type + numeric id, e.g. event12 or venue7.
@@ -269,7 +268,7 @@ class JemAttachment extends CMSObject
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$object, 'warning');
                 continue;
             }
-            // Since Joomla! 3.4.0 File::upload has some more params to control new security parsing
+            // File::upload has additional params to control security parsing.
             // switch off parsing archives for byte sequences looking like a script file extension
             // but keep all other checks running
             if (!File::upload($rec['tmp_name'], $filepath, false, false, array('forbidden_ext_in_content' => true))) {
@@ -300,7 +299,7 @@ class JemAttachment extends CMSObject
             $table->created_by = $user->get('id');
 
             if (!($table->check() && $table->store())) {
-                \Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError(), 'warning');
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError(), 'warning');
             }
         } // foreach
 
@@ -350,7 +349,7 @@ class JemAttachment extends CMSObject
         $table->bind($attach);
 
         if (!($table->check() && $table->store())) {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError(), 'warning');
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError(), 'warning');
             return false;
         }
 

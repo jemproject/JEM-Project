@@ -2,7 +2,7 @@
 
 JEM now includes an automated test suite intended to make everyday development safer, faster, and easier to review. The goal is not to replace manual Joomla testing, but to catch common regressions before a change reaches a browser or a release ZIP.
 
-The test suite is deliberately split into layers. Most checks are fast and do not need Joomla. Joomla integration tests are available separately for developers who have a local Joomla 5 installation.
+The test suite is deliberately split into layers. Most checks are fast and do not need Joomla. Joomla integration tests are available separately for developers who have a local Joomla 6 installation.
 
 ## Why These Tests Exist
 
@@ -16,7 +16,7 @@ These tests help us answer practical questions before committing code:
 - Are attachment and link options consistent between backend and frontend?
 - Are security guardrails still present for SQL injection, XSS, CSRF, permissions, uploads, file paths, secrets, and suspicious code?
 - Does the package build exclude development files?
-- Can a local Joomla 5 installation load JEM tables, models, schema, and configuration?
+- Can a local Joomla 6 installation load JEM tables, models, schema, and configuration?
 
 ## Test Layers
 
@@ -61,7 +61,7 @@ composer test:unit:helpers
 
 ### Joomla Integration Tests
 
-Joomla integration tests boot a local Joomla 5 installation and inspect the installed JEM component. They are separate from the default test command because they need local setup.
+Joomla integration tests boot a local Joomla 6 installation and inspect the installed JEM component. They are separate from the default test command because they need local setup.
 
 Current Joomla tests are read-only. They do not create, update, or delete records. They verify:
 
@@ -241,11 +241,11 @@ The component ZIP must not include:
 
 Note that `media/vendor/**` is allowed because it contains frontend assets such as FontAwesome.
 
-## Joomla 5 Now, Joomla 6 Later
+## Joomla 6 Only
 
-These tests are currently designed for the Joomla 5 version of JEM. Keep tests focused on JEM-owned behavior where possible. Joomla internals may change during a future JEM 5.0.0 migration for Joomla 6, so integration tests should stay isolated and easy to review.
+These tests are designed for JEM 5.x on Joomla 6. Keep tests focused on JEM-owned behavior where possible so Joomla 6 minor updates remain isolated and easy to review.
 
-Static and pure unit tests should remain mostly portable. Joomla bootstrap, database, browser, and visual suites are expected to need review during the Joomla 6 migration.
+Static and pure unit tests should remain mostly portable. Joomla bootstrap, database, browser, and visual suites should stay isolated from the default fast suite.
 
 ## Recommended Developer Workflow
 

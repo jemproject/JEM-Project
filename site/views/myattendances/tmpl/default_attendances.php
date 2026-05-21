@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 ?>
@@ -181,7 +182,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
                         <td>
                             <?php
                             $len  = ($this->print) ? 256 : 16;
-                            $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > $len) ? (\Joomla\String\StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
+                            $cmnt = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
                             if (!empty($cmnt)) :
                                 echo ($this->print) ? $cmnt : HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null);
                             endif;

@@ -23,7 +23,6 @@ use Joomla\CMS\Date\Date;
 use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 
-use Joomla\CMS\Router\Route;
 
 /**
  * EventsMap-View
@@ -92,7 +91,7 @@ class JemViewEventsMap extends JemView
         $mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
 
         $height             = $params->get('height', '500px');
-        $zoom               = (int) $params->get('map_zoom', 8);
+        $zoom               = (int) $params->get('map_zoom', 4);
         $showDateFilter     = (int) $params->get('show_date_filter', 0);
         $showCategoryFilter = (int) $params->get('show_category_filter', 0);
         $showCountryFilter  = (int) $params->get('show_country_filter', 0);
@@ -342,7 +341,7 @@ class JemViewEventsMap extends JemView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolbarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/views/eventsmap');
+        ToolbarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/frontend/events-map');
     }
 
     /**

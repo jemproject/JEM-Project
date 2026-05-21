@@ -9,7 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\Filesystem\File;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
@@ -27,7 +26,7 @@ class JemModelHelp extends BaseDatabaseModel
     {
         parent::__construct($config, $factory);
         
-        // Set the dispatcher for Joomla 5/6 compatibility
+        // Set the dispatcher for Joomla 6 compatibility
         if (method_exists($this, 'setDispatcher')) {
             $this->setDispatcher(Factory::getApplication()->getDispatcher());
         }

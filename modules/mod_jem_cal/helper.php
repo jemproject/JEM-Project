@@ -16,7 +16,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Helper\ModuleHelper;
@@ -28,7 +27,7 @@ abstract class ModJemCalHelper extends ModuleHelper
     /**
      * Get module by id
      *
-     * Same as JModuleHelper::getModule() but checking id instead of name.
+     * Same as Joomla's module lookup, but checking id instead of name.
      * This is required because multiple instances with different settings
      * can be shown on same position. The only unique thing is the id.
      *
@@ -72,7 +71,7 @@ abstract class ModJemCalHelper extends ModuleHelper
     {
         $app     = Factory::getApplication();
         $modid   = $app->input->getInt('modjemcal_id');
-        # JModuleHelper doesn't provide module by id - but we
+        // Joomla's module helper does not provide module lookup by id.
         $module = self::getModuleById($modid);
         if (!empty($module->id) && ((int)$module->id === $modid)) {
             # Indicate ajax mode where some parts will be suppressed or rendered different.
@@ -225,7 +224,7 @@ abstract class ModJemCalHelper extends ModuleHelper
                 for ($count = $event->created_day; $count <= $eday; $count++) {
 
                     $uxdate = mktime(0, 0, 0, $greq_month, $count, $greq_year);
-                    $tdate = date('Ymd',$uxdate);// Toni change Joomla 1.5
+                    $tdate = date('Ymd', $uxdate);
 
                     if (empty($days[$count][1])) {
                         // First event of the day

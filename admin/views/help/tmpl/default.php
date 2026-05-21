@@ -48,6 +48,8 @@ $options = array(
                             <div class="filter-select fltrt">
                                     <a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_HOME'); ?></a>
                                     |
+                                    <a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/documentation.html'; ?>" target='helpFrame'>Documentation map</a>
+                                    |
                                     <a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_GET_HELP'); ?></a>
                                     |
                                     <a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/contribute.html'; ?>" target='helpFrame'><?php echo Text::_('COM_JEM_CONTRIBUTE'); ?></a>

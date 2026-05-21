@@ -15,11 +15,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Response\JsonResponse;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\User\User;
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';

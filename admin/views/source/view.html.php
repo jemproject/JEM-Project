@@ -8,10 +8,8 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Client\ClientHelper;
 
@@ -21,10 +19,10 @@ use Joomla\CMS\Client\ClientHelper;
  */
 class JemViewSource extends JemAdminView
 {
-    protected $form;
+    public $form;
     protected $ftp;
     protected $source;
-    protected $state;
+    public $state;
     protected $template;
 
     /**

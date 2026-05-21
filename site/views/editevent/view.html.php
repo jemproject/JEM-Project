@@ -17,10 +17,10 @@ use Joomla\CMS\Factory;
  */
 class JemViewEditevent extends JemView
 {
-    protected $form;
-    protected $item;
+    public $form;
+    public $item;
     protected $return_page;
-    protected $state;
+    public $state;
 
     /**
      * Editevent-View

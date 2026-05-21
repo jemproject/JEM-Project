@@ -12,7 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
-
+
+use Joomla\Utilities\ArrayHelper;
 // ensure JemFactory is loaded (because field maybe used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -96,7 +97,7 @@ class JFormFieldCategoryEdit extends ListField
         }
         elseif (is_array($published) && count($published))
         {
-            \Joomla\Utilities\ArrayHelper::toInteger($published);
+            ArrayHelper::toInteger($published);
             $query->where('a.published IN (' . implode(',', $published) . ')');
         }
 

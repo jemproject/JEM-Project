@@ -10,7 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Group Table
  *
@@ -80,7 +81,7 @@ class JemTableGroup extends Table
         $k = $this->_tbl_key;
 
         // Sanitize input.
-        \Joomla\Utilities\ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
         $userId = (int) $userId;
         $state = (int) $state;
 

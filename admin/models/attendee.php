@@ -14,7 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Log\Log;
 
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * Model: Attendee
  */
@@ -357,7 +358,7 @@ class JemModelAttendee extends BaseDatabaseModel
     {
         // Sanitize the ids.
         $pks = (array)$pks;
-        \Joomla\Utilities\ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
 
         if (empty($pks)) {
             $this->setError(Text::_('JERROR_NO_ITEMS_SELECTED'));

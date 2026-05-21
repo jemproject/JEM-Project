@@ -13,7 +13,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component Export Model
  */
@@ -38,7 +39,7 @@ class JemModelExport extends ListModel
      * Constructor.
      *
      * @param array An optional associative array of configuration settings.
-     * @see   JController
+     * @see   AdminController
      */
     public function __construct($config = array())
     {
@@ -112,7 +113,7 @@ class JemModelExport extends ListModel
 
         // check if specific category's have been selected
         if (! empty($cats)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($cats);
+            ArrayHelper::toInteger($cats);
             $query->where('  c.id IN (' . implode(',', $cats) . ')');
         }
 

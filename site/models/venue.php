@@ -61,7 +61,7 @@ class JemModelVenue extends JemModelEventslist
         // List state information
 
         if (empty($format) || ($format == 'html')) {
-            /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+            /* Preserve limitstart when it is missing from the request. */
             if ($app->input->getInt('limitstart', null) === null) {
                 $app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
             }

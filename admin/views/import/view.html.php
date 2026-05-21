@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
@@ -59,7 +58,6 @@ class JemViewImport extends JemAdminView
         $progress->prefix     = $jinput->get('prefix', null, 'CMD');
         $progress->copyImages = $jinput->get('copyImages', null, 'INT');
         $progress->copyAttachments = $jinput->get('copyAttachments', null, 'INT');
-        $progress->fromJ15 = $jinput->get('fromJ15', null, 'INT');
         $this->progress = $progress;
         $this->attachmentsPossible = !empty($this->eventlistTables['eventlist_attachments']);
 

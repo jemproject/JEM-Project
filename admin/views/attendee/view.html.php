@@ -43,9 +43,6 @@ class JemViewAttendee extends HtmlView {
 
         //build selectlists
         $lists = array();
-        // TODO: On J! 2.5 we need last param 0 because it defaults to 1 activating a useless feature.
-        //       On J! 3.x this param and the useless feature has been removed so we should remove last param.
-        //       Such changes are of sort "grrr".
         $lists['users'] = HTMLHelper::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
 
         //assign data to template
@@ -100,6 +97,6 @@ class JemViewAttendee extends HtmlView {
         }
 
         ToolbarHelper::divider();
-        ToolbarHelper::help('editattendee', true);
+        ToolbarHelper::help('editattendee', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/attendees/edit-attendee');
     }
 }

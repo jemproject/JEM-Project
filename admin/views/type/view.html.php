@@ -14,9 +14,9 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class JemViewType extends JemAdminView
 {
-    protected $form;
-    protected $item;
-    protected $state;
+    public $form;
+    public $item;
+    public $state;
     protected $typeLanguages;
     protected $typeTranslations;
 

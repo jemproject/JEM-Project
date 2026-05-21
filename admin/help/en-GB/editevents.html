@@ -7,6 +7,13 @@
         <link href="../css/help.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/manual/plugins" target="_blank">Plugins</a>
+        </div>
         <h1>Edit Event</h1>
         <h2>Description</h2>
         <div>
@@ -89,6 +96,16 @@
         <p><strong>Status:</strong>
             Select Yes to publish the event or No to unpublish. Published events are displayed on the Frontend.
         </p>
+        <p><strong>Event status:</strong>
+            Public status used for visitor messaging and structured data. Options are Scheduled, Cancelled, Postponed, Rescheduled and Moved online. Default: Scheduled.
+            This is separate from Joomla publication status.
+        </p>
+        <p><strong>Availability:</strong>
+            General ticket or booking availability used for visitor messaging and structured data. Options are Available, Preorder and Sold out. Default: Available.
+        </p>
+        <p><strong>Type:</strong>
+            Assign an optional Event type. Only types configured for Events are shown. Default: no type.
+        </p>
         <p><strong>Featured:</strong>
             Select Yes to mark the selected event as a featured event. In the Frontend, the featured event will
             be especially marked or highlighted to distinguish it from other events.
@@ -138,19 +155,49 @@
         </p>
         <h3>Registration</h3>
         <p><strong>Registration:</strong>
-            Select if users should be able to register to this Event. The options are No, Yes or Invited Users Only.
+            Select if users should be able to register to this Event. The options are No, Yes or From date/time. Default: No.
+        </p>
+        <p><strong>Registration From:</strong>
+            When Registration is set to From date/time, registrations open at this date and time. Default: now.
+        </p>
+        <p><strong>Registration Until:</strong>
+            When Registration is set to From date/time, registrations close at this date and time.
+        </p>
+        <p><strong>Invited users only:</strong>
+            Restricts registration to the invited users selected for the event. Default: No.
         </p>
         <p><strong>Registration Annulation:</strong>
-            Select if users should be able to annulate their registration from this Event. The options are No, Yes or Limited .... datetime before the event starts.
+            Select if users should be able to annulate their registration from this Event. The options are No, Yes or Until date/time. Default: No.
+        </p>
+        <p><strong>Annulation Until:</strong>
+            When annulation is limited, users can unregister until this date and time.
         </p>
         <p><strong>Max Places:</strong>
             Enter the maximum capacity for the event. When there is no maximum, enter 0 for unlimited registrations.
+        </p>
+        <p><strong>Minimum / Maximum booked places per user:</strong>
+            Controls how many places one user must or may book. Both fields default to 1.
+        </p>
+        <p><strong>Reserved Places:</strong>
+            Places held back from normal booking. Default: 0.
+        </p>
+        <p><strong>Invited Users:</strong>
+            Select users that may register when invited-only registration is enabled.
         </p>
         <p><strong>Booked Places:</strong>
             Displays the currently booked (registered) number of visitors to the event.
         </p>
         <p><strong>Waiting List:</strong>
             Check this box to enable the waiting list.
+        </p>
+        <p><strong>Request answer:</strong>
+            Ask registered users to answer the attendance request. Default: No.
+        </p>
+        <p><strong>Series booking:</strong>
+            Applies booking behavior to events in a recurrence series where supported. Default: No.
+        </p>
+        <p><strong>Single event booking:</strong>
+            Applies booking behavior to this individual event where supported. Default: No.
         </p>
         <h3>Image</h3>
         <p><strong>Image:</strong>
@@ -197,6 +244,48 @@
         <p><strong>Metadata information:</strong>
             Enter or edit (if needed) the Meta Description and the Meta Keywords of the event here. <br>
             You may use the suggestions in the settings to set default values which will be automatically set to the event data.
+        </p>
+        <h3>Event display options</h3>
+        <p><strong>Show venue name, category, author, contact, hits, availability, print icon, email icon, iCal icon and details title:</strong>
+            These event-specific options override the global settings when a value other than Use Global is selected. Most fields offer Use Global, Show and Hide.
+        </p>
+        <p><strong>Link category, author and contact:</strong>
+            Controls whether the shown item is plain text or a link. These options are available when the matching show option is enabled.
+        </p>
+        <p><strong>Contact category and contact description:</strong>
+            Controls extra contact information on the event detail page. Default: No.
+        </p>
+        <h3>Venue display options</h3>
+        <p><strong>Venue description and address:</strong>
+            Event-level overrides for showing venue description and address. Default: Use Global.
+        </p>
+        <p><strong>Venue link:</strong>
+            Options are Use Global, No Link, Link to URL or Link to Venue view.
+        </p>
+        <p><strong>Map service:</strong>
+            Options are Use Global, No Map Service, Google map link, Google map display, Google map display with API, OpenStreetMap link or OpenStreetMap display.
+        </p>
+        <p><strong>Google map TLD and language:</strong>
+            Optional Google map top-level domain and language code used when a Google map service is selected.
+        </p>
+        <h3>Links and attachments</h3>
+        <p><strong>Attachments layout:</strong>
+            Options are Use Global, row, full row, uniform row, column, full column or uniform column. Default: Use Global.
+        </p>
+        <p><strong>Attachment icon size:</strong>
+            Options are Use Global, No icon, Normal, Medium or Large. Default: Use Global.
+        </p>
+        <p><strong>Attachment frame:</strong>
+            Adds a visual frame around attachment output. Default: No.
+        </p>
+        <p><strong>Links layout:</strong>
+            Controls how event links are arranged. Options include row, full row, uniform row, column, full column and uniform column. Default: row.
+        </p>
+        <p><strong>Links order:</strong>
+            Controls the order of image, icon and text inside each link. Default: image, icon, text.
+        </p>
+        <p><strong>Event links:</strong>
+            Add repeatable links with title, description, type, color, URL, target, frame, image and maximum image dimensions. Link target defaults to new tab, frame defaults to Yes, color defaults to #2f6f46, maximum image width defaults to 120 and maximum image height defaults to 60.
         </p>
     </body>
 </html>

@@ -62,6 +62,3 @@ class ModJemMapHelper
     }
 }
 
-if (!class_exists('ModJemMapHelper', false)) {
-    class_alias(ModJemMapHelper::class, 'ModJemMapHelper');
-}

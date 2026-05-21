@@ -9,7 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\String\StringHelper;
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx . ' venues_id' . $this->item->id; ?>">
     <div class="buttons">
@@ -58,8 +58,8 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <dd class="venue_website">
                     <a href="<?php echo $this->escape($row->url); ?>" target="_blank">
                     <?php
-                        if (\Joomla\String\StringHelper::strlen($row->url) > 35) {
-                            $urlclean = htmlspecialchars(\Joomla\String\StringHelper::substr($row->url, 0 , 35)) . '...';
+                        if (StringHelper::strlen($row->url) > 35) {
+                            $urlclean = htmlspecialchars(StringHelper::substr($row->url, 0 , 35)) . '...';
                         } else {
                             $urlclean = htmlspecialchars($row->url);
                         }

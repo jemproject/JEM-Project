@@ -74,6 +74,70 @@ final class SiteCodeContractsTest extends TestCase
         );
     }
 
+    public function testCategoryCalendarModelResolvesCategoryForAccessChecks(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/models/categorycal.php');
+
+        self::assertStringContainsString('protected $_item = null;', $code);
+        self::assertStringContainsString('public function getCategory()', $code);
+        self::assertStringContainsString("new JemCategories(\$this->_id, array('countItems' => 0))", $code);
+        self::assertStringContainsString('$this->_item = $categories->get($this->_id);', $code);
+        self::assertStringContainsString('$this->_item = null;', $code);
+    }
+
+    public function testCategoryCalendarViewPassesResolvedCategoryIdToModel(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/category/view.html.php');
+
+        self::assertStringContainsString('$catid = (int) $catid;', $code);
+        self::assertStringContainsString('$model->setId($catid);', $code);
+        self::assertMatchesRegularExpression(
+            '/\$model->setId\(\$catid\);\s*\$model->setDate\(/',
+            $code
+        );
+    }
+
+    public function testCategoryNodeDeclaresComputedAccessFlag(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/categories.class.php');
+
+        self::assertStringContainsString('public $user_has_access_category = null;', $code);
+        self::assertStringContainsString('property_exists($this, $name)', $code);
+        self::assertStringContainsString('END as user_has_access_category', $code);
+    }
+
+    public function testCategoryNodeDeclaresJemCategoryAndPluginFields(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/categories.class.php');
+
+        foreach (array(
+            'catname',
+            'meta_keywords',
+            'meta_description',
+            'image',
+            'color',
+            'text',
+            'jcfields',
+            'type_id',
+            'email',
+            'emailacljl',
+        ) as $property) {
+            self::assertMatchesRegularExpression(
+                '/public\s+\$' . preg_quote($property, '/') . '\b/',
+                $code,
+                'JemCategoryNode must declare $' . $property . ' to avoid PHP 8.4 dynamic/undefined property warnings.'
+            );
+        }
+    }
+
+    public function testCategoryViewAvoidsNullMetadataAndImageArguments(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/category/view.html.php');
+
+        self::assertStringContainsString("\$document->setMetadata('keywords', (string) \$category->meta_keywords);", $code);
+        self::assertStringContainsString("JemImage::flyercreator((string) \$category->image,'category')", $code);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

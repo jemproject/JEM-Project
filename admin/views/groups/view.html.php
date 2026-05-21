@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
@@ -23,9 +22,9 @@ use Joomla\CMS\Factory;
 
 class JemViewGroups extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     public function display($tpl = null)
     {

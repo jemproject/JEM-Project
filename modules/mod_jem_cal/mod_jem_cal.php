@@ -57,9 +57,6 @@ if($Itemid ==0){
     $Itemid = $app->getMenu()->getActive()->id;
 }
 
-# AJAX requires at least J! 3.2.7 (because we use com_ajax)
-// $use_ajax: JVERSION always >= 3.2.7 on J6
-
 # Get switch trigger
 $req_modid = $app->input->getInt('modjemcal_id');
 if ((int)$module->id === $req_modid) {

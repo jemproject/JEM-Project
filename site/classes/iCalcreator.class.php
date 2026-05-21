@@ -1835,7 +1835,7 @@ class vcalendar {
     $filename = $this->getConfig( 'filename' );
     $output   = $this->createCalendar();
     if( $utf8Encode )
-      $output = utf8_encode( $output );
+      $output = mb_convert_encoding( $output, 'UTF-8', 'ISO-8859-1' );
     if( $gzip ) {
       $output = gzencode( $output, 9 );
       header( 'Content-Encoding: gzip' );

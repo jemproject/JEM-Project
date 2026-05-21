@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 
 
 /**
@@ -21,9 +20,9 @@ use Joomla\CMS\Uri\Uri;
 
 class JemViewEvents extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     public function display($tpl = null)
     {
@@ -32,8 +31,6 @@ class JemViewEvents extends JemAdminView
         $user             = JemFactory::getUser();
         $settings         = JemHelper::globalattribs();
         $jemsettings     = JemAdmin::config();
-        $uri            = Uri::getInstance();
-        $url             = $uri->root();
 
         // Initialise variables.
         $this->items        = $this->get('Items');
@@ -58,10 +55,10 @@ class JemViewEvents extends JemAdminView
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Load Scripts
-        $this->document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+        $wa->useScript('jquery');
 
         if ($highlighter) {
-            $this->document->addScript($url.'media/com_jem/js/highlighter.js');
+            $wa->registerScript('jem.highlighter', 'com_jem/highlighter.js')->useScript('jem.highlighter');
             $style = '
                 .red, .red a {
                 color:red;}

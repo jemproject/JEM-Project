@@ -13,6 +13,7 @@ final class DirectSuperglobalsTest extends TestCase
         'modules/mod_jem_wide/tmpl/default_jem_eventslist.php:$_SERVER',
         'modules/mod_jem_wide/tmpl/default_jem_eventslist_small.php:$_SERVER',
         'plugins/plg_content_jemembed/jemembed.php:$_SERVER',
+        'site/classes/icalcreator/Traits/PRODIDtrait.php:$_SERVER',
         'site/classes/iCalcreator.class.php:$_SERVER',
         'site/common/views/tmpl/responsive/default_jem_eventslist.php:$_SERVER',
         'site/common/views/tmpl/responsive/default_jem_eventslist_small.php:$_SERVER',

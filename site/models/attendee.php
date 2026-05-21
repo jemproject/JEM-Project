@@ -21,6 +21,8 @@ use Joomla\CMS\Language\Text;
  */
 class JemModelAttendee extends BaseDatabaseModel
 {
+    protected $regname = 1;
+
     /**
      * Attendee id
      *
@@ -151,7 +153,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
         // bind it to the table
         if (!$row->bind($data)) {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+            Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
             return false;
         }
 
@@ -178,7 +180,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 if ($details->booked >= $details->maxplaces)
                 {
                     if (!$details->waitinglist) {
-                        \Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
+                        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
                         return false;
                     }
                     $row->waiting = 1;

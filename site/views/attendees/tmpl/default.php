@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
@@ -150,7 +151,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         </td>
                         <td class="center"><?php echo (int) $row->places; ?></td>
                         <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-                        <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+                        <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
                         <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?></td>
                         <?php endif;?>
                         <td class="center">

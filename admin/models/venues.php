@@ -21,7 +21,7 @@ class JemModelVenues extends ListModel
      * Constructor.
      *
      * @param  array An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array())
     {

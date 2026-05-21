@@ -112,9 +112,30 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     private function ensureSampleDataSchema()
     {
+        $this->ensureTypeAssignmentSchema();
         $this->ensureTypesSchema();
         $this->ensureAttachmentsSchema();
         $this->ensureLinksSchema();
+    }
+
+    /**
+     * @return void
+     */
+    private function ensureTypeAssignmentSchema()
+    {
+        $definitions = array(
+            '#__jem_events' => "`type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ticket_availability`",
+            '#__jem_venues' => "`type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`",
+            '#__jem_categories' => "`type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `modified_user_id`",
+        );
+
+        foreach ($definitions as $table => $definition) {
+            $columns = $this->getTableColumns($table);
+
+            if (!empty($columns) && !isset($columns['type_id'])) {
+                $this->executeSchemaQuery("ALTER TABLE `" . $table . "` ADD COLUMN " . $definition);
+            }
+        }
     }
 
     /**

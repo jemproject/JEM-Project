@@ -8,7 +8,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
 ?>
 
 <div id="jem" class="jem_typeevents<?php echo $this->pageclass_sfx; ?>">

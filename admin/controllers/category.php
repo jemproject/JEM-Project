@@ -29,7 +29,7 @@ class JemControllerCategory extends FormController
      *
      * @param  array  $config  An optional associative array of configuration settings.
      *
-     * @see    JController
+     * @see    FormController
      */
     public function __construct($config = array()) {
         parent::__construct($config);

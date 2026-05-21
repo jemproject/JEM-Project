@@ -14,7 +14,9 @@ use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Registry\Registry;
-
+use Joomla\String\StringHelper;
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component JEM Model
  *
@@ -56,7 +58,7 @@ class JemModelMyevents extends BaseDatabaseModel
 
         //get the number of events from database
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myevents.limitstart', 0);
         }
@@ -146,7 +148,7 @@ class JemModelMyevents extends BaseDatabaseModel
         $userid = (int) $user->get('id');
 
         if (is_array($cid) && count($cid)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            ArrayHelper::toInteger($cid);
             $cid = array_filter(array_unique($cid));
 
             if (empty($cid) || ($publish < -2) || ($publish > 2)) {
@@ -311,7 +313,7 @@ class JemModelMyevents extends BaseDatabaseModel
 
         $filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', 0, 'int');
         $search   = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
-        $search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search   = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
         // First thing we need to do is to select only needed events
@@ -332,7 +334,7 @@ class JemModelMyevents extends BaseDatabaseModel
 
         if ($excluded_cats != '') {
             $cats_excluded = explode(',', $excluded_cats);
-            \Joomla\Utilities\ArrayHelper::toInteger($cats_excluded);
+            ArrayHelper::toInteger($cats_excluded);
             $where[] = '  c.id NOT IN (' . implode(',', $cats_excluded) . ')';
         }
         // === END Excluded categories add === //

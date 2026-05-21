@@ -24,9 +24,9 @@ use Joomla\CMS\Filter\OutputFilter;
  */
 class JemViewGroup extends JemAdminView
 {
-    protected $form;
-    protected $item;
-    protected $state;
+    public $form;
+    public $item;
+    public $state;
 
     public function display($tpl = null)
     {

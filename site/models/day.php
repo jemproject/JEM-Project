@@ -168,7 +168,7 @@ class JemModelDay extends JemModelEventslist
 
         # limit/start
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.day.'.$itemid.'.limitstart', 0);
         }

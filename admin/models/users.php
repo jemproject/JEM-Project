@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component users Model
@@ -171,7 +172,7 @@ class JemModelUsers extends BaseDatabaseModel
         $app = Factory::getApplication();
 
         $search = $app->getUserStateFromRequest( 'com_jem.users.search', 'search', '', 'string' );
-        $search = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );
+        $search = $this->_db->escape( trim(StringHelper::strtolower( $search ) ) );
 
         $where = array();
 

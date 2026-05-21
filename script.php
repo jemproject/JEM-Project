@@ -11,12 +11,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Installer\InstallerScript;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Version;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -233,12 +230,8 @@ class com_jemInstallerScript
     {
         $app = Factory::getApplication();
         
-        // Verify that we are in Joomla 6
-        $jversion = new Version();
-        $current_version = Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION;
-        $devLevel = Version::PATCH_VERSION;
-         
-        if (Version::MAJOR_VERSION < 6) {
+        // Verify that we are in Joomla 6.
+        if (Version::MAJOR_VERSION !== 6) {
             $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', '6.0', JVERSION), 'error');
             return false;
         }
@@ -258,23 +251,32 @@ class com_jemInstallerScript
         if (strtolower($type) == 'update') {
             // Installed component version
             $this->oldRelease = $this->getParam('version');
+
+            $minUpgradeVersion = '4.5.0';
+
+            if ($this->oldRelease !== '' && version_compare($this->oldRelease, $minUpgradeVersion, 'lt')) {
+                $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION', $minUpgradeVersion, $this->oldRelease), 'error');
+                return false;
+            }
             
-            if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
+            if ($this->oldRelease !== '' && version_compare($this->newRelease, $this->oldRelease, 'lt')) {
                 $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'error');
                 return false;
             }
 
-            // Check and remove obsolete files and folder
-            $this->deleteObsoleteFiles();
+            if ($this->oldRelease !== '') {
+                // Check and remove obsolete files and folder
+                $this->deleteObsoleteFiles();
 
-            // Check columns in database
-            $this->checkColumnsIntoDatabase();
+                // Check columns in database
+                $this->checkColumnsIntoDatabase();
 
-            // Ensure css files are (over)writable
-            $this->makeFilesWritable();
+                // Ensure css files are (over)writable
+                $this->makeFilesWritable();
 
-            // Initialize schema table if necessary
-            $this->initializeSchema($this->oldRelease);
+                // Initialize schema table if necessary
+                $this->initializeSchema($this->oldRelease);
+            }
         }
 
         // $type is the type of change (install, update or discover_install)
@@ -355,7 +357,7 @@ class com_jemInstallerScript
     /**
      * Gets globalattrib values from the settings table
      *
-     * @return JRegistry object
+     * @return Registry
      */
     private function getGlobalParams()
     {
@@ -423,7 +425,7 @@ class com_jemInstallerScript
     private function getHeader()
     {
         ?>
-        <img src="../media/com_jem/images/jemlogo.svg" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;height: 160px;width: 396px;background-color:#fff;border-radius: 8px;" />
+        <img src="../media/com_jem/images/jemlogo.svg" alt="JEM - Joomla Event Manager" style="float:left;margin-right:24px;margin-bottom:16px;height:160px;width:396px;background-color:#fff;border-radius:8px;" />
         <h1><?php echo Text::_('COM_JEM'); ?></h1>
         <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
         <?php
@@ -572,28 +574,6 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/1.9.6.sql',
             '/administrator/components/com_jem/sql/updates/1.9.7.sql',
             '/administrator/components/com_jem/sql/updates/1.9.8.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.0.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.1.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.3.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.0.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.1.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.3.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.5.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.7-dev1.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.7-dev5.sql',
-            '/administrator/components/com_jem/sql/updates/2.2.0-p1.sql',
-            '/administrator/components/com_jem/sql/updates/2.2.1-dev2.sql',
-            '/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
-            '/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
-            '/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
-            '/administrator/components/com_jem/sql/updates/2.3.1.sql',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',

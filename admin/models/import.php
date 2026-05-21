@@ -823,7 +823,6 @@ class JemModelImport extends BaseDatabaseModel
      *
      * @param  string $tablename The name of the table
      * @param  array  $data      The data to work with
-     * @param  int    $j15       Import from Joomla! 1.5
      * @return array  The changed data
      *
      * @Todo   potentially dangerous references to "foreign" objects:
@@ -831,7 +830,7 @@ class JemModelImport extends BaseDatabaseModel
      *         contact id: contact for events
      *         access id: view access level for events, categories
      */
-    public function transformEventlistData($tablename, &$data, $j15)
+    public function transformEventlistData($tablename, &$data)
     {
         // attachments - MUST be transformed after potential objects are stored!
         if (strcasecmp($tablename, 'attachments') === 0) {
@@ -841,13 +840,6 @@ class JemModelImport extends BaseDatabaseModel
             $valid_user_ids     = $this->_getUserIds();
 
             foreach ($data as $row) {
-                // Set view access level to e.g. event's view level or default view level
-                if (isset($row->access) && $j15) {
-                    // on Joomla! 1.5 levels are 0 (public), 1 (registered), 2 (special)
-                    // now we have (normally) 1 (public), 2 (registered), 3 (special), ...
-                    // (hopefully admin hadn't changed this default levels, but we have no other chance)
-                    ++$row->access;
-                }
                 if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
                     $row->access = $this->_getObjectViewLevel($row->object, $default_view_level);
                 }
@@ -976,7 +968,7 @@ class JemModelImport extends BaseDatabaseModel
                     } else {
                         // no catsid field, so we should have cats_event_relations table
                         // try to find unique level
-                        $row->access = $this->_getEventViewLevelFromCats($row->id, $default_view_level, $j15);
+                        $row->access = $this->_getEventViewLevelFromCats($row->id, $default_view_level);
                         if (!in_array($row->access, $valid_view_levels)) {
                             $row->access = $default_view_level;
                         }
@@ -1263,12 +1255,9 @@ class JemModelImport extends BaseDatabaseModel
      *
      * @param  int     $eventId      ID of the event
      * @param  int     $defaultLevel Level returned if no one found
-     * @param  boolean $j15          Do we need to increment found level?
-     *                               On Joomla! 1.5 levels have IDs 0, 1, 2 - we need 1, 2, 3, ...
-     *
      * @return int     The view level found or $defaultLevel.
      */
-    protected function _getEventViewLevelFromCats($eventId, $defaultLevel, $j15 = false)
+    protected function _getEventViewLevelFromCats($eventId, $defaultLevel)
     {
         $ret = $defaultLevel;
 
@@ -1284,7 +1273,7 @@ class JemModelImport extends BaseDatabaseModel
         if (is_array($result)) {
             $result = array_unique($result);
             if (count($result) == 1) {
-                $ret = array_pop($result) + ($j15 ? 1 : 0);
+                $ret = array_pop($result);
             }
         }
 

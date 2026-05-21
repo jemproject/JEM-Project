@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Component\Router\RouterBase;
 use Joomla\CMS\Application\CMSApplication;
 
 use Joomla\CMS\Component\Router\RouterView;

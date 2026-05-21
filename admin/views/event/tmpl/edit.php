@@ -10,11 +10,9 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Date\Date;
 use Joomla\CMS\Uri\Uri;
 
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');

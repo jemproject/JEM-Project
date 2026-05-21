@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
@@ -21,7 +20,7 @@ use Joomla\CMS\Factory;
  */
 class JemViewUpdatecheck extends JemAdminView
 {
-    protected $app;
+    public $app;
 
     public function __construct($config = [])
     {

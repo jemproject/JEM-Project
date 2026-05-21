@@ -13,7 +13,9 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
-
+use Joomla\String\StringHelper;
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Venue Table
  */
@@ -120,32 +122,32 @@ class JemTableVenue extends Table
         }
 
         $this->street = strip_tags($this->street);
-        $streetlength = \Joomla\String\StringHelper::strlen($this->street);
+        $streetlength = StringHelper::strlen($this->street);
         if ($streetlength > 50) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_STREET'));
             return false;
         }
 
         $this->postalCode = strip_tags($this->postalCode);
-        if (\Joomla\String\StringHelper::strlen($this->postalCode) > 10) {
+        if (StringHelper::strlen($this->postalCode) > 10) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_POSTALCODE'));
             return false;
         }
 
         $this->city = strip_tags($this->city);
-        if (\Joomla\String\StringHelper::strlen($this->city) > 50) {
+        if (StringHelper::strlen($this->city) > 50) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_CITY'));
             return false;
         }
 
         $this->state = strip_tags($this->state);
-        if (\Joomla\String\StringHelper::strlen($this->state) > 50) {
+        if (StringHelper::strlen($this->state) > 50) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_STATE'));
             return false;
         }
 
         $this->country = strip_tags($this->country);
-        if (\Joomla\String\StringHelper::strlen($this->country) > 2) {
+        if (StringHelper::strlen($this->country) > 2) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_COUNTRY'));
             return false;
         }
@@ -334,7 +336,7 @@ class JemTableVenue extends Table
         $k = $this->_tbl_key;
 
         // Sanitize input.
-        \Joomla\Utilities\ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
         $userId = (int) $userId;
         $state = (int) $state;
 

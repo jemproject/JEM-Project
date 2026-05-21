@@ -12,8 +12,9 @@ use Joomla\CMS\Button\FeaturedButton;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Button\PublishedButton;
+use Joomla\String\StringHelper;
+use Joomla\Registry\Registry;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $user        = JemFactory::getUser();
@@ -23,7 +24,7 @@ $listDirn    = $this->escape($this->state->get('list.direction'));
 $canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder    = $listOrder=='a.ordering';
 
-$params        = (isset($this->state->params)) ? $this->state->params : new CMSObject();
+$params        = (isset($this->state->params)) ? $this->state->params : new Registry();
 $settings    = $this->settings;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns');
@@ -185,8 +186,8 @@ $ticketAvailabilityOptions = array(
                                 <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
                             <?php endif; ?>
                             <br>
-                            <?php if (\Joomla\String\StringHelper::strlen($row->alias) > 25) : ?>
-                                <?php echo \Joomla\String\StringHelper::substr( $this->escape($row->alias), 0 , 25).'...'; ?>
+                            <?php if (StringHelper::strlen($row->alias) > 25) : ?>
+                                <?php echo StringHelper::substr( $this->escape($row->alias), 0 , 25).'...'; ?>
                             <?php else : ?>
                                 <?php echo $this->escape($row->alias); ?>
                             <?php endif; ?>

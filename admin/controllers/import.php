@@ -255,11 +255,7 @@ class JemControllerImport extends BaseController
         $model = $this->getModel('import');
         $size = 5000;
 
-        // Handling the different names for all classes and db table names (possibly substrings)
-        // EL 1.0.2 doesn't have tables attachments and cats_event_descriptions
-        // EL 1.1 has both tables but events doesn't contain field catsid
-        // also the recurrence fields are different
-        // And EL 1.1 runs on J! 1.5 only - which has different access level ids (fixed (0, 1, 2) instead of (1, 2, 3, ...))
+        // Handling the different names for all classes and db table names (possibly substrings).
         $tables = new stdClass();
         // Note: 'attachments' MUST be last entry!
         $tables->eltables  = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues", "attachments");
@@ -274,8 +270,6 @@ class JemControllerImport extends BaseController
         $prefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
         $copyImages = $app->getUserStateFromRequest('com_jem.import.elimport.copyImages', 'copyImages', 0, 'int');
         $copyAttachments = $app->getUserStateFromRequest('com_jem.import.elimport.copyAttachments', 'copyAttachments', 0, 'int');
-        $fromJ15 = $app->getUserStateFromRequest('com_jem.import.elimport.fromJ15', 'fromJ15', '0', 'int'); // import from Joomla! 1.5 site?
-
         $link = 'index.php?option=com_jem&view=import';
         $msg = Text::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
@@ -295,7 +289,6 @@ class JemControllerImport extends BaseController
         if ($step <= 1) {
             $app->setUserState('com_jem.import.elimport.copyImages', '0');
             $app->setUserState('com_jem.import.elimport.copyAttachments', '0');
-            $app->setUserState('com_jem.import.elimport.fromJ15', '0');
 
             if ($step === 1) {
                 $attachments = $model->getEventlistTableCount("eventlist_attachments") !== null;
@@ -328,7 +321,7 @@ class JemControllerImport extends BaseController
                 // The real work is done here:
                 // Loading from EL tables, changing data, storing in JEM tables
                 $data = $model->getEventlistData("eventlist_".$tables->eltables[$table], $current, $size);
-                $data = $model->transformEventlistData($tables->jemtables[$table], $data, $fromJ15);
+                $data = $model->transformEventlistData($tables->jemtables[$table], $data);
                 $model->storeJemData("jem_".$tables->jemtables[$table], $data);
             }
 
@@ -393,7 +386,6 @@ class JemControllerImport extends BaseController
             $app->setUserState('com_jem.import.elimport.prefix', null);
             $app->setUserState('com_jem.import.elimport.copyImages', null);
             $app->setUserState('com_jem.import.elimport.copyAttachments', null);
-            $app->setUserState('com_jem.import.elimport.fromJ15', null);
             $app->setUserState('com_jem.import.elimport.attachmentsPossible', null);
 
             // perform forced cleanup (archive, delete, recurrence)

@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\String\StringHelper;
 
 /**
  * JEM events Model class
@@ -164,7 +165,7 @@ class jem_events extends Table
         }
 
         $this->title = strip_tags(trim($this->title));
-        $titlelength = \Joomla\String\StringHelper::strlen($this->title);
+        $titlelength = StringHelper::strlen($this->title);
 
         if ($this->title == '') {
             $this->_error = Text::_('COM_JEM_ADD_TITLE');

@@ -41,6 +41,7 @@ use function filesize;
 use function filter_var;
 use function gzencode;
 use function header;
+use function mb_convert_encoding;
 use function sprintf;
 use function strcasecmp;
 use function strlen;
@@ -48,7 +49,6 @@ use function substr;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
-use function utf8_encode;
 
 /**
  * iCalcreator http support class
@@ -98,7 +98,7 @@ class HttpFactory
         }
         $output     = $calendar->createCalendar();
         if( $utf8Encode ?? false ) {
-            $output = utf8_encode( $output );
+            $output = mb_convert_encoding( $output, 'UTF-8', 'ISO-8859-1' );
         }
         $fsize = null;
         if( $gzip ?? false ) {
