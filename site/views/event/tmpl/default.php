@@ -389,7 +389,7 @@ if ($jemsettings->oldevent > 0) {
                 <dt class="createdby"><?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
                 <dd class="createdby">
                     <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
-                    <?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
+                    <?php if (JemHelper::isContactComponentEnabled() && !empty($this->item->contactid2) && $params->get('event_link_author') == true) :
                         $concatid = null;
 
                         if ($params->get('event_link_author')) {
@@ -696,7 +696,7 @@ if ($jemsettings->oldevent > 0) {
         $rawFields = $params->get('contact_fields', ['position', 'website', 'country']);
         $selectedFields = array_map('trim', is_string($rawFields) ? explode(',', $rawFields) : (array) $rawFields);
 
-        if ($params->get('event_show_contact') && !empty($this->contacts)) :
+        if (JemHelper::isContactComponentEnabled() && $params->get('event_show_contact') && !empty($this->contacts)) :
             $displayGroups = array();
             if ($showContactCategory) {
                 foreach ($this->contacts as $contact) {

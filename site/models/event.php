@@ -114,19 +114,23 @@ class JemModelEvent extends ItemModel
                 $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
                 $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
-                # Get contact id
-                $subQuery = $db->getQuery(true);
-                $subQuery->select('MAX(contact.id) AS id');
-                $subQuery->from('#__contact_details AS contact');
-                $subQuery->where('contact.published = 1');
-                $subQuery->where('contact.user_id = a.created_by');
+                if (JemHelper::isContactComponentEnabled()) {
+                    # Get contact id
+                    $subQuery = $db->getQuery(true);
+                    $subQuery->select('MAX(contact.id) AS id');
+                    $subQuery->from('#__contact_details AS contact');
+                    $subQuery->where('contact.published = 1');
+                    $subQuery->where('contact.user_id = a.created_by');
 
-                # Filter contact by language
-                if ($this->getState('filter.language')) {
-                    $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                    # Filter contact by language
+                    if ($this->getState('filter.language')) {
+                        $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                    }
+
+                    $query->select('(' . $subQuery . ') as contactid2');
+                } else {
+                    $query->select('0 AS contactid2');
                 }
-
-                $query->select('(' . $subQuery . ') as contactid2');
 
                 $case_when_a  = ' CASE WHEN ';
                 $case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
@@ -320,6 +324,10 @@ class JemModelEvent extends ItemModel
      */
     public function getContacts($id = null)
     {
+        if (!JemHelper::isContactComponentEnabled()) {
+            return array();
+        }
+
         $id = (!empty($id)) ? (int) $id : (int) $this->getState('event.id');
 
         if (!$id){
@@ -405,8 +413,12 @@ class JemModelEvent extends ItemModel
             $query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
             # Contact
-            $query->select('con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail');
-            $query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
+            if (JemHelper::isContactComponentEnabled()) {
+                $query->select('con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail');
+                $query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
+            } else {
+                $query->select('0 AS conid, NULL AS conname, NULL AS contelephone, NULL AS conemail');
+            }
 
             # Venue
             $query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
@@ -427,16 +439,18 @@ class JemModelEvent extends ItemModel
             $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
             $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1 AND ' . $typeLanguageCondition);
 
-            # Get contact id
-            $subQuery = $db->getQuery(true);
-            $subQuery->select('MAX(contact.id) AS id');
-            $subQuery->from('#__contact_details AS contact');
-            $subQuery->where('contact.published = 1');
-            $subQuery->where('contact.user_id = a.created_by');
+            if (JemHelper::isContactComponentEnabled()) {
+                # Get contact id
+                $subQuery = $db->getQuery(true);
+                $subQuery->select('MAX(contact.id) AS id');
+                $subQuery->from('#__contact_details AS contact');
+                $subQuery->where('contact.published = 1');
+                $subQuery->where('contact.user_id = a.created_by');
 
-            # Filter contact by language
-            if ($this->getState('filter.language')) {
-                $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                # Filter contact by language
+                if ($this->getState('filter.language')) {
+                    $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                }
             }
 
             # If $iduser is defined, then the events list is filtered by registration of this user
@@ -448,7 +462,11 @@ class JemModelEvent extends ItemModel
             // Not include the delete event
             $query->where("a.published != -2");
 
-            $query->select('(' . $subQuery . ') as contactid2');
+            if (JemHelper::isContactComponentEnabled()) {
+                $query->select('(' . $subQuery . ') as contactid2');
+            } else {
+                $query->select('0 AS contactid2');
+            }
 
             $dateFrom = date('Y-m-d', $datetimeFrom);
             $timeFrom = date('H:i:s', $datetimeFrom);

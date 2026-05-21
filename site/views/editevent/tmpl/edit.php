@@ -224,7 +224,11 @@ $params        = $this->params;
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
-                    <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
+                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                        <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
+                    <?php else : ?>
+                        <input type="hidden" name="jform[contactid]" value="" />
+                    <?php endif; ?>
                     <li><?php echo $this->form->getLabel('event_status'); ?><?php echo $this->form->getInput('event_status'); ?></li>
                     <li><?php echo $this->form->getLabel('ticket_availability'); ?><?php echo $this->form->getInput('ticket_availability'); ?></li>
                     <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>

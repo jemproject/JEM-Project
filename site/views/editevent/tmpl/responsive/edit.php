@@ -239,8 +239,12 @@ $params        = $this->params;
                     } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
-                    <dd><?php echo $this->form->getInput('contactid'); ?></dd>
+                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                        <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
+                        <dd><?php echo $this->form->getInput('contactid'); ?></dd>
+                    <?php else : ?>
+                        <input type="hidden" name="jform[contactid]" value="" />
+                    <?php endif; ?>
                     <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
                     <dd><?php echo $this->form->getInput('event_status'); ?></dd>
                     <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>

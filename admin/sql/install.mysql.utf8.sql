@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `singlebooking` int(1) NOT NULL DEFAULT '0',
     `hits` int(11) unsigned NOT NULL DEFAULT '0',
     `published` tinyint(1) NOT NULL DEFAULT '0',
-    `contactid` varchar(100) NOT NULL DEFAULT '',
+    `contactid` varchar(100) DEFAULT NULL,
     `custom1` varchar(200) NOT NULL DEFAULT '',
     `custom2` varchar(200) NOT NULL DEFAULT '',
     `custom3` varchar(100) NOT NULL DEFAULT '',

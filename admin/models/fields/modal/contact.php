@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Contact select
@@ -31,6 +32,12 @@ class JFormFieldModal_Contact extends FormField
     protected function getInput()
     {
         $app = Factory::getApplication();
+        $currentValues = ComponentHelper::isEnabled('com_contact') ? ($this->value ? $this->value : '') : '';
+
+        if (!ComponentHelper::isEnabled('com_contact')) {
+            return '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="" />';
+        }
+
         $document = $app->getDocument();
         $wa = $document->getWebAssetManager();
         $modalId = 'modal_' . $this->id;
@@ -48,7 +55,6 @@ class JFormFieldModal_Contact extends FormField
 
         // Setup variables for display
         $html = array();
-        $currentValues = $this->value ? $this->value : '';
         $link = 'index.php?option=com_jem&view=contactelement&tmpl=component'
             . '&function=jSelectContact_' . $this->id
             . '&selection=' . $currentValues;

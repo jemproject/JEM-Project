@@ -230,7 +230,11 @@ $params = $params->toArray();
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
+                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
+                    <?php else : ?>
+                        <input type="hidden" name="jform[contactid]" value="" />
+                    <?php endif; ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>

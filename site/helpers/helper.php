@@ -53,6 +53,16 @@ class JemHelper
     }
 
     /**
+     * Returns true when Joomla's core Contacts component is available.
+     *
+     * @return boolean
+     */
+    static public function isContactComponentEnabled()
+    {
+        return ComponentHelper::isEnabled('com_contact');
+    }
+
+    /**
      * Pulls settings from database and stores in an static object
      *
      * @return object

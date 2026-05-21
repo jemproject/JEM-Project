@@ -100,7 +100,7 @@ use Joomla\CMS\Factory;
         //Contact
         $contact = '';
 
-        if ($row->contactid) {
+        if (JemHelper::isContactComponentEnabled() && $row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $ids = array_map('intval', explode(',', $row->contactid));
 

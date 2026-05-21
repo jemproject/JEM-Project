@@ -376,6 +376,10 @@ class JemModelEditevent extends JemModelEvent
      */
     public function getContacts()
     {
+        if (!JemHelper::isContactComponentEnabled()) {
+            return array();
+        }
+
         $query      = $this->buildQueryContacts();
         $pagination = $this->getContactsPagination();
 
@@ -395,6 +399,10 @@ class JemModelEditevent extends JemModelEvent
         $limitstart  = $app->input->getInt('limitstart', 0);
         // correct start value if required
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+
+        if (!JemHelper::isContactComponentEnabled()) {
+            return new Pagination(0, $limitstart, $limit);
+        }
 
         $query = $this->buildQueryContacts();
         $total = $this->_getListCount($query);
