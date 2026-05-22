@@ -7,7 +7,7 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>5.0.0-beta1</version>
+        <version>5.0.0beta1</version>
         <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem-5</infourl>
         <downloads>
             <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-0-stable</downloadurl>
@@ -23,7 +23,8 @@
         <sha384>d265c0623ac5b65feaeec719dc90c199a27126dcd6ac4bbb24596050e0db5b01480e1d179a0b86d6c6a2f5bfa5cf75f9</sha384>
         <sha512>06a3706d770eec98c41f68e81a8fc8d7ba27cba055e5a7d3fa2374aa4cd32f1c704af1a6197261736fb49ac43b576c3826be2db1bd51eb4e1b68b4170b74ae78</sha512>
         <date>2026-05-21</date>
-        <notes>JEM 5.0.0 for Joomla! 6.x only. Requires PHP 8.3 or newer.</notes>
-        <changes>JEM 5.0.0 focuses on Joomla 6 compatibility. Please refer to the changelog for details.</changes>
+        <notes>JEM 5.0.0 beta 1 for Joomla! 6.x only. Requires PHP 8.3 or newer.</notes>
+        <changes>JEM 5.0.0 beta 1 focuses on Joomla 6 compatibility. Please refer to the changelog for details.</changes>
     </update>
 </updates>
+

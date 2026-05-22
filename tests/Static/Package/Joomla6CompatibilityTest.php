@@ -23,7 +23,7 @@ final class Joomla6CompatibilityTest extends TestCase
         $current = null;
 
         foreach ($updates->update as $update) {
-            if ((string) $update->version === '5.0.0-beta1') {
+            if ((string) $update->version === '5.0.0beta1') {
                 $current = $update;
                 break;
             }
@@ -57,6 +57,41 @@ final class Joomla6CompatibilityTest extends TestCase
         }
 
         self::assertSame(array(), $wrong, "Joomla 6 package manifests should use JEM 5.x versions:\n" . implode("\n", $wrong));
+    }
+
+    public function testReleaseManifestsUseCurrentJemVersion(): void
+    {
+        $expectedVersion = '5.0.0beta1';
+        $manifestPaths = array_merge(
+            array(JEM_TEST_ROOT . '/jem.xml', JEM_TEST_ROOT . '/package/pkg_jem.xml'),
+            glob(JEM_TEST_ROOT . '/modules/*/*.xml') ?: array(),
+            glob(JEM_TEST_ROOT . '/plugins/*/*.xml') ?: array()
+        );
+
+        $wrong = array();
+
+        foreach ($manifestPaths as $path) {
+            $manifest = simplexml_load_file($path);
+
+            if ($manifest === false || (string) $manifest->version === '') {
+                continue;
+            }
+
+            if ((string) $manifest->version !== $expectedVersion) {
+                $wrong[] = $this->relativePath($path) . ':' . (string) $manifest->version;
+            }
+        }
+
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
+        self::assertNotFalse($updates);
+
+        foreach ($updates->update as $update) {
+            if ((string) $update->element === 'pkg_jem' && (string) $update->version !== $expectedVersion) {
+                $wrong[] = 'update_pkg_jem.xml:' . (string) $update->version;
+            }
+        }
+
+        self::assertSame(array(), $wrong, "JEM release manifests should use $expectedVersion:\n" . implode("\n", $wrong));
     }
 
     public function testInstallerScriptsGuardJoomla6Runtime(): void
@@ -128,3 +163,4 @@ final class Joomla6CompatibilityTest extends TestCase
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
     }
 }
+

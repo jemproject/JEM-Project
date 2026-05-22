@@ -21,3 +21,4 @@ https://www.joomlaeventmanager.net/project/changelog-jem-4
 ## Errors
 Please report errors here: [https://github.com/jemproject/JEM-Project/issues](https://github.com/jemproject/JEM-Project/issues).
 
+
