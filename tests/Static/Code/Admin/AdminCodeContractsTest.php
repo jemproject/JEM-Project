@@ -121,6 +121,53 @@ final class AdminCodeContractsTest extends TestCase
         );
     }
 
+    public function testDeletePathsForCategoriesVenuesAndTypesAvoidLegacyInputFilterNamespace(): void
+    {
+        foreach (array(
+            'admin/controllers/categories.php',
+            'admin/models/category.php',
+            'admin/tables/category.php',
+            'admin/controllers/venues.php',
+            'admin/models/venue.php',
+            'admin/tables/venue.php',
+            'admin/controllers/types.php',
+            'admin/models/type.php',
+            'admin/tables/jem_types.php',
+        ) as $relativePath) {
+            $code = self::read(JEM_TEST_ROOT . '/' . $relativePath);
+
+            self::assertStringNotContainsString(
+                'use Joomla\Filter\InputFilter;',
+                $code,
+                $relativePath . ' must not use the Joomla 6-incompatible InputFilter namespace.'
+            );
+            self::assertStringNotContainsString(
+                'Joomla\Filter\InputFilter::getInstance',
+                $code,
+                $relativePath . ' must not call the Joomla 6-incompatible InputFilter factory.'
+            );
+        }
+    }
+
+    public function testEventsToolbarShowsStateActionsForComponentAdministrators(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/views/events/view.html.php');
+
+        self::assertStringContainsString("\$canChangeState = \$canDo->get('core.edit.state') || \$canDo->get('core.admin');", $code);
+        self::assertMatchesRegularExpression(
+            "/if\s*\(\s*\\\$canChangeState\s*\)\s*\{[^}]*ToolBarHelper::publishList\('events\.publish'/s",
+            $code
+        );
+        self::assertMatchesRegularExpression(
+            "/if\s*\(\s*\\\$canChangeState\s*\)\s*\{[^}]*ToolBarHelper::checkin\('events\.checkin'\)/s",
+            $code
+        );
+        self::assertMatchesRegularExpression(
+            "/elseif\s*\(\s*\\\$canChangeState\s*\)\s*\{[^}]*ToolBarHelper::trash\('events\.trash'\)/s",
+            $code
+        );
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

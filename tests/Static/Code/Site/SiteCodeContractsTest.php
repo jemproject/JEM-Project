@@ -138,6 +138,14 @@ final class SiteCodeContractsTest extends TestCase
         self::assertStringContainsString("JemImage::flyercreator((string) \$category->image,'category')", $code);
     }
 
+    public function testAttachmentClassUsesCmsInputFilterFactory(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/attachment.class.php');
+
+        self::assertStringContainsString('use Joomla\CMS\Filter\InputFilter;', $code);
+        self::assertStringNotContainsString('use Joomla\Filter\InputFilter;', $code);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

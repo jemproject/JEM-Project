@@ -99,6 +99,7 @@ class JemViewEvents extends JemAdminView
 
         /* retrieving the allowed actions for the user */
         $canDo = JemHelperBackend::getActions(0);
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -112,7 +113,7 @@ class JemViewEvents extends JemAdminView
         }
 
         /* state */
-        if ($canDo->get('core.edit.state')) {
+        if ($canChangeState) {
             if ($this->state->get('filter_state') != 2) {
                 ToolBarHelper::publishList('events.publish', 'JTOOLBAR_PUBLISH', true);
                 ToolBarHelper::unpublishList('events.unpublish', 'JTOOLBAR_UNPUBLISH', true);
@@ -129,13 +130,13 @@ class JemViewEvents extends JemAdminView
             }
         }
 
-        if ($canDo->get('core.edit.state')) {
+        if ($canChangeState) {
             ToolBarHelper::checkin('events.checkin');
         }
 
         if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete')) {
             ToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
-        } elseif ($canDo->get('core.edit.state')) {
+        } elseif ($canChangeState) {
             ToolBarHelper::trash('events.trash');
         }
 

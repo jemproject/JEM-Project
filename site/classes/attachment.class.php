@@ -14,7 +14,7 @@ use Joomla\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\Path;
-use Joomla\Filter\InputFilter;
+use Joomla\CMS\Filter\InputFilter;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
