@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 
@@ -96,10 +97,13 @@ class JemViewEvents extends JemAdminView
     protected function addToolbar()
     {
         ToolBarHelper::title(Text::_('COM_JEM_EVENTS'), 'events');
+        $toolbar = Toolbar::getInstance('toolbar');
 
         /* retrieving the allowed actions for the user */
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete = $canDo->get('core.delete');
+        $showActionDropdown = $canChangeState || ($this->state->get('filter_state') == -2 && $canDelete);
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -113,31 +117,42 @@ class JemViewEvents extends JemAdminView
         }
 
         /* state */
-        if ($canChangeState) {
-            if ($this->state->get('filter_state') != 2) {
-                ToolBarHelper::publishList('events.publish', 'JTOOLBAR_PUBLISH', true);
-                ToolBarHelper::unpublishList('events.unpublish', 'JTOOLBAR_UNPUBLISH', true);
-                ToolBarHelper::custom('events.featured', 'featured.webp', 'featured_f2.webp', 'JFEATURED', true);
+        if ($showActionDropdown) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
+
+            if ($canChangeState && $this->state->get('filter_state') != 2) {
+                $childBar->publish('events.publish')->listCheck(true);
+                $childBar->unpublish('events.unpublish')->listCheck(true);
+                $childBar->standardButton('featured', 'JFEATURED', 'events.featured')
+                    ->icon('icon-featured')
+                    ->listCheck(true);
             }
 
-            if ($this->state->get('filter_state') != -1) {
-                ToolBarHelper::divider();
+            if ($canChangeState && $this->state->get('filter_state') != -1) {
                 if ($this->state->get('filter_state') != 2) {
-                    ToolBarHelper::archiveList('events.archive');
+                    $childBar->archive('events.archive')->listCheck(true);
                 } elseif ($this->state->get('filter_state') == 2) {
-                    ToolBarHelper::unarchiveList('events.publish');
+                    $childBar->publish('events.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
                 }
             }
-        }
 
-        if ($canChangeState) {
-            ToolBarHelper::checkin('events.checkin');
-        }
+            if ($canChangeState) {
+                $childBar->checkin('events.checkin')->listCheck(true);
+            }
 
-        if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete')) {
-            ToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
-        } elseif ($canChangeState) {
-            ToolBarHelper::trash('events.trash');
+            if ($this->state->get('filter_state') == -2 && $canDelete) {
+                $childBar->delete('events.delete', 'JTOOLBAR_EMPTY_TRASH')
+                    ->message('COM_JEM_CONFIRM_DELETE')
+                    ->listCheck(true);
+            } elseif ($canChangeState) {
+                $childBar->trash('events.trash')->listCheck(true);
+            }
         }
 
         ToolBarHelper::divider();

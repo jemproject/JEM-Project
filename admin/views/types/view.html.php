@@ -9,6 +9,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class JemViewTypes extends JemAdminView
@@ -40,8 +41,11 @@ class JemViewTypes extends JemAdminView
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_TYPES'), 'tag');
+        $toolbar = Toolbar::getInstance('toolbar');
 
         $canDo = JemHelperBackend::getActions(0);
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete = $canDo->get('core.delete');
 
         if ($canDo->get('core.create')) {
             ToolbarHelper::addNew('type.add');
@@ -50,14 +54,26 @@ class JemViewTypes extends JemAdminView
             ToolbarHelper::editList('type.edit');
             ToolbarHelper::divider();
         }
-        if ($canDo->get('core.edit.state')) {
-            ToolbarHelper::publishList('types.publish');
-            ToolbarHelper::unpublishList('types.unpublish');
-            ToolbarHelper::divider();
-            ToolbarHelper::checkin('types.checkin');
-        }
-        if ($canDo->get('core.delete')) {
-            ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'types.remove', 'JACTION_DELETE');
+        if ($canChangeState || $canDelete) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
+
+            if ($canChangeState) {
+                $childBar->publish('types.publish')->listCheck(true);
+                $childBar->unpublish('types.unpublish')->listCheck(true);
+                $childBar->checkin('types.checkin')->listCheck(true);
+            }
+
+            if ($canDelete) {
+                $childBar->delete('types.remove', 'JACTION_DELETE')
+                    ->message('COM_JEM_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
         }
 
         ToolbarHelper::divider();

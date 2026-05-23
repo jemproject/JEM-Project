@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
@@ -88,8 +89,11 @@ use Joomla\CMS\Factory;
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_VENUES'), 'venues');
+        $toolbar = Toolbar::getInstance('toolbar');
 
         $canDo = JemHelperBackend::getActions(0);
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete = $canDo->get('core.delete');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -103,21 +107,30 @@ use Joomla\CMS\Factory;
         }
 
         /* state */
-        if ($canDo->get('core.edit.state')) {
-            if ($this->state->get('filter.state') != 2) {
-                ToolbarHelper::publishList('venues.publish');
-                ToolbarHelper::unpublishList('venues.unpublish');
-                ToolbarHelper::divider();
+        if ($canChangeState || $canDelete) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
+
+            if ($canChangeState && $this->state->get('filter.state') != 2) {
+                $childBar->publish('venues.publish')->listCheck(true);
+                $childBar->unpublish('venues.unpublish')->listCheck(true);
             }
-        }
 
-        if ($canDo->get('core.edit.state')) {
-            ToolbarHelper::checkin('venues.checkin');
-        }
+            if ($canChangeState) {
+                $childBar->checkin('venues.checkin')->listCheck(true);
+            }
 
-        /* delete-trash */
-        if ($canDo->get('core.delete')) {
-            ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
+            /* delete-trash */
+            if ($canDelete) {
+                $childBar->delete('venues.remove', 'JACTION_DELETE')
+                    ->message('COM_JEM_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
         }
 
         ToolbarHelper::divider();
