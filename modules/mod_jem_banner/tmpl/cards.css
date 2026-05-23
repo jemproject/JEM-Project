@@ -198,7 +198,6 @@
 .jemmodulebanner .btn {
     flex: 1;
     padding: 0.7rem;
-    border: none;
     border-radius: 6px;
     font-weight: 500;
     cursor: pointer;
@@ -208,26 +207,6 @@
     justify-content: center;
     gap: 0.4rem;
     font-size: 0.85rem;
-}
-
-.jemmodulebanner .btn-primary {
-    background-color: var(--joomla-primary-color, #007bff);
-    border-color: var(--joomla-primary-color, #007bff);
-    color: var(--joomla-primary-color-contrast, #ffffff);
-}
-
-.jemmodulebanner .btn-primary:hover {
-    background: #3a56c4;
-    opacity: 0.85;
-}
-
-.jemmodulebanner .btn-secondary {
-    background: #edf2f7;
-    color: var(--dark);
-}
-
-.jemmodulebanner .btn-secondary:hover {
-    background: #e2e8f0;
 }
 
 .jemmodulebanner .jem-no-events {

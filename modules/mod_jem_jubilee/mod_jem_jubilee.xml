@@ -41,6 +41,7 @@
                        default="2"
                        label="MOD_JEM_JUBILEE_PUBLISHING_STATE"
                        description="MOD_JEM_JUBILEE_PUBLISHING_STATE_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="1">MOD_JEM_JUBILEE_PUBLISHED_EVENTS</option>
                     <option value="2">MOD_JEM_JUBILEE_ARCHIVED_EVENTS</option>
@@ -50,6 +51,7 @@
                        default="5"
                        label="MOD_JEM_JUBILEE_EVENTS_IN_MODULE"
                        description="MOD_JEM_JUBILEE_EVENTS_IN_MODULE_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="show_no_events" type="radio"
                        default="0"
@@ -64,11 +66,13 @@
                        default=""
                        label="MOD_JEM_JUBILEE_OFFSET_DAYS"
                        description="MOD_JEM_JUBILEE_OFFSET_DAYS_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="date_match_mode" type="list"
                        default="0"
                        label="MOD_JEM_JUBILEE_DATE_MATCH_MODE"
                        description="MOD_JEM_JUBILEE_DATE_MATCH_MODE_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_JUBILEE_DATE_MATCH_FROM_START_TO_END</option>
                     <option value="1">MOD_JEM_JUBILEE_DATE_MATCH_ON_START</option>
@@ -97,11 +101,13 @@
                        default=""
                        label="MOD_JEM_JUBILEE_SHUFFLE_COUNT"
                        description="MOD_JEM_JUBILEE_SHUFFLE_COUNT_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="order" type="list"
                        default="0"
                        label="MOD_JEM_JUBILEE_ORDER"
                        description="MOD_JEM_JUBILEE_ORDER_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_JUBILEE_ORDER_DESCENDING</option>
                     <option value="1">MOD_JEM_JUBILEE_ORDER_ASCENDING</option>
@@ -111,6 +117,7 @@
                        default="25"
                        label="MOD_JEM_JUBILEE_MAX_TITLE_LENGTH"
                        description="MOD_JEM_JUBILEE_MAX_TITLE_LENGTH_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="linkevent" type="radio"
                        default="1"
@@ -132,9 +139,10 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="color" type="list"
-                       default="1"
+                       default="0"
                        label="MOD_JEM_JUBILEE_COLOR"
                        description="MOD_JEM_JUBILEE_COLOR_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="red">MOD_JEM_JUBILEE_RED</option>
                     <option value="blue">MOD_JEM_JUBILEE_BLUE</option>
@@ -143,7 +151,7 @@
                     <option value="alpha">MOD_JEM_JUBILEE_USER</option>
                 </field>
                 <field name="usercolor" type="color"
-                       class="inputbox"
+                       class="inputbox w-auto"
                        default="#EEEEEE"
                        size="8"
                        label="MOD_JEM_JUBILEE_USER_COLOR"
@@ -163,6 +171,7 @@
                        default="0"
                        label="MOD_JEM_JUBILEE_FLYER_LINKS_TO"
                        description="MOD_JEM_JUBILEE_FLYER_LINKS_TO_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_JUBILEE_FLYER_LINK_IMAGE_PAGE</option>
                     <option value="1">MOD_JEM_JUBILEE_FLYER_LINK_IMAGE_MODAL</option>
@@ -183,6 +192,7 @@
                        default="300"
                        label="MOD_JEM_JUBILEE_MAX_DESCRIPTION_LENGTH"
                        description="MOD_JEM_JUBILEE_MAX_DESCRIPTION_LENGTH_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="br" type="radio"
                        default="0"
@@ -193,11 +203,32 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="readmore" type="radio"
+                <field name="readmore" type="list"
                        default="0"
                        label="MOD_JEM_JUBILEE_FIELD_READMORE_LABEL"
                        description="MOD_JEM_JUBILEE_FIELD_READMORE_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="1">MOD_JEM_JUBILEE_READMORE_LINK</option>
+                    <option value="2">MOD_JEM_JUBILEE_READMORE_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_more_information" type="list"
+                       default="1"
+                       label="MOD_JEM_JUBILEE_SHOW_MORE_INFORMATION"
+                       description="MOD_JEM_JUBILEE_SHOW_MORE_INFORMATION_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="1">MOD_JEM_JUBILEE_MORE_INFORMATION_LINK</option>
+                    <option value="2">MOD_JEM_JUBILEE_MORE_INFORMATION_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_more_information_title" type="radio"
+                       default="0"
+                       label="MOD_JEM_JUBILEE_SHOW_MORE_INFORMATION_TITLE"
+                       description="MOD_JEM_JUBILEE_SHOW_MORE_INFORMATION_TITLE_DESC"
                        class="btn-group btn-group-yesno"
+                       showon="show_more_information:1,2,link,button"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
@@ -207,6 +238,7 @@
                        default="0"
                        label="MOD_JEM_JUBILEE_SHOW_DATE_OR_YEAR_DIFFERENCE"
                        description="MOD_JEM_JUBILEE_SHOW_DATE_OR_YEAR_DIFFERENCE_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_JUBILEE_HIDE_DATE</option>
                     <option value="1">MOD_JEM_JUBILEE_SHOW_DATE</option>
@@ -216,6 +248,7 @@
                        default=""
                        label="MOD_JEM_JUBILEE_DATE_FORMAT"
                        description="MOD_JEM_JUBILEE_DATE_FORMAT_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="showtime" type="radio"
                        default="0"
@@ -230,6 +263,7 @@
                        default=""
                        label="MOD_JEM_JUBILEE_TIME_FORMAT"
                        description="MOD_JEM_JUBILEE_TIME_FORMAT_DESC"
+                       class="form-control w-auto"
                 />
 
                 <field name="showcategory" type="radio"
@@ -275,22 +309,26 @@
                        removeroot="true"
                        label="MOD_JEM_JUBILEE_CATEGORY_ID"
                        description="MOD_JEM_JUBILEE_CATEGORY_ID_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="venid" type="venueoptions"
                        default=""
                        multiple="true"
                        label="MOD_JEM_JUBILEE_VENUE_ID"
                        description="MOD_JEM_JUBILEE_VENUE_ID_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="stateloc" type="text"
                        default=""
                        label="MOD_JEM_JUBILEE_STATE"
                        description="MOD_JEM_JUBILEE_STATE_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="stateloc_mode" type="list"
                        default="0"
                        label="MOD_JEM_JUBILEE_STATE_MODE"
                        description="MOD_JEM_JUBILEE_STATE_MODE_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_JUBILEE_STATE_MODE_EXACTMATCH</option>
                     <option value="1">MOD_JEM_JUBILEE_STATE_MODE_CONTAINS</option>
@@ -301,7 +339,7 @@
                         name="layout"
                         type="modulelayout"
                         label="JFIELD_ALT_LAYOUT_LABEL"
-                        class="form-select"
+                        class="form-select w-auto"
                         validate="moduleLayout"
                         default="_:default"
                 />
@@ -320,6 +358,7 @@
                         default="1"
                         filter="integer"
                         validate="options"
+                        class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -331,6 +370,7 @@
                         description="MOD_JEM_CACHE_TIME_DESC"
                         default="900"
                         filter="integer"
+                        class="form-control w-auto"
                 />
                 <field name="cachemode" type="hidden"
                        default="static"
@@ -341,5 +381,3 @@
         </fields>
     </config>
 </extension>
-
-

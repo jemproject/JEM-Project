@@ -24,6 +24,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Date\Date;
+use Joomla\CMS\Language\Multilanguage;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -60,6 +61,165 @@ class JemHelper
     static public function isContactComponentEnabled()
     {
         return ComponentHelper::isEnabled('com_contact');
+    }
+
+    /**
+     * Load published Joomla articles associated with the given events.
+     *
+     * @param   array  $events  Event objects that may contain article_id.
+     * @param   array  $levels  Authorized view levels.
+     *
+     * @return  array  Associated article data keyed by article id.
+     */
+    static public function getAssociatedArticles(array $events, array $levels)
+    {
+        $articleIds = array();
+
+        foreach ($events as $event) {
+            if (!empty($event->article_id)) {
+                $articleIds[] = (int) $event->article_id;
+            }
+        }
+
+        $articleIds = array_values(array_unique(array_filter($articleIds)));
+
+        if (!$articleIds) {
+            return array();
+        }
+
+        $levels = array_map('intval', $levels);
+
+        if (!$levels) {
+            return array();
+        }
+
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $nullDate = $db->quote($db->getNullDate());
+        $nowDate  = $db->quote(Factory::getDate()->toSql());
+        $query    = $db->getQuery(true);
+
+        $query->select(array(
+            $db->quoteName('a.id'),
+            $db->quoteName('a.title'),
+            $db->quoteName('a.alias'),
+            $db->quoteName('a.catid')
+        ))
+            ->from($db->quoteName('#__content', 'a'))
+            ->join('INNER', $db->quoteName('#__categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid') . ' AND ' . $db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
+            ->where($db->quoteName('a.id') . ' IN (' . implode(',', $articleIds) . ')')
+            ->where($db->quoteName('a.state') . ' = 1')
+            ->where($db->quoteName('a.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where($db->quoteName('c.published') . ' = 1')
+            ->where($db->quoteName('c.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where('(' . $db->quoteName('a.publish_up') . ' IS NULL OR ' . $db->quoteName('a.publish_up') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_up') . ' <= ' . $nowDate . ')')
+            ->where('(' . $db->quoteName('a.publish_down') . ' IS NULL OR ' . $db->quoteName('a.publish_down') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_down') . ' >= ' . $nowDate . ')');
+
+        if (Multilanguage::isEnabled()) {
+            $language = Factory::getApplication()->getLanguage()->getTag();
+            $query->where($db->quoteName('a.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
+        }
+
+        try {
+            $db->setQuery($query);
+
+            return $db->loadObjectList('id') ?: array();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return array();
+        }
+    }
+
+    /**
+     * Build display data for an associated article.
+     *
+     * @param   object|null  $article  Associated article.
+     *
+     * @return  array
+     */
+    static public function getAssociatedArticleLink($article)
+    {
+        if (empty($article)) {
+            return array('link' => '', 'title' => '');
+        }
+
+        $articleSlug = $article->alias ? ((int) $article->id . ':' . $article->alias) : (int) $article->id;
+
+        return array(
+            'link'  => Route::_('index.php?option=com_content&view=article&id=' . $articleSlug . '&catid=' . (int) $article->catid),
+            'title' => htmlspecialchars($article->title, ENT_COMPAT, 'UTF-8')
+        );
+    }
+
+    /**
+     * Normalize the More information display option.
+     *
+     * @param   mixed  $value  Module parameter value.
+     *
+     * @return  string  link, button, or empty string when disabled.
+     */
+    static public function getMoreInformationDisplay($value)
+    {
+        $value = (string) $value;
+
+        if ($value === '1') {
+            return 'link';
+        }
+
+        if ($value === '2') {
+            return 'button';
+        }
+
+        if ($value === 'link' || $value === 'button') {
+            return $value;
+        }
+
+        return '';
+    }
+
+    /**
+     * Build CSS classes for the More information article link.
+     *
+     * @param   string  $display  Normalized display option.
+     * @param   string  $base     Optional base classes.
+     *
+     * @return  string
+     */
+    static public function getMoreInformationClass($display, $base = '')
+    {
+        $classes = trim($base);
+
+        if (!preg_match('/(^|\s)jem-more-information-link(\s|$)/', $classes)) {
+            $classes = trim($classes . ' jem-more-information-link');
+        }
+
+        if ($display === 'button') {
+            $classes .= ' jem-more-information-button';
+
+            if (!preg_match('/(^|\s)btn(\s|$)/', $base)) {
+                $classes .= ' btn btn-primary btn-sm';
+            }
+        }
+
+        return trim($classes);
+    }
+
+    /**
+     * Build a stable id for module event action links.
+     *
+     * @param   string  $module   Module name.
+     * @param   string  $action   Action name.
+     * @param   mixed   $eventId  Event id.
+     * @param   mixed   $moduleId Module id.
+     *
+     * @return  string
+     */
+    static public function getModuleActionId($module, $action, $eventId, $moduleId = 0)
+    {
+        $module = preg_replace('/[^a-z0-9_-]+/i', '-', (string) $module);
+        $action = preg_replace('/[^a-z0-9_-]+/i', '-', (string) $action);
+
+        return strtolower(trim($module, '-') . '-' . trim($action, '-') . '-' . (int) $moduleId . '-' . (int) $eventId);
     }
 
     /**

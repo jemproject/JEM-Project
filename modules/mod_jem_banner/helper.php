@@ -184,6 +184,7 @@ abstract class ModJemBannerHelper
         # Retrieve the available Events
         ####
         $events = $model->getItems();
+        $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         $color = $params->get('color');
         $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
@@ -250,6 +251,14 @@ abstract class ModJemBannerHelper
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->articlelink = '';
+            $lists[$i]->articletitle = '';
+
+            if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
+                $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
+                $lists[$i]->articlelink = $articleLink['link'];
+                $lists[$i]->articletitle = $articleLink['title'];
+            }
 
             # time/date
             /* depending on settongs we need:

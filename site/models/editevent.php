@@ -488,6 +488,108 @@ class JemModelEditevent extends JemModelEvent
         return $query;
     }
 
+    ##############
+    ## ARTICLES ##
+    ##############
+
+    /**
+     * Get article data.
+     */
+    public function getArticles()
+    {
+        $query      = $this->buildQueryArticles();
+        $pagination = $this->getArticlesPagination();
+
+        return $this->_getList($query, $pagination->limitstart, $pagination->limit);
+    }
+
+    /**
+     * Articles pagination.
+     */
+    public function getArticlesPagination()
+    {
+        $jemsettings = JemHelper::config();
+        $app         = Factory::getApplication();
+        $limit       = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
+        $limitstart  = $app->input->getInt('limitstart', 0);
+        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+
+        $query = $this->buildQueryArticles();
+        $total = $this->_getListCount($query);
+
+        return new Pagination($total, $limitstart, $limit);
+    }
+
+    /**
+     * Articles query.
+     */
+    protected function buildQueryArticles()
+    {
+        $app              = Factory::getApplication();
+        $user             = JemFactory::getUser();
+        $db               = Factory::getContainer()->get('DatabaseDriver');
+        $nullDate         = $db->quote($db->getNullDate());
+        $nowDate          = $db->quote(Factory::getDate()->toSql());
+        $levels           = array_map('intval', $user->getAuthorisedViewLevels());
+        $filter_order     = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
+        $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
+        $search           = $db->escape(trim(StringHelper::strtolower($search)));
+
+        $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
+        $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('a.id'),
+                $db->quoteName('a.title'),
+                $db->quoteName('a.alias'),
+                $db->quoteName('a.state'),
+                $db->quoteName('cat.title', 'category_title')
+            ))
+            ->from($db->quoteName('#__content', 'a'))
+            ->join(
+                'LEFT',
+                $db->quoteName('#__categories', 'cat')
+                . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('a.catid')
+                . ' AND ' . $db->quoteName('cat.extension') . ' = ' . $db->quote('com_content')
+            )
+            ->where($db->quoteName('a.state') . ' = 1')
+            ->where($db->quoteName('cat.published') . ' = 1')
+            ->where($db->quoteName('a.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where($db->quoteName('cat.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where('(' . $db->quoteName('a.publish_up') . ' IS NULL OR ' . $db->quoteName('a.publish_up') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_up') . ' <= ' . $nowDate . ')')
+            ->where('(' . $db->quoteName('a.publish_down') . ' IS NULL OR ' . $db->quoteName('a.publish_down') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_down') . ' >= ' . $nowDate . ')');
+
+        if ($search || ($search === '0')) {
+            switch ($filter_type) {
+                case 2:
+                    $query->where('LOWER(' . $db->quoteName('cat.title') . ') LIKE ' . $db->quote('%' . $search . '%'));
+                    break;
+
+                case 1:
+                default:
+                    $query->where('LOWER(' . $db->quoteName('a.title') . ') LIKE ' . $db->quote('%' . $search . '%'));
+                    break;
+            }
+        }
+
+        if (strtoupper($filter_order_Dir) !== 'DESC') {
+            $filter_order_Dir = 'ASC';
+        }
+
+        $allowedOrder = array('a.title', 'cat.title', 'a.id');
+
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.title';
+        }
+
+        $query->order($filter_order . ' ' . $filter_order_Dir);
+
+        return $query;
+    }
+
     ###########
     ## USERS ##
     ###########

@@ -161,8 +161,19 @@ $wa->addInlineStyle($css);
                         <?php endif; ?>
 
                         <div class="event-actions">
-                            <?php if (isset($item->link) && ($item->readmore != 0 || $params->get('readmore'))) : ?>
-                                <a href="<?php echo $item->link; ?>" class="btn btn-primary"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
+                            <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
+                            <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-banner__readmore'); ?>"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
+                            <?php endif; ?>
+                            <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                            <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-banner__more-information'); ?>">
+                                    <?php echo Text::_('MOD_JEM_BANNER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>

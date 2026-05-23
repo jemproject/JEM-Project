@@ -156,7 +156,7 @@ $document->addStyleDeclaration($css);
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 <?php endif; ?>
-                                <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+                                <?php if ((int)$params->get('showcategory', 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
                                     <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
                                         <?php echo $item->catname; ?>
                                     </div>
@@ -220,15 +220,28 @@ $document->addStyleDeclaration($css);
 
                                 <?php if($item->showdescriptionevent): ?>
                                     <div class="jem-description-teaser" itemprop="description">
-                                        <?php
-                                        echo $item->eventdescription;
-                                        if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
-                                            <div class="jem-readmore">
-                                                <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
-                                                    <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
-                                                </a>
-                                            </div>
-                                        <?php endif; ?>
+                                        <?php echo $item->eventdescription; ?>
+                                    </div>
+                                    <?php
+                                    $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1));
+                                    if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                        <div class="jem-readmore">
+                                            <a id="<?php echo JemHelper::getModuleActionId('mod-jem-teaser', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                               href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                               class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-teaser__readmore'); ?>">
+                                                <?php echo $item->linkText; ?>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif;
+                                $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link'));
+                                if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                    <div class="jem-more-information">
+                                        <a id="<?php echo JemHelper::getModuleActionId('mod-jem-teaser', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                           href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                           class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-teaser__more-information'); ?>">
+                                            <?php echo Text::_('MOD_JEM_TEASER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                        </a>
                                     </div>
                                 <?php endif;
                                 echo $item->dateschema; ?>

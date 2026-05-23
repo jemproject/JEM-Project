@@ -248,14 +248,17 @@ if ($jemsettings->oldevent > 0) {
         </span>
         </h2>
 
-        <?php if ($eventImageRibbonText) : ?>
-            <div class="jem-event-image-ribbon-wrap jem-event-image-ribbon-wrap--legacy">
-                <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
-                <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
+        <div class="jem-event-main">
+            <div class="jem-img jem-img-event">
+                <?php if ($eventImageRibbonText) : ?>
+                    <div class="jem-event-image-ribbon-wrap jem-event-image-ribbon-wrap--legacy">
+                        <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                        <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
+                    </div>
+                <?php else : ?>
+                    <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                <?php endif; ?>
             </div>
-        <?php else : ?>
-            <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
-        <?php endif; ?>
 
         <dl class="event_info floattext">
             <?php if ($params->get('event_show_detailstitle',1)) : ?>
@@ -435,6 +438,7 @@ if ($jemsettings->oldevent > 0) {
                 </dd>
             <?php endif; ?>
         </dl>
+        </div>
 
         <!-- DESCRIPTION -->
         <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
@@ -655,6 +659,25 @@ if ($jemsettings->oldevent > 0) {
                             </<?php echo $tagName; ?>>
 
                             <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php
+                    $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('event_show_more_information', '1'));
+                    $moreInformationText = trim((string) $params->get('event_more_information_text', ''));
+                    if ($moreInformationText === '') {
+                        $moreInformationText = Text::_('COM_JEM_EVENT_MORE_INFORMATION');
+                    } elseif (strtoupper($moreInformationText) === $moreInformationText) {
+                        $moreInformationText = Text::_($moreInformationText);
+                    }
+                    ?>
+                    <?php if ($moreInformationDisplay !== '' && !empty($this->item->articlelink)) : ?>
+                        <div class="jem-more-information jem-event-more-information">
+                            <a id="jem-event-more-information-<?php echo (int) $this->item->id; ?>"
+                               href="<?php echo htmlspecialchars($this->item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                               class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link jem-event__more-information'); ?>">
+                                <?php echo $this->escape($moreInformationText); ?>
+                            </a>
                         </div>
                     <?php endif;
                 }

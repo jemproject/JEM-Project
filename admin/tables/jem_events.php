@@ -41,6 +41,8 @@ class jem_events extends Table
     public $title = '';
     /** @var string */
     public $alias = '';
+    /** @var int */
+    public $article_id = 0;
     /** @var date */
     public $created = null;
     /** @var int */

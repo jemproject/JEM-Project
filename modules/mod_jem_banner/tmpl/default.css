@@ -89,6 +89,17 @@ div#jemmodulebanner .desc {
     font-size: small;
 }
 
+div#jemmodulebanner .jem-readmore,
+div#jemmodulebanner .jem-more-information {
+    clear: both;
+    margin-top: 0.35rem;
+}
+
+div#jemmodulebanner .jem-readmore .jem-readmore-link {
+    display: inline-flex;
+    width: auto;
+}
+
 div#jemmodulebanner .time {
     padding-top: 2px;
     font-weight: normal;

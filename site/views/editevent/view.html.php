@@ -37,6 +37,11 @@ class JemViewEditevent extends JemView
             return;
         }
 
+        if ($this->getLayout() == 'choosearticle') {
+            $this->_displaychoosearticle($tpl);
+            return;
+        }
+
         if ($this->getLayout() == 'chooseusers') {
             $this->_displaychooseusers($tpl);
             return;
@@ -380,6 +385,48 @@ class JemViewEditevent extends JemView
         $lists['search']= $search;
 
         //assign data to template
+        $this->searchfilter = $searchfilter;
+        $this->lists        = $lists;
+        $this->rows         = $rows;
+        $this->pagination   = $pagination;
+
+        parent::display($tpl);
+    }
+
+
+    /**
+     * Creates the output for the article select listing
+     */
+    protected function _displaychoosearticle($tpl)
+    {
+        $app         = Factory::getApplication();
+        $jinput      = $app->input;
+        $jemsettings = JemHelper::config();
+        $document    = $app->getDocument();
+
+        $filter_order     = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
+        $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
+        $limitstart       = $jinput->get('limitstart', '0', 'int');
+        $limit            = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
+
+        JemHelper::loadCss('jem');
+
+        $document->setTitle(Text::_('COM_JEM_SELECT_ARTICLE'));
+
+        $rows       = $this->get('Articles');
+        $pagination = $this->get('ArticlesPagination');
+
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+        $lists['search']    = $search;
+
+        $filters = array();
+        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_TITLE'));
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('JCATEGORY'));
+        $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+
         $this->searchfilter = $searchfilter;
         $this->lists        = $lists;
         $this->rows         = $rows;

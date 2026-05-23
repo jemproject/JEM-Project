@@ -245,6 +245,9 @@ $params = $params->toArray();
             </fieldset>
 
             <fieldset class="adminform">
+                <ul class="adminformlist">
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_id'); ?></div></li>
+                </ul>
                 <div class="clr"></div>
                 <?php echo $this->form->getLabel('articletext'); ?>
                 <div class="clr"></div>

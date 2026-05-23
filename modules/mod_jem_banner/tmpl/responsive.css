@@ -66,6 +66,17 @@ body.body-overlayed {
     font-weight: bold;
 }
 
+#jemmodulebanner .jem-readmore-banner,
+#jemmodulebanner .jem-more-information {
+    clear: both;
+    margin-top: 0.35rem;
+}
+
+#jemmodulebanner .jem-readmore-banner .jem-readmore-link {
+    display: inline-flex;
+    width: auto;
+}
+
 #jemmodulebanner [class|="calendar"] {
     background-repeat: no-repeat;
     width: 81px;

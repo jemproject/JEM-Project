@@ -11,6 +11,16 @@
             filter="\Joomla\CMS\Component\ComponentHelper::filterText"
             hide="pagebreak"
         />
+        <field name="article_id" type="modal_article"
+            addfieldprefix="Joomla\Component\Content\Administrator\Field"
+            label="COM_JEM_EVENT_FIELD_ASSOCIATED_ARTICLE_LABEL"
+            description="COM_JEM_EVENT_FIELD_ASSOCIATED_ARTICLE_DESC"
+            select="true"
+            clear="true"
+            new="true"
+            edit="true"
+            filter="integer"
+        />
         <field name="featured" type="radio"
             label="JFEATURED"
             description="COM_JEM_EVENT_FIELD_FEATURED_DESC"

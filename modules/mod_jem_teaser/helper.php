@@ -160,6 +160,7 @@ abstract class ModJemTeaserHelper
 
         # Retrieve the available Events
         $events = $model->getItems();
+        $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         $module_color = $params->get('color');
         $module_fallback_color = $params->get('fallbackcolor', '#EEEEEE');
@@ -307,6 +308,13 @@ abstract class ModJemTeaserHelper
             $lists[$i]->venuecolor  = !empty($row->venuecolor) ? $row->venuecolor : '';
             $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->articlelink = '';
+            $lists[$i]->articletitle = '';
+            if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
+                $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
+                $lists[$i]->articlelink = $articleLink['link'];
+                $lists[$i]->articletitle = $articleLink['title'];
+            }
             $lists[$i]->showimageevent   = $params->get('showimageevent', 1);
             $lists[$i]->showimagevenue   = $params->get('showimagevenue', 1);
             $lists[$i]->showdescriptionevent   = $params->get('showdescriptionevent', 1);

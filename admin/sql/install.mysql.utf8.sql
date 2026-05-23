@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `introtext` mediumtext NOT NULL,
     `fulltext` mediumtext NOT NULL,
+    `article_id` int(10) unsigned NOT NULL DEFAULT '0',
     `meta_keywords` varchar(200) DEFAULT NULL,
     `meta_description` varchar(255) DEFAULT NULL,
     `recurrence_first_id` int(11) NOT NULL DEFAULT '0',
@@ -73,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_pubstate` (`published`),
     KEY `idx_createdby` (`created_by`),
     KEY `idx_language` (`language`),
+    KEY `idx_article` (`article_id`),
     KEY `idx_type` (`type_id`)
     ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
@@ -351,6 +353,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('lastupdate', '0'),
 ('tableeventimagewidth', '10%'),
 ('display_num', '10'),
+('fancy_select_threshold', '10'),
 ('discatheader', '1'),
 ('showatte', '0'),
 ('attewidth', '10%'),

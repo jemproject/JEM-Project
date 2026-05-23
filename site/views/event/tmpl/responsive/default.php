@@ -161,7 +161,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
             ?>
         </h2>
-        <div class="jem-row">
+        <div class="jem-row jem-event-main-responsive">
             <div class="jem-info">
                 <dl class="jem-dl">
                     <?php if ($params->get('event_show_detailstitle',1)) : ?>
@@ -320,7 +320,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 </dl>
             </div>
             <style>
-                .jem-img {
+                .jem-event-main-responsive > .jem-img {
                     flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
                 }
             </style>
@@ -554,6 +554,25 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             </<?php echo $tagName; ?>>
 
                             <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php
+                    $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('event_show_more_information', '1'));
+                    $moreInformationText = trim((string) $params->get('event_more_information_text', ''));
+                    if ($moreInformationText === '') {
+                        $moreInformationText = Text::_('COM_JEM_EVENT_MORE_INFORMATION');
+                    } elseif (strtoupper($moreInformationText) === $moreInformationText) {
+                        $moreInformationText = Text::_($moreInformationText);
+                    }
+                    ?>
+                    <?php if ($moreInformationDisplay !== '' && !empty($this->item->articlelink)) : ?>
+                        <div class="jem-more-information jem-event-more-information">
+                            <a id="jem-event-more-information-<?php echo (int) $this->item->id; ?>"
+                               href="<?php echo htmlspecialchars($this->item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                               class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link jem-event__more-information'); ?>">
+                                <?php echo $this->escape($moreInformationText); ?>
+                            </a>
                         </div>
                     <?php endif;
                 }

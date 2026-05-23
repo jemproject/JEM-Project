@@ -94,6 +94,16 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                                     break;
                             }
                             ?>
+                            <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                            <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                <div class="jem-more-information">
+                                    <a id="<?php echo JemHelper::getModuleActionId('mod-jem', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                       href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                       class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem__more-information'); ?>">
+                                        <?php echo Text::_('MOD_JEM_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 

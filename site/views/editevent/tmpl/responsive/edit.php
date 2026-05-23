@@ -256,6 +256,10 @@ $params        = $this->params;
             <!-- EVENTDESCRIPTION -->
             <fieldset class="adminform">
                 <legend><?php echo Text::_('COM_JEM_EDITEVENT_DESCRIPTION_LEGEND'); ?></legend>
+                <dl class="adminformlist jem-dl">
+                    <dt><?php echo $this->form->getLabel('article_id'); ?></dt>
+                    <dd><?php echo $this->form->getInput('article_id'); ?></dd>
+                </dl>
                 <div>
                     <?php echo $this->form->getLabel('articletext'); ?>
                     <?php echo $this->form->getInput('articletext'); ?>

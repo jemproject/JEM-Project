@@ -253,6 +253,57 @@ div#jem .jem-search-filter-actions .btn {
     max-width: 100%;
 }
 
+#jem.jem_event .jem-event-main {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+}
+
+#jem.jem_event .jem-event-main > .event_info {
+    flex: 1 1 20rem;
+    min-width: 0;
+    order: 1;
+}
+
+#jem.jem_event .jem-event-main > .jem-img {
+    flex: 0 0 auto;
+    max-width: 100%;
+    order: 2;
+    text-align: right;
+}
+
+#jem.jem_event .jem-event-main > .jem-img .flyerimage {
+    display: inline-block;
+    float: none !important;
+}
+
+#jem.jem_event .jem-event-main > .jem-img .jem-event-image-ribbon-wrap--legacy {
+    float: none;
+    margin: 0;
+}
+
+#jem.jem_event .jem-event-main > .jem-img img {
+    height: auto;
+    max-width: 100%;
+}
+
+#jem.jem_event .jem-event-more-information {
+    clear: both;
+    margin-top: 0.75rem;
+}
+
+@media (max-width: 767px) {
+    #jem.jem_event .jem-event-main {
+        display: block;
+    }
+
+    #jem.jem_event .jem-event-main > .jem-img {
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+}
+
 #jem .jem-event-image-ribbon {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
     color: #fff;

@@ -33,6 +33,7 @@
                        default="1"
                        label="MOD_JEM_WIDE_UPCOMING_ARCHIVED_OR_CURRENT"
                        description="MOD_JEM_WIDE_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_WIDE_UPCOMING_EVENTS</option>
                     <option value="1">MOD_JEM_WIDE_UNFINISHED_EVENTS</option>
@@ -43,6 +44,7 @@
                        default="5"
                        label="MOD_JEM_WIDE_EVENTS_IN_MODULE"
                        description="MOD_JEM_WIDE_EVENTS_IN_MODULE_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="show_no_events" type="radio"
                        default="1"
@@ -67,17 +69,39 @@
                        default=""
                        label="MOD_JEM_WIDE_OFFSET_HOURS"
                        description="MOD_JEM_WIDE_OFFSET_HOURS_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="cuttitle" type="text"
                        default="25"
                        label="MOD_JEM_WIDE_MAX_TITLE_LENGTH"
                        description="MOD_JEM_WIDE_MAX_TITLE_LENGTH_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="linkevent" type="radio"
                        default="1"
                        label="MOD_JEM_WIDE_LINK_TO_EVENT"
                        description="MOD_JEM_WIDE_LINK_TO_EVENT_DESC"
                        class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_more_information" type="list"
+                       default="1"
+                       label="MOD_JEM_WIDE_SHOW_MORE_INFORMATION"
+                       description="MOD_JEM_WIDE_SHOW_MORE_INFORMATION_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="1">MOD_JEM_WIDE_MORE_INFORMATION_LINK</option>
+                    <option value="2">MOD_JEM_WIDE_MORE_INFORMATION_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_more_information_title" type="radio"
+                       default="0"
+                       label="MOD_JEM_WIDE_SHOW_MORE_INFORMATION_TITLE"
+                       description="MOD_JEM_WIDE_SHOW_MORE_INFORMATION_TITLE_DESC"
+                       class="btn-group btn-group-yesno"
+                       showon="show_more_information:1,2,link,button"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
@@ -116,17 +140,20 @@
                        removeroot="true"
                        label="MOD_JEM_WIDE_CATEGORY_ID"
                        description="MOD_JEM_WIDE_CATEGORY_ID_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="venid" type="venueoptions"
                        default=""
                        multiple="true"
                        label="MOD_JEM_WIDE_VENUE_ID"
                        description="MOD_JEM_WIDE_VENUE_ID_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="datemethod" type="list"
                        default="1"
                        label="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE"
                        description="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="1">MOD_JEM_WIDE_SHOW_DATE</option>
                     <option value="2">MOD_JEM_WIDE_SHOW_DAY_DIFFERENCE</option>
@@ -135,11 +162,13 @@
                        default=""
                        label="MOD_JEM_WIDE_DATE_FORMAT"
                        description="MOD_JEM_WIDE_DATE_FORMAT_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="formattime" type="text"
                        default=""
                        label="MOD_JEM_WIDE_TIME_FORMAT"
                        description="MOD_JEM_WIDE_TIME_FORMAT_DESC"
+                       class="form-control w-auto"
                 />
             </fieldset>
             <fieldset name="advanced">
@@ -147,7 +176,7 @@
                         name="layout"
                         type="modulelayout"
                         label="JFIELD_ALT_LAYOUT_LABEL"
-                        class="form-select"
+                        class="form-select w-auto"
                         validate="moduleLayout"
                         default="_:default"
                 />
@@ -166,6 +195,7 @@
                         default="1"
                         filter="integer"
                         validate="options"
+                        class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -177,6 +207,7 @@
                         description="MOD_JEM_WIDE_CACHE_TIME_DESC"
                         default="900"
                         filter="integer"
+                        class="form-control w-auto"
                 />
                 <field name="cachemode" type="hidden"
                        default="static"
@@ -187,5 +218,3 @@
         </fields>
     </config>
 </extension>
-
-

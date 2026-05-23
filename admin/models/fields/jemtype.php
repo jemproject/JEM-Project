@@ -42,11 +42,47 @@ class JFormFieldJemtype extends FormField
             $options[] = HTMLHelper::_('select.option', $t->id, $t->name);
         }
 
+        $class = trim('form-select ' . $this->class);
+        $class = preg_match('/(^|\s)w-auto(\s|$)/', $class) ? $class : $class . ' w-auto';
+
         $attribs = array(
             'id'    => $this->id,
-            'class' => 'form-select ' . $this->class,
+            'class' => $class,
         );
 
-        return HTMLHelper::_('select.genericlist', $options, $this->name, $attribs, 'value', 'text', $this->value);
+        $html = HTMLHelper::_('select.genericlist', $options, $this->name, $attribs, 'value', 'text', $this->value, $this->id);
+
+        if (count($types) < $this->getFancySelectThreshold()) {
+            return $html;
+        }
+
+        Factory::getApplication()->getDocument()->getWebAssetManager()
+            ->usePreset('choicesjs')
+            ->useScript('webcomponent.field-fancy-select');
+
+        return '<joomla-field-fancy-select class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '">' . $html . '</joomla-field-fancy-select>';
+    }
+
+    /**
+     * Get the configured threshold for switching long entity lists to fancy select.
+     *
+     * @return  int
+     */
+    protected function getFancySelectThreshold()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('value'))
+            ->from($db->quoteName('#__jem_config'))
+            ->where($db->quoteName('keyname') . ' = ' . $db->quote('fancy_select_threshold'));
+
+        try {
+            $db->setQuery($query);
+            $threshold = (int) $db->loadResult();
+        } catch (RuntimeException $e) {
+            $threshold = 10;
+        }
+
+        return max(1, $threshold ?: 10);
     }
 }

@@ -64,6 +64,17 @@ body.body-overlayed {
     min-width: 100px;
 }
 
+#jemmoduleteaser .jem-readmore,
+#jemmoduleteaser .jem-more-information {
+    clear: both;
+    margin-top: 0.35rem;
+}
+
+#jemmoduleteaser .jem-readmore .jem-readmore-link {
+    display: inline-flex;
+    width: auto;
+}
+
 #jemmoduleteaser .event-title,
 #jemmoduleteaser .jem-teaser-datecat {
     hyphens: auto;

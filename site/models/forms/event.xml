@@ -8,6 +8,12 @@
         filter="\Joomla\CMS\Component\ComponentHelper::filterText"
         hide="pagebreak"
     />
+        <field name="article_id" type="modal_article"
+            label="COM_JEM_EDITEVENT_FIELD_ASSOCIATED_ARTICLE_LABEL"
+            description="COM_JEM_EDITEVENT_FIELD_ASSOCIATED_ARTICLE_DESC"
+            required="false"
+            filter="integer"
+        />
         <field name="featured" class="inputbox" type="list"
             label="JFEATURED"
             description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
