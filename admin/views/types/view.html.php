@@ -9,7 +9,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class JemViewTypes extends JemAdminView
@@ -41,7 +40,7 @@ class JemViewTypes extends JemAdminView
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_TYPES'), 'tag');
-        $toolbar = Toolbar::getInstance('toolbar');
+        $toolbar = $this->getToolbarInstance();
 
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
@@ -54,7 +53,7 @@ class JemViewTypes extends JemAdminView
             ToolbarHelper::editList('type.edit');
             ToolbarHelper::divider();
         }
-        if ($canChangeState || $canDelete) {
+        if (($canChangeState || $canDelete) && $this->supportsToolbarDropdown($toolbar)) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -73,6 +72,16 @@ class JemViewTypes extends JemAdminView
                 $childBar->delete('types.remove', 'JACTION_DELETE')
                     ->message('COM_JEM_CONFIRM_DELETE')
                     ->listCheck(true);
+            }
+        } elseif ($canChangeState || $canDelete) {
+            if ($canChangeState) {
+                ToolbarHelper::publishList('types.publish');
+                ToolbarHelper::unpublishList('types.unpublish');
+                ToolbarHelper::checkin('types.checkin');
+            }
+
+            if ($canDelete) {
+                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'types.remove', 'JACTION_DELETE');
             }
         }
 

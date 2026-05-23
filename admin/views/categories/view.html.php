@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
@@ -85,7 +84,7 @@ class JemViewCategories extends JemAdminView
         $showActionDropdown = $canChangeState || ($this->state->get('filter.published') == -2 && $canDelete);
 
         ToolbarHelper::title(Text::_('COM_JEM_CATEGORIES'), 'elcategories');
-        $toolbar = Toolbar::getInstance('toolbar');
+        $toolbar = $this->getToolbarInstance();
 
         if ($canDo->get('core.create')) {
              ToolbarHelper::addNew('category.add');
@@ -96,7 +95,7 @@ class JemViewCategories extends JemAdminView
             ToolbarHelper::divider();
         }
 
-        if ($showActionDropdown) {
+        if ($showActionDropdown && $this->supportsToolbarDropdown($toolbar)) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -121,6 +120,22 @@ class JemViewCategories extends JemAdminView
                     ->listCheck(true);
             } elseif ($canChangeState) {
                 $childBar->trash('categories.trash')->listCheck(true);
+            }
+        } elseif ($showActionDropdown) {
+            if ($canChangeState) {
+                ToolbarHelper::publishList('categories.publish');
+                ToolbarHelper::unpublishList('categories.unpublish');
+                ToolbarHelper::archiveList('categories.archive');
+            }
+
+            if ($canChangeState && $user->authorise('core.admin')) { // todo: is that correct?
+                ToolbarHelper::checkin('categories.checkin');
+            }
+
+            if ($this->state->get('filter.published') == -2 && $canDelete) {
+                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'categories.remove', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($canChangeState) {
+                ToolbarHelper::trash('categories.trash');
             }
         }
 
