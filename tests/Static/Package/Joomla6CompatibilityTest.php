@@ -23,7 +23,7 @@ final class Joomla6CompatibilityTest extends TestCase
         $current = null;
 
         foreach ($updates->update as $update) {
-            if ((string) $update->version === '5.0.0beta1') {
+            if ((string) $update->version === '5.0.0beta2') {
                 $current = $update;
                 break;
             }
@@ -61,7 +61,7 @@ final class Joomla6CompatibilityTest extends TestCase
 
     public function testReleaseManifestsUseCurrentJemVersion(): void
     {
-        $expectedVersion = '5.0.0beta1';
+        $expectedVersion = '5.0.0beta2';
         $manifestPaths = array_merge(
             array(JEM_TEST_ROOT . '/jem.xml', JEM_TEST_ROOT . '/package/pkg_jem.xml'),
             glob(JEM_TEST_ROOT . '/modules/*/*.xml') ?: array(),

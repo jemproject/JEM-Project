@@ -1,4 +1,4 @@
-# JEM 5.0.0beta1 (the Joomla Event Manager)
+# JEM 5.0.0beta2 (the Joomla Event Manager)
 # released 2026-05-21
 
 ## To install
