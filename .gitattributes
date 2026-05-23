@@ -22,3 +22,7 @@
 *.RTF	 diff=astextplain
 
 /*.code-workspace export-ignore
+Desktop.ini export-ignore
+desktop.ini export-ignore
+**/Desktop.ini export-ignore
+**/desktop.ini export-ignore

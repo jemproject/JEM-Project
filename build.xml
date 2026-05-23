@@ -19,6 +19,17 @@
     <property name="cfg.siteFilesDir" location="${cfg.comDir}/site" />
     <property name="cfg.version" value="${pkg.version}.${build.number}" />
 
+    <patternset id="windows.junk.excludes">
+        <exclude name="Desktop.ini" />
+        <exclude name="desktop.ini" />
+        <exclude name="**/Desktop.ini" />
+        <exclude name="**/desktop.ini" />
+        <exclude name="Thumbs.db" />
+        <exclude name="thumbs.db" />
+        <exclude name="**/Thumbs.db" />
+        <exclude name="**/thumbs.db" />
+    </patternset>
+
     <target name="build" depends="clean, init, build_package, info" />
 
     <target name="init" description="creates nessecary directory to build with">
@@ -36,7 +47,9 @@
             <zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages">
                 <exclude name="mod_${cfg.name}_calajax.zip" />
             </zipfileset>
-            <zipfileset dir="package" />
+            <zipfileset dir="package">
+                <patternset refid="windows.junk.excludes" />
+            </zipfileset>
         </zip>
     </target>
 
@@ -75,38 +88,77 @@
             <exclude name="plugins/**" />
             <exclude name="tests/**" />
             <exclude name="vendor/**" />
+            <patternset refid="windows.junk.excludes" />
         </zip>
     </target>
 
     <target name="build_plugins" description="packages any plugins">
         <!-- add all plugin directories here -->
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}embed.zip" basedir="plugins/plg_content_${cfg.name}embed" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}embed.zip" basedir="plugins/plg_content_${cfg.name}embed">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
     </target>
 
     <target name="build_modules" description="packages any modules">
         <!-- add all module directories here -->
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_types.zip" basedir="modules/mod_${cfg.name}_types" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_types.zip" basedir="modules/mod_${cfg.name}_types">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
     </target>
 
     <target name="build_3rd" description="packages any 3rd party plugins">
         <!-- add all 3rd party plugins directories here -->
-        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending" />
-        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents" />
-        <zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/" />
+        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
     </target>
 
     <!--
