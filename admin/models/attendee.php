@@ -12,10 +12,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Log\Log;
-
-
+use Joomla\CMS\Log\Log;
 use Joomla\Utilities\ArrayHelper;
+
 /**
  * Model: Attendee
  */

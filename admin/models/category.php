@@ -18,8 +18,8 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Date\Date;
 use Joomla\String\StringHelper;
-
 use Joomla\Utilities\ArrayHelper;
+
 /**
  * Category Model
  */
