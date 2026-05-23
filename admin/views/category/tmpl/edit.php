@@ -52,6 +52,8 @@ $wa = $this->document->getWebAssetManager();
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_category_id'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_create_mode'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
                 </ul>
                 <div class="clr"></div>

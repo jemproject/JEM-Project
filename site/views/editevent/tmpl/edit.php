@@ -240,6 +240,9 @@ $params        = $this->params;
 
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('article_id'); ?><?php echo $this->form->getInput('article_id'); ?></li>
+                    <li><?php echo $this->form->getLabel('create_article'); ?><?php echo $this->form->getInput('create_article'); ?></li>
+                    <li><?php echo $this->form->getLabel('article_target_category_id'); ?><?php echo $this->form->getInput('article_target_category_id'); ?></li>
+                    <li><?php echo $this->form->renderField('article_auto_info'); ?></li>
                 </ul>
                 <div class="clr"></div>
                 <?php echo $this->form->getLabel('articletext'); ?>

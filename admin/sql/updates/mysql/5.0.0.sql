@@ -15,6 +15,9 @@ ALTER TABLE `#__jem_events` ADD COLUMN `article_id` int(10) unsigned NOT NULL DE
 ALTER TABLE `#__jem_events` ADD KEY `idx_article` (`article_id`);
 ALTER TABLE `#__jem_venues` MODIFY `latitude` decimal(10,6) DEFAULT NULL;
 ALTER TABLE `#__jem_venues` MODIFY `longitude` decimal(10,6) DEFAULT NULL;
+ALTER TABLE `#__jem_categories` ADD COLUMN `article_category_id` int(10) unsigned NOT NULL DEFAULT '0' AFTER `type_id`;
+ALTER TABLE `#__jem_categories` ADD COLUMN `article_create_mode` tinyint(1) NOT NULL DEFAULT '0' AFTER `article_category_id`;
+ALTER TABLE `#__jem_categories` ADD KEY `idx_article_category` (`article_category_id`);
 ALTER TABLE `#__jem_categories` ADD KEY `idx_parent` (`parent_id`);
 
 ALTER TABLE `#__jem_events` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

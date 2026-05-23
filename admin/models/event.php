@@ -121,6 +121,13 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
+        if ((int) JemHelper::globalattribs()->get('event_use_associated_article', 1) !== 1) {
+            $form->removeField('article_id');
+            $form->removeField('article_target_category_id');
+            $form->removeField('create_article');
+            $form->removeField('article_auto_info');
+        }
+
         return $form;
     }
 
@@ -308,6 +315,19 @@ class JemModelEvent extends JemModelAdmin
         }
         if (array_key_exists('article_id', $data)) {
             $data['article_id'] = (int) $data['article_id'];
+        }
+        $createArticleMode = isset($data['create_article']) ? (int) $data['create_article'] : 0;
+        $articleTargetCategoryId = isset($data['article_target_category_id']) ? (int) $data['article_target_category_id'] : 0;
+        unset($data['create_article']);
+        unset($data['article_target_category_id']);
+
+        $associatedArticlesEnabled = (int) JemHelper::globalattribs()->get('event_use_associated_article', 1) === 1;
+
+        if (!$associatedArticlesEnabled) {
+            $data['article_id'] = 0;
+            $createArticleMode  = 0;
+        } elseif (!empty($data['article_id']) && !$this->validateAssociatedArticleSelection((int) $data['article_id'], $cats)) {
+            return false;
         }
 
         // convert international date formats...
@@ -640,6 +660,8 @@ class JemModelEvent extends JemModelAdmin
                         return false;
                     }
                 }
+
+                $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
             }
         } else {
             // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
@@ -697,6 +719,10 @@ class JemModelEvent extends JemModelAdmin
                 $this->setState($this->getName() . '.id', $table->id);
             }
 
+            if ($saved) {
+                $this->createAssociatedArticleIfRequested((int) $table->id, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
+            }
+
             // Update  and new attachment file
             $allowed = $backend || ($jemsettings->attachmentenabled > 0);
 
@@ -744,6 +770,414 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return $saved;
+    }
+
+    /**
+     * Create and associate an unpublished Joomla article when requested.
+     *
+     * @param   integer       $eventId     Event id.
+     * @param   array         $eventData   Event data being saved.
+     * @param   array|string  $categories  Selected JEM category ids.
+     * @param   integer       $mode        0 disabled, 1 manual create, 2 category auto.
+     * @param   boolean       $new         True when saving a new event.
+     * @param   integer       $targetId    Selected Joomla category id.
+     *
+     * @return  boolean
+     */
+    protected function createAssociatedArticleIfRequested($eventId, array $eventData, $categories, $mode, $new, $targetId = 0)
+    {
+        $eventId = (int) $eventId;
+        $mode    = (int) $mode;
+        $targetId = (int) $targetId;
+
+        if ($eventId <= 0 || $mode === 0 || !empty($eventData['article_id'])) {
+            return true;
+        }
+
+        $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, $mode, $new, $targetId);
+
+        if (!$articleCategoryId) {
+            return true;
+        }
+
+        $user = Factory::getApplication()->getIdentity();
+
+        if (!$user->authorise('core.create', 'com_content.category.' . $articleCategoryId) && !$user->authorise('core.create', 'com_content')) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_PERMISSION'), 'warning');
+
+            return true;
+        }
+
+        $articleId = $this->createAssociatedContentArticle($eventData, $articleCategoryId);
+
+        if (!$articleId) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED'), 'warning');
+
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $article = (object) array(
+            'id'         => $eventId,
+            'article_id' => $articleId
+        );
+
+        $db->updateObject('#__jem_events', $article, 'id');
+        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
+
+        return true;
+    }
+
+    /**
+     * Resolve the Joomla category that may receive the associated article.
+     *
+     * @param   array|string  $categories  Selected JEM category ids.
+     * @param   integer       $mode        1 manual create, 2 category auto.
+     * @param   boolean       $new         True when saving a new event.
+     * @param   integer       $targetId    Selected Joomla category id.
+     *
+     * @return  integer
+     */
+    protected function resolveAssociatedArticleCategory($categories, $mode, $new, $targetId = 0)
+    {
+        $mode = (int) $mode;
+        $targetId = (int) $targetId;
+        $associations = $this->getAssociatedArticleCategoryOptions($categories);
+
+        if ($mode === 2) {
+            if (!$new) {
+                return 0;
+            }
+
+            $autoConfigured = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 1;
+            });
+            $auto = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 1 && (int) $category->article_category_id > 0;
+            });
+
+            if ($autoConfigured && !$auto) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_CATEGORY'), 'warning');
+
+                return 0;
+            }
+
+            if (!$autoConfigured) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_NOT_ENABLED'), 'warning');
+
+                return 0;
+            }
+
+            return $this->resolveAssociatedArticleCategoryFromCandidates($auto, $targetId, true);
+        }
+
+        if ($mode === 1) {
+            $manualConfigured = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 2;
+            });
+            $manual = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 2 && (int) $category->article_category_id > 0;
+            });
+
+            if (!$manualConfigured) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'), 'warning');
+
+                return 0;
+            }
+
+            if ($manual) {
+                return $this->resolveAssociatedArticleCategoryFromCandidates($manual, $targetId, false);
+            }
+
+            if (!$targetId) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_SELECT_CATEGORY'), 'warning');
+
+                return 0;
+            }
+
+            if (!$this->contentCategoryExists($targetId)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_SELECT_CATEGORY'), 'warning');
+
+                return 0;
+            }
+
+            return $targetId;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Resolve one Joomla category from the selected JEM category associations.
+     *
+     * @param   array    $candidates  Candidate JEM categories.
+     * @param   integer  $targetId    Selected Joomla category id.
+     * @param   boolean  $auto        True when resolving automatic creation.
+     *
+     * @return  integer
+     */
+    protected function resolveAssociatedArticleCategoryFromCandidates(array $candidates, $targetId, $auto)
+    {
+        $articleCategoryIds = array_values(array_unique(array_map('intval', array_column($candidates, 'article_category_id'))));
+
+        if (!$articleCategoryIds) {
+            if (!$auto) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_CATEGORY'), 'warning');
+            }
+
+            return 0;
+        }
+
+        if (count($articleCategoryIds) === 1) {
+            return (int) $articleCategoryIds[0];
+        }
+
+        if ($targetId && in_array((int) $targetId, $articleCategoryIds, true)) {
+            return (int) $targetId;
+        }
+
+        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_SELECT_ASSOCIATION'), 'warning');
+
+        return 0;
+    }
+
+    /**
+     * Get selected JEM categories with their associated Joomla categories.
+     *
+     * @param   array|string  $categories  Selected JEM category ids.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleCategoryOptions($categories)
+    {
+        if (is_string($categories)) {
+            $categories = explode(',', $categories);
+        }
+
+        if (!is_array($categories)) {
+            return array();
+        }
+
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', $categories))));
+
+        if (!$categoryIds) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('id'),
+                $db->quoteName('article_category_id'),
+                $db->quoteName('article_create_mode')
+            ))
+            ->from($db->quoteName('#__jem_categories'))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $categoryIds) . ')');
+
+        try {
+            $db->setQuery($query);
+            $categoryMap = $db->loadObjectList('id') ?: array();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return array();
+        }
+
+        $categories = array();
+
+        foreach ($categoryIds as $categoryId) {
+            if (empty($categoryMap[$categoryId])) {
+                continue;
+            }
+
+            $categories[] = $categoryMap[$categoryId];
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Check whether a selected existing article is valid for the selected JEM categories.
+     *
+     * @param   integer       $articleId   Joomla article id.
+     * @param   array|string  $categories  Selected JEM category ids.
+     *
+     * @return  boolean
+     */
+    protected function validateAssociatedArticleSelection($articleId, $categories)
+    {
+        $articleId = (int) $articleId;
+
+        if ($articleId <= 0) {
+            return true;
+        }
+
+        $articleCategoryId = $this->getContentArticleCategoryId($articleId);
+
+        if (!$articleCategoryId) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'));
+
+            return false;
+        }
+
+        $associations = $this->getAssociatedArticleCategoryOptions($categories);
+        $activeAssociations = array_filter($associations, static function ($category) {
+            return (int) $category->article_create_mode !== 0 && (int) $category->article_category_id > 0;
+        });
+        $autoAssociations = array_filter($associations, static function ($category) {
+            return (int) $category->article_create_mode === 1;
+        });
+
+        if ($autoAssociations) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'));
+
+            return false;
+        }
+
+        if (!$activeAssociations) {
+            $manualAllowed = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 2;
+            });
+
+            return (bool) $manualAllowed;
+        }
+
+        $allowedCategoryIds = array_values(array_unique(array_map('intval', array_column($activeAssociations, 'article_category_id'))));
+
+        if (!in_array($articleCategoryId, $allowedCategoryIds, true)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the category id of a Joomla article.
+     *
+     * @param   integer  $articleId  Joomla article id.
+     *
+     * @return  integer
+     */
+    protected function getContentArticleCategoryId($articleId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('id') . ' = ' . (int) $articleId);
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+
+        return 0;
+    }
+
+    /**
+     * Check whether a Joomla article category exists.
+     *
+     * @param   integer  $categoryId  Joomla category id.
+     *
+     * @return  boolean
+     */
+    protected function contentCategoryExists($categoryId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__categories'))
+            ->where($db->quoteName('id') . ' = ' . (int) $categoryId)
+            ->where($db->quoteName('extension') . ' = ' . $db->quote('com_content'))
+            ->where($db->quoteName('published') . ' IN (0,1)');
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult() > 0;
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+
+        return false;
+    }
+
+    /**
+     * Create an unpublished com_content article through Joomla's content model.
+     *
+     * @param   array    $eventData          Event data.
+     * @param   integer  $articleCategoryId  Joomla article category id.
+     *
+     * @return  integer
+     */
+    protected function createAssociatedContentArticle(array $eventData, $articleCategoryId)
+    {
+        $app = Factory::getApplication();
+
+        try {
+            $component = $app->bootComponent('com_content');
+            $factory = $component->getMVCFactory();
+            $model = $factory->createModel('Article', 'Administrator', array('ignore_request' => true));
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return 0;
+        }
+
+        if (!$model) {
+            return 0;
+        }
+
+        $user = $app->getIdentity();
+        $title = trim((string) ($eventData['title'] ?? ''));
+        $categoryAccess = 1;
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('access'))
+                ->from($db->quoteName('#__categories'))
+                ->where($db->quoteName('id') . ' = ' . (int) $articleCategoryId)
+                ->where($db->quoteName('extension') . ' = ' . $db->quote('com_content'));
+            $db->setQuery($query);
+            $categoryAccess = (int) $db->loadResult() ?: 1;
+        } catch (Throwable $e) {
+            $categoryAccess = 1;
+        }
+
+        $article = array(
+            'id'          => 0,
+            'catid'       => (int) $articleCategoryId,
+            'title'       => $title,
+            'alias'       => '',
+            'introtext'   => '',
+            'fulltext'    => '',
+            'state'       => 0,
+            'access'      => $categoryAccess,
+            'language'    => !empty($eventData['language']) ? $eventData['language'] : '*',
+            'created_by'  => (int) $user->id,
+            'metadata'    => array(),
+            'attribs'     => array()
+        );
+
+        try {
+            if (!$model->save($article)) {
+                $this->setError($model->getError());
+
+                return 0;
+            }
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return 0;
+        }
+
+        return (int) $model->getState($model->getName() . '.id');
     }
 
 

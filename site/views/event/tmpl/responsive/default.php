@@ -573,6 +573,15 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link jem-event__more-information'); ?>">
                                 <?php echo $this->escape($moreInformationText); ?>
                             </a>
+                            <?php if (!empty($this->item->caneditarticle) && !empty($this->item->articleeditlink)) : ?>
+                                <a id="jem-event-edit-associated-article-<?php echo (int) $this->item->id; ?>"
+                                   href="<?php echo htmlspecialchars($this->item->articleeditlink, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="jem-associated-article-edit-link btn btn-secondary btn-sm"
+                                   title="<?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?>">
+                                    <span class="icon-edit" aria-hidden="true"></span>
+                                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?></span>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     <?php endif;
                 }

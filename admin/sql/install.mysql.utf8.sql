@@ -160,9 +160,12 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `modified_time` datetime NULL DEFAULT NULL,
     `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
     `type_id` int(11) unsigned NULL DEFAULT NULL,
+    `article_category_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `article_create_mode` tinyint(1) NOT NULL DEFAULT '0',
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `idx_article_category` (`article_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (

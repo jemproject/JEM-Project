@@ -134,6 +134,7 @@ $ticketAvailabilityOptions = array(
                     <th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
                     <th style="width: 9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
+                    <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ARTICLE_ID', 'a.article_id', $listDirn, $listOrder); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
                 </tr>
                 </thead>
@@ -304,6 +305,15 @@ $ticketAvailabilityOptions = array(
                         </td>
                         <td class="center">
                             <?php echo $this->escape($row->access_level); ?>
+                        </td>
+                        <td class="center">
+                            <?php if (!empty($row->article_id)) : ?>
+                                <a href="<?php echo Route::_('index.php?option=com_content&task=article.edit&id=' . (int) $row->article_id); ?>" title="<?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?>">
+                                    <?php echo (int) $row->article_id; ?>
+                                </a>
+                            <?php else : ?>
+                                <?php echo '-'; ?>
+                            <?php endif; ?>
                         </td>
                         <td class="center">
                             <?php echo (int) $row->id; ?>

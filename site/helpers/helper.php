@@ -22,6 +22,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Language\Multilanguage;
@@ -73,6 +74,10 @@ class JemHelper
      */
     static public function getAssociatedArticles(array $events, array $levels)
     {
+        if ((int) self::globalattribs()->get('event_use_associated_article', 1) !== 1) {
+            return array();
+        }
+
         $articleIds = array();
 
         foreach ($events as $event) {
@@ -102,7 +107,8 @@ class JemHelper
             $db->quoteName('a.id'),
             $db->quoteName('a.title'),
             $db->quoteName('a.alias'),
-            $db->quoteName('a.catid')
+            $db->quoteName('a.catid'),
+            $db->quoteName('a.created_by')
         ))
             ->from($db->quoteName('#__content', 'a'))
             ->join('INNER', $db->quoteName('#__categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid') . ' AND ' . $db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
@@ -144,10 +150,15 @@ class JemHelper
         }
 
         $articleSlug = $article->alias ? ((int) $article->id . ':' . $article->alias) : (int) $article->id;
+        $user = JemFactory::getUser();
+        $canEdit = $user->authorise('core.edit', 'com_content.article.' . (int) $article->id)
+            || ((int) $article->created_by === (int) $user->id && $user->authorise('core.edit.own', 'com_content.article.' . (int) $article->id));
 
         return array(
-            'link'  => Route::_('index.php?option=com_content&view=article&id=' . $articleSlug . '&catid=' . (int) $article->catid),
-            'title' => htmlspecialchars($article->title, ENT_COMPAT, 'UTF-8')
+            'link'      => Route::_('index.php?option=com_content&view=article&id=' . $articleSlug . '&catid=' . (int) $article->catid),
+            'title'     => htmlspecialchars($article->title, ENT_COMPAT, 'UTF-8'),
+            'edit_link' => $canEdit ? Route::_('index.php?option=com_content&task=article.edit&a_id=' . (int) $article->id . '&return=' . base64_encode(Uri::getInstance()->toString()) . '&' . Session::getFormToken() . '=1') : '',
+            'can_edit'  => $canEdit
         );
     }
 
@@ -194,8 +205,6 @@ class JemHelper
         }
 
         if ($display === 'button') {
-            $classes .= ' jem-more-information-button';
-
             if (!preg_match('/(^|\s)btn(\s|$)/', $base)) {
                 $classes .= ' btn btn-primary btn-sm';
             }

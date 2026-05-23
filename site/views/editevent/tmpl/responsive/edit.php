@@ -259,6 +259,12 @@ $params        = $this->params;
                 <dl class="adminformlist jem-dl">
                     <dt><?php echo $this->form->getLabel('article_id'); ?></dt>
                     <dd><?php echo $this->form->getInput('article_id'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('create_article'); ?></dt>
+                    <dd><?php echo $this->form->getInput('create_article'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('article_target_category_id'); ?></dt>
+                    <dd><?php echo $this->form->getInput('article_target_category_id'); ?></dd>
+                    <dt></dt>
+                    <dd><?php echo $this->form->renderField('article_auto_info'); ?></dd>
                 </dl>
                 <div>
                     <?php echo $this->form->getLabel('articletext'); ?>

@@ -237,6 +237,8 @@ class JemViewEvent extends JemView
         $articleLink        = JemHelper::getAssociatedArticleLink($associatedArticle);
         $item->articlelink  = $articleLink['link'];
         $item->articletitle = $articleLink['title'];
+        $item->articleeditlink = $articleLink['edit_link'] ?? '';
+        $item->caneditarticle = !empty($articleLink['can_edit']);
 
         // Check if the user has permission to add things
         $permissions = new stdClass();

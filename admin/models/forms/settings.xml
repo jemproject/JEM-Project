@@ -1044,11 +1044,21 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="event_use_associated_article" type="radio"
+                label="COM_JEM_EVENT_FIELD_USE_ASSOCIATED_ARTICLE_LABEL"
+                description="COM_JEM_EVENT_FIELD_USE_ASSOCIATED_ARTICLE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="event_show_more_information" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_DESC"
                 class="inputbox form-select w-auto"
                 default="1"
+                showon="event_use_associated_article:1"
             >
                 <option value="0">JNO</option>
                 <option value="1">COM_JEM_MORE_INFORMATION_LINK</option>
@@ -1058,7 +1068,8 @@
                 label="COM_JEM_EVENT_FIELD_MORE_INFORMATION_TEXT_LABEL"
                 description="COM_JEM_EVENT_FIELD_MORE_INFORMATION_TEXT_DESC"
                 class="inputbox form-control w-auto"
-                default="COM_JEM_EVENT_MORE_INFORMATION"
+                default=""
+                hint="COM_JEM_EVENT_MORE_INFORMATION"
                 showon="event_show_more_information:1,2"
             />
             <field name="event_show_intro" type="radio"
