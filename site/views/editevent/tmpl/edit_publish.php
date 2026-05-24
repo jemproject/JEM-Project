@@ -15,23 +15,33 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 ?>
 <!--START PUBLISHING FIELDSET -->
 <fieldset class="adminform">
-    <legend><?php echo Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'); ?></legend>
+    <legend><?php echo Text::_('COM_JEM_ADVANCED'); ?></legend>
     <dl class="jem-dl">
 
-        <dt><?php echo $this->form->getLabel('published'); ?></dt>
-        <dd><?php echo $this->form->getInput('published'); ?></dd>
-        <dt><?php echo $this->form->getLabel('featured'); ?></dt>
-        <dd><?php echo $this->form->getInput('featured'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
-        <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
-        <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
         <dt><?php echo $this->form->getLabel('access'); ?></dt>
         <dd><?php
             echo HTMLHelper::_('select.genericlist', $this->access, 'jform[access]',
                 array('list.attr' => ' class="form-select inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
             ?>
         </dd>
+        <dt><?php echo $this->form->getLabel('published'); ?></dt>
+        <dd><?php echo $this->form->getInput('published'); ?></dd>
+        <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
+        <dd><?php echo $this->form->getInput('event_status'); ?></dd>
+        <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
+        <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
+        <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
+        <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
+        <dt><?php echo $this->form->getLabel('article_id'); ?></dt>
+        <dd><?php echo $this->form->getInput('article_id'); ?></dd>
+        <dt><?php echo $this->form->getLabel('create_article'); ?></dt>
+        <dd><?php echo $this->form->getInput('create_article'); ?></dd>
+        <dt><?php echo $this->form->getLabel('article_target_category_id'); ?></dt>
+        <dd><?php echo $this->form->getInput('article_target_category_id'); ?></dd>
+        <dt></dt>
+        <dd><?php echo $this->form->renderField('article_auto_info'); ?></dd>
 
     </dl>
 </fieldset>

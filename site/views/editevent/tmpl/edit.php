@@ -21,6 +21,10 @@ $wa->useScript('keepalive')
 // Create shortcut to parameters.
 $params        = $this->params;
 // $settings    = json_decode($this->item->attribs);
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+$contactField = $this->form->getField('contactid');
+$showContactField = $contactField && method_exists($contactField, 'hasAvailableContacts') && $contactField->hasAvailableContacts();
 ?>
 
 <script>
@@ -224,26 +228,22 @@ $params        = $this->params;
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
-                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                    <?php if ($showTypeField) : ?>
+                        <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
+                    <?php if ($showContactField) : ?>
                         <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
                     <?php else : ?>
-                        <input type="hidden" name="jform[contactid]" value="" />
+                        <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
-                    <li><?php echo $this->form->getLabel('event_status'); ?><?php echo $this->form->getInput('event_status'); ?></li>
-                    <li><?php echo $this->form->getLabel('ticket_availability'); ?><?php echo $this->form->getInput('ticket_availability'); ?></li>
-                    <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
+                    <li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
                 </ul>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>
-
-                <ul class="adminformlist">
-                    <li><?php echo $this->form->getLabel('article_id'); ?><?php echo $this->form->getInput('article_id'); ?></li>
-                    <li><?php echo $this->form->getLabel('create_article'); ?><?php echo $this->form->getInput('create_article'); ?></li>
-                    <li><?php echo $this->form->getLabel('article_target_category_id'); ?><?php echo $this->form->getInput('article_target_category_id'); ?></li>
-                    <li><?php echo $this->form->renderField('article_auto_info'); ?></li>
-                </ul>
                 <div class="clr"></div>
                 <?php echo $this->form->getLabel('articletext'); ?>
                 <div class="clr"><br></div>
@@ -288,10 +288,10 @@ $params        = $this->params;
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
-            <!-- PUBLISH TAB -->
+            <!-- ADVANCED TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-publishtab', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED')); ?>
+            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_ADVANCED'), 'editevent-advancedtab'); ?>
             <?php echo $this->loadTemplate('publish'); ?>
 
             <!-- ATTACHMENTS TAB -->

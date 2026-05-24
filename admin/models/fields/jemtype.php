@@ -16,20 +16,23 @@ class JFormFieldJemtype extends FormField
 {
     protected $type = 'Jemtype';
 
+    /**
+     * Check whether the field has published type options for its entity.
+     *
+     * @return  bool
+     */
+    public function hasAvailableTypes()
+    {
+        return count($this->getTypes()) > 0;
+    }
+
     protected function getInput()
     {
-        $entity = (int) $this->getAttribute('entity', 1);
+        $types = $this->getTypes();
 
-        $db    = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'name', 'icon', 'color')))
-            ->from($db->quoteName('#__jem_types'))
-            ->where($db->quoteName('entity') . ' = ' . $entity)
-            ->where($db->quoteName('published') . ' = 1')
-            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
-
-        $db->setQuery($query);
-        $types = $db->loadObjectList();
+        if ($types === array()) {
+            return '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="" />';
+        }
 
         $options   = array();
         $options[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_TYPE_SELECT_NONE'));
@@ -61,6 +64,28 @@ class JFormFieldJemtype extends FormField
             ->useScript('webcomponent.field-fancy-select');
 
         return '<joomla-field-fancy-select class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '">' . $html . '</joomla-field-fancy-select>';
+    }
+
+    /**
+     * Get published type options for the configured entity.
+     *
+     * @return  array
+     */
+    protected function getTypes()
+    {
+        $entity = (int) $this->getAttribute('entity', 1);
+
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name', 'icon', 'color')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = ' . $entity)
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: array();
     }
 
     /**

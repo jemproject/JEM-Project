@@ -25,6 +25,33 @@ class JFormFieldModal_Contact extends FormField
      */
     protected $type = 'Modal_Contact';
 
+    /**
+     * Check whether Contact has selectable published contacts.
+     *
+     * @return  bool
+     */
+    public function hasAvailableContacts()
+    {
+        if (!ComponentHelper::isEnabled('com_contact')) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__contact_details'))
+            ->where($db->quoteName('published') . ' = 1');
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult() > 0;
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return false;
+        }
+    }
 
     /**
      * Method to get the field input markup
@@ -34,7 +61,7 @@ class JFormFieldModal_Contact extends FormField
         $app = Factory::getApplication();
         $currentValues = ComponentHelper::isEnabled('com_contact') ? ($this->value ? $this->value : '') : '';
 
-        if (!ComponentHelper::isEnabled('com_contact')) {
+        if (!$this->hasAvailableContacts()) {
             return '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="" />';
         }
 

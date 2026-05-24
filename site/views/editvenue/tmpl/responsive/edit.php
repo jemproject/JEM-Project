@@ -22,6 +22,8 @@ $wa->useScript('keepalive')
 // Create shortcut to parameters.
 $params        = $this->item->params;
 //$settings = json_decode($this->item->attribs);
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 
 $options = array(
     'onActive' => 'function(title, description){
@@ -259,6 +261,12 @@ $location = JemHelper::defineCenterMap($this->form);
                     <dd><?php echo $this->form->getInput('url'); ?></dd>
                     <dt><?php echo $this->form->getLabel('color'); ?></dt>
                     <dd><?php echo $this->form->getInput('color'); ?></dd>
+                    <?php if ($showTypeField) : ?>
+                        <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
+                        <dd><?php echo $this->form->getInput('type_id'); ?></dd>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
                 </dl>
 
             </fieldset>
