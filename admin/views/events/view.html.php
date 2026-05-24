@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 
@@ -96,7 +97,7 @@ class JemViewEvents extends JemAdminView
     protected function addToolbar()
     {
         ToolBarHelper::title(Text::_('COM_JEM_EVENTS'), 'events');
-        $toolbar = $this->getToolbarInstance();
+        $toolbar = Toolbar::getInstance('toolbar');
 
         /* retrieving the allowed actions for the user */
         $canDo = JemHelperBackend::getActions(0);
@@ -116,7 +117,7 @@ class JemViewEvents extends JemAdminView
         }
 
         /* state */
-        if ($showActionDropdown && $this->supportsToolbarDropdown($toolbar)) {
+        if ($showActionDropdown) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -151,30 +152,6 @@ class JemViewEvents extends JemAdminView
                     ->listCheck(true);
             } elseif ($canChangeState) {
                 $childBar->trash('events.trash')->listCheck(true);
-            }
-        } elseif ($showActionDropdown) {
-            if ($canChangeState && $this->state->get('filter_state') != 2) {
-                ToolbarHelper::publishList('events.publish');
-                ToolbarHelper::unpublishList('events.unpublish');
-                ToolbarHelper::custom('events.featured', 'featured.png', 'featured_f2.png', 'JFEATURED', true);
-            }
-
-            if ($canChangeState && $this->state->get('filter_state') != -1) {
-                if ($this->state->get('filter_state') != 2) {
-                    ToolbarHelper::archiveList('events.archive');
-                } elseif ($this->state->get('filter_state') == 2) {
-                    ToolbarHelper::publishList('events.publish', 'JTOOLBAR_UNARCHIVE');
-                }
-            }
-
-            if ($canChangeState) {
-                ToolbarHelper::checkin('events.checkin');
-            }
-
-            if ($this->state->get('filter_state') == -2 && $canDelete) {
-                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
-            } elseif ($canChangeState) {
-                ToolbarHelper::trash('events.trash');
             }
         }
 
