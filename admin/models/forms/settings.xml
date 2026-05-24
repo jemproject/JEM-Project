@@ -1521,6 +1521,42 @@
         </fieldset>
 
         <fieldset name="evregistration" label="COM_JEM_SETTINGS_EVENT_LINKS">
+            <field name="event_show_online_meeting" type="radio"
+                    label="COM_JEM_EVENT_FIELD_SHOW_ONLINE_MEETING_LABEL"
+                    description="COM_JEM_EVENT_FIELD_SHOW_ONLINE_MEETING_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_ics" type="radio"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_ics_description" type="radio"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESCRIPTION_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESCRIPTION_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+                    showon="event_online_meeting_ics:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_default_label" type="text"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_DEFAULT_LABEL_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_DEFAULT_LABEL_DESC"
+                    class="inputbox form-control w-auto"
+                    default=""
+                    hint="COM_JEM_JOIN_ONLINE"
+                    showon="event_show_online_meeting:1"
+            />
             <field name="allowed_link_extensions" type="text"
                     label="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_LABEL"
                     description="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_DESC"

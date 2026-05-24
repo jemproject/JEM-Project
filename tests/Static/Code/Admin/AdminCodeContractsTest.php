@@ -154,18 +154,11 @@ final class AdminCodeContractsTest extends TestCase
         $code = self::read(JEM_TEST_ROOT . '/admin/views/events/view.html.php');
 
         self::assertStringContainsString("\$canChangeState = \$canDo->get('core.edit.state') || \$canDo->get('core.admin');", $code);
-        self::assertMatchesRegularExpression(
-            "/if\s*\(\s*\\\$canChangeState\s*\)\s*\{[^}]*ToolBarHelper::publishList\('events\.publish'/s",
-            $code
-        );
-        self::assertMatchesRegularExpression(
-            "/if\s*\(\s*\\\$canChangeState\s*\)\s*\{[^}]*ToolBarHelper::checkin\('events\.checkin'\)/s",
-            $code
-        );
-        self::assertMatchesRegularExpression(
-            "/elseif\s*\(\s*\\\$canChangeState\s*\)\s*\{[^}]*ToolBarHelper::trash\('events\.trash'\)/s",
-            $code
-        );
+        self::assertStringContainsString("\$toolbar = Toolbar::getInstance('toolbar');", $code);
+        self::assertStringContainsString("\$dropdown = \$toolbar->dropdownButton('status-group')", $code);
+        self::assertStringContainsString("\$childBar->publish('events.publish')->listCheck(true);", $code);
+        self::assertStringContainsString("\$childBar->checkin('events.checkin')->listCheck(true);", $code);
+        self::assertStringContainsString("\$childBar->trash('events.trash')->listCheck(true);", $code);
     }
 
     /**

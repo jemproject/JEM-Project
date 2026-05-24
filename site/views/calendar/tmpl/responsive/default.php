@@ -135,6 +135,7 @@ use Joomla\CMS\Factory;
 
         //initialize variables
         $multicatname = '';
+        $color = '';
         $colorpic = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
@@ -390,7 +391,7 @@ use Joomla\CMS\Factory;
         $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 pb-2' : '') . '" style="' . $featuredstyle;
         $style = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
-            $style = '; background-color:' . array_pop($catcolor);
+            $style = '; background-color:' . reset($catcolor);
         } elseif ($eventbackgroundcolor) {
             $style = '; background-color:' . $eventbackgroundcolor;
         }

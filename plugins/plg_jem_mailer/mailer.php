@@ -108,6 +108,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= $id.' END as slug';
 
         $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+            'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
@@ -132,7 +133,7 @@ class plgJemMailer extends CMSPlugin
         }
 
         //create link to event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
 
         // Strip tags/scripts, etc. from description and comment
         $text_description = OutputFilter::cleanText($event->text);
@@ -289,6 +290,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= $id.' END as slug';
 
         $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+            'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
@@ -306,7 +308,7 @@ class plgJemMailer extends CMSPlugin
         $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
         // create link to event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -391,7 +393,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', $case_when));
+        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         if (empty($registration) && ((int)$register_id > 0)) {
@@ -426,7 +428,7 @@ class plgJemMailer extends CMSPlugin
         }
 
         // create link to event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -561,7 +563,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by'));
+        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->select($case_when);
@@ -603,6 +605,9 @@ class plgJemMailer extends CMSPlugin
                 $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
                 break;
         }
+
+        $adminstate = $this->_appendOnlineMeetingInfo($adminstate, $event);
+        $userstate  = $this->_appendOnlineMeetingInfo($userstate, $event);
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, ($event->created_by != $userid) ? $event->created_by : 0, $userid);
 
@@ -773,6 +778,35 @@ class plgJemMailer extends CMSPlugin
         }
 
         return true;
+    }
+
+    /**
+     * Append online meeting details to an event mail link block.
+     *
+     * @param   string  $text   Existing mail text.
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    private function _appendOnlineMeetingInfo($text, $event)
+    {
+        $settings = JemHelper::globalattribs();
+
+        if ((int) $settings->get('event_show_online_meeting', '1') !== 1) {
+            return $text;
+        }
+
+        $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($event);
+
+        if ($onlineMeetingUrl === '') {
+            return $text;
+        }
+
+        return $text . "\n" . Text::sprintf(
+            'PLG_JEM_MAILER_ONLINE_MEETING_LINK',
+            JemHelper::getOnlineMeetingLabel($event),
+            $onlineMeetingUrl
+        );
     }
 
     /**

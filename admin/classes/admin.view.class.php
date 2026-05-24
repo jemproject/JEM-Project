@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\Toolbar;
 
 /**
  * JemView class with JEM specific extensions
@@ -69,8 +70,8 @@ class JemAdminView extends HtmlView
 
     protected function getToolbarInstance()
     {
-        if (class_exists('\\Joomla\\CMS\\Toolbar\\Toolbar')) {
-            return \Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
+        if (class_exists(Toolbar::class)) {
+            return Toolbar::getInstance('toolbar');
         }
 
         if (class_exists('\\JToolbar')) {

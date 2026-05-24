@@ -338,7 +338,11 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
         <!-- DESCRIPTION -->
         <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
-        <?php if (($params->get('event_show_description','1') && $hasDescription) || !empty($this->event_links)) { ?>
+        <?php
+        $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($this->item);
+        $showOnlineMeeting = $onlineMeetingUrl !== '' && (int) $params->get('event_show_online_meeting', '1') === 1;
+        ?>
+        <?php if (($params->get('event_show_description','1') && $hasDescription) || $showOnlineMeeting || !empty($this->event_links)) { ?>
             <?php if ($params->get('event_show_description','1') && $hasDescription) : ?>
                 <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <?php endif; ?>
@@ -352,7 +356,28 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         echo $this->item->text;
                     }
 
-                    if (!empty($this->event_links)) : ?>
+                    if ($showOnlineMeeting) :
+                        $onlineMeetingLabel = JemHelper::getOnlineMeetingLabel($this->item);
+                        $onlineMeetingPlatform = JemHelper::getOnlineMeetingPlatform($onlineMeetingUrl);
+                        $onlineMeetingPlatformKey = preg_replace('/[^a-z0-9_-]/i', '', $onlineMeetingPlatform['key']);
+                        ?>
+                        <fieldset id="jem-event-online-meeting-<?php echo (int) $this->item->id; ?>"
+                                  class="jem-online-meeting jem-online-meeting-<?php echo $this->escape($onlineMeetingPlatformKey); ?>">
+                            <legend><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></legend>
+                            <a id="jem-event-online-meeting-link-<?php echo (int) $this->item->id; ?>"
+                               class="jem-online-meeting-link btn btn-primary"
+                               href="<?php echo $this->escape($onlineMeetingUrl); ?>"
+                               target="_blank"
+                               title="<?php echo $this->escape($onlineMeetingPlatform['label']); ?>"
+                               rel="noopener noreferrer">
+                                <span class="jem-online-meeting-icon <?php echo $this->escape($onlineMeetingPlatform['icon']); ?>" aria-hidden="true"></span>
+                                <span class="visually-hidden"><?php echo $this->escape($onlineMeetingPlatform['label']); ?>: </span>
+                                <?php echo $this->escape($onlineMeetingLabel); ?>
+                            </a>
+                        </fieldset>
+                    <?php endif; ?>
+
+                    <?php if (!empty($this->event_links)) : ?>
                         <?php
                         // Default icons by action type.
                         $defaultLinkTypes = array(

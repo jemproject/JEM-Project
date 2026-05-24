@@ -60,6 +60,12 @@ class JemTableEvent extends Table
         if (array_key_exists('article_id', $array)) {
             $array['article_id'] = (int) $array['article_id'];
         }
+        if (array_key_exists('online_meeting_url', $array)) {
+            $array['online_meeting_url'] = trim((string) $array['online_meeting_url']);
+        }
+        if (array_key_exists('online_meeting_label', $array)) {
+            $array['online_meeting_label'] = trim((string) $array['online_meeting_label']);
+        }
 
         // Search for the {readmore} tag and split the text up accordingly.
         if (isset($array['articletext'])) {

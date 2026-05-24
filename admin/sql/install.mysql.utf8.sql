@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `introtext` mediumtext NOT NULL,
     `fulltext` mediumtext NOT NULL,
     `article_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `online_meeting_url` varchar(2048) NOT NULL DEFAULT '',
+    `online_meeting_label` varchar(255) NOT NULL DEFAULT '',
     `meta_keywords` varchar(200) DEFAULT NULL,
     `meta_description` varchar(255) DEFAULT NULL,
     `recurrence_first_id` int(11) NOT NULL DEFAULT '0',

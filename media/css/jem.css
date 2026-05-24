@@ -2545,4 +2545,34 @@ div#jem .inline-button-right {
     order: 3;
 }
 
+#jem .jem-online-meeting {
+    display: block;
+    width: 100%;
+    margin: 1.25rem 0;
+    padding: 1rem;
+    border: 1px solid currentColor;
+}
+
+#jem .jem-online-meeting legend {
+    float: none;
+    width: auto;
+    margin: 0 0 .75rem;
+    padding: 0 .35rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+#jem .jem-online-meeting-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    max-width: 100%;
+    white-space: normal;
+}
+
+#jem .jem-online-meeting-icon {
+    line-height: 1;
+}
+
 

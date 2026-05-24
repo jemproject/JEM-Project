@@ -43,6 +43,10 @@ class jem_events extends Table
     public $alias = '';
     /** @var int */
     public $article_id = 0;
+    /** @var string */
+    public $online_meeting_url = '';
+    /** @var string */
+    public $online_meeting_label = '';
     /** @var date */
     public $created = null;
     /** @var int */

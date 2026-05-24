@@ -17,6 +17,10 @@ $group = 'globalattribs';
     <fieldset class="options-form">
         <legend><?php echo Text::_('COM_JEM_SETTINGS_EVENT_LINKS'); ?></legend>
         <ul class="adminformlist">
+            <li><div class="label-form"><?php echo $this->form->renderfield('event_show_online_meeting',$group); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('event_online_meeting_ics',$group); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('event_online_meeting_ics_description',$group); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('event_online_meeting_default_label',$group); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('allowed_link_extensions',$group); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('allowed_link_schemes',$group); ?></div></li>
         </ul>

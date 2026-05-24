@@ -163,6 +163,136 @@ class JemHelper
     }
 
     /**
+     * Return a sanitized online meeting URL for display and export.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    static public function getOnlineMeetingUrl($event)
+    {
+        $url = isset($event->online_meeting_url) ? trim((string) $event->online_meeting_url) : '';
+
+        if ($url === '') {
+            return '';
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!$scheme || !in_array(strtolower($scheme), array('http', 'https'), true)) {
+            return '';
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
+    }
+
+    /**
+     * Return the label used for the online meeting call to action.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    static public function getOnlineMeetingLabel($event)
+    {
+        $label = isset($event->online_meeting_label) ? trim((string) $event->online_meeting_label) : '';
+
+        if ($label === '') {
+            $settings = self::globalattribs();
+            $label = trim((string) $settings->get('event_online_meeting_default_label', ''));
+        }
+
+        if ($label === '') {
+            $label = Text::_('COM_JEM_JOIN_ONLINE');
+        } elseif (strtoupper($label) === $label) {
+            $label = Text::_($label);
+        }
+
+        return $label;
+    }
+
+    /**
+     * Detect the online meeting platform from a URL.
+     *
+     * @param   string  $url  Online meeting URL.
+     *
+     * @return  array
+     */
+    static public function getOnlineMeetingPlatform($url)
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $host = preg_replace('/^www\./', '', $host);
+
+        $platforms = array(
+            'zoom' => array(
+                'label' => 'Zoom',
+                'domains' => array('zoom.us')
+            ),
+            'teams' => array(
+                'label' => 'Microsoft Teams',
+                'domains' => array('teams.microsoft.com', 'teams.live.com')
+            ),
+            'meet' => array(
+                'label' => 'Google Meet',
+                'domains' => array('meet.google.com')
+            ),
+            'webex' => array(
+                'label' => 'Cisco Webex',
+                'domains' => array('webex.com')
+            ),
+            'jitsi' => array(
+                'label' => 'Jitsi Meet',
+                'domains' => array('meet.jit.si', 'jitsi.org')
+            ),
+            'bigbluebutton' => array(
+                'label' => 'BigBlueButton',
+                'domains' => array('bigbluebutton.org')
+            ),
+            'gotomeeting' => array(
+                'label' => 'GoTo Meeting',
+                'domains' => array('gotomeeting.com')
+            ),
+            'whereby' => array(
+                'label' => 'Whereby',
+                'domains' => array('whereby.com')
+            ),
+            'discord' => array(
+                'label' => 'Discord',
+                'domains' => array('discord.gg', 'discord.com')
+            ),
+            'youtube' => array(
+                'label' => 'YouTube Live',
+                'domains' => array('youtube.com', 'youtu.be')
+            )
+        );
+
+        foreach ($platforms as $key => $platform) {
+            foreach ($platform['domains'] as $domain) {
+                if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+                    return array(
+                        'key' => $key,
+                        'label' => $platform['label'],
+                        'icon' => 'fa fa-video'
+                    );
+                }
+            }
+        }
+
+        if (preg_match('/(^|\.)bbb[.-]/', $host) || strpos($host, 'bigbluebutton') !== false) {
+            return array(
+                'key' => 'bigbluebutton',
+                'label' => 'BigBlueButton',
+                'icon' => 'fa fa-video'
+            );
+        }
+
+        return array(
+            'key' => 'generic',
+            'label' => Text::_('COM_JEM_ONLINE_MEETING'),
+            'icon' => 'fa fa-globe'
+        );
+    }
+
+    /**
      * Normalize the More information display option.
      *
      * @param   mixed  $value  Module parameter value.
@@ -1226,6 +1356,11 @@ class JemHelper
 
     static public function icalAddEvent(&$calendartool, $event)
     {
+        $language = Factory::getApplication()->getLanguage();
+        $language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true);
+        $language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem', null, true);
+        $language->load('com_jem', JPATH_SITE, null, false);
+
         $jemsettings   = JemHelper::config();
         $timezone_name = JemHelper::getTimeZoneName();
         $config        = Factory::getConfig();
@@ -1311,13 +1446,38 @@ class JemHelper
             }
         }
 
-        // item description text
-        $description = $event->title . '\\n';
-        $description .= Text::_('COM_JEM_CATEGORY') . ': ' . implode(', ', $categories) . '\\n';
-
         $link = $uri->root() . JemHelperRoute::getEventRoute($event->slug);
         $link = Route::_($link);
-        $description .= Text::_('COM_JEM_ICS_LINK') . ': ' . $link . '\\n';
+
+        $onlineMeetingUrl = self::getOnlineMeetingUrl($event);
+        $onlineMeetingLabel = self::getOnlineMeetingLabel($event);
+        $onlineMeetingPlatform = $onlineMeetingUrl !== '' ? self::getOnlineMeetingPlatform($onlineMeetingUrl) : array('key' => '', 'label' => '');
+        $includeOnlineMeetingInIcs = (int) self::globalattribs()->get('event_online_meeting_ics', 1) === 1;
+        $includeOnlineMeetingInDescription = (int) self::globalattribs()->get('event_online_meeting_ics_description', 1) === 1;
+
+        // item description text
+        $description = $event->title . '\\n\\n';
+        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs && $includeOnlineMeetingInDescription) {
+            $description .= Text::_('COM_JEM_ONLINE_MEETING') . ': ' . $onlineMeetingLabel . ' - ' . $onlineMeetingUrl . '\\n';
+        }
+
+        $description .= Text::_('COM_JEM_CATEGORY') . ': ' . implode(', ', $categories) . '\\n';
+        $description .= Text::_('COM_JEM_ICS_EVENT_LINK') . ': ' . $link . '\\n';
+
+        $htmlDescription = '<html><body>';
+        $htmlDescription .= '<p>' . htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8') . '</p>';
+
+        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs && $includeOnlineMeetingInDescription) {
+            $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_ONLINE_MEETING'), ENT_QUOTES, 'UTF-8') . ':</strong> '
+                . '<a href="' . htmlspecialchars($onlineMeetingUrl, ENT_QUOTES, 'UTF-8') . '">'
+                . htmlspecialchars($onlineMeetingLabel, ENT_QUOTES, 'UTF-8') . '</a></p>';
+        }
+
+        $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_CATEGORY'), ENT_QUOTES, 'UTF-8') . ':</strong> '
+            . htmlspecialchars(implode(', ', $categories), ENT_QUOTES, 'UTF-8') . '</p>';
+        $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_ICS_EVENT_LINK'), ENT_QUOTES, 'UTF-8') . ':</strong> '
+            . '<a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '</a></p>';
+        $htmlDescription .= '</body></html>';
 
         // location
         $location = array($event->venue);
@@ -1343,6 +1503,20 @@ class JemHelper
 
         $location = implode(",", $location);
 
+        if ($onlineMeetingUrl !== '') {
+            $onlineLocation = array();
+
+            if (isset($event->venue) && trim((string) $event->venue) !== '') {
+                $onlineLocation[] = trim((string) $event->venue);
+            }
+
+            if (!empty($onlineMeetingPlatform['label'])) {
+                $onlineLocation[] = $onlineMeetingPlatform['label'];
+            }
+
+            $location = $onlineLocation ? implode(' - ', $onlineLocation) : Text::_('COM_JEM_ONLINE_MEETING');
+        }
+
         // Build vevent using iCalcreator v2.41 API
         $e = $calendartool->newVevent();
         $e->setSummary($event->title);
@@ -1350,8 +1524,18 @@ class JemHelper
         $e->setDtstart($dtStart, $dtStartParams);
         $e->setDtend($dtEnd, $dtEndParams);
         $e->setDescription($description);
+        $e->setXprop('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
         if ($location !== '') {
             $e->setLocation($location);
+        }
+        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs) {
+            $e->setConference($onlineMeetingUrl, array('FEATURE' => 'AUDIO,VIDEO', 'LABEL' => $onlineMeetingLabel));
+
+            if ($onlineMeetingPlatform['key'] === 'teams') {
+                $e->setXprop('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);
+                $e->setXprop('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
+                $e->setXprop('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
+            }
         }
         $e->setUrl($link);
         $e->setUid('event' . $event->id . '@' . $sitename);

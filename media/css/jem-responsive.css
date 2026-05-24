@@ -2045,3 +2045,13 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
         justify-self: start !important;
     }
 }
+
+#jem .jem-online-meeting {
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    #jem .jem-online-meeting-link {
+        width: 100%;
+    }
+}
