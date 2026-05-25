@@ -91,8 +91,11 @@ use Joomla\CMS\Uri\Uri;
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_VENUES'), 'venues');
+        $toolbar = $this->getToolbarInstance();
 
         $canDo = JemHelperBackend::getActions(0);
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete = $canDo->get('core.delete');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -106,21 +109,43 @@ use Joomla\CMS\Uri\Uri;
         }
 
         /* state */
-        if ($canDo->get('core.edit.state')) {
-            if ($this->state->get('filter.state') != 2) {
+        if (($canChangeState || $canDelete) && $this->supportsToolbarDropdown($toolbar)) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
+
+            if ($canChangeState && $this->state->get('filter.state') != 2) {
+                $childBar->publish('venues.publish')->listCheck(true);
+                $childBar->unpublish('venues.unpublish')->listCheck(true);
+            }
+
+            if ($canChangeState) {
+                $childBar->checkin('venues.checkin')->listCheck(true);
+            }
+
+            /* delete-trash */
+            if ($canDelete) {
+                $childBar->delete('venues.remove', 'JACTION_DELETE')
+                    ->message('COM_JEM_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
+        } elseif ($canChangeState || $canDelete) {
+            if ($canChangeState && $this->state->get('filter.state') != 2) {
                 ToolbarHelper::publishList('venues.publish');
                 ToolbarHelper::unpublishList('venues.unpublish');
-                ToolbarHelper::divider();
             }
-        }
 
-        if ($canDo->get('core.edit.state')) {
-            ToolbarHelper::checkin('venues.checkin');
-        }
+            if ($canChangeState) {
+                ToolbarHelper::checkin('venues.checkin');
+            }
 
-        /* delete-trash */
-        if ($canDo->get('core.delete')) {
-            ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
+            if ($canDelete) {
+                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
+            }
         }
 
         ToolbarHelper::divider();
