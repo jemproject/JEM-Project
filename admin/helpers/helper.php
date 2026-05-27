@@ -81,6 +81,12 @@ class JemHelperBackend
             $vName == 'groups'
         );
 
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_ATTACHMENTS'),
+            'index.php?option=com_jem&view=attachments',
+            $vName == 'attachments'
+        );
+
         if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_SETTINGS_TITLE'),

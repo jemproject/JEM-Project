@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Attachments-v2" serif:id="Attachments v2">
+            <path d="M26.678,13.972L61.678,13.972L75.678,27.972L75.678,78.75C75.678,81.511 73.439,83.75 70.678,83.75L26.678,83.75C23.916,83.75 21.678,81.511 21.678,78.75L21.678,18.972C21.678,16.211 23.916,13.972 26.678,13.972Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+            <path d="M61.678,14.472L61.678,27.972L75.178,27.972" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:square;"/>
+            <path d="M35.678,40.478L55.678,40.478M35.678,52.478L49.678,52.478" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+            <path d="M46.432,72.222L61.714,56.94C65.228,53.426 70.943,53.426 74.457,56.94C77.971,60.454 77.971,66.169 74.457,69.683L58.576,85.564C53.756,90.385 45.913,90.385 41.092,85.564C36.272,80.743 36.272,72.9 41.092,68.08L57.079,52.093" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+            <path d="M53.378,75.963L68.586,60.755C69.999,59.342 72.297,59.342 73.711,60.755C75.125,62.169 75.125,64.467 73.711,65.881L57.83,81.762C55.107,84.485 50.678,84.485 47.955,81.762C45.232,79.039 45.232,74.61 47.955,71.887L63.943,55.899" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
+        </g>
+    </g>
+</svg>

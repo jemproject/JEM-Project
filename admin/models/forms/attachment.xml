@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden" />
+
+        <field name="file"
+               type="text"
+               label="COM_JEM_ATTACHMENT_FILE"
+               required="true"
+               readonly="true"
+               class="form-control"
+        />
+
+        <field name="object"
+               type="text"
+               label="COM_JEM_ATTACHMENT_OBJECT"
+               description="COM_JEM_ATTACHMENT_OBJECT_DESC"
+               required="true"
+               readonly="true"
+               class="form-control"
+        />
+
+        <field name="name"
+               type="text"
+               label="COM_JEM_ATTACHMENT_NAME"
+               maxlength="255"
+               class="form-control"
+        />
+
+        <field name="description"
+               type="textarea"
+               label="COM_JEM_ATTACHMENT_DESCRIPTION"
+               rows="4"
+               class="form-control"
+        />
+
+        <field name="icon"
+               type="text"
+               label="COM_JEM_ATTACHMENT_ICON"
+               maxlength="255"
+               class="form-control"
+        />
+
+        <field name="frontend"
+               type="radio"
+               label="COM_JEM_ATTACHMENT_FRONTEND"
+               default="1"
+               layout="joomla.form.field.radio.switcher"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+        <field name="access"
+               type="accesslevel"
+               label="COM_JEM_ATTACHMENT_ACCESS"
+               default="1"
+        />
+
+        <field name="ordering"
+               type="number"
+               label="JGRID_HEADING_ORDERING"
+               default="0"
+               class="form-control"
+        />
+
+        <field name="created"
+               type="calendar"
+               label="JGLOBAL_FIELD_CREATED_LABEL"
+               showtime="true"
+               translateformat="true"
+               class="form-control"
+        />
+
+        <field name="created_by"
+               type="user"
+               label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+        />
+    </fieldset>
+</form>

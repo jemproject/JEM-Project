@@ -80,6 +80,9 @@ $options = array(
                                         $link = 'index.php?option=com_jem&amp;task=group.add';
                                         $this->quickiconButton($link, 'icon-48-groupedit.svg', Text::_('COM_JEM_GROUP_ADD'));
 
+                                        $link = 'index.php?option=com_jem&amp;view=attachments';
+                                        $this->quickiconButton($link, 'icon-48-attachments.svg', Text::_('COM_JEM_ATTACHMENTS'));
+
                                         $link = 'index.php?option=com_jem&amp;view=types';
                                         $this->quickiconButton($link, 'icon-48-types.svg', Text::_('COM_JEM_TYPES'));
 

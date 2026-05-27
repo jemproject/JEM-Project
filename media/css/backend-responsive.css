@@ -521,6 +521,10 @@ img#imagelib {
     white-space: nowrap;
 }
 
+.jem-attachment-file-name {
+    white-space: nowrap;
+}
+
 /* ---------- TABLE, J3 Isis template -------------------------- */
 .com_jem table {
     max-width: 100%;

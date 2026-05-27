@@ -39,6 +39,16 @@ $location = JemHelper::defineCenterMap($this->form);
         }
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+        var requestedTab = new URLSearchParams(window.location.search).get('active_tab') || window.location.hash.replace('#', '');
+        if (requestedTab === 'attachments' && window.bootstrap && bootstrap.Tab) {
+            var tabTrigger = document.querySelector('[data-bs-target="#attachments"], [href="#attachments"], [aria-controls="attachments"]');
+            if (tabTrigger) {
+                bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+            }
+        }
+    });
+
     // window.addEvent('domready', function() {
     window.onload = function() {
         setAttribute();

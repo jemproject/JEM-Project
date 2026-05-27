@@ -65,6 +65,7 @@
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=types">COM_JEM_MENU_TYPES</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=attachments">COM_JEM_MENU_ATTACHMENTS</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
         </submenu>
