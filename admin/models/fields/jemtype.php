@@ -31,7 +31,7 @@ class JFormFieldJemtype extends FormField
         $types = $this->getTypes();
 
         if ($types === array()) {
-            return '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="" />';
+            return '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars((string) $this->value, ENT_QUOTES, 'UTF-8') . '" />';
         }
 
         $options   = array();
