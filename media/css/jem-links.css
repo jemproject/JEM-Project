@@ -30,6 +30,23 @@
 .jem-links-tab {
     max-width: 100%;
     container-type: inline-size;
+    --jem-link-card-bg: var(--bs-body-bg, #fff);
+    --jem-link-card-alt-bg: var(--bs-tertiary-bg, #f4f6f8);
+    --jem-link-border: var(--bs-border-color, #d7dce1);
+    --jem-link-text: var(--bs-body-color, #1d2733);
+    --jem-link-muted: var(--bs-secondary-color, #667280);
+    --jem-link-input-bg: var(--bs-body-bg, #fff);
+    --jem-link-input-border: var(--bs-border-color, #b8c8e3);
+}
+
+[data-bs-theme="dark"] .jem-links-tab {
+    --jem-link-card-bg: var(--bs-tertiary-bg, #263442);
+    --jem-link-card-alt-bg: color-mix(in srgb, var(--bs-tertiary-bg, #263442) 82%, var(--bs-body-bg, #17212b));
+    --jem-link-border: var(--bs-border-color, #52677e);
+    --jem-link-text: var(--bs-body-color, #eef3f7);
+    --jem-link-muted: var(--bs-secondary-color, #b7c5d1);
+    --jem-link-input-bg: var(--bs-body-bg, #17212b);
+    --jem-link-input-border: var(--bs-border-color, #52677e);
 }
 
 .jem-links-tab .adminform-subform {
@@ -54,11 +71,11 @@
 
 /* Alternate background to visually separate link cards */
 .jem-links-tab .subform-repeatable-group:nth-child(odd) {
-    background: #fff;
+    background: var(--jem-link-card-bg);
 }
 
 .jem-links-tab .subform-repeatable-group:nth-child(even) {
-    background: #f4f6f8;
+    background: var(--jem-link-card-alt-bg);
 }
 
 /* Main repeatable item card */
@@ -77,9 +94,10 @@
     margin: 0 3.5rem 1.35rem 0;
     padding: .75rem 1rem;
 
-    border: 1px solid #d7dce1;
+    border: 1px solid var(--jem-link-border);
     border-radius: .5rem;
-    background: #fff;
+    background: var(--jem-link-card-bg);
+    color: var(--jem-link-text);
 
     overflow: visible !important;
 }
@@ -238,7 +256,7 @@
     padding: 0 !important;
 
     font-weight: 600;
-    color: #1d2733;
+    color: var(--jem-link-text);
     line-height: 1.15;
 }
 
@@ -327,6 +345,40 @@
     box-sizing: border-box;
 }
 
+[data-bs-theme="dark"] .jem-links-tab,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group,
+[data-bs-theme="dark"] .jem-links-tab .control-label,
+[data-bs-theme="dark"] .jem-links-tab .control-label label,
+[data-bs-theme="dark"] .jem-links-tab .controls {
+    color: var(--jem-link-text) !important;
+}
+
+[data-bs-theme="dark"] .jem-links-tab .form-text,
+[data-bs-theme="dark"] .jem-links-tab .small,
+[data-bs-theme="dark"] .jem-links-tab .text-muted {
+    color: var(--jem-link-muted) !important;
+}
+
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group {
+    border-color: var(--jem-link-border);
+}
+
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group input,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group select,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group textarea,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group .form-control,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group .form-select,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group .custom-select {
+    border-color: var(--jem-link-input-border) !important;
+    background-color: var(--jem-link-input-bg) !important;
+    color: var(--jem-link-text) !important;
+}
+
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group input::placeholder,
+[data-bs-theme="dark"] .jem-links-tab .subform-repeatable-group textarea::placeholder {
+    color: var(--jem-link-muted) !important;
+}
+
 /* Hide the hidden icon field row */
 .jem-links-tab .subform-repeatable-group .control-group:has(input[type="hidden"][name$="[icon]"]) {
     display: none !important;
@@ -357,9 +409,10 @@
     min-width: 2.35rem;
     height: 36px;
 
-    border: 1px solid #d7dce1;
+    border: 1px solid var(--jem-link-border);
     border-radius: .25rem;
-    background: #f8f9fa;
+    background: var(--jem-link-card-alt-bg);
+    color: var(--jem-link-text);
 
     font-size: 1rem;
 }
