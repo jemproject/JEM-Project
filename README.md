@@ -1,4 +1,4 @@
-# JEM 4.5.0beta4 (the Joomla Event Manager)
+﻿# JEM 4.5.0beta5 (the Joomla Event Manager)
 released 2026-05-21
 
 Based on
@@ -24,4 +24,5 @@ https://www.joomlaeventmanager.net/project/changelog-jem-4
 
 ## Errors
 Please report errors here: [https://github.com/jemproject/JEM-Project/issues](https://github.com/jemproject/JEM-Project/issues).
+
 
