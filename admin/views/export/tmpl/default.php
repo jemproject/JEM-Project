@@ -31,6 +31,41 @@ use Joomla\CMS\Language\Text;
             selectBox.options[i].selected = false;
         }
     }
+
+    function jemExportTimestamp()
+    {
+        var now = new Date();
+        var pad = function(value) {
+            return String(value).padStart(2, '0');
+        };
+
+        return now.getFullYear()
+            + pad(now.getMonth() + 1)
+            + pad(now.getDate())
+            + '-'
+            + pad(now.getHours())
+            + pad(now.getMinutes())
+            + pad(now.getSeconds());
+    }
+
+    function jemSubmitExport(task, label, filename)
+    {
+        if (filename.indexOf('{timestamp}') !== -1) {
+            filename = filename.replace('{timestamp}', jemExportTimestamp());
+        }
+
+        document.getElementsByName('task')[0].value = task;
+        document.getElementsByName('export_filename')[0].value = filename;
+
+        var message = <?php echo json_encode(Text::_('COM_JEM_EXPORT_DOWNLOAD_STARTED')); ?>;
+        message = message.replace('%1$s', label).replace('%2$s', filename);
+
+        if (window.Joomla && Joomla.renderMessages) {
+            Joomla.renderMessages({'message': [message]});
+        }
+
+        return true;
+    }
 </script>
 
 <div id="jem" class="jem_jem">
@@ -74,7 +109,7 @@ use Joomla\CMS\Language\Text;
                                 <div style="clear: both"></div>
                                 <input class="btn btn-primary selectcat" type="button" name="selectall" value="<?php echo Text::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
                                 <input class="btn btn-primary selectcat" type="button" name="unselectall" value="<?php echo Text::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();">
-                                <input class="btn btn-success csvexport" type="submit" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;">
+                                <input class="btn btn-success csvexport" type="submit" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="return jemSubmitExport('export.export', <?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_EXPORT_EVENTS_LEGEND')), ENT_QUOTES, 'UTF-8'); ?>, 'exportEvents-{timestamp}.csv');">
                             </div>
                     </fieldset>
 
@@ -88,23 +123,23 @@ use Joomla\CMS\Language\Text;
                         <ul class="adminformlist">
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CATEGORIES'); ?></label>
-                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="return jemSubmitExport('export.exportcats', <?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_EXPORT_CATEGORIES')), ENT_QUOTES, 'UTF-8'); ?>, 'exportCategories-{timestamp}.csv');">
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_VENUES'); ?></label>
-                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="return jemSubmitExport('export.exportvenues', <?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_EXPORT_VENUES')), ENT_QUOTES, 'UTF-8'); ?>, 'exportVenues-{timestamp}.csv');">
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></label>
-                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="return jemSubmitExport('export.exportcatevents', <?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_EXPORT_CAT_EVENTS')), ENT_QUOTES, 'UTF-8'); ?>, 'exportCatEvents-{timestamp}.csv');">
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_ATTACHMENTS'); ?></label>
-                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportattachments';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="return jemSubmitExport('export.exportattachments', <?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_EXPORT_ATTACHMENTS')), ENT_QUOTES, 'UTF-8'); ?>, 'exportAttachments-{timestamp}.csv');">
                             </li>
                             <li>
                                 <label class="labelexport"><?php echo Text::_('COM_JEM_EXPORT_TYPES'); ?></label>
-                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exporttypes';return true;">
+                                <input type="submit" class="btn btn-success csvexport" value="<?php echo Text::_('COM_JEM_EXPORT_FILE'); ?>" onclick="return jemSubmitExport('export.exporttypes', <?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_EXPORT_TYPES')), ENT_QUOTES, 'UTF-8'); ?>, 'exportTypes-{timestamp}.csv');">
                             </li>
                         </ul>
                     </fieldset>
@@ -120,5 +155,6 @@ use Joomla\CMS\Language\Text;
         <input type="hidden" name="view" value="export" />
         <input type="hidden" name="controller" value="export" />
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="export_filename" value="" />
     </form>
 </div>
