@@ -47,7 +47,7 @@ class JemControllerExport extends AdminController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanExport();
 
-        $this->sendHeaders("jem_export-" . date('Ymd-His') . ".csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportEvents')), "text/csv");
         $this->getModel()->getCsv();
         jexit();
     }
@@ -57,7 +57,7 @@ class JemControllerExport extends AdminController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanExport();
 
-        $this->sendHeaders("categories.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportCategories')), "text/csv");
         $this->getModel()->getCsvcats();
         jexit();
     }
@@ -67,7 +67,7 @@ class JemControllerExport extends AdminController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanExport();
 
-        $this->sendHeaders("venues.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportVenues')), "text/csv");
         $this->getModel()->getCsvvenues();
         jexit();
     }
@@ -77,7 +77,7 @@ class JemControllerExport extends AdminController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanExport();
 
-        $this->sendHeaders("catevents.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportCatEvents')), "text/csv");
         $this->getModel()->getCsvcatsevents();
         jexit();
     }
@@ -86,7 +86,7 @@ class JemControllerExport extends AdminController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanExport();
 
-        $this->sendHeaders("attachments.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportAttachments')), "text/csv");
         $this->getModel()->getCsvattachments();
         jexit();
     }
@@ -95,9 +95,24 @@ class JemControllerExport extends AdminController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanExport();
 
-        $this->sendHeaders("types.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportTypes')), "text/csv");
         $this->getModel()->getCsvtypes();
         jexit();
+    }
+
+    private function getRequestedFilename($default = 'export.csv') {
+        $filename = Factory::getApplication()->input->post->getString('export_filename', $default);
+        $filename = preg_replace('/[^A-Za-z0-9._-]/', '_', basename($filename));
+
+        if ($filename === '' || strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'csv') {
+            return $default;
+        }
+
+        return $filename;
+    }
+
+    private function buildExportFilename($name) {
+        return $name . '-' . date('Ymd-His') . '.csv';
     }
 
     private function sendHeaders($filename = 'export.csv', $contentType = 'text/plain') {
