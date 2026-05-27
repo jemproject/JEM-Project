@@ -118,6 +118,35 @@ use Joomla\CMS\Session\Session;
                     <td>
                     <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'); ?></h3>
                         <?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DESC'); ?>
+                        <fieldset class="options-form jem-housekeeping-file-options">
+                            <legend><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_FILES'); ?></legend>
+                            <div class="jem-housekeeping-file-option">
+                                <span class="jem-housekeeping-file-question"><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_IMAGES_OPTION'); ?></span>
+                                <span class="jem-housekeeping-file-choices">
+                                    <label for="jem-delete-images-no">
+                                        <input type="radio" name="jem_delete_images" id="jem-delete-images-no" value="0" checked>
+                                        <?php echo Text::_('JNO'); ?>
+                                    </label>
+                                    <label for="jem-delete-images-yes">
+                                        <input type="radio" name="jem_delete_images" id="jem-delete-images-yes" value="1">
+                                        <?php echo Text::_('JYES'); ?>
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="jem-housekeeping-file-option">
+                                <span class="jem-housekeeping-file-question"><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_ATTACHMENTS_OPTION'); ?></span>
+                                <span class="jem-housekeeping-file-choices">
+                                    <label for="jem-delete-attachments-no">
+                                        <input type="radio" name="jem_delete_attachments" id="jem-delete-attachments-no" value="0" checked>
+                                        <?php echo Text::_('JNO'); ?>
+                                    </label>
+                                    <label for="jem-delete-attachments-yes">
+                                        <input type="radio" name="jem_delete_attachments" id="jem-delete-attachments-yes" value="1">
+                                        <?php echo Text::_('JYES'); ?>
+                                    </label>
+                                </span>
+                            </div>
+                        </fieldset>
                     </td>
                 </tr>
             </tbody>
@@ -132,11 +161,11 @@ use Joomla\CMS\Session\Session;
             return false;
         }
 
-        if (confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_IMAGES_CONFIRM')); ?>)) {
+        if (document.querySelector('input[name="jem_delete_images"]:checked').value === '1') {
             link.href += '&deleteimages=1';
         }
 
-        if (confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_ATTACHMENTS_CONFIRM')); ?>)) {
+        if (document.querySelector('input[name="jem_delete_attachments"]:checked').value === '1') {
             link.href += '&deleteattachments=1';
         }
 
