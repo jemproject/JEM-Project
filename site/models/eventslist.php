@@ -23,6 +23,8 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  **/
 class JemModelEventslist extends ListModel
 {
+    protected $show_archived_events = 0;
+
     /**
      * Constructor.
      */
@@ -103,9 +105,8 @@ class JemModelEventslist extends ListModel
         $currentItemid = $activeMenu ? $activeMenu->id : $app->input->getInt('Itemid', 0);
         $itemid        = $app->input->getInt('id', 0) . ':' . $currentItemid;
 
-        if (!$task) {
-            $task = ($params->get('show_archived_events') ? 'archive' : '');
-        }
+        $this->show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->setState('filter.show_archived_events', $this->show_archived_events);
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
@@ -499,10 +500,6 @@ class JemModelEventslist extends ListModel
         ## FILTER - TASK ##
         ###################
 
-        if (!$task) {
-            $task = ($params->get('show_archived_events') ? 'archive' : '');
-        }
-
         #####################
         ## FILTER - EVENTS ##
         #####################
@@ -557,7 +554,7 @@ class JemModelEventslist extends ListModel
             if ($this->getState('filter.published') == 2) {
                 $ispublished = implode(' OR ', $where_pub);
             } else {
-                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND a.publish_up <= ' . $db->quote($currentDate) . ' AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
+                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND (a.publish_up <= ' . $db->quote($currentDate) . ' OR a.publish_up IS null) AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
             }
             $query->where($ispublished);
         } else {

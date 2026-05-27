@@ -14,9 +14,13 @@ CREATE TABLE IF NOT EXISTS `#__jem_links` (`id` INT(11) NOT NULL AUTO_INCREMENT,
 
 -- change values
 ALTER TABLE `#__jem_events` MODIFY `contactid` VARCHAR(100) NOT NULL DEFAULT '';
+ALTER TABLE `#__jem_events` ADD COLUMN `article_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `fulltext`;
+ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_url` VARCHAR(2048) NOT NULL DEFAULT '' AFTER `article_id`;
+ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_label` VARCHAR(255) NOT NULL DEFAULT '' AFTER `online_meeting_url`;
 ALTER TABLE `#__jem_events` ADD COLUMN `event_status` VARCHAR(30) NOT NULL DEFAULT 'scheduled' AFTER `language`;
 ALTER TABLE `#__jem_events` ADD COLUMN `ticket_availability` VARCHAR(30) NOT NULL DEFAULT 'instock' AFTER `event_status`;
 ALTER TABLE `#__jem_events` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ticket_availability`;
+ALTER TABLE `#__jem_events` ADD KEY `idx_article` (`article_id`);
 ALTER TABLE `#__jem_events` ADD KEY `idx_type` (`type_id`);
 ALTER TABLE `#__jem_venues` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`;
 ALTER TABLE `#__jem_venues` ADD KEY `idx_type` (`type_id`);
