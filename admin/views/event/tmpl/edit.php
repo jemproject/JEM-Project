@@ -131,6 +131,14 @@ $showContactField = $contactField && method_exists($contactField, 'hasAvailableC
 </script>
 <script>
     $(document).ready(function () {
+        var requestedTab = new URLSearchParams(window.location.search).get('active_tab') || window.location.hash.replace('#', '');
+        if (requestedTab === 'attachments' && window.bootstrap && bootstrap.Tab) {
+            var tabTrigger = document.querySelector('[data-bs-target="#attachments"], [href="#attachments"], [aria-controls="attachments"]');
+            if (tabTrigger) {
+                bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+            }
+        }
+
         var $registraSelect = $("#jform_registra");
         var $restOfList = $registraSelect.closest(".adminformlist").find("li:not(:first-child)");
         $registraSelect.on("change", function () {
