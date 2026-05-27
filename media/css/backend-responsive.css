@@ -483,6 +483,44 @@ img#imagelib {
     background-color: #e8f6fe;
 }
 
+.jem-housekeeping-file-options {
+    max-width: 760px;
+    margin: 12px 0 0;
+    padding: 14px 18px 16px;
+}
+
+.jem-housekeeping-file-options legend {
+    width: auto;
+    margin: 0;
+    padding: 0 8px;
+    font-size: 1rem;
+}
+
+.jem-housekeeping-file-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 6px 0;
+}
+
+.jem-housekeeping-file-question {
+    flex: 0 1 28rem;
+}
+
+.jem-housekeeping-file-choices {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.jem-housekeeping-file-choices label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    white-space: nowrap;
+}
+
 /* ---------- TABLE, J3 Isis template -------------------------- */
 .com_jem table {
     max-width: 100%;
