@@ -70,6 +70,11 @@
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
         </submenu>
 
+        <languages folder="admin/language">
+            <language tag="en-GB">en-GB/com_jem.ini</language>
+            <language tag="en-GB">en-GB/com_jem.sys.ini</language>
+        </languages>
+
         <files folder="admin">
             <filename>jem.php</filename>
             <filename>controller.php</filename>
