@@ -1,4 +1,4 @@
-# JEM 5.0.0beta2 (the Joomla Event Manager)
+﻿# JEM 5.0.0beta3 (the Joomla Event Manager)
 # released 2026-05-21
 
 ## To install
@@ -20,5 +20,6 @@ https://www.joomlaeventmanager.net/project/changelog-jem-4
 
 ## Errors
 Please report errors here: [https://github.com/jemproject/JEM-Project/issues](https://github.com/jemproject/JEM-Project/issues).
+
 
 

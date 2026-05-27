@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <extension type="component" method="upgrade">
     <name>com_jem</name>
     <creationDate>May 2026</creationDate>
@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0beta2</version>
+    <version>5.0.0beta3</version>
     <description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -91,5 +91,6 @@
     </administration>
 
 </extension>
+
 
 
