@@ -188,6 +188,7 @@ class JemModelExport extends ListModel
         // Select the required fields from the table.
         $query->select('a.*');
         $query->from('#__jem_categories AS a');
+        $query->where('a.id <> 1');
 
         return $query;
     }

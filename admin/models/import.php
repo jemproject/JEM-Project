@@ -429,6 +429,11 @@ class JemModelImport extends BaseDatabaseModel
             }
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
+                if ((int) ($values['id'] ?? 0) === 1 || strtolower(trim($values['catname'] ?? '')) === 'root') {
+                    $rec['ignored']++;
+                    continue;
+                }
+
                 // check if column "parent_id" exists
                 if (array_key_exists('parent_id', $values)) {
                     // when not in replace mode the parent_id is set to the rootkey
@@ -448,13 +453,6 @@ class JemModelImport extends BaseDatabaseModel
                     // column parent_id is not detected
                     $values['parent_id'] = $rootkey;
                     //$parentid = $values['parent_id'];
-                }
-
-                // check if column "alias" exists
-                if (array_key_exists('alias', $values)) {
-                    if ($values['alias'] == 'root') {
-                        $values['alias'] = '';
-                    }
                 }
 
                 // check if column "lft" exists
@@ -494,7 +492,7 @@ class JemModelImport extends BaseDatabaseModel
                             } else {
                                 $rec['updated']++;
                             }
-                        } else if( $result == 0) {
+                        } else if( $results == 0) {
                             $rec['duplicated']++;
                             $rec['duplicatedids'] .= ($rec['duplicatedids']!=""?',':'') . $row[0];
                         }else{
