@@ -100,8 +100,9 @@ if ($params->get('use_modal', 0)) {
                                         <?php if ($item->showdescriptionevent) : ?>
                                             <div class="jem-description-teaser" itemprop="description">
                                                 <?php echo $item->eventdescription;
-                                                if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')):
-                                                    echo '<a class="readmore" style="padding-left: 10px;" href="' . $item->link . '">' . $item->linkText . '</a>';
+                                                $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1));
+                                                if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== ''):
+                                                    echo '<a id="' . JemHelper::getModuleActionId('mod-jem-teaser', 'readmore', $item->eventid, $module->id ?? 0) . '" class="' . JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-teaser__readmore') . '" style="padding-left: 10px;" href="' . htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8') . '">' . $item->linkText . '</a>';
                                                 endif; ?>
                                             </div>
                                         <?php endif; ?>

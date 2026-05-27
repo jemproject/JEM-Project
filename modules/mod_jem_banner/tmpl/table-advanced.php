@@ -177,8 +177,11 @@ $wa->addInlineStyle($css);
                         <?php if ($params->get('showdesc', 1) == 1) :?>
                             <div class="event-description" itemprop="description">
                                 <?php echo $item->eventdescription; ?>
-                                <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
-                                    <a href="<?php echo $item->link ?>" class="read-more"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
+                                <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
+                                <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                    <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                       href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                       class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'read-more jem-readmore-link mod-jem-banner__readmore'); ?>"><?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?></a>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>

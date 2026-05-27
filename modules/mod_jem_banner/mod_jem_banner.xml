@@ -166,13 +166,14 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="readmore" type="radio"
+                <field name="readmore" type="list"
                        default="0"
                        label="MOD_JEM_BANNER_FIELD_READMORE_LABEL"
                        description="MOD_JEM_BANNER_FIELD_READMORE_DESC"
-                       class="btn-group btn-group-yesno"
+                       class="form-select w-auto"
                 >
-                    <option value="1">JYES</option>
+                    <option value="1">MOD_JEM_BANNER_READMORE_LINK</option>
+                    <option value="2">MOD_JEM_BANNER_READMORE_BUTTON</option>
                     <option value="0">JNO</option>
                 </field>
 

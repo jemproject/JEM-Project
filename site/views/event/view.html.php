@@ -233,6 +233,14 @@ class JemViewEvent extends JemView
         $this->dimage = JemImage::flyercreator($item->datimage, 'event');
         $this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
+        $associatedArticles = JemHelper::getAssociatedArticles(array($item), $user->getAuthorisedViewLevels());
+        $associatedArticle  = !empty($item->article_id) && isset($associatedArticles[$item->article_id]) ? $associatedArticles[$item->article_id] : null;
+        $articleLink        = JemHelper::getAssociatedArticleLink($associatedArticle);
+        $item->articlelink  = $articleLink['link'];
+        $item->articletitle = $articleLink['title'];
+        $item->articleeditlink = $articleLink['edit_link'] ?? '';
+        $item->caneditarticle = !empty($articleLink['can_edit']);
+
         // Check if the user has permission to add things
         $permissions = new stdClass();
         $permissions->canAddEvent = $user->can('add', 'event');

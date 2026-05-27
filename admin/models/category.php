@@ -251,6 +251,12 @@ class JemModelCategory extends AdminModel
         $data['path'] = $data['path'] ?? '';
         $data['metadata'] = $data['metadata'] ?? '';
 
+        if ((int) ($data['article_create_mode'] ?? 0) === 1 && empty($data['article_category_id'])) {
+            $this->setError(Text::_('COM_JEM_CATEGORY_ARTICLE_AUTO_REQUIRES_CATEGORY'));
+
+            return false;
+        }
+
         // Alter the title for save as copy
         if ($jinput->get('task', '') == 'save2copy') {
             list ($title, $alias) = $this->generateNewTitle($data['parent_id'], $data['alias'], $data['title']);

@@ -56,6 +56,9 @@ class JemTableEvent extends Table
         if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
             $array['type_id'] = null;
         }
+        if (array_key_exists('article_id', $array)) {
+            $array['article_id'] = (int) $array['article_id'];
+        }
 
         // Search for the {readmore} tag and split the text up accordingly.
         if (isset($array['articletext'])) {

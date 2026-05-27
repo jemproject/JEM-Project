@@ -22,6 +22,9 @@ $wa = $this->document->getWebAssetManager();
             ->useScript('keepalive')
             ->useScript('inlinehelp')
             ->useScript('form.validate');
+
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 ?>
 
 <script>
@@ -51,7 +54,13 @@ $wa = $this->document->getWebAssetManager();
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
+                    <?php if ($showTypeField) : ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_category_id'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_create_mode'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
                 </ul>
                 <div class="clr"></div>

@@ -162,8 +162,11 @@ $wa->addInlineStyle($css);
                         <?php endif; ?>
 
                         <div class="event-actions">
-                            <?php if (isset($item->link) && ($item->readmore != 0 || $params->get('readmore'))) : ?>
-                                <a href="<?php echo $item->link; ?>" class="btn btn-primary"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
+                            <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
+                            <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-banner__readmore'); ?>"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
                             <?php endif; ?>
                         </div>
                     </div>

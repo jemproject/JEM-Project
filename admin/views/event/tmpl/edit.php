@@ -43,6 +43,11 @@ $wa->useScript('keepalive')
 $params = $this->state->get('params');
 $params = $params->toArray();
 
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+$contactField = $this->form->getField('contactid');
+$showContactField = $contactField && method_exists($contactField, 'hasAvailableContacts') && $contactField->hasAvailableContacts();
+
 ?>
 
 <script>
@@ -230,19 +235,29 @@ $params = $params->toArray();
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
-                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                    <?php if ($showTypeField) : ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
+                    <?php if ($showContactField) : ?>
                         <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
                     <?php else : ?>
-                        <input type="hidden" name="jform[contactid]" value="" />
+                        <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
+                    <?php if ($this->form->getField('article_id')) : ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('article_id'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('create_article'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('article_target_category_id'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('article_auto_info'); ?></div></li>
+                    <?php endif; ?>
                 </ul>
             </fieldset>
 

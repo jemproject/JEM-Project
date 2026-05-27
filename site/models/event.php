@@ -85,7 +85,7 @@ class JemModelEvent extends ItemModel
                         'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                         'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
-                        'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+                        'a.checked_out, a.checked_out_time, a.datimage, a.article_id, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                         'a.hits, a.language, a.event_status, a.ticket_availability, a.recurrence_type, a.recurrence_first_id, a.type_id'));
                 $query->from('#__jem_events AS a');
@@ -403,7 +403,7 @@ class JemModelEvent extends ItemModel
                     'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
-                    'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
+                    'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.article_id, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                     'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 

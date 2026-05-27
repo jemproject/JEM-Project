@@ -85,6 +85,24 @@
             entity="2"
             class="form-select"
         />
+        <field name="article_category_id" type="contentcategory"
+            label="COM_JEM_CATEGORY_FIELD_ARTICLE_CATEGORY_LABEL"
+            description="COM_JEM_CATEGORY_FIELD_ARTICLE_CATEGORY_DESC"
+            class="inputbox form-select w-auto"
+            default="0"
+        >
+            <option value="0">COM_JEM_SELECT_JOOMLA_CATEGORY</option>
+        </field>
+        <field name="article_create_mode" type="list"
+            label="COM_JEM_CATEGORY_FIELD_ARTICLE_MODE_LABEL"
+            description="COM_JEM_CATEGORY_FIELD_ARTICLE_CREATE_MODE_DESC"
+            class="inputbox form-select w-auto"
+            default="0"
+        >
+            <option value="0">COM_JEM_ARTICLE_MODE_NONE</option>
+            <option value="2">COM_JEM_ARTICLE_MODE_MANUAL</option>
+            <option value="1">COM_JEM_ARTICLE_MODE_AUTO</option>
+        </field>
     </fieldset>
 
     <field name="access" type="accesslevel"

@@ -222,9 +222,13 @@ $document->addStyleDeclaration($css);
                                     <div class="jem-description-teaser" itemprop="description">
                                         <?php
                                         echo $item->eventdescription;
-                                        if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) : ?>
+                                        $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1));
+                                        if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
                                             <div class="jem-readmore">
-                                                <a href="<?php echo $item->eventlink ?>" title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>">
+                                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-teaser', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                                   href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                                   title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>"
+                                                   class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-teaser__readmore'); ?>">
                                                     <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
                                                 </a>
                                             </div>

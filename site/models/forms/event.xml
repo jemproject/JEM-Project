@@ -8,6 +8,40 @@
         filter="\Joomla\CMS\Component\ComponentHelper::filterText"
         hide="pagebreak"
     />
+        <field name="article_id" type="modal_article"
+            label="COM_JEM_EDITEVENT_FIELD_ASSOCIATED_ARTICLE_LABEL"
+            description="COM_JEM_EDITEVENT_FIELD_ASSOCIATED_ARTICLE_DESC"
+            select="true"
+            clear="true"
+            new="false"
+            edit="false"
+            required="false"
+            filter="integer"
+        />
+        <field name="article_target_category_id" type="contentcategory"
+            label="COM_JEM_EDITEVENT_FIELD_ARTICLE_TARGET_CATEGORY_LABEL"
+            description="COM_JEM_EDITEVENT_FIELD_ARTICLE_TARGET_CATEGORY_DESC"
+            class="inputbox form-select w-auto"
+            default="0"
+            showon="create_article:1"
+        >
+            <option value="0">COM_JEM_SELECT_JOOMLA_CATEGORY</option>
+        </field>
+        <field name="create_article" type="list"
+            label="COM_JEM_EDITEVENT_FIELD_CREATE_ARTICLE_LABEL"
+            description="COM_JEM_EDITEVENT_FIELD_CREATE_ARTICLE_DESC"
+            class="inputbox form-select w-auto"
+            default="2"
+        >
+            <option value="0">COM_JEM_ARTICLE_ACTION_NONE</option>
+            <option value="1">COM_JEM_ARTICLE_ACTION_CREATE_ON_SAVE</option>
+            <option value="2">COM_JEM_ARTICLE_ACTION_AUTO_BY_CATEGORY</option>
+        </field>
+        <field name="article_auto_info" type="note"
+            class="alert alert-info"
+            label="COM_JEM_EVENT_ARTICLE_AUTO_INFO"
+            showon="create_article:2"
+        />
         <field name="featured" class="inputbox" type="list"
             label="JFEATURED"
             description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"

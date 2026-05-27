@@ -103,6 +103,8 @@ class jem_events extends Table
     /** @var int */
     public $type_id = null;
     /** @var int */
+    public $article_id = 0;
+    /** @var int */
     public $registra = null;
     /** @var int */
     public $unregistra = null;

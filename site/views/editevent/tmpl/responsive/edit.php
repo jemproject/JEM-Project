@@ -22,6 +22,10 @@ $wa->useScript('keepalive')
 // Create shortcut to parameters.
 $params        = $this->params;
 // $settings    = json_decode($this->item->attribs);
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+$contactField = $this->form->getField('contactid');
+$showContactField = $contactField && method_exists($contactField, 'hasAvailableContacts') && $contactField->hasAvailableContacts();
 ?>
 
 <script>
@@ -239,18 +243,20 @@ $params        = $this->params;
                     } ?>
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
-                    <?php if (JemHelper::isContactComponentEnabled()) : ?>
+                    <?php if ($showTypeField) : ?>
+                        <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
+                        <dd><?php echo $this->form->getInput('type_id'); ?></dd>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
+                    <?php if ($showContactField) : ?>
                         <dt><?php echo $this->form->getLabel('contactid'); ?></dt>
                         <dd><?php echo $this->form->getInput('contactid'); ?></dd>
                     <?php else : ?>
-                        <input type="hidden" name="jform[contactid]" value="" />
+                        <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
-                    <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
-                    <dd><?php echo $this->form->getInput('event_status'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
-                    <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
-                    <dd><?php echo $this->form->getInput('type_id'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('featured'); ?></dt>
+                    <dd><?php echo $this->form->getInput('featured'); ?></dd>
                 </dl>
             </fieldset>
             <!-- EVENTDESCRIPTION -->
@@ -297,10 +303,10 @@ $params        = $this->params;
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
-            <!-- PUBLISH TAB -->
+            <!-- ADVANCED TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-publishtab', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED')); ?>
+            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_ADVANCED'), 'editevent-advancedtab'); ?>
             <?php echo $this->loadTemplate('publish'); ?>
 
             <!-- ATTACHMENTS TAB -->
