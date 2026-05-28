@@ -51,6 +51,7 @@ $events       = $this->eventslist ?? [];
 $startLat    = (float) $this->params->get('map_center_lat', '54.526');
 $startLng    = (float) $this->params->get('map_center_lng', '15.255');
 $startZoom   = (int)   $this->params->get('map_zoom', '4');
+$autoCenter  = (int)   $this->params->get('map_auto_center', '1');
 $heatMapLayer = (int)  $this->params->get('heat_layer', '1');
 $fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
 $showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');
@@ -380,6 +381,7 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 
         <?php
         $heatPoints = [];
+        $mapBounds = [];
         foreach ($events as $v):
         $route = 'index.php?option=com_jem&view=event&id=' . (int) $v->id . ':' . $v->alias;
         if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
@@ -412,6 +414,7 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
         }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
         <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
+        <?php   $mapBounds[] = [(float)$v->latitude, (float)$v->longitude]; ?>
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
@@ -420,12 +423,26 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
             return [p.lat, p.lng, 1]; // 1 = intensity
         });
 
-        L.heatLayer(heatPoints, {
-            radius: 25,
-            blur: 10,
-            maxZoom: 17,
-        }).addTo(map);
+        if (typeof L.heatLayer === 'function') {
+            L.heatLayer(heatPoints, {
+                radius: 25,
+                blur: 10,
+                maxZoom: 17,
+            }).addTo(map);
+        }
         <?php } ?>
+
+        <?php if ($autoCenter && !empty($mapBounds)) : ?>
+        var eventBounds = <?php echo json_encode($mapBounds); ?>;
+        if (eventBounds.length > 1) {
+            map.fitBounds(eventBounds, {
+                padding: [30, 30],
+                maxZoom: 12
+            });
+        } else if (eventBounds.length === 1) {
+            map.setView(eventBounds[0], Math.max(map.getZoom(), 10));
+        }
+        <?php endif; ?>
 
     });
 </script>
