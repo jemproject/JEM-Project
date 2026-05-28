@@ -37,6 +37,8 @@ class JemModelCategories extends ListModel
                 'checked_out_time', 'a.checked_out_time',
                 'created_time', 'a.created_time',
                 'created_user_id', 'a.created_user_id',
+                'article_category_id', 'a.article_category_id',
+                'article_create_mode', 'a.article_create_mode',
                 'lft', 'a.lft',
                 'rgt', 'a.rgt',
                 'level', 'a.level',
@@ -132,6 +134,7 @@ class JemModelCategories extends ListModel
                 'a.id, a.catname, a.color, a.alias, a.note, a.published, a.access' .
                 ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id' .
                 ', a.path, a.parent_id, a.level, a.lft, a.rgt' .
+                ', a.article_category_id, a.article_create_mode' .
                 ', a.language'
             )
         );
@@ -156,6 +159,10 @@ class JemModelCategories extends ListModel
         // Join over the groups
         $query->select('gr.name AS catgroup');
         $query->join('LEFT', '#__jem_groups AS gr ON gr.id = a.groupid');
+
+        // Join over Joomla content categories for associated article creation.
+        $query->select('jc.title AS article_category_title');
+        $query->join('LEFT', '#__categories AS jc ON jc.id = a.article_category_id');
 
         // Filter on the level.
         if ($level = $this->getState('filter.level')) {

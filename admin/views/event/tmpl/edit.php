@@ -212,7 +212,7 @@ $contactField = $this->form->getField('contactid');
     <div class="row">
         <div class="col-md-7">
 
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => true, 'breakpoint' => 768]); ?>
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_EVENT_INFO_TAB')); ?>
 
             <!-- START OF LEFT FIELDSET -->

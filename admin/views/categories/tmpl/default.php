@@ -21,6 +21,11 @@ $canOrder = $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder = $listOrder == 'a.lft';
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
+$articleCreateModes = array(
+    0 => Text::_('COM_JEM_ARTICLE_MODE_NONE'),
+    1 => Text::_('COM_JEM_ARTICLE_MODE_AUTO'),
+    2 => Text::_('COM_JEM_ARTICLE_MODE_MANUAL'),
+);
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
@@ -81,6 +86,12 @@ $wa->useScript('table.columns');
                     <?php echo Text::_('COM_JEM_COLOR'); ?>
                 </th>
                 <th style="width:15%"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $listDirn, $listOrder); ?></th>
+                <th style="width:12%" class="center">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CATEGORY_FIELD_ARTICLE_CATEGORY_LABEL', 'a.article_category_id', $listDirn, $listOrder); ?>
+                </th>
+                <th style="width:10%" class="center">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CATEGORY_FIELD_ARTICLE_MODE_LABEL', 'a.article_create_mode', $listDirn, $listOrder); ?>
+                </th>
                 <th style="width:1%" class="center" nowrap="nowrap"><?php echo Text::_('COM_JEM_EVENTS'); ?></th>
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
@@ -163,6 +174,18 @@ $wa->useScript('table.columns');
                         <?php else : ?>
                             <?php echo '-'; ?>
                         <?php endif; ?>
+                    </td>
+                    <td class="center">
+                        <?php if (!empty($item->article_category_id) && !empty($item->article_category_title)) : ?>
+                            <?php echo $this->escape($item->article_category_title); ?>
+                        <?php elseif (!empty($item->article_category_id)) : ?>
+                            <?php echo Text::sprintf('COM_JEM_CATEGORY_UNKNOWN_CATEGORY', (int) $item->article_category_id); ?>
+                        <?php else : ?>
+                            <?php echo '-'; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td class="center">
+                        <?php echo $this->escape($articleCreateModes[(int) $item->article_create_mode] ?? $articleCreateModes[0]); ?>
                     </td>
                     <td class="center">
                         <?php echo $item->assignedevents; ?>

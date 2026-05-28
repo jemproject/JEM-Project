@@ -232,7 +232,7 @@ $location = JemHelper::defineCenterMap($this->form);
             <!-- START OF LEFT DIV -->
             <!-- <div class="width-55 fltlft"> -->
 
-                <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => true, 'breakpoint' => 768]); ?>
+                <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
                 <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_VENUE_INFO_TAB')); ?>
                     <fieldset class="adminform">
                         <legend>
