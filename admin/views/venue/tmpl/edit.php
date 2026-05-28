@@ -28,6 +28,25 @@ $typeField = $this->form->getField('type_id');
 
 # defining values for centering default-map
 $location = JemHelper::defineCenterMap($this->form);
+
+Text::script('COM_JEM_GEOCODE_SEARCHING');
+Text::script('COM_JEM_GEOCODE_ADDRESS_REQUIRED');
+Text::script('COM_JEM_GEOCODE_COORDINATES_REQUIRED');
+Text::script('COM_JEM_GEOCODE_NO_RESULTS');
+Text::script('COM_JEM_GEOCODE_REQUEST_FAILED');
+Text::script('COM_JEM_GEOCODE_COORDINATES_UPDATED');
+Text::script('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_NAME');
+Text::script('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_ADDRESS');
+Text::script('COM_JEM_GEOCODE_ADDRESS_UPDATED');
+Text::script('COM_JEM_GEOCODE_CHECK_SUGGESTIONS');
+Text::script('COM_JEM_GEOCODE_APPLY_ADDRESS_HINT');
+Text::script('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS');
+Text::script('COM_JEM_GEOCODE_NO_SUGGESTED_ADDRESS');
+Text::script('COM_JEM_STREET');
+Text::script('COM_JEM_ZIP');
+Text::script('COM_JEM_CITY');
+Text::script('COM_JEM_STATE');
+Text::script('COM_JEM_COUNTRY');
 ?>
 
 <script>
@@ -45,6 +64,378 @@ $location = JemHelper::defineCenterMap($this->form);
             if (tabTrigger) {
                 bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
             }
+        }
+
+        var addressToCoordsButton = document.getElementById('jem-geocode-address');
+        var coordsToAddressButton = document.getElementById('jem-reverse-geocode');
+        var applySuggestedAddressButton = document.getElementById('jem-apply-suggested-address');
+        var suggestedAddressNotice = document.getElementById('jem-suggested-address');
+        var suggestedAddressText = document.getElementById('jem-suggested-address-text');
+        var nominatimBaseUrl = 'https://nominatim.openstreetmap.org';
+        var lastSuggestedAddress = null;
+
+        function getFieldValue(id) {
+            var field = document.getElementById(id);
+            return field ? field.value.trim() : '';
+        }
+
+        function getFieldText(id) {
+            var field = document.getElementById(id);
+            if (!field) {
+                return '';
+            }
+
+            if (field.options && field.selectedIndex >= 0) {
+                return field.options[field.selectedIndex].text.trim();
+            }
+
+            return field.value.trim();
+        }
+
+        function setFieldValue(id, value) {
+            var field = document.getElementById(id);
+            if (!field || value === undefined || value === null || value === '') {
+                return;
+            }
+
+            field.value = value;
+            field.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+
+        function setSuggestedAddress(address, suggestions) {
+            lastSuggestedAddress = address || null;
+
+            if (applySuggestedAddressButton) {
+                applySuggestedAddressButton.disabled = !lastSuggestedAddress;
+            }
+
+            if (suggestedAddressNotice) {
+                suggestedAddressNotice.classList.toggle('d-none', !lastSuggestedAddress);
+            }
+
+            if (suggestedAddressText) {
+                suggestedAddressText.textContent = lastSuggestedAddress && suggestions && suggestions.length
+                    ? (Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_CHECK_SUGGESTIONS') : 'OpenStreetMap suggests checking:') + ' ' + suggestions.join('; ')
+                    : '';
+            }
+        }
+
+        function showGeocodeMessage(message, type) {
+            if (window.Joomla && Joomla.removeMessages) {
+                Joomla.removeMessages();
+            } else {
+                document.querySelectorAll('#system-message-container .alert').forEach(function (alert) {
+                    alert.remove();
+                });
+            }
+
+            if (window.Joomla && Joomla.renderMessages) {
+                Joomla.renderMessages({[type || 'message']: [message]});
+            } else {
+                alert(message);
+            }
+        }
+
+        function buildVenueAddressParts() {
+            return {
+                venue: getFieldValue('jform_venue'),
+                street: getFieldValue('jform_street'),
+                postalcode: getFieldValue('jform_postalCode'),
+                city: getFieldValue('jform_city'),
+                state: getFieldValue('jform_state'),
+                country: getFieldText('jform_country'),
+                countryCode: getFieldValue('jform_country')
+            };
+        }
+
+        function buildVenueAddress() {
+            var address = buildVenueAddressParts();
+
+            return [
+                address.street,
+                address.postalcode,
+                address.city,
+                address.state,
+                address.country
+            ].filter(Boolean).join(', ');
+        }
+
+        function buildVenueNamedAddress() {
+            var address = buildVenueAddressParts();
+
+            return [
+                address.venue,
+                address.street,
+                address.postalcode,
+                address.city,
+                address.state,
+                address.country
+            ].filter(Boolean).join(', ');
+        }
+
+        function hasEnoughAddressData() {
+            return (getFieldValue('jform_venue') || getFieldValue('jform_street'))
+                && getFieldValue('jform_city')
+                && getFieldValue('jform_country');
+        }
+
+        function hasValidCoordinates(latitude, longitude) {
+            var lat = Number(latitude);
+            var lon = Number(longitude);
+
+            return Number.isFinite(lat)
+                && Number.isFinite(lon)
+                && lat >= -90
+                && lat <= 90
+                && lon >= -180
+                && lon <= 180;
+        }
+
+        function setMapEnabled() {
+            var map = document.getElementById('jform_map');
+            if (map && !map.checked) {
+                map.checked = true;
+                map.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+        }
+
+        function setButtonBusy(button, busy) {
+            if (!button) {
+                return;
+            }
+
+            button.disabled = busy;
+            if (busy) {
+                button.dataset.originalText = button.textContent;
+                button.textContent = Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_SEARCHING') : 'Searching...';
+            } else if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+            }
+        }
+
+        function getAddressPart(address, keys) {
+            for (var i = 0; i < keys.length; i++) {
+                if (address[keys[i]]) {
+                    return address[keys[i]];
+                }
+            }
+
+            return '';
+        }
+
+        function normalizeGeocodeValue(value) {
+            return String(value || '')
+                .trim()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, ' ');
+        }
+
+        function buildReverseAddress(address) {
+            var road = getAddressPart(address, ['road', 'pedestrian', 'footway', 'path', 'residential']);
+            var houseNumber = getAddressPart(address, ['house_number']);
+            var city = getAddressPart(address, ['city', 'town', 'village', 'municipality', 'hamlet', 'county']);
+
+            return {
+                street: [road, houseNumber].filter(Boolean).join(' '),
+                postalCode: getAddressPart(address, ['postcode']),
+                city: city,
+                state: getAddressPart(address, ['state', 'region']),
+                countryCode: address.country_code ? address.country_code.toUpperCase() : ''
+            };
+        }
+
+        function applyOsmAddress(osmAddress) {
+            setFieldValue('jform_street', osmAddress.street);
+            setFieldValue('jform_postalCode', osmAddress.postalCode);
+            setFieldValue('jform_city', osmAddress.city);
+            setFieldValue('jform_state', osmAddress.state);
+            setFieldValue('jform_country', osmAddress.countryCode);
+        }
+
+        function getAddressSuggestions(address) {
+            var suggestions = [];
+            var osmAddress = buildReverseAddress(address || {});
+            var checks = [
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_STREET') : 'Street', current: getFieldValue('jform_street'), suggested: osmAddress.street},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_ZIP') : 'Post code', current: getFieldValue('jform_postalCode'), suggested: osmAddress.postalCode},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_CITY') : 'City', current: getFieldValue('jform_city'), suggested: osmAddress.city},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_STATE') : 'County', current: getFieldValue('jform_state'), suggested: osmAddress.state},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_COUNTRY') : 'Country', current: getFieldValue('jform_country'), suggested: osmAddress.countryCode}
+            ];
+
+            checks.forEach(function (check) {
+                if (!check.suggested) {
+                    return;
+                }
+
+                suggestions.push(check.label + ': ' + check.suggested);
+            });
+
+            return suggestions;
+        }
+
+        async function requestNominatim(path, params) {
+            var url = new URL(nominatimBaseUrl + path);
+            Object.keys(params).forEach(function (key) {
+                if (params[key] !== '') {
+                    url.searchParams.set(key, params[key]);
+                }
+            });
+
+            var response = await fetch(url.toString(), {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Nominatim request failed (' + response.status + ')');
+            }
+
+            return response.json();
+        }
+
+        if (addressToCoordsButton) {
+            addressToCoordsButton.addEventListener('click', async function () {
+                setSuggestedAddress(null);
+
+                if (!hasEnoughAddressData()) {
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_ADDRESS_REQUIRED') : 'Enter venue or street, city and country before searching for coordinates.', 'warning');
+                    return;
+                }
+
+                var address = buildVenueAddressParts();
+                var query = buildVenueAddress();
+                var namedQuery = buildVenueNamedAddress();
+                var matchedBy = '';
+                setButtonBusy(addressToCoordsButton, true);
+                try {
+                    var results = [];
+
+                    if (namedQuery) {
+                        results = await requestNominatim('/search', {
+                            format: 'jsonv2',
+                            limit: '1',
+                            q: namedQuery,
+                            addressdetails: '1',
+                            countrycodes: address.countryCode && address.countryCode !== '0' ? address.countryCode.toLowerCase() : '',
+                            'accept-language': document.documentElement.lang || ''
+                        });
+                        if (results.length) {
+                            matchedBy = 'name';
+                        }
+                    }
+
+                    if (!results.length) {
+                        results = await requestNominatim('/search', {
+                            format: 'jsonv2',
+                            limit: '1',
+                            street: address.street,
+                            postalcode: address.postalcode,
+                            city: address.city,
+                            state: address.state,
+                            country: address.country,
+                            addressdetails: '1',
+                            countrycodes: address.countryCode && address.countryCode !== '0' ? address.countryCode.toLowerCase() : '',
+                            'accept-language': document.documentElement.lang || ''
+                        });
+                        if (results.length) {
+                            matchedBy = 'address';
+                        }
+                    }
+
+                    if (!results.length) {
+                        showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_NO_RESULTS') : 'No matching place was found in OpenStreetMap.', 'warning');
+                        return;
+                    }
+
+                    setFieldValue('jform_latitude', Number(results[0].lat).toFixed(6));
+                    setFieldValue('jform_longitude', Number(results[0].lon).toFixed(6));
+                    setMapEnabled();
+                    test();
+                    var successMessage = Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_UPDATED') : 'Coordinates updated.';
+                    if (matchedBy === 'name') {
+                        successMessage = Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_NAME') : 'Coordinates updated. Found by venue name and address.';
+                    } else if (matchedBy === 'address') {
+                        successMessage = Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_ADDRESS') : 'Coordinates updated. Found by address only.';
+                    }
+
+                    var verifiedAddress = results[0].address || {};
+                    try {
+                        var reverseResult = await requestNominatim('/reverse', {
+                            format: 'jsonv2',
+                            lat: results[0].lat,
+                            lon: results[0].lon,
+                            addressdetails: '1',
+                            'accept-language': document.documentElement.lang || ''
+                        });
+                        verifiedAddress = reverseResult.address || verifiedAddress;
+                    } catch (reverseError) {
+                        // The coordinates are still useful even if reverse verification fails.
+                    }
+
+                    var suggestions = getAddressSuggestions(verifiedAddress);
+                    if (suggestions.length) {
+                        setSuggestedAddress(buildReverseAddress(verifiedAddress), suggestions);
+                    } else {
+                        setSuggestedAddress(null);
+                    }
+                    showGeocodeMessage(successMessage, 'message');
+                } catch (error) {
+                    showGeocodeMessage((Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_REQUEST_FAILED') : 'Could not contact OpenStreetMap.') + ' ' + error.message, 'error');
+                } finally {
+                    setButtonBusy(addressToCoordsButton, false);
+                }
+            });
+        }
+
+        if (coordsToAddressButton) {
+            coordsToAddressButton.addEventListener('click', async function () {
+                setSuggestedAddress(null);
+
+                var latitude = getFieldValue('jform_latitude');
+                var longitude = getFieldValue('jform_longitude');
+                if (!hasValidCoordinates(latitude, longitude)) {
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_REQUIRED') : 'Enter valid latitude and longitude before searching for an address.', 'warning');
+                    return;
+                }
+
+                setButtonBusy(coordsToAddressButton, true);
+                try {
+                    var result = await requestNominatim('/reverse', {
+                        format: 'jsonv2',
+                        lat: latitude,
+                        lon: longitude,
+                        addressdetails: '1',
+                        'accept-language': document.documentElement.lang || ''
+                    });
+                    var address = result.address || {};
+                    var osmAddress = buildReverseAddress(address);
+
+                    applyOsmAddress(osmAddress);
+                    setSuggestedAddress(null);
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_ADDRESS_UPDATED') : 'Address updated.', 'message');
+                } catch (error) {
+                    showGeocodeMessage((Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_REQUEST_FAILED') : 'Could not contact OpenStreetMap.') + ' ' + error.message, 'error');
+                } finally {
+                    setButtonBusy(coordsToAddressButton, false);
+                }
+            });
+        }
+
+        if (applySuggestedAddressButton) {
+            applySuggestedAddressButton.addEventListener('click', function () {
+                if (!lastSuggestedAddress) {
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_NO_SUGGESTED_ADDRESS') : 'There is no suggested address to apply.', 'warning');
+                    return;
+                }
+
+                applyOsmAddress(lastSuggestedAddress);
+                setSuggestedAddress(null);
+                showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_ADDRESS_UPDATED') : 'Address updated.', 'message');
+            });
         }
     });
 
@@ -247,6 +638,23 @@ $location = JemHelper::defineCenterMap($this->form);
                             <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
+                            <li>
+                                <div class="label-form">
+                                    <div class="control-group">
+                                        <div class="control-label"><span aria-hidden="true">&nbsp;</span></div>
+                                        <div class="controls">
+                                            <div class="btn-toolbar gap-2 mb-2">
+                                                <button type="button" class="btn btn-secondary" id="jem-geocode-address"><span class="icon-arrow-down-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_COORDINATES'); ?></button>
+                                                <button type="button" class="btn btn-secondary" id="jem-reverse-geocode"><span class="icon-arrow-up-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_ADDRESS'); ?></button>
+                                            </div>
+                                            <div class="alert alert-info d-none align-items-center gap-2 mt-2 mb-0" id="jem-suggested-address">
+                                                <span id="jem-suggested-address-text"></span>
+                                                <button type="button" class="btn btn-sm btn-primary ms-auto" id="jem-apply-suggested-address" disabled="disabled"><?php echo Text::_('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS'); ?></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
