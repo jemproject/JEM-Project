@@ -73,9 +73,6 @@ class JemViewEventsMap extends JemView
         JemHelper::loadCustomTag();
         JemHelper::loadCss('leaflet');
 
-        // Add JavaScript
-        $document->addScript(Uri::root() . 'media/com_jem/js/leaflet.js');
-
         if ($print) {
             JemHelper::loadCss('print');
             $document->setMetaData('robots', 'noindex, nofollow');

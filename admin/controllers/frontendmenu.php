@@ -45,7 +45,7 @@ class JemControllerFrontendmenu extends BaseController
         $this->ensureMenuType($menutype);
         $this->ensureMenuModule($menutype);
 
-        $rootId = $this->createMenuItem($menutype, 'JEM', 'jem', '#', 1, 'heading', 0);
+        $rootId = $this->createMenuItem($menutype, 'JEM', 'jem-frontend', '#', 1, 'heading', 0, array('jem'));
 
         $groups = array(
             'events'     => $this->createMenuItem($menutype, 'Events', 'events', '#', $rootId, 'heading', 0),
@@ -58,6 +58,7 @@ class JemControllerFrontendmenu extends BaseController
 
         $items = array(
             array('Events List', 'events-list', 'index.php?option=com_jem&view=eventslist', $groups['events']),
+            array('Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', $groups['events']),
             array('Submit Event', 'submit-event', 'index.php?option=com_jem&view=editevent', $groups['events']),
             array('Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
             array('Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
@@ -85,11 +86,13 @@ class JemControllerFrontendmenu extends BaseController
             $items[] = array('Venue Calendar', 'venue-calendar', 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $this->slug($venue), $groups['calendars']);
         }
 
-        $category = $this->getRandomRecord('#__jem_categories', 'published = 1', array('id', 'alias'));
+        $category = $this->getRandomCategoryRecord();
         if ($category) {
             $items[] = array('Sample Category', 'sample-category', 'index.php?option=com_jem&view=category&id=' . $this->slug($category), $groups['categories']);
             $items[] = array('Sample Category Calendar', 'sample-category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['categories']);
             $items[] = array('Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
+        } else {
+            $this->unpublishGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
         }
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
@@ -221,16 +224,16 @@ class JemControllerFrontendmenu extends BaseController
         $db->execute();
     }
 
-    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId)
+    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array())
     {
-        $existing = $this->getExistingMenuItem($menutype, $alias, $parentId);
+        $existing = $this->getExistingMenuItem($menutype, array_merge(array($alias), $legacyAliases), $parentId);
 
         if ($existing) {
-            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId);
+            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId, $parentId);
             return (int) $existing;
         }
 
-        $table = Table::getInstance('Menu', 'JTable');
+        $table = Table::getInstance('Menu');
         $table->setLocation((int) $parentId, 'last-child');
 
         $data = array(
@@ -263,24 +266,39 @@ class JemControllerFrontendmenu extends BaseController
         return (int) $table->id;
     }
 
-    protected function getExistingMenuItem($menutype, $alias, $parentId)
+    protected function getExistingMenuItem($menutype, array $aliases, $parentId)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $aliases = array_values(array_filter(array_unique($aliases), static fn ($alias) => trim((string) $alias) !== ''));
 
         $query = $db->getQuery(true)
             ->select($db->quoteName('id'))
             ->from($db->quoteName('#__menu'))
             ->where($db->quoteName('menutype') . ' = ' . $db->quote($menutype))
-            ->where($db->quoteName('alias') . ' = ' . $db->quote($alias))
+            ->where($db->quoteName('alias') . ' IN (' . implode(',', array_map(array($db, 'quote'), $aliases)) . ')')
             ->where($db->quoteName('parent_id') . ' = ' . (int) $parentId)
             ->where($db->quoteName('client_id') . ' = 0');
 
         $db->setQuery($query);
 
+        $existing = (int) $db->loadResult();
+
+        if ($existing) {
+            return $existing;
+        }
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__menu'))
+            ->where($db->quoteName('menutype') . ' = ' . $db->quote($menutype))
+            ->where($db->quoteName('alias') . ' IN (' . implode(',', array_map(array($db, 'quote'), $aliases)) . ')')
+            ->where($db->quoteName('client_id') . ' = 0');
+        $db->setQuery($query, 0, 1);
+
         return (int) $db->loadResult();
     }
 
-    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId)
+    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -291,6 +309,26 @@ class JemControllerFrontendmenu extends BaseController
             ->set($db->quoteName('type') . ' = ' . $db->quote($type))
             ->set($db->quoteName('component_id') . ' = ' . (int) $componentId)
             ->where($db->quoteName('id') . ' = ' . (int) $id)
+            ->where($db->quoteName('client_id') . ' = 0');
+
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    protected function unpublishGeneratedMenuItems($menutype, array $aliases)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $aliases = array_values(array_filter(array_unique($aliases), static fn ($alias) => trim((string) $alias) !== ''));
+
+        if ($aliases === array()) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__menu'))
+            ->set($db->quoteName('published') . ' = 0')
+            ->where($db->quoteName('menutype') . ' = ' . $db->quote($menutype))
+            ->where($db->quoteName('alias') . ' IN (' . implode(',', array_map(array($db, 'quote'), $aliases)) . ')')
             ->where($db->quoteName('client_id') . ' = 0');
         $db->setQuery($query);
         $db->execute();
@@ -318,6 +356,23 @@ class JemControllerFrontendmenu extends BaseController
             ->select($db->quoteName($columns))
             ->from($db->quoteName($table))
             ->where($where)
+            ->order('RAND()');
+        $db->setQuery($query, 0, 1);
+
+        return $db->loadObject();
+    }
+
+    protected function getRandomCategoryRecord()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'alias')))
+            ->from($db->quoteName('#__jem_categories'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('id') . ' > 1')
+            ->where($db->quoteName('alias') . ' <> ' . $db->quote('root'))
+            ->where($db->quoteName('catname') . ' <> ' . $db->quote('root'))
             ->order('RAND()');
         $db->setQuery($query, 0, 1);
 
