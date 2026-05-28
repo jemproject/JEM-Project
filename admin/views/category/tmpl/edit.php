@@ -24,7 +24,6 @@ $wa = $this->document->getWebAssetManager();
             ->useScript('form.validate');
 
 $typeField = $this->form->getField('type_id');
-$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 ?>
 
 <script>
@@ -54,7 +53,7 @@ $showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') 
                     <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
-                    <?php if ($showTypeField) : ?>
+                    <?php if ($typeField) : ?>
                         <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>

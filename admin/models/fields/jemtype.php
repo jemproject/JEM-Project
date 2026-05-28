@@ -29,9 +29,17 @@ class JFormFieldJemtype extends FormField
     protected function getInput()
     {
         $types = $this->getTypes();
+        $class = trim('form-select ' . $this->class);
+        $class = preg_match('/(^|\s)w-auto(\s|$)/', $class) ? $class : $class . ' w-auto';
 
         if ($types === array()) {
-            return '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="" />';
+            $html = array();
+            $html[] = '<select id="' . htmlspecialchars($this->id, ENT_QUOTES, 'UTF-8') . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" disabled="disabled">';
+            $html[] = '<option value="">' . Text::_('COM_JEM_TYPE_SELECT_NONE') . '</option>';
+            $html[] = '</select>';
+            $html[] = '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars((string) $this->value, ENT_QUOTES, 'UTF-8') . '" />';
+
+            return implode("\n", $html);
         }
 
         $options   = array();
@@ -44,9 +52,6 @@ class JFormFieldJemtype extends FormField
             }
             $options[] = HTMLHelper::_('select.option', $t->id, $t->name);
         }
-
-        $class = trim('form-select ' . $this->class);
-        $class = preg_match('/(^|\s)w-auto(\s|$)/', $class) ? $class : $class . ' w-auto';
 
         $attribs = array(
             'id'    => $this->id,

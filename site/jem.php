@@ -32,6 +32,11 @@ require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
 Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+$language = Factory::getApplication()->getLanguage();
+$language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem');
+$language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true);
+$language->load('com_jem', JPATH_ADMINISTRATOR);
+$language->load('com_jem', JPATH_SITE, null, true);
 $document = Factory::getApplication()->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('jquery');
@@ -52,3 +57,4 @@ $controller->execute($input->getCmd('task'));
 $controller->redirect();
 HTMLHelper::_('bootstrap.framework');
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -9,6 +9,16 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+
+$renderInlineHelp = function ($field) {
+    if (empty($field->description) || empty($field->id)) {
+        return '';
+    }
+
+    return '<div id="' . $field->id . '-desc" class="hide-aware-inline-help d-none">'
+        . '<small class="form-text">' . Text::_($field->description) . '</small>'
+        . '</div>';
+};
 ?>
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
@@ -102,9 +112,44 @@ use Joomla\CMS\Language\Text;
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
         <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS'); ?></legend>
-        <ul class="adminformlist">
-            <?php foreach ($this->form->getFieldset('stylesheet') as $field): ?>
-                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+        <ul class="adminformlist jem-stylesheet-list">
+            <?php
+            $stylesheetFields = $this->form->getFieldset('stylesheet');
+            $stylesheetFieldsByName = array();
+
+            foreach ($stylesheetFields as $field) {
+                $stylesheetFieldsByName[$field->fieldname] = $field;
+            }
+
+            foreach ($stylesheetFields as $field):
+                if (substr($field->fieldname, -11) === '_customfile') {
+                    continue;
+                }
+
+                if (strtolower($field->type) === 'spacer') :
+            ?>
+                <li class="jem-stylesheet-separator"><?php echo $field->input; ?></li>
+            <?php
+                    continue;
+                endif;
+
+                if (substr($field->fieldname, -10) === '_usecustom') :
+                    $fileFieldName = substr($field->fieldname, 0, -10) . '_customfile';
+                    $fileField = $stylesheetFieldsByName[$fileFieldName] ?? null;
+            ?>
+                <li class="jem-stylesheet-row">
+                    <div class="jem-stylesheet-toggle">
+                        <?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?>
+                    </div>
+                    <?php if ($fileField) : ?>
+                        <div class="jem-stylesheet-file">
+                            <?php echo $fileField->label; ?> <?php echo $fileField->input; ?><?php echo $renderInlineHelp($fileField); ?>
+                        </div>
+                    <?php endif; ?>
+                </li>
+            <?php else : ?>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?></li>
+            <?php endif; ?>
             <?php endforeach; ?>
         </ul>
     </fieldset>
@@ -114,7 +159,7 @@ use Joomla\CMS\Language\Text;
         <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BACKGROUND'); ?></legend>
         <ul class="adminformlist label-button-line">
             <?php foreach ($this->form->getFieldset('css_color') as $field): ?>
-                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?></li>
             <?php endforeach; ?>
         </ul>
     </fieldset>
@@ -124,7 +169,7 @@ use Joomla\CMS\Language\Text;
         <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BORDER'); ?></legend>
         <ul class="adminformlist label-button-line">
             <?php foreach ($this->form->getFieldset('css_color_border') as $field): ?>
-                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?></li>
             <?php endforeach; ?>
         </ul>
     </fieldset>
@@ -134,9 +179,10 @@ use Joomla\CMS\Language\Text;
         <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_FONT'); ?></legend>
         <ul class="adminformlist label-button-line">
             <?php foreach ($this->form->getFieldset('css_color_font') as $field): ?>
-                <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                <li><?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?></li>
             <?php endforeach; ?>
         </ul>
     </fieldset>
 </div>
 </div><div class="clr"></div>
+

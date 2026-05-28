@@ -248,14 +248,17 @@ if ($jemsettings->oldevent > 0) {
         </span>
         </h2>
 
-        <?php if ($eventImageRibbonText) : ?>
-            <div class="jem-event-image-ribbon-wrap jem-event-image-ribbon-wrap--legacy">
-                <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
-                <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
+        <div class="jem-event-main">
+            <div class="jem-img jem-img-event">
+                <?php if ($eventImageRibbonText) : ?>
+                    <div class="jem-event-image-ribbon-wrap jem-event-image-ribbon-wrap--legacy">
+                        <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                        <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
+                    </div>
+                <?php else : ?>
+                    <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
+                <?php endif; ?>
             </div>
-        <?php else : ?>
-            <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
-        <?php endif; ?>
 
         <dl class="event_info floattext">
             <?php if ($params->get('event_show_detailstitle',1)) : ?>
@@ -435,6 +438,7 @@ if ($jemsettings->oldevent > 0) {
                 </dd>
             <?php endif; ?>
         </dl>
+        </div>
 
         <!-- DESCRIPTION -->
         <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>

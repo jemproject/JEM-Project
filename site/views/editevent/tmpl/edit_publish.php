@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
+$articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 ?>
 <!--START PUBLISHING FIELDSET -->
 <fieldset class="adminform">
@@ -38,11 +39,20 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
             <dt><?php echo $this->form->getLabel('article_id'); ?></dt>
             <dd><?php echo $this->form->getInput('article_id'); ?></dd>
             <dt><?php echo $this->form->getLabel('create_article'); ?></dt>
-            <dd><?php echo $this->form->getInput('create_article'); ?></dd>
+            <dd>
+                <span class="jem-inline-info-control">
+                    <?php echo $this->form->getInput('create_article'); ?>
+                    <span class="jem-info-tooltip hasTooltip" title="<?php echo $articleAutoInfo; ?>" aria-label="<?php echo $articleAutoInfo; ?>">
+                        <svg aria-hidden="true" viewBox="0 0 16 16" focusable="false">
+                            <circle cx="8" cy="8" r="7"></circle>
+                            <path d="M8 7v4"></path>
+                            <path d="M8 4.75h.01"></path>
+                        </svg>
+                    </span>
+                </span>
+            </dd>
             <dt><?php echo $this->form->getLabel('article_target_category_id'); ?></dt>
             <dd><?php echo $this->form->getInput('article_target_category_id'); ?></dd>
-            <dt><?php echo $this->form->getLabel('article_auto_info'); ?></dt>
-            <dd><?php echo $this->form->getInput('article_auto_info'); ?></dd>
         <?php endif; ?>
 
     </dl>
