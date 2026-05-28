@@ -58,7 +58,6 @@
             <exclude name="*.key" />
             <exclude name="*.crt" />
             <exclude name="*.pfx" />
-            <exclude name="*.sql" />
             <exclude name="*.bak" />
             <exclude name="*.orig" />
             <exclude name="*.log" />

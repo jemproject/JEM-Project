@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `introtext` mediumtext NOT NULL,
     `fulltext` mediumtext NOT NULL,
     `article_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `online_meeting_url` varchar(2048) NOT NULL DEFAULT '',
+    `online_meeting_label` varchar(255) NOT NULL DEFAULT '',
     `meta_keywords` varchar(200) DEFAULT NULL,
     `meta_description` varchar(255) DEFAULT NULL,
     `recurrence_first_id` int(11) NOT NULL DEFAULT '0',
@@ -165,7 +167,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    KEY `idx_article_category` (`article_category_id`)
+    KEY `idx_article_category` (`article_category_id`),
+    KEY `idx_type` (`type_id`)
     ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (

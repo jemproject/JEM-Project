@@ -37,7 +37,6 @@ final class BuildPackageExcludesTest extends TestCase
             '*.key',
             '*.crt',
             '*.pfx',
-            '*.sql',
             '*.bak',
             '*.orig',
             '*.log',

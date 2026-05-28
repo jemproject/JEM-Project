@@ -47,6 +47,15 @@ final class SqlConfigDefaultsTest extends TestCase
         self::assertStringContainsString('ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL DEFAULT 0', $sql);
     }
 
+    public function testFreshInstallSchemaMatchesCurrentUpdateSchema(): void
+    {
+        $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
+
+        self::assertStringContainsString("`online_meeting_url` varchar(2048) NOT NULL DEFAULT ''", $sql);
+        self::assertStringContainsString("`online_meeting_label` varchar(255) NOT NULL DEFAULT ''", $sql);
+        self::assertStringContainsString('KEY `idx_type` (`type_id`)', $sql);
+    }
+
     private function read(string $path): string
     {
         self::assertFileExists($path);
