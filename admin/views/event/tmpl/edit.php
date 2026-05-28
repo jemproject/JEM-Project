@@ -42,9 +42,7 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 $typeField = $this->form->getField('type_id');
-$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
-$showContactField = $contactField && method_exists($contactField, 'hasAvailableContacts') && $contactField->hasAvailableContacts();
 
 ?>
 
@@ -241,12 +239,12 @@ $showContactField = $contactField && method_exists($contactField, 'hasAvailableC
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield('locid'); ?></div></li>
-                    <?php if ($showTypeField) : ?>
+                    <?php if ($typeField) : ?>
                         <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
-                    <?php if ($showContactField) : ?>
+                    <?php if ($contactField) : ?>
                         <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
                     <?php else : ?>
                         <?php echo $this->form->getInput('contactid'); ?>

@@ -25,7 +25,6 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 $typeField = $this->form->getField('type_id');
-$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 
 # defining values for centering default-map
 $location = JemHelper::defineCenterMap($this->form);
@@ -252,7 +251,7 @@ $location = JemHelper::defineCenterMap($this->form);
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
-                            <?php if ($showTypeField) : ?>
+                            <?php if ($typeField) : ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
                             <?php else : ?>
                                 <?php echo $this->form->getInput('type_id'); ?>

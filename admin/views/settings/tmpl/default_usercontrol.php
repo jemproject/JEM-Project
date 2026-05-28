@@ -16,7 +16,7 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_USER_CONTROL'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrol') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -26,7 +26,7 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_AC_EVENTS'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrolacevent') as $field): ?>
-                                  <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
@@ -37,7 +37,7 @@ use Joomla\CMS\Language\Text;
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
             <ul class="adminformlist">
-                <li><?php echo $this->form->getLabel('showfroregistra'); ?> <?php echo $this->form->getInput('showfroregistra'); ?> </li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('showfroregistra'); ?></div></li>
                 <li id="froreg1"><div class="label-form"><?php echo $this->form->renderfield('regallowinvitation'); ?></div></li>
                 <li id="froreg2"><div class="label-form"><?php echo $this->form->renderfield('regallowcomments'); ?></div></li>
             </ul>
@@ -48,7 +48,7 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_AC_VENUES'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('usercontrolacvenue') as $field): ?>
-                    <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>

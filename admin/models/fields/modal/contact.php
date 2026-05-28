@@ -62,7 +62,17 @@ class JFormFieldModal_Contact extends FormField
         $currentValues = ComponentHelper::isEnabled('com_contact') ? ($this->value ? $this->value : '') : '';
 
         if (!$this->hasAvailableContacts()) {
-            return '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="" />';
+            $emptyContactName = htmlspecialchars(Text::_('COM_JEM_SELECT_CONTACT'), ENT_QUOTES, 'UTF-8');
+            $html = array();
+            $html[] = '<div class="input-group" style="width: auto; flex-grow: 1;">';
+            $html[] = '  <input type="text" id="' . $this->id . '_name" class="form-control readonly" disabled="disabled" value="' . $emptyContactName . '" readonly size="35" />';
+            $html[] = '  <button type="button" class="btn btn-success" disabled="disabled">';
+            $html[] = '    <i class="icon-user"></i> ' . Text::_('COM_JEM_SELECT');
+            $html[] = '  </button>';
+            $html[] = '</div>';
+            $html[] = '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="' . htmlspecialchars($currentValues, ENT_QUOTES, 'UTF-8') . '" />';
+
+            return implode("\n", $html);
         }
 
         $document = $app->getDocument();

@@ -1196,6 +1196,55 @@ select.inputbox, textarea.inputbox {
     padding: 0.5rem;
 }
 
+.jem-stylesheet-list .jem-stylesheet-row {
+    align-items: flex-start;
+    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.jem-stylesheet-list .jem-stylesheet-toggle {
+    flex: 0 0 150px;
+}
+
+.jem-stylesheet-list .jem-stylesheet-file {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.jem-stylesheet-list .jem-stylesheet-toggle > label,
+.jem-stylesheet-list .jem-stylesheet-file label {
+    clear: none;
+    display: block;
+    float: none;
+    margin-bottom: 4px;
+    min-width: 0;
+    width: auto;
+}
+
+.jem-stylesheet-list .jem-stylesheet-file input {
+    box-sizing: border-box;
+    min-width: 180px;
+    width: 100%;
+}
+
+.jem-stylesheet-list .jem-stylesheet-separator {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 600px) {
+    .jem-stylesheet-list .jem-stylesheet-toggle,
+    .jem-stylesheet-list .jem-stylesheet-file {
+        flex-basis: 100%;
+    }
+
+    .jem-stylesheet-list .jem-stylesheet-file input {
+        min-width: 0;
+    }
+}
+
 /* -- Help --------------------------- */
 .helpFrame {
     border-left: 0 solid #222;

@@ -22,8 +22,9 @@ $wa->useScript('keepalive')
 // Create shortcut to parameters.
 $params        = $this->item->params;
 //$settings = json_decode($this->item->attribs);
+$hideEmptyManagedFields = !empty($this->jemsettings->frontend_hide_empty_managed_fields);
 $typeField = $this->form->getField('type_id');
-$showTypeField = !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+$showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 
 $options = array(
     'onActive' => 'function(title, description){

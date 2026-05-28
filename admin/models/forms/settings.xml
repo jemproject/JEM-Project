@@ -397,6 +397,16 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="frontend_hide_empty_managed_fields" type="radio"
+            label="COM_JEM_SETTINGS_FIELD_FRONTEND_HIDE_EMPTY_MANAGED_FIELDS"
+            description="COM_JEM_SETTINGS_FIELD_FRONTEND_HIDE_EMPTY_MANAGED_FIELDS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="0"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
     </fieldset>
 
     <fieldset name="usercontrolregistration"
@@ -405,7 +415,7 @@
         <field name="showfroregistra" type="list"
             label="COM_JEM_SUBMIT_REGISTER"
             description="COM_JEM_SUBMIT_REGISTER_DESC"
-            class="inputbox"
+            class="inputbox w-auto"
             default="0"
             required="false"
         >

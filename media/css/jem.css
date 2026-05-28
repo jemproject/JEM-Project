@@ -1452,6 +1452,38 @@ div.jem_editevent form label#recurrence_output {
     margin: 5px 0;
 }
 
+div.jem_editevent .jem-inline-info-control {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5em;
+    vertical-align: middle;
+}
+
+div.jem_editevent .jem-inline-info-control > * {
+    flex: 0 0 auto;
+}
+
+div.jem_editevent .jem-info-tooltip {
+    color: #1f5d8c;
+    cursor: help;
+    display: block;
+    height: 1.25em;
+    margin-top: 0.35em;
+    vertical-align: middle;
+    width: 1.25em;
+}
+
+div.jem_editevent .jem-info-tooltip svg {
+    display: block;
+    fill: none;
+    height: 100%;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+    width: 100%;
+}
+
 /** registration */
 div.jem_editevent form div.jem_unregister,
 div.jem_editevent form div.jem_register {
