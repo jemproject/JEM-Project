@@ -253,6 +253,57 @@ div#jem .jem-search-filter-actions .btn {
     max-width: 100%;
 }
 
+#jem.jem_event .jem-event-main {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+}
+
+#jem.jem_event .jem-event-main > .event_info {
+    flex: 1 1 20rem;
+    min-width: 0;
+    order: 1;
+}
+
+#jem.jem_event .jem-event-main > .jem-img {
+    flex: 0 0 auto;
+    max-width: 100%;
+    order: 2;
+    text-align: right;
+}
+
+#jem.jem_event .jem-event-main > .jem-img .flyerimage {
+    display: inline-block;
+    float: none !important;
+}
+
+#jem.jem_event .jem-event-main > .jem-img .jem-event-image-ribbon-wrap--legacy {
+    float: none;
+    margin: 0;
+}
+
+#jem.jem_event .jem-event-main > .jem-img img {
+    height: auto;
+    max-width: 100%;
+}
+
+#jem.jem_event .jem-event-more-information {
+    clear: both;
+    margin-top: 0.75rem;
+}
+
+@media (max-width: 767px) {
+    #jem.jem_event .jem-event-main {
+        display: block;
+    }
+
+    #jem.jem_event .jem-event-main > .jem-img {
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+}
+
 #jem .jem-event-image-ribbon {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
     color: #fff;
@@ -2492,6 +2543,36 @@ div#jem .inline-button-right {
 
 #jem .jem-links-order-icon-image-text .jem-event-link-text {
     order: 3;
+}
+
+#jem .jem-online-meeting {
+    display: block;
+    width: 100%;
+    margin: 1.25rem 0;
+    padding: 1rem;
+    border: 1px solid currentColor;
+}
+
+#jem .jem-online-meeting legend {
+    float: none;
+    width: auto;
+    margin: 0 0 .75rem;
+    padding: 0 .35rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+#jem .jem-online-meeting-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    max-width: 100%;
+    white-space: normal;
+}
+
+#jem .jem-online-meeting-icon {
+    line-height: 1;
 }
 
 

@@ -295,6 +295,37 @@ input#replace_catevents1.inputbox {
     display: inline-block;
 }
 
+.jem-import-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.jem-import-grid > hr {
+    display: none;
+}
+
+.jem-import-grid > div {
+    min-width: 0;
+}
+
+.jem-import-grid > div > fieldset.adminform {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.jem-import-grid input[type="file"] {
+    max-width: 100%;
+}
+
+@media (max-width: 900px) {
+    .jem-import-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 table#el-attachments td {
     padding: 4px 5px;
     vertical-align: top;

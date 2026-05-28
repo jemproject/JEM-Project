@@ -8,6 +8,62 @@
     --jem-attachment-row-bg: var(--table-bg, var(--bs-table-bg, #4eeeee));
 }
 
+/* Atum dark mode: keep attachment editor contrast predictable. */
+[data-bs-theme="dark"] .jem-attachments-tab {
+    --jem-attachment-row-bg: var(--bs-body-bg, #1f2933);
+    --jem-attachment-panel-bg: var(--bs-tertiary-bg, #263442);
+    --jem-attachment-border: var(--bs-border-color, #52677e);
+    --jem-attachment-text: var(--bs-body-color, #eef3f7);
+    --jem-attachment-muted: var(--bs-secondary-color, #b7c5d1);
+    --jem-attachment-input-bg: var(--bs-body-bg, #17212b);
+    --jem-attachment-input-border: var(--bs-border-color, #52677e);
+}
+
+[data-bs-theme="dark"] .jem-attachments-tab,
+[data-bs-theme="dark"] .jem-attachments-tab .title,
+[data-bs-theme="dark"] .jem-attachments-tab dt,
+[data-bs-theme="dark"] .jem-attachments-tab dd,
+[data-bs-theme="dark"] .jem-attachments-tab label,
+[data-bs-theme="dark"] .jem-attachments-tab .control-label,
+[data-bs-theme="dark"] .jem-attachments-tab .controls {
+    color: var(--jem-attachment-text) !important;
+}
+
+[data-bs-theme="dark"] .jem-attachments-tab .form-text,
+[data-bs-theme="dark"] .jem-attachments-tab .small,
+[data-bs-theme="dark"] .jem-attachments-tab .text-muted {
+    color: var(--jem-attachment-muted) !important;
+}
+
+[data-bs-theme="dark"] .jem-attachments-tab .adminform tr,
+[data-bs-theme="dark"] .jem-attachments-tab #el-attachments tr {
+    border-color: var(--jem-attachment-border) !important;
+    background: var(--jem-attachment-panel-bg) !important;
+}
+
+[data-bs-theme="dark"] .jem-attachments-tab .jem-attachments-global-options {
+    border-color: var(--jem-attachment-border);
+    background: var(--jem-attachment-panel-bg);
+    color: var(--jem-attachment-text);
+}
+
+[data-bs-theme="dark"] .jem-attachments-tab input[type="text"],
+[data-bs-theme="dark"] .jem-attachments-tab input[type="file"],
+[data-bs-theme="dark"] .jem-attachments-tab select,
+[data-bs-theme="dark"] .jem-attachments-tab textarea,
+[data-bs-theme="dark"] .jem-attachments-tab .form-control,
+[data-bs-theme="dark"] .jem-attachments-tab .form-select,
+[data-bs-theme="dark"] .jem-attachments-tab .inputbox {
+    border-color: var(--jem-attachment-input-border) !important;
+    background-color: var(--jem-attachment-input-bg) !important;
+    color: var(--jem-attachment-text) !important;
+}
+
+[data-bs-theme="dark"] .jem-attachments-tab input::placeholder,
+[data-bs-theme="dark"] .jem-attachments-tab textarea::placeholder {
+    color: var(--jem-attachment-muted) !important;
+}
+
 .jem-attachments-tab fieldset {
     border: 0 !important;
     outline: 0 !important;

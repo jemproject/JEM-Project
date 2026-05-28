@@ -263,6 +263,54 @@ body.com_jem.body-overlayed {
     max-width: 100%;
 }
 
+#jem.jem_event .jem-event-main-responsive {
+    align-items: flex-start;
+    gap: 1rem 1.5rem;
+    justify-content: space-between;
+}
+
+#jem.jem_event .jem-event-main-responsive > .jem-info {
+    flex: 1 1 20rem;
+    min-width: 0;
+}
+
+#jem.jem_event .jem-event-main-responsive > .jem-img {
+    flex: 0 0 auto;
+    max-width: 100%;
+    text-align: right;
+}
+
+#jem.jem_event .jem-event-main-responsive > .jem-img .flyerimage {
+    display: inline-block;
+    float: none !important;
+    max-width: 100%;
+}
+
+#jem.jem_event .jem-event-main-responsive > .jem-img .jem-event-image-ribbon-wrap {
+    display: inline-block;
+}
+
+#jem.jem_event .jem-event-main-responsive > .jem-img img {
+    height: auto;
+    max-width: 100%;
+}
+
+#jem.jem_event .jem-event-more-information {
+    clear: both;
+    margin-top: 0.75rem;
+}
+
+@media (max-width: 767px) {
+    #jem.jem_event .jem-event-main-responsive {
+        display: block;
+    }
+
+    #jem.jem_event .jem-event-main-responsive > .jem-img {
+        margin-top: 1rem;
+        text-align: left;
+    }
+}
+
 #jem .jem-registered-list {
     margin-left: calc(2.14285714em / 1.5);
 }
@@ -1999,5 +2047,15 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
     #jem .jem-attachments-tab #el-attachments tr > td:first-child > .jem-attachment-status-row .clear-attach-field {
         grid-column: 1 !important;
         justify-self: start !important;
+    }
+}
+
+#jem .jem-online-meeting {
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    #jem .jem-online-meeting-link {
+        width: 100%;
     }
 }
