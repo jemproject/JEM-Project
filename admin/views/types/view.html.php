@@ -86,6 +86,6 @@ class JemViewTypes extends JemAdminView
         }
 
         ToolbarHelper::divider();
-        ToolbarHelper::help('listtypes', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/types');
+        ToolbarHelper::help('listtypes', true, 'https://www.joomlaeventmanager.net/documentation/backend/types');
     }
 }

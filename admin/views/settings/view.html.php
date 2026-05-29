@@ -104,7 +104,7 @@ class JemViewSettings extends JemAdminView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/settings');
+        ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/backend/settings');
     }
 
     protected function WarningIcon()

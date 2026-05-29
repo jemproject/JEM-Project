@@ -90,6 +90,6 @@ class JemViewAttachments extends JemAdminView
         }
 
         ToolbarHelper::divider();
-        ToolbarHelper::help('attachments', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/attachments');
+        ToolbarHelper::help('attachments', true, 'https://www.joomlaeventmanager.net/documentation/backend/attachments');
     }
 }

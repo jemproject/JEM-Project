@@ -58,6 +58,6 @@ class JemViewCssmanager extends JemAdminView
         ToolbarHelper::custom('cssmanager.back', 'back', 'back', Text::_('COM_JEM_ATT_BACK'), false);
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/css-manager');
+        ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/css-manager');
     }
 }

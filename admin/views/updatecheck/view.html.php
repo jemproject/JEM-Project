@@ -75,6 +75,6 @@ class JemViewUpdatecheck extends JemAdminView
         // Use cancel instead of deprecated back
         ToolbarHelper::cancel('settings.cancel', 'JTOOLBAR_CLOSE');
         ToolbarHelper::divider();
-        ToolBarHelper::help('update', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/check-update');
+        ToolBarHelper::help('update', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/check-update');
     }
 }

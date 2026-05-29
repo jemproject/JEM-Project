@@ -134,6 +134,6 @@ use Joomla\CMS\Factory;
         }
 
         ToolbarHelper::divider();
-        ToolBarHelper::help('listvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues');
+        ToolBarHelper::help('listvenues', true, 'https://www.joomlaeventmanager.net/documentation/backend/venues');
     }
 }

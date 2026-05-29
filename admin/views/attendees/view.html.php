@@ -146,6 +146,6 @@ class JemViewAttendees extends JemAdminView
         ToolbarHelper::spacer();
         ToolbarHelper::custom('attendees.back', 'back', 'back', Text::_('COM_JEM_ATT_BACK'), false);
         ToolbarHelper::divider();
-        ToolbarHelper::help('registereduser', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/attendees');
+        ToolbarHelper::help('registereduser', true, 'https://www.joomlaeventmanager.net/documentation/backend/events/registered-users');
     }
 }
