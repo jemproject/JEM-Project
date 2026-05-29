@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
@@ -72,30 +73,26 @@ class JemViewCategories extends JemAdminView
      */
     protected function addToolbar()
     {
+        ToolbarHelper::title(Text::_('COM_JEM_CATEGORIES'), 'elcategories');
+        $toolbar = Toolbar::getInstance('toolbar');
 
-        // Initialise variables.
-        $canDo        = null;
-        $user        = JemFactory::getUser();
-
-        // Get the results for each action.
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
         $canDelete = $canDo->get('core.delete');
-        $showActionDropdown = $canChangeState || ($this->state->get('filter.published') == -2 && $canDelete);
 
-        ToolbarHelper::title(Text::_('COM_JEM_CATEGORIES'), 'elcategories');
-        $toolbar = $this->getToolbarInstance();
-
-        if ($canDo->get('core.create')) {
+        /* create */
+        if (($canDo->get('core.create'))) {
              ToolbarHelper::addNew('category.add');
         }
 
-        if ($canDo->get('core.edit' ) || $canDo->get('core.edit.own')) {
+        /* edit */
+        if (($canDo->get('core.edit'))) {
             ToolbarHelper::editList('category.edit');
             ToolbarHelper::divider();
         }
 
-        if ($showActionDropdown && $this->supportsToolbarDropdown($toolbar)) {
+        /* state */
+        if ($canChangeState || $canDelete) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -104,47 +101,24 @@ class JemViewCategories extends JemAdminView
                 ->listCheck(true);
             $childBar = $dropdown->getChildToolbar();
 
-            if ($canChangeState) {
+            if ($canChangeState && $this->state->get('filter.state') != 2) {
                 $childBar->publish('categories.publish')->listCheck(true);
                 $childBar->unpublish('categories.unpublish')->listCheck(true);
-                $childBar->archive('categories.archive')->listCheck(true);
             }
 
-            if ($canChangeState && $user->authorise('core.admin')) { // todo: is that correct?
+            if ($canChangeState) {
                 $childBar->checkin('categories.checkin')->listCheck(true);
             }
 
-            if ($this->state->get('filter.published') == -2 && $canDelete) {
-                $childBar->delete('categories.remove', 'JTOOLBAR_EMPTY_TRASH')
+            /* delete-trash */
+            if ($canDelete) {
+                $childBar->delete('categories.remove', 'JACTION_DELETE')
                     ->message('COM_JEM_CONFIRM_DELETE')
                     ->listCheck(true);
-            } elseif ($canChangeState) {
-                $childBar->trash('categories.trash')->listCheck(true);
             }
-        } elseif ($showActionDropdown) {
-            if ($canChangeState) {
-                ToolbarHelper::publishList('categories.publish');
-                ToolbarHelper::unpublishList('categories.unpublish');
-                ToolbarHelper::archiveList('categories.archive');
             }
 
-            if ($canChangeState && $user->authorise('core.admin')) { // todo: is that correct?
-                ToolbarHelper::checkin('categories.checkin');
-            }
-
-            if ($this->state->get('filter.published') == -2 && $canDelete) {
-                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'categories.remove', 'JTOOLBAR_EMPTY_TRASH');
-            } elseif ($canChangeState) {
-                ToolbarHelper::trash('categories.trash');
-            }
-        }
-
-        if ($canDo->get('core.admin')) {
             ToolbarHelper::divider();
-            ToolbarHelper::custom('categories.rebuild', 'refresh.webp', 'refresh_f2.webp', 'JTOOLBAR_REBUILD', false);
+        ToolBarHelper::help('listcategories', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/categories');
         }
-
-        ToolbarHelper::divider();
-        ToolBarHelper::help('listcategories', true, 'https://www.joomlaeventmanager.net/documentation/backend/categories');
     }
-}
