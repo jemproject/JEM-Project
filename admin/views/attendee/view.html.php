@@ -100,6 +100,6 @@ class JemViewAttendee extends HtmlView {
         }
 
         ToolbarHelper::divider();
-        ToolbarHelper::help('editattendee', true);
+        ToolBarHelper::help('editattendee', true, 'https://www.joomlaeventmanager.net/documentation/backend/events/registered-users');
     }
 }
