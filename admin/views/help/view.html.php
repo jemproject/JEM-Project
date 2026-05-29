@@ -106,7 +106,7 @@ class JemViewHelp extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_HELP'), 'help');
         ToolbarHelper::cancel('settings.cancel', 'JTOOLBAR_CLOSE');
         ToolBarHelper::divider();
-        ToolBarHelper::help('help', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/help');
+        ToolBarHelper::help('help', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/help');
     }
 }
 ?>

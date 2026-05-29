@@ -73,7 +73,7 @@ class JemViewMain extends JemAdminView
         }
 
         ToolBarHelper::divider();
-        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
+        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel');
     }
 
     /**

@@ -118,6 +118,6 @@ class JemViewCategory extends JemAdminView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('editcategories', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/categories/add-category');
+        ToolBarHelper::help('editcategories', true, 'https://www.joomlaeventmanager.net/documentation/backend/categories/add-category');
     }
 }

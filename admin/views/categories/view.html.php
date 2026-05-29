@@ -145,6 +145,6 @@ class JemViewCategories extends JemAdminView
         }
 
         ToolbarHelper::divider();
-        ToolBarHelper::help('listcategories', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/categories');
+        ToolBarHelper::help('listcategories', true, 'https://www.joomlaeventmanager.net/documentation/backend/categories');
     }
 }
