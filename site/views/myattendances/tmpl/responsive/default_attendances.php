@@ -13,6 +13,35 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+
+if (!function_exists('jem_myattendances_country_name')) {
+    function jem_myattendances_country_name($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        return JemHelperCountries::getCountryName($country) ?: $country;
+    }
+}
+
+if (!function_exists('jem_myattendances_country_flag')) {
+    function jem_myattendances_country_flag($country, $countryName)
+    {
+        $flagSrc = JemHelperCountries::getIsoFlag((string) $country);
+
+        if (!$flagSrc) {
+            return '';
+        }
+
+        $alt = htmlspecialchars((string) $countryName, ENT_QUOTES, 'UTF-8');
+        $src = htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8');
+
+        return '<img src="' . $src . '" alt="' . $alt . '" title="' . $alt . '" class="venue_country_flag jem-myattendances-country-flag" style="width:20px;height:auto;margin-right:6px;vertical-align:middle;" />';
+    }
+}
 ?>
 
 <style>
@@ -78,6 +107,18 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
       flex: 1;
     <?php endif; ?>
     <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nostate')) : ?>
+      display: none;
+    <?php endif; ?>
+  }
+
+  .jem-sort #jem_country,
+  #jem .jem-event .jem-event-country {
+    <?php if (($this->jemsettings->showstate == 1) && (!empty($this->jemsettings->statewidth))) : ?>
+      flex: 1 <?php echo ($this->jemsettings->statewidth); ?>;
+    <?php else : ?>
+      flex: 1;
+    <?php endif; ?>
+    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nocountry')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -175,6 +216,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
         <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_country" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
@@ -259,6 +301,11 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             <?php else : ?>
               <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
             <?php endif; ?>
+
+            <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY') . ': ' . $this->escape(jem_myattendances_country_name($row->country ?? '')); ?>">
+              <?php $countryName = jem_myattendances_country_name($row->country ?? ''); ?>
+              <?php echo $countryName !== '' ? jem_myattendances_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '<i class="fa fa-globe" aria-hidden="true"></i> -'; ?>
+            </div>
           <?php endif; ?>
 
                     <?php if ($this->jemsettings->showcat == 1) : ?>
