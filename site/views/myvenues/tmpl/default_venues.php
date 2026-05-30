@@ -11,6 +11,35 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+
+if (!function_exists('jem_myvenues_country_name')) {
+    function jem_myvenues_country_name($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        return JemHelperCountries::getCountryName($country) ?: $country;
+    }
+}
+
+if (!function_exists('jem_myvenues_country_flag')) {
+    function jem_myvenues_country_flag($country, $countryName)
+    {
+        $flagSrc = JemHelperCountries::getIsoFlag((string) $country);
+
+        if (!$flagSrc) {
+            return '';
+        }
+
+        $alt = htmlspecialchars((string) $countryName, ENT_QUOTES, 'UTF-8');
+        $src = htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8');
+
+        return '<img src="' . $src . '" alt="' . $alt . '" title="' . $alt . '" class="venue_country_flag jem-myvenues-country-flag" style="width:20px;height:auto;margin-right:6px;vertical-align:middle;" />';
+    }
+}
 ?>
 
 <script>
@@ -63,7 +92,7 @@ use Joomla\CMS\Router\Route;
                 <col style="width: <?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
                 <?php endif; ?>
                 <?php if ($this->jemsettings->showstate == 1) : ?>
-                <col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
+                <col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_country" />
                 <?php endif; ?>
                 <col style="width: 1%" class="jem_col_status" />
             </colgroup>
@@ -80,7 +109,7 @@ use Joomla\CMS\Router\Route;
                     <th id="jem_city" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php endif; ?>
                     <?php if ($this->jemsettings->showstate == 1) : ?>
-                    <th id="jem_state" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                    <th id="jem_country" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php endif; ?>
                     <th id="jem_status" class="sectiontableheader center" nowrap="nowrap"><?php echo Text::_('JSTATUS'); ?></th>
                 </tr>
@@ -127,8 +156,9 @@ use Joomla\CMS\Router\Route;
                             <?php endif; ?>
 
                             <?php if ($this->jemsettings->showstate == 1) : ?>
-                            <td headers="jem_state" style="text-align: left; vertical-align: top;">
-                                <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+                            <td headers="jem_country" style="text-align: left; vertical-align: top;">
+                                <?php $countryName = jem_myvenues_country_name($row->country ?? ''); ?>
+                                <?php echo $countryName !== '' ? jem_myvenues_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?>
                             </td>
                             <?php endif; ?>
 

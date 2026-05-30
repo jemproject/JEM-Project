@@ -11,6 +11,35 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+
+if (!function_exists('jem_myvenues_country_name')) {
+    function jem_myvenues_country_name($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        return JemHelperCountries::getCountryName($country) ?: $country;
+    }
+}
+
+if (!function_exists('jem_myvenues_country_flag')) {
+    function jem_myvenues_country_flag($country, $countryName)
+    {
+        $flagSrc = JemHelperCountries::getIsoFlag((string) $country);
+
+        if (!$flagSrc) {
+            return '';
+        }
+
+        $alt = htmlspecialchars((string) $countryName, ENT_QUOTES, 'UTF-8');
+        $src = htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8');
+
+        return '<img src="' . $src . '" alt="' . $alt . '" title="' . $alt . '" class="venue_country_flag jem-myvenues-country-flag" style="width:20px;height:auto;margin-right:6px;vertical-align:middle;" />';
+    }
+}
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
@@ -43,8 +72,8 @@ use Joomla\CMS\Router\Route;
     <?php endif; ?>
   }
 
-  .jem-sort #jem_state,
-  #jem .jem-event .jem-event-state {
+  .jem-sort #jem_country,
+  #jem .jem-event .jem-event-country {
     <?php if (($this->jemsettings->showstate == 1) && (!empty($this->jemsettings->statewidth))) : ?>
       flex: 1 <?php echo ($this->jemsettings->statewidth); ?>;
     <?php else : ?>
@@ -111,7 +140,7 @@ use Joomla\CMS\Router\Route;
         <div id="jem_city" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
-        <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_country" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <div class="jem-myvenues-status" ><?php echo Text::_('JSTATUS'); ?></div>
     </div>
@@ -162,13 +191,14 @@ use Joomla\CMS\Router\Route;
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showstate == 1) : ?>
-              <?php if (!empty($row->state)) : ?>
-                <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                  <i class="fa fa-map" aria-hidden="true"></i>
-                  <?php echo $this->escape($row->state); ?>
+              <?php $countryName = jem_myvenues_country_name($row->country ?? ''); ?>
+              <?php if ($countryName !== '') : ?>
+                <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY').': '.$this->escape($countryName); ?>">
+                  <?php echo jem_myvenues_country_flag($row->country ?? '', $countryName); ?>
+                  <?php echo $this->escape($countryName); ?>
                 </div>
               <?php else : ?>
-                <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
+                <div class="jem-event-info-small jem-event-country">-</div>
               <?php endif; ?>
             <?php endif; ?>
 
