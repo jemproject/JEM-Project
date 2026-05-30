@@ -96,6 +96,7 @@ class JemViewCategory extends JemView
 
             // get data from model and set the month
             $model = $this->getModel('CategoryCal');
+            $model->setId((int) $catid);
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
             $category = $this->get('Category', 'CategoryCal');

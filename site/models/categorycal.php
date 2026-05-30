@@ -34,6 +34,13 @@ class JemModelCategoryCal extends JemModelEventslist
     protected $_date = null;
 
     /**
+     * Category data.
+     *
+     * @var object|null
+     */
+    protected $_item = null;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -67,7 +74,20 @@ class JemModelCategoryCal extends JemModelEventslist
     {
         // Set new category ID and wipe data
         $this->_id   = $id;
-        //$this->_data = null;
+        $this->_item = null;
+    }
+
+    /**
+     * Method to get category data for the current category calendar.
+     */
+    public function getCategory()
+    {
+        if (!is_object($this->_item)) {
+            $categories  = new JemCategories($this->_id, array('countItems' => 0));
+            $this->_item = $categories->get($this->_id);
+        }
+
+        return $this->_item;
     }
 
     /**
