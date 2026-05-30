@@ -125,7 +125,7 @@ final class ZipArtifactContentsTest extends TestCase
             );
 
             self::assertStringContainsString(
-                'https://www.joomlaeventmanager.net/documentation/manual/backend',
+                'https://www.joomlaeventmanager.net/documentation/backend',
                 $this->componentEntryContents($zipFile, 'admin/help/en-GB/documentation.html'),
                 $source . ':admin/help/en-GB/documentation.html should include the online documentation map.'
             );
