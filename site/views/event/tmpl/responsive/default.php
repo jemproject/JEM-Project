@@ -920,7 +920,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php endif; ?>
 
         <!-- Registration -->
-        <?php if ($this->showAttendees && $params->get('event_show_registration', '0')) { ?>
+        <?php if ($this->showAttendees && $params->get('event_show_registration', $this->settings->get('event_show_registration', '1'))) { ?>
             <hr class="jem-hr">
             <dl class="jem-dl floattext">
                 <?php
