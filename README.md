@@ -7,6 +7,14 @@ Download the installation package from https://www.joomlaeventmanager.net/downlo
 ## Documentation
 https://www.joomlaeventmanager.net/documentation/basics
 
+## Sample Data
+The sample data included with JEM is fictional and provided only for demonstration
+purposes. Event names, descriptions, venues, attachments, links and images are
+not intended to represent real programme content. Some text and images may be
+AI-generated to help demonstrate JEM features, flexibility and configuration
+combinations such as registrations, waiting lists, recurring events, event
+links, attachments, maps, categories, venues and event types.
+
 ## Community Support
 https://www.joomlaeventmanager.net/forum
 
