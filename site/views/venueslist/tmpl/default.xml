@@ -37,6 +37,56 @@
                 <option value="0">JNO</option>
             </field>
 
+            <field name="showcity" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_CITY"
+                description="COM_JEM_VENUESLIST_SHOW_CITY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showcountry" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_COUNTRY"
+                description="COM_JEM_VENUESLIST_SHOW_COUNTRY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showvenueimage" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_VENUE_IMAGE"
+                description="COM_JEM_VENUESLIST_SHOW_VENUE_IMAGE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showtypes" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_TYPES"
+                description="COM_JEM_VENUESLIST_SHOW_TYPES_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showvenuemap" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_VENUE_MAP"
+                description="COM_JEM_VENUESLIST_SHOW_VENUE_MAP_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
             <field name="showvenuecalendar" type="radio"
                 default="1"
                 label="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK"
@@ -47,17 +97,31 @@
                 <option value="0">JNO</option>
             </field>
 
-            <field name="display_order" type="list"
-                default="venue_city_country"
+            <field name="display_order" type="venueslistorder"
+                default="image,venue,type,city,state,country,map,calendar"
                 label="COM_JEM_VENUESLIST_DISPLAY_ORDER"
                 description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC"
+                hint="image,venue,type,city,state,country,map,calendar"
+                size="56"
+                class="inputbox form-control w-auto"
+            />
+
+            <field name="filtercountries" type="countryoptions"
+                default=""
+                multiple="true"
+                label="COM_JEM_VENUESLIST_FILTER_COUNTRIES"
+                description="COM_JEM_VENUESLIST_FILTER_COUNTRIES_DESC"
+                class="inputbox form-select"
+            />
+
+            <field name="showcountryfilter" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_COUNTRY_FILTER"
+                description="COM_JEM_VENUESLIST_SHOW_COUNTRY_FILTER_DESC"
+                class="btn-group btn-group-yesno"
             >
-                <option value="venue_city_country">COM_JEM_VENUESLIST_ORDER_VENUE_CITY_COUNTRY</option>
-                <option value="venue_country_city">COM_JEM_VENUESLIST_ORDER_VENUE_COUNTRY_CITY</option>
-                <option value="city_venue_country">COM_JEM_VENUESLIST_ORDER_CITY_VENUE_COUNTRY</option>
-                <option value="city_country_venue">COM_JEM_VENUESLIST_ORDER_CITY_COUNTRY_VENUE</option>
-                <option value="country_venue_city">COM_JEM_VENUESLIST_ORDER_COUNTRY_VENUE_CITY</option>
-                <option value="country_city_venue">COM_JEM_VENUESLIST_ORDER_COUNTRY_CITY_VENUE</option>
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
 
         </fieldset>
