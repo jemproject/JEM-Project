@@ -112,13 +112,13 @@ class JemMapHelper
         $levels = $user->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $countryColumns = $db->getTableColumns('#__jem_countries');
         $query  = $db->getQuery(true);
 
         $query->select('DISTINCT ' . $db->quoteName('v.country', 'country'))
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->join('INNER', $db->quoteName('#__jem_countries', 'ct') . ' ON ' . $db->quoteName('ct.iso2') . ' = ' . $db->quoteName('v.country'))
             ->where($db->quoteName('v.published') . ' = 1')
-            ->where($db->quoteName('ct.published') . ' = 1')
             ->where($db->quoteName('v.country') . ' <> ' . $db->quote(''))
             ->where([
                 'v.latitude IS NOT NULL',
@@ -127,6 +127,10 @@ class JemMapHelper
                 "v.longitude <> ''",
             ])
             ->order($db->quoteName('v.country') . ' ASC');
+
+        if (isset($countryColumns['published'])) {
+            $query->where($db->quoteName('ct.published') . ' = 1');
+        }
 
         if ($venueAccess !== '') {
             $query->where($db->quoteName('v.access') . ' IN (' . $venueAccess . ')');

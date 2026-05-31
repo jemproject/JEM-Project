@@ -119,7 +119,7 @@
             />
 
             <field name="show_category_filter" type="radio"
-                   default="1"
+                   default="0"
                    label="COM_JEM_VENUESMAP_SHOW_CATEGORY_FILTER_LABEL"
                    description="COM_JEM_VENUESMAP_SHOW_CATEGORY_FILTER_DESC"
                    class="inputbox btn-group btn-group-yesno"
