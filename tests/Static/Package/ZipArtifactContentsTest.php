@@ -138,7 +138,7 @@ final class ZipArtifactContentsTest extends TestCase
 
             $sampleDataSql = $this->componentEntryContents($zipFile, 'admin/assets/sampledata.sql');
 
-            foreach (array('INSERT INTO `#__jem_types`', 'Prado Evening Tour', 'INSERT INTO `#__jem_links`', 'INSERT INTO `#__jem_attachments`') as $expected) {
+            foreach (array('INSERT INTO `#__jem_types`', 'Museum Technology Talk at the Prado', 'INSERT INTO `#__jem_links`', 'INSERT INTO `#__jem_attachments`') as $expected) {
                 self::assertStringContainsString(
                     $expected,
                     $sampleDataSql,
@@ -146,7 +146,7 @@ final class ZipArtifactContentsTest extends TestCase
                 );
             }
 
-            foreach (array('event-prado-evening-tour.webp', 'venue-museo-del-prado.webp', 'attachment-event1-dj-night-lineup.txt') as $entry) {
+            foreach (array('event-prado-museum-technology-talk.webp', 'venue-museo-del-prado.webp', 'attachment-event1-dj-night-lineup.txt') as $entry) {
                 self::assertTrue(
                     $this->componentNestedZipContains($zipFile, 'admin/assets/sampledata.zip', $entry),
                     $source . ':admin/assets/sampledata.zip should contain ' . $entry . '.'
@@ -348,7 +348,7 @@ final class ZipArtifactContentsTest extends TestCase
         }
 
         return preg_match(
-            '#(^|/)(tests|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
+            '#(^|/)(tests|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit(?:\.[^.]+)?\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
             $entry
         ) === 1;
     }

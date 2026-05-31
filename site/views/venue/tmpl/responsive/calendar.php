@@ -125,6 +125,7 @@ use Joomla\CMS\Factory;
         $content = '';
         $contentend = '';
         $catcolor = array();
+        $categoryFilterClasses = array();
 
         //walk through categories assigned to an event
         $catcolor = array();
@@ -133,9 +134,7 @@ use Joomla\CMS\Factory;
             // Currently only one id possible...so simply just pick one up...
             $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
-            // Wrap a div for each category around the event for show/hide toggler
-            $content    .= '<div id="catz" class="cat'.$category->id.'">';
-            $contentend .= '</div>';
+            $categoryFilterClasses[] = 'cat' . (int) $category->id;
 
             // Attach category color in front of the catname
             if ($category->color) {
@@ -163,6 +162,11 @@ use Joomla\CMS\Factory;
                 }
             }
         }
+
+        $categoryFilterClasses = array_values(array_unique($categoryFilterClasses));
+        $categoryFilterClassAttribute = implode(' ', $categoryFilterClasses);
+        $content = '<div class="event-filter ' . $categoryFilterClassAttribute . '" data-categories="' . $this->escape($categoryFilterClassAttribute) . '">';
+        $contentend = '</div>';
 
         // Build color output depending on $categoryColorMarker
         if (!empty($catcolor)) {

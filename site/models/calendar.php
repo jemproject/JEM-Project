@@ -50,6 +50,7 @@ class JemModelCalendar extends JemModelEventslist
 
         # params
         $this->setState('params', $params);
+        $this->applyMenuEventFilters($params);
 
         # publish state
         $this->_populatePublishState($task);

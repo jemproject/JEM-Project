@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0beta3</version>
+    <version>5.0.0beta4</version>
     <description>PLG_JEM_MAILER_XML_DESCRIPTION</description>
 
     <files>
@@ -407,6 +407,7 @@
         </fields>
     </config>
 </extension>
+
 
 
 

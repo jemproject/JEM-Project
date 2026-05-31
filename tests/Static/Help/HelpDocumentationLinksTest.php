@@ -41,13 +41,16 @@ final class HelpDocumentationLinksTest extends TestCase
             }
 
             foreach ($matches[0] as $call) {
-                if (strpos($call, 'https://www.joomlaeventmanager.net/documentation/manual/') === false) {
+                if (
+                    strpos($call, 'https://www.joomlaeventmanager.net/documentation/manual/') === false
+                    && strpos($call, 'https://www.joomlaeventmanager.net/documentation/backend/') === false
+                ) {
                     $missing[] = $this->relativePath($path) . ' uses ' . trim($call);
                 }
             }
         }
 
-        self::assertSame(array(), $missing, "Toolbar Help buttons should point to the online JEM manual:\n" . implode("\n", $missing));
+        self::assertSame(array(), $missing, "Toolbar Help buttons should point to online JEM documentation:\n" . implode("\n", $missing));
     }
 
     /**

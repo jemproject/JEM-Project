@@ -44,7 +44,9 @@
     "test:joomla:models": "phpunit --testsuite joomla-models",
     "test:joomla:environment": "phpunit --testsuite joomla-environment",
     "test:unit": "phpunit --testsuite unit",
-    "test:unit:helpers": "phpunit --testsuite unit-helpers"
+    "test:unit:progress": "phpunit --configuration phpunit.progress.xml.dist --testsuite unit",
+    "test:unit:helpers": "phpunit --testsuite unit-helpers",
+    "test:unit:helpers:progress": "phpunit --configuration phpunit.progress.xml.dist --testsuite unit-helpers"
   },
   "config": {
     "allow-plugins": false,

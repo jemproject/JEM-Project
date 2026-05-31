@@ -85,6 +85,7 @@
             <exclude name="package/**" />
             <exclude name="phpunit.xml" />
             <exclude name="phpunit.xml.dist" />
+            <exclude name="phpunit.progress.xml.dist" />
             <exclude name="plugins/**" />
             <exclude name="tests/**" />
             <exclude name="vendor/**" />

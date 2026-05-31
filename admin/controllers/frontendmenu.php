@@ -62,16 +62,20 @@ class JemControllerFrontendmenu extends BaseController
             array('Submit Event', 'submit-event', 'index.php?option=com_jem&view=editevent', $groups['events']),
             array('Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
             array('Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
+            array('Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', $groups['calendars']),
             array('Monthly Calendar', 'monthly-calendar', 'index.php?option=com_jem&view=calendar', $groups['calendars']),
             array('Weekly Calendar', 'weekly-calendar', 'index.php?option=com_jem&view=weekcal', $groups['calendars']),
+            array('Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', $groups['venues']),
             array('Venues List', 'venues-list', 'index.php?option=com_jem&view=venueslist', $groups['venues']),
             array('Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', $groups['venues']),
             array('Submit Venue', 'submit-venue', 'index.php?option=com_jem&view=editvenue', $groups['venues']),
             array('Categories', 'categories-list', 'index.php?option=com_jem&view=categories', $groups['categories']),
             array('Search', 'search', 'index.php?option=com_jem&view=search', $groups['user']),
             array('My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),
+            array('My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', $groups['user']),
             array('My Venues', 'my-venues', 'index.php?option=com_jem&view=myvenues', $groups['user']),
             array('My Attendances', 'my-attendances', 'index.php?option=com_jem&view=myattendances', $groups['user']),
+            array('My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', $groups['user']),
         );
 
         $event = $this->getRandomRecord('#__jem_events', 'published = 1', array('id', 'alias'));
@@ -84,6 +88,8 @@ class JemControllerFrontendmenu extends BaseController
             $items[] = array('Sample Venue', 'sample-venue', 'index.php?option=com_jem&view=venue&id=' . $this->slug($venue), $groups['venues']);
             $items[] = array('Sample Venue Calendar', 'sample-venue-calendar', 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $this->slug($venue), $groups['venues']);
             $items[] = array('Venue Calendar', 'venue-calendar', 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $this->slug($venue), $groups['calendars']);
+        } else {
+            $this->keepExistingGeneratedMenuItems($menutype, array('sample-venue', 'sample-venue-calendar', 'venue-calendar'));
         }
 
         $category = $this->getRandomCategoryRecord();
@@ -92,7 +98,7 @@ class JemControllerFrontendmenu extends BaseController
             $items[] = array('Sample Category Calendar', 'sample-category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['categories']);
             $items[] = array('Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
         } else {
-            $this->unpublishGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
+            $this->keepExistingGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
         }
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
@@ -327,6 +333,25 @@ class JemControllerFrontendmenu extends BaseController
         $query = $db->getQuery(true)
             ->update($db->quoteName('#__menu'))
             ->set($db->quoteName('published') . ' = 0')
+            ->where($db->quoteName('menutype') . ' = ' . $db->quote($menutype))
+            ->where($db->quoteName('alias') . ' IN (' . implode(',', array_map(array($db, 'quote'), $aliases)) . ')')
+            ->where($db->quoteName('client_id') . ' = 0');
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    protected function keepExistingGeneratedMenuItems($menutype, array $aliases)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $aliases = array_values(array_filter(array_unique($aliases), static fn ($alias) => trim((string) $alias) !== ''));
+
+        if ($aliases === array()) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__menu'))
+            ->set($db->quoteName('published') . ' = 1')
             ->where($db->quoteName('menutype') . ' = ' . $db->quote($menutype))
             ->where($db->quoteName('alias') . ' IN (' . implode(',', array_map(array($db, 'quote'), $aliases)) . ')')
             ->where($db->quoteName('client_id') . ' = 0');

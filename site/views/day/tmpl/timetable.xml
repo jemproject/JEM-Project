@@ -7,7 +7,7 @@
     </layout>
 
     <fields name="params">
-        <fieldset name="basic">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
             <field name="days" type="text"
                 default="0"
                 size="2"
@@ -102,17 +102,42 @@
             <field type="spacer" name="spacer2" hr="true" />
             <field name="categoryswitch" type="radio"
                 default="0"
-                label="COM_JEM_CATEGORYSWITCH"
+                label="COM_JEM_TIMELINE_CATEGORY_FILTER_MODE_LABEL"
                 description="COM_JEM_CATEGORYSWITCH_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">COM_JEM_INCLUDE</option>
                 <option value="0">COM_JEM_EXCLUDE</option>
             </field>
-            <field name="categoryswitchcats" type="text"
+            <field name="categoryswitchcats" type="categoryedit"
+                multiple="true"
+                removeroot="true"
+                class="form-select"
                 default=""
-                label="COM_JEM_CATEGORYSWITCHCATS"
-                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
+            />
+            <field name="timeline_filter_venues" type="venueoptions"
+                multiple="true"
+                class="form-select"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_VENUES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_VENUES_DESC"
+            />
+            <field name="timeline_filter_types" type="jemtype"
+                entity="1"
+                multiple="true"
+                class="form-select"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_TYPES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_TYPES_DESC"
+            />
+            <field name="timeline_filter_countries" type="countryoptions"
+                multiple="true"
+                class="form-select"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"
             />
 
             <field type="spacer" name="spacer3" hr="true" />

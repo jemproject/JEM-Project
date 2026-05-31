@@ -19,6 +19,7 @@ require_once __DIR__ . '/eventslist.php';
 class JemModelDay extends JemModelEventslist
 {
     protected $_date = null;
+    protected $_dateEnd = null;
 
     /**
      * Constructor
@@ -27,8 +28,19 @@ class JemModelDay extends JemModelEventslist
     {
         parent::__construct();
 
-        $rawday = Factory::getApplication()->input->getInt('id', 0);
+        $rawday = Factory::getApplication()->input->getCmd('id', '');
         $this->setDate($rawday);
+    }
+
+    /**
+     * Return the menu configured offset date.
+     */
+    private function getOffsetDate($params)
+    {
+        $dayoffset = (int) $params->get('days', 0);
+        $timestamp = mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
+
+        return date('Y-m-d', $timestamp);
     }
 
     /**
@@ -44,14 +56,14 @@ class JemModelDay extends JemModelEventslist
         # Get the params of the active menu item
         $params = $app->getParams('com_jem');
 
-        # 0 means we have a direct request from a menuitem and without any params (eg: calendar module)
-        if ($date == 0) {
-            $dayoffset = $params->get('days');
-            $timestamp = mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
-            $date      = date('Y-m-d', $timestamp);
+        $date = trim((string) $date);
 
-        # a valid date has 8 characters (ymd)
-        } elseif (strlen($date) == 8) {
+        # 0 or empty means we have a direct request from a menu item and without any date params.
+        if ($date === '' || $date === '0') {
+            $date = $this->getOffsetDate($params);
+
+        # a valid date has 8 digits (ymd)
+        } elseif (preg_match('/^\d{8}$/', $date)) {
             $year  = substr($date, 0, -4);
             $month = substr($date, 4, -2);
             $day   = substr($date, 6);
@@ -60,17 +72,22 @@ class JemModelDay extends JemModelEventslist
             if (checkdate($month, $day, $year)) {
                 $date = $year.'-'.$month.'-'.$day;
             } else {
-                //date isn't valid raise notice and use current date
-                $date = date('Ymd');
+                // Date isn't valid: raise notice and use the menu offset date.
+                $date = $this->getOffsetDate($params);
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
             }
         } else {
-            //date isn't valid raise notice and use current date
-            $date = date('Ymd');
+            // Date isn't valid: raise notice and use the menu offset date.
+            $date = $this->getOffsetDate($params);
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
         }
 
         $this->_date = $date;
+
+        $params = Factory::getApplication()->getParams('com_jem');
+        $daysToShow = max(1, min(60, (int) $params->get('timeline_days_to_show', 1)));
+        $startDate = new DateTimeImmutable($date);
+        $this->_dateEnd = $startDate->modify('+' . ($daysToShow - 1) . ' days')->format('Y-m-d');
     }
 
     /**
@@ -79,6 +96,14 @@ class JemModelDay extends JemModelEventslist
     public function getDay()
     {
         return $this->_date;
+    }
+
+    /**
+     * Return the end date of the timeline range.
+     */
+    public function getDayEnd()
+    {
+        return $this->_dateEnd ?: $this->_date;
     }
 
     /**
@@ -96,6 +121,32 @@ class JemModelDay extends JemModelEventslist
         $requestVenueId    = $app->input->getInt('locid', 0);
         $requestCategoryId = $app->input->getInt('catid', 0);
         $item              = $app->input->getInt('Itemid', 0);
+        $normaliseIds      = static function ($value) {
+            if (is_array($value)) {
+                $ids = $value;
+            } else {
+                $value = trim((string) $value);
+                $ids   = $value === '' ? array() : explode(',', $value);
+            }
+
+            $ids = array_map('intval', $ids);
+
+            return array_values(array_filter($ids));
+        };
+        $normaliseStrings  = static function ($value) {
+            if (is_array($value)) {
+                $values = $value;
+            } else {
+                $value  = trim((string) $value);
+                $values = $value === '' ? array() : explode(',', $value);
+            }
+
+            $values = array_map('trim', $values);
+
+            return array_values(array_filter($values, static function ($entry) {
+                return $entry !== '';
+            }));
+        };
 
         $locid = $app->getUserState('com_jem.venuecal.locid'.$item);
         if ($locid) {
@@ -130,30 +181,40 @@ class JemModelDay extends JemModelEventslist
             $this->setState('filter.category_id', $cats);
             $this->setState('filter.category_id.include', true);
         }
+
+        $timelineVenueIds = $normaliseIds($params->get('timeline_filter_venues', array()));
+        if ($timelineVenueIds) {
+            $this->setState('filter.venue_id', $timelineVenueIds);
+            $this->setState('filter.venue_id.include', true);
+        }
+
+        $timelineTypeIds = $normaliseIds($params->get('timeline_filter_types', array()));
+        if ($timelineTypeIds) {
+            $this->setState('filter.type_id', $timelineTypeIds);
+        }
+
+        $timelineCountries = $normaliseStrings($params->get('timeline_filter_countries', array()));
+        if ($timelineCountries) {
+            $this->setState('filter.country_id', $timelineCountries);
+            $this->setState('filter.country_id.include', true);
+        }
 ################################
         ## EXCLUDE/INCLUDE CATEGORIES ##
         ################################
 
         $catswitch = $params->get('categoryswitch', '');
+        $switchCats = $normaliseIds($params->get('categoryswitchcats', array()));
 
         # set included categories
-        if ($catswitch) {
-            $included_cats = trim($params->get('categoryswitchcats', ''));
-            if ($included_cats) {
-                $included_cats = explode(",", $included_cats);
-                $this->setState('filter.category_id', $included_cats);
+        if ($catswitch && $switchCats) {
+                $this->setState('filter.category_id', $switchCats);
                 $this->setState('filter.category_id.include', true);
-            }
         }
 
         # set excluded categories
-        if (!$catswitch) {
-            $excluded_cats = trim($params->get('categoryswitchcats', ''));
-            if ($excluded_cats) {
-                $excluded_cats = explode(",", $excluded_cats);
-                $this->setState('filter.category_id', $excluded_cats);
+        if (!$catswitch && $switchCats) {
+                $this->setState('filter.category_id', $switchCats);
                 $this->setState('filter.category_id.include', false);
-            }
         }
 
         // maybe top category is given by calendar view
@@ -267,8 +328,11 @@ class JemModelDay extends JemModelEventslist
             $query->where(' a.locid = '.$this->_db->quote($requestVenueId));
         }
 
-        // Second is to only select events of the specified day
-        $query->where('('.$this->_db->quote($this->_date).' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR '.$this->_db->quote($this->_date).' = a.dates)');
+        // Select events that overlap the configured day/timeline range.
+        $query->where(
+            'a.dates <= ' . $this->_db->quote($this->getDayEnd())
+            . ' AND IF(a.enddates >= a.dates, a.enddates, a.dates) >= ' . $this->_db->quote($this->_date)
+        );
 
         return $query;
     }

@@ -102,8 +102,18 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString("->where(\$db->quoteName('id') . ' > 1')", $code);
         self::assertStringContainsString("->where(\$db->quoteName('alias') . ' <> ' . \$db->quote('root'))", $code);
         self::assertStringContainsString("->where(\$db->quoteName('catname') . ' <> ' . \$db->quote('root'))", $code);
-        self::assertStringContainsString("\$this->unpublishGeneratedMenuItems(\$menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));", $code);
+        self::assertStringContainsString("\$this->keepExistingGeneratedMenuItems(\$menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));", $code);
         self::assertStringContainsString("'index.php?option=com_jem&view=category&layout=calendar&id=' . \$this->slug(\$category)", $code);
+    }
+
+    public function testFrontendMenuGeneratorIncludesAllStandaloneFrontendViews(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString("array('Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', \$groups['calendars'])", $code);
+        self::assertStringContainsString("array('Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', \$groups['venues'])", $code);
+        self::assertStringContainsString("array('My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', \$groups['user'])", $code);
+        self::assertStringContainsString("array('My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', \$groups['user'])", $code);
     }
 
     public function testFrontendMenuGeneratorRepairsExistingGeneratedAliasesAcrossTheMenuType(): void

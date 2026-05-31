@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 final class NetworkAndLatencyGuardrailTest extends TestCase
 {
     private const ALLOWED_CLIENT_NETWORK_CALLS = array(
+        'admin/views/venue/tmpl/edit.php:fetch',
         'media/js/load-more.js:XMLHttpRequest',
         'modules/mod_jem_cal/tmpl/grid.php:fetch',
         'site/controller.php:XMLHttpRequest',

@@ -184,6 +184,13 @@ Show progress with team-friendly colors:
 composer test:static:views -- --colors=always
 ```
 
+Show unit progress as a line-based arrow bar, suitable for tee logs:
+
+```bash
+composer test:unit:progress
+composer test:unit:helpers:progress 2>&1 | tee test-unit-helpers.log
+```
+
 Run only tests matching a class, method, or data set name:
 
 ```bash

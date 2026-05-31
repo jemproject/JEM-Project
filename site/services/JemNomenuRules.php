@@ -205,6 +205,12 @@ class JemNomenuRules implements RulesInterface
                 }
                 break;
 
+            case 'mytimeline':
+                {
+                    $vars['view'] = 'mytimeline';
+                }
+                break;
+
             case 'myvenues':
                 {
                     $vars['view'] = 'myvenues';

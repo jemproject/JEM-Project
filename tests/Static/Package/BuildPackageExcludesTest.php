@@ -48,6 +48,7 @@ final class BuildPackageExcludesTest extends TestCase
             'composer.lock',
             'phpunit.xml',
             'phpunit.xml.dist',
+            'phpunit.progress.xml.dist',
         ) as $pattern) {
             self::assertContains($pattern, $excluded, $pattern . ' must not be packaged in com_jem.zip.');
         }
