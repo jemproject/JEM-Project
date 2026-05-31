@@ -92,7 +92,7 @@ class JemViewVenuesMap extends JemView
         $height             = $params->get('height', '500px');
         $zoom               = (int) $params->get('map_zoom', 4);
         $showCountryFilter  = (int) $params->get('show_country_filter', 1);
-        $showCategoryFilter = (int) $params->get('show_category_filter', 1);
+        $showCategoryFilter = (int) $params->get('show_category_filter', 0);
         $defaultCountry     = trim((string) $params->get('default_country', ''));
         if ($defaultCountry === '0') {
             $defaultCountry = '';
@@ -101,7 +101,7 @@ class JemViewVenuesMap extends JemView
         $selectedCity       = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
         $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
         $countries          = JemMapHelper::getVenueCountries();
-        $categories         = $showCategoryFilter ? JemMapHelper::getUpcomingEventCategories() : [];
+        $categories         = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
         foreach ($countries as $country) {
             $countryCode = (string) $country->country;
             $countryName = JemHelperCountries::getCountryName($countryCode);
