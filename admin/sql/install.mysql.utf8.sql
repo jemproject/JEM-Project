@@ -252,8 +252,11 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     `iso3` varchar(3) NOT NULL,
     `un` int(11) NOT NULL,
     `name` varchar(100) NOT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`),
-    KEY `iso2` (`iso2`)
+    KEY `iso2` (`iso2`),
+    KEY `idx_continent` (`continent`),
+    KEY `idx_published` (`published`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

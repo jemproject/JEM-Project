@@ -21,6 +21,9 @@ ALTER TABLE `#__jem_categories` ADD COLUMN `article_category_id` int(10) unsigne
 ALTER TABLE `#__jem_categories` ADD COLUMN `article_create_mode` tinyint(1) NOT NULL DEFAULT '0' AFTER `article_category_id`;
 ALTER TABLE `#__jem_categories` ADD KEY `idx_article_category` (`article_category_id`);
 ALTER TABLE `#__jem_categories` ADD KEY `idx_parent` (`parent_id`);
+ALTER TABLE `#__jem_countries` ADD COLUMN `published` tinyint(1) NOT NULL DEFAULT '1' AFTER `name`;
+ALTER TABLE `#__jem_countries` ADD KEY `idx_continent` (`continent`);
+ALTER TABLE `#__jem_countries` ADD KEY `idx_published` (`published`);
 
 ALTER TABLE `#__jem_events` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `#__jem_venues` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

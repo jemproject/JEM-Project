@@ -59,6 +59,7 @@ final class JemSchemaTest extends JoomlaTestCase
         yield 'attachments' => array('jem_attachments', array('id', 'object', 'file', 'name', 'description', 'frontend', 'access', 'created_by'));
         yield 'links' => array('jem_links', array('id', 'event_id', 'type', 'title', 'description', 'url', 'params', 'state', 'created_by'));
         yield 'types' => array('jem_types', array('id', 'name', 'alias', 'entity', 'translations', 'published', 'access', 'language'));
+        yield 'countries' => array('jem_countries', array('id', 'continent', 'iso2', 'iso3', 'name', 'published'));
         yield 'config' => array('jem_config', array('keyname', 'value', 'access'));
     }
 

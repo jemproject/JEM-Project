@@ -301,10 +301,12 @@ class JemModelSearch extends BaseDatabaseModel
         // filter continent
         if ($filter_continent) {
             $where .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
+            $where .= ' AND c.published = 1';
         }
         // filter country
         if ($filter_country) {
             $where .= ' AND l.country = ' . $this->_db->Quote($filter_country);
+            $where .= ' AND c.published = 1';
         }
         // filter city
         if ($filter_country && $filter_city) {
@@ -370,8 +372,10 @@ class JemModelSearch extends BaseDatabaseModel
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
                ;
 
+        $query .= ' WHERE c.published = 1';
+
         if ($filter_continent) {
-            $query .= ' WHERE c.continent = ' . $this->_db->Quote($filter_continent);
+            $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
         }
         $query .= ' GROUP BY c.iso2 ';
         $query .= ' ORDER BY c.name ';
@@ -384,7 +388,7 @@ class JemModelSearch extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
 
-        $query = ' SELECT c.continent as value FROM #__jem_countries as c WHERE c.iso2 = ' . $this->_db->Quote($country);
+        $query = ' SELECT c.continent as value FROM #__jem_countries as c WHERE c.published = 1 AND c.iso2 = ' . $this->_db->Quote($country);
         $this->_db->setQuery($query);
 
         return $this->_db->loadResult();
@@ -420,6 +424,7 @@ class JemModelSearch extends BaseDatabaseModel
         if ($needsLocation) {
             $query->join('LEFT', $this->_db->quoteName('#__jem_venues') . ' AS lv ON lv.id = a.locid');
             $query->join('LEFT', $this->_db->quoteName('#__jem_countries') . ' AS co ON co.iso2 = lv.country');
+            $query->where('co.published = 1');
             if ($filter_continent) {
                 $query->where('co.continent = ' . $this->_db->Quote($filter_continent));
             }
@@ -448,7 +453,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-               . ' WHERE l.country = ' . $this->_db->Quote($country)
+               . ' WHERE c.published = 1 AND l.country = ' . $this->_db->Quote($country)
                . ' ORDER BY l.city ';
 
         $this->_db->setQuery($query);
@@ -465,7 +470,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
-               . ' WHERE a.published = 1 AND l.published = 1';
+               . ' WHERE a.published = 1 AND l.published = 1 AND c.published = 1';
 
         if ($filter_continent) {
             $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);

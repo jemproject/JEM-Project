@@ -19,6 +19,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseDriver;
 
 class JemHelperCountries
 {
@@ -535,6 +537,34 @@ class JemHelperCountries
 
     static public function getCountryOptions($value_tag = 'value', $text_tag = 'text')
     {
+        try {
+            $db = Factory::getContainer()->get(DatabaseDriver::class);
+            $columns = $db->getTableColumns('#__jem_countries');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('iso2', 'name'), array('value', 'text')))
+                ->from($db->quoteName('#__jem_countries'));
+
+            if (isset($columns['published'])) {
+                $query->where($db->quoteName('published') . ' = 1');
+            }
+
+            $query->order($db->quoteName('name') . ' ASC');
+            $db->setQuery($query);
+            $countries = (array) $db->loadObjectList();
+
+            if ($countries) {
+                $options = array();
+
+                foreach ($countries as $country) {
+                    $options[] = HTMLHelper::_('select.option', $country->value, Text::_($country->text), $value_tag, $text_tag);
+                }
+
+                return $options;
+            }
+        } catch (Exception $e) {
+            // Fall back to the static list so country selectors remain available during installation.
+        }
+
         $countries = self::getCountries();
         $options = array();
         foreach ($countries as $country) {
@@ -1079,7 +1109,6 @@ class JemHelperCountries
      */
     static public function getIsoFlag($iso_code)
     {
-        $uri      = Uri::getInstance();
         $settings = JemHelper::config();
         if (strlen($iso_code) == 3) {
             $iso_code = self::convertIso3to2($iso_code);
@@ -1087,7 +1116,7 @@ class JemHelperCountries
         if ($iso_code) {
             $flagpath = $settings->flagicons_path . (str_ends_with($settings->flagicons_path, '/')?'':'/');
             $flagext = substr($flagpath, strrpos($flagpath,"-")+1,-1) ;
-            $path = Uri::getInstance()->base() . $flagpath . strtolower($iso_code) . '.' . $flagext;
+            $path = Uri::root() . $flagpath . strtolower($iso_code) . '.' . $flagext;
             return $path;
         }
         else

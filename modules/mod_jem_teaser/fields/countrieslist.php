@@ -62,6 +62,12 @@ class JFormFieldCountrieslist extends ListField
                 ->from($db->quoteName('#__jem_countries'))
                 ->order('name ASC');
 
+            $columns = $db->getTableColumns('#__jem_countries');
+
+            if (isset($columns['published'])) {
+                $query->where($db->quoteName('published') . ' = 1');
+            }
+
             $db->setQuery($query);
             $countries = $db->loadObjectList();
 

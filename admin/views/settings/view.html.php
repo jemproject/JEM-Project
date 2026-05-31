@@ -21,6 +21,7 @@ use Joomla\CMS\Factory;
 class JemViewSettings extends JemAdminView
 {
     public $form;
+    public $countryGroups;
     protected $data;
     public $state;
 
@@ -32,6 +33,7 @@ class JemViewSettings extends JemAdminView
         $data        = $this->get('Data');
         $state       = $this->get('State');
         $config      = $this->get('ConfigInfo');
+        $countryGroups = $this->get('CountryGroups');
         $jemsettings = $this->get('Data');
         $settings    = JemHelper::globalattribs();
         $this->document = $document;
@@ -82,6 +84,7 @@ class JemViewSettings extends JemAdminView
         $this->state       = $state;
         $this->jemsettings = $jemsettings;
         $this->config      = $config;
+        $this->countryGroups = $countryGroups;
         $this->settings       = $settings;
 
         // add toolbar

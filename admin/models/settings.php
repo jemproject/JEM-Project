@@ -13,6 +13,7 @@ use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Database\DatabaseDriver;
 
 /**
  * JEM Component Settings Model
@@ -61,6 +62,72 @@ class JemModelSettings extends AdminModel
         $data = $config->toObject();
 
         return $data;
+    }
+
+    /**
+     * Return countries grouped by continent for the settings screen.
+     *
+     * @return array
+     */
+    public function getCountryGroups()
+    {
+        $continents = array(
+            'AF' => Text::_('COM_JEM_CONTINENT_AFRICA'),
+            'AN' => Text::_('COM_JEM_CONTINENT_ANTARCTICA'),
+            'AS' => Text::_('COM_JEM_CONTINENT_ASIA'),
+            'EU' => Text::_('COM_JEM_CONTINENT_EUROPE'),
+            'NA' => Text::_('COM_JEM_CONTINENT_NORTH_AMERICA'),
+            'OC' => Text::_('COM_JEM_CONTINENT_OCEANIA'),
+            'SA' => Text::_('COM_JEM_CONTINENT_SOUTH_AMERICA'),
+        );
+
+        $groups = array();
+
+        foreach ($continents as $code => $label) {
+            $groups[$code] = array(
+                'label'     => $label,
+                'countries' => array(),
+                'total'     => 0,
+                'active'    => 0,
+            );
+        }
+
+        try {
+            $db = Factory::getContainer()->get(DatabaseDriver::class);
+            $this->ensureCountriesPublishedColumn($db);
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('continent', 'iso2', 'iso3', 'name', 'published')))
+                ->from($db->quoteName('#__jem_countries'))
+                ->order($db->quoteName('continent') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+            $db->setQuery($query);
+
+            foreach ((array) $db->loadObjectList() as $country) {
+                $continent = (string) $country->continent;
+
+                if (!isset($groups[$continent])) {
+                    $groups[$continent] = array(
+                        'label'     => $continent,
+                        'countries' => array(),
+                        'total'     => 0,
+                        'active'    => 0,
+                    );
+                }
+
+                $country->published = (int) $country->published;
+                $groups[$continent]['countries'][] = $country;
+                $groups[$continent]['total']++;
+
+                if ($country->published) {
+                    $groups[$continent]['active']++;
+                }
+            }
+        } catch (Exception $e) {
+            $this->setError($e->getMessage());
+        }
+
+        return $groups;
     }
 
     /**
@@ -117,6 +184,10 @@ class JemModelSettings extends AdminModel
             return false;
         }
 
+        if (!$this->storeCountryStates()) {
+            return false;
+        }
+
         //
         // Old table - deprecated, maybe already removed
         //
@@ -161,6 +232,68 @@ class JemModelSettings extends AdminModel
         }
 
         return true;
+    }
+
+    /**
+     * Persist enabled countries posted from the Countries settings tab.
+     *
+     * @return bool
+     */
+    protected function storeCountryStates()
+    {
+        $input = Factory::getApplication()->input;
+
+        if (!$input->exists('jem_country_published')) {
+            return true;
+        }
+
+        $states = $input->get('jem_country_published', array(), 'array');
+
+        try {
+            $db = Factory::getContainer()->get(DatabaseDriver::class);
+            $this->ensureCountriesPublishedColumn($db);
+
+            foreach ($states as $iso2 => $published) {
+                $iso2 = strtoupper(substr(preg_replace('/[^A-Z]/i', '', (string) $iso2), 0, 2));
+
+                if ($iso2 === '') {
+                    continue;
+                }
+
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_countries'))
+                    ->set($db->quoteName('published') . ' = ' . ((int) $published ? 1 : 0))
+                    ->where($db->quoteName('iso2') . ' = ' . $db->quote($iso2));
+
+                $db->setQuery($query)->execute();
+            }
+        } catch (Exception $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Add the published column on beta upgrade paths that have not run the SQL update yet.
+     *
+     * @param DatabaseDriver $db
+     *
+     * @return void
+     */
+    protected function ensureCountriesPublishedColumn(DatabaseDriver $db)
+    {
+        $columns = $db->getTableColumns('#__jem_countries');
+
+        if (isset($columns['published'])) {
+            return;
+        }
+
+        $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_countries') . ' ADD COLUMN ' . $db->quoteName('published') . " tinyint(1) NOT NULL DEFAULT '1' AFTER " . $db->quoteName('name'))->execute();
+        $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_countries') . ' ADD KEY ' . $db->quoteName('idx_continent') . ' (' . $db->quoteName('continent') . ')')->execute();
+        $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_countries') . ' ADD KEY ' . $db->quoteName('idx_published') . ' (' . $db->quoteName('published') . ')')->execute();
     }
 
     /**
