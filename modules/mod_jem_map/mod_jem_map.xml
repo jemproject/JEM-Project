@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="4.0" client="site" method="upgrade">
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="6.0" client="site" method="upgrade">
     <name>mod_jem_map</name>
     <author>JEM Community</author>
     <creationDate>May 2026</creationDate>
@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0beta6</version>
+    <version>5.0.0beta4</version>
     <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -41,17 +41,20 @@
                 <field name="map_center_lat" type="text"
                        default="54.526"
                        label="MOD_JEM_MAP_CENTER_LATITUDE"
-                       description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"/>
+                       description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"
+                       class="form-control w-auto"/>
                 <field name="map_center_lng" type="text"
                        default="15.255"
                        label="MOD_JEM_MAP_CENTER_LONGITUDE"
-                       description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"/>
+                       description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"
+                       class="form-control w-auto"/>
                 <field name="map_zoom" type="number"
                        default="4"
                        label="MOD_JEM_MAP_ZOOM"
                        description="MOD_JEM_MAP_ZOOM_DESC"
                        min="0"
-                       max="19"/>
+                       max="19"
+                       class="form-control w-auto"/>
                 <field name="show_my_location" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
@@ -105,11 +108,13 @@
                 <field name="venue_markerfile" type="text"
                        default="media/com_jem/images/marker-red.webp"
                        label="MOD_JEM_MAP_VENUE_MARKER"
-                       description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
+                       description="MOD_JEM_MAP_VENUE_MARKER_DESC"
+                       class="form-control w-auto" />
                 <field name="mylocation_markerfile" type="text"
                        default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
-                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC"/>
+                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC"
+                       class="form-control w-auto"/>
                 <field name="show_category_filter" type="radio"
                        default="0"
                        label="MOD_JEM_MAP_SHOW_CATEGORY_FILTER"
@@ -125,6 +130,7 @@
                        removeroot="true"
                        label="MOD_JEM_MAP_CATEGORY_ID"
                        description="MOD_JEM_MAP_CATEGORY_ID_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="show_country_filter" type="radio"
                        default="0"
@@ -139,16 +145,18 @@
                        default="0"
                        label="MOD_JEM_MAP_DEFAULT_COUNTRY"
                        description="MOD_JEM_MAP_DEFAULT_COUNTRY_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="height" type="text" default="500px"
                        label="MOD_JEM_MAP_HEIGHT"
                        description="MOD_JEM_MAP_HEIGHT_DESC"
+                       class="form-control w-auto"
                 />
             </fieldset>
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"
                        label="JFIELD_ALT_LAYOUT_LABEL"
-                       class="form-select"
+                       class="form-select w-auto"
                        validate="moduleLayout"
                        default="_:default"
                 />
@@ -163,6 +171,7 @@
                        default="1"
                        filter="integer"
                        validate="options"
+                       class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -172,6 +181,7 @@
                        description="MOD_JEM_CACHE_TIME_DESC"
                        default="900"
                        filter="integer"
+                       class="form-control w-auto"
                 />
                 <field name="cachemode" type="hidden"
                        default="static"
@@ -182,5 +192,7 @@
         </fields>
     </config>
 </extension>
+
+
 
 

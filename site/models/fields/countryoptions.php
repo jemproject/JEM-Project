@@ -10,12 +10,8 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-
-FormHelper::loadFieldClass('list');
-
 
 /**
  * CountryOptions Field class
@@ -50,6 +46,7 @@ class JFormFieldCountryOptions extends ListField
         $attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 
         $fancyAttr  = ' class="' . $class . '"';
+        $fancyAttr .= ' style="width: min(100%, 36rem); max-width: 36rem;"';
         $fancyAttr .= $this->multiple ? ' multiple' : '';
         $fancyAttr .= $this->required ? ' required aria-required="true"' : '';
         $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';

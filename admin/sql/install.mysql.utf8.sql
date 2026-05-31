@@ -253,10 +253,12 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     `iso3` varchar(3) NOT NULL,
     `un` int(11) NOT NULL,
     `name` varchar(100) NOT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`),
-    KEY `iso2` (`iso2`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
-
+    KEY `iso2` (`iso2`),
+    KEY `idx_continent` (`continent`),
+    KEY `idx_published` (`published`)
+) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_links` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -653,4 +655,6 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time`, `path` ) VALUES
 (1, 0, 0, 3, 0, 'root', 'root', 1, 1, now(), null),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
+
+
 

@@ -13,7 +13,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Factory;
 
 $wa = $this->document->getWebAssetManager();
         $wa
@@ -477,6 +476,14 @@ function registraoff()
                         <fieldset class="adminform">
                            <?php echo $this->loadTemplate('usercontrol'); ?>
                         </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'countries-settings', Text::_('COM_JEM_COUNTRIES')); ?>
+                    <fieldset class="adminform">
+                        <?php echo $this->loadTemplate('countries'); ?>
+                    </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
 

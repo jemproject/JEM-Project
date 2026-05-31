@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>JEM - Types Module</name>
     <author>JEM Community</author>
@@ -7,12 +7,15 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0beta6</version>
+    <version>5.0.0beta4</version>
     <description>MOD_JEM_TYPES_XML_DESCRIPTION</description>
+
+    <scriptfile>script.php</scriptfile>
 
     <files>
         <filename module="mod_jem_types">mod_jem_types.php</filename>
         <filename>helper.php</filename>
+        <filename>script.php</filename>
         <filename>index.html</filename>
 
         <folder>tmpl</folder>
@@ -30,6 +33,7 @@
                     label="MOD_JEM_TYPES_DISPLAY_MODE"
                     description="MOD_JEM_TYPES_DISPLAY_MODE_DESC"
                     default="summary"
+                    class="form-select w-auto"
                 >
                     <option value="summary">MOD_JEM_TYPES_MODE_SUMMARY</option>
                     <option value="topn">MOD_JEM_TYPES_MODE_TOPN</option>
@@ -41,8 +45,32 @@
                     default="3"
                     min="1"
                     max="20"
+                    class="form-control w-auto"
                     showon="display_mode:topn"
                 />
+
+                <field name="show_more_information" type="list"
+                    label="MOD_JEM_TYPES_SHOW_MORE_INFORMATION"
+                    description="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_DESC"
+                    default="1"
+                    class="form-select w-auto"
+                    showon="display_mode:topn"
+                >
+                    <option value="1">MOD_JEM_TYPES_MORE_INFORMATION_LINK</option>
+                    <option value="2">MOD_JEM_TYPES_MORE_INFORMATION_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="show_more_information_title" type="radio"
+                    label="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_TITLE"
+                    description="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_TITLE_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                    showon="display_mode:topn[AND]show_more_information:1,2,link,button"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
 
                 <field name="hide_empty" type="radio"
                     label="MOD_JEM_TYPES_HIDE_EMPTY"
@@ -71,6 +99,7 @@
                     type="modulelayout"
                     label="JFIELD_ALT_LAYOUT_LABEL"
                     description="JFIELD_ALT_LAYOUT_DESC"
+                    class="form-select w-auto"
                     validate="moduleLayout"
                 />
                 <field
@@ -88,6 +117,7 @@
                     description="COM_MODULES_FIELD_CACHING_DESC"
                     default="1"
                     filter="integer"
+                    class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -99,6 +129,7 @@
                     description="COM_MODULES_FIELD_CACHE_TIME_DESC"
                     default="900"
                     filter="integer"
+                    class="form-control w-auto"
                 />
             </fieldset>
         </fields>

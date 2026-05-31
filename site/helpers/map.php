@@ -10,8 +10,8 @@ namespace Joomla\Component\Jem\Site\Helper;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Filesystem\File;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
@@ -114,20 +114,22 @@ class JemMapHelper
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
         $query  = $db->getQuery(true);
 
-        $query->select('DISTINCT ' . $db->quoteName('country'))
-            ->from($db->quoteName('#__jem_venues'))
-            ->where($db->quoteName('published') . ' = 1')
-            ->where($db->quoteName('country') . ' <> ' . $db->quote(''))
+        $query->select('DISTINCT ' . $db->quoteName('v.country', 'country'))
+            ->from($db->quoteName('#__jem_venues', 'v'))
+            ->join('INNER', $db->quoteName('#__jem_countries', 'ct') . ' ON ' . $db->quoteName('ct.iso2') . ' = ' . $db->quoteName('v.country'))
+            ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('ct.published') . ' = 1')
+            ->where($db->quoteName('v.country') . ' <> ' . $db->quote(''))
             ->where([
-                'latitude IS NOT NULL',
-                "latitude <> ''",
-                'longitude IS NOT NULL',
-                "longitude <> ''",
+                'v.latitude IS NOT NULL',
+                "v.latitude <> ''",
+                'v.longitude IS NOT NULL',
+                "v.longitude <> ''",
             ])
-            ->order($db->quoteName('country') . ' ASC');
+            ->order($db->quoteName('v.country') . ' ASC');
 
         if ($venueAccess !== '') {
-            $query->where($db->quoteName('access') . ' IN (' . $venueAccess . ')');
+            $query->where($db->quoteName('v.access') . ' IN (' . $venueAccess . ')');
         }
 
         $db->setQuery($query);
@@ -491,6 +493,3 @@ class JemMapHelper
     }
 }
 
-if (!class_exists('JemMapHelper', false)) {
-    class_alias(JemMapHelper::class, 'JemMapHelper');
-}

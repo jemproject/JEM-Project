@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
@@ -21,9 +20,10 @@ use Joomla\CMS\Factory;
  */
 class JemViewSettings extends JemAdminView
 {
-    protected $form;
+    public $form;
+    public $countryGroups;
     protected $data;
-    protected $state;
+    public $state;
 
     public function display($tpl = null)
     {
@@ -33,6 +33,7 @@ class JemViewSettings extends JemAdminView
         $data        = $this->get('Data');
         $state       = $this->get('State');
         $config      = $this->get('ConfigInfo');
+        $countryGroups = $this->get('CountryGroups');
         $jemsettings = $this->get('Data');
         $settings    = JemHelper::globalattribs();
         $this->document = $document;
@@ -83,6 +84,7 @@ class JemViewSettings extends JemAdminView
         $this->state       = $state;
         $this->jemsettings = $jemsettings;
         $this->config      = $config;
+        $this->countryGroups = $countryGroups;
         $this->settings       = $settings;
 
         // add toolbar

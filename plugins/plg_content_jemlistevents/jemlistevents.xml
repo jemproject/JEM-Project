@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="content" method="upgrade">
     <name>plg_content_jemlistevents</name>
     <author>JEM Community</author>
@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0beta6</version>
+    <version>5.0.0beta4</version>
     <description>PLG_CONTENT_JEMLISTEVENTS_XML_INSTRUCTION</description>
 
     <files>
@@ -155,5 +155,7 @@
         </fields>
     </config>
 </extension>
+
+
 
 
