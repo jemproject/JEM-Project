@@ -17,6 +17,7 @@ require_once __DIR__ . '/eventslist.php';
  */
 class JemModelWeekcal extends JemModelEventslist
 {
+    protected $_currentweek = null;
 
     /**
      * Constructor
@@ -44,6 +45,7 @@ class JemModelWeekcal extends JemModelEventslist
 
         # params
         $this->setState('params', $params);
+        $this->applyMenuEventFilters($params);
 
         # publish state
         $this->_populatePublishState($task);

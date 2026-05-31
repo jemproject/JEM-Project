@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_JEM_MYATTENDANCES_VIEW_TIMELINE_TITLE">
+        <message>
+            <![CDATA[COM_JEM_MYATTENDANCES_VIEW_TIMELINE_DESC]]>
+        </message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic">
+            <field
+                name="filtermyregs"
+                type="radio"
+                default="1"
+                label="COM_JEM_FILTER_MYREGISTRATIONS"
+                description="COM_JEM_FILTER_MYREGISTRATIONS_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field
+                name="myregspast"
+                type="text"
+                default="1"
+                label="COM_JEM_MYREGSPAST"
+                description="COM_JEM_MYREGSPAST_DESC"
+            />
+            <field
+                name="timeline_side"
+                type="list"
+                default="right"
+                label="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_LABEL"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_DESC"
+                >
+                <option value="right">COM_JEM_TIMELINE_SIDE_RIGHT</option>
+                <option value="left">COM_JEM_TIMELINE_SIDE_LEFT</option>
+                <option value="alternate">COM_JEM_TIMELINE_SIDE_ALTERNATE</option>
+            </field>
+            <field
+                name="timeline_show_axis_date"
+                type="radio"
+                default="1"
+                label="COM_JEM_MYATTENDANCES_TIMELINE_AXIS_DATE_LABEL"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_AXIS_DATE_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

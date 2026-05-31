@@ -86,7 +86,9 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                     $showAttendenenames = 0;
             }
             if ($showAttendenenames) : ?>
-                <hr/>
+            </dl>
+            <hr/>
+            <dl class="jem-dl floattext">
 
                 <dt class="register registered-users hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?>"><?php echo Text::_('COM_JEM_REGISTERED_USERS'); ?>:</dt>
                 <dd class="register registered-users">

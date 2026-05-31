@@ -56,11 +56,11 @@ class JemViewDay extends JemView
         // Retrieving data
         $requestVenueId = $jinput->getInt('locid', 0);
         $requestCategoryId = $jinput->getInt('catid', 0);
-        $requestDate = $jinput->getInt('id', 0);
+        $requestDate = $jinput->getCmd('id', '');
 
         // Load css
         JemHelper::loadCss('jem');
-        if ($this->getLayout() === 'timetable') {
+        if (in_array($this->getLayout(), array('timetable', 'timeline'), true)) {
             JemHelper::loadCss('timetable');
         }
         JemHelper::loadCustomCss();
@@ -81,10 +81,14 @@ class JemViewDay extends JemView
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order']     = $filter_order;
 
+        // Ensure menu date parameters are applied before loading events.
+        $model = $this->getModel();
+        $model->setDate($requestDate);
+
         // Get data from model
         $rows = $this->get('Items');
         $day  = $this->get('Day');
-        $isTimetableLayout = ($this->getLayout() === 'timetable');
+        $isTimetableLayout = in_array($this->getLayout(), array('timetable', 'timeline'), true);
 
         $daydate     = JemOutput::formatdate($day);
         $showdaydate = true; // show by default
@@ -102,13 +106,13 @@ class JemViewDay extends JemView
       //$pathway->setItemName(1, $menuitem->title);
         } else {
             // TODO: If we can integrate $daydate into page_heading we should set $showdaydate to false.
-            $pagetitle   = $isTimetableLayout ? Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE') : Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
+            $pagetitle   = $this->getLayout() === 'timeline' ? Text::_('COM_JEM_DAY_VIEW_TIMELINE_TITLE') : ($isTimetableLayout ? Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE') : Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
             $params->set('page_heading', $pagetitle);
             $pathway->addItem($pagetitle);
         }
 
         if ($isTimetableLayout && $params->get('page_heading') === Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY')) {
-            $params->set('page_heading', Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE'));
+            $params->set('page_heading', $this->getLayout() === 'timeline' ? Text::_('COM_JEM_DAY_VIEW_TIMELINE_TITLE') : Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE'));
         }
         $pageclass_sfx = $params->get('pageclass_sfx');
 
@@ -123,14 +127,16 @@ class JemViewDay extends JemView
         // Set Page title
         $document->setTitle($pagetitle);
 
+        $printDate = str_replace('-', '', (string) $day);
+
         if ($requestVenueId){
-            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
+            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$printDate);
         }
         elseif ($requestCategoryId){
-            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
+            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$printDate);
         }
         else /*(!$requestCategoryId && !$requestVenueId)*/ {
-            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&id='.$requestDate);
+            $print_link = Route::_('index.php?option=com_jem&view=day&tmpl=component&print=1&id='.$printDate);
         }
 
         // Check if the user has permission to add things

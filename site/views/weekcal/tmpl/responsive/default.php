@@ -121,12 +121,14 @@ use Joomla\CMS\Factory;
 
         //initialize variables
         $multicatname = '';
+        $color = '';
         $colorpic = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
         $contentend = '';
         $catcolor = array();
+        $categoryFilterClasses = array();
 
         //walk through categories assigned to an event
         $catcolor = array();
@@ -135,9 +137,7 @@ use Joomla\CMS\Factory;
             // Currently only one id possible...so simply just pick one up...
             $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
-            // Wrap a div for each category around the event for show/hide toggler
-            $content    .= '<div id="catz" class="cat'.$category->id.'">';
-            $contentend .= '</div>';
+            $categoryFilterClasses[] = 'cat' . (int) $category->id;
 
             // Attach category color in front of the catname
             if ($category->color) {
@@ -165,6 +165,11 @@ use Joomla\CMS\Factory;
                 }
             }
         }
+
+        $categoryFilterClasses = array_values(array_unique($categoryFilterClasses));
+        $categoryFilterClassAttribute = implode(' ', $categoryFilterClasses);
+        $content = '<div class="event-filter ' . $categoryFilterClassAttribute . '" data-categories="' . $this->escape($categoryFilterClassAttribute) . '">';
+        $contentend = '</div>';
 
         // Build color output depending on $categoryColorMarker
         if (!empty($catcolor)) {
@@ -358,7 +363,7 @@ use Joomla\CMS\Factory;
         $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 pb-2' : '') . '" style="' . $featuredstyle;
         $style = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
-            $style = '; background-color:' . array_pop($catcolor);
+            $style = '; background-color:' . reset($catcolor);
         }
         $content .= $style . '" onclick="location.href=\'' . $detaillink . '\'">';
         $divClass = $categoryColorMarker ? 'eventcontenttextbar' : 'eventcontenttextblock';

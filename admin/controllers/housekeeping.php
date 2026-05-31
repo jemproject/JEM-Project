@@ -52,6 +52,7 @@ class JemControllerHousekeeping extends BaseController
         $this->allowHousekeeping();
 
         $task = Factory::getApplication()->input->get('task', '');
+        $task = strpos($task, '.') !== false ? substr($task, strrpos($task, '.') + 1) : $task;
         $model = $this->getModel('housekeeping');
         $total = 0;
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_MY_TIMELINE_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_MY_TIMELINE_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic">
+            <field
+                name="mytimeline_purposes"
+                type="list"
+                multiple="true"
+                default="personal_calendar,planning"
+                label="COM_JEM_MY_TIMELINE_PURPOSES"
+                description="COM_JEM_MY_TIMELINE_PURPOSES_DESC"
+                >
+                <option value="personal_calendar">COM_JEM_MY_TIMELINE_PURPOSE_PERSONAL_CALENDAR</option>
+                <option value="activity_history">COM_JEM_MY_TIMELINE_PURPOSE_ACTIVITY_HISTORY</option>
+                <option value="planning">COM_JEM_MY_TIMELINE_PURPOSE_PLANNING</option>
+                <option value="event_diary">COM_JEM_MY_TIMELINE_PURPOSE_EVENT_DIARY</option>
+                <option value="all">COM_JEM_MY_TIMELINE_PURPOSE_ALL</option>
+            </field>
+            <field
+                name="filtermytimeline"
+                type="radio"
+                default="1"
+                label="COM_JEM_FILTER_MY_TIMELINE"
+                description="COM_JEM_FILTER_MY_TIMELINE_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field
+                name="mytimelinepast"
+                type="text"
+                default="1"
+                label="COM_JEM_MY_TIMELINE_PAST_DAYS"
+                description="COM_JEM_MY_TIMELINE_PAST_DAYS_DESC"
+            />
+            <field
+                name="mytimeline_include_registered"
+                type="radio"
+                default="0"
+                label="COM_JEM_MY_TIMELINE_INCLUDE_REGISTERED"
+                description="COM_JEM_MY_TIMELINE_INCLUDE_REGISTERED_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field
+                name="timeline_side"
+                type="list"
+                default="right"
+                label="COM_JEM_TIMELINE_SIDE_LABEL"
+                description="COM_JEM_TIMELINE_SIDE_DESC"
+                >
+                <option value="right">COM_JEM_TIMELINE_SIDE_RIGHT</option>
+                <option value="left">COM_JEM_TIMELINE_SIDE_LEFT</option>
+                <option value="alternate">COM_JEM_TIMELINE_SIDE_ALTERNATE</option>
+            </field>
+            <field
+                name="timeline_show_axis_date"
+                type="radio"
+                default="1"
+                label="COM_JEM_MYATTENDANCES_TIMELINE_AXIS_DATE_LABEL"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_AXIS_DATE_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

@@ -8,7 +8,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0beta5</version>
+    <version>4.5.0beta6</version>
     <url>https://www.joomlaeventmanager.net/</url>
     <packager>JEM Community</packager>
     <packagerurl>https://www.joomlaeventmanager.net</packagerurl>
@@ -45,4 +45,5 @@
         <server type="extension" name="JEM Update Site">https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml</server>
     </updateservers>
 </extension>
+
 

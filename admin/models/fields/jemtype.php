@@ -43,7 +43,9 @@ class JFormFieldJemtype extends FormField
         }
 
         $options   = array();
-        $options[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_TYPE_SELECT_NONE'));
+        if (!$this->multiple) {
+            $options[] = HTMLHelper::_('select.option', '', Text::_('COM_JEM_TYPE_SELECT_NONE'));
+        }
 
         foreach ($types as $t) {
             $label = htmlspecialchars($t->name, ENT_QUOTES, 'UTF-8');
@@ -58,9 +60,20 @@ class JFormFieldJemtype extends FormField
             'class' => $class,
         );
 
-        $html = HTMLHelper::_('select.genericlist', $options, $this->name, $attribs, 'value', 'text', $this->value, $this->id);
+        if ($this->multiple) {
+            $attribs['multiple'] = 'multiple';
+        }
 
-        if (count($types) < $this->getFancySelectThreshold()) {
+        $name  = $this->multiple && substr($this->name, -2) !== '[]' ? $this->name . '[]' : $this->name;
+        $value = $this->value;
+
+        if ($this->multiple && !is_array($value)) {
+            $value = trim((string) $value) === '' ? array() : explode(',', (string) $value);
+        }
+
+        $html = HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'value', 'text', $value, $this->id);
+
+        if (!$this->multiple && count($types) < $this->getFancySelectThreshold()) {
             return $html;
         }
 
@@ -68,7 +81,11 @@ class JFormFieldJemtype extends FormField
             ->usePreset('choicesjs')
             ->useScript('webcomponent.field-fancy-select');
 
-        return '<joomla-field-fancy-select class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '">' . $html . '</joomla-field-fancy-select>';
+        $fancyAttr = ' class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '"';
+        $fancyAttr .= $this->multiple ? ' multiple' : '';
+        $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';
+
+        return '<joomla-field-fancy-select' . $fancyAttr . '>' . $html . '</joomla-field-fancy-select>';
     }
 
     /**

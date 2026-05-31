@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
@@ -50,7 +49,7 @@ class JemViewHousekeeping extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
 
-        ToolbarHelper::back();
+        ToolbarHelper::back('JTOOLBAR_BACK', 'index.php?option=com_jem&view=main');
         ToolbarHelper::divider();
         ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/housekeeping');
     }

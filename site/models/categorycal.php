@@ -27,18 +27,18 @@ class JemModelCategoryCal extends JemModelEventslist
     protected $_id = null;
 
     /**
-     * Date as timestamp useable for strftime()
-     *
-     * @var int
-     */
-    protected $_date = null;
-
-    /**
      * Category data.
      *
      * @var object|null
      */
     protected $_item = null;
+
+    /**
+     * Date as timestamp useable for strftime()
+     *
+     * @var int
+     */
+    protected $_date = null;
 
     /**
      * Constructor
@@ -104,6 +104,7 @@ class JemModelCategoryCal extends JemModelEventslist
 
         # params
         $this->setState('params', $params);
+        $this->applyMenuEventFilters($params);
 
         # publish state
         $this->_populatePublishState($task);

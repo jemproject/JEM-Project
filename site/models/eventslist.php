@@ -23,6 +23,8 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  **/
 class JemModelEventslist extends ListModel
 {
+    protected $show_archived_events = 0;
+
     /**
      * Constructor.
      */
@@ -57,6 +59,94 @@ class JemModelEventslist extends ListModel
         }
 
         parent::__construct($config);
+    }
+
+    /**
+     * Convert menu parameter values from fancy fields, arrays, or comma-separated text into integer ids.
+     */
+    protected function normaliseParamIds($value)
+    {
+        if (is_array($value)) {
+            $ids = $value;
+        } else {
+            $value = trim((string) $value);
+            $ids   = $value === '' ? array() : explode(',', $value);
+        }
+
+        $ids = array_map('intval', $ids);
+
+        return array_values(array_filter($ids));
+    }
+
+    /**
+     * Convert menu parameter values from fancy fields, arrays, or comma-separated text into strings.
+     */
+    protected function normaliseParamStrings($value)
+    {
+        if (is_array($value)) {
+            $values = $value;
+        } else {
+            $value  = trim((string) $value);
+            $values = $value === '' ? array() : explode(',', $value);
+        }
+
+        $values = array_map('trim', $values);
+
+        return array_values(array_filter($values, static function ($entry) {
+            return $entry !== '';
+        }));
+    }
+
+    /**
+     * Apply menu-level event filters shared by calendar-style views.
+     */
+    protected function applyMenuEventFilters($params)
+    {
+        if ((int) $params->get('onlyfeatured', 0) === 1) {
+            $this->setState('filter.featured', 1);
+        }
+
+        $catswitch = $params->get('categoryswitch', '');
+        $cats      = $this->normaliseParamIds($params->get('categoryswitchcats', array()));
+
+        if ($cats) {
+            if ($params->get('includesubcategories', 0)) {
+                $listCats = array();
+
+                foreach ($cats as $idcat) {
+                    if (!in_array($idcat, $listCats, true)) {
+                        $listCats[] = $idcat;
+                        $childCat   = $this->getListChildCat($idcat, false);
+
+                        if ($childCat) {
+                            $listCats = array_unique(array_merge($listCats, $childCat));
+                        }
+                    }
+                }
+            } else {
+                $listCats = $cats;
+            }
+
+            $this->setState('filter.category_id', $listCats);
+            $this->setState('filter.category_id.include', (bool) $catswitch);
+        }
+
+        $venues = $this->normaliseParamIds($params->get('timeline_filter_venues', array()));
+        if ($venues) {
+            $this->setState('filter.venue_id', $venues);
+            $this->setState('filter.venue_id.include', true);
+        }
+
+        $types = $this->normaliseParamIds($params->get('timeline_filter_types', array()));
+        if ($types) {
+            $this->setState('filter.type_id', $types);
+        }
+
+        $countries = $this->normaliseParamStrings($params->get('timeline_filter_countries', array()));
+        if ($countries) {
+            $this->setState('filter.country_id', $countries);
+            $this->setState('filter.country_id.include', true);
+        }
     }
 
     /**
@@ -103,9 +193,8 @@ class JemModelEventslist extends ListModel
         $currentItemid = $activeMenu ? $activeMenu->id : $app->input->getInt('Itemid', 0);
         $itemid        = $app->input->getInt('id', 0) . ':' . $currentItemid;
 
-        if (!$task) {
-            $task = ($params->get('show_archived_events') ? 'archive' : '');
-        }
+        $this->show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->setState('filter.show_archived_events', $this->show_archived_events);
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
@@ -238,16 +327,13 @@ class JemModelEventslist extends ListModel
         ################################
 
         $catswitch = $params->get('categoryswitch', '');
-        $cats      = trim($params->get('categoryswitchcats', ''));
+        $cats      = $this->normaliseParamIds($params->get('categoryswitchcats', array()));
         $list_cats = [];
 
         if ($cats) {
-            $ids_cats = explode(",", $cats);
-            $ids_cats = ArrayHelper::toInteger($ids_cats);
-
             if ($params->get('includesubcategories', 0)) {
                 // Get subcategories
-                foreach ($ids_cats as $idcat) {
+                foreach ($cats as $idcat) {
                     if (!in_array($idcat, $list_cats, true)) {
                         $list_cats[] = $idcat;
                         $child_cat   = $this->getListChildCat($idcat, false);
@@ -258,7 +344,7 @@ class JemModelEventslist extends ListModel
                     }
                 }
             } else {
-                $list_cats = $ids_cats;
+                $list_cats = $cats;
             }
 
             if ($catswitch) {
@@ -355,11 +441,13 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.featured');
         $id .= ':' . serialize($this->getState('filter.event_id'));
         $id .= ':' . $this->getState('filter.event_id.include');
-        $id .= ':' . $this->getState('filter.type_id');
+        $id .= ':' . serialize($this->getState('filter.type_id'));
         $id .= ':' . serialize($this->getState('filter.category_id'));
         $id .= ':' . $this->getState('filter.category_id.include');
         $id .= ':' . serialize($this->getState('filter.venue_id'));
         $id .= ':' . $this->getState('filter.venue_id.include');
+        $id .= ':' . serialize($this->getState('filter.country_id'));
+        $id .= ':' . $this->getState('filter.country_id.include');
         $id .= ':' . $this->getState('filter.venue_state');
         $id .= ':' . $this->getState('filter.venue_state.mode');
         $id .= ':' . $this->getState('filter.filter_search');
@@ -405,7 +493,7 @@ class JemModelEventslist extends ListModel
         $query->select(
             $this->getState('list.select',
                 'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-                'a.fulltext,a.hits,a.id,a.introtext,a.article_id,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
+                'a.fulltext,a.hits,a.id,a.introtext,a.article_id,a.online_meeting_url,a.online_meeting_label,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
                 'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version,a.type_id'
             )
         );
@@ -499,10 +587,6 @@ class JemModelEventslist extends ListModel
         ## FILTER - TASK ##
         ###################
 
-        if (!$task) {
-            $task = ($params->get('show_archived_events') ? 'archive' : '');
-        }
-
         #####################
         ## FILTER - EVENTS ##
         #####################
@@ -557,7 +641,7 @@ class JemModelEventslist extends ListModel
             if ($this->getState('filter.published') == 2) {
                 $ispublished = implode(' OR ', $where_pub);
             } else {
-                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND a.publish_up <= ' . $db->quote($currentDate) . ' AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
+                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND (a.publish_up <= ' . $db->quote($currentDate) . ' OR a.publish_up IS null) AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
             }
             $query->where($ispublished);
         } else {
@@ -595,7 +679,7 @@ class JemModelEventslist extends ListModel
                 $opendates_query = "";
                 break;
             case 2: // show only events without startdate
-                $opendates_query = " a.dates IS NULL";
+                $opendates_query = "a.dates IS NULL";
                 break;
         }
 
@@ -787,6 +871,10 @@ class JemModelEventslist extends ListModel
         ############################
 
         $venueCountry = $this->getState('filter.country_id');
+
+        if (!empty($venueCountry) && !is_array($venueCountry)) {
+            $venueCountry = array($venueCountry);
+        }
 
         if (!empty($venueCountry) && array_filter($venueCountry)) {
             $venueCountry = array_map([$db, 'quote'], $venueCountry);
@@ -1002,7 +1090,7 @@ class JemModelEventslist extends ListModel
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && !empty($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');
@@ -1036,7 +1124,13 @@ class JemModelEventslist extends ListModel
         ####################
 
         $filterTypeId = $this->getState('filter.type_id');
-        if (!empty($filterTypeId)) {
+        if (is_array($filterTypeId)) {
+            ArrayHelper::toInteger($filterTypeId);
+            $filterTypeId = array_filter($filterTypeId);
+            if ($filterTypeId) {
+                $query->where('a.type_id IN (' . implode(',', $filterTypeId) . ')');
+            }
+        } elseif (!empty($filterTypeId)) {
             $query->where('a.type_id = ' . (int) $filterTypeId);
         }
 
@@ -1217,7 +1311,7 @@ class JemModelEventslist extends ListModel
             $where_pub[] = '(' . $tbl . 'published ' . ($show_archived_events? '>=':'=') . (int)$published . ')';
         }
         elseif (is_array($published) && !empty($published)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($published);
+            ArrayHelper::toInteger($published);
             $published = implode(',', $published);
             $where_pub[] = '(' . $tbl . 'published IN (' . $published . '))';
         }
