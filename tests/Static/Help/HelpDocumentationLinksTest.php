@@ -10,10 +10,10 @@ final class HelpDocumentationLinksTest extends TestCase
     {
         $missing = array();
         $requiredLinks = array(
-            'https://www.joomlaeventmanager.net/documentation/manual/backend',
-            'https://www.joomlaeventmanager.net/documentation/manual/frontend',
-            'https://www.joomlaeventmanager.net/documentation/manual/modules',
-            'https://www.joomlaeventmanager.net/documentation/manual/plugins',
+            'https://www.joomlaeventmanager.net/documentation/backend',
+            'https://www.joomlaeventmanager.net/documentation/frontend',
+            'https://www.joomlaeventmanager.net/documentation/modules',
+            'https://www.joomlaeventmanager.net/documentation/plugins',
         );
 
         foreach ($this->helpHtmlFiles() as $path) {
