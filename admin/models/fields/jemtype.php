@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -37,7 +37,8 @@ class JFormFieldJemtype extends FormField
             $html[] = '<select id="' . htmlspecialchars($this->id, ENT_QUOTES, 'UTF-8') . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" disabled="disabled">';
             $html[] = '<option value="">' . Text::_('COM_JEM_TYPE_SELECT_NONE') . '</option>';
             $html[] = '</select>';
-            $html[] = '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars((string) $this->value, ENT_QUOTES, 'UTF-8') . '" />';
+            $value  = is_array($this->value) ? implode(',', $this->value) : (string) $this->value;
+            $html[] = '<input type="hidden" name="' . htmlspecialchars($this->name, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '" />';
 
             return implode("\n", $html);
         }
@@ -133,3 +134,4 @@ class JFormFieldJemtype extends FormField
         return max(1, $threshold ?: 10);
     }
 }
+

@@ -36,11 +36,23 @@ use Joomla\CMS\Uri\Uri;
 
         <div class="clr"></div>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
+
         <!--table-->
         <?php echo $this->loadTemplate('events');?>
 
         <!--footer-->
-        <div class="copyright">
+            <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
+    <div class="copyright">
             <?php echo JemOutput::footer( ); ?>
         </div>
     <?php } ?>

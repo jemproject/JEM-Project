@@ -112,7 +112,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
     ?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>"
          itemscope="itemscope" itemtype="https://schema.org/Event">
 
-        <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+        
+        <?php if ($this->params->get('showintrotext')) : ?>
+            <div class="description no_space floattext">
+                <?php echo $this->params->get('introtext'); ?>
+            </div>
+        <?php endif; ?>
+<meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
         <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
         <meta itemprop="eventStatus" content="<?php echo $eventStatusOption['schema']; ?>" />
         <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
@@ -997,7 +1003,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <?php echo $this->item->pluginevent->onEventEnd; ?>
         <?php endif; ?>
 
-        <div class="copyright">
+            <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
+    <div class="copyright">
             <?php echo JemOutput::footer(); ?>
         </div>
     </div>

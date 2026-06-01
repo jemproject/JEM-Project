@@ -126,36 +126,7 @@
                 <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
             </field>
       <field type="spacer" name="spacer1" hr="true" />
-      <field name="introtext" type="editor"
-                filter="safehtml"
-                hide="readmore,pagebreak,module,menu,fields,contact,article"
-                default=""
-                rows="8"
-                cols="30"
-                height="300px"
-                label="COM_JEM_INTROTEXT_FIELD"
-                description="COM_JEM_INTROTEXT_FIELD_DESC"
-            />
-            <field name="showintrotext" type="radio"
-                default="0"
-                label="COM_JEM_DISPLAY_INTROTEXT"
-                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field type="spacer" name="spacer2" hr="true" />
-            <field name="categoryswitch" type="radio"
-                default="0"
-                label="COM_JEM_CATEGORYSWITCH"
-                description="COM_JEM_CATEGORYSWITCH_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">COM_JEM_INCLUDE</option>
-                <option value="0">COM_JEM_EXCLUDE</option>
-            </field>
-            <field name="categoryswitchcats" type="text"
+<field name="categoryswitchcats" type="text"
                 default=""
                 label="COM_JEM_CATEGORYSWITCHCATS"
                 description="COM_JEM_CATEGORYSWITCHCATS_DESC"
@@ -179,15 +150,28 @@
                 <option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
             </field>
             <field type="spacer" name="spacer3" hr="true" />
-            <field name="footertext" type="editor"
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
                 filter="safehtml"
                 hide="readmore,pagebreak,module,menu,fields,contact,article"
                 default=""
                 rows="8"
                 cols="30"
                 height="300px"
-                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
-                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
             />
             <field name="showfootertext" type="radio"
                 default="0"
@@ -198,6 +182,15 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-        </fieldset>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
     </fields>
 </metadata>

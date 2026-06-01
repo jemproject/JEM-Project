@@ -7,35 +7,7 @@
     </layout>
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-            <field name="introtext" type="editor"
-                   filter="safehtml"
-                   hide="readmore,pagebreak,module,menu,fields,contact,article"
-                   default=""
-                   rows="8"
-                   cols="30"
-                   height="300px"
-                   label="COM_JEM_INTROTEXT_FIELD"
-                   description="COM_JEM_INTROTEXT_FIELD_DESC"
-            />
-            <field name="showintrotext" type="radio"
-                   default="0"
-                   label="COM_JEM_DISPLAY_INTROTEXT"
-                   description="COM_JEM_DISPLAY_INTROTEXT_DESC"
-                   class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="map_auto_center" type="radio"
-                   default="1"
-                   label="COM_JEM_EVENTS_MAP_AUTO_CENTER"
-                   description="COM_JEM_EVENTS_MAP_AUTO_CENTER_DESC"
-                   class="inputbox btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="map_center_lat" type="text"
+<field name="map_center_lat" type="text"
                    default="48.750"
                    label="COM_JEM_EVENTS_MAP_CENTER_LATITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LATITUDE_DESC"/>
@@ -150,6 +122,47 @@
             <field name="height" type="text" default="500px"
                    label="COM_JEM_EVENTS_MAP_HEIGHT"
                    description="COM_JEM_EVENTS_MAP_HEIGHT_DESC" />
-        </fieldset>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
     </fields>
 </metadata>
