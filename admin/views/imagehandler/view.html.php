@@ -44,19 +44,28 @@ class JemViewImagehandler extends HtmlView
         $search = trim(StringHelper::strtolower($search));
 
         //set variables
-        if ($task == 'selecteventimg') {
-            $folder = 'events';
-            $task   = 'eventimg';
-            $redi   = 'selecteventimg';
-        } elseif ($task == 'selectvenueimg') {
-            $folder = 'venues';
-            $task   = 'venueimg';
-            $redi   = 'selectvenueimg';
-        } elseif ($task == 'selectcategoriesimg') {
-            $folder = 'categories';
-            $task   = 'categoriesimg';
-            $redi   = 'selectcategoriesimg';
+        $imageTasks = array(
+            'selecteventimg'      => array('folder' => 'events',     'task' => 'eventimg',      'redi' => 'selecteventimg'),
+            'eventimg'            => array('folder' => 'events',     'task' => 'eventimg',      'redi' => 'selecteventimg'),
+            'eventimgup'          => array('folder' => 'events',     'task' => 'eventimg',      'redi' => 'selecteventimg'),
+            'selectvenueimg'      => array('folder' => 'venues',     'task' => 'venueimg',      'redi' => 'selectvenueimg'),
+            'venueimg'            => array('folder' => 'venues',     'task' => 'venueimg',      'redi' => 'selectvenueimg'),
+            'venueimgup'          => array('folder' => 'venues',     'task' => 'venueimg',      'redi' => 'selectvenueimg'),
+            'selectcategoriesimg' => array('folder' => 'categories', 'task' => 'categoriesimg', 'redi' => 'selectcategoriesimg'),
+            'categoriesimg'       => array('folder' => 'categories', 'task' => 'categoriesimg', 'redi' => 'selectcategoriesimg'),
+            'categoriesimgup'     => array('folder' => 'categories', 'task' => 'categoriesimg', 'redi' => 'selectcategoriesimg'),
+        );
+
+        if (empty($imageTasks[$task])) {
+            Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'warning');
+            $this->setLayout('uploadimage');
+            $this->_displayuploadimage($tpl);
+            return;
         }
+
+        $folder = $imageTasks[$task]['folder'];
+        $task   = $imageTasks[$task]['task'];
+        $redi   = $imageTasks[$task]['redi'];
 
         $app->input->set('folder', $folder);
 
