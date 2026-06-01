@@ -27,7 +27,7 @@
             label="COM_JEM_EDITEVENT_FIELD_CREATE_ARTICLE_LABEL"
             description="COM_JEM_EDITEVENT_FIELD_CREATE_ARTICLE_DESC"
             class="inputbox form-select w-auto"
-            default="2"
+            default="0"
         >
             <option value="0">COM_JEM_ARTICLE_ACTION_NONE</option>
             <option value="1">COM_JEM_ARTICLE_ACTION_CREATE_ON_SAVE</option>
