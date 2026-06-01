@@ -46,21 +46,29 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
         <dd><?php echo $this->form->getInput('article_id'); ?></dd>
         <dt><?php echo $this->form->getLabel('create_article'); ?></dt>
         <dd>
-            <span class="jem-inline-info-control">
-                <?php echo $this->form->getInput('create_article'); ?>
-                <span class="jem-info-tooltip hasTooltip" title="<?php echo $articleAutoInfo; ?>" aria-label="<?php echo $articleAutoInfo; ?>">
-                    <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" focusable="false">
-                        <circle cx="8" cy="8" r="7"></circle>
-                        <path d="M8 7v4"></path>
-                        <path d="M8 4.75h.01"></path>
-                    </svg>
-                </span>
-            </span>
+            <?php echo $this->form->getInput('create_article'); ?>
+            <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
+                <?php echo $articleAutoInfo; ?>
+            </div>
         </dd>
         <dt><?php echo $this->form->getLabel('article_target_category_id'); ?></dt>
         <dd><?php echo $this->form->getInput('article_target_category_id'); ?></dd>
     </dl>
 </fieldset>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var articleActionSelect = document.getElementById('jform_create_article');
+    var articleAutoInfo = document.getElementById('jem-article-auto-info');
+    if (!articleActionSelect || !articleAutoInfo) {
+        return;
+    }
+    var updateArticleAutoInfo = function () {
+        articleAutoInfo.hidden = articleActionSelect.value !== '2';
+    };
+    articleActionSelect.addEventListener('change', updateArticleAutoInfo);
+    updateArticleAutoInfo();
+});
+</script>
 <!-- START META FIELDSET -->
 <fieldset class="adminform">
     <legend><?php echo Text::_('COM_JEM_METADATA'); ?></legend>
