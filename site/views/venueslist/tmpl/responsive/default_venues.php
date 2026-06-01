@@ -582,8 +582,8 @@ foreach ((array) $this->rows as $venueRow) {
                 <?php endif; ?>
 
                 <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-                <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+                <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
+                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
                 <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
                 <?php if (!empty($row->locid)) : ?>
                     <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
