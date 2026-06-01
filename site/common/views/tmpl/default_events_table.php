@@ -213,11 +213,12 @@ use Joomla\CMS\Router\Route;
                         else :
                             echo "-<meta itemprop='name' content='' />";
                         endif; ?>
-                        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                            <meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" />
-                            <meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" />
-                            <meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" />
-                            <meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" />
+                        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                            <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                            <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                            <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                            <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                            <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
                         </div>
 
                     </td>

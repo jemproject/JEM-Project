@@ -301,6 +301,7 @@ if (!function_exists('jem_venueslist_default_display_order')) {
 }
 
 $displayOrder = jem_venueslist_default_display_order($this->params);
+$uri = Uri::getInstance();
 $showVenueImage = (bool) $this->params->get('showvenueimage', 1);
 $showTypes = (bool) $this->params->get('showtypes', 1);
 $showVenueMap = (bool) $this->params->get('showvenuemap', 1);
@@ -414,7 +415,7 @@ foreach ((array) $this->rows as $venueRow) {
                     }
                     $canEditVenue = $user->can('edit', 'venue', (int) $row->id, (int) ($row->created_by ?? 0));
                     ?>
-                    <tr class="venue_id<?php echo $this->escape($row->id); ?>">
+                    <tr class="venue_id<?php echo $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
                     <?php $odd = 1 - $odd; ?>
                     <?php foreach ($displayOrder as $field) : ?>
                         <?php if ($field === 'image') : ?>
@@ -425,13 +426,21 @@ foreach ((array) $this->rows as $venueRow) {
                             <td headers="jem_location" style="text-align: left; vertical-align: middle;">
                                 <?php
                                 if ($this->jemsettings->showlinkvenue == 1) :
-                                    echo $row->id != 0 ? "<a href='".jem_venueslist_default_venue_page_link($row)."'>".$this->escape($row->venue)."</a>" : '-';
+                                    echo $row->id != 0 ? "<a href='".jem_venueslist_default_venue_page_link($row)."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>" : '-';
                                 else :
-                                    echo $row->id ? $this->escape($row->venue) : '-';
+                                    echo $row->id ? "<span itemprop='name'>".$this->escape($row->venue)."</span>" : '-';
                                 endif;
                                 echo JemOutput::publishstateicon($row);
                                 echo $venueaccess;
                                 ?>
+                                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
+                                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
+                                </div>
                             </td>
                         <?php elseif ($field === 'type') : ?>
                             <td headers="jem_type" style="text-align: left; vertical-align: middle;">

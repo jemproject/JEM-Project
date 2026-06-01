@@ -120,7 +120,7 @@ if (!function_exists('jem_myvenues_country_flag')) {
                     <tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></td></tr>
                 <?php else : ?>
                     <?php foreach ($this->venues as $i => $row) : ?>
-                        <tr class="row<?php echo $i % 2 . ' venue_id' . $this->escape($row->id); ?>">
+                        <tr class="row<?php echo $i % 2 . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 
                             <?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
                             <td class="center">
@@ -137,14 +137,21 @@ if (!function_exists('jem_myvenues_country_flag')) {
                                 <?php
                                 if (!empty($row->venue)) :
                                     if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
-                                        echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+                                        echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>";
                                     else :
-                                        echo $this->escape($row->venue);
+                                        echo '<span itemprop="name">'.$this->escape($row->venue).'</span>';
                                     endif;
                                 else :
                                     echo '-';
                                 endif;
                                 ?>
+                                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
+                                </div>
                                 <?php echo JemOutput::publishstateicon($row); ?>
                             </td>
                             <?php endif; ?>

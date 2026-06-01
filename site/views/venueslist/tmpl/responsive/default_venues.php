@@ -497,9 +497,9 @@ foreach ((array) $this->rows as $venueRow) {
             $canEditVenue = $user->can('edit', 'venue', (int) $row->id, (int) ($row->created_by ?? 0));
             ?>
                 <?php if (!empty($row->featured)) :   ?>
-                  <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
+                  <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place"  >
                 <?php else : ?>
-                    <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
+                    <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place"  >
                 <?php endif; ?>
 
                 <?php foreach ($displayOrder as $field) : ?>
@@ -513,9 +513,9 @@ foreach ((array) $this->rows as $venueRow) {
                             <i class="fa fa-map-marker" aria-hidden="true"></i>
                                 <?php
                                 if ($this->jemsettings->showlinkvenue == 1) :
-                                    echo $row->id != 0 ? "<a href='".jem_venueslist_responsive_venue_page_link($row)."'>".$this->escape($row->venue)."</a>" : '-';
+                                    echo $row->id != 0 ? "<a href='".jem_venueslist_responsive_venue_page_link($row)."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>" : '-';
                                 else :
-                                    echo $row->id ? $this->escape($row->venue) : '-';
+                                    echo $row->id ? "<span itemprop='name'>".$this->escape($row->venue)."</span>" : '-';
                                  endif; ?>
                                 <?php echo JemOutput::publishstateicon($row); ?>
                             <?php echo $venueaccess;?>
@@ -525,9 +525,9 @@ foreach ((array) $this->rows as $venueRow) {
                             <i class="fa fa-map-marker" aria-hidden="true"></i>
                                 <?php
                                 if ($this->jemsettings->showlinkvenue == 1) :
-                                    echo $row->id != 0 ? "<a href='".jem_venueslist_responsive_venue_page_link($row)."'>".$this->escape($row->venue)."</a>" : '-';
+                                    echo $row->id != 0 ? "<a href='".jem_venueslist_responsive_venue_page_link($row)."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>" : '-';
                                 else :
-                                    echo $row->id ? $this->escape($row->venue) : '-';
+                                    echo $row->id ? "<span itemprop='name'>".$this->escape($row->venue)."</span>" : '-';
                                  endif; ?>
                                 <?php echo JemOutput::publishstateicon($row); ?>
                             <?php echo $venueaccess;?>
@@ -581,36 +581,15 @@ foreach ((array) $this->rows as $venueRow) {
                     </div>
                 <?php endif; ?>
 
-                <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
                 <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
                 <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
-                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
-                <?php if (!empty($row->venue)) : ?>
-                    <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-                <?php endif;
-                
-                $microadress = '';
-                if (!empty($row->city)) {
-                    $microadress .= $this->escape($row->city);
-                }
-                if (!empty($microadress)) {
-                    $microadress .= ', ';
-                }
-                if (!empty($row->state)) {
-                    $microadress .= $this->escape($row->state);
-                }
-                if (!empty($row->country)) {
-                    if (!empty($microadress)) {
-                        $microadress .= ', ';
-                    }
-                    $microadress .= $this->escape(jem_venueslist_country_name($row->country));
-                }
-                if (empty($microadress)) {
-                    $microadress .= '-';
-                }
-                ?>
-                <meta itemprop="address" content="<?php echo $microadress; ?>" />
-              </div>
+                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
+                </div>
         </li>
             <?php endforeach; ?>
   <?php endif; ?>

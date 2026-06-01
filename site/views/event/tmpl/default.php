@@ -312,34 +312,6 @@ if ($jemsettings->oldevent > 0) {
                 </dd>
             <?php endif;
 
-            if (empty($this->item->locid)) : ?>
-                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                    <meta itemprop="name" content="None"/>
-                </div>
-
-            <?php else : ?>
-                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                    <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
-                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display: none;">
-                        <?php if ($this->item->street) : ?>
-                            <meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->postalCode) : ?>
-                            <meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->city) : ?>
-                            <meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->state) : ?>
-                            <meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->country) : ?>
-                            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
-                        <?php endif; ?>
-                    </div>
-                </div>
-            <?php endif;
-
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
