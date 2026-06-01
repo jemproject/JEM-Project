@@ -9,8 +9,18 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\Registry\Registry;
+
+if (!isset($this->params) || !($this->params instanceof Registry)) {
+    $this->params = Factory::getApplication()->getParams('com_jem');
+
+    if (!($this->params instanceof Registry)) {
+        $this->params = new Registry();
+    }
+}
 
 $getCategoryColor = static function ($row, $fallback = '#2f6f73') {
     foreach ((array) $row->categories as $category) {
@@ -1080,3 +1090,4 @@ foreach ($rows as $row) {
         <?php echo JemOutput::footer(); ?>
     </div>
 </div>
+
