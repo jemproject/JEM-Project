@@ -57,7 +57,7 @@ if (JemHelper::jemStringContains($this->params->get('pageclass_sfx'), $imageheig
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $css = '
     #jem .jem-list-img {
         width: ' . $imagewidth . ';
@@ -220,7 +220,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                 <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
                     <h3 title="<?php echo Text::_('COM_JEM_TABLE_TITLE') . ': ' . $this->escape($row->title); ?>">
 
-                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
+                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo $this->escape($row->title); ?></a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) : ?>
@@ -233,7 +233,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
 
                 <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
                     <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE') . ': ' . $this->escape($row->title); ?>">
-                        <?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) :'') . JemOutput::publishstateicon($row); ?>
+                        <span itemprop="name"><?php echo $this->escape($row->title); ?></span><?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :'') . JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
@@ -292,18 +292,25 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                     <?php if ($this->jemsettings->showtitle == 0) : ?>
                         <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-comment" aria-hidden="true"></i>':''); ?>
-                            <?php echo $this->escape($row->title); ?>
+                            <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if($row->user_has_access_venue) : ?>
                     <?php if (($this->jemsettings->showlocate == 1) && (!empty($row->locid))) : ?>
-                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                             <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-                                <?php echo "<a href='" . Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) . "'>" . $this->escape($row->venue) . "</a>"; ?>
+                                <?php echo "<a href='" . Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) . "'><span itemprop='name'>" . $this->escape($row->venue) . "</span></a>"; ?>
                             <?php else : ?>
-                                <?php echo $this->escape($row->venue); ?>
+                                <span itemprop="name"><?php echo $this->escape($row->venue); ?></span>
                             <?php endif; ?>
+                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                                <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -366,32 +373,8 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
             }
             ?>
 
-            <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>"/>
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                <?php if (!empty($row->locid)) : ?>
-                    <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>"/>
-                <?php else : ?>
-                    <meta itemprop="name" content="None"/>
-                <?php endif; ?>
-                <?php
-                $microadress = '';
-                if (!empty($row->city)) {
-                    $microadress .= $this->escape($row->city);
-                }
-                if (!empty($microadress)) {
-                    $microadress .= ', ';
-                }
-                if (!empty($row->state)) {
-                    $microadress .= $this->escape($row->state);
-                }
-                if (empty($microadress)) {
-                    $microadress .= '-';
-                }
-                ?>
-                <meta itemprop="address" content="<?php echo $microadress; ?>"/>
-            </div>
 
             </li>
         <?php endforeach; ?>

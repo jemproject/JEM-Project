@@ -249,7 +249,7 @@ class JemController extends BaseController
             <div class="jem-event-details" <?php if (($jemsettings->showdetails == 1) && (!$isSafari) && ($jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''. Route::_(JemHelperRoute::getEventRoute($row->slug)) .'\'"'; endif; ?>>
                 <?php if (($jemsettings->showtitle == 1) && ($jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
                     <h3 title="<?php echo Text::_('COM_JEM_TABLE_TITLE') . ': ' . htmlspecialchars($row->title); ?>">
-                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo htmlspecialchars($row->title); ?></a>
+                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo htmlspecialchars($row->title); ?></a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) : ?>
@@ -259,7 +259,7 @@ class JemController extends BaseController
 
                 <?php elseif (($jemsettings->showtitle == 1) && ($jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
                     <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE') . ': ' . htmlspecialchars($row->title); ?>">
-                        <?php echo htmlspecialchars($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) :'') . JemOutput::publishstateicon($row); ?>
+                        <span itemprop="name"><?php echo htmlspecialchars($row->title); ?></span><?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :'') . JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
@@ -311,20 +311,27 @@ class JemController extends BaseController
                     <?php if ($jemsettings->showtitle == 0) : ?>
                         <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.htmlspecialchars($row->title); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-comment" aria-hidden="true"></i>':''); ?>
-                            <?php echo htmlspecialchars($row->title); ?>
+                            <span itemprop="name"><?php echo htmlspecialchars($row->title); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($jemsettings->showlocate == 1 && !empty($row->locid)) : ?>
-                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION') . ': ' . htmlspecialchars($row->venue); ?>">
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION') . ': ' . htmlspecialchars($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                             <?php if ($jemsettings->showlinkvenue == 1) : ?>
                                 <a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($row->venueslug ?? '')); ?>">
-                                    <?php echo htmlspecialchars($row->venue); ?>
+                                    <span itemprop="name"><?php echo htmlspecialchars($row->venue); ?></span>
                                 </a>
                             <?php else : ?>
-                                <?php echo htmlspecialchars($row->venue); ?>
+                                <span itemprop="name"><?php echo htmlspecialchars($row->venue); ?></span>
                             <?php endif; ?>
+                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                                <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo htmlspecialchars($row->street); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo htmlspecialchars($row->postalCode); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo htmlspecialchars($row->city); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo htmlspecialchars($row->state); ?>" /><?php endif; ?>
+                                <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo htmlspecialchars($row->country); ?>" /><?php endif; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -387,28 +394,8 @@ class JemController extends BaseController
                 <?php endif; ?>
             </div>
 
-            <meta itemprop="name" content="<?php echo htmlspecialchars($row->title); ?>"/>
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                <meta itemprop="name" content="<?php echo !empty($row->locid) ? htmlspecialchars($row->venue) : 'None'; ?>"/>
-                <?php
-                $microadress = '';
-                if (!empty($row->city)) {
-                    $microadress .= htmlspecialchars($row->city);
-                }
-                if (!empty($microadress)) {
-                    $microadress .= ', ';
-                }
-                if (!empty($row->state)) {
-                    $microadress .= htmlspecialchars($row->state);
-                }
-                if (empty($microadress)) {
-                    $microadress .= '-';
-                }
-                ?>
-                <meta itemprop="address" content="<?php echo $microadress; ?>"/>
-            </div>
 
             </li>
         <?php endforeach;

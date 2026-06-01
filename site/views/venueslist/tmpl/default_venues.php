@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -12,152 +12,70 @@ require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
 require_once JPATH_SITE . '/components/com_jem/classes/image.class.php';
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-
-$uri = Uri::getInstance();
+use Joomla\CMS\Uri\Uri;
 ?>
 
-<script>
-    function tableOrdering(order, dir, view)
-    {
-        var form = document.getElementById("adminForm");
-
-        form.filter_order.value     = order;
-        form.filter_order_Dir.value    = dir;
-        form.submit(view);
-    }
-</script>
 <style>
+    #jem_filter .jem-venueslist-filter-country {
+        flex: 0 0 11.5rem;
+        min-width: 0;
+        max-width: 11.5rem;
+    }
 
-  .jem-sort #jem_city,
-  #jem .jem-event .jem-event-city {
-      flex: 1 <?php echo ($this->jemsettings->citywidth); ?>;
-  }
+    #jem_filter .jem-venueslist-filter-country label {
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
 
-  .jem-sort #jem_state,
-  #jem .jem-event .jem-event-state {
-    <?php if ($this->params->get('showstate') && (!empty($this->jemsettings->statewidth))) : ?>
-      flex: 1 <?php echo ($this->jemsettings->statewidth); ?>;
-    <?php else : ?>
-      flex: 1;
-    <?php endif; ?>
-  }
+    #jem_filter .jem-venueslist-filter-country #filter_country,
+    #jem_filter .jem-venueslist-filter-country joomla-field-fancy-select,
+    #jem_filter .jem-venueslist-filter-country .choices {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        margin-bottom: 0;
+    }
 
-  .jem-sort #jem_location,
-  #jem .jem-event .jem-event-venue {
-      flex: 1 <?php echo ($this->jemsettings->locationwidth); ?>;
-  }
+    #jem_filter .jem-venueslist-filter-country .choices__inner {
+        min-height: 2.25rem;
+        box-sizing: border-box;
+    }
 
-  .jem-sort #jem_venue_image,
-  #jem .jem-event .jem-event-venue-image {
-      flex: 0 0 5rem;
-      justify-content: center;
-      text-align: center;
-  }
+    #jem_filter .jem-venueslist-filter-country .choices__placeholder {
+        display: none;
+    }
 
-  .jem-sort #jem_type,
-  #jem .jem-event .jem-event-type {
-      flex: 0 0 9rem;
-  }
+    #jem_filter .jem-venueslist-filter-country .choices__input--cloned {
+        min-width: 1ch !important;
+        width: 1ch !important;
+    }
 
-  .jem-sort #jem_country,
-  #jem .jem-event .jem-event-country {
-      flex: 1 20%;
-  }
+    #jem_filter .jem-venueslist-filter-country .choices__input--cloned::placeholder {
+        color: transparent;
+    }
 
-  .jem-sort #jem_map,
-  #jem .jem-event .jem-event-map-action {
-      flex: 0 0 5rem;
-      justify-content: center;
-      text-align: center;
-  }
+    #jem_filter .jem-venueslist-filter-search {
+        flex: 1 1 auto;
+        min-width: 18rem;
+    }
 
-  .jem-sort #jem_calendar,
-  #jem .jem-event .jem-event-calendar-action {
-      flex: 0 0 6rem;
-      justify-content: center;
-      text-align: center;
-  }
+    #jem_filter .jem-venueslist-filter-search #filter_search {
+        flex: 0 1 12rem !important;
+        max-width: 12rem !important;
+    }
 
-  .jem-sort #jem_edit,
-  #jem .jem-event .jem-event-edit-action {
-      flex: 0 0 4rem;
-      justify-content: center;
-      text-align: center;
-  }
-
-  #jem_filter .jem-venueslist-filter-country {
-      flex: 0 0 11.5rem;
-      min-width: 0;
-      max-width: 11.5rem;
-      align-items: center;
-  }
-
-  #jem_filter .jem-venueslist-filter-country label {
-      margin-bottom: 0;
-      white-space: nowrap;
-  }
-
-  #jem_filter .jem-venueslist-filter-country #filter_country,
-  #jem_filter .jem-venueslist-filter-country joomla-field-fancy-select,
-  #jem_filter .jem-venueslist-filter-country .choices {
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      margin-bottom: 0;
-  }
-
-  #jem_filter .jem-venueslist-filter-country .choices__placeholder {
-      display: none;
-  }
-
-  #jem_filter .jem-venueslist-filter-country .choices__input--cloned {
-      min-width: 1ch !important;
-      width: 1ch !important;
-  }
-
-  #jem_filter .jem-venueslist-filter-country .choices__input--cloned::placeholder {
-      color: transparent;
-  }
-
-  .jem-venueslist-map-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.25rem;
-      white-space: nowrap;
-  }
-
-  #jem .jem-event .jem-event-calendar-action,
-  #jem .jem-event .jem-event-map-action,
-  #jem .jem-event .jem-event-edit-action {
-      display: flex;
-      align-items: center;
-  }
-
-  .jem-sort .sectiontableheader,
-  #jem .jem-event .jem-event-info-small {
-      box-sizing: border-box;
-      padding-right: 0.75rem;
-  }
-
-  #jem .jem-event .jem-event-calendar-action a,
-  #jem .jem-event .jem-event-edit-action a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-  }
-
-  #jem .jem-event .jem-venueslist-venue-image {
-      width: 64px;
-      height: 48px;
-      object-fit: contain;
-  }
-
+    .jem-venueslist-map-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+    }
 </style>
 
+<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
 <?php
 function jem_common_show_filter(&$obj) {
@@ -205,8 +123,8 @@ if (!function_exists('jem_venueslist_country_flag')) {
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_venue_page_link')) {
-    function jem_venueslist_responsive_venue_page_link($row)
+if (!function_exists('jem_venueslist_default_venue_page_link')) {
+    function jem_venueslist_default_venue_page_link($row)
     {
         $slug = (int) $row->id . ':' . ($row->alias ?? '');
 
@@ -214,8 +132,8 @@ if (!function_exists('jem_venueslist_responsive_venue_page_link')) {
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_venue_calendar_link')) {
-    function jem_venueslist_responsive_venue_calendar_link($row)
+if (!function_exists('jem_venueslist_default_venue_calendar_link')) {
+    function jem_venueslist_default_venue_calendar_link($row)
     {
         $slug = (int) $row->id . ':' . ($row->alias ?? '');
 
@@ -223,15 +141,15 @@ if (!function_exists('jem_venueslist_responsive_venue_calendar_link')) {
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_venue_edit_link')) {
-    function jem_venueslist_responsive_venue_edit_link($row)
+if (!function_exists('jem_venueslist_default_venue_edit_link')) {
+    function jem_venueslist_default_venue_edit_link($row)
     {
         return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $row->id . '&return=' . base64_encode(Uri::getInstance()->toString()));
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_venue_image')) {
-    function jem_venueslist_responsive_venue_image($row)
+if (!function_exists('jem_venueslist_default_venue_image')) {
+    function jem_venueslist_default_venue_image($row)
     {
         $image = JemImage::flyercreator($row->locimage ?? '', 'venue');
 
@@ -242,12 +160,12 @@ if (!function_exists('jem_venueslist_responsive_venue_image')) {
         $src = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb']) ? $image['thumb'] : $image['original'];
         $alt = htmlspecialchars((string) ($row->venue ?? ''), ENT_QUOTES, 'UTF-8');
 
-        return '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="jem-venueslist-venue-image" loading="lazy" />';
+        return '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="jem-venueslist-venue-image" loading="lazy" style="width:64px;height:48px;object-fit:contain;" />';
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_type_badge')) {
-    function jem_venueslist_responsive_type_badge($row)
+if (!function_exists('jem_venueslist_default_type_badge')) {
+    function jem_venueslist_default_type_badge($row)
     {
         JemOutput::translateType($row, 'type_');
 
@@ -274,8 +192,8 @@ if (!function_exists('jem_venueslist_responsive_type_badge')) {
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_venue_map')) {
-    function jem_venueslist_responsive_venue_map($row)
+if (!function_exists('jem_venueslist_default_venue_map')) {
+    function jem_venueslist_default_venue_map($row)
     {
         if (!is_numeric($row->latitude ?? null) || !is_numeric($row->longitude ?? null)) {
             return '';
@@ -287,7 +205,7 @@ if (!function_exists('jem_venueslist_responsive_venue_map')) {
         $src = 'https://www.openstreetmap.org/export/embed.html?bbox=' . rawurlencode($bbox) . '&layer=mapnik&marker=' . rawurlencode($lat . ',' . $lon);
         $external = 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat) . '&mlon=' . rawurlencode((string) $lon) . '#map=16/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lon);
         $title = htmlspecialchars((string) ($row->venue ?? Text::_('COM_JEM_MAP')), ENT_QUOTES, 'UTF-8');
-        $modalId = 'jem-venueslist-map-responsive-' . (int) ($row->id ?? 0);
+        $modalId = 'jem-venueslist-map-' . (int) ($row->id ?? 0);
 
         $output = HTMLHelper::_(
             'bootstrap.renderModal',
@@ -310,8 +228,8 @@ if (!function_exists('jem_venueslist_responsive_venue_map')) {
     }
 }
 
-if (!function_exists('jem_venueslist_responsive_display_order')) {
-    function jem_venueslist_responsive_display_order($params)
+if (!function_exists('jem_venueslist_default_display_order')) {
+    function jem_venueslist_default_display_order($params)
     {
         $defaultOrder = array('image', 'venue', 'type', 'city', 'state', 'country', 'map', 'calendar');
         $orders = array(
@@ -382,7 +300,8 @@ if (!function_exists('jem_venueslist_responsive_display_order')) {
     }
 }
 
-$displayOrder = jem_venueslist_responsive_display_order($this->params);
+$displayOrder = jem_venueslist_default_display_order($this->params);
+$uri = Uri::getInstance();
 $showVenueImage = (bool) $this->params->get('showvenueimage', 1);
 $showTypes = (bool) $this->params->get('showtypes', 1);
 $showVenueMap = (bool) $this->params->get('showvenuemap', 1);
@@ -391,7 +310,6 @@ $mediaRoot = rtrim(Uri::root(true), '/');
 $calendarIcon = $mediaRoot . '/media/com_jem/images/el.webp';
 $editIcon = $mediaRoot . '/media/com_jem/images/calendar_edit.webp';
 $user = JemFactory::getUser();
-$this->rows = $this->getRows();
 $showEditColumn = false;
 
 foreach ((array) $this->rows as $venueRow) {
@@ -402,205 +320,180 @@ foreach ((array) $this->rows as $venueRow) {
 }
 ?>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-  <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-venueslist-filter">
-    <div class="jem-venueslist-filter-label">
-      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-    </div>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-search">
-      <?php echo $this->lists['filter']; ?>
-      <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
-    </div>
-    <?php if (!empty($this->lists['country_filter'])) : ?>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-country">
-      <label for="filter_country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
-      <?php echo $this->lists['country_filter']; ?>
-    </div>
-    <?php endif; ?>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-actions">
-      <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';var c=document.getElementById('filter_country');if(c){c.selectedIndex=0;}this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-    </div>
-          <?php if ($this->settings->get('global_display',1)) : ?>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-limit">
-        <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
-        <?php echo $this->pagination->getLimitBox(); ?>
-    </div>
-    <?php endif; ?>
-  </div>
+    <div id="jem_filter" class="jem-venueslist-filter d-flex flex-wrap align-items-center gap-2 mb-2">
+        <?php if ($this->settings->get('global_show_filter',1)) : ?>
+        <div class="jem-venueslist-filter-search d-flex flex-wrap align-items-center gap-2">
+            <label for="filter" class="mb-0"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
+            <?php echo $this->lists['filter']; ?>
+            <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="form-control form-control-sm" style="flex:1 1 8rem;min-width:6rem;max-width:20rem;" onchange="document.adminForm.submit();" />
+            <button class="btn btn-primary btn-sm" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+            <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('filter_search').value='';var c=document.getElementById('filter_country');if(c){c.selectedIndex=0;}this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+        </div>
+        <?php endif; ?>
 
-<?php endif; ?>
+        <?php if (!empty($this->lists['country_filter'])) : ?>
+        <div class="jem-venueslist-filter-country d-flex align-items-center gap-2">
+            <label for="filter_country" class="mb-0"><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
+            <?php echo $this->lists['country_filter']; ?>
+        </div>
+        <?php endif; ?>
 
-<div class="jem-sort jem-sort-small">
-    <div class="jem-list-row jem-small-list">
-        <?php foreach ($displayOrder as $field) : ?>
-            <?php if ($field === 'image') : ?>
-                <div id="jem_venue_image" class="sectiontableheader"><?php echo Text::_('COM_JEM_IMAGE'); ?></div>
-            <?php elseif ($field === 'venue') : ?>
-                <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-            <?php elseif ($field === 'type') : ?>
-                <div id="jem_type" class="sectiontableheader"><?php echo Text::_('COM_JEM_TYPE'); ?></div>
-            <?php elseif ($field === 'city') : ?>
-                <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-            <?php elseif ($field === 'state') : ?>
-                <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-            <?php elseif ($field === 'country') : ?>
-                <div id="jem_country" class="sectiontableheader"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-            <?php elseif ($field === 'map') : ?>
-                <div id="jem_map" class="sectiontableheader jem-event-action jem-event-map-action"><?php echo Text::_('COM_JEM_MAP'); ?></div>
-            <?php elseif ($field === 'calendar') : ?>
-                <div id="jem_calendar" class="sectiontableheader jem-event-action jem-event-calendar-action"><?php echo Text::_('COM_JEM_CALENDAR'); ?></div>
-            <?php endif; ?>
-        <?php endforeach; ?>
-        <?php if ($showEditColumn) : ?>
-            <div id="jem_edit" class="sectiontableheader jem-event-action jem-event-edit-action"><?php echo Text::_('JGLOBAL_EDIT'); ?></div>
+        <?php if ($this->settings->get('global_display',1)) : ?>
+        <div class="jem-venueslist-filter-limit d-flex align-items-center gap-2 ms-auto">
+            <label for="limit" class="mb-0"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
+            <?php echo $this->pagination->getLimitBox(); ?>
+        </div>
         <?php endif; ?>
     </div>
-</div>
+<?php endif; ?>
 
-<ul class="eventlist">
-  <?php if ($this->novenues == 1) : ?>
-    <li class="jem-event"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></li>
-  <?php else : ?>
-      <?php
-      // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
-        // This detects the browser and just writes the onclick attribute if the browser is not Safari.
-      $isSafari = false;
-      if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-        $isSafari = true;
-      }
-      ?>
-            <?php foreach ($this->rows as $row) : ?>
-            <?php
-            // has user access
-            $venueaccess = '';
-            if (!$row->user_has_access_venue) {
-                // show a closed lock icon
-                $venueaccess = '<span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
-            }
-            $canEditVenue = $user->can('edit', 'venue', (int) $row->id, (int) ($row->created_by ?? 0));
-            ?>
-                <?php if (!empty($row->featured)) :   ?>
-                  <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
-                <?php else : ?>
-                    <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event"  >
+    <div class="table table-responsive table-striped table-hover table-sm">
+    <table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
+        <colgroup>
+            <?php foreach ($displayOrder as $field) : ?>
+                <?php if ($field === 'image') : ?>
+                    <col style="width: 1%" class="jem_col_venue_image" />
+                <?php elseif ($field === 'venue') : ?>
+                    <col style="width: <?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
+                <?php elseif ($field === 'type') : ?>
+                    <col style="width: 12%" class="jem_col_type" />
+                <?php elseif ($field === 'city') : ?>
+                    <col style="width: 20%" class="jem_col_city" />
+                <?php elseif ($field === 'state') : ?>
+                    <col style="width: 20%" class="jem_col_state" />
+                <?php elseif ($field === 'country') : ?>
+                    <col style="width: 20%" class="jem_col_country" />
+                <?php elseif ($field === 'map') : ?>
+                    <col style="width: 1%" class="jem_col_map" />
+                <?php elseif ($field === 'calendar') : ?>
+                    <col style="width: 1%" class="jem_col_calendar" />
                 <?php endif; ?>
-
+            <?php endforeach; ?>
+            <?php if ($showEditColumn) : ?>
+                <col style="width: 1%" class="jem_col_edit" />
+            <?php endif; ?>
+        </colgroup>
+        <thead>
+            <tr>
                 <?php foreach ($displayOrder as $field) : ?>
                     <?php if ($field === 'image') : ?>
-                        <div class="jem-event-info-small jem-event-venue-image">
-                            <?php echo jem_venueslist_responsive_venue_image($row) ?: '-'; ?>
-                        </div>
+                        <th id="jem_venue_image" class="sectiontableheader" style="text-align: center;"><?php echo Text::_('COM_JEM_IMAGE'); ?></th>
                     <?php elseif ($field === 'venue') : ?>
-                        <?php if (!empty($row->id)) : ?>
-                          <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
-                            <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                <?php
-                                if ($this->jemsettings->showlinkvenue == 1) :
-                                    echo $row->id != 0 ? "<a href='".jem_venueslist_responsive_venue_page_link($row)."'>".$this->escape($row->venue)."</a>" : '-';
-                                else :
-                                    echo $row->id ? $this->escape($row->venue) : '-';
-                                 endif; ?>
-                                <?php echo JemOutput::publishstateicon($row); ?>
-                            <?php echo $venueaccess;?>
-                            </div>
-                        <?php else : ?>
-                          <div class="jem-event-info-small jem-event-venue">
-                            <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                <?php
-                                if ($this->jemsettings->showlinkvenue == 1) :
-                                    echo $row->id != 0 ? "<a href='".jem_venueslist_responsive_venue_page_link($row)."'>".$this->escape($row->venue)."</a>" : '-';
-                                else :
-                                    echo $row->id ? $this->escape($row->venue) : '-';
-                                 endif; ?>
-                                <?php echo JemOutput::publishstateicon($row); ?>
-                            <?php echo $venueaccess;?>
-                            </div>
-                        <?php endif; ?>
+                        <th id="jem_location" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'type') : ?>
-                        <div class="jem-event-info-small jem-event-type">
-                            <?php echo jem_venueslist_responsive_type_badge($row) ?: '-'; ?>
-                        </div>
+                        <th id="jem_type" class="sectiontableheader" style="text-align: left;"><?php echo Text::_('COM_JEM_TYPE'); ?></th>
                     <?php elseif ($field === 'city') : ?>
-                        <?php if (!empty($row->city)) : ?>
-                          <div class="jem-event-info-small jem-event-city venue-big" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                            <?php echo $this->escape($row->city); ?>
-                          </div>
-                        <?php else : ?>
-                          <div class="jem-event-info-small jem-event-city">-</div>
-                        <?php endif; ?>
+                        <th id="jem_city" class="sectiontableheader" style="text-align: left;"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'state') : ?>
-                        <?php if (!empty($row->state)) : ?>
-                        <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                            <?php echo $this->escape($row->state); ?>
-                        </div>
-                        <?php else : ?>
-                        <div class="jem-event-info-small jem-event-state">-</div>
-                        <?php endif; ?>
+                        <th id="jem_state" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'country') : ?>
-                        <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY') . ': ' . $this->escape(jem_venueslist_country_name($row->country ?? '')); ?>">
-                            <?php $countryName = jem_venueslist_country_name($row->country ?? ''); ?>
-                            <?php echo $countryName !== '' ? jem_venueslist_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?>
-                        </div>
+                        <th id="jem_country" class="sectiontableheader" style="text-align: left;"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'map') : ?>
-                        <div class="jem-event-info-small jem-event-action jem-event-map-action" title="<?php echo Text::_('COM_JEM_MAP'); ?>">
-                            <?php echo jem_venueslist_responsive_venue_map($row) ?: '-'; ?>
-                        </div>
+                        <th id="jem_map" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('COM_JEM_MAP'); ?></th>
                     <?php elseif ($field === 'calendar') : ?>
-                        <div class="jem-event-info-small jem-event-action jem-event-calendar-action" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
-                            <a href="<?php echo htmlspecialchars(jem_venueslist_responsive_venue_calendar_link($row), ENT_QUOTES, 'UTF-8'); ?>">
-                                <img src="<?php echo htmlspecialchars($calendarIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_CALENDAR'); ?>" class="jem-venuesmap-action-icon" />
-                            </a>
-                        </div>
+                        <th id="jem_calendar" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
                     <?php endif; ?>
                 <?php endforeach; ?>
-
                 <?php if ($showEditColumn) : ?>
-                    <div class="jem-event-info-small jem-event-action jem-event-edit-action" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
-                        <?php if ($canEditVenue) : ?>
-                            <a href="<?php echo htmlspecialchars(jem_venueslist_responsive_venue_edit_link($row), ENT_QUOTES, 'UTF-8'); ?>">
-                                <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
-                            </a>
-                        <?php endif; ?>
-                    </div>
+                    <th id="jem_edit" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('JGLOBAL_EDIT'); ?></th>
                 <?php endif; ?>
+            </tr>
+        </thead>
 
-                <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-                <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
-                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
-                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
-                <?php if (!empty($row->venue)) : ?>
-                    <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-                <?php endif;
-                
-                $microadress = '';
-                if (!empty($row->city)) {
-                    $microadress .= $this->escape($row->city);
-                }
-                if (!empty($microadress)) {
-                    $microadress .= ', ';
-                }
-                if (!empty($row->state)) {
-                    $microadress .= $this->escape($row->state);
-                }
-                if (!empty($row->country)) {
-                    if (!empty($microadress)) {
-                        $microadress .= ', ';
+        <tbody>
+            <?php if (empty($this->rows)) : ?>
+                <tr class="no_events"><td colspan="20"><?php echo Text::_('COM_JEM_NO_VENUES'); ?></td></tr>
+            <?php else : ?>
+                <?php $odd = 0; ?>
+                <?php foreach ($this->rows as $row) : ?>
+                    <?php
+                    // has user access
+                    $venueaccess = '';
+                    if (!$row->user_has_access_venue) {
+                        // show a closed lock icon
+                        $venueaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                     }
-                    $microadress .= $this->escape(jem_venueslist_country_name($row->country));
-                }
-                if (empty($microadress)) {
-                    $microadress .= '-';
-                }
-                ?>
-                <meta itemprop="address" content="<?php echo $microadress; ?>" />
-              </div>
-        </li>
+                    $canEditVenue = $user->can('edit', 'venue', (int) $row->id, (int) ($row->created_by ?? 0));
+                    ?>
+                    <tr class="venue_id<?php echo $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+                    <?php $odd = 1 - $odd; ?>
+                    <?php foreach ($displayOrder as $field) : ?>
+                        <?php if ($field === 'image') : ?>
+                            <td headers="jem_venue_image" style="text-align: center; vertical-align: middle;">
+                                <?php echo jem_venueslist_default_venue_image($row) ?: '-'; ?>
+                            </td>
+                        <?php elseif ($field === 'venue') : ?>
+                            <td headers="jem_location" style="text-align: left; vertical-align: middle;">
+                                <?php
+                                if ($this->jemsettings->showlinkvenue == 1) :
+                                    echo $row->id != 0 ? "<a href='".jem_venueslist_default_venue_page_link($row)."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>" : '-';
+                                else :
+                                    echo $row->id ? "<span itemprop='name'>".$this->escape($row->venue)."</span>" : '-';
+                                endif;
+                                echo JemOutput::publishstateicon($row);
+                                echo $venueaccess;
+                                ?>
+                                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
+                                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
+                                </div>
+                            </td>
+                        <?php elseif ($field === 'type') : ?>
+                            <td headers="jem_type" style="text-align: left; vertical-align: middle;">
+                                <?php echo jem_venueslist_default_type_badge($row) ?: '-'; ?>
+                            </td>
+                        <?php elseif ($field === 'city') : ?>
+                            <td headers="jem_city" style="text-align: left; vertical-align: middle;"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+                        <?php elseif ($field === 'state') : ?>
+                            <td headers="jem_state" style="text-align: left; vertical-align: middle;">
+                                <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+                            </td>
+                        <?php elseif ($field === 'country') : ?>
+                            <td headers="jem_country" style="text-align: left; vertical-align: middle;">
+                                <?php $countryName = jem_venueslist_country_name($row->country ?? ''); ?>
+                                <?php echo $countryName !== '' ? jem_venueslist_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?>
+                            </td>
+                        <?php elseif ($field === 'map') : ?>
+                            <td headers="jem_map" class="center" style="text-align: center; vertical-align: middle;">
+                                <?php echo jem_venueslist_default_venue_map($row) ?: '-'; ?>
+                            </td>
+                        <?php elseif ($field === 'calendar') : ?>
+                            <td headers="jem_calendar" class="center" style="text-align: center; vertical-align: middle;">
+                                <a href="<?php echo htmlspecialchars(jem_venueslist_default_venue_calendar_link($row), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
+                                    <img src="<?php echo htmlspecialchars($calendarIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_CALENDAR'); ?>" class="jem-venuesmap-action-icon" />
+                                </a>
+                            </td>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                        <?php if ($showEditColumn) : ?>
+                            <td headers="jem_edit" class="center" style="text-align: center; vertical-align: middle;">
+                                <?php if ($canEditVenue) : ?>
+                                    <a href="<?php echo htmlspecialchars(jem_venueslist_default_venue_edit_link($row), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                        <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
+                </tr>
+
             <?php endforeach; ?>
-  <?php endif; ?>
-</ul>
+        <?php endif; ?>
+        </tbody>
+    </table>
+    </div>
+    <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+    <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+    <input type="hidden" name="boxchecked" value="0" />
+    <input type="hidden" name="task" value="" />
+    <input type="hidden" name="option" value="com_jem" />
+    <?php echo HTMLHelper::_('form.token'); ?>
+</form>
 
 <div class="pagination">
     <?php echo $this->pagination->getPagesLinks(); ?>
 </div>
-
 
