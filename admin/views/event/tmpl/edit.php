@@ -45,6 +45,7 @@ $params = $params->toArray();
 
 $typeField = $this->form->getField('type_id');
 $contactField = $this->form->getField('contactid');
+$articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 
 ?>
 
@@ -177,6 +178,16 @@ $contactField = $this->form->getField('contactid');
         // Trigger the change event on page load to initialize the state
         $registraSelect.change();
         $minBookedUserInput.change();
+
+        var articleActionSelect = document.getElementById('jform_create_article');
+        var articleAutoInfo = document.getElementById('jem-article-auto-info');
+        if (articleActionSelect && articleAutoInfo) {
+            var updateArticleAutoInfo = function () {
+                articleAutoInfo.hidden = articleActionSelect.value !== '2';
+            };
+            articleActionSelect.addEventListener('change', updateArticleAutoInfo);
+            updateArticleAutoInfo();
+        }
     });
 </script>
 <form
@@ -260,9 +271,15 @@ $contactField = $this->form->getField('contactid');
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                     <?php if ($this->form->getField('article_id')) : ?>
                         <li><div class="label-form"><?php echo $this->form->renderfield('article_id'); ?></div></li>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('create_article'); ?></div></li>
+                        <li>
+                            <div class="label-form">
+                                <?php echo $this->form->renderfield('create_article'); ?>
+                                <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
+                                    <?php echo $articleAutoInfo; ?>
+                                </div>
+                            </div>
+                        </li>
                         <li><div class="label-form"><?php echo $this->form->renderfield('article_target_category_id'); ?></div></li>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('article_auto_info'); ?></div></li>
                     <?php endif; ?>
                 </ul>
             </fieldset>
@@ -677,3 +694,4 @@ $contactField = $this->form->getField('contactid');
 <script>
     output_recurrencescript();
 </script>
+
