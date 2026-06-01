@@ -185,6 +185,12 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
 </style>
 
 <div id="jem" class="jem_mytimeline jem-mytimeline-<?php echo $this->escape($timelineSide); ?><?php echo $this->pageclass_sfx; ?>">
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
     <?php if ($this->needLoginFirst) : ?>
         <?php
         $uri = Uri::getInstance();
@@ -313,7 +319,12 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
             </div>
         <?php endif; ?>
 
-        <div class="copyright">
+            <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
+    <div class="copyright">
             <?php echo JemOutput::footer(); ?>
         </div>
     <?php endif; ?>

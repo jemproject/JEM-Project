@@ -95,6 +95,13 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 
     <div class="clr"></div>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
+
     <?php if ($showControls): ?>
         <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
             <?php if (!empty($showCountryFilter)): ?>
@@ -203,6 +210,11 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 
 
     <!--footer-->  
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php
         echo JemOutput::footer(); ?>
