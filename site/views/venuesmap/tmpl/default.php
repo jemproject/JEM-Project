@@ -125,6 +125,12 @@ foreach (($this->venueslist ?? []) as $venue) {
 
     <div class="clr"></div>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
     <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
         <?php if ($showCountryFilter) : ?>
             <label for="jem-map-filter-country-<?= $map_id ?>" class="form-label mb-0">
@@ -259,7 +265,7 @@ foreach (($this->venueslist ?? []) as $venue) {
     <?php endif; ?>
 
     <!--footer-->
-        <?php if ($this->params->get('showfootertext')) : ?>
+    <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>
@@ -268,16 +274,6 @@ foreach (($this->venueslist ?? []) as $venue) {
         <?php
         echo JemOutput::footer(); ?>
     </div>
-
-    <?php
-    if ($this->params->get('showintrotext')) : ?>
-        <div class="description no_space floattext">
-            <?php
-            echo $this->params->get('introtext'); ?>
-        </div>
-    <?php
-    endif; ?>
-
 
     <div class="pagination">
         <?php
