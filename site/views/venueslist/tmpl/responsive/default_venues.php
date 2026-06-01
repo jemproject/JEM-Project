@@ -508,7 +508,7 @@ foreach ((array) $this->rows as $venueRow) {
                             <?php echo jem_venueslist_responsive_venue_image($row) ?: '-'; ?>
                         </div>
                     <?php elseif ($field === 'venue') : ?>
-                        <?php if (!empty($row->locid)) : ?>
+                        <?php if (!empty($row->id)) : ?>
                           <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                             <i class="fa fa-map-marker" aria-hidden="true"></i>
                                 <?php
@@ -585,10 +585,8 @@ foreach ((array) $this->rows as $venueRow) {
                 <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
                 <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
                 <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
-                <?php if (!empty($row->locid)) : ?>
+                <?php if (!empty($row->venue)) : ?>
                     <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-                <?php else : ?>
-                    <meta itemprop="name" content="None" />
                 <?php endif;
                 
                 $microadress = '';
