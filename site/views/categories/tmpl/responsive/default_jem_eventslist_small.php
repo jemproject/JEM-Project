@@ -156,7 +156,7 @@ if (empty($this->catrow->events)) { return; }
             <?php if ($this->jemsettings->showtitle == 1) : ?>
               <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <i class="fa fa-comment" aria-hidden="true"></i>
-                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo $this->escape($row->title); ?></a>
+                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->title); ?></span></a>
                 <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                 <?php if (!empty($row->featured)) :?>
                   <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
@@ -169,7 +169,7 @@ if (empty($this->catrow->events)) { return; }
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
+                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
                   <?php else : ?>
                     <span itemprop="name"><?php echo $this->escape($row->venue); ?></span>
                   <?php endif; ?>
