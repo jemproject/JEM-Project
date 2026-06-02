@@ -74,6 +74,8 @@
             <exclude name="*.orig" />
             <exclude name="*.log" />
             <exclude name="*.code-workspace" />
+            <exclude name="CODEX_PENDING_DIARY.md" />
+            <exclude name="update_pkg_*.xml" />
             <exclude name="pkg_*.zip" />
             <exclude name="build.*" />
             <exclude name="_old*/**" />

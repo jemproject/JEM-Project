@@ -7,7 +7,7 @@
     </layout>
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-<field name="showcity" type="radio"
+            <field name="showcity" type="radio"
                 default="1"
                 label="COM_JEM_VENUESLIST_SHOW_CITY"
                 description="COM_JEM_VENUESLIST_SHOW_CITY_DESC"
@@ -17,8 +17,18 @@
                 <option value="0">JNO</option>
             </field>
 
-            <field name="showcountry" type="radio"
+            <field name="showstate" type="radio"
                 default="1"
+                label="COM_JEM_VENUESLIST_SHOW_STATE"
+                description="COM_JEM_VENUESLIST_SHOW_STATE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showcountry" type="radio"
+                default="0"
                 label="COM_JEM_VENUESLIST_SHOW_COUNTRY"
                 description="COM_JEM_VENUESLIST_SHOW_COUNTRY_DESC"
                 class="btn-group btn-group-yesno"
