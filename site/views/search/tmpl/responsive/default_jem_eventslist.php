@@ -231,7 +231,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
           <div class="jem-event-details" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo $this->escape($row->title); ?></a>
+              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->title); ?></span></a>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
@@ -305,7 +305,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) : ?>
-                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
+                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
                   <?php else : ?>
                     <span itemprop="name"><?php echo $this->escape($row->venue); ?></span>
                   <?php endif; ?>
