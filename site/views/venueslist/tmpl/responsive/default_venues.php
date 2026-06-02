@@ -223,9 +223,14 @@ if (!function_exists('jem_venueslist_country_flag')) {
 }
 
 if (!function_exists('jem_venueslist_responsive_venue_page_link')) {
+    function jem_venueslist_responsive_venue_slug($row)
+    {
+        return $row->venueslug ?? ((int) $row->id . ':' . ($row->alias ?? ''));
+    }
+
     function jem_venueslist_responsive_venue_page_link($row)
     {
-        $slug = (int) $row->id . ':' . ($row->alias ?? '');
+        $slug = jem_venueslist_responsive_venue_slug($row);
 
         return Route::_('index.php?option=com_jem&view=venue&layout=default&id=' . $slug);
     }
@@ -234,7 +239,7 @@ if (!function_exists('jem_venueslist_responsive_venue_page_link')) {
 if (!function_exists('jem_venueslist_responsive_venue_calendar_link')) {
     function jem_venueslist_responsive_venue_calendar_link($row)
     {
-        $slug = (int) $row->id . ':' . ($row->alias ?? '');
+        $slug = jem_venueslist_responsive_venue_slug($row);
 
         return Route::_('index.php?option=com_jem&view=venue&layout=calendar&id=' . $slug);
     }
@@ -580,8 +585,8 @@ foreach ((array) $this->rows as $venueRow) {
                     </div>
                 <?php endif; ?>
 
-                <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
-                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute($row->venueslug)); ?>" />
+                <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute(jem_venueslist_responsive_venue_slug($row))); ?>" />
+                <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getVenueRoute(jem_venueslist_responsive_venue_slug($row))); ?>" />
                 <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
                     <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
                     <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
