@@ -86,8 +86,20 @@ class JemControllerAttachments extends AdminController
     {
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $cid = $app->input->get('cid', array(), 'array');
+        ArrayHelper::toInteger($cid);
+        $cid = array_values(array_filter($cid));
+
+        if (empty($cid)) {
+            $app->enqueueMessage(Text::_('COM_JEM_ATTACHMENTS_SELECT_ITEM_TO_EXPORT'), 'warning');
+            $this->setRedirect('index.php?option=com_jem&view=attachments');
+            return;
         }
 
         $model = $this->getModel('Attachments');
@@ -98,7 +110,7 @@ class JemControllerAttachments extends AdminController
         header('Pragma: no-cache');
         header('Expires: 0');
 
-        $model->exportCsv();
-        Factory::getApplication()->close();
+        $model->exportCsv($cid);
+        $app->close();
     }
 }

@@ -76,7 +76,8 @@ class JemViewAttachments extends JemAdminView
                 $childBar->standardButton('export')
                     ->text('COM_JEM_EXPORT')
                     ->task('attachments.export')
-                    ->icon('icon-download');
+                    ->icon('icon-download')
+                    ->listCheck(true);
             }
         } else {
             if ($canDelete) {
@@ -85,7 +86,7 @@ class JemViewAttachments extends JemAdminView
             }
 
             if ($canDo->get('core.manage')) {
-                ToolbarHelper::custom('attachments.export', 'download', 'download', 'COM_JEM_EXPORT', false);
+                ToolbarHelper::custom('attachments.export', 'download', 'download', 'COM_JEM_EXPORT', true);
             }
         }
 
