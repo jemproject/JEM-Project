@@ -86,7 +86,8 @@ class JemViewVenueslist extends JemView
         // search filter
         $filters = array();
         $showCity = (int) $params->get('showcity', 1);
-        $showCountry = (int) $params->get('showcountry', 1);
+        $showState = (int) $params->get('showstate', 1);
+        $showCountry = (int) $params->get('showcountry', 0);
 
         // Workaround issue #557: Show venue name always.
         $jemsettings->showlocate = 1;
@@ -100,7 +101,7 @@ class JemViewVenueslist extends JemView
         if ($showCountry) {
             $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
         }
-        if ($params->get('showstate') && $showCity) {
+        if ($showState) {
             $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
         }
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter);

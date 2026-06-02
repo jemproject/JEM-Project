@@ -379,11 +379,11 @@ if (!function_exists('jem_venueslist_responsive_display_order')) {
             $displayOrder = array_values(array_diff($displayOrder, array('state')));
         }
 
-        if (!(int) $params->get('showcountry', 1)) {
+        if (!(int) $params->get('showcountry', 0)) {
             $displayOrder = array_values(array_diff($displayOrder, array('country')));
         }
 
-        if (!(int) $params->get('showstate', 0)) {
+        if (!(int) $params->get('showstate', 1)) {
             $displayOrder = array_values(array_diff($displayOrder, array('state')));
         }
 
@@ -459,7 +459,7 @@ foreach ((array) $this->rows as $venueRow) {
             <?php elseif ($field === 'city') : ?>
                 <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php elseif ($field === 'state') : ?>
-                <div id="jem_state" class="sectiontableheader"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+                <div id="jem_state" class="sectiontableheader"><i class="fa fa-map-signs" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUESLIST_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php elseif ($field === 'country') : ?>
                 <div id="jem_country" class="sectiontableheader"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php elseif ($field === 'map') : ?>
@@ -547,7 +547,7 @@ foreach ((array) $this->rows as $venueRow) {
                         <?php endif; ?>
                     <?php elseif ($field === 'state') : ?>
                         <?php if (!empty($row->state)) : ?>
-                        <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
+                        <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_VENUESLIST_TABLE_STATE').': '.$this->escape($row->state); ?>">
                             <?php echo $this->escape($row->state); ?>
                         </div>
                         <?php else : ?>
