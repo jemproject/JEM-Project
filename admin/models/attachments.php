@@ -124,7 +124,7 @@ class JemModelAttachments extends ListModel
         }
 
         $frontend = $this->getState('filter_frontend');
-        if ($frontend !== '') {
+        if (in_array((string) $frontend, array('0', '1'), true)) {
             $query->where($db->quoteName('a.frontend') . ' = ' . (int) $frontend);
         }
 
