@@ -146,10 +146,16 @@ class JemModelAttachments extends ListModel
         return $this->enrichItems($items);
     }
 
-    public function exportCsv()
+    public function exportCsv($cid = array())
     {
         $db = $this->getDatabase();
         $query = $this->getListQuery();
+        $cid = array_values(array_filter(array_map('intval', (array) $cid)));
+
+        if (!empty($cid)) {
+            $query->where($db->quoteName('a.id') . ' IN (' . implode(',', $cid) . ')');
+        }
+
         $db->setQuery($query);
         $items = $this->enrichItems($db->loadObjectList() ?: array());
 
