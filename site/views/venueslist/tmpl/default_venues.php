@@ -377,11 +377,11 @@ foreach ((array) $this->rows as $venueRow) {
             <tr>
                 <?php foreach ($displayOrder as $field) : ?>
                     <?php if ($field === 'image') : ?>
-                        <th id="jem_venue_image" class="sectiontableheader" style="text-align: center;"><?php echo Text::_('COM_JEM_IMAGE'); ?></th>
+                        <th id="jem_venue_image" class="sectiontableheader" style="text-align: center;"><i class="fa fa-image" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_IMAGE'); ?></th>
                     <?php elseif ($field === 'venue') : ?>
                         <th id="jem_location" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'type') : ?>
-                        <th id="jem_type" class="sectiontableheader" style="text-align: left;"><?php echo Text::_('COM_JEM_TYPE'); ?></th>
+                        <th id="jem_type" class="sectiontableheader" style="text-align: left;"><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TYPE'); ?></th>
                     <?php elseif ($field === 'city') : ?>
                         <th id="jem_city" class="sectiontableheader" style="text-align: left;"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'state') : ?>
@@ -389,13 +389,13 @@ foreach ((array) $this->rows as $venueRow) {
                     <?php elseif ($field === 'country') : ?>
                         <th id="jem_country" class="sectiontableheader" style="text-align: left;"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'map') : ?>
-                        <th id="jem_map" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('COM_JEM_MAP'); ?></th>
+                        <th id="jem_map" class="sectiontableheader center" style="text-align: center;"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_MAP'); ?></th>
                     <?php elseif ($field === 'calendar') : ?>
-                        <th id="jem_calendar" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
+                        <th id="jem_calendar" class="sectiontableheader center" style="text-align: center;"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
                     <?php endif; ?>
                 <?php endforeach; ?>
                 <?php if ($showEditColumn) : ?>
-                    <th id="jem_edit" class="sectiontableheader center" style="text-align: center;"><?php echo Text::_('JGLOBAL_EDIT'); ?></th>
+                    <th id="jem_edit" class="sectiontableheader center" style="text-align: center;"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<?php echo Text::_('JGLOBAL_EDIT'); ?></th>
                 <?php endif; ?>
             </tr>
         </thead>

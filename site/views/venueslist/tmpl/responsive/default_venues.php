@@ -451,11 +451,11 @@ foreach ((array) $this->rows as $venueRow) {
     <div class="jem-list-row jem-small-list">
         <?php foreach ($displayOrder as $field) : ?>
             <?php if ($field === 'image') : ?>
-                <div id="jem_venue_image" class="sectiontableheader"><?php echo Text::_('COM_JEM_IMAGE'); ?></div>
+                <div id="jem_venue_image" class="sectiontableheader"><i class="fa fa-image" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_IMAGE'); ?></div>
             <?php elseif ($field === 'venue') : ?>
                 <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'a.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php elseif ($field === 'type') : ?>
-                <div id="jem_type" class="sectiontableheader"><?php echo Text::_('COM_JEM_TYPE'); ?></div>
+                <div id="jem_type" class="sectiontableheader"><i class="fa fa-tags" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TYPE'); ?></div>
             <?php elseif ($field === 'city') : ?>
                 <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php elseif ($field === 'state') : ?>
@@ -463,13 +463,13 @@ foreach ((array) $this->rows as $venueRow) {
             <?php elseif ($field === 'country') : ?>
                 <div id="jem_country" class="sectiontableheader"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php elseif ($field === 'map') : ?>
-                <div id="jem_map" class="sectiontableheader jem-event-action jem-event-map-action"><?php echo Text::_('COM_JEM_MAP'); ?></div>
+                <div id="jem_map" class="sectiontableheader jem-event-action jem-event-map-action"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_MAP'); ?></div>
             <?php elseif ($field === 'calendar') : ?>
-                <div id="jem_calendar" class="sectiontableheader jem-event-action jem-event-calendar-action"><?php echo Text::_('COM_JEM_CALENDAR'); ?></div>
+                <div id="jem_calendar" class="sectiontableheader jem-event-action jem-event-calendar-action"><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_CALENDAR'); ?></div>
             <?php endif; ?>
         <?php endforeach; ?>
         <?php if ($showEditColumn) : ?>
-            <div id="jem_edit" class="sectiontableheader jem-event-action jem-event-edit-action"><?php echo Text::_('JGLOBAL_EDIT'); ?></div>
+            <div id="jem_edit" class="sectiontableheader jem-event-action jem-event-edit-action"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<?php echo Text::_('JGLOBAL_EDIT'); ?></div>
         <?php endif; ?>
     </div>
 </div>
