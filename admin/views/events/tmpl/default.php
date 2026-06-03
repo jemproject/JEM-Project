@@ -61,57 +61,45 @@ $ticketAvailabilityOptions = array(
 <form action="<?php echo Route::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
-            <div class="row">
-                <div class="col-md-1">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="input-group">
-                                <?php echo $this->lists['filter']; ?>
-                            </div>
-                        </div>
+            <div class="jem-admin-filter-bar">
+                <div class="jem-admin-filter-item">
+                    <?php echo $this->lists['filter']; ?>
+                </div>
+                <div class="jem-admin-filter-search">
+                    <div class="input-group">
+                        <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
+
+                        <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
+                            <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.filter_state.value='';document.getElementById('filter_category_id').value='0';document.getElementById('filter_event_type_id').value='0';document.getElementById('filter_venue_id').value='0';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                     </div>
                 </div>
-                <div class="col-md-10">
-                    <div class="row mb-12">
-                        <div class="col-md-3">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
-
-                                <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-                                    <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.filter_state.value='';document.getElementById('filter_category_id').value='0';document.getElementById('filter_event_type_id').value='0';document.getElementById('filter_venue_id').value='0';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <?php echo HTMLHelper::_('calendar', $this->state->get('filter_begin'), 'filter_begin', 'filter_begin', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_STARTDATE')));?>
-                        </div>
-                        <div class="col-md-2">
-
-                            <?php echo HTMLHelper::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_ENDDATE') ));?>
-                        </div>
-                        <div class="col-md-1 wauto-minwmax">
-                            <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
-                                <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
-                                <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
-                            </select>
-                        </div>
-                        <div class="col-md-2 wauto-minwmax">
-                            <select name="filter_access" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
-                                <option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
-                                <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
-                            </select>
-                        </div>
+                <div class="jem-admin-filter-date-range">
+                    <div class="jem-admin-filter-calendar">
+                        <?php echo HTMLHelper::_('calendar', $this->state->get('filter_begin'), 'filter_begin', 'filter_begin', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_STARTDATE')));?>
+                    </div>
+                    <div class="jem-admin-filter-calendar">
+                        <?php echo HTMLHelper::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_ENDDATE') ));?>
                     </div>
                 </div>
-                <div class="col-md-1">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class=" float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                        </div>
-                    </div>
+                <div class="jem-admin-filter-item">
+                    <?php echo $this->lists['event_type_filter']; ?>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
+                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_access" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
+                        <option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-limit">
+                    <?php echo $this->pagination->getLimitBox(); ?>
                 </div>
             </div>
         </fieldset>
@@ -337,7 +325,6 @@ $ticketAvailabilityOptions = array(
         <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
         <input type="hidden" name="filter_category_id" id="filter_category_id" value="<?php echo (int) $this->state->get('filter_category_id'); ?>" />
-        <input type="hidden" name="filter_event_type_id" id="filter_event_type_id" value="<?php echo (int) $this->state->get('filter_event_type_id'); ?>" />
         <input type="hidden" name="filter_venue_id" id="filter_venue_id" value="<?php echo (int) $this->state->get('filter_venue_id'); ?>" />
 
         <?php echo HTMLHelper::_('form.token'); ?>

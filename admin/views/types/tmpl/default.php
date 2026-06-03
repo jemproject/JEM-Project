@@ -79,44 +79,44 @@ $renderEventStateCounts = static function ($counts, $typeId) {
 
         <!-- Filter bar -->
         <fieldset id="filter-bar" class="mb-3">
-            <div class="row">
-                <div class="col-md-11">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control"
-                                       placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>"
-                                       value="<?php echo $this->escape($this->state->get('filter_search')); ?>"
-                                       onchange="document.adminForm.submit();" />
-                                <button type="submit" class="btn btn-primary">
-                                    <span class="icon-search" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary"
-                                        onclick="document.getElementById('filter_search').value='';this.form.submit();">
-                                    <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <select name="filter_state" class="form-select" onchange="this.form.submit()">
-                                <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                                <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true); ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <select name="filter_entity" class="form-select" onchange="this.form.submit()">
-                                <option value="0"><?php echo Text::_('COM_JEM_TYPE_FILTER_ENTITY'); ?></option>
-                                <option value="1" <?php echo $this->state->get('filter_entity') == 1 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_EVENT'); ?></option>
-                                <option value="2" <?php echo $this->state->get('filter_entity') == 2 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_CATEGORY'); ?></option>
-                                <option value="3" <?php echo $this->state->get('filter_entity') == 3 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_VENUE'); ?></option>
-                            </select>
-                        </div>
+            <div class="jem-admin-filter-bar">
+                <div class="jem-admin-filter-search">
+                    <div class="input-group">
+                        <input type="text" name="filter_search" id="filter_search" class="form-control"
+                               placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>"
+                               value="<?php echo $this->escape($this->state->get('filter_search')); ?>"
+                               onchange="document.adminForm.submit();" />
+                        <button type="submit" class="btn btn-primary">
+                            <span class="icon-search" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary"
+                                onclick="document.getElementById('filter_search').value='';this.form.filter_access.value='0';this.form.submit();">
+                            <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+                        </button>
                     </div>
                 </div>
-                <div class="col-md-1">
-                    <div class="float-end">
-                        <?php echo $this->pagination->getLimitBox(); ?>
-                    </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_state" class="form-select" onchange="this.form.submit()">
+                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true); ?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_entity" class="form-select" onchange="this.form.submit()">
+                        <option value="0"><?php echo Text::_('COM_JEM_TYPE_FILTER_ENTITY'); ?></option>
+                        <option value="1" <?php echo $this->state->get('filter_entity') == 1 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_EVENT'); ?></option>
+                        <option value="2" <?php echo $this->state->get('filter_entity') == 2 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_CATEGORY'); ?></option>
+                        <option value="3" <?php echo $this->state->get('filter_entity') == 3 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_VENUE'); ?></option>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_access" class="form-select" onchange="this.form.submit()">
+                        <option value="0"><?php echo Text::_('JOPTION_SELECT_ACCESS'); ?></option>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access')); ?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-limit">
+                    <?php echo $this->pagination->getLimitBox(); ?>
                 </div>
             </div>
         </fieldset>

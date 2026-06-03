@@ -88,6 +88,9 @@ class JemModelCategories extends ListModel
         $published = $this->getUserStateFromRequest($context.'.filter.published', 'filter_published', '');
         $this->setState('filter.published', $published);
 
+        $categoryTypeId = $this->getUserStateFromRequest($context.'.filter.category_type_id', 'filter_category_type_id', 0, 'int');
+        $this->setState('filter.category_type_id', $categoryTypeId);
+
         $language = $this->getUserStateFromRequest($context.'.filter.language', 'filter_language', '');
         $this->setState('filter.language', $language);
 
@@ -112,6 +115,7 @@ class JemModelCategories extends ListModel
         $id .= ':'.$this->getState('filter.search');
         $id .= ':'.$this->getState('filter.extension');
         $id .= ':'.$this->getState('filter.published');
+        $id .= ':'.$this->getState('filter.category_type_id');
         $id .= ':'.$this->getState('filter.language');
 
         return parent::getStoreId($id);
@@ -135,6 +139,7 @@ class JemModelCategories extends ListModel
                 ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id' .
                 ', a.path, a.parent_id, a.level, a.lft, a.rgt' .
                 ', a.article_category_id, a.article_create_mode' .
+                ', a.type_id' .
                 ', a.language'
             )
         );
@@ -188,6 +193,12 @@ class JemModelCategories extends ListModel
         }
         elseif ($published === '') {
             $query->where('(a.published IN (0, 1))');
+        }
+
+        // Filter by category type.
+        $categoryTypeId = (int) $this->getState('filter.category_type_id');
+        if ($categoryTypeId > 0) {
+            $query->where('a.type_id = ' . $categoryTypeId);
         }
 
         $query->where('(a.alias NOT LIKE "root")');

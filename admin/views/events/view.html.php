@@ -77,6 +77,16 @@ class JemViewEvents extends JemAdminView
         $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
         $filters[] = HTMLHelper::_('select.option', '7', Text::_('JALL'));
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select m-0','onChange'=>"this.form.submit()"), 'value', 'text', $this->state->get('filter_type'));
+        $lists['event_type_filter'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getTypeFilterOptions(1, 'COM_JEM_TYPE_FILTER_EVENT'),
+            'filter_event_type_id',
+            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
+            'value',
+            'text',
+            (int) $this->state->get('filter_event_type_id'),
+            'filter_event_type_id'
+        );
 
         //assign data to template
         $this->lists        = $lists;
@@ -88,6 +98,30 @@ class JemViewEvents extends JemAdminView
         $this->addToolbar();
 
         parent::display($tpl);
+    }
+
+    /**
+     * Build type filter options for the requested JEM entity.
+     */
+    protected function getTypeFilterOptions($entity, $emptyText)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = ' . (int) $entity)
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        $db->setQuery($query);
+        $types = $db->loadObjectList() ?: array();
+        $options = array(HTMLHelper::_('select.option', '0', Text::_($emptyText)));
+
+        foreach ($types as $type) {
+            $options[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
+        }
+
+        return $options;
     }
 
 

@@ -61,6 +61,12 @@ class JemModelVenues extends ListModel
         $filter_type = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter_type', $filter_type);
 
+        $venueTypeId = $this->getUserStateFromRequest($this->context.'.filter_venue_type_id', 'filter_venue_type_id', 0, 'int');
+        $this->setState('filter_venue_type_id', $venueTypeId);
+
+        $access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter.access', $access);
+
         $params = ComponentHelper::getParams('com_jem');
         $this->setState('params', $params);
 
@@ -81,8 +87,10 @@ class JemModelVenues extends ListModel
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter_search');
-        $id .= ':' . $this->getState('filter_published');
+        $id .= ':' . $this->getState('filter_state');
         $id .= ':' . $this->getState('filter_type');
+        $id .= ':' . $this->getState('filter_venue_type_id');
+        $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
     }
@@ -106,7 +114,7 @@ class JemModelVenues extends ListModel
                         .'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
                         .'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
                         .'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
-                        .'a.ordering, a.publish_up, a.publish_down, a.access'
+                        .'a.ordering, a.publish_up, a.publish_down, a.access, a.type_id'
                 )
         );
         $query->from($db->quoteName('#__jem_venues').' AS a');
@@ -144,6 +152,17 @@ class JemModelVenues extends ListModel
             $query->where('a.published = '.(int) $published);
         } elseif ($published === '') {
             $query->where('(a.published IN (0, 1))');
+        }
+
+        // Filter by venue type.
+        $venueTypeId = (int) $this->getState('filter_venue_type_id');
+        if ($venueTypeId > 0) {
+            $query->where('a.type_id = ' . $venueTypeId);
+        }
+
+        // Filter by access level.
+        if ($access = $this->getState('filter.access')) {
+            $query->where('a.access = ' . (int) $access);
         }
 
         // Filter by search in title

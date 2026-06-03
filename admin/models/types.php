@@ -40,6 +40,9 @@ class JemModelTypes extends ListModel
         $entity = $this->getUserStateFromRequest($this->context . '.filter_entity', 'filter_entity', 0, 'int');
         $this->setState('filter_entity', $entity);
 
+        $access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter.access', $access);
+
         parent::populateState('a.entity, a.ordering', 'asc');
     }
 
@@ -48,6 +51,7 @@ class JemModelTypes extends ListModel
         $id .= ':' . $this->getState('filter_search');
         $id .= ':' . $this->getState('filter_state');
         $id .= ':' . $this->getState('filter_entity');
+        $id .= ':' . $this->getState('filter.access');
         return parent::getStoreId($id);
     }
 
@@ -75,6 +79,10 @@ class JemModelTypes extends ListModel
         $entity = $this->getState('filter_entity');
         if ($entity > 0) {
             $query->where('a.entity = ' . (int) $entity);
+        }
+
+        if ($access = $this->getState('filter.access')) {
+            $query->where('a.access = ' . (int) $access);
         }
 
         $orderCol  = $this->state->get('list.ordering', 'a.entity, a.ordering');
