@@ -83,4 +83,82 @@ class JemModelTypes extends ListModel
 
         return $query;
     }
+
+    public function getItems()
+    {
+        $items = parent::getItems();
+        $counts = $this->getTypeEventStateCounts($items);
+
+        foreach ($items as $item) {
+            if ((int) $item->entity !== 1) {
+                $item->event_state_counts = null;
+                continue;
+            }
+
+            $item->event_state_counts = $counts[(int) $item->id] ?? (object) array(
+                'published' => 0,
+                'unpublished' => 0,
+                'archived' => 0,
+                'trashed' => 0,
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * Count events by state for the listed event types.
+     *
+     * @param  array  $items  Type rows.
+     *
+     * @return array
+     */
+    private function getTypeEventStateCounts($items)
+    {
+        if (empty($items)) {
+            return array();
+        }
+
+        $ids = array();
+
+        foreach ($items as $item) {
+            if ((int) $item->entity === 1) {
+                $ids[] = (int) $item->id;
+            }
+        }
+
+        $ids = array_values(array_unique(array_filter($ids)));
+
+        if (empty($ids)) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('type_id'),
+                'SUM(CASE WHEN ' . $db->quoteName('published') . ' = 1 THEN 1 ELSE 0 END) AS ' . $db->quoteName('published'),
+                'SUM(CASE WHEN ' . $db->quoteName('published') . ' = 0 THEN 1 ELSE 0 END) AS ' . $db->quoteName('unpublished'),
+                'SUM(CASE WHEN ' . $db->quoteName('published') . ' = 2 THEN 1 ELSE 0 END) AS ' . $db->quoteName('archived'),
+                'SUM(CASE WHEN ' . $db->quoteName('published') . ' = -2 THEN 1 ELSE 0 END) AS ' . $db->quoteName('trashed'),
+            ))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('type_id') . ' IN (' . implode(',', $ids) . ')')
+            ->group($db->quoteName('type_id'));
+
+        $db->setQuery($query);
+        $rows = $db->loadObjectList('type_id');
+        $counts = array();
+
+        foreach ($rows as $typeId => $row) {
+            $counts[(int) $typeId] = (object) array(
+                'published' => (int) $row->published,
+                'unpublished' => (int) $row->unpublished,
+                'archived' => (int) $row->archived,
+                'trashed' => (int) $row->trashed,
+            );
+        }
+
+        return $counts;
+    }
 }

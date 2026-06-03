@@ -23,6 +23,56 @@ $entityLabels = array(
     2 => Text::_('COM_JEM_TYPE_ENTITY_CATEGORY'),
     3 => Text::_('COM_JEM_TYPE_ENTITY_VENUE'),
 );
+
+$renderEventStateHeader = static function () {
+    $states = array(
+        array('icon-publish', Text::_('JPUBLISHED')),
+        array('icon-unpublish', Text::_('JUNPUBLISHED')),
+        array('icon-archive', Text::_('JARCHIVED')),
+        array('icon-trash', Text::_('JTRASHED')),
+    );
+
+    $html = array();
+
+    foreach ($states as $state) {
+        [$icon, $label] = $state;
+        $html[] = '<span class="d-inline-block text-center me-2" style="min-width:2rem" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . '<span class="' . $icon . '" aria-hidden="true"></span>'
+            . '<span class="visually-hidden">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</span>'
+            . '</span>';
+    }
+
+    return implode('', $html);
+};
+
+$renderEventStateCounts = static function ($counts, $typeId) {
+    if ($counts === null) {
+        return '<span class="text-muted">-</span>';
+    }
+
+    $states = array(
+        'published' => array(1, Text::_('JPUBLISHED'), (int) $counts->published),
+        'unpublished' => array(0, Text::_('JUNPUBLISHED'), (int) $counts->unpublished),
+        'archived' => array(2, Text::_('JARCHIVED'), (int) $counts->archived),
+        'trashed' => array(-2, Text::_('JTRASHED'), (int) $counts->trashed),
+    );
+
+    $html = array();
+
+    foreach ($states as $state) {
+        [$published, $label, $value] = $state;
+        $url = Route::_(
+            'index.php?option=com_jem&view=events&filter_state=' . (int) $published
+            . '&filter_event_type_id=' . (int) $typeId
+            . '&filter_category_id=0&filter_search=&filter_type=0&filter_begin=&filter_end=&filter_access=0'
+        );
+        $html[] = '<a class="badge bg-light text-dark border me-1" style="min-width:2rem" href="' . $url . '" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . $value
+            . '</a>';
+    }
+
+    return implode('', $html);
+};
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=types'); ?>" method="post" name="adminForm" id="adminForm">
@@ -95,6 +145,10 @@ $entityLabels = array(
                     <th style="width:10%">
                         <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
                     </th>
+                    <th style="width:15%" class="center">
+                        <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
+                        <?php echo $renderEventStateHeader(); ?>
+                    </th>
                     <th style="width:8%" class="center">
                         <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
@@ -139,6 +193,9 @@ $entityLabels = array(
                         <?php echo $this->escape($item->access_level); ?>
                     </td>
                     <td class="center">
+                        <?php echo $renderEventStateCounts($item->event_state_counts, $item->id); ?>
+                    </td>
+                    <td class="center">
                         <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'types.', $canEditState); ?>
                     </td>
                     <td class="center">
@@ -147,7 +204,7 @@ $entityLabels = array(
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($this->items)) : ?>
-                <tr><td colspan="8" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
+                <tr><td colspan="9" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
             <?php endif; ?>
             </tbody>
         </table>

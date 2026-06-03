@@ -22,6 +22,46 @@ $canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder    = $listOrder=='a.ordering';
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
+
+$eventStateColumns = array(
+    'event_published' => array(1, 'icon-publish', Text::_('JPUBLISHED')),
+    'event_unpublished' => array(0, 'icon-unpublish', Text::_('JUNPUBLISHED')),
+    'event_archived' => array(2, 'icon-archive', Text::_('JARCHIVED')),
+    'event_trashed' => array(-2, 'icon-trash', Text::_('JTRASHED')),
+);
+
+$renderEventStateHeader = static function ($columns) {
+    $html = array();
+
+    foreach ($columns as $state) {
+        [$published, $icon, $label] = $state;
+        $html[] = '<span class="d-inline-block text-center me-2" style="min-width:2rem" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . '<span class="' . $icon . '" aria-hidden="true"></span>'
+            . '<span class="visually-hidden">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</span>'
+            . '</span>';
+    }
+
+    return implode('', $html);
+};
+
+$renderEventStateCounts = static function ($item) use ($eventStateColumns) {
+    $html = array();
+
+    foreach ($eventStateColumns as $property => $state) {
+        [$published, $icon, $label] = $state;
+        $value = (int) ($item->{$property} ?? 0);
+        $url = Route::_(
+            'index.php?option=com_jem&view=events&filter_state=' . (int) $published
+            . '&filter_venue_id=' . (int) $item->id
+            . '&filter_category_id=0&filter_event_type_id=0&filter_search=&filter_type=0&filter_begin=&filter_end=&filter_access=0'
+        );
+        $html[] = '<a class="badge bg-light text-dark border me-1" style="min-width:2rem" href="' . $url . '" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . $value
+            . '</a>';
+    }
+
+    return implode('', $html);
+};
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
@@ -97,8 +137,9 @@ $wa->useScript('table.columns');
                 <th>
                     <?php echo Text::_('COM_JEM_CREATION'); ?>
                 </th>
-                <th style="width:5%" class="center" nowrap="nowrap">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENTS', 'assignedevents', $listDirn, $listOrder ); ?>
+                <th style="width:15%" class="center" nowrap="nowrap">
+                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
+                    <?php echo $renderEventStateHeader($eventStateColumns); ?>
                 </th>
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder ); ?>
@@ -187,7 +228,7 @@ $wa->useScript('table.columns');
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
                         <a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$item->created_by; ?>"><?php echo $item->author; ?></a></span>
                     </td>
-                    <td class="center"><?php echo $item->assignedevents; ?></td>
+                    <td class="center"><?php echo $renderEventStateCounts($item); ?></td>
                     <td class="order">
                         <?php if ($canChange) : ?>
                             <?php $disabled = $saveOrder ?  '' : 'disabled="disabled"'; ?>

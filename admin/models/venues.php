@@ -123,8 +123,14 @@ class JemModelVenues extends ListModel
         $query->select('u.email, u.name AS author');
         $query->join('LEFT', '#__users AS u ON u.id = a.created_by');
 
-        // Join over the assigned events
-        $query->select('COUNT(e.locid) AS assignedevents');
+        // Join over the assigned events.
+        $query->select(array(
+            'COUNT(e.locid) AS assignedevents',
+            'SUM(CASE WHEN e.published = 1 THEN 1 ELSE 0 END) AS event_published',
+            'SUM(CASE WHEN e.published = 0 THEN 1 ELSE 0 END) AS event_unpublished',
+            'SUM(CASE WHEN e.published = 2 THEN 1 ELSE 0 END) AS event_archived',
+            'SUM(CASE WHEN e.published = -2 THEN 1 ELSE 0 END) AS event_trashed',
+        ));
         $query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
         $query->group('a.id');
 

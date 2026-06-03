@@ -26,6 +26,46 @@ $articleCreateModes = array(
     1 => Text::_('COM_JEM_ARTICLE_MODE_AUTO'),
     2 => Text::_('COM_JEM_ARTICLE_MODE_MANUAL'),
 );
+
+$eventStateColumns = array(
+    'published' => array(1, 'icon-publish', Text::_('JPUBLISHED')),
+    'unpublished' => array(0, 'icon-unpublish', Text::_('JUNPUBLISHED')),
+    'archived' => array(2, 'icon-archive', Text::_('JARCHIVED')),
+    'trashed' => array(-2, 'icon-trash', Text::_('JTRASHED')),
+);
+
+$renderEventStateHeader = static function ($columns) {
+    $html = array();
+
+    foreach ($columns as $state) {
+        [$published, $icon, $label] = $state;
+        $html[] = '<span class="d-inline-block text-center me-2" style="min-width:2rem" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . '<span class="' . $icon . '" aria-hidden="true"></span>'
+            . '<span class="visually-hidden">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</span>'
+            . '</span>';
+    }
+
+    return implode('', $html);
+};
+
+$renderEventStateCounts = static function ($counts, $categoryId) use ($eventStateColumns) {
+    $html = array();
+
+    foreach ($eventStateColumns as $property => $state) {
+        [$published, $icon, $label] = $state;
+        $value = (int) ($counts->{$property} ?? 0);
+        $url = Route::_(
+            'index.php?option=com_jem&view=events&filter_state=' . (int) $published
+            . '&filter_category_id=' . (int) $categoryId
+            . '&filter_event_type_id=0&filter_search=&filter_type=0&filter_begin=&filter_end=&filter_access=0'
+        );
+        $html[] = '<a class="badge bg-light text-dark border me-1" style="min-width:2rem" href="' . $url . '" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '">'
+            . $value
+            . '</a>';
+    }
+
+    return implode('', $html);
+};
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
@@ -44,13 +84,13 @@ $articleCreateModes = array(
                                 <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <select name="filter_level" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
                                 <option value=""><?php echo Text::_('JOPTION_SELECT_MAX_LEVELS'); ?></option>
                                 <?php echo HTMLHelper::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level')); ?>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <select name="filter_published" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
                                 <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
                                 <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true); ?>
@@ -92,7 +132,10 @@ $articleCreateModes = array(
                 <th style="width:10%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CATEGORY_FIELD_ARTICLE_MODE_LABEL', 'a.article_create_mode', $listDirn, $listOrder); ?>
                 </th>
-                <th style="width:1%" class="center" nowrap="nowrap"><?php echo Text::_('COM_JEM_EVENTS'); ?></th>
+                <th style="width:15%" class="center" nowrap="nowrap">
+                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
+                    <?php echo $renderEventStateHeader($eventStateColumns); ?>
+                </th>
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                 </th>
@@ -188,7 +231,7 @@ $articleCreateModes = array(
                         <?php echo $this->escape($articleCreateModes[(int) $item->article_create_mode] ?? $articleCreateModes[0]); ?>
                     </td>
                     <td class="center">
-                        <?php echo $item->assignedevents; ?>
+                        <?php echo $renderEventStateCounts($item->event_state_counts, $item->id); ?>
                     </td>
                     <td class="center">
                         <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'categories.', $canChange); ?>
