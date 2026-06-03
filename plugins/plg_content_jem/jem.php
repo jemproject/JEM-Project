@@ -34,6 +34,16 @@ class plgContentJem extends CMSPlugin
             return;
         }
 
+        if (!class_exists('JemHelper')) {
+            $helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
+
+            if (!is_file($helper)) {
+                return;
+            }
+
+            require_once $helper;
+        }
+
         // event maybe first of recurrence set -> dissolve complete set
         JemHelper::dissolve_recurrence($data->id);
 

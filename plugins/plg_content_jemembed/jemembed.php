@@ -21,10 +21,18 @@ use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\User;
 
+$helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
+$output = JPATH_SITE . '/components/com_jem/classes/output.class.php';
+$route  = JPATH_SITE . '/components/com_jem/helpers/route.php';
+
+if (!is_file($helper) || !is_file($output) || !is_file($route)) {
+    return;
+}
+
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
-require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
-require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
-require_once JPATH_SITE.'/components/com_jem/helpers/route.php';
+require_once $helper;
+require_once $output;
+require_once $route;
 
 /**
  * JEM List Events Plugin - JSON API Version
