@@ -18,7 +18,18 @@
     <property name="cfg.siteFilesDir" location="${cfg.comDir}/site" />
     <property name="cfg.version" value="${pkg.version}.${build.number}" />
 
-    <target name="build" depends="clean, init, build_package, info" />
+    <patternset id="windows.junk.excludes">
+        <exclude name="Desktop.ini" />
+        <exclude name="desktop.ini" />
+        <exclude name="**/Desktop.ini" />
+        <exclude name="**/desktop.ini" />
+        <exclude name="Thumbs.db" />
+        <exclude name="thumbs.db" />
+        <exclude name="**/Thumbs.db" />
+        <exclude name="**/thumbs.db" />
+    </patternset>
+
+    <target name="build" depends="clean, init, build_package, validate_package, info" />
 
     <target name="init" description="creates nessecary directory to build with">
         <mkdir dir="${cfg.buildVersionDir}" />
@@ -31,13 +42,13 @@
     <target name="build_package" depends="build_plugins, build_modules, build_component" description="packages the final package file">
         <zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip">
             <zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
-            <zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages">
-                <exclude name="plg_quickicon_${cfg.name}.zip" />
-            </zipfileset>
+            <zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages" />
             <zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages">
                 <exclude name="mod_${cfg.name}_calajax.zip" />
             </zipfileset>
-            <zipfileset dir="package" />
+            <zipfileset dir="package">
+                <patternset refid="windows.junk.excludes" />
+            </zipfileset>
         </zip>
     </target>
 
@@ -59,8 +70,14 @@
             <exclude name="*.crt" />
             <exclude name="*.pfx" />
             <exclude name="*.bak" />
+            <exclude name="**/*.bak" />
+            <exclude name="**/*.bak-*" />
             <exclude name="*.orig" />
+            <exclude name="**/*.orig" />
             <exclude name="*.log" />
+            <exclude name="**/*.log" />
+            <exclude name="**/*.tmp" />
+            <exclude name="**/*~" />
             <exclude name="build.*" />
             <exclude name="3rd/**" />
             <exclude name="composer.json" />
@@ -71,31 +88,116 @@
             <exclude name="phpunit.xml.dist" />
             <exclude name="plugins/**" />
             <exclude name="tests/**" />
+            <exclude name="tools/**" />
             <exclude name="vendor/**" />
+            <patternset refid="windows.junk.excludes" />
         </zip>
+    </target>
+
+    <target name="validate_package" description="validates the generated package structure">
+        <property name="cfg.validateDir" location="${cfg.buildVersionDir}/validate" />
+
+        <delete dir="${cfg.validateDir}" />
+        <mkdir dir="${cfg.validateDir}/package" />
+
+        <unzip src="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip" dest="${cfg.validateDir}/package" />
+
+        <available file="${cfg.validateDir}/package/pkg_${cfg.name}.xml" property="validate.pkg.manifest" />
+        <fail unless="validate.pkg.manifest" message="Package manifest pkg_${cfg.name}.xml is missing." />
+
+        <available file="${cfg.validateDir}/package/pkg_install.php" property="validate.pkg.script" />
+        <fail unless="validate.pkg.script" message="Package script pkg_install.php is missing." />
+
+        <available file="${cfg.validateDir}/package/packages/${cfg.comName}.zip" property="validate.component.zip" />
+        <fail unless="validate.component.zip" message="Component package ${cfg.comName}.zip is missing." />
+
+        <mkdir dir="${cfg.validateDir}/component" />
+        <unzip src="${cfg.validateDir}/package/packages/${cfg.comName}.zip" dest="${cfg.validateDir}/component" />
+
+        <available file="${cfg.validateDir}/component/${cfg.name}.xml" property="validate.component.manifest" />
+        <fail unless="validate.component.manifest" message="Component manifest ${cfg.name}.xml is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/component/script.php" property="validate.component.script" />
+        <fail unless="validate.component.script" message="Component script.php is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/component/admin/jem.php" property="validate.component.admin" />
+        <fail unless="validate.component.admin" message="Component admin entry point admin/jem.php is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/component/site/jem.php" property="validate.component.site" />
+        <fail unless="validate.component.site" message="Component site entry point site/jem.php is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/component/media/index.html" property="validate.component.media" />
+        <fail unless="validate.component.media" message="Component media folder is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/component/media/vendor/index.html" property="validate.component.media.vendor" />
+        <fail unless="validate.component.media.vendor" message="Component media/vendor folder is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/component/admin/assets/sampledata.zip" property="validate.component.sampledata" />
+        <fail unless="validate.component.sampledata" message="Sample data archive admin/assets/sampledata.zip is missing inside ${cfg.comName}.zip." />
+
+        <available file="${cfg.validateDir}/package/packages/mod_${cfg.name}_types.zip" property="validate.mod.types.zip" />
+        <fail unless="validate.mod.types.zip" message="Module package mod_${cfg.name}_types.zip is missing." />
+
+        <mkdir dir="${cfg.validateDir}/mod_types" />
+        <unzip src="${cfg.validateDir}/package/packages/mod_${cfg.name}_types.zip" dest="${cfg.validateDir}/mod_types" />
+
+        <available file="${cfg.validateDir}/mod_types/mod_${cfg.name}_types.xml" property="validate.mod.types.manifest" />
+        <fail unless="validate.mod.types.manifest" message="Module manifest mod_${cfg.name}_types.xml is missing inside mod_${cfg.name}_types.zip." />
+
+        <delete dir="${cfg.validateDir}" />
     </target>
 
     <target name="build_plugins" description="packages any plugins">
         <!-- add all plugin directories here -->
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}embed.zip" basedir="plugins/plg_content_${cfg.name}embed" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer" />
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}" />
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}embed.zip" basedir="plugins/plg_content_${cfg.name}embed">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}listevents.zip" basedir="plugins/plg_content_${cfg.name}listevents">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
     </target>
 
     <target name="build_modules" description="packages any modules">
         <!-- add all module directories here -->
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map" />
-        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_types.zip" basedir="modules/mod_${cfg.name}_types" />
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_banner.zip" basedir="modules/mod_${cfg.name}_banner">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_jubilee.zip" basedir="modules/mod_${cfg.name}_jubilee">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_map.zip" basedir="modules/mod_${cfg.name}_map">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_types.zip" basedir="modules/mod_${cfg.name}_types">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
     </target>
 
     <target name="build_3rd" description="packages any 3rd party plugins">
