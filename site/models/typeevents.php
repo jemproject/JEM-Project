@@ -22,6 +22,17 @@ class JemModelTypeevents extends JemModelEventslist
 
         parent::populateState($ordering, $direction);
 
+        // Type overview links can be reached through a fallback Itemid, so do not
+        // inherit unrelated menu filters from events list or calendar menu items.
+        $this->setState('filter.featured', null);
+        $this->setState('filter.category_id', null);
+        $this->setState('filter.category_id.include', true);
+        $this->setState('filter.venue_id', null);
+        $this->setState('filter.venue_id.include', true);
+        $this->setState('filter.country_id', null);
+        $this->setState('filter.country_id.include', true);
+        $this->setState('filter.req_catid', null);
+
         $this->setState('filter.type_id', $typeId);
         $this->setState('filter.published', 1);
         $this->setState('filter.unpublished', null);
@@ -34,6 +45,7 @@ class JemModelTypeevents extends JemModelEventslist
         $dateWhere = 'COALESCE(a.enddates, a.dates) >= ' . $db->quote($today);
 
         $this->setState('filter.calendar_from', $dateWhere);
+        $this->setState('filter.calendar_to', null);
         $this->setState('filter.tablefiltereventfrom', 0);
         $this->setState('filter.tablefiltereventuntil', '');
     }

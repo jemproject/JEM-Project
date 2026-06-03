@@ -214,9 +214,15 @@ abstract class JEMHelperRoute
     {
         $settings      = JEMHelper::globalattribs();
         $defaultItemid = $settings->get('default_Itemid');
+        $typeId        = (int) $id;
+        $slug          = (string) $id;
 
-        $needles = array('typeevents' => array((int) $id));
-        $link    = 'index.php?option=com_jem&view=typeevents&id=' . (int) $id;
+        if (strpos($slug, ':') === false) {
+            $slug = (string) $typeId;
+        }
+
+        $needles = array('typeevents' => array($typeId));
+        $link    = 'index.php?option=com_jem&view=typeevents&id=' . $slug;
 
         if ($item = self::_findItem($needles)) {
             $link .= '&Itemid=' . $item;
@@ -231,9 +237,15 @@ abstract class JEMHelperRoute
     {
         $settings      = JEMHelper::globalattribs();
         $defaultItemid = $settings->get('default_Itemid');
+        $typeId        = (int) $id;
+        $slug          = (string) $id;
 
-        $needles = array('typevenues' => array((int) $id));
-        $link    = 'index.php?option=com_jem&view=typevenues&id=' . (int) $id;
+        if (strpos($slug, ':') === false) {
+            $slug = (string) $typeId;
+        }
+
+        $needles = array('typevenues' => array($typeId));
+        $link    = 'index.php?option=com_jem&view=typevenues&id=' . $slug;
 
         if ($item = self::_findItem($needles)) {
             $link .= '&Itemid=' . $item;

@@ -255,6 +255,7 @@ class JemController extends BaseController
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h3>
 
                 <?php elseif (($jemsettings->showtitle == 1) && ($jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
@@ -263,6 +264,7 @@ class JemController extends BaseController
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
 
                 <?php elseif (($jemsettings->showtitle == 0) && ($jemsettings->showdetails == 1)) : // Display date as title of jem-event with link ?>
@@ -278,6 +280,7 @@ class JemController extends BaseController
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
 
                 <?php else : // Display date as title of jem-event without link ?>
@@ -293,6 +296,7 @@ class JemController extends BaseController
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
+                        <?php echo JemOutput::typeBadge($row); ?>
                     </h4>
                 <?php endif; ?>
 
