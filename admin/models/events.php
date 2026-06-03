@@ -61,6 +61,15 @@ class JemModelEvents extends ListModel
         $filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter_type', $filterfield);
 
+        $categoryId = $this->getUserStateFromRequest($this->context.'.filter_category_id', 'filter_category_id', 0, 'int');
+        $this->setState('filter_category_id', $categoryId);
+
+        $eventTypeId = $this->getUserStateFromRequest($this->context.'.filter_event_type_id', 'filter_event_type_id', 0, 'int');
+        $this->setState('filter_event_type_id', $eventTypeId);
+
+        $venueId = $this->getUserStateFromRequest($this->context.'.filter_venue_id', 'filter_venue_id', 0, 'int');
+        $this->setState('filter_venue_id', $venueId);
+
         $begin = $this->getUserStateFromRequest($this->context.'.filter_begin', 'filter_begin', '', 'string');
         $this->setState('filter_begin', $begin);
 
@@ -92,8 +101,14 @@ class JemModelEvents extends ListModel
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter_search');
-        $id .= ':' . $this->getState('filter_published');
+        $id .= ':' . $this->getState('filter_state');
         $id .= ':' . $this->getState('filter_type');
+        $id .= ':' . $this->getState('filter_category_id');
+        $id .= ':' . $this->getState('filter_event_type_id');
+        $id .= ':' . $this->getState('filter_venue_id');
+        $id .= ':' . $this->getState('filter_begin');
+        $id .= ':' . $this->getState('filter_end');
+        $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
     }
@@ -149,6 +164,25 @@ class JemModelEvents extends ListModel
         // Filter by access level.
         if ($access = $this->getState('filter.access')) {
             $query->where('a.access = ' . (int) $access);
+        }
+
+        // Filter by exact JEM category.
+        $categoryId = (int) $this->getState('filter_category_id');
+        if ($categoryId > 0) {
+            $query->join('INNER', '#__jem_cats_event_relations AS filter_rel ON filter_rel.itemid = a.id');
+            $query->where('filter_rel.catid = ' . $categoryId);
+        }
+
+        // Filter by exact event type.
+        $eventTypeId = (int) $this->getState('filter_event_type_id');
+        if ($eventTypeId > 0) {
+            $query->where('a.type_id = ' . $eventTypeId);
+        }
+
+        // Filter by exact venue.
+        $venueId = (int) $this->getState('filter_venue_id');
+        if ($venueId > 0) {
+            $query->where('a.locid = ' . $venueId);
         }
 
         // Filter by Date

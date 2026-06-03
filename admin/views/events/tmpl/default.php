@@ -80,7 +80,7 @@ $ticketAvailabilityOptions = array(
                                 <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
                                     <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.filter_state.value='';document.getElementById('filter_category_id').value='0';document.getElementById('filter_event_type_id').value='0';document.getElementById('filter_venue_id').value='0';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -336,6 +336,9 @@ $ticketAvailabilityOptions = array(
         <input type="hidden" name="boxchecked" value="0" />
         <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+        <input type="hidden" name="filter_category_id" id="filter_category_id" value="<?php echo (int) $this->state->get('filter_category_id'); ?>" />
+        <input type="hidden" name="filter_event_type_id" id="filter_event_type_id" value="<?php echo (int) $this->state->get('filter_event_type_id'); ?>" />
+        <input type="hidden" name="filter_venue_id" id="filter_venue_id" value="<?php echo (int) $this->state->get('filter_venue_id'); ?>" />
 
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>

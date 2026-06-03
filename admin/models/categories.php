@@ -232,30 +232,72 @@ class JemModelCategories extends ListModel
     public function getItems()
     {
         $items = parent::getItems();
-        $app   = Factory::getApplication();
+        $counts = $this->getCategoryEventStateCounts($items);
 
         foreach ($items as $item) {
-            $item->assignedevents = $this->countCatEvents($item->id);
+            $item->event_state_counts = $counts[(int) $item->id] ?? (object) array(
+                'published' => 0,
+                'unpublished' => 0,
+                'archived' => 0,
+                'trashed' => 0,
+            );
+            $item->assignedevents = $item->event_state_counts->published
+                + $item->event_state_counts->unpublished
+                + $item->event_state_counts->archived
+                + $item->event_state_counts->trashed;
         }
 
         return $items;
     }
 
-    private function countCatEvents($id)
+    /**
+     * Count directly assigned events by state for the listed categories.
+     *
+     * @param  array  $items  Category rows.
+     *
+     * @return array
+     */
+    private function getCategoryEventStateCounts($items)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
+        if (empty($items)) {
+            return array();
+        }
 
-        $query = 'SELECT COUNT(catid) as num'
-                .' FROM #__jem_cats_event_relations'
-                .' WHERE catid = '.(int)$id
-                .' GROUP BY catid'
-                ;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $ids = array_map('intval', array_column($items, 'id'));
+        $ids = array_values(array_unique(array_filter($ids)));
+
+        if (empty($ids)) {
+            return array();
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('rel.catid'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = 1 THEN 1 ELSE 0 END) AS ' . $db->quoteName('published'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = 0 THEN 1 ELSE 0 END) AS ' . $db->quoteName('unpublished'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = 2 THEN 1 ELSE 0 END) AS ' . $db->quoteName('archived'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = -2 THEN 1 ELSE 0 END) AS ' . $db->quoteName('trashed'),
+            ))
+            ->from($db->quoteName('#__jem_cats_event_relations', 'rel'))
+            ->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('rel.itemid'))
+            ->where($db->quoteName('rel.catid') . ' IN (' . implode(',', $ids) . ')')
+            ->group($db->quoteName('rel.catid'));
 
         $db->setQuery($query);
-        $result = $db->loadResult('catid');
+        $rows = $db->loadObjectList('catid');
+        $counts = array();
 
-        return $result;
+        foreach ($rows as $catid => $row) {
+            $counts[(int) $catid] = (object) array(
+                'published' => (int) $row->published,
+                'unpublished' => (int) $row->unpublished,
+                'archived' => (int) $row->archived,
+                'trashed' => (int) $row->trashed,
+            );
+        }
+
+        return $counts;
     }
 
 }
