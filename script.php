@@ -512,11 +512,56 @@ class com_jemInstallerScript
      */
     private function getHeader()
     {
+        $logoDataUri = $this->getHeaderLogoDataUri();
         ?>
-        <img src="../media/com_jem/images/jemlogo.svg" alt="JEM - Joomla Event Manager" style="float:left;margin-right:24px;margin-bottom:16px;height:160px;width:396px;background-color:#fff;border-radius:8px;" />
-        <h1><?php echo Text::_('COM_JEM'); ?></h1>
-        <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
+        <div style="display:flex;align-items:center;column-gap:40px;row-gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+            <div style="flex:0 0 300px;max-width:100%;">
+                <img src="<?php echo $logoDataUri; ?>" alt="JEM - Joomla Event Manager" style="display:block;width:100%;height:auto;background-color:#fff;border-radius:8px;" />
+            </div>
+            <div style="flex:1 1 260px;min-width:260px;">
+                <h1 style="margin-top:0;"><?php echo Text::_('COM_JEM'); ?></h1>
+                <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
+            </div>
+        </div>
         <?php
+    }
+
+    /**
+     * Returns the JEM logo as a data URI so uninstall messages do not depend on media files.
+     */
+    private function getHeaderLogoDataUri()
+    {
+        $logo = __DIR__ . '/media/images/jemlogo.svg';
+
+        if (!is_file($logo)) {
+            return $this->getFallbackHeaderLogoDataUri();
+        }
+
+        $data = file_get_contents($logo);
+
+        if ($data === false) {
+            return $this->getFallbackHeaderLogoDataUri();
+        }
+
+        return 'data:image/svg+xml;base64,' . base64_encode($data);
+    }
+
+    /**
+     * Returns a compact inline JEM mark used when package media is unavailable during uninstall.
+     */
+    private function getFallbackHeaderLogoDataUri()
+    {
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="280" height="110" viewBox="0 0 280 110">'
+            . '<rect width="280" height="110" rx="8" fill="#fff"/>'
+            . '<g fill="none" stroke="#f69d00" stroke-width="8" stroke-linecap="round">'
+            . '<path d="M28 34h48M28 55h48M28 76h48"/>'
+            . '</g>'
+            . '<circle cx="18" cy="34" r="5" fill="#5e7899"/><circle cx="18" cy="55" r="5" fill="#5e7899"/><circle cx="18" cy="76" r="5" fill="#5e7899"/>'
+            . '<text x="92" y="55" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#f69d00">JEM</text>'
+            . '<text x="92" y="78" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5e7899">Joomla Event Manager</text>'
+            . '</svg>';
+
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
     /**
