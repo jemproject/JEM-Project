@@ -1298,7 +1298,12 @@ static public function lightbox() {
         }
         $inner .= $name;
 
-        $link = htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($event->type_id)), ENT_QUOTES, 'UTF-8');
+        $typeRouteId = (int) $event->type_id;
+        if (!empty($event->type_alias)) {
+            $typeRouteId .= ':' . $event->type_alias;
+        }
+
+        $link = htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($typeRouteId)), ENT_QUOTES, 'UTF-8');
 
         return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
     }
