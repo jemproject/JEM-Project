@@ -342,13 +342,14 @@ class JemViewCategory extends JemView
             // Create the pagination object
             $pagination = $this->get('Pagination');
 
+            $category->title = $category->catname;
+
             // Generate Categorydescription
             if (empty ($category->description)) {
                 $description = Text::_('COM_JEM_NO_DESCRIPTION');
             } else {
                 // execute plugins
                 $category->text  = $category->description;
-                $category->title = $category->catname;
                 PluginHelper::importPlugin('content');
                 $app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
                 $description = $category->text;
