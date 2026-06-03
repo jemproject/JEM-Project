@@ -63,7 +63,7 @@ class JemModelAttachments extends ListModel
         return parent::getStoreId($id);
     }
 
-    protected function getListQuery()
+    protected function getListQuery($applyFilters = true)
     {
         $db = $this->getDatabase();
         $query = $db->getQuery(true);
@@ -100,36 +100,38 @@ class JemModelAttachments extends ListModel
             ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'))
             ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
 
-        $search = $this->getState('filter_search');
-        if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $query->where($db->quoteName('a.id') . ' = ' . (int) substr($search, 3));
-            } else {
-                $search = $db->quote('%' . $db->escape($search, true) . '%');
-                $query->where('('
-                    . $db->quoteName('a.file') . ' LIKE ' . $search
-                    . ' OR ' . $db->quoteName('a.name') . ' LIKE ' . $search
-                    . ' OR ' . $db->quoteName('a.description') . ' LIKE ' . $search
-                    . ' OR ' . $db->quoteName('a.object') . ' LIKE ' . $search
-                    . ' OR ' . $db->quoteName('e.title') . ' LIKE ' . $search
-                    . ' OR ' . $db->quoteName('v.venue') . ' LIKE ' . $search
-                    . ' OR ' . $db->quoteName('c.catname') . ' LIKE ' . $search
-                    . ')');
+        if ($applyFilters) {
+            $search = $this->getState('filter_search');
+            if (!empty($search)) {
+                if (stripos($search, 'id:') === 0) {
+                    $query->where($db->quoteName('a.id') . ' = ' . (int) substr($search, 3));
+                } else {
+                    $search = $db->quote('%' . $db->escape($search, true) . '%');
+                    $query->where('('
+                        . $db->quoteName('a.file') . ' LIKE ' . $search
+                        . ' OR ' . $db->quoteName('a.name') . ' LIKE ' . $search
+                        . ' OR ' . $db->quoteName('a.description') . ' LIKE ' . $search
+                        . ' OR ' . $db->quoteName('a.object') . ' LIKE ' . $search
+                        . ' OR ' . $db->quoteName('e.title') . ' LIKE ' . $search
+                        . ' OR ' . $db->quoteName('v.venue') . ' LIKE ' . $search
+                        . ' OR ' . $db->quoteName('c.catname') . ' LIKE ' . $search
+                        . ')');
+                }
             }
-        }
 
-        $type = $this->getState('filter_type');
-        if (in_array($type, array('event', 'venue', 'category'), true)) {
-            $query->where($db->quoteName('a.object') . ' LIKE ' . $db->quote($type . '%'));
-        }
+            $type = $this->getState('filter_type');
+            if (in_array($type, array('event', 'venue', 'category'), true)) {
+                $query->where($db->quoteName('a.object') . ' LIKE ' . $db->quote($type . '%'));
+            }
 
-        $frontend = $this->getState('filter_frontend');
-        if (in_array((string) $frontend, array('0', '1'), true)) {
-            $query->where($db->quoteName('a.frontend') . ' = ' . (int) $frontend);
-        }
+            $frontend = $this->getState('filter_frontend');
+            if (in_array((string) $frontend, array('0', '1'), true)) {
+                $query->where($db->quoteName('a.frontend') . ' = ' . (int) $frontend);
+            }
 
-        if ($access = $this->getState('filter.access')) {
-            $query->where($db->quoteName('a.access') . ' = ' . (int) $access);
+            if ($access = $this->getState('filter.access')) {
+                $query->where($db->quoteName('a.access') . ' = ' . (int) $access);
+            }
         }
 
         $orderCol = $this->state->get('list.ordering', 'a.created');
@@ -149,7 +151,7 @@ class JemModelAttachments extends ListModel
     public function exportCsv($cid = array())
     {
         $db = $this->getDatabase();
-        $query = $this->getListQuery();
+        $query = $this->getListQuery(false);
         $cid = array_values(array_filter(array_map('intval', (array) $cid)));
 
         if (!empty($cid)) {
