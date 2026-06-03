@@ -62,9 +62,45 @@ class JemViewCategories extends JemAdminView
         $options[]    = HTMLHelper::_('select.option', '10', Text::_('J10'));
 
         $this->f_levels = $options;
+        $lists = array();
+        $lists['category_type_filter'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getTypeFilterOptions(2, 'COM_JEM_TYPE_FILTER_CATEGORY'),
+            'filter_category_type_id',
+            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
+            'value',
+            'text',
+            (int) $this->state->get('filter.category_type_id'),
+            'filter_category_type_id'
+        );
+        $this->lists = $lists;
 
         $this->addToolbar();
         parent::display($tpl);
+    }
+
+    /**
+     * Build type filter options for the requested JEM entity.
+     */
+    protected function getTypeFilterOptions($entity, $emptyText)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = ' . (int) $entity)
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        $db->setQuery($query);
+        $types = $db->loadObjectList() ?: array();
+        $options = array(HTMLHelper::_('select.option', '0', Text::_($emptyText)));
+
+        foreach ($types as $type) {
+            $options[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
+        }
+
+        return $options;
     }
 
     /**

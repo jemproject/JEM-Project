@@ -71,41 +71,40 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
 <form action="<?php echo Route::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class="mb-3">
-            <div class="row">
-                <div class="col-md-11">
-                    <div class="row mb-12">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" inputmode="search" onChange="document.adminForm.submit();">
+            <div class="jem-admin-filter-bar">
+                <div class="jem-admin-filter-search">
+                    <div class="input-group">
+                        <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" inputmode="search" onChange="document.adminForm.submit();">
 
-                                <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-                                    <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="filter_level" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
-                                <option value=""><?php echo Text::_('JOPTION_SELECT_MAX_LEVELS'); ?></option>
-                                <?php echo HTMLHelper::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level')); ?>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="filter_published" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
-                                <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                                <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true); ?>
-                            </select>
-                        </div>
+                        <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
+                            <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_category_type_id').value='0';this.form.filter_access.value='0';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                     </div>
                 </div>
-                <div class="col-md-1">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                        </div>
-                    </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_level" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
+                        <option value=""><?php echo Text::_('JOPTION_SELECT_MAX_LEVELS'); ?></option>
+                        <?php echo HTMLHelper::_('select.options', $this->f_levels, 'value', 'text', $this->state->get('filter.level')); ?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <?php echo $this->lists['category_type_filter']; ?>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_access" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
+                        <option value="0"><?php echo Text::_('JOPTION_SELECT_ACCESS'); ?></option>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access')); ?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-item">
+                    <select name="filter_published" class="inputbox form-select wauto-minwmax m-0" onchange="this.form.submit()">
+                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true); ?>
+                    </select>
+                </div>
+                <div class="jem-admin-filter-limit">
+                    <?php echo $this->pagination->getLimitBox(); ?>
                 </div>
             </div>
         </fieldset>
