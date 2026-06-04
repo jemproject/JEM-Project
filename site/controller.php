@@ -208,8 +208,13 @@ class JemController extends BaseController
         $showMonthRow = false;
         $uri = Uri::getInstance();
         
+        $odd = 0;
+
         foreach ($items as $row) : ?>
             <?php
+            $row->odd = $odd;
+            $odd = 1 - $odd;
+
             if ($paramShowMonthRow && $row->dates) {
                 // Get event date
                 $year = date('Y', strtotime($row->dates));
