@@ -28,6 +28,8 @@ class ModJemTypesHelper
         $today  = $date->format('Y-m-d');
         $now    = $date->toSql();
         $language = $app->getLanguage()->getTag();
+        $parentTypeId = '(SELECT ' . $db->quoteName('parent.type_id') . ' FROM ' . $db->quoteName('#__jem_events', 'parent') . ' WHERE ' . $db->quoteName('parent.id') . ' = ' . $db->quoteName('a.recurrence_first_id') . ')';
+        $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $parentTypeId . ')';
 
         $query = $db->getQuery(true)
             ->select(array(
@@ -37,7 +39,7 @@ class ModJemTypesHelper
             ->from($db->quoteName('#__jem_types', 't'))
             ->join('LEFT',
                 $db->quoteName('#__jem_events', 'a') . ' ON ' .
-                $db->quoteName('a.type_id') . ' = ' . $db->quoteName('t.id') .
+                $effectiveTypeId . ' = ' . $db->quoteName('t.id') .
                 ' AND ' . $db->quoteName('a.published') . ' = 1' .
                 ' AND ' . $db->quoteName('a.access') . ' IN (' . $levelsList . ')' .
                 ' AND ' . $db->quoteName('a.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')' .
@@ -100,6 +102,7 @@ class ModJemTypesHelper
         $now    = $date->toSql();
         $language = $app->getLanguage()->getTag();
         $n      = max(1, (int) $params->get('top_n', 3));
+        $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $db->quoteName('parent.type_id') . ')';
 
         // Load all active types
         $typeQuery = $db->getQuery(true)
@@ -140,10 +143,11 @@ class ModJemTypesHelper
                     '(' . $caseSlug . ') AS slug',
                 ))
                 ->from($db->quoteName('#__jem_events', 'a'))
+                ->join('LEFT', $db->quoteName('#__jem_events', 'parent') . ' ON ' . $db->quoteName('parent.id') . ' = ' . $db->quoteName('a.recurrence_first_id'))
                 ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'rel') . ' ON ' . $db->quoteName('rel.itemid') . ' = ' . $db->quoteName('a.id'))
                 ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('rel.catid'))
                 ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('a.locid'))
-                ->where($db->quoteName('a.type_id') . ' = ' . (int) $type->id)
+                ->where($effectiveTypeId . ' = ' . (int) $type->id)
                 ->where($db->quoteName('a.published') . ' = 1')
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
                 ->where($db->quoteName('a.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
