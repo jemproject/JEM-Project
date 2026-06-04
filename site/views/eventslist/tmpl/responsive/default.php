@@ -61,7 +61,15 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php echo HTMLHelper::_('form.token'); ?>
     </form>
     
-    <?php if (!$this->params->get('show_more_button', 1)) : ?>
+    <?php $showMoreButton = ((int) $this->params->get('show_more_button', 0) === 1); ?>
+    <?php if ($showMoreButton) : ?>
+        <noscript>
+            <div class="pagination">
+                <?php
+                echo $this->pagination->getPagesLinks(); ?>
+            </div>
+        </noscript>
+    <?php else : ?>
         <div class="pagination">
             <?php
             echo $this->pagination->getPagesLinks(); ?>
