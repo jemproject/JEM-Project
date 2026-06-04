@@ -94,7 +94,7 @@ if (!function_exists('jem_myvenues_country_flag')) {
                 <?php if ($this->jemsettings->showstate == 1) : ?>
                 <col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_country" />
                 <?php endif; ?>
-                <col style="width: 1%" class="jem_col_status" />
+                <col style="width: 4rem" class="jem_col_status" />
             </colgroup>
 
             <thead>

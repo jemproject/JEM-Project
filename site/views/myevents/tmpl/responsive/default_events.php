@@ -127,7 +127,10 @@ use Joomla\CMS\Router\Route;
   }
 
   #jem .jem-event .jem-myevents-status {
-    flex: 0 1%;
+    flex: 0 0 4rem;
+    min-width: 4rem;
+    text-align: center;
+    justify-content: center;
   }
 </style>
 
