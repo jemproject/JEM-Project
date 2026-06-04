@@ -30,6 +30,11 @@ if ($flyer_link_type == 1) {
     $modal = '';
 }
 
+$banneralignment = 'jem-vertical-banner';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-horizontal')) {
+    $banneralignment = 'jem-horizontal-banner';
+}
+
 $document = Factory::getApplication()->getDocument();
 $widthStyle = $imagewidthmax ? 'width:' . $imagewidthmax . 'px' : 'max-width: 100%';
 
