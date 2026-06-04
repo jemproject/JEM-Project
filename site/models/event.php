@@ -1103,7 +1103,7 @@ class JemModelEvent extends ItemModel
             }
 
             // IP
-            $uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+            $uip = JemHelper::getStoredIP();
 
             $regid = $reg ? (int) $reg->id : 0;
             $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
@@ -1144,7 +1144,7 @@ class JemModelEvent extends ItemModel
         }
 
         // IP
-        $uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $uip = JemHelper::getStoredIP();
 
         $result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid, $respectPlaces);
 

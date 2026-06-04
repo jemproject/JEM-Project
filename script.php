@@ -305,96 +305,9 @@ class com_jemInstallerScript
         // $type is the type of change (install, update or discover_install)
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
-        if (strtolower($type) !== 'uninstall') {
-            $this->repairBeta3Schema();
-        }
-
         if (strtolower($type) == 'install') {
             $this->fixJemMenuItems();
         }
-    }
-
-    /**
-     * Repair schema/data changes introduced during the 5.0.0 beta cycle.
-     *
-     * Some beta-to-beta updates can skip admin/sql/updates/mysql/5.0.0.sql
-     * because Joomla already considers that version applied. Keep this repair
-     * idempotent so reinstalling the same beta safely completes the schema.
-     *
-     * @return void
-     */
-    private function repairBeta3Schema()
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
-        try {
-            $this->addColumnIfMissing('#__jem_events', 'article_id', "int(10) unsigned NOT NULL DEFAULT '0' AFTER `fulltext`");
-            $this->addColumnIfMissing('#__jem_events', 'online_meeting_url', "varchar(2048) NOT NULL DEFAULT '' AFTER `article_id`");
-            $this->addColumnIfMissing('#__jem_events', 'online_meeting_label', "varchar(255) NOT NULL DEFAULT '' AFTER `online_meeting_url`");
-            $this->addIndexIfMissing('#__jem_events', 'idx_article', '(`article_id`)');
-
-            $this->addColumnIfMissing('#__jem_categories', 'article_category_id', "int(10) unsigned NOT NULL DEFAULT '0' AFTER `type_id`");
-            $this->addColumnIfMissing('#__jem_categories', 'article_create_mode', "tinyint(1) NOT NULL DEFAULT '0' AFTER `article_category_id`");
-            $this->addIndexIfMissing('#__jem_categories', 'idx_article_category', '(`article_category_id`)');
-            $this->addIndexIfMissing('#__jem_categories', 'idx_parent', '(`parent_id`)');
-
-            $queries = array(
-                "UPDATE " . $db->quoteName('#__jem_venues') . " SET " . $db->quoteName('attribs') . " = " . $db->quote('{}') . " WHERE " . $db->quoteName('attribs') . " IS NULL OR " . $db->quoteName('attribs') . " = " . $db->quote('') . " OR " . $db->quoteName('attribs') . " = " . $db->quote('""') . " OR " . $db->quoteName('attribs') . " = " . $db->quote("''") . " OR NOT JSON_VALID(" . $db->quoteName('attribs') . ")",
-                "UPDATE " . $db->quoteName('#__jem_events') . " SET " . $db->quoteName('attribs') . " = " . $db->quote('{}') . " WHERE " . $db->quoteName('attribs') . " IS NULL OR " . $db->quoteName('attribs') . " = " . $db->quote('') . " OR " . $db->quoteName('attribs') . " = " . $db->quote('""') . " OR " . $db->quoteName('attribs') . " = " . $db->quote("''") . " OR NOT JSON_VALID(" . $db->quoteName('attribs') . ")",
-                "UPDATE " . $db->quoteName('#__jem_categories') . " SET " . $db->quoteName('metadata') . " = " . $db->quote('{}') . " WHERE " . $db->quoteName('metadata') . " IS NULL OR " . $db->quoteName('metadata') . " = " . $db->quote('') . " OR " . $db->quoteName('metadata') . " = " . $db->quote('""') . " OR " . $db->quoteName('metadata') . " = " . $db->quote("''") . " OR NOT JSON_VALID(" . $db->quoteName('metadata') . ")",
-            );
-
-            foreach ($queries as $query) {
-                $db->setQuery($query);
-                $db->execute();
-            }
-        } catch (Exception $e) {
-            Factory::getApplication()->enqueueMessage('JEM beta 3 schema repair failed: ' . $e->getMessage(), 'warning');
-        }
-    }
-
-    /**
-     * Add a column only when it is missing.
-     *
-     * @param string $table
-     * @param string $column
-     * @param string $definition
-     *
-     * @return void
-     */
-    private function addColumnIfMissing($table, $column, $definition)
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $columns = $db->getTableColumns($table);
-
-        if (isset($columns[$column])) {
-            return;
-        }
-
-        $db->setQuery('ALTER TABLE ' . $db->quoteName($table) . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition);
-        $db->execute();
-    }
-
-    /**
-     * Add an index only when it is missing.
-     *
-     * @param string $table
-     * @param string $index
-     * @param string $columns
-     *
-     * @return void
-     */
-    private function addIndexIfMissing($table, $index, $columns)
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $db->setQuery('SHOW INDEX FROM ' . $db->quoteName($table) . ' WHERE ' . $db->quoteName('Key_name') . ' = ' . $db->quote($index));
-
-        if ($db->loadObject()) {
-            return;
-        }
-
-        $db->setQuery('ALTER TABLE ' . $db->quoteName($table) . ' ADD KEY ' . $db->quoteName($index) . ' ' . $columns);
-        $db->execute();
     }
 
     /**

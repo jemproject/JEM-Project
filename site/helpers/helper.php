@@ -1652,6 +1652,69 @@ class JemHelper
     }
 
     /**
+     * Gets the IP value that should be stored according to JEM privacy settings.
+     *
+     * @return string|false
+     */
+    static public function getStoredIP()
+    {
+        $jemsettings = self::config();
+
+        if (empty($jemsettings->storeip)) {
+            return false;
+        }
+
+        $ip = self::retrieveIP();
+
+        if (!$ip) {
+            return false;
+        }
+
+        $mode = isset($jemsettings->storeipmode) ? (string) $jemsettings->storeipmode : 'full';
+
+        switch ($mode) {
+            case 'anonymized':
+                return self::anonymizeIP($ip);
+
+            case 'hash':
+                $secret = (string) Factory::getApplication()->get('secret', '');
+
+                return 'sha256:' . hash_hmac('sha256', $ip, $secret);
+
+            case 'full':
+            default:
+                return $ip;
+        }
+    }
+
+    /**
+     * Removes host-level precision from an IP address before storage.
+     *
+     * @param   string  $ip  The detected IP address.
+     *
+     * @return string|false
+     */
+    static public function anonymizeIP($ip)
+    {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $parts = explode('.', $ip);
+            $parts[3] = '0';
+
+            return implode('.', $parts);
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $packed = @inet_pton($ip);
+
+            if ($packed !== false) {
+                return inet_ntop(substr($packed, 0, 8) . str_repeat("\0", 8));
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Ensures an ip address is both a valid IP and does not fall within
      * a private network range.
      *

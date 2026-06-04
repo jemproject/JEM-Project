@@ -116,7 +116,7 @@ class JemModelEditvenue extends JemModelVenue
         //  Check edit state permission.
         $value->params->set('access-change', $user->can('publish', 'venue', $value->id, $value->created_by));
 
-        $value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $value->author_ip = JemHelper::getStoredIP();
 
         // Get attachments - but not on copied venues
         $files = JemAttachment::getAttachments('venue' . $value->id, true);

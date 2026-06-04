@@ -184,7 +184,7 @@ class JemModelEditevent extends JemModelEvent
         }
         $value->params->set('access-change', $user->can('publish', 'event', $value->id, $value->created_by, $cats));
 
-        $value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $value->author_ip = JemHelper::getStoredIP();
 
         $value->articletext = $value->introtext;
         if (!empty($value->fulltext)) {

@@ -1,7 +1,6 @@
 -- delete values
 
 -- new values
-INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('fancy_select_threshold', '10');
 
 -- change values
 UPDATE `#__jem_venues` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
@@ -11,10 +10,6 @@ UPDATE `#__jem_categories` SET `path` = NULL WHERE `id` = 1 AND `catname` = 'roo
   
 -- update values    
 ALTER TABLE `#__jem_events` MODIFY `recurrence_number` int(11) NOT NULL DEFAULT '0';
-ALTER TABLE `#__jem_events` ADD COLUMN `article_id` int(10) unsigned NOT NULL DEFAULT '0' AFTER `fulltext`;
-ALTER TABLE `#__jem_events` ADD KEY `idx_article` (`article_id`);
-ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_url` varchar(2048) NOT NULL DEFAULT '' AFTER `article_id`;
-ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_label` varchar(255) NOT NULL DEFAULT '' AFTER `online_meeting_url`;
 ALTER TABLE `#__jem_venues` MODIFY `latitude` decimal(10,6) DEFAULT NULL;
 ALTER TABLE `#__jem_venues` MODIFY `longitude` decimal(10,6) DEFAULT NULL;
 ALTER TABLE `#__jem_categories` ADD COLUMN `article_category_id` int(10) unsigned NOT NULL DEFAULT '0' AFTER `type_id`;

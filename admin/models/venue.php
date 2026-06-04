@@ -215,7 +215,7 @@ class JemModelVenue extends JemModelAdmin
             $item->attachments = $files;
         }
 
-        $item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $item->author_ip = JemHelper::getStoredIP();
 
         if (empty($item->id)) {
             $item->country = $jemsettings->defaultCountry;
