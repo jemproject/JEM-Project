@@ -204,6 +204,7 @@ class JemMapHelper
         $query->select([
                 'DISTINCT e.id',
                 'e.alias',
+                'CASE WHEN CHAR_LENGTH(e.alias) THEN CONCAT_WS(\':\', e.id, e.alias) ELSE e.id END AS slug',
                 'e.title',
                 'e.dates',
                 'e.times',
