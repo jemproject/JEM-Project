@@ -394,7 +394,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
 <?php endif;
 
 // Add Load More Button
-if (!$this->noevents && $this->params->get('show_more_button', 1) && count($this->rows) >= $this->pagination->limit) {
+if (!$this->noevents && (int) $this->params->get('show_more_button', 0) === 1 && count($this->rows) >= $this->pagination->limit) {
     // jQuery is loaded, just add Script
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
     $wa->registerAndUseScript(
