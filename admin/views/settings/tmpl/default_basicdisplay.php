@@ -21,6 +21,7 @@ use Joomla\CMS\Language\Text;
             <li><div class="label-form"><?php echo $this->form->renderfield('timename'); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('formathour'); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('storeip'); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('storeipmode'); ?></div></li>
         </ul>
     </fieldset>
 </div>

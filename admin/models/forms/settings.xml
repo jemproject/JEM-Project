@@ -407,6 +407,18 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="storeipmode" type="list"
+            label="COM_JEM_STORE_IP_MODE"
+            description="COM_JEM_STORE_IP_MODE_DESC"
+            class="inputbox form-select"
+            default="full"
+            required="false"
+            showon="storeip:1"
+        >
+            <option value="full">COM_JEM_STORE_IP_MODE_FULL</option>
+            <option value="anonymized">COM_JEM_STORE_IP_MODE_ANONYMIZED</option>
+            <option value="hash">COM_JEM_STORE_IP_MODE_HASH</option>
+        </field>
     </fieldset>
 
     <fieldset name="usercontrolregistration"

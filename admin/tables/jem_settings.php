@@ -147,6 +147,8 @@ class jem_settings extends Table
     /** @var int */
     public $storeip = null;
     /** @var string */
+    public $storeipmode = 'full';
+    /** @var string */
     public $lastupdate = null;
     /** @var int */
     public $checked_out = null;
