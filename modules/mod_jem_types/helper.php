@@ -10,9 +10,26 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Date\Date;
+use Joomla\CMS\Language\Multilanguage;
 
 class ModJemTypesHelper
 {
+    protected static function languageFilter($db, $column, $language)
+    {
+        return '(' . $column . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+            . ' OR ' . $column . ' = ' . $db->quote('')
+            . ' OR ' . $column . ' IS NULL)';
+    }
+
+    protected static function typeLanguageFilter($db, $prefix, $language)
+    {
+        return '('
+            . self::languageFilter($db, $db->quoteName($prefix . 'language'), $language)
+            . ' OR ' . $db->quoteName($prefix . 'base_language') . ' = ' . $db->quote($language)
+            . ' OR ' . $db->quoteName($prefix . 'translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+            . ')';
+    }
+
     /**
      * Summary mode: returns all published event types (entity=1) with event count.
      */
@@ -28,6 +45,9 @@ class ModJemTypesHelper
         $today  = $date->format('Y-m-d');
         $now    = $date->toSql();
         $language = $app->getLanguage()->getTag();
+        $filterLanguage = Multilanguage::isEnabled();
+        $eventLanguageCondition = $filterLanguage ? ' AND ' . self::languageFilter($db, $db->quoteName('a.language'), $language) : '';
+        $categoryLanguageCondition = $filterLanguage ? ' AND ' . self::languageFilter($db, $db->quoteName('c.language'), $language) : '';
         $parentTypeId = '(SELECT ' . $db->quoteName('parent.type_id') . ' FROM ' . $db->quoteName('#__jem_events', 'parent') . ' WHERE ' . $db->quoteName('parent.id') . ' = ' . $db->quoteName('a.recurrence_first_id') . ')';
         $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $parentTypeId . ')';
 
@@ -42,7 +62,7 @@ class ModJemTypesHelper
                 $effectiveTypeId . ' = ' . $db->quoteName('t.id') .
                 ' AND ' . $db->quoteName('a.published') . ' = 1' .
                 ' AND ' . $db->quoteName('a.access') . ' IN (' . $levelsList . ')' .
-                ' AND ' . $db->quoteName('a.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')' .
+                $eventLanguageCondition .
                 ' AND ' . $db->quoteName('a.publish_up') . ' <= ' . $db->quote($now) .
                 ' AND (' . $db->quoteName('a.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName('a.publish_down') . ' IS NULL)' .
                 ' AND (COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today) . ')'
@@ -53,7 +73,7 @@ class ModJemTypesHelper
                 $db->quoteName('c.id') . ' = ' . $db->quoteName('rel.catid') .
                 ' AND ' . $db->quoteName('c.published') . ' = 1' .
                 ' AND ' . $db->quoteName('c.access') . ' IN (' . $levelsList . ')' .
-                ' AND ' . $db->quoteName('c.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                $categoryLanguageCondition
             )
             ->join('LEFT',
                 $db->quoteName('#__jem_venues', 'v') . ' ON ' .
@@ -65,13 +85,12 @@ class ModJemTypesHelper
             ->where($db->quoteName('t.entity') . ' = 1')
             ->where($db->quoteName('t.access') . ' IN (' . $levelsList . ')')
             ->where('(' . $db->quoteName('a.id') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR ' . $db->quoteName('v.id') . ' IS NOT NULL)')
-            ->where('('
-                . $db->quoteName('t.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
-                . ' OR ' . $db->quoteName('t.base_language') . ' = ' . $db->quote($language)
-                . ' OR ' . $db->quoteName('t.translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
-                . ')')
             ->group('t.id, t.name, t.alias, t.icon, t.color, t.description, t.base_language, t.translation_languages, t.translations')
             ->order($db->quoteName('t.ordering') . ' ASC, ' . $db->quoteName('t.name') . ' ASC');
+
+        if ($filterLanguage) {
+            $query->where(self::typeLanguageFilter($db, 't.', $language));
+        }
 
         if ($params->get('hide_empty', 0)) {
             $query->having('COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) > 0');
@@ -101,6 +120,7 @@ class ModJemTypesHelper
         $today  = $date->format('Y-m-d');
         $now    = $date->toSql();
         $language = $app->getLanguage()->getTag();
+        $filterLanguage = Multilanguage::isEnabled();
         $n      = max(1, (int) $params->get('top_n', 3));
         $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $db->quoteName('parent.type_id') . ')';
 
@@ -111,12 +131,11 @@ class ModJemTypesHelper
             ->where($db->quoteName('published') . ' = 1')
             ->where($db->quoteName('entity') . ' = 1')
             ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
-            ->where('('
-                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
-                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
-                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
-                . ')')
             ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        if ($filterLanguage) {
+            $typeQuery->where(self::typeLanguageFilter($db, '', $language));
+        }
 
         $db->setQuery($typeQuery);
         $types = $db->loadObjectList();
@@ -150,17 +169,20 @@ class ModJemTypesHelper
                 ->where($effectiveTypeId . ' = ' . (int) $type->id)
                 ->where($db->quoteName('a.published') . ' = 1')
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
-                ->where($db->quoteName('a.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
                 ->where($db->quoteName('a.publish_up') . ' <= ' . $db->quote($now))
                 ->where('(' . $db->quoteName('a.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName('a.publish_down') . ' IS NULL)')
                 ->where('COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today))
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
-                ->where($db->quoteName('c.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
                 ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
                 ->group('a.id, a.title, a.alias, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
                 ->order($db->quoteName('a.dates') . ' ASC')
                 ->setLimit($n);
+
+            if ($filterLanguage) {
+                $eventQuery->where(self::languageFilter($db, $db->quoteName('a.language'), $language));
+                $eventQuery->where(self::languageFilter($db, $db->quoteName('c.language'), $language));
+            }
 
             $db->setQuery($eventQuery);
             $events = $db->loadObjectList();
