@@ -76,7 +76,7 @@ use Joomla\CMS\Router\Route;
                 <?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
                 <col style="width: "<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
                 <?php endif; ?>
-                <col style="width: 1%" class="jem_col_status" />
+                <col style="width: 4rem" class="jem_col_status" />
             </colgroup>
 
             <thead>

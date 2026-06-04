@@ -86,7 +86,10 @@ if (!function_exists('jem_myvenues_country_flag')) {
   }
 
   #jem.jem_myvenues .jem-myvenues-status {
-    flex: 0 1%;
+    flex: 0 0 4rem;
+    min-width: 4rem;
+    text-align: center;
+    justify-content: center;
   }
 </style>
 
