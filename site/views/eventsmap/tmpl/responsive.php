@@ -69,6 +69,47 @@ $tileLayers  = [
     ],
 ];
 $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
+$eventMarkers = [];
+
+foreach ((array) $events as $event) {
+    $lat = (float) $event->latitude;
+    $lng = (float) $event->longitude;
+
+    $venueId = (int) ($event->venue_id ?? 0);
+    $key = $venueId ? 'venue-' . $venueId : 'coords-' . $lat . '-' . $lng;
+
+    if (!isset($eventMarkers[$key])) {
+        $country = htmlspecialchars((string) $event->country, ENT_QUOTES, 'UTF-8');
+        $countryFlagPath = rtrim((string) $jemsettings->flagicons_path, '/');
+        $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
+        $countryFlagFile = $country && $countryFlagExtension
+            ? rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension
+            : '';
+
+        $eventMarkers[$key] = [
+            'lat' => $lat,
+            'lng' => $lng,
+            'venue' => htmlspecialchars((string) $event->venue, ENT_QUOTES, 'UTF-8'),
+            'city' => htmlspecialchars((string) $event->city, ENT_QUOTES, 'UTF-8'),
+            'country' => $country,
+            'countryFlag' => $countryFlagFile,
+            'events' => [],
+        ];
+    }
+
+    $slug = !empty($event->slug)
+        ? (string) $event->slug
+        : (int) $event->id . (!empty($event->alias) ? ':' . $event->alias : '');
+    $link = Route::_(JemHelperRoute::getEventRoute($slug), false);
+    $dateText = !empty($event->dates) ? JemOutput::formatdate($event->dates) : '';
+    $timeText = !empty($event->times) ? JemOutput::formattime($event->times) : '';
+
+    $eventMarkers[$key]['events'][] = [
+        'title' => htmlspecialchars((string) $event->title, ENT_QUOTES, 'UTF-8'),
+        'link' => htmlspecialchars($link, ENT_QUOTES, 'UTF-8'),
+        'date' => htmlspecialchars(trim($dateText . ' ' . $timeText), ENT_QUOTES, 'UTF-8'),
+    ];
+}
 ?>
 
 <div id="jem" class="jem_eventsmap<?php echo $this->pageclass_sfx; ?>">
@@ -404,39 +445,41 @@ $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
         <?php
         $heatPoints = [];
         $mapBounds = [];
-        foreach ($events as $v):
-        $route = 'index.php?option=com_jem&view=event&id=' . (int) $v->id . ':' . $v->alias;
-        if (!empty($jemItemid)) { $route .= '&Itemid=' . (int)$jemItemid; }
-        $sef  = Route::_($route, false);
-        $link = Uri::root() . ltrim($sef, '/');
+        foreach ($eventMarkers as $marker):
+        $visibleEvents = array_slice($marker['events'], 0, 5);
+        $hiddenEvents = max(0, count($marker['events']) - count($visibleEvents));
+        $popupEvents = [];
 
-        $eventTitle = htmlspecialchars($v->title, ENT_QUOTES);
-        $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
-        $city      = htmlspecialchars($v->city, ENT_QUOTES);
-        $country   = htmlspecialchars($v->country, ENT_QUOTES);
-        $dateText  = !empty($v->dates) ? htmlspecialchars(JemOutput::formatdate($v->dates), ENT_QUOTES) : '';
-        $timeText  = !empty($v->times) ? htmlspecialchars(JemOutput::formattime($v->times), ENT_QUOTES) : '';
+        foreach ($visibleEvents as $event) {
+            $eventLine = '<li><a href="' . $event['link'] . '"><strong>' . $event['title'] . '</strong></a>';
 
-        $countryFlagPath = rtrim($jemsettings->flagicons_path, '/');
-        $countryFlagExtension = substr(strrchr($countryFlagPath, '-'), 1);
-        $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
+            if ($event['date'] !== '') {
+                $eventLine .= '<br><small>' . $event['date'] . '</small>';
+            }
 
-        $popupHtml = '<a href="' . $link . '"><strong>' . $eventTitle . '</strong></a><br>'
-            . trim($dateText . ' ' . $timeText) . '<br>'
-            . $venueName . ($city ? ', ' . $city : '') . '<br>'
-            . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
-            . '<a href="https://maps.google.com/?daddr=' . (float) $v->latitude . ',' . (float) $v->longitude . '">'
+            $popupEvents[] = $eventLine . '</li>';
+        }
+
+        if ($hiddenEvents > 0) {
+            $popupEvents[] = '<li><em>' . Text::sprintf('COM_JEM_EVENTS_MAP_MORE_EVENTS', $hiddenEvents) . '</em></li>';
+        }
+
+        $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
+            . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
+            . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
+            . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
+            . '<a href="https://maps.google.com/?daddr=' . (float) $marker['lat'] . ',' . (float) $marker['lng'] . '">'
             . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
         ?>
-        L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
+        L.marker([<?= (float) $marker['lat'] ?>, <?= (float) $marker['lng'] ?>], {
             icon: L.icon({
                 iconUrl: "<?= addslashes($venueMarker) ?>",
                 iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
             })
         }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
-        <?php   $heatPoints[] = ["lat" => (float)$v->latitude, "lng" => (float)$v->longitude]; ?>
-        <?php   $mapBounds[] = [(float)$v->latitude, (float)$v->longitude]; ?>
+        <?php   $heatPoints[] = ["lat" => (float) $marker['lat'], "lng" => (float) $marker['lng']]; ?>
+        <?php   $mapBounds[] = [(float) $marker['lat'], (float) $marker['lng']]; ?>
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
