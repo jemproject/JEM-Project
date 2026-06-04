@@ -35,6 +35,8 @@ class com_jemInstallerScript
      */
     public function install($parent)
     {
+        $this->loadInstallerLanguage();
+
         $error = array(
             'summary' => 0,
             'folders' => 0
@@ -185,6 +187,8 @@ class com_jemInstallerScript
      */
     function uninstall($parent)
     {
+        $this->loadInstallerLanguage();
+
         $this->getHeader(); ?>
         <h2><?php echo Text::_('COM_JEM_UNINSTALL_STATUS'); ?>:</h2>
         <p><?php echo Text::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
@@ -214,6 +218,8 @@ class com_jemInstallerScript
      */
     function update($parent)
     {
+        $this->loadInstallerLanguage();
+
         $this->getHeader(); ?>
         <h2><?php echo Text::_('COM_JEM_UPDATE_STATUS'); ?>:</h2>
         <p><?php echo Text::sprintf('COM_JEM_UPDATE_TEXT', $parent->getManifest()->version); ?></p>;
@@ -228,6 +234,8 @@ class com_jemInstallerScript
      */
     public function preflight($type, $parent)
     {
+        $this->loadInstallerLanguage();
+
         $app = Factory::getApplication();
         
         // Verify that we are in Joomla 6.
@@ -292,6 +300,8 @@ class com_jemInstallerScript
      */
     function postflight($type, $parent)
     {
+        $this->loadInstallerLanguage();
+
         // $type is the type of change (install, update or discover_install)
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
@@ -512,6 +522,8 @@ class com_jemInstallerScript
      */
     private function getHeader()
     {
+        $this->loadInstallerLanguage();
+
         $logoDataUri = $this->getHeaderLogoDataUri();
         ?>
         <div style="display:flex;align-items:center;column-gap:40px;row-gap:16px;margin-bottom:24px;flex-wrap:wrap;">
@@ -524,6 +536,27 @@ class com_jemInstallerScript
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Loads JEM language strings before Joomla copies the component language files.
+     */
+    private function loadInstallerLanguage()
+    {
+        $language = Factory::getApplication()->getLanguage();
+        $paths = array(
+            JPATH_ADMINISTRATOR,
+            JPATH_ADMINISTRATOR . '/components/com_jem',
+            __DIR__,
+            __DIR__ . '/admin',
+        );
+
+        foreach ($paths as $path) {
+            if (is_dir($path)) {
+                $language->load('com_jem.sys', $path, null, true, true);
+                $language->load('com_jem', $path, null, true, true);
+            }
+        }
     }
 
     /**
