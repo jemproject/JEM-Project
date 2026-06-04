@@ -498,6 +498,8 @@ class JemModelEventslist extends ListModel
             )
         );
         $query->from('#__jem_events as a');
+        $query->join('LEFT', '#__jem_events AS parent ON parent.id = a.recurrence_first_id');
+        $effectiveTypeId = 'COALESCE(NULLIF(a.type_id, 0), parent.type_id)';
 
         # Author
         $name = $settings->get('global_regname', '1') ? 'u.name' : 'u.username';
@@ -530,7 +532,7 @@ class JemModelEventslist extends ListModel
             'jt.translation_languages AS type_translation_languages',
             'jt.translations AS type_translations',
         ));
-        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = ' . $effectiveTypeId . ' AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
         # the rest
         $case_when_e = ' CASE WHEN ';
@@ -627,7 +629,22 @@ class JemModelEventslist extends ListModel
         }
 
         # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
-        $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (' . $levelsList . '))');
+        $query->where('(' . $effectiveTypeId . ' IS NULL OR ' . $effectiveTypeId . ' = 0 OR jt.id IS NULL OR jt.access IN (' . $levelsList . '))');
+
+        ####################
+        ## FILTER-TYPE_ID ##
+        ####################
+
+        $filterTypeId = $this->getState('filter.type_id');
+        if (is_array($filterTypeId)) {
+            ArrayHelper::toInteger($filterTypeId);
+            $filterTypeId = array_filter($filterTypeId);
+            if ($filterTypeId) {
+                $query->where($effectiveTypeId . ' IN (' . implode(',', $filterTypeId) . ')');
+            }
+        } elseif (!empty($filterTypeId)) {
+            $query->where($effectiveTypeId . ' = ' . (int) $filterTypeId);
+        }
 
         ####################
         ## FILTER-PUBLISH ##
@@ -1117,21 +1134,6 @@ class JemModelEventslist extends ListModel
             } else {
                 $query->where('c.id = ' . (int)reset($idsCat));
             }
-        }
-
-        ####################
-        ## FILTER-TYPE_ID ##
-        ####################
-
-        $filterTypeId = $this->getState('filter.type_id');
-        if (is_array($filterTypeId)) {
-            ArrayHelper::toInteger($filterTypeId);
-            $filterTypeId = array_filter($filterTypeId);
-            if ($filterTypeId) {
-                $query->where('a.type_id IN (' . implode(',', $filterTypeId) . ')');
-            }
-        } elseif (!empty($filterTypeId)) {
-            $query->where('a.type_id = ' . (int) $filterTypeId);
         }
 
         ###################
