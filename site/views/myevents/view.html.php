@@ -38,6 +38,10 @@ class JemViewMyevents extends JemView
         $pathway      = $app->getPathWay();
         $print        = $app->input->getBool('print', false);
         $task         = $app->input->getCmd('task', '');
+        $pageclass_sfx = $params->get('pageclass_sfx', '');
+
+        $this->params = $params;
+        $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
         // redirect if not logged in
         $this->needLoginFirst = 0;
