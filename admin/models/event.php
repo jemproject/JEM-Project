@@ -755,6 +755,22 @@ class JemModelEvent extends JemModelAdmin
                 JemAttachment::update($attach, 'event' . $this->eventid);
             }
         }
+        if ($saved) {
+            $stateName = $this->getName();
+            $savedId   = (int) $this->getState($stateName . '.id');
+
+            if (!$savedId && !empty($data['id'])) {
+                $savedId = (int) $data['id'];
+            }
+
+            if ($savedId) {
+                $this->setState('event.id', $savedId);
+                $this->setState($stateName . '.id', $savedId);
+            }
+
+            $this->setState('event.new', $new);
+            $this->setState($stateName . '.new', $new);
+        }
 
         return $saved;
     }
