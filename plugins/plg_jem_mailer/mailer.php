@@ -863,11 +863,9 @@ class plgJemMailer extends CMSPlugin
             $query->where('u.block = 0');
             $query->where(array('u.id = '.$creatorid));
 
-            $db->setQuery($query);
-            if (is_null($recipients['creator'] = $db->loadColumn(0))) {
+            $recipients['creator'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['creator']) {
                 $recipients['creator'] = false;
-            } else {
-                $recipients['creator'] = array_unique($recipients['creator']);
             }
         } else {
             $recipients['creator'] = false;
@@ -891,11 +889,9 @@ class plgJemMailer extends CMSPlugin
                 $query->where('0');
             }
 
-            $db->setQuery($query);
-            if (is_null($recipients['ev-creator'] = $db->loadColumn(0))) {
+            $recipients['ev-creator'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['ev-creator']) {
                 $recipients['ev-creator'] = false;
-            } else {
-                $recipients['ev-creator'] = array_unique($recipients['ev-creator']);
             }
         } else {
             $recipients['ev-creator'] = false;
@@ -947,11 +943,9 @@ class plgJemMailer extends CMSPlugin
             # inform attendees only if event had not finished since one or more hours
             $query->where('((a.dates IS NULL) OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), " ", IFNULL(a.endtimes, "23:59:59"))) > -60))');
 
-            $db->setQuery($query);
-            if (is_null($recipients['registered'] = $db->loadColumn(0))) {
+            $recipients['registered'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['registered']) {
                 $recipients['registered'] = false;
-            } else {
-                $recipients['registered'] = array_unique($recipients['registered']);
             }
         } else {
             $recipients['registered'] = false;
@@ -981,8 +975,8 @@ class plgJemMailer extends CMSPlugin
                 $query->where('0');
             }
 
-            $db->setQuery($query);
-            if (is_null($category_receivers = $db->loadColumn(0))) {
+            $category_receivers = $this->_loadColumn($query);
+            if (!$category_receivers) {
                 $recipients['category'] = false;
             } else {
                 $recipients['category'] = array_unique($this->categoryDBList($category_receivers));
@@ -1022,11 +1016,11 @@ class plgJemMailer extends CMSPlugin
                 $query->join('INNER', '#__users AS u ON u.id = um.user_id');
                 $query->where('um.group_id IN ('.implode(',', $groupIds).')');
                 $query->where('u.block = 0');
-                $db->setQuery($query);
-                if (is_null($category_acl_receivers = $db->loadColumn(0))) {
+                $category_acl_receivers = array_unique($this->_loadColumn($query));
+                if (!$category_acl_receivers) {
                     $recipients['category_acl'] = false;
                 } else {
-                    $recipients['category_acl'] = array_unique($category_acl_receivers);
+                    $recipients['category_acl'] = $category_acl_receivers;
                 }
             } else {
                 $recipients['category_acl'] = false;
@@ -1060,11 +1054,9 @@ class plgJemMailer extends CMSPlugin
                 $query->where('0');
             }
 
-            $db->setQuery($query);
-            if (is_null($recipients['group'] = $db->loadColumn(0))) {
+            $recipients['group'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['group']) {
                 $recipients['group'] = false;
-            } else {
-                $recipients['group'] = array_unique($recipients['group']);
             }
         } else {
             $recipients['group'] = false;
@@ -1271,6 +1263,29 @@ class plgJemMailer extends CMSPlugin
         }
 
         return $CategoryDBList;
+    }
+
+    /**
+     * Load a database column while keeping recipient lookup failures local.
+     *
+     * @param   object   $query   Query object to execute.
+     * @param   integer  $column  Column offset to load.
+     *
+     * @return  array
+     */
+    private function _loadColumn($query, $column = 0)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $db->setQuery($query);
+            $values = $db->loadColumn($column);
+        } catch (RuntimeException $e) {
+            JemHelper::addLogEntry($e->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
+            $values = array();
+        }
+
+        return is_array($values) ? $values : array();
     }
 
     /**
