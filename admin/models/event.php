@@ -77,6 +77,36 @@ class JemModelEvent extends JemModelAdmin
     }
 
     /**
+     * Method to delete one or more event records.
+     *
+     * @param   array  &$pks  An array of event record primary keys.
+     *
+     * @return  boolean
+     */
+    public function delete(&$pks)
+    {
+        $pks = (array) $pks;
+
+        if (!parent::delete($pks)) {
+            return false;
+        }
+
+        $recurrenceCleaned = false;
+
+        foreach ($pks as $pk) {
+            if (JemHelper::dissolve_recurrence($pk)) {
+                $recurrenceCleaned = true;
+            }
+        }
+
+        if ($recurrenceCleaned) {
+            $this->cleanCache();
+        }
+
+        return true;
+    }
+
+    /**
      * Method to test whether a record can be published/unpublished.
      *
      * @param  object  A record object.

@@ -28,7 +28,6 @@ use Joomla\CMS\Language\Text;
                                          ,'mod_jem_teaser'    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER'
                                          ,'mod_jem_types'     => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TYPES'
                                          ,'mod_jem_wide'      => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE'
-                                         ,'plg_content_jem'   => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT'
                                          ,'plg_content_jemlistevents' => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS'
                                          ,'plg_finder_jem'    => 'COM_JEM_MAIN_CONFIG_VS_PLG_FINDER'
                                          ,'plg_jem_comments'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS'

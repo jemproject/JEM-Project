@@ -160,9 +160,6 @@
 
     <target name="build_plugins" description="packages any plugins">
         <!-- add all plugin directories here -->
-        <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}">
-            <patternset refid="windows.junk.excludes" />
-        </zip>
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}embed.zip" basedir="plugins/plg_content_${cfg.name}embed">
             <patternset refid="windows.junk.excludes" />
         </zip>
