@@ -28,7 +28,6 @@
         <file type="module" id="mod_jem_jubilee" client="site">mod_jem_jubilee.zip</file>
         <file type="module" id="mod_jem_types" client="site">mod_jem_types.zip</file>
 
-        <file type="plugin" id="jem" group="content">plg_content_jem.zip</file>
         <file type="plugin" id="jemlistevents" group="content">plg_content_jemlistevents.zip</file>
         <file type="plugin" id="jemembed" group="content">plg_content_jemembed.zip</file>
         <file type="plugin" id="jem" group="finder">plg_finder_jem.zip</file>

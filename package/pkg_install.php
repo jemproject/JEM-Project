@@ -91,9 +91,9 @@ class Pkg_JemInstallerScript
 
         if ($type == 'uninstall') return true;
 
-        $this->enablePlugin('content', 'jem');
         $this->enablePlugin('content', 'jemlistevents');
         $this->enablePlugin('quickicon', 'jem');
+        $this->uninstallPlugin('content', 'jem');
         $this->uninstallPlugin('search', 'jem');
     //    $this->enablePlugin('finder', 'jem');
     //    $this->enablePlugin('jem', 'mailer');
