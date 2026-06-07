@@ -16,6 +16,16 @@
                 description="COM_JEM_SELECTTOPCATDESC"
                 required="false"
             />
+            <field
+                name="typeid"
+                type="sql"
+                label="COM_JEM_TYPE_FIELD_TYPE"
+                description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+                query="SELECT 0 AS value, '- ' AS text UNION SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 2 ORDER BY text ASC"
+                key_field="value"
+                value_field="text"
+                required="false"
+            />
         </fieldset>
     </fields>
 

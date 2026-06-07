@@ -60,7 +60,7 @@
                type="text"
                label="COM_JEM_TYPE_FIELD_ICON"
                description="COM_JEM_TYPE_FIELD_ICON_DESC"
-               hint="fa-solid fa-calendar"
+               hint="icon-calendar or fa-solid fa-calendar"
                maxlength="255"
                class="form-control"
         />

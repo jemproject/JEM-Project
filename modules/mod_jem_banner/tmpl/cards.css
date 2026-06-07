@@ -20,6 +20,7 @@
     border: 1px solid var(--joomla-border-color, #dddddd);
     border-radius: var(--joomla-card-border-radius, 12px);
     overflow: hidden;
+    position: relative;
     transition: all 0.3s ease;
 }
 
@@ -30,12 +31,25 @@
 
 .jemmodulebanner .event-media {
     position: relative;
-    height: 200px;
-    overflow: hidden;
+    z-index: 1;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    overflow: visible;
     display: flex;
     justify-content: center;
     align-items: center;
     background: #f0f4f8;
+}
+
+.jemmodulebanner .event-media-link {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    overflow: hidden;
 }
 
 .jemmodulebanner .event-media img {
@@ -47,6 +61,24 @@
     transition: transform 0.5s ease;
 }
 
+.jemmodulebanner .event-media-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    color: var(--joomla-text-muted-color, #6c757d);
+    background: linear-gradient(135deg, #f6f8fb, #edf2f7);
+    font-size: 0.9rem;
+}
+
+.jemmodulebanner .event-media-placeholder i {
+    font-size: 2rem;
+    opacity: 0.75;
+}
+
 
 .jemmodulebanner .event-card:hover .event-media img {
     transform: scale(1.03);
@@ -54,16 +86,20 @@
 
 .jemmodulebanner .event-badge {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
+    left: 50%;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    transform: translate(-50%, 50%);
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
 }
 
-.jemmodulebanner .event-badge a {
+.jemmodulebanner .event-badge > a {
     display: inline-block;
-    background: rgba(var(--primary-rgb), 0.6);
+    background: rgba(79, 100, 140, 0.95);
     color: #f0f7ff;
     text-decoration: none;
     padding: 6px 12px;
@@ -72,13 +108,39 @@
     border: 1px solid #d0e3ff;
 }
 
-.jemmodulebanner .event-badge a:hover {
+.jemmodulebanner .event-badge-content {
+    display: inline-block;
+    background: rgba(79, 100, 140, 0.95);
+    color: #f0f7ff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid #d0e3ff;
+}
+
+.jemmodulebanner .event-badge-content a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.jemmodulebanner .event-badge-content a:hover {
+    color: inherit;
+}
+
+.jemmodulebanner .event-badge > a:hover,
+.jemmodulebanner .event-badge-content:hover {
     background-color: #f0f7ff;
     color: var(--secundary);
 }
 
 .jemmodulebanner .event-content {
+    position: relative;
+    z-index: 0;
     padding: 1.5rem;
+}
+
+.jemmodulebanner .has-event-badge .event-content {
+    padding-top: 2rem;
 }
 
 .jemmodulebanner .event-title {

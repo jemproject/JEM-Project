@@ -24,7 +24,12 @@ INSERT INTO `#__jem_types` (`name`, `alias`, `description`, `entity`, `icon`, `c
 ('Conciert', 'conciert', 'Concert-style events used to demonstrate custom event types.', 1, 'fa-solid fa-guitar', '#d35400', 1, 6, 1, '*', NOW(), 62),
 ('Dancing', 'dancing', 'Dance events, parties, and social dancing sessions.', 1, 'fa-solid fa-person-dress', '#c2185b', 1, 7, 1, '*', NOW(), 62),
 ('Guided Tour', 'guided-tour', 'Small-group tours with limited capacity, bookings, and waiting lists.', 1, 'fa-solid fa-person-walking', '#245c4a', 1, 8, 1, '*', NOW(), 62),
+('Music Category', 'music-category', 'Music-oriented categories used by the category type sample menu.', 2, 'fa-solid fa-tags', '#7b2cbf', 1, 1, 1, '*', NOW(), 62),
+('Museum Category', 'museum-category', 'Museum and cultural categories used by the category type sample menu.', 2, 'fa-solid fa-landmark', '#8a5a00', 1, 2, 1, '*', NOW(), 62),
 ('Museum', 'museum', 'Museums, galleries, and science centres.', 3, 'fa-solid fa-landmark', '#245c4a', 1, 1, 1, '*', NOW(), 62);
+
+UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'music-category' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` IN (2, 3, 4);
+UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'museum-category' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 5;
 
 -- --------------------------------------------------------
 

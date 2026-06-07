@@ -12,6 +12,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 HTMLHelper::_('behavior.formvalidator');
+
+$useIconPicker = version_compare(JVERSION, '5.0.0', '>=');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id=' . (int) $this->item->id); ?>"
@@ -103,6 +105,9 @@ HTMLHelper::_('behavior.formvalidator');
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <?php echo $this->form->getLabel('icon'); ?>
+                            <?php if (!$useIconPicker) : ?>
+                                <?php echo $this->form->getInput('icon'); ?>
+                            <?php else : ?>
                             <div class="input-group">
                                 <select id="jem-icon-style" class="form-select flex-grow-0" style="width:auto" title="<?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY'); ?>">
                                     <option value="all"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_ALL'); ?></option>
@@ -298,6 +303,7 @@ HTMLHelper::_('behavior.formvalidator');
                                     <small id="jem-icon-label" class="text-muted ms-2"></small>
                                 <?php endif; ?>
                             </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-6 mb-3">
                             <?php echo $this->form->getLabel('color'); ?>

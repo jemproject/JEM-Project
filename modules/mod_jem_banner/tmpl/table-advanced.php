@@ -22,6 +22,7 @@ $showcalendar = (int)$params->get('showcalendar', 1);
 $showflyer = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 $imagewidthmax = (int)$params->get('imagewidthmax', 0);
+$imageRatio = preg_match('#^\d+\s*/\s*\d+$#', (string) $params->get('imageratio', '1 / 1')) ? (string) $params->get('imageratio', '1 / 1') : '1 / 1';
 
 if ($flyer_link_type == 1) {
     echo JemOutput::lightbox();
@@ -100,6 +101,10 @@ $css = '
         .events-grid {
             grid-template-columns: 1fr;
         }
+    }
+
+    #jemmodulebanner .event-image {
+        aspect-ratio: ' . $imageRatio . ';
     }';
 $wa->addInlineStyle($css);
 ?>
@@ -121,9 +126,33 @@ $wa->addInlineStyle($css);
                             </div>
                         <?php endif; ?>
 
-                        <h3 class="event-title" itemprop="name">
-                            <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'" itemprop="url">'.$item->title.'</a>' : $item->title; ?>
-                        </h3>
+                        <div class="event-heading">
+                            <h3 class="event-title" itemprop="name">
+                                <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'" itemprop="url">'.$item->title.'</a>' : $item->title; ?>
+                            </h3>
+
+                            <div class="event-title-meta">
+                                <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                                    <div class="event-category-badge">
+                                        <span><?php echo $item->catname; ?></span>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (($params->get('showtype', 1) == 1) && !empty($item->typename)) :?>
+                                    <div class="event-type">
+                                        <i class="fas fa-tag" aria-hidden="true"></i>
+                                        <span><?php echo $item->typelink ? '<a href="'.$item->typelink.'">'.$item->typename.'</a>' : $item->typename; ?></span>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
+                                    <div class="event-venue">
+                                        <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                                        <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="event-body">
@@ -150,19 +179,6 @@ $wa->addInlineStyle($css);
                                 <?php endif; ?>
                             <?php endif; ?>
 
-                            <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
-                                <div class="event-meta-item">
-                                    <i class="icon-location"></i>
-                                    <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
-                                <div class="event-meta-item">
-                                    <i class="icon-tag"></i>
-                                    <span><?php echo $item->catname; ?></span>
-                                </div>
-                            <?php endif; ?>
                         </div>
 
                         <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>

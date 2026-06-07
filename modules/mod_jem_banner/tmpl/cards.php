@@ -22,6 +22,9 @@ $showcalendar    = (int)$params->get('showcalendar', 1);
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 $imagewidthmax   = (int)$params->get('imagewidthmax', 0);
+$imageRatio      = preg_match('#^\d+\s*/\s*\d+$#', (string) $params->get('imageratio', '1 / 1')) ? (string) $params->get('imageratio', '1 / 1') : '1 / 1';
+$noImageText     = Text::_('MOD_JEM_BANNER_NO_IMAGE');
+$noImageText     = ($noImageText === 'MOD_JEM_BANNER_NO_IMAGE') ? 'No image' : $noImageText;
 
 if ($flyer_link_type == 1) {
     echo JemOutput::lightbox();
@@ -107,6 +110,10 @@ $css = '
             gap: 0.8rem;
         }
     }
+
+    #jemmodulebanner_cards .event-media {
+        aspect-ratio: ' . $imageRatio . ';
+    }
 ';
 $wa->addInlineStyle($css);
 ?>
@@ -115,11 +122,34 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-                <div class="event-card event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
-                    <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
+                <?php $showCategoryBadge = (($params->get('showcategory', 1) == 1) && !empty($item->catname)); ?>
+                <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                    <?php if ($showflyer == 1) : ?>
                         <div class="event-media">
-                            <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>">
-                            <div class="event-badge"><?php echo $item->catname; ?></div>
+                            <?php if (!empty($item->eventlink)) : ?>
+                                <a class="event-media-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
+                            <?php else : ?>
+                                <div class="event-media-link">
+                            <?php endif; ?>
+
+                                <?php if (!empty($item->eventimage)) : ?>
+                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>">
+                                <?php else : ?>
+                                    <span class="event-media-placeholder">
+                                        <i class="far fa-image" aria-hidden="true"></i>
+                                        <span><?php echo $noImageText; ?></span>
+                                    </span>
+                                <?php endif; ?>
+
+                            <?php if (!empty($item->eventlink)) : ?>
+                                </a>
+                            <?php else : ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($showCategoryBadge) : ?>
+                                <div class="event-badge"><span class="event-badge-content"><?php echo $item->catname; ?></span></div>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
 
@@ -127,6 +157,23 @@ $wa->addInlineStyle($css);
                         <h3 class="event-title">
                             <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" style="text-decoration:none;color:inherit;">'.$item->title.'</a>' : $item->title; ?>
                         </h3>
+
+                        <?php if ((($params->get('showvenue', 1) == 1) && !empty($item->venue)) || (($params->get('showcategory', 1) == 1) && !empty($item->catname))) : ?>
+                            <div class="event-title-meta">
+                                <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) : ?>
+                                    <div class="event-venue">
+                                        <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                                        <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) : ?>
+                                    <div class="event-category-badge">
+                                        <span><?php echo $item->catname; ?></span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
 
                         <div class="event-date-container">
                             <div class="date-box" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;">
@@ -147,12 +194,6 @@ $wa->addInlineStyle($css);
                                 </div>
                             <?php endif; ?>
 
-                            <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) : ?>
-                                <div class="meta-item">
-                                    <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-tag"></i></div>
-                                    <div class="meta-text"><?php echo $item->catname; ?></div>
-                                </div>
-                            <?php endif; ?>
                         </div>
 
                         <?php if ($params->get('showdesc', 1) == 1) : ?>

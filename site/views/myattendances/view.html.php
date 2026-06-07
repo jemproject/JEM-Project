@@ -64,6 +64,27 @@ class JemViewMyattendances extends JemView
             // are attendences available?
             $noattending = (!$attending) ? 1 : 0;
 
+            $columnParamDefaults = array(
+                'showtitle'  => '-1',
+                'showlocate' => '-1',
+                'showcity'   => '-1',
+                'showstate'  => '-1',
+                'showcat'    => '-1',
+            );
+
+            foreach ($columnParamDefaults as $columnParam => $columnDefault) {
+                $columnValue = (string) $params->get($columnParam, $columnDefault);
+
+                if ($columnValue !== '-1') {
+                    $jemsettings->{$columnParam} = (int) $columnValue;
+                }
+            }
+
+            $showdate    = (int) $params->get('showdate', 1);
+            $showplaces  = (int) $params->get('showplaces', 1);
+            $showstatus  = (int) $params->get('showstatus', 1);
+            $showcomment = (int) $params->get('showcomment', 1);
+
             // get variables
             $filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
             $filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -160,6 +181,10 @@ class JemViewMyattendances extends JemView
             $this->print_link = $print_link;
             $this->archive_link = $archive_link;
             $this->print = $print;
+            $this->showdate = $showdate;
+            $this->showplaces = $showplaces;
+            $this->showstatus = $showstatus;
+            $this->showcomment = $showcomment;
             $this->lists = $lists;
             $this->noattending = $noattending;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

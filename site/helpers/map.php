@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Filesystem\File;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
@@ -425,7 +424,7 @@ class JemMapHelper
         }
 
         foreach (array_unique($candidates) as $candidate) {
-            if (File::exists(JPATH_SITE . '/' . $candidate)) {
+            if (is_file(JPATH_SITE . '/' . $candidate)) {
                 return rtrim(Uri::root(), '/') . '/' . $candidate;
             }
         }

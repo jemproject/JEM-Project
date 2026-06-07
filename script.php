@@ -238,17 +238,10 @@ class com_jemInstallerScript
         $this->loadInstallerLanguage();
 
         $app = Factory::getApplication();
-        // Are we installing in J4.0?
-        $jversion = new Version();
-        $current_version = Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION;
-        $devLevel = Version::PATCH_VERSION;
+        // JEM 4.5 supports Joomla 4.2.9+ and Joomla 5.x. Joomla 6 requires JEM 5.x.
         $this->newRelease = (string)$parent->manifest->version;
 
-        if (version_compare(JVERSION, '6.0.0', 'ge') || // J! 6.x NOT supported, but allow alpha/beta
-            !(($current_version >= '4.3' && $devLevel >= '0') ||
-                ($current_version >= '4.2' && $devLevel >= '9') ||
-                ($current_version == '4.1' && $devLevel >= '5') ||
-                ($current_version == '4.0' && $devLevel >= '6'))) {
+        if (version_compare(JVERSION, '4.2.9', 'lt') || version_compare(JVERSION, '6.0.0', 'ge')) {
             $app->enqueueMessage(Text::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
             return false;
         }

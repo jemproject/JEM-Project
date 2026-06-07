@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
@@ -58,7 +59,7 @@ if (!function_exists('jem_myattendances_country_flag')) {
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nodate')) : ?>
+    <?php if (($this->showdate != 1) || JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nodate')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -151,16 +152,25 @@ if (!function_exists('jem_myattendances_country_flag')) {
     #jem .jem-event .jem-myattendances-places {
         flex: 0 5%;
         text-align: center;
+        <?php if ($this->showplaces != 1) : ?>
+          display: none;
+        <?php endif; ?>
     }
 
   .jem-sort #jem_status,
   #jem .jem-event .jem-myattendances-status {
         flex: 0 5%;
         text-align: center;
+        <?php if ($this->showstatus != 1) : ?>
+          display: none;
+        <?php endif; ?>
   }
     .jem-sort #jem_comment,
   #jem .jem-event .jem-myattendances-comments {
     flex: 0 5%;
+    <?php if ($this->showcomment != 1) : ?>
+      display: none;
+    <?php endif; ?>
   }
 </style>
 
@@ -204,7 +214,9 @@ if (!function_exists('jem_myattendances_country_flag')) {
 
     <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
+      <?php if ($this->showdate == 1) : ?>
       <div id="jem_date" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
       <?php if ($this->jemsettings->showtitle == 1) : ?>
         <div id="jem_title" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
@@ -221,9 +233,13 @@ if (!function_exists('jem_myattendances_country_flag')) {
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
-      <div id="jem_places" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <div id="jem_status" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+      <?php if ($this->showplaces == 1) : ?>
+        <div id="jem_places" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
+      <?php if ($this->showstatus == 1) : ?>
+        <div id="jem_status" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
+      <?php if (!empty($this->jemsettings->regallowcomments) && $this->showcomment == 1) : ?>
         <div id="jem_comment" class="sectiontableheader"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
       <?php endif; ?>
     </div>
@@ -240,6 +256,7 @@ if (!function_exists('jem_myattendances_country_flag')) {
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx'). ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php endif; ?>
 
+                    <?php if ($this->showdate == 1) : ?>
                     <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
             <i class="far fa-clock" aria-hidden="true"></i>
             <?php
@@ -252,6 +269,7 @@ if (!function_exists('jem_myattendances_country_flag')) {
               <?php endif; ?>
              <?php endif; ?>
           </div>
+          <?php endif; ?>
 
                     <?php if ($this->jemsettings->showtitle == 1) : ?>
             <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
@@ -315,10 +333,13 @@ if (!function_exists('jem_myattendances_country_flag')) {
             </div>
           <?php endif; ?>
 
+          <?php if ($this->showplaces == 1) : ?>
             <div class="jem-event-info-small jem-myattendances-places" title="<?php echo Text::_('COM_JEM_TABLE_PLACES').': '.$this->escape($row->places); ?>">
                 <?php echo $this->escape($row->places); ?>
             </div>
+          <?php endif; ?>
 
+                    <?php if ($this->showstatus == 1) : ?>
                     <div class="jem-event-info-small jem-myattendances-status">
                         <?php
                         $status = (int)$row->status;
@@ -326,12 +347,13 @@ if (!function_exists('jem_myattendances_country_flag')) {
                         echo jemhtml::toggleAttendanceStatus($row->id, $status, false, $this->print);
                         ?>
                     </div>
+                    <?php endif; ?>
 
-                    <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+                    <?php if (!empty($this->jemsettings->regallowcomments) && $this->showcomment == 1) : ?>
             <div class="jem-event-info-small jem-myattendances-comments">
               <?php
               $len  = ($this->print) ? 256 : 16;
-              $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > $len) ? (\Joomla\String\StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
+              $cmnt = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
               if (!empty($cmnt)) :
                 echo ($this->print) ? $cmnt : HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null);
               endif;

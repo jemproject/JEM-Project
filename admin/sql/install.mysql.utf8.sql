@@ -342,7 +342,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('imagewidth', '200'),
 ('gddisabled', '1'),
 ('imageenabled', '1'),
-('attachmentenabled', '0'),
+('attachmentenabled', '1'),
 ('frontendpublish','0'),
 ('catlinklist', '1'),
 ('showfroregistra', '2'),
