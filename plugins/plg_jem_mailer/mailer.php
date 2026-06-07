@@ -795,7 +795,7 @@ class plgJemMailer extends CMSPlugin
             return $text;
         }
 
-        $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($event);
+        $onlineMeetingUrl = $this->_getOnlineMeetingUrl($event);
 
         if ($onlineMeetingUrl === '') {
             return $text;
@@ -803,9 +803,65 @@ class plgJemMailer extends CMSPlugin
 
         return $text . "\n" . Text::sprintf(
             'PLG_JEM_MAILER_ONLINE_MEETING_LINK',
-            JemHelper::getOnlineMeetingLabel($event),
+            $this->_getOnlineMeetingLabel($event),
             $onlineMeetingUrl
         );
+    }
+
+    /**
+     * Return a sanitized online meeting URL without depending on the loaded JEM helper variant.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    private function _getOnlineMeetingUrl($event)
+    {
+        if (method_exists('JemHelper', 'getOnlineMeetingUrl')) {
+            return JemHelper::getOnlineMeetingUrl($event);
+        }
+
+        $url = isset($event->online_meeting_url) ? trim((string) $event->online_meeting_url) : '';
+
+        if ($url === '') {
+            return '';
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!$scheme || !in_array(strtolower($scheme), array('http', 'https'), true)) {
+            return '';
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
+    }
+
+    /**
+     * Return the online meeting label without depending on the loaded JEM helper variant.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    private function _getOnlineMeetingLabel($event)
+    {
+        if (method_exists('JemHelper', 'getOnlineMeetingLabel')) {
+            return JemHelper::getOnlineMeetingLabel($event);
+        }
+
+        $label = isset($event->online_meeting_label) ? trim((string) $event->online_meeting_label) : '';
+
+        if ($label === '' && method_exists('JemHelper', 'globalattribs')) {
+            $settings = JemHelper::globalattribs();
+            $label = trim((string) $settings->get('event_online_meeting_default_label', ''));
+        }
+
+        if ($label === '') {
+            $label = Text::_('COM_JEM_JOIN_ONLINE');
+        } elseif (strtoupper($label) === $label) {
+            $label = Text::_($label);
+        }
+
+        return $label;
     }
 
     /**

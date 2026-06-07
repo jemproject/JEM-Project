@@ -7,10 +7,10 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>5.0.0beta4</version>
+        <version>5.0.0rc1</version>
         <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem-5</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-0-beta4</downloadurl>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-0-rc1</downloadurl>
         </downloads>
         <tags>
             <tag>beta</tag>

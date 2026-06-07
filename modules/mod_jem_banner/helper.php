@@ -185,6 +185,7 @@ abstract class ModJemBannerHelper
         ####
         $events = $model->getItems();
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
+        $registrationTotals = self::getRegistrationTotals($events);
 
         $color = $params->get('color');
         $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
@@ -245,14 +246,27 @@ abstract class ModJemBannerHelper
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
+            $lists[$i]->typename    = htmlspecialchars($row->type_name ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->typelink    = (!empty($row->type_id) && $params->get('linktype', 1)) ? Route::_(JemHelperRoute::getTypeeventsRoute((int) $row->type_id)) : '';
             $lists[$i]->articlelink = '';
             $lists[$i]->articletitle = '';
+            $lists[$i]->registra    = (int) ($row->registra ?? 0);
+            $lists[$i]->maxplaces   = (int) ($row->maxplaces ?? 0);
+            $lists[$i]->reservedplaces = (int) ($row->reservedplaces ?? 0);
+            $lists[$i]->bookedplaces = (int) ($registrationTotals[(int) $row->id]->booked ?? 0);
+            $lists[$i]->waitingplaces = (int) ($registrationTotals[(int) $row->id]->waiting ?? 0);
+            $lists[$i]->availableplaces = $lists[$i]->maxplaces > 0
+                ? max(0, $lists[$i]->maxplaces - $lists[$i]->reservedplaces - $lists[$i]->bookedplaces)
+                : 0;
+            $lists[$i]->placespercent = $lists[$i]->maxplaces > 0
+                ? min(100, max(0, round(($lists[$i]->bookedplaces + $lists[$i]->reservedplaces) / $lists[$i]->maxplaces * 100)))
+                : 0;
 
             if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
                 $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
@@ -341,6 +355,36 @@ abstract class ModJemBannerHelper
         } // foreach ($events as $row)
 
         return $lists;
+    }
+
+    protected static function getRegistrationTotals(array $events)
+    {
+        $eventIds = array();
+
+        foreach ($events as $event) {
+            if (!empty($event->id)) {
+                $eventIds[(int) $event->id] = (int) $event->id;
+            }
+        }
+
+        if ($eventIds === array()) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('event'),
+                'SUM(CASE WHEN ' . $db->quoteName('status') . ' = 1 THEN ' . $db->quoteName('places') . ' ELSE 0 END) AS booked',
+                'SUM(CASE WHEN ' . $db->quoteName('status') . ' = 2 THEN ' . $db->quoteName('places') . ' ELSE 0 END) AS waiting',
+            ))
+            ->from($db->quoteName('#__jem_register'))
+            ->where($db->quoteName('event') . ' IN (' . implode(',', $eventIds) . ')')
+            ->group($db->quoteName('event'));
+
+        $db->setQuery($query);
+
+        return $db->loadObjectList('event') ?: array();
     }
 
     /**

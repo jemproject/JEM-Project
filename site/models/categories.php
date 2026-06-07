@@ -80,6 +80,13 @@ class JemModelCategories extends BaseDatabaseModel
     protected $_showemptysubcats = false;
 
     /**
+     * Category type filter.
+     *
+     * @var int
+     */
+    protected $_typeid = 0;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,6 +104,7 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $this->_id = $id;
+        $this->_typeid = $app->input->getInt('typeid', (int) $params->get('typeid', 0));
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
         $this->_showsubcats      = (bool)$params->get('usecat', 1);
@@ -423,6 +431,10 @@ class JemModelCategories extends BaseDatabaseModel
         }
         $where_sub .= ' AND c.id = cc.id';
 
+        if ($this->_typeid > 0) {
+            $where_sub .= ' AND cc.type_id = ' . (int) $this->_typeid;
+        }
+
         // show/hide empty categories
         $empty = $emptycat ? '' : ' HAVING assignedevents > 0';
 
@@ -460,6 +472,7 @@ class JemModelCategories extends BaseDatabaseModel
                . ' WHERE c.published = 1'
                . ' AND '.$parentCategoryQuery
                . $where_access
+               . ($this->_typeid > 0 ? ' AND c.type_id = ' . (int) $this->_typeid : '')
                . ' GROUP BY c.id '.$empty
                . ' ORDER BY '.$ordering
                ;
@@ -492,6 +505,10 @@ class JemModelCategories extends BaseDatabaseModel
                 . ' AND c.parent_id = ' . (int) $this->_id
                 . ' AND c.access IN (' . implode(',', $levels) . ')'
                 ;
+
+        if ($this->_typeid > 0) {
+            $query .= ' AND c.type_id = ' . (int) $this->_typeid;
+        }
 
         if (!$this->_showemptycats) {
             $query .= ' AND e.access IN (' . implode(',', $levels) . ')';
