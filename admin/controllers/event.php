@@ -51,8 +51,27 @@ class JemControllerEvent extends JemControllerForm
      *
      */
     protected function _postSaveHook($model, $validData = array()) {
-        $isNew = $model->getState('event.new');
-        $id    = $model->getState('event.id');
+        $modelName = method_exists($model, 'getName') ? $model->getName() : 'event';
+        $isNew     = $model->getState('event.new');
+        $id        = (int) $model->getState('event.id');
+
+        if ($isNew === null) {
+            $isNew = $model->getState($modelName . '.new');
+        }
+
+        if (!$id) {
+            $id = (int) $model->getState($modelName . '.id');
+        }
+
+        if (!$id && !empty($validData['id'])) {
+            $id = (int) $validData['id'];
+        }
+
+        if (!$id) {
+            return;
+        }
+
+        $isNew = (bool) $isNew;
 
         // trigger all jem plugins
         PluginHelper::importPlugin('jem');
