@@ -116,7 +116,7 @@ class plgJemMailer extends CMSPlugin
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-        $query->where(array('r.id= '.$db->quote($register_id)));
+        $query->where(array('r.id = '.(int) $register_id));
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
@@ -299,7 +299,7 @@ class plgJemMailer extends CMSPlugin
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-        $query->where(array('r.id= '.$db->quote($register_id)));
+        $query->where(array('r.id = '.(int) $register_id));
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
@@ -404,11 +404,11 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__jem_register').' AS r');
             $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
             $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-            $query->where(array('r.id= '.$db->quote($register_id)));
+            $query->where(array('r.id = '.(int) $register_id));
         } else {
             $query->from($db->quoteName('#__jem_events').' AS a');
             $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-            $query->where(array('a.id = '.$db->quote($event_id)));
+            $query->where(array('a.id = '.(int) $event_id));
         }
 
         $db->setQuery($query);
@@ -577,7 +577,7 @@ class plgJemMailer extends CMSPlugin
         $query->select($case_when);
         $query->from($db->quoteName('#__jem_events').' AS a');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-        $query->where(array('a.id = '.$db->quote($event_id)));
+        $query->where(array('a.id = '.(int) $event_id));
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
@@ -715,7 +715,7 @@ class plgJemMailer extends CMSPlugin
 
         $query->select(array('id', 'published', 'venue', 'city', 'street', 'postalCode', 'url', 'country', 'locdescription', 'created', 'created_by', 'modified' ,$case_when));
         $query->from('#__jem_venues');
-        $query->where(array('id = '.$db->quote($venue_id)));
+        $query->where(array('id = '.(int) $venue_id));
 
         $db->setQuery($query);
         if (is_null($venue = $db->loadObject())) {
@@ -841,6 +841,10 @@ class plgJemMailer extends CMSPlugin
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $recipients = array('all' => array());
+        $eventid = (int) $eventid;
+        $creatorid = (int) $creatorid;
+        $userid = (int) $userid;
+        $venueid = (int) $venueid;
 
         ######################
         ## RECEIVERS - USER ##
@@ -867,7 +871,7 @@ class plgJemMailer extends CMSPlugin
             $query->select(array('u.email'));
             $query->from($db->quoteName('#__users').' AS u');
             $query->where('u.block = 0');
-            $query->where(array('u.id = '.$db->quote($creatorid)));
+            $query->where(array('u.id = '.$creatorid));
 
             $db->setQuery($query);
             if (is_null($recipients['creator'] = $db->loadColumn(0))) {
@@ -892,7 +896,7 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__users').' AS u');
             $query->where('u.block = 0');
             if (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND a.created_by = u.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND a.created_by = u.id');
             } else {
                 $query->where('0');
             }
@@ -936,10 +940,10 @@ class plgJemMailer extends CMSPlugin
             $query->join('INNER', '#__jem_register AS reg ON reg.uid = u.id');
             if (!empty($eventid)) {
                 $query->join('INNER', '#__jem_events AS a ON reg.event = a.id');
-                $query->where('reg.event= '.$db->quote($eventid));
+                $query->where('reg.event = '.$eventid);
                 $query->where('a.published = 1');
             } elseif (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND reg.event = a.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND reg.event = a.id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
                 $query->where('a.published = 1');
                 $query->where('l.published = 1');
@@ -981,9 +985,9 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__jem_categories').' AS c');
             $query->join('INNER', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
             if (!empty($eventid)) {
-                $query->where('rel.itemid = '.$db->quote($eventid));
+                $query->where('rel.itemid = '.$eventid);
             } elseif (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND rel.itemid = a.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND rel.itemid = a.id');
             } else {
                 $query->where('0');
             }
@@ -1015,7 +1019,7 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__jem_cats_event_relations').' AS cer');
             $query->join('INNER', '#__jem_categories AS cat ON cat.id = cer.catid');
             $query->join('INNER', '#__viewlevels AS vl ON vl.id = cat.access');
-            $query->where('cer.itemid = '.$db->quote($eventid));
+            $query->where('cer.itemid = '.$eventid);
             $query->where('cat.emailacljl = 1');
             $db->setQuery($query);
             $list_groups_jl = $db->loadResult();
@@ -1060,9 +1064,9 @@ class plgJemMailer extends CMSPlugin
             $query->join('INNER', '#__jem_categories AS c ON c.groupid = gm.group_id');
             $query->join('INNER', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
             if (!empty($eventid)) {
-                $query->where('rel.itemid = '.$db->quote($eventid));
+                $query->where('rel.itemid = '.$eventid);
             } elseif (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND rel.itemid = a.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND rel.itemid = a.id');
             } else {
                 $query->where('0');
             }
