@@ -1104,9 +1104,8 @@ class plgJemMailer extends CMSPlugin
         if (isset($data->receivers)) {
             $receivers = is_array($data->receivers) ? $data->receivers : array($data->receivers);
 
-            # remove empty fields and duplicates
-            $receivers    = array_filter($receivers);
-            $receivers    = array_unique($receivers);
+            # remove empty/invalid fields and duplicates
+            $receivers = $this->_normaliseEmailList($receivers);
 
             if ($receivers) {
                 foreach ($receivers as $receiver)
@@ -1139,6 +1138,11 @@ class plgJemMailer extends CMSPlugin
             #  value is an array of roles which cause this user to get this email
             foreach ($data->recipients as $receiver => $causes)
             {
+                $receiver = filter_var(trim((string) $receiver), FILTER_VALIDATE_EMAIL);
+                if (!$receiver) {
+                    continue;
+                }
+
                 # collect why tis user gets this email
                 $why = array();
                 foreach ($causes as $cause) {
@@ -1181,6 +1185,11 @@ class plgJemMailer extends CMSPlugin
     private function _send($recipient, $subject, $body)
     {
         $result = false;
+        $recipient = filter_var(trim((string) $recipient), FILTER_VALIDATE_EMAIL);
+
+        if (!$recipient) {
+            return false;
+        }
 
         try {
             $mail = Factory::getMailer();
@@ -1223,12 +1232,7 @@ class plgJemMailer extends CMSPlugin
     private function Adminlist()
     {
         $admin_receiver = $this->params->get('admin_receivers');
-        $additional_mails    =(!empty($admin_receiver) ? (array_filter(explode(',', ($admin_receiver  ? trim($admin_receiver) : $admin_receiver)))) :array()) ;
-        // remove whitespaces around each entry, then check if valid email address
-        foreach ($additional_mails as $k => $v) {
-            $additional_mails[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
-        }
-        $additional_mails    = array_filter($additional_mails);
+        $additional_mails = $this->_normaliseEmailList(!empty($admin_receiver) ? explode(',', trim($admin_receiver)) : array());
 
         if ($this->params->get('fetch_admin_mails', '0')) {
 
@@ -1249,10 +1253,9 @@ class plgJemMailer extends CMSPlugin
             }
 
             $admin_mails = $db->loadColumn(1);
-            $AdminList   = array_merge($admin_mails, $additional_mails);
-            $AdminList   = array_unique($AdminList);
+            $AdminList   = $this->_normaliseEmailList(array_merge($admin_mails, $additional_mails));
         } else {
-            $AdminList    = array_unique($additional_mails);
+            $AdminList   = $additional_mails;
         }
 
         return $AdminList;
@@ -1268,18 +1271,33 @@ class plgJemMailer extends CMSPlugin
             if (is_array($list)) {
                 $list = implode(',', $list);
             }
-            $CategoryDBList    = array_filter(explode(',', trim($list)));
-            // remove whitespaces around each entry, then check if valid email address
-            foreach ($CategoryDBList as $k => $v) {
-                $CategoryDBList[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
-            }
-            $CategoryDBList = array_unique($CategoryDBList);
-            $CategoryDBList = array_filter($CategoryDBList);
+            $CategoryDBList = $this->_normaliseEmailList(explode(',', trim($list)));
         } else {
             $CategoryDBList = array();
         }
 
         return $CategoryDBList;
+    }
+
+    /**
+     * Normalise a mixed list of email values.
+     *
+     * @param   array  $emails  Raw email values.
+     *
+     * @return  array
+     */
+    private function _normaliseEmailList(array $emails)
+    {
+        $normalised = array();
+
+        foreach ($emails as $email) {
+            $email = filter_var(trim((string) $email), FILTER_VALIDATE_EMAIL);
+            if ($email) {
+                $normalised[] = $email;
+            }
+        }
+
+        return array_values(array_unique($normalised));
     }
 }
 ?>
