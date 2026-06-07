@@ -631,11 +631,11 @@ class plgJemMailer extends CMSPlugin
             $data = new stdClass();
 
             if ($is_new) {
-                $created = HtmlHelper::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $event->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
             } else {
-                $modified = HtmlHelper::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $event->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
             }
@@ -652,11 +652,11 @@ class plgJemMailer extends CMSPlugin
             $data = new stdClass();
 
             if ($is_new) {
-                $created = HtmlHelper::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $event->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
             } else {
-                $modified = HtmlHelper::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $event->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
             }
@@ -749,11 +749,11 @@ class plgJemMailer extends CMSPlugin
             $data = new stdClass();
 
             if ($is_new) {
-                $created = HtmlHelper::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $venue->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
             } else {
-                $modified = HtmlHelper::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $venue->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
             }
@@ -772,12 +772,12 @@ class plgJemMailer extends CMSPlugin
             # is the venue new or edited?
             if ($is_new) {
                 # the venue is new and we send a mail to adminDBList
-                $created = HtmlHelper::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $venue->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
             } else {
                 # the venue is edited and we send a mail to adminDBList
-                $modified = HtmlHelper::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $venue->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
             }
