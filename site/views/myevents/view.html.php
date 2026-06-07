@@ -69,6 +69,24 @@ class JemViewMyevents extends JemView
             // are no events available?
             $noevents = (!$events) ? 1 : 0;
 
+            $columnParamDefaults = array(
+                'showtitle'  => '-1',
+                'showlocate' => '-1',
+                'showcity'   => '-1',
+                'showstate'  => '0',
+                'showcat'    => '-1',
+            );
+
+            foreach ($columnParamDefaults as $columnParam => $columnDefault) {
+                $columnValue = (string) $params->get($columnParam, $columnDefault);
+
+                if ($columnValue !== '-1') {
+                    $jemsettings->{$columnParam} = (int) $columnValue;
+                }
+            }
+
+            $showdate = (int) $params->get('showdate', 1);
+
             // get variables
             $filter_order = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
             $filter_order_Dir = $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -174,6 +192,7 @@ class JemViewMyevents extends JemView
             $this->task = $task;
             $this->print = $print;
             $this->params = $params;
+            $this->showdate = $showdate;
             $this->events_pagination = $events_pagination;
             $this->jemsettings = $jemsettings;
             $this->settings = $settings;

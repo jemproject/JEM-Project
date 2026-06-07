@@ -11,6 +11,25 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+
+if (!function_exists('jem_frontend_status_label')) {
+    function jem_frontend_status_label($state)
+    {
+        switch ((int) $state) {
+            case 1:
+                return Text::_('JPUBLISHED');
+            case 0:
+                return Text::_('JUNPUBLISHED');
+            case 2:
+                return Text::_('JARCHIVED');
+            case -2:
+                return Text::_('JTRASHED');
+        }
+
+        return Text::_('JSTATUS');
+    }
+}
 
 if (!function_exists('jem_myvenues_country_name')) {
     function jem_myvenues_country_name($country)
@@ -54,6 +73,74 @@ if (!function_exists('jem_myvenues_country_flag')) {
     }
   <?php endif; ?>
 
+  #jem .jem-list-row.jem-small-list {
+    column-gap: 0;
+    row-gap: 0.35rem;
+  }
+
+  #jem .jem-list-row.jem-small-list > * {
+    box-sizing: border-box;
+    min-width: 0;
+    padding-right: 0.75rem;
+  }
+
+  #jem .jem-list-row.jem-small-list > *:last-child {
+    padding-right: 0;
+  }
+
+  #jem .jem-status-published .btn-micro span.icon-publish:before,
+  #jem .jem-status-published .btn-micro i.icon-publish,
+  #jem .jem-status-published .jgrid span.publish {
+    background-image: url(<?php echo Uri::root(true); ?>/media/com_jem/images/tick.webp) !important;
+    content: url(<?php echo Uri::root(true); ?>/media/com_jem/images/tick.webp) !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .btn-micro span.icon-unpublish:before,
+  #jem .jem-status-unpublished .btn-micro i.icon-unpublish:before,
+  #jem .jem-status-unpublished .jgrid span.unpublish:before,
+  #jem .jem-status-unpublished .icon-unpublish:before {
+    background-image: none !important;
+    color: #b71c1c !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .btn-micro i.icon-unpublish,
+  #jem .jem-status-unpublished .jgrid span.unpublish,
+  #jem .jem-status-unpublished .btn-micro span.icon-unpublish {
+    background-image: none !important;
+    color: #b71c1c !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .btn-micro,
+  #jem .jem-status-unpublished .btn-micro *,
+  #jem .jem-status-unpublished .jgrid,
+  #jem .jem-status-unpublished .jgrid * {
+    color: #b71c1c !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .jem-publishstateicon-unpublished,
+  #jem .jem-status-unpublished .jem-status-link {
+    color: #b71c1c !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+  }
+
+  #jem .jem-status-trashed .btn-micro span.icon-trash:before,
+  #jem .jem-status-trashed .btn-micro i.icon-trash,
+  #jem .jem-status-trashed .jgrid span.trash {
+    background-image: url(<?php echo Uri::root(true); ?>/media/com_jem/images/icon-16-trash.webp) !important;
+    content: url(<?php echo Uri::root(true); ?>/media/com_jem/images/icon-16-trash.webp) !important;
+    opacity: 0.55 !important;
+  }
+
+  #jem .jem-row-unpublished,
+  #jem .jem-row-unpublished a {
+    color: #6c757d !important;
+  }
+
   .jem-sort #jem_location,
   #jem .jem-event .jem-event-venue {
     <?php if (($this->jemsettings->showlocate == 1) && (!empty($this->jemsettings->locationwidth))) : ?>
@@ -81,15 +168,32 @@ if (!function_exists('jem_myvenues_country_flag')) {
     <?php endif; ?>
   }
 
+  .jem-sort .jem-myvenues-check,
   #jem.jem_myvenues .jem-myvenues-check {
-    flex: 0 1%;
+    display: flex;
+    flex: 0 0 auto;
+    flex-basis: auto !important;
+    width: max-content;
+    min-width: 1.5rem;
+    max-width: max-content;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
   }
 
+  .jem-sort .jem-myvenues-status,
   #jem.jem_myvenues .jem-myvenues-status {
-    flex: 0 0 4rem;
-    min-width: 4rem;
+    display: flex;
+    flex: 0 0 auto;
+    flex-basis: auto !important;
+    width: max-content;
+    min-width: max-content;
+    max-width: max-content;
+    margin-left: auto;
+    align-items: center;
     text-align: center;
     justify-content: center;
+    overflow: visible;
   }
 </style>
 
@@ -133,19 +237,21 @@ if (!function_exists('jem_myvenues_country_flag')) {
     <div class="jem-list-row jem-small-list">
       <?php if (empty($this->print) && !empty($this->permissions->canPublishVenue)) : ?>
                 <div class="sectiontableheader jem-myvenues-check">
-          <input type="checkbox" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showlocate == 1) : ?>
-        <div id="jem_location" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcity == 1) : ?>
-        <div id="jem_city" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_city" class="sectiontableheader"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
-        <div id="jem_country" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_country" class="sectiontableheader"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
-      <div class="jem-myvenues-status" ><?php echo Text::_('JSTATUS'); ?></div>
+      <div class="jem-myvenues-status" title="<?php echo Text::_('JSTATUS'); ?>" aria-label="<?php echo Text::_('JSTATUS'); ?>">
+        <span class="fa fa-check-circle" aria-hidden="true"></span>&nbsp;<?php echo Text::_('JSTATUS'); ?>
+      </div>
     </div>
   </div>
 
@@ -155,13 +261,13 @@ if (!function_exists('jem_myvenues_country_flag')) {
         <?php else :?>
             <?php foreach ($this->venues as $i => $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?><?php echo ((int) $row->published === 0) ? ' jem-row-unpublished' : ''; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
+          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' venue_id' . $this->escape($row->id); ?><?php echo ((int) $row->published === 0) ? ' jem-row-unpublished' : ''; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <?php endif; ?>
 
             <?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
-            <div class="jem-event-info-small jem-myevents-check" >
+            <div class="jem-event-info-small jem-myvenues-check" >
               <?php
               if (!empty($row->params) && $row->params->get('access-change', false)) :
                 echo HTMLHelper::_('grid.id', $i, $row->id) . '&nbsp;';
@@ -172,7 +278,6 @@ if (!function_exists('jem_myvenues_country_flag')) {
 
             <?php if ($this->jemsettings->showlocate == 1) : ?>
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
-                  <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) : ?>
                     <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
                   <?php else : ?>
@@ -185,18 +290,16 @@ if (!function_exists('jem_myvenues_country_flag')) {
                       <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
                       <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
                     </div>
-                    <?php echo JemOutput::publishstateicon($row); ?>
                 </div>
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcity == 1) : ?>
               <?php if (!empty($row->city)) : ?>
                 <div class="jem-event-info-small jem-event-city" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                  <i class="fa fa-building" aria-hidden="true"></i>
                   <?php echo $this->escape($row->city); ?>
                 </div>
               <?php else : ?>
-                <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
+                <div class="jem-event-info-small jem-event-city">-</div>
               <?php endif; ?>
             <?php endif; ?>
 
@@ -204,7 +307,6 @@ if (!function_exists('jem_myvenues_country_flag')) {
               <?php $countryName = jem_myvenues_country_name($row->country ?? ''); ?>
               <?php if ($countryName !== '') : ?>
                 <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY').': '.$this->escape($countryName); ?>">
-                  <?php echo jem_myvenues_country_flag($row->country ?? '', $countryName); ?>
                   <?php echo $this->escape($countryName); ?>
                 </div>
               <?php else : ?>
@@ -212,10 +314,19 @@ if (!function_exists('jem_myvenues_country_flag')) {
               <?php endif; ?>
             <?php endif; ?>
 
-                    <div class="jem-event-info-small jem-myvenues-status">
-                        <?php // Ensure icon is not clickable if user isn't allowed to change state!
+                    <div class="jem-event-info-small jem-myvenues-status jem-status-<?php echo ((int) $row->published === 1) ? 'published' : (((int) $row->published === -2) ? 'trashed' : 'unpublished'); ?>" title="<?php echo Text::_('JSTATUS') . ': ' . jem_frontend_status_label($row->published); ?>" aria-label="<?php echo Text::_('JSTATUS') . ': ' . jem_frontend_status_label($row->published); ?>">
+                        <?php
                         $enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
-                        echo HTMLHelper::_('jgrid.published', $row->published, $i, 'myvenues.', $enabled);
+                        $statusIcon = JemOutput::publishstateicon($row, array(), false, false);
+                        if ($enabled && ((int) $row->published >= 0)) :
+                            $statusTask = ((int) $row->published === 1) ? 'unpublish' : 'publish';
+                            ?>
+                            <a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i; ?>','myvenues.<?php echo $statusTask; ?>')" class="jem-status-link">
+                                <?php echo $statusIcon; ?>
+                            </a>
+                        <?php else :
+                            echo $statusIcon;
+                        endif;
                         ?>
                     </div>
             </li>
