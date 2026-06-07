@@ -31,6 +31,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 
 class plgJemMailer extends CMSPlugin
@@ -121,6 +122,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_formatEventMailDateTime($event);
 
         // check if currrent user handles on behalf of
         $attendeeid = $event->uid;
@@ -303,6 +305,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_formatEventMailDateTime($event);
 
         $attendee     = JemFactory::getUser($event->uid);
         $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
@@ -412,6 +415,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_formatEventMailDateTime($event);
 
         if (empty($registration)) {
             $registration = $event;
@@ -579,6 +583,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_formatEventMailDateTime($event);
 
         // Link for event
         $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
@@ -811,6 +816,22 @@ class plgJemMailer extends CMSPlugin
             JemHelper::getOnlineMeetingLabel($event),
             $onlineMeetingUrl
         );
+    }
+
+    /**
+     * Format event date/time fields for mail output using JEM display settings.
+     *
+     * @param   object  $event  Event data object.
+     *
+     * @return  void
+     */
+    private function _formatEventMailDateTime($event)
+    {
+        $date = JemOutput::formatdate($event->dates ?? '');
+        $time = JemOutput::formattime($event->times ?? '');
+
+        $event->dates = $date ?: '';
+        $event->times = $time ?: '';
     }
 
     /**
