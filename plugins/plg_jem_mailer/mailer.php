@@ -1025,21 +1025,21 @@ class plgJemMailer extends CMSPlugin
             $list_groups_jl = $db->loadResult();
 
             //List user emails of groups list
-            if($list_groups_jl) {
-            $list_groups_jl = substr ($list_groups_jl, 1, -1);
-            $query = $db->getQuery(true);
-            $query->select(array('u.email'));
-            $query->from($db->quoteName('#__user_usergroup_map').' AS um');
-            $query->join('INNER', '#__users AS u ON u.id = um.user_id');
-            $query->where('um.group_id IN ('.$list_groups_jl.')');
-            $query->where('u.block = 0');
-            $db->setQuery($query);
-            if (is_null($category_acl_receivers = $db->loadColumn(0))) {
-                $recipients['category_acl'] = false;
+            $groupIds = $this->_normaliseIntegerList(json_decode((string) $list_groups_jl, true) ?: array());
+            if ($groupIds) {
+                $query = $db->getQuery(true);
+                $query->select(array('u.email'));
+                $query->from($db->quoteName('#__user_usergroup_map').' AS um');
+                $query->join('INNER', '#__users AS u ON u.id = um.user_id');
+                $query->where('um.group_id IN ('.implode(',', $groupIds).')');
+                $query->where('u.block = 0');
+                $db->setQuery($query);
+                if (is_null($category_acl_receivers = $db->loadColumn(0))) {
+                    $recipients['category_acl'] = false;
+                } else {
+                    $recipients['category_acl'] = array_unique($category_acl_receivers);
+                }
             } else {
-                $recipients['category_acl'] = array_unique($category_acl_receivers);
-            }
-            }else{
                 $recipients['category_acl'] = false;
             }
         } else {
@@ -1298,6 +1298,27 @@ class plgJemMailer extends CMSPlugin
             $email = filter_var(trim((string) $email), FILTER_VALIDATE_EMAIL);
             if ($email) {
                 $normalised[] = $email;
+            }
+        }
+
+        return array_values(array_unique($normalised));
+    }
+
+    /**
+     * Normalise a mixed list of integer values.
+     *
+     * @param   array  $values  Raw integer values.
+     *
+     * @return  array
+     */
+    private function _normaliseIntegerList(array $values)
+    {
+        $normalised = array();
+
+        foreach ($values as $value) {
+            $value = (int) $value;
+            if ($value > 0) {
+                $normalised[] = $value;
             }
         }
 
