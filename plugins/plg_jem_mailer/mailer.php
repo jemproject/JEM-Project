@@ -417,6 +417,10 @@ class plgJemMailer extends CMSPlugin
             $registration = $event;
         }
 
+        if (!empty($registration->waiting)) {
+            return true;
+        }
+
         // check if currrent user handles on behalf of
         $attendeeid = (!empty($registration->uid) ? $registration->uid : $userid);
         if ($attendeeid != $userid) {
@@ -815,6 +819,7 @@ class plgJemMailer extends CMSPlugin
     private function _getRecipients(array $send_to, array $skip, $eventid, $creatorid, $userid, $venueid = 0)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $recipients = array('all' => array());
 
         ######################
         ## RECEIVERS - USER ##
@@ -921,15 +926,16 @@ class plgJemMailer extends CMSPlugin
                 $query->where('0');
             }
 
-            # since 2.1.6/7 there is a registration status but we will ignore it here
-            #  because it maybe usefull for "non-attendees" too to get information about changes, maybe they will attend now...
+            # inform confirmed attendees only
+            $query->where('reg.waiting = 0');
+            $query->where('reg.status = 1');
 
             # inform attendees only if event had not finished since one or more hours
             $query->where('((a.dates IS NULL) OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), " ", IFNULL(a.endtimes, "23:59:59"))) > -60))');
 
             $db->setQuery($query);
             if (is_null($recipients['registered'] = $db->loadColumn(0))) {
-                return array();
+                $recipients['registered'] = false;
             } else {
                 $recipients['registered'] = array_unique($recipients['registered']);
             }
@@ -963,7 +969,7 @@ class plgJemMailer extends CMSPlugin
 
             $db->setQuery($query);
             if (is_null($category_receivers = $db->loadColumn(0))) {
-                return array();
+                $recipients['category'] = false;
             } else {
                 $recipients['category'] = array_unique($this->categoryDBList($category_receivers));
             }
@@ -1004,7 +1010,7 @@ class plgJemMailer extends CMSPlugin
             $query->where('u.block = 0');
             $db->setQuery($query);
             if (is_null($category_acl_receivers = $db->loadColumn(0))) {
-                return array();
+                $recipients['category_acl'] = false;
             } else {
                 $recipients['category_acl'] = array_unique($category_acl_receivers);
             }
@@ -1042,7 +1048,7 @@ class plgJemMailer extends CMSPlugin
 
             $db->setQuery($query);
             if (is_null($recipients['group'] = $db->loadColumn(0))) {
-                return array();
+                $recipients['group'] = false;
             } else {
                 $recipients['group'] = array_unique($recipients['group']);
             }
@@ -1212,12 +1218,13 @@ class plgJemMailer extends CMSPlugin
             $query->select(array('u.id','u.email','u.name'));
             $query->from($db->quoteName('#__users').' AS u');
             $query->where(array('u.sendEmail = 1'));
+            $query->where(array('u.block = 0'));
 
             $db->setQuery($query);
 
             if ($db->execute() === false) {
                 Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
-                return;
+                return array();
             }
 
             $admin_mails = $db->loadColumn(1);
