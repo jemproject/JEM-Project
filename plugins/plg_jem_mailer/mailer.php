@@ -1239,14 +1239,14 @@ class plgJemMailer extends CMSPlugin
             $query->where(array('u.sendEmail = 1'));
             $query->where(array('u.block = 0'));
 
-            $db->setQuery($query);
-
-            if ($db->execute() === false) {
-                Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
-                return array();
+            try {
+                $db->setQuery($query);
+                $admin_mails = $db->loadColumn(1);
+            } catch (RuntimeException $e) {
+                JemHelper::addLogEntry($e->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
+                $admin_mails = array();
             }
 
-            $admin_mails = $db->loadColumn(1);
             $AdminList   = $this->_normaliseEmailList(array_merge($admin_mails, $additional_mails));
         } else {
             $AdminList   = $additional_mails;
