@@ -5,16 +5,6 @@
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
- *
- * @todo: change onEventUserRegistered
- * there is a check for the waitinglist and that one is looking
- * at the option "reg_email_to". The onEventUnregistered function
- * has no check for the waitinglist.
- *
- * @todo: check output time/date
- * it's possible that there is no time or date for an event.
- * add check for global time/date format. At the moment the output
- * format is not respecting the global-setting
  */
 
 defined('_JEXEC') or die;
@@ -609,7 +599,7 @@ class plgJemMailer extends CMSPlugin
                 $adminstate = Text::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
                 $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
                 break;
-            default: /* TODO: fallback unknown / undefined */
+            default:
                 $adminstate = Text::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
                 $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
                 break;
@@ -928,8 +918,7 @@ class plgJemMailer extends CMSPlugin
         ## RECEIVERS - REGISTERED ##
         ############################
 
-        # in here we selected the option to send an email to all people registered to the event.
-        # there is no check for the waitinglist
+        # in here we selected the option to send an email to confirmed attendees of the event.
 
         if (!empty($send_to['registered'])) {
             # get data
@@ -1133,8 +1122,9 @@ class plgJemMailer extends CMSPlugin
                 'creator'    => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ITEM_CREATOR'),
                 'ev-creator' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_EVENT_CREATOR'),
                 'group'      => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_GROUP_MEMBER'),
-                'category'   => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED'),
-                'registered' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE')
+                'category'     => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED'),
+                'registered'   => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE'),
+                'category_acl' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_ACL')
             );
 
             # for all recipients...
