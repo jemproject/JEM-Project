@@ -1,0 +1,22 @@
+#jem.jem_eventsmap .jem-eventsmap-canvas {
+    min-height: 300px;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-group,
+#jem.jem_eventsmap .jem-date-filter .form-select,
+#jem.jem_eventsmap .jem-date-filter .form-control {
+    margin-bottom: 4px;
+}
+
+#jem.jem_eventsmap .jem-eventsmap-popup-events {
+    margin: 0.4rem 0;
+    padding-left: 1.2rem;
+}
+
+#jem.jem_eventsmap .copyright {
+    clear: both;
+    float: none;
+    width: 100%;
+    margin: 1em 0;
+    text-align: center;
+}

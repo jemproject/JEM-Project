@@ -51,7 +51,6 @@ class JemViewEventsMap extends JemView
 
         // Initialize variables
         $app         = Factory::getApplication();
-        $app->getLanguage()->load('mod_jem_map', JPATH_SITE . '/modules/mod_jem_map');
         $document    = $app->getDocument();
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
@@ -171,10 +170,6 @@ class JemViewEventsMap extends JemView
                     // Shows all venues with or without events.
                     break;
             }
-        }
-
-        if (!$filterStartDate) {
-            $filterStartDate = Factory::getDate()->format('Y-m-d');
         }
 
         $categories = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];

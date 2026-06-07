@@ -27,8 +27,7 @@ $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
 $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
 $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
 $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
-
-JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
+$wa->registerAndUseStyle('com_jem.eventsmap', 'media/com_jem/css/eventsmap.css');
 
 $jemsettings  = JemHelper::config();
 $map_id        = 'leafletmap-' . uniqid();
@@ -43,7 +42,7 @@ $filterMode    = $this->filterMode;
 $filterDate    = $this->filterDate;
 $isDateMode    = $filterDate !== null;
 $currentDate   = $isDateMode ? $filterDate : '';
-$youAreHere    = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
+$youAreHere    = Text::_('COM_JEM_EVENTS_MAP_YOU_ARE_HERE');
 $height        = $this->height;
 $centerLat     = (float) $this->centerLat;
 $centerLng     = (float) $this->centerLng;
@@ -147,13 +146,13 @@ foreach ((array) $events as $event) {
         <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
             <?php if (!empty($showCountryFilter)): ?>
                 <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
-                    <?= Text::_('MOD_JEM_MAP_COUNTRY_FILTER') ?>
+                    <?= Text::_('COM_JEM_EVENTS_MAP_COUNTRY_FILTER') ?>
                 </label>
                 <select name="jem_map_filter_country"
                         id="jem-map-filter-country-<?= $map_id ?>"
                         class="form-select form-select-sm auto-submit"
                         style="width: auto;">
-                    <option value=""><?= Text::_('MOD_JEM_MAP_ALL_COUNTRIES') ?></option>
+                    <option value=""><?= Text::_('COM_JEM_EVENTS_MAP_ALL_COUNTRIES') ?></option>
                     <?php foreach ($countries as $country): ?>
                         <?php
                         $countryCode = (string) $country->country;
@@ -169,17 +168,17 @@ foreach ((array) $events as $event) {
             <?php if (!empty($showDateFilter)): ?>
             <?php
             $options = [
-                'all'      => 'MOD_JEM_MAP_ALL',
-                'today'    => 'MOD_JEM_MAP_TODAY',
-                'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
-                'week'     => 'MOD_JEM_MAP_WEEK',
-                'month'    => 'MOD_JEM_MAP_MONTH',
-                'year'     => 'MOD_JEM_MAP_YEAR',
-                'date'     => 'MOD_JEM_MAP_DATE'
+                'all'      => 'COM_JEM_EVENTS_MAP_ALL',
+                'today'    => 'COM_JEM_EVENTS_MAP_TODAY',
+                'tomorrow' => 'COM_JEM_EVENTS_MAP_TOMORROW',
+                'week'     => 'COM_JEM_EVENTS_MAP_WEEK',
+                'month'    => 'COM_JEM_EVENTS_MAP_MONTH',
+                'year'     => 'COM_JEM_EVENTS_MAP_YEAR',
+                'date'     => 'COM_JEM_EVENTS_MAP_DATE'
             ];
 
             foreach ($options as $value => $label) {
-                $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
+                $isActive = $filterMode === $value;
                 $isDateField = $value === 'date';
                 ?>
                 <?php if ($isDateField) { ?>
@@ -202,19 +201,19 @@ foreach ((array) $events as $event) {
             <?php } ?>
 
             <button type="submit" class="btn btn-primary btn-sm">
-                <?= Text::_('MOD_JEM_MAP_APPLY') ?>
+                <?= Text::_('COM_JEM_EVENTS_MAP_APPLY') ?>
             </button>
             <?php endif; ?>
 
             <?php if (!empty($showCategoryFilter)): ?>
                 <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
-                    <?= Text::_('MOD_JEM_MAP_CATEGORY_FILTER') ?>
+                    <?= Text::_('COM_JEM_EVENTS_MAP_CATEGORY_FILTER') ?>
                 </label>
                 <select name="jem_map_filter_catid"
                         id="jem-map-filter-category-<?= $map_id ?>"
                         class="form-select form-select-sm auto-submit"
                         style="width: auto;">
-                    <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
+                    <option value="0"><?= Text::_('COM_JEM_EVENTS_MAP_ALL_CATEGORIES') ?></option>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
@@ -226,7 +225,7 @@ foreach ((array) $events as $event) {
             <?php if($this->params->get('show_my_location','0')) { ?>
                 <!-- Location button -->
                 <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
-                    <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
+                    <i class="icon-location"></i> <?= Text::_('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>
                 </button>
             <?php } ?>
             <?php echo HTMLHelper::_('form.token'); ?>
@@ -236,18 +235,18 @@ foreach ((array) $events as $event) {
         <?php if($this->params->get('show_my_location','0')) { ?>
             <div class="alert alert-info small mt-2" id="location-help">
                 <i class="icon-info"></i>
-                <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
+                <?= Text::_('COM_JEM_EVENTS_MAP_LOCATION_HELP') ?>
             </div>
 
             <!-- Permission instructions -->
             <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
                 <i class="icon-warning"></i>
-                <?= Text::_('MOD_JEM_MAP_PERMISSION_INSTRUCTIONS') ?>
+                <?= Text::_('COM_JEM_EVENTS_MAP_PERMISSION_INSTRUCTIONS') ?>
             </div>
         <?php } ?>
     <?php endif; ?>
 
-    <div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
+    <div id="<?= $map_id ?>" class="jem-eventsmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
 
 
     <!--footer-->  
@@ -307,8 +306,8 @@ foreach ((array) $events as $event) {
         L.control
             .fullscreen({
                 position: 'topleft', // change the position: topleft, topright, bottomright or bottomleft, default topleft
-                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
-                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                title: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_TITLE") ?>',
+                titleCancel: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_EXIT") ?>',
                 content: null,
                 forceSeparateButton: true
             })
@@ -323,7 +322,7 @@ foreach ((array) $events as $event) {
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
                 return false;
             }
             return true;
@@ -334,7 +333,7 @@ foreach ((array) $events as $event) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
                 locateBtn.disabled = false;
             }
         }
@@ -371,7 +370,7 @@ foreach ((array) $events as $event) {
                 return;
             }
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
             locateBtn.disabled = true;
             locationRequested = true;
 
@@ -429,16 +428,16 @@ foreach ((array) $events as $event) {
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
                             break;
                         default:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
                     }
 
                     showError(errorMessage);
@@ -489,7 +488,7 @@ foreach ((array) $events as $event) {
             . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
             . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
             . '<a href="https://maps.google.com/?daddr=' . (float) $marker['lat'] . ',' . (float) $marker['lng'] . '">'
-            . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
+            . Text::_('COM_JEM_EVENTS_MAP_NAVIGATE') . '</a>';
         ?>
         L.marker([<?= (float) $marker['lat'] ?>, <?= (float) $marker['lng'] ?>], {
             icon: L.icon({
