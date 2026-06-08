@@ -46,6 +46,7 @@ class JemViewTypes extends JemAdminView
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
         $canDelete = $canDo->get('core.delete');
+        $filterState = $this->state->get('filter_state');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -58,8 +59,8 @@ class JemViewTypes extends JemAdminView
             ToolbarHelper::divider();
         }
 
-        /* state */
-        if ($canChangeState || $canDelete) {
+        /* actions */
+        if ($canChangeState) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -68,22 +69,34 @@ class JemViewTypes extends JemAdminView
                 ->listCheck(true);
             $childBar = $dropdown->getChildToolbar();
 
-            if ($canChangeState && $this->state->get('filter.state') != 2) {
+            if ($canChangeState && $filterState != 2) {
                 $childBar->publish('types.publish')->listCheck(true);
                 $childBar->unpublish('types.unpublish')->listCheck(true);
+            }
+
+            if ($canChangeState) {
+                if ($filterState != 2) {
+                    $childBar->archive('types.archive')->listCheck(true);
+                } else {
+                    $childBar->publish('types.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
+                }
             }
 
             if ($canChangeState) {
                 $childBar->checkin('types.checkin')->listCheck(true);
             }
 
-            /* delete-trash */
-            if ($canDelete) {
-                $childBar->delete('types.remove', 'JACTION_DELETE')
-                    ->message('COM_JEM_CONFIRM_DELETE')
-                    ->listCheck(true);
+            if ($canChangeState && $filterState != -2) {
+                $childBar->trash('types.trash')->listCheck(true);
             }
-            }
+        }
+
+        if ($filterState == -2 && $canDelete) {
+            ToolbarHelper::divider();
+            $toolbar->delete('types.remove', 'JTOOLBAR_EMPTY_TRASH')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
+        }
 
         ToolbarHelper::divider();
         ToolbarHelper::help('listtypes', true, 'https://www.joomlaeventmanager.net/documentation/backend/types');

@@ -137,7 +137,7 @@ class JemViewEvents extends JemAdminView
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
         $canDelete = $canDo->get('core.delete');
-        $showActionDropdown = $canChangeState || ($this->state->get('filter_state') == -2 && $canDelete);
+        $showActionDropdown = $canChangeState;
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -150,7 +150,7 @@ class JemViewEvents extends JemAdminView
             ToolBarHelper::divider();
         }
 
-        /* state */
+        /* actions */
         if ($showActionDropdown) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
@@ -180,13 +180,16 @@ class JemViewEvents extends JemAdminView
                 $childBar->checkin('events.checkin')->listCheck(true);
             }
 
-            if ($this->state->get('filter_state') == -2 && $canDelete) {
-                $childBar->delete('events.delete', 'JTOOLBAR_EMPTY_TRASH')
-                    ->message('COM_JEM_CONFIRM_DELETE')
-                    ->listCheck(true);
-            } elseif ($canChangeState) {
+            if ($this->state->get('filter_state') != -2 && $canChangeState) {
                 $childBar->trash('events.trash')->listCheck(true);
             }
+        }
+
+        if ($this->state->get('filter_state') == -2 && $canDelete) {
+            ToolBarHelper::divider();
+            $toolbar->delete('events.delete', 'JTOOLBAR_EMPTY_TRASH')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
         }
 
         ToolBarHelper::divider();

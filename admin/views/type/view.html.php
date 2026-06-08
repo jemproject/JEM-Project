@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class JemViewType extends JemAdminView
@@ -120,25 +121,40 @@ class JemViewType extends JemAdminView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user       = JemFactory::getUser();
-        $isNew      = ($this->item->id == 0);
-        $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        $canDo      = JemHelperBackend::getActions();
+        $user         = JemFactory::getUser();
+        $isNew        = ($this->item->id == 0);
+        $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        $canDo        = JemHelperBackend::getActions();
+        $canSave      = !$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'));
+        $canSave2New  = !$checkedOut && $canDo->get('core.create');
+        $canSave2Copy = !$isNew && $canDo->get('core.create');
+        $cancelText   = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         ToolbarHelper::title($isNew ? Text::_('COM_JEM_ADD_TYPE') : Text::_('COM_JEM_TYPE_EDIT'), 'tag');
 
-        if (!$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'))) {
+        if ($canSave) {
             ToolbarHelper::apply('type.apply');
-            ToolbarHelper::save('type.save');
-        }
-        if (!$checkedOut && $canDo->get('core.create')) {
-            ToolbarHelper::save2new('type.save2new');
-        }
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolbarHelper::save2copy('type.save2copy');
+
+            $toolbar = Toolbar::getInstance('toolbar');
+            $saveGroup = $toolbar->dropdownButton('save-group')
+                ->toggleSplit(true)
+                ->icon('icon-save')
+                ->buttonClass('btn btn-success')
+                ->listCheck(false);
+
+            $childBar = $saveGroup->getChildToolbar();
+            $childBar->save('type.save');
+
+            if ($canSave2New) {
+                $childBar->save2new('type.save2new');
+            }
+
+            if ($canSave2Copy) {
+                $childBar->save2copy('type.save2copy');
+            }
         }
 
-        ToolbarHelper::cancel($isNew ? 'type.cancel' : 'type.cancel', $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE');
+        ToolbarHelper::cancel('type.cancel', $cancelText);
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
     }
