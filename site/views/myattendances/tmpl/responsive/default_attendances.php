@@ -237,7 +237,7 @@ if (!function_exists('jem_myattendances_country_flag')) {
         <div id="jem_places" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->showstatus == 1) : ?>
-        <div id="jem_status" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_status" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if (!empty($this->jemsettings->regallowcomments) && $this->showcomment == 1) : ?>
         <div id="jem_comment" class="sectiontableheader"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
