@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">JEM Associated Articles: practical examples</title>
+  <desc id="desc">Practical infographic with two examples showing how associated articles can support event publishing workflows.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f7fafc}.card{fill:#fff;stroke:#cbd5e1;stroke-width:2}.head{fill:#243b53}.blue{fill:#2563eb}.green{fill:#198754}.orange{fill:#f97316}.red{fill:#dc2626}.muted{fill:#64748b}.soft{fill:#eff6ff}.text{font-family:Arial,Helvetica,sans-serif;fill:#172033}.h1{font-size:42px;font-weight:700}.h2{font-size:27px;font-weight:700}.h3{font-size:20px;font-weight:700}.p{font-size:18px}.small{font-size:15px}.label{font-size:14px;font-weight:700;fill:#fff}.line{stroke:#94a3b8;stroke-width:3;fill:none}.dash{stroke:#94a3b8;stroke-width:3;stroke-dasharray:8 8;fill:none}.chip{fill:#eef2ff;stroke:#a5b4fc}.mono{font-family:Consolas,Monaco,monospace;font-size:15px;fill:#172033}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1400" height="900"/>
+  <text class="text h1" x="70" y="70">Associated Articles in Practice</text>
+  <text class="text p" x="72" y="105">Two publishing workflows using manual, on-demand and automatic Joomla articles linked to JEM events.</text>
+
+  <rect class="card" x="70" y="145" width="600" height="630" rx="14"/>
+  <rect class="head" x="70" y="145" width="600" height="64" rx="14"/>
+  <text class="label" x="100" y="184">Example 1</text>
+  <text class="text h2" x="100" y="250">Museum events with curated articles</text>
+  <rect class="soft" x="100" y="285" width="220" height="85" rx="10"/>
+  <text class="text h3" x="125" y="318">JEM Category</text>
+  <text class="text small" x="125" y="344">Museum Talks</text>
+  <path class="line" d="M320 327 H405" marker-end="url(#arrow)"/>
+  <rect class="soft" x="405" y="285" width="220" height="85" rx="10"/>
+  <text class="text h3" x="430" y="318">Article mode</text>
+  <text class="text small" x="430" y="344">Manual link</text>
+
+  <text class="text h3" x="100" y="430">Workflow</text>
+  <circle class="blue" cx="112" cy="470" r="8"/><text class="text p" x="135" y="477">Create the event in JEM.</text>
+  <circle class="blue" cx="112" cy="512" r="8"/><text class="text p" x="135" y="519">Select an existing editorial Joomla article.</text>
+  <circle class="blue" cx="112" cy="554" r="8"/><text class="text p" x="135" y="561">Event page shows a More information link.</text>
+  <circle class="blue" cx="112" cy="596" r="8"/><text class="text p" x="135" y="603">Editors keep full control over the article.</text>
+
+  <text class="text h3" x="100" y="675">Good for</text>
+  <rect class="chip" x="100" y="700" width="160" height="32" rx="16"/><text class="text small" x="118" y="721">Press content</text>
+  <rect class="chip" x="275" y="700" width="150" height="32" rx="16"/><text class="text small" x="294" y="721">SEO pages</text>
+  <rect class="chip" x="440" y="700" width="160" height="32" rx="16"/><text class="text small" x="458" y="721">Long articles</text>
+
+  <rect class="card" x="730" y="145" width="600" height="630" rx="14"/>
+  <rect class="head" x="730" y="145" width="600" height="64" rx="14"/>
+  <text class="label" x="760" y="184">Example 2</text>
+  <text class="text h2" x="760" y="250">Recurring concerts with automatic articles</text>
+  <rect class="soft" x="760" y="285" width="220" height="85" rx="10"/>
+  <text class="text h3" x="785" y="318">JEM Category</text>
+  <text class="text small" x="785" y="344">Concerts</text>
+  <path class="line" d="M980 327 H1065" marker-end="url(#arrow)"/>
+  <rect class="soft" x="1065" y="285" width="220" height="85" rx="10"/>
+  <text class="text h3" x="1090" y="318">Article mode</text>
+  <text class="text small" x="1090" y="344">Automatic</text>
+
+  <text class="text h3" x="760" y="430">Configuration</text>
+  <text class="mono" x="785" y="470">Title format: {title} - {date}</text>
+  <text class="mono" x="785" y="505">Article date: Use event start date</text>
+  <text class="mono" x="785" y="540">Recurring: Share first article with series</text>
+
+  <text class="text h3" x="760" y="605">Result</text>
+  <circle class="green" cx="772" cy="645" r="8"/><text class="text p" x="795" y="652">JEM creates an unpublished Joomla article on save.</text>
+  <circle class="green" cx="772" cy="687" r="8"/><text class="text p" x="795" y="694">Alias is stable: event-title-123.</text>
+  <circle class="green" cx="772" cy="729" r="8"/><text class="text p" x="795" y="736">The series can share one article or create one per occurrence.</text>
+
+  <rect class="card" x="70" y="815" width="1260" height="48" rx="10"/>
+  <text class="text small" x="95" y="845">Important: automatic article creation is enabled per JEM category. Global settings only define how generated associated articles are named, dated and handled for recurring events.</text>
+</svg>

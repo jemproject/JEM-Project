@@ -1066,6 +1066,18 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="event_show_intro" type="radio"
+                description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
+                label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+
+        <fieldset name="associatedarticles" label="COM_JEM_ASSOCIATED_ARTICLES">
             <field name="event_use_associated_article" type="radio"
                 label="COM_JEM_EVENT_FIELD_USE_ASSOCIATED_ARTICLE_LABEL"
                 description="COM_JEM_EVENT_FIELD_USE_ASSOCIATED_ARTICLE_DESC"
@@ -1075,6 +1087,13 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="event_associated_article_title_format" type="text"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_TITLE_FORMAT_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_TITLE_FORMAT_DESC"
+                class="inputbox form-control w-auto"
+                default="{title}"
+                showon="event_use_associated_article:1"
+            />
             <field name="event_show_more_information" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_DESC"
@@ -1094,14 +1113,26 @@
                 hint="COM_JEM_EVENT_MORE_INFORMATION"
                 showon="event_show_more_information:1,2"
             />
-            <field name="event_show_intro" type="radio"
-                description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
-                label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
-                class="inputbox btn-group btn-group-yesno"
+            <field name="event_associated_article_date_source" type="list"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_DATE_SOURCE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_DATE_SOURCE_DESC"
+                class="inputbox form-select w-auto"
                 default="0"
+                showon="event_use_associated_article:1"
             >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
+                <option value="0">COM_JEM_ARTICLE_DATE_SOURCE_CREATED</option>
+                <option value="1">COM_JEM_ARTICLE_DATE_SOURCE_EVENT_START</option>
+            </field>
+            <field name="event_associated_article_recurrence_mode" type="list"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_MODE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_MODE_DESC"
+                class="inputbox form-select w-auto"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="0">COM_JEM_ARTICLE_RECURRENCE_FIRST_ONLY</option>
+                <option value="1">COM_JEM_ARTICLE_RECURRENCE_SHARE_SERIES</option>
+                <option value="2">COM_JEM_ARTICLE_RECURRENCE_EACH_OCCURRENCE</option>
             </field>
         </fieldset>
 

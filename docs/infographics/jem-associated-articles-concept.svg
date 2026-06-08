@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">JEM Associated Articles: configuration and publishing paths</title>
+  <desc id="desc">Conceptual infographic showing manual, on-demand and automatic associated Joomla article creation for JEM events.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f6f8fb}.panel{fill:#fff;stroke:#cfd7e3;stroke-width:2}.head{fill:#1d3557}.accent{fill:#2f80ed}.ok{fill:#2e7d32}.warn{fill:#f59e0b}.muted{fill:#64748b}.text{font-family:Arial,Helvetica,sans-serif;fill:#14213d}.h1{font-size:42px;font-weight:700}.h2{font-size:25px;font-weight:700}.h3{font-size:20px;font-weight:700}.p{font-size:18px}.small{font-size:15px}.tiny{font-size:13px}.label{font-size:15px;font-weight:700;fill:#fff}.line{stroke:#94a3b8;stroke-width:3;fill:none}.dash{stroke:#94a3b8;stroke-width:3;stroke-dasharray:8 8;fill:none}.chip{fill:#eaf2ff;stroke:#93b7ff}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1400" height="900"/>
+  <text class="text h1" x="70" y="70">JEM Associated Articles</text>
+  <text class="text p" x="72" y="105">Link Joomla articles to JEM events manually, on demand, or automatically from category rules.</text>
+
+  <rect class="panel" x="70" y="145" width="390" height="255" rx="12"/>
+  <rect class="head" x="70" y="145" width="390" height="58" rx="12"/>
+  <text class="label" x="95" y="181">1. Global feature switch</text>
+  <text class="text h3" x="95" y="245">Associated Articles</text>
+  <text class="text p" x="95" y="280">Enables article linking in event forms.</text>
+  <text class="text p" x="95" y="315">It does not force every category to</text>
+  <text class="text p" x="95" y="340">create articles automatically.</text>
+  <rect class="chip" x="95" y="360" width="245" height="30" rx="15"/>
+  <text class="text small" x="112" y="381">Global setting: On / Off</text>
+
+  <rect class="panel" x="505" y="145" width="390" height="255" rx="12"/>
+  <rect class="head" x="505" y="145" width="390" height="58" rx="12"/>
+  <text class="label" x="530" y="181">2. Category rule</text>
+  <text class="text h3" x="530" y="245">Each JEM category decides</text>
+  <text class="text p" x="530" y="280">No article, manual creation, or</text>
+  <text class="text p" x="530" y="305">automatic article creation.</text>
+  <rect class="chip" x="530" y="335" width="290" height="30" rx="15"/>
+  <text class="text small" x="548" y="356">JEM Category → Joomla Category</text>
+
+  <rect class="panel" x="940" y="145" width="390" height="255" rx="12"/>
+  <rect class="head" x="940" y="145" width="390" height="58" rx="12"/>
+  <text class="label" x="965" y="181">3. Event save action</text>
+  <text class="text h3" x="965" y="245">The event chooses the action</text>
+  <text class="text p" x="965" y="280">Keep no article, select an existing</text>
+  <text class="text p" x="965" y="305">article, or create one on save.</text>
+  <rect class="chip" x="965" y="335" width="270" height="30" rx="15"/>
+  <text class="text small" x="982" y="356">Event → Associated Article</text>
+
+  <path class="line" d="M460 272 H505" marker-end="url(#arrow)"/>
+  <path class="line" d="M895 272 H940" marker-end="url(#arrow)"/>
+
+  <text class="text h2" x="70" y="465">Creation paths</text>
+  <rect class="panel" x="70" y="500" width="290" height="280" rx="12"/>
+  <circle class="accent" cx="110" cy="545" r="20"/><text class="label" x="104" y="552">A</text>
+  <text class="text h3" x="145" y="552">Manual link</text>
+  <text class="text p" x="95" y="595">The editor selects an existing</text>
+  <text class="text p" x="95" y="620">Joomla article in the event.</text>
+  <text class="text small" x="95" y="670">Best for curated pages, long</text>
+  <text class="text small" x="95" y="692">descriptions, press releases, or</text>
+  <text class="text small" x="95" y="714">content managed outside JEM.</text>
+
+  <rect class="panel" x="405" y="500" width="290" height="280" rx="12"/>
+  <circle class="warn" cx="445" cy="545" r="20"/><text class="label" x="439" y="552">B</text>
+  <text class="text h3" x="480" y="552">On demand</text>
+  <text class="text p" x="430" y="595">The editor asks JEM to create</text>
+  <text class="text p" x="430" y="620">an unpublished Joomla article.</text>
+  <text class="text small" x="430" y="670">Best when articles are needed</text>
+  <text class="text small" x="430" y="692">only for selected events.</text>
+
+  <rect class="panel" x="740" y="500" width="290" height="280" rx="12"/>
+  <circle class="ok" cx="780" cy="545" r="20"/><text class="label" x="774" y="552">C</text>
+  <text class="text h3" x="815" y="552">Automatic</text>
+  <text class="text p" x="765" y="595">If the selected JEM category</text>
+  <text class="text p" x="765" y="620">allows it, JEM creates the article</text>
+  <text class="text p" x="765" y="645">during event save.</text>
+  <text class="text small" x="765" y="700">Best for structured workflows.</text>
+
+  <rect class="panel" x="1075" y="500" width="255" height="280" rx="12"/>
+  <text class="text h3" x="1100" y="552">Automatic variants</text>
+  <text class="text small" x="1100" y="595">Title format: {title}, {id},</text>
+  <text class="text small" x="1100" y="617">{date}, {time}</text>
+  <text class="text small" x="1100" y="650">Date: keep Joomla date or</text>
+  <text class="text small" x="1100" y="672">use event start date</text>
+  <text class="text small" x="1100" y="705">Recurring: first only, shared</text>
+  <text class="text small" x="1100" y="727">series article, or one per</text>
+  <text class="text small" x="1100" y="749">occurrence</text>
+</svg>
