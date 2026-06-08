@@ -45,6 +45,32 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         }
         return r;
     }
+
+    function jemCheckAllUsers(source)
+    {
+        var form = source.form || document.adminForm,
+            boxes,
+            checked = 0,
+            i;
+
+        if (!form) {
+            return;
+        }
+
+        boxes = form.querySelectorAll('input[name="cid[]"]');
+
+        for (i = 0; i < boxes.length; i++) {
+            boxes[i].checked = source.checked;
+
+            if (boxes[i].checked) {
+                checked++;
+            }
+        }
+
+        if (form.boxchecked) {
+            form.boxchecked.value = checked;
+        }
+    }
 </script>
 
 <div id="jem" class="jem_select_users">
@@ -90,7 +116,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         <div class="jem-sort jem-sort-small">
             <div class="jem-list-row jem-small-list">
                 <div class="sectiontableheader jem-users-number"><?php echo Text::_('COM_JEM_NUM'); ?></div>
-                <div class="sectiontableheader jem-users-checkall"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></div>
+                <div class="sectiontableheader jem-users-checkall"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="jemCheckAllUsers(this)" /></div>
                 <div class="sectiontableheader jem-users-name"><?php echo Text::_('COM_JEM_NAME'); ?></div>
                 <div class="sectiontableheader jem-users-state"><?php echo Text::_('COM_JEM_STATUS'); ?></div>
                 <div class="sectiontableheader jem-users-state"><?php echo Text::_('COM_JEM_PLACES'); ?></div>
