@@ -1794,42 +1794,6 @@ static public function lightbox() {
     }
 
     /**
-     * Returns an array for ical formatting
-     * @todo alter, where is this used for?
-     *
-     * @param string date
-     * @param string time
-     * @return array
-     */
-    static public function getIcalDateArray($date, $time = null)
-    {
-        if ($time) {
-            $sec = strtotime($date. ' ' .$time);
-        } else {
-            $sec = strtotime($date);
-        }
-        if (!$sec) {
-            return false;
-        }
-
-        //Format date
-        $parsed = date('Y-m-d H:i:s', $sec);
-
-        $date = array('year'  => (int) substr($parsed, 0, 4),
-                      'month' => (int) substr($parsed, 5, 2),
-                      'day'   => (int) substr($parsed, 8, 2));
-
-        //Format time
-        if (substr($parsed, 11, 8) != '00:00:00')
-        {
-            $date['hour'] = substr($parsed, 11, 2);
-            $date['min']  = substr($parsed, 14, 2);
-            $date['sec']  = substr($parsed, 17, 2);
-        }
-        return $date;
-    }
-
-    /**
      * Get a category names list
      * @param unknown $categories Category List
      * @param boolean $doLink Link the categories to the respective Category View
