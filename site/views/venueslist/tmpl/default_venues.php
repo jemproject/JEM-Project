@@ -390,7 +390,7 @@ foreach ((array) $this->rows as $venueRow) {
                     <?php elseif ($field === 'city') : ?>
                         <th id="jem_city" class="sectiontableheader" style="text-align: left;"><i class="fa fa-building" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'a.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'state') : ?>
-                        <th id="jem_state" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUESLIST_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                        <th id="jem_state" class="sectiontableheader" style="text-align: left;"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'a.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'country') : ?>
                         <th id="jem_country" class="sectiontableheader" style="text-align: left;"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php elseif ($field === 'map') : ?>
