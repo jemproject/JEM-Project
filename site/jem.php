@@ -33,10 +33,10 @@ require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 // Set the table directory
 Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 $language = Factory::getApplication()->getLanguage();
-$language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem');
-$language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true);
 $language->load('com_jem', JPATH_ADMINISTRATOR);
 $language->load('com_jem', JPATH_SITE, null, true);
+$language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem', null, true, false);
+$language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true, false);
 $document = Factory::getApplication()->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('jquery');
