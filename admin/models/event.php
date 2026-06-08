@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -842,7 +843,7 @@ class JemModelEvent extends JemModelAdmin
             return true;
         }
 
-        $articleId = $this->createAssociatedContentArticle($eventData, $articleCategoryId);
+        $articleId = $this->createAssociatedContentArticle($eventData, $articleCategoryId, $eventId);
 
         if (!$articleId) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED'), 'warning');
@@ -857,6 +858,7 @@ class JemModelEvent extends JemModelAdmin
         );
 
         $db->updateObject('#__jem_events', $article, 'id');
+        $this->applyRecurringAssociatedArticleMode($eventId, $articleId, $eventData, $articleCategoryId);
         Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
 
         return true;
@@ -1140,10 +1142,11 @@ class JemModelEvent extends JemModelAdmin
      *
      * @param   array    $eventData          Event data.
      * @param   integer  $articleCategoryId  Joomla article category id.
+     * @param   integer  $eventId            Event id.
      *
      * @return  integer
      */
-    protected function createAssociatedContentArticle(array $eventData, $articleCategoryId)
+    protected function createAssociatedContentArticle(array $eventData, $articleCategoryId, $eventId = 0)
     {
         $app = Factory::getApplication();
 
@@ -1162,8 +1165,10 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $user           = $app->getIdentity();
-        $title          = trim((string) ($eventData['title'] ?? ''));
+        $eventTitle     = trim((string) ($eventData['title'] ?? ''));
+        $title          = $this->buildAssociatedArticleTitle($eventData, $eventId);
         $categoryAccess = 1;
+        $eventId = (int) $eventId;
 
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -1182,7 +1187,7 @@ class JemModelEvent extends JemModelAdmin
             'id'         => 0,
             'catid'      => (int) $articleCategoryId,
             'title'      => $title,
-            'alias'      => '',
+            'alias'      => $this->buildAssociatedArticleAlias($eventTitle, $eventId),
             'introtext'  => '',
             'fulltext'   => '',
             'state'      => 0,
@@ -1192,6 +1197,12 @@ class JemModelEvent extends JemModelAdmin
             'metadata'   => array(),
             'attribs'    => array()
         );
+
+        $created = $this->getAssociatedArticleCreatedDate($eventData);
+
+        if ($created !== '') {
+            $article['created'] = $created;
+        }
 
         try {
             if (!$model->save($article)) {
@@ -1208,6 +1219,173 @@ class JemModelEvent extends JemModelAdmin
         return (int) $model->getState($model->getName() . '.id');
     }
 
+    /**
+     * Build a deterministic Joomla article alias for an associated event article.
+     *
+     * @param   string   $title    Event title.
+     * @param   integer  $eventId  Event id.
+     *
+     * @return  string
+     */
+    protected function buildAssociatedArticleAlias($title, $eventId)
+    {
+        $alias = OutputFilter::stringURLSafe(trim((string) $title));
+
+        if ($alias === '') {
+            $alias = 'event';
+        }
+
+        $eventId = (int) $eventId;
+
+        return $eventId > 0 ? $alias . '-' . $eventId : $alias;
+    }
+
+    /**
+     * Return the created date to use for automatically generated articles.
+     *
+     * @param   array  $eventData  Event data.
+     *
+     * @return  string
+     */
+    protected function getAssociatedArticleCreatedDate(array $eventData)
+    {
+        if ((int) JemHelper::globalattribs()->get('event_associated_article_date_source', 0) !== 1) {
+            return '';
+        }
+
+        $date = trim((string) ($eventData['dates'] ?? ''));
+
+        if ($date === '') {
+            return '';
+        }
+
+        $time = trim((string) ($eventData['times'] ?? ''));
+
+        if ($time === '') {
+            $time = '00:00:00';
+        } elseif (preg_match('/^\d{1,2}:\d{2}$/', $time)) {
+            $time .= ':00';
+        }
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !preg_match('/^\d{1,2}:\d{2}:\d{2}$/', $time)) {
+            return '';
+        }
+
+        try {
+            return Factory::getDate($date . ' ' . $time, Factory::getApplication()->get('offset', 'UTC'))->toSql();
+        } catch (Throwable $e) {
+            return '';
+        }
+    }
+
+    /**
+     * Apply the configured associated article behavior to generated recurring events.
+     *
+     * @param   integer  $eventId            Root event id.
+     * @param   integer  $articleId          Root article id.
+     * @param   array    $eventData          Root event data.
+     * @param   integer  $articleCategoryId  Joomla article category id.
+     *
+     * @return  void
+     */
+    protected function applyRecurringAssociatedArticleMode($eventId, $articleId, array $eventData, $articleCategoryId)
+    {
+        $eventId = (int) $eventId;
+        $articleId = (int) $articleId;
+        $recurrenceMode = (int) JemHelper::globalattribs()->get('event_associated_article_recurrence_mode', 1);
+
+        if ($eventId <= 0 || $articleId <= 0 || $recurrenceMode === 0 || empty($eventData['recurrence_type'])) {
+            return;
+        }
+
+        $children = $this->getRecurringEventChildrenWithoutArticle($eventId);
+
+        if (!$children) {
+            return;
+        }
+
+        if ($recurrenceMode === 1) {
+            $childIds = array_map(static function ($child) {
+                return (int) $child->id;
+            }, $children);
+
+            $this->setAssociatedArticleForEvents($childIds, $articleId);
+
+            return;
+        }
+
+        if ($recurrenceMode !== 2) {
+            return;
+        }
+
+        foreach ($children as $child) {
+            $childData = array_merge($eventData, (array) $child);
+            $childArticleId = $this->createAssociatedContentArticle($childData, $articleCategoryId, (int) $child->id);
+
+            if ($childArticleId) {
+                $this->setAssociatedArticleForEvents(array((int) $child->id), $childArticleId);
+            }
+        }
+    }
+
+    /**
+     * Get generated recurrence children that do not yet have an associated article.
+     *
+     * @param   integer  $eventId  Root event id.
+     *
+     * @return  array
+     */
+    protected function getRecurringEventChildrenWithoutArticle($eventId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('recurrence_first_id') . ' = ' . (int) $eventId)
+            ->where('(' . $db->quoteName('article_id') . ' IS NULL OR ' . $db->quoteName('article_id') . ' = 0)')
+            ->order(array($db->quoteName('dates') . ' ASC', $db->quoteName('times') . ' ASC', $db->quoteName('id') . ' ASC'));
+
+        try {
+            $db->setQuery($query);
+
+            return $db->loadObjectList() ?: array();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+
+        return array();
+    }
+
+    /**
+     * Set the same associated article for a list of events.
+     *
+     * @param   array    $eventIds   Event ids.
+     * @param   integer  $articleId  Joomla article id.
+     *
+     * @return  void
+     */
+    protected function setAssociatedArticleForEvents(array $eventIds, $articleId)
+    {
+        $eventIds = array_values(array_unique(array_filter(array_map('intval', $eventIds))));
+        $articleId = (int) $articleId;
+
+        if (!$eventIds || $articleId <= 0) {
+            return;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_events'))
+            ->set($db->quoteName('article_id') . ' = ' . $articleId)
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $eventIds) . ')');
+
+        try {
+            $db->setQuery($query);
+            $db->execute();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+    }
 
     /**
      * Security validation for the link data (Joomla 5 standard)

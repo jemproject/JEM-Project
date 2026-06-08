@@ -42,3 +42,13 @@ $group = 'globalattribs';
         </ul>
     </fieldset>
 </div>
+<div class="width-100" style="padding: 10px 1vw;">
+    <fieldset class="options-form">
+        <legend><?php echo Text::_('COM_JEM_ASSOCIATED_ARTICLES'); ?></legend>
+        <ul class="adminformlist">
+            <?php foreach ($this->form->getFieldset('associatedarticles') as $field): ?>
+                <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
+            <?php endforeach; ?>
+        </ul>
+    </fieldset>
+</div>
