@@ -84,13 +84,14 @@ class JemViewCategory extends JemAdminView
 
         // Get the results for each action.
         $canDo = JemHelperBackend::getActions();
+        $canCreate = $canDo->get('core.create') || count($user->getAuthorisedCategories('com_jem', 'core.create')) > 0;
 
         $title = Text::_('COM_JEM_CATEGORY_BASE_'.($isNew?'ADD':'EDIT').'_TITLE');
         // Prepare the toolbar.
         ToolbarHelper::title($title, 'category-'.($isNew?'add':'edit').' -category-'.($isNew?'add':'edit'));
 
         // For new records, check the create permission.
-        if ($isNew && (count($user->getAuthorisedCategories('com_jem', 'core.create')) > 0)) {
+        if ($isNew && $canCreate) {
             ToolbarHelper::apply('category.apply');
             ToolbarHelper::save('category.save');
             ToolbarHelper::save2new('category.save2new');
@@ -106,7 +107,7 @@ class JemViewCategory extends JemAdminView
         }
 
         // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
+        if (!$isNew && $canCreate) {
             ToolbarHelper::save2copy('category.save2copy');
         }
 
