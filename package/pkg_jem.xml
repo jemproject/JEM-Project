@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="package" version="4.4" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension version="4.0" type="plugin" group="acymailing" method="upgrade">
     <name>AcyMailing 5.x Tag: insert events from JEM 4</name>
     <author>Acyba, JEM Community</author>
