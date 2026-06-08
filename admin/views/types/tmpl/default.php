@@ -98,7 +98,7 @@ $renderEventStateCounts = static function ($counts, $typeId) {
                 <div class="jem-admin-filter-item">
                     <select name="filter_state" class="form-select" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true); ?>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter_state'), true);?>
                     </select>
                 </div>
                 <div class="jem-admin-filter-item">
