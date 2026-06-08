@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
@@ -60,6 +61,9 @@ class JemViewGroups extends JemAdminView
 
         /* retrieving the allowed actions for the user */
         $canDo = JEMHelperBackend::getActions(0);
+        $toolbar = Toolbar::getInstance('toolbar');
+        $canCheckin = $canDo->get('core.edit.state');
+        $canDelete = $canDo->get('core.delete');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -72,14 +76,25 @@ class JemViewGroups extends JemAdminView
             ToolbarHelper::divider();
         }
 
-        if ($canDo->get('core.edit.state')) {
-            ToolbarHelper::checkin('groups.checkin');
-        }
+        if ($canCheckin) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
 
-        ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
+            $childBar->checkin('groups.checkin')->listCheck(true);
+        }
+        
+        if ($canDelete) {
+            $toolbar->delete('groups.remove', 'JACTION_DELETE')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
+        }
 
         ToolbarHelper::divider();
         ToolBarHelper::help('listgroups', true, 'https://www.joomlaeventmanager.net/documentation/backend/groups');
     }
 }
-?>

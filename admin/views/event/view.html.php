@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 
@@ -82,35 +83,43 @@ class JemViewEvent extends JemAdminView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user       = JemFactory::getUser();
-        $isNew      = ($this->item->id == 0);
-        $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        $canDo      = JemHelperBackend::getActions();
+        $user         = JemFactory::getUser();
+        $isNew        = ($this->item->id == 0);
+        $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        $canDo        = JemHelperBackend::getActions();
+        $canSave      = !$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'));
+        $canSave2New  = !$checkedOut && $canDo->get('core.create');
+        $canSave2Copy = !$isNew && $canDo->get('core.create');
+        $cancelText   = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         ToolBarHelper::title($isNew ? Text::_('COM_JEM_ADD_EVENT') : Text::_('COM_JEM_EDIT_EVENT'), 'eventedit');
 
-        // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+        if ($canSave) {
             ToolBarHelper::apply('event.apply');
-            ToolBarHelper::save('event.save');
-        }
-        if (!$checkedOut && $canDo->get('core.create')) {
-            ToolBarHelper::save2new('event.save2new');
-        }
-        // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolBarHelper::save2copy('event.save2copy');
+
+            $toolbar = Toolbar::getInstance('toolbar');
+            $saveGroup = $toolbar->dropdownButton('save-group')
+                ->toggleSplit(true)
+                ->icon('icon-save')
+                ->buttonClass('btn btn-success')
+                ->listCheck(false);
+
+            $childBar = $saveGroup->getChildToolbar();
+            $childBar->save('event.save');
+
+            if ($canSave2New) {
+                $childBar->save2new('event.save2new');
+            }
+
+            if ($canSave2Copy) {
+                $childBar->save2copy('event.save2copy');
+            }
         }
 
-        if (empty($this->item->id))  {
-            ToolBarHelper::cancel('event.cancel');
-        } else {
-            ToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
-        }
+        ToolBarHelper::cancel('event.cancel', $cancelText);
 
         ToolBarHelper::divider();
         ToolbarHelper::inlinehelp();
         ToolBarHelper::help('editevents', true, 'https://www.joomlaeventmanager.net/documentation/backend/events/add-event');
     }
 }
-?>

@@ -9,8 +9,10 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+
 /**
  * View class: Venue
  */
@@ -23,8 +25,8 @@ class JemViewVenue extends JemAdminView
     public function display($tpl = null)
     {
         // Initialise variables.
-        $this->form     = $this->get('Form');
-        $this->item     = $this->get('Item');
+        $this->form  = $this->get('Form');
+        $this->item  = $this->get('Item');
         $this->state = $this->get('State');
 
         // Check for errors.
@@ -35,7 +37,7 @@ class JemViewVenue extends JemAdminView
         }
 
         //initialise variables
-        $app = Factory::getApplication();
+        $app            = Factory::getApplication();
         $this->document = $app->getDocument();
         $this->settings = JemAdmin::config();
         $globalregistry = JemHelper::globalattribs();
@@ -77,31 +79,40 @@ class JemViewVenue extends JemAdminView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user       = JemFactory::getUser();
-        $isNew      = ($this->item->id == 0);
-        $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        $canDo      = JemHelperBackend::getActions();
+        $user         = JemFactory::getUser();
+        $isNew        = ($this->item->id == 0);
+        $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        $canDo        = JemHelperBackend::getActions();
+        $canSave      = !$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'));
+        $canSave2New  = !$checkedOut && $canDo->get('core.create');
+        $canSave2Copy = !$isNew && $canDo->get('core.create');
+        $cancelText   = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         ToolbarHelper::title($isNew ? Text::_('COM_JEM_ADD_VENUE') : Text::_('COM_JEM_EDIT_VENUE'), 'venuesedit');
 
-        // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+        if ($canSave) {
             ToolbarHelper::apply('venue.apply');
-            ToolbarHelper::save('venue.save');
-        }
-        if (!$checkedOut && $canDo->get('core.create')) {
-            ToolbarHelper::save2new('venue.save2new');
-        }
-        // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolbarHelper::save2copy('venue.save2copy');
+
+            $toolbar = Toolbar::getInstance('toolbar');
+            $saveGroup = $toolbar->dropdownButton('save-group')
+                ->toggleSplit(true)
+                ->icon('icon-save')
+                ->buttonClass('btn btn-success')
+                ->listCheck(false);
+
+            $childBar = $saveGroup->getChildToolbar();
+            $childBar->save('venue.save');
+
+            if ($canSave2New) {
+                $childBar->save2new('venue.save2new');
+            }
+
+            if ($canSave2Copy) {
+                $childBar->save2copy('venue.save2copy');
+            }
         }
 
-        if (empty($this->item->id))  {
-            ToolbarHelper::cancel('venue.cancel');
-        } else {
-            ToolbarHelper::cancel('venue.cancel', 'JTOOLBAR_CLOSE');
-        }
+        ToolbarHelper::cancel('venue.cancel', $cancelText);
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
