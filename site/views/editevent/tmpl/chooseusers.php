@@ -45,6 +45,32 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         }
         return r;
     }
+
+    function jemCheckAllUsers(source)
+    {
+        var form = source.form || document.adminForm,
+            boxes,
+            checked = 0,
+            i;
+
+        if (!form) {
+            return;
+        }
+
+        boxes = form.querySelectorAll('input[name="cid[]"]');
+
+        for (i = 0; i < boxes.length; i++) {
+            boxes[i].checked = source.checked;
+
+            if (boxes[i].checked) {
+                checked++;
+            }
+        }
+
+        if (form.boxchecked) {
+            form.boxchecked.value = checked;
+        }
+    }
 </script>
 
 <div id="jem" class="jem_select_users">
@@ -80,7 +106,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             <thead>
             <tr>
                 <th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-                <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+                <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="jemCheckAllUsers(this)" /></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
                 <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
                 <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
