@@ -42,14 +42,13 @@ class JemViewGroups extends JemAdminView
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // assign data to template
-        $this->user            = $user;
+        $this->user         = $user;
         $this->jemsettings  = $jemsettings;
 
         // add toolbar
         $this->addToolbar();
-
         parent::display($tpl);
-        }
+    }
 
 
     /**
@@ -60,23 +59,24 @@ class JemViewGroups extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_GROUPS'), 'groups');
 
         /* retrieving the allowed actions for the user */
-        $canDo = JEMHelperBackend::getActions(0);
-        $toolbar = Toolbar::getInstance('toolbar');
-        $canCheckin = $canDo->get('core.edit.state');
-        $canDelete = $canDo->get('core.delete');
+        $canDo          = JemHelperBackend::getActions(0);
+        $toolbar        = Toolbar::getInstance('toolbar');
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete      = $canDo->get('core.delete');
+        $filterState    = $this->state->get('filter_state');
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if ($canDo->get('core.create')) {
             ToolbarHelper::addNew('group.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if ($canDo->get('core.edit')) {
             ToolbarHelper::editList('group.edit');
             ToolbarHelper::divider();
         }
 
-        if ($canCheckin) {
+        if ($canChangeState) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -85,11 +85,25 @@ class JemViewGroups extends JemAdminView
                 ->listCheck(true);
             $childBar = $dropdown->getChildToolbar();
 
-            $childBar->checkin('groups.checkin')->listCheck(true);
+            if ($filterState != 2) {
+                $childBar->publish('groups.publish')->listCheck(true);
+                $childBar->unpublish('groups.unpublish')->listCheck(true);
+            }
+
+            if ($filterState != 2) {
+                $childBar->archive('groups.archive')->listCheck(true);
+            } else {
+                $childBar->publish('groups.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
+            }
+
+            if ($filterState != -2) {
+                $childBar->trash('groups.trash')->listCheck(true);
+            }
         }
-        
-        if ($canDelete) {
-            $toolbar->delete('groups.remove', 'JACTION_DELETE')
+
+        if ($filterState == -2 && $canDelete) {
+            ToolbarHelper::divider();
+            $toolbar->delete('groups.remove', 'JTOOLBAR_EMPTY_TRASH')
                 ->message('COM_JEM_CONFIRM_DELETE')
                 ->listCheck(true);
         }

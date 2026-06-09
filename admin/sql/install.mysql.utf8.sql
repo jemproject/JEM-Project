@@ -204,6 +204,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
     `id` int(11) unsigned NOT NULL auto_increment,
     `name` varchar(150) NOT NULL DEFAULT '',
     `description` mediumtext DEFAULT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
     `checked_out_time` datetime NULL DEFAULT NULL,
     `addvenue` int(11) NOT NULL,
