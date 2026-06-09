@@ -51,7 +51,7 @@ use Joomla\CMS\Language\Text;
                         <td><?php echo Text::_($label).': '; ?></td>
                         <td><b><?php echo $this->config->$name->version; ?></b></td>
                         <td><?php echo $this->config->$name->creationDate; ?></td>
-                        <td><?php echo empty($this->config->$name->enabled) ? Text::_('COM_JEM_DISABLED') : ''; ?></td>
+                        <td><?php echo empty($this->config->$name->enabled) ? Text::_('COM_JEM_DISABLED') : Text::_('COM_JEM_ENABLED'); ?></td>
                     </tr>
                     <?php
                     }
