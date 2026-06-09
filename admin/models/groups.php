@@ -11,12 +11,11 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
-
 use Joomla\Utilities\ArrayHelper;
+
 /**
  * JEM Component Groups Model
- *
- **/
+ */
 class JemModelGroups extends ListModel
 {
     /**
@@ -30,6 +29,7 @@ class JemModelGroups extends ListModel
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
                 'name', 'a.name',
+                'published', 'a.published',
             );
         }
 
@@ -75,7 +75,7 @@ class JemModelGroups extends ListModel
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter_search');
-        $id .= ':' . $this->getState('filter_published');
+        $id .= ':' . $this->getState('filter_state');
     //    $id .= ':' . $this->getState('filter_type');
 
         return parent::getStoreId($id);
@@ -101,6 +101,16 @@ class JemModelGroups extends ListModel
         $query->select('uc.name AS editor');
         $query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
 
+        // Filter by published state
+        $published = $this->getState('filter_state');
+        if (is_numeric($published) && $published !== '') {
+            $query->where('a.published = ' . (int) $published);
+        } elseif ($published === '') {
+            $query->where('(a.published IN (0, 1))');
+        }
+        // $published === '*' → keine WHERE-Bedingung, alle Stati
+
+        // Filter by search
         $search = $this->getState('filter_search');
 
         if (!empty($search)) {
@@ -137,9 +147,27 @@ class JemModelGroups extends ListModel
      */
     public function getItems()
     {
-        $items = parent::getItems();
+        return parent::getItems();
+    }
 
-        return $items;
+    /**
+     * Method to publish/unpublish/archive/trash groups
+     */
+    public function publish(&$pks, $value = 1)
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+
+        ArrayHelper::toInteger($pks);
+
+        $query->update($db->quoteName('#__jem_groups'))
+              ->set($db->quoteName('published') . ' = ' . (int) $value)
+              ->where($db->quoteName('id') . ' IN (' . implode(',', $pks) . ')');
+
+        $db->setQuery($query);
+        $db->execute();
+
+        return true;
     }
 
     /**
@@ -151,34 +179,24 @@ class JemModelGroups extends ListModel
      */
     public function delete($cid = array())
     {
-        if (is_array($cid) && count($cid))
-        {
+        if (is_array($cid) && count($cid)) {
             ArrayHelper::toInteger($cid);
             $cids = implode(',', $cid);
 
-            $query = 'DELETE FROM #__jem_groups'
-                   . ' WHERE id IN ('. $cids .')'
-                   ;
-
+            $query = 'DELETE FROM #__jem_groups WHERE id IN (' . $cids . ')';
             $this->_db->setQuery($query);
-
             if ($this->_db->execute() === false) {
                 $this->setError($this->_db->getError());
                 return false;
             }
 
-            $query = 'DELETE FROM #__jem_groupmembers'
-                   . ' WHERE group_id IN ('. $cids .')'
-                   ;
-
+            $query = 'DELETE FROM #__jem_groupmembers WHERE group_id IN (' . $cids . ')';
             $this->_db->setQuery($query);
-
             if ($this->_db->execute() === false) {
                 $this->setError($this->_db->getError());
                 return false;
             }
         }
-
         return true;
     }
 }
