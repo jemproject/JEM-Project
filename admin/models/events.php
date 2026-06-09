@@ -256,7 +256,15 @@ class JemModelEvents extends ListModel
 
         // Add the list ordering clause.
         $orderCol  = $this->state->get('list.ordering');
-        $orderDirn = $this->state->get('list.direction');
+        $orderDirn = strtoupper($this->state->get('list.direction'));
+
+        if (!in_array($orderCol, $this->filter_fields, true)) {
+            $orderCol = 'a.dates';
+        }
+
+        if (!in_array($orderDirn, array('ASC', 'DESC'), true)) {
+            $orderDirn = 'ASC';
+        }
 
         $query->order($db->escape($orderCol.' '.$orderDirn));
 

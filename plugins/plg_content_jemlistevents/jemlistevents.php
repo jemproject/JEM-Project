@@ -671,9 +671,9 @@ class PlgContentJemlistevents extends CMSPlugin
             $html .= '<td class="eventvenue" data-label="' . Text::_('COM_JEM_VENUE') . '">';
             if ($event->venue) {
                 if ($parameters['show_venue'] === 'link') {
-                    $html .= '<a href="' . $linkvenue . '">';
+                    $html .= '<a href="' . htmlspecialchars($linkvenue, ENT_QUOTES, 'UTF-8') . '">';
                 }
-                $html .= $event->venue;
+                $html .= htmlspecialchars($event->venue, ENT_QUOTES, 'UTF-8');
                 if ($parameters['show_venue'] === 'link') {
                     $html .= '</a>';
                 }
@@ -705,6 +705,6 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     private function generateNoEventsMessage(array $parameters, int $cols_count): string
     {
-        return '<tr><td colspan="' . $cols_count . '" class="no-events-message">' . $parameters['no_events_msg'] . '</td></tr>';
+        return '<tr><td colspan="' . $cols_count . '" class="no-events-message">' . htmlspecialchars((string) $parameters['no_events_msg'], ENT_QUOTES, 'UTF-8') . '</td></tr>';
     }
 }

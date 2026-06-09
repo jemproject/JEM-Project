@@ -315,6 +315,15 @@ class JemModelEventslist extends ListModel
 
         // Finalize order direction from request/session, falling back to determined default
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+        $filter_order_Dir = strtoupper($filter_order_Dir);
+
+        if (!in_array($filter_order, $this->filter_fields, true)) {
+            $filter_order = 'a.dates';
+        }
+
+        if (!in_array($filter_order_Dir, array('ASC', 'DESC'), true)) {
+            $filter_order_Dir = $filter_order_DirDefault;
+        }
 
         $default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 
