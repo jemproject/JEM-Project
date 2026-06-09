@@ -72,8 +72,10 @@ class JemModelTypes extends ListModel
         }
 
         $published = $this->getState('filter_state');
-        if ($published !== '') {
+        if (is_numeric($published)) {
             $query->where('a.published = ' . (int) $published);
+        } elseif ($published === '') {
+            $query->where('a.published IN (0, 1)');
         }
 
         $entity = $this->getState('filter_entity');
