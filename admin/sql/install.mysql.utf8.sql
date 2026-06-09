@@ -167,7 +167,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    KEY `idx_article_category` (`article_category_id`)
+    KEY `idx_article_category` (`article_category_id`),
+    KEY `idx_parent` (`parent_id`),
+    KEY `idx_type` (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
