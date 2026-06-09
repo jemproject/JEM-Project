@@ -89,6 +89,7 @@
             <exclude name="3rd/**" />
             <exclude name="composer.json" />
             <exclude name="composer.lock" />
+            <exclude name="docs/**" />
             <exclude name="modules/**" />
             <exclude name="package/**" />
             <exclude name="phpunit.xml" />
