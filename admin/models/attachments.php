@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Filesystem\Path;
 
+require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
+
 /**
  * Model-Attachments
  */
@@ -135,7 +137,16 @@ class JemModelAttachments extends ListModel
         }
 
         $orderCol = $this->state->get('list.ordering', 'a.created');
-        $orderDir = $this->state->get('list.direction', 'desc');
+        $orderDir = strtoupper($this->state->get('list.direction', 'desc'));
+
+        if (!in_array($orderCol, $this->filter_fields, true)) {
+            $orderCol = 'a.created';
+        }
+
+        if (!in_array($orderDir, array('ASC', 'DESC'), true)) {
+            $orderDir = 'DESC';
+        }
+
         $query->order($db->escape($orderCol) . ' ' . $db->escape($orderDir));
 
         return $query;
@@ -162,7 +173,7 @@ class JemModelAttachments extends ListModel
         $items = $this->enrichItems($db->loadObjectList() ?: array());
 
         $csv = fopen('php://output', 'w');
-        fputcsv($csv, array(
+        fputcsv($csv, JemCsv::protectFormulaRow(array(
             'id',
             'file',
             'name',
@@ -180,12 +191,12 @@ class JemModelAttachments extends ListModel
             'created_by_name',
             'file_status',
             'file_size',
-        ), ';', '"', '\\');
+        )), ';', '"', '\\');
 
         foreach ($items as $item) {
             $fileStatus = !$item->file_path_safe ? 'unsafe' : ($item->file_exists ? 'exists' : 'missing');
 
-            fputcsv($csv, array(
+            fputcsv($csv, JemCsv::protectFormulaRow(array(
                 $item->id,
                 $item->file,
                 $item->name,
@@ -203,7 +214,7 @@ class JemModelAttachments extends ListModel
                 $item->created_by_name,
                 $fileStatus,
                 $item->file_size,
-            ), ';', '"', '\\');
+            )), ';', '"', '\\');
         }
 
         fclose($csv);

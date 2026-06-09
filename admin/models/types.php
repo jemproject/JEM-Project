@@ -86,7 +86,16 @@ class JemModelTypes extends ListModel
         }
 
         $orderCol  = $this->state->get('list.ordering', 'a.entity, a.ordering');
-        $orderDir  = $this->state->get('list.direction', 'asc');
+        $orderDir  = strtoupper($this->state->get('list.direction', 'asc'));
+
+        if (!in_array($orderCol, $this->filter_fields, true)) {
+            $orderCol = 'a.entity, a.ordering';
+        }
+
+        if (!in_array($orderDir, array('ASC', 'DESC'), true)) {
+            $orderDir = 'ASC';
+        }
+
         $query->order($db->escape($orderCol) . ' ' . $db->escape($orderDir));
 
         return $query;

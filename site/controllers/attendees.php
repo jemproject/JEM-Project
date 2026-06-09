@@ -18,6 +18,8 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Log\Log;
 
 use Joomla\Utilities\ArrayHelper;
+
+require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
 /**
  * JEM Component Attendees Controller
  *
@@ -364,7 +366,7 @@ class JemControllerAttendees extends BaseController
             $cols[] = Text::_('COM_JEM_COMMENT');
         }
 
-        fputcsv($export, $cols, $separator, $delimiter, '\\');
+        fputcsv($export, JemCsv::protectFormulaRow($cols), $separator, $delimiter, '\\');
 
         $i = 0;
         foreach ($datas as $data) {
@@ -393,7 +395,7 @@ class JemControllerAttendees extends BaseController
                 $cols[] = $comment;
             }
 
-            fputcsv($export, $cols, $separator, $delimiter, '\\');
+            fputcsv($export, JemCsv::protectFormulaRow($cols), $separator, $delimiter, '\\');
         }
 
         fclose($export);
