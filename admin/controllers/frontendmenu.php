@@ -130,6 +130,16 @@ class JemControllerFrontendmenu extends BaseController
         $db->setQuery($query);
 
         if ((int) $db->loadResult() > 0) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__modules'))
+                ->set($db->quoteName('published') . ' = 1')
+                ->set($db->quoteName('access') . ' = 1')
+                ->where($db->quoteName('module') . ' = ' . $db->quote('mod_menu'))
+                ->where($db->quoteName('client_id') . ' = 0')
+                ->where($db->quoteName('params') . ' LIKE ' . $db->quote('%"menutype":"' . $menutype . '"%'));
+            $db->setQuery($query);
+            $db->execute();
+
             return;
         }
 
@@ -313,6 +323,8 @@ class JemControllerFrontendmenu extends BaseController
             ->set($db->quoteName('link') . ' = ' . $db->quote($link))
             ->set($db->quoteName('type') . ' = ' . $db->quote($type))
             ->set($db->quoteName('component_id') . ' = ' . (int) $componentId)
+            ->set($db->quoteName('published') . ' = 1')
+            ->set($db->quoteName('access') . ' = 1')
             ->where($db->quoteName('id') . ' = ' . (int) $id)
             ->where($db->quoteName('client_id') . ' = 0');
 
