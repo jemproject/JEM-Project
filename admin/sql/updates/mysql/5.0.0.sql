@@ -32,6 +32,13 @@ ALTER TABLE `#__jem_config` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_uni
 ALTER TABLE `#__jem_attachments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE `#__jem_countries` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- keep schema checker definitions stable after charset conversion
+ALTER TABLE `#__jem_events` MODIFY `author_ip` varchar(80) DEFAULT NULL;
+ALTER TABLE `#__jem_events` MODIFY `language` char(7) NOT NULL DEFAULT '*';
+ALTER TABLE `#__jem_venues` MODIFY `author_ip` varchar(80) NOT NULL DEFAULT '';
+ALTER TABLE `#__jem_venues` MODIFY `language` char(7) NOT NULL DEFAULT '*';
+ALTER TABLE `#__jem_categories` MODIFY `language` varchar(7) NOT NULL DEFAULT '*';
+
 ALTER TABLE #__jem_attachments ENGINE=InnoDB;
 ALTER TABLE #__jem_categories ENGINE=InnoDB;
 ALTER TABLE #__jem_cats_event_relations ENGINE=InnoDB;
