@@ -83,6 +83,64 @@ class JemControllerEvents extends AdminController
     }
 
     /**
+     * Batch process selected events.
+     */
+    public function batch()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $user = JemFactory::getUser();
+        $ids = $app->input->get('cid', array(), 'array');
+        ArrayHelper::toInteger($ids);
+        $ids = array_values(array_filter($ids));
+        $batch = $app->input->get('batch', array(), 'array');
+
+        $globAuth = $user->can('edit', 'event');
+
+        foreach ($ids as $i => $id) {
+            if (!$globAuth && !$user->can('edit', 'event', (int) $id)) {
+                unset($ids[$i]);
+                $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'notice');
+            }
+        }
+
+        if (empty($ids)) {
+            $app->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
+        } else {
+            $model = $this->getModel();
+            $operations = array(
+                'assetgroup_id' => array('method' => 'changeAccess', 'message' => 'COM_JEM_EVENTS_BATCH_ACCESS_CHANGED'),
+                'category_id'   => array('method' => 'moveToCategory', 'message' => 'COM_JEM_EVENTS_MOVED_TO_CATEGORY'),
+                'venue_id'      => array('method' => 'moveToVenue', 'message' => 'COM_JEM_EVENTS_MOVED_TO_VENUE'),
+                'type_id'       => array('method' => 'moveToType', 'message' => 'COM_JEM_EVENTS_MOVED_TO_TYPE'),
+            );
+            $processed = false;
+
+            foreach ($operations as $field => $operation) {
+                if (!array_key_exists($field, $batch) || $batch[$field] === '') {
+                    continue;
+                }
+
+                if (!$model->{$operation['method']}($ids, (int) $batch[$field])) {
+                    $app->enqueueMessage($model->getError(), 'warning');
+                    $this->setRedirect('index.php?option=com_jem&view=events');
+                    return;
+                }
+
+                $processed = true;
+                $app->enqueueMessage(Text::plural($operation['message'], count($ids)));
+            }
+
+            if (!$processed) {
+                $app->enqueueMessage(Text::_('COM_JEM_EVENTS_BATCH_NO_CHANGE'), 'warning');
+            }
+        }
+
+        $this->setRedirect('index.php?option=com_jem&view=events');
+    }
+
+    /**
      * Proxy for getModel.
      *
      */

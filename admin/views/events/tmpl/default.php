@@ -113,6 +113,7 @@ $ticketAvailabilityOptions = array(
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
                     <th class="nowrap center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_FIELD_EVENT_STATUS_LABEL', 'a.event_status', $listDirn, $listOrder ); ?></th>
                     <th class="nowrap center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_FIELD_TICKET_AVAILABILITY_LABEL', 'a.ticket_availability', $listDirn, $listOrder ); ?></th>
+                    <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE', 'jt.name', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
                     <th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
                     <th style="width: 1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
@@ -202,6 +203,9 @@ $ticketAvailabilityOptions = array(
                                 <span class="<?php echo $ticketAvailabilityOption['icon']; ?>" aria-hidden="true"></span>
                                 <?php echo $this->escape($ticketAvailabilityText); ?>
                             </span>
+                        </td>
+                        <td class="type">
+                            <?php echo !empty($row->type_name) ? $this->escape($row->type_name) : '-'; ?>
                         </td>
                         <td class="venue">
                             <?php if ($row->venue) : ?>
@@ -303,6 +307,10 @@ $ticketAvailabilityOptions = array(
             <div class="ms-auto mb-4 me-0">
                 <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
             </div>
+
+            <?php if ($user->authorise('core.edit', 'com_jem')) : ?>
+                <template id="joomla-dialog-batch"><?php echo $this->loadTemplate('batch_body'); ?></template>
+            <?php endif; ?>
         </div>
     </div>
     <?php //if (isset($this->sidebar)) : ?>

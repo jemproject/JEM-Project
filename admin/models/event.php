@@ -18,6 +18,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\Database\ParameterType;
+use Joomla\Utilities\ArrayHelper;
 
 require_once __DIR__ . '/admin.php';
 
@@ -1877,6 +1878,203 @@ class JemModelEvent extends JemModelAdmin
         $this->cleanCache();
 
         return true;
+    }
+
+    /**
+     * Move the selected events to one JEM category, replacing existing category assignments.
+     */
+    public function moveToCategory($pks, $categoryId)
+    {
+        $pks = (array) $pks;
+        ArrayHelper::toInteger($pks);
+        $pks = array_values(array_filter($pks));
+        $categoryId = (int) $categoryId;
+
+        if (empty($pks)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+            return false;
+        }
+
+        if ($categoryId <= 0 || !$this->categoryExists($categoryId)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_MOVE_CATEGORY_SELECT'));
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $userId = (int) JemFactory::getUser()->id;
+            $now = Factory::getDate()->toSql();
+            $ids = implode(',', $pks);
+
+            $db->transactionStart();
+
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_cats_event_relations'))
+                ->where($db->quoteName('itemid') . ' IN (' . $ids . ')');
+            $db->setQuery($query);
+            $db->execute();
+
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_cats_event_relations'))
+                ->columns($db->quoteName(array('catid', 'itemid', 'ordering')));
+
+            foreach ($pks as $pk) {
+                $query->values($categoryId . ',' . (int) $pk . ',0');
+            }
+
+            $db->setQuery($query);
+            $db->execute();
+
+            $this->touchEvents($pks, $now, $userId);
+
+            $db->transactionCommit();
+        } catch (Exception $e) {
+            if (isset($db)) {
+                $db->transactionRollback();
+            }
+
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        $this->cleanCache();
+
+        return true;
+    }
+
+    /**
+     * Move the selected events to a venue.
+     */
+    public function moveToVenue($pks, $venueId)
+    {
+        $venueId = (int) $venueId;
+
+        if ($venueId <= 0 || !$this->venueExists($venueId)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_MOVE_VENUE_SELECT'));
+            return false;
+        }
+
+        return $this->updateEventsField($pks, 'locid', $venueId);
+    }
+
+    /**
+     * Change the selected events to a JEM event type.
+     */
+    public function moveToType($pks, $typeId)
+    {
+        $typeId = (int) $typeId;
+
+        if ($typeId > 0 && !$this->typeExists($typeId)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_MOVE_TYPE_SELECT'));
+            return false;
+        }
+
+        return $this->updateEventsField($pks, 'type_id', $typeId > 0 ? $typeId : null);
+    }
+
+    /**
+     * Change the access level for the selected events.
+     */
+    public function changeAccess($pks, $accessId)
+    {
+        $accessId = (int) $accessId;
+
+        if ($accessId <= 0) {
+            $this->setError(Text::_('JLIB_HTML_BATCH_NOCHANGE'));
+            return false;
+        }
+
+        return $this->updateEventsField($pks, 'access', $accessId);
+    }
+
+    /**
+     * Update a field for multiple events and touch their modified metadata.
+     */
+    protected function updateEventsField($pks, $field, $value)
+    {
+        $pks = (array) $pks;
+        ArrayHelper::toInteger($pks);
+        $pks = array_values(array_filter($pks));
+
+        if (empty($pks)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $userId = (int) JemFactory::getUser()->id;
+            $now = Factory::getDate()->toSql();
+
+            $fields = array(
+                $db->quoteName($field) . ' = ' . ($value !== null ? $db->quote($value) : 'NULL'),
+                $db->quoteName('modified') . ' = ' . $db->quote($now),
+                $db->quoteName('modified_by') . ' = ' . $userId,
+            );
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($fields)
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $pks) . ')');
+            $db->setQuery($query);
+            $db->execute();
+        } catch (Exception $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        $this->cleanCache();
+
+        return true;
+    }
+
+    /**
+     * Update modified metadata after relation-only changes.
+     */
+    protected function touchEvents($pks, $now, $userId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_events'))
+            ->set(array(
+                $db->quoteName('modified') . ' = ' . $db->quote($now),
+                $db->quoteName('modified_by') . ' = ' . (int) $userId,
+            ))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', array_map('intval', $pks)) . ')');
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    protected function categoryExists($categoryId)
+    {
+        return $this->recordExists('#__jem_categories', $categoryId);
+    }
+
+    protected function venueExists($venueId)
+    {
+        return $this->recordExists('#__jem_venues', $venueId);
+    }
+
+    protected function typeExists($typeId)
+    {
+        return $this->recordExists('#__jem_types', $typeId, 'entity = 1');
+    }
+
+    protected function recordExists($table, $id, $extraWhere = null)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName($table))
+            ->where($db->quoteName('id') . ' = ' . (int) $id);
+
+        if ($extraWhere) {
+            $query->where($extraWhere);
+        }
+
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() > 0;
     }
 
     /**

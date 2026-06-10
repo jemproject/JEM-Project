@@ -34,6 +34,7 @@ class JemModelEvents extends ListModel
                     'hits', 'a.hits',
                     'event_status', 'a.event_status',
                     'ticket_availability', 'a.ticket_availability',
+                    'type_name', 'jt.name',
                     'article_id', 'a.article_id',
                     'id', 'a.id',
                     'catname', 'c.catname',
@@ -152,6 +153,10 @@ class JemModelEvents extends ListModel
         // Join over the country.
         $query->select('co.name AS country');
         $query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
+
+        // Join over the event type.
+        $query->select('jt.name AS type_name');
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1');
 
         // Filter by published state
         $published = $this->getState('filter_state');
