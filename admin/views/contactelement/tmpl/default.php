@@ -50,7 +50,7 @@ $selectedIds = array_map('trim', $selectedIds);
             <th style="width: 20px" class="center">
                 <input type="checkbox" name="checkall-toggle" value=""
                        title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
-                       onclick="if (window.Joomla) { Joomla.checkAll(this); } else { var cbs = document.getElementsByName('cid[]'); for(var i=0; i<cbs.length; i++) { cbs[i].checked = this.checked; jemUpdateSelection(cbs[i]); } }"/>
+                       onclick="jemToggleAllContacts(this);"/>
             </th>
             <th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
             <th style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -125,6 +125,15 @@ $selectedIds = array_map('trim', $selectedIds);
             }
         }
         holder.value = selected.join(',');
+    }
+
+    function jemToggleAllContacts(toggle) {
+        var checkboxes = document.getElementsByName('cid[]');
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = toggle.checked;
+            jemUpdateSelection(checkboxes[i]);
+        }
     }
 
     /**
