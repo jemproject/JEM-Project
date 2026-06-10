@@ -68,6 +68,28 @@ use Joomla\CMS\Factory;
         $month = date('m', $timestamp);
         $day   = date('d', $timestamp);
         $dateKey = $year.$month.$day;
+        $isLegendEvent = ((int) $year === (int) $this->calendarYear)
+            && ((int) $month === (int) $this->calendarMonth)
+            && !empty($row->user_has_access_event);
+
+        if ($isLegendEvent && (!isset($row->multi) || ($row->multi == 'first'))) {
+            foreach ((array) $row->categories as $category) {
+                if (!array_key_exists($category->id, $countcatevents)) {
+                    $countcatevents[$category->id] = 1;
+                } else {
+                    $countcatevents[$category->id]++;
+                }
+            }
+
+            $venueId = (int) $row->locid;
+            if ($venueId > 0) {
+                if (!array_key_exists($venueId, $countvenueevents)) {
+                    $countvenueevents[$venueId] = 1;
+                } else {
+                    $countvenueevents[$venueId]++;
+                }
+            }
+        }
 
         $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
 
@@ -162,26 +184,11 @@ use Joomla\CMS\Factory;
                 $catcolor[$category->color] = $category->color;
             }
 
-            // Count category occurrence
-            if (!isset($row->multi) || ($row->multi == 'first')) {
-                if (!array_key_exists($category->id, $countcatevents)) {
-                    $countcatevents[$category->id] = 1;
-                } else {
-                    $countcatevents[$category->id]++;
-                }
-            }
         }
 
         if ($venueId > 0) {
             $eventFilterClasses['venue' . $venueId] = 'venue' . $venueId;
 
-            if (!isset($row->multi) || ($row->multi == 'first')) {
-                if (!array_key_exists($venueId, $countvenueevents)) {
-                    $countvenueevents[$venueId] = 1;
-                } else {
-                    $countvenueevents[$venueId]++;
-                }
-            }
         }
 
         // Build color output depending on $categoryColorMarker
