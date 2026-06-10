@@ -290,6 +290,14 @@
                 </field>
             </fieldset>
             <fieldset name="advanced">
+                <field
+                        name="layout"
+                        type="modulelayout"
+                        label="JFIELD_ALT_LAYOUT_LABEL"
+                        class="form-select w-auto"
+                        validate="moduleLayout"
+                        default="_:default"
+                />
                 <field name="showcategory" type="radio"
                        default="1"
                        label="MOD_JEM_BANNER_SHOWCATEGORY"
@@ -347,14 +355,6 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field
-                        name="layout"
-                        type="modulelayout"
-                        label="JFIELD_ALT_LAYOUT_LABEL"
-                        class="form-select w-auto"
-                        validate="moduleLayout"
-                        default="_:default"
-                />
                 <field
                         name="moduleclass_sfx"
                         type="textarea"
