@@ -10,7 +10,7 @@
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
             <field type="spacer" name="timeline_date_range_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_DATE_RANGE"
-                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="days" type="text"
                 default="0"
@@ -78,7 +78,7 @@
             />
             <field type="spacer" name="timeline_layout_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_LAYOUT"
-                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="timeline_side" type="list"
                 default="right"
@@ -174,7 +174,7 @@
             />
             <field type="spacer" name="timeline_content_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_EVENT_CONTENT"
-                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="timeline_show_category" type="radio"
                 default="1"
@@ -241,7 +241,7 @@
             </field>
             <field type="spacer" name="timeline_filtering_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_FILTERING"
-                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="onlyfeatured" type="radio"
                 default="0"
@@ -293,7 +293,7 @@
             />
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
-                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="showintrotext" type="radio"
                 default="0"

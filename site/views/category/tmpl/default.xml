@@ -41,7 +41,7 @@
             </field>
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
-                class="badge bg-light text-dark border px-3 py-2 fs-5 fw-bold"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="showintrotext" type="radio"
                 default="0"
