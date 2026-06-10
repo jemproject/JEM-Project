@@ -218,10 +218,13 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
             <div class="jem-mytimeline-list jem-mytimeline-<?php echo $this->escape($timelineSide); ?>">
                 <?php foreach ($this->items as $row) : ?>
                     <?php
-                    $dateText = !empty($row->dates) ? HTMLHelper::_('date', $row->dates, Text::_('DATE_FORMAT_LC3')) : Text::_('COM_JEM_OPEN_DATE');
+                    $hasDate  = JemHelper::isValidDate($row->dates);
+                    $dateText = $hasDate ? HTMLHelper::_('date', $row->dates, Text::_('DATE_FORMAT_LC3')) : Text::_('COM_JEM_OPEN_DATE');
                     $timeText = '';
-                    if ($this->jemsettings->showtime && !empty($row->times)) {
-                        $timeText = HTMLHelper::_('date', $row->dates . ' ' . $row->times, Text::_('TIME_FORMAT_LC4'));
+                    if ($hasDate && $this->jemsettings->showtime && !empty($row->times)) {
+                        $startTime = JemOutput::formattime($row->times);
+                        $endTime   = !empty($row->endtimes) ? JemOutput::formattime($row->endtimes) : '';
+                        $timeText  = $startTime . ($endTime !== '' ? ' - ' . $endTime : '');
                     }
                     $endDate = !empty($row->enddates) ? $row->enddates : $row->dates;
                     $isPast = !empty($endDate) && strtotime($endDate . ' 23:59:59') < time();
