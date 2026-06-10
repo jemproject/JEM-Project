@@ -146,7 +146,7 @@ class JemViewCategory extends JemView
 
             $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
             $archive_link = Route::_('index.php?option=com_jem&view=category');
-            $archive_link = Route::_(JemHelperRoute::getVenueRoute($catid));
+            $archive_link = Route::_(JemHelperRoute::getCategoryRoute($catid));
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);

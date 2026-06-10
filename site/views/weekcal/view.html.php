@@ -126,6 +126,7 @@ class JemViewWeekcal extends JemView
         $partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($week ? ('&weekID=' . $week) : '');
         $url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid;
+        $archive_link = Route::_($url_base . $partDate);
         $nrweeks = max(1, (int) $params->get('nrweeks', 1));
         $weekStart = (new \DateTimeImmutable())->setISODate($year, $week, 1);
         $weekEnd = $weekStart->modify('+' . ($nrweeks - 1) . ' weeks');
@@ -175,6 +176,7 @@ class JemViewWeekcal extends JemView
         $this->print_link    = $print_link;
         $this->print         = $print;
         $this->ical_link     = $partDate;
+        $this->archive_link  = $archive_link;
 
         parent::display($tpl);
     }
