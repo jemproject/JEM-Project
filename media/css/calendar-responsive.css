@@ -165,8 +165,37 @@ div[id^='scat'] {
 }
 
 div#jem .eventcontentinner a {
-    color: #333;
+    color: inherit;
     /* text-decoration:none; */
+}
+
+div#jem .eventcontentinner a,
+div#jem .eventcontentinner span,
+div#jem .eventcontentinner .eventcontenttop,
+div#jem .eventcontentinner .eventcontentbottom,
+div#jem .eventcontentinner .eventtitle {
+    color: inherit !important;
+}
+
+div#jem .jem-calendar-event-time,
+div#jem .jem-calendar-event-title {
+    display: block;
+}
+
+div#jem .jem-calendar-event-time {
+    color: inherit !important;
+    font-size: .88em;
+    font-weight: 500;
+    line-height: 1.15;
+    margin-bottom: 3px;
+    opacity: .62;
+}
+
+div#jem .jem-calendar-event-title {
+    color: inherit !important;
+    font-weight: 700;
+    line-height: 1.25;
+    opacity: 1;
 }
 
 /* *** CALENDAR WEEK ADDITIONS START *** */
@@ -271,19 +300,22 @@ div#jem .rowcolor {
     display: inline-block;
     align-items: center;
     justify-content: center;
-    padding: 0px 10px;
+    padding: 10px 14px 0;
 }
 
 .colorpicbar {
     display: block;
     width: 100%;
-    height: 10px;
+    height: 8px;
+    position: absolute;
+    top: 0;
+    left: 0;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
 
 .colorpicbartext {
-    padding: 0px 10px;
+    padding: 10px 14px 0;
     display: inline-block;
     align-items: center;
     justify-content: center;
@@ -338,6 +370,8 @@ div#jem .rowcolor {
     cursor: pointer;
     padding: 0px;
     border: 1px solid black;
+    overflow: hidden;
+    position: relative;
     margin-right: 5px;
     margin-bottom: 5px;
     line-height: 40px;
@@ -348,6 +382,7 @@ div#jem .rowcolor {
     cursor: pointer;
     padding: 0px;
     padding-bottom: 5px;
+    overflow: hidden;
     position: relative;
     bottom: 0;
     left: 0;
@@ -363,6 +398,10 @@ div#jem .rowcolor {
     background-color: green;
     line-height: 10px;
     margin-right: 4px;
+}
+
+#jlcalendarlegend .eventVenues .colorpicbartext {
+    padding: 0 14px 10px;
 }
 
 #jlcalendarlegend .eventCat.catoff,

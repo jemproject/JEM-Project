@@ -74,7 +74,8 @@ class JemViewCategory extends JemView
             $eventandmorecolor = $params->get('eventandmorecolor');
 
             $style = '
-            div#jem .eventcontentinner a, div#jem .eventandmore a {color:' . $evlinkcolor . ';}
+            div#jem .eventcontentinner a {color: inherit;}
+            div#jem .eventandmore a {color:' . $evlinkcolor . ';}
             .eventcontentinner {background-color:'.$evbackgroundcolor .';}
             .eventandmore {background-color:'.$eventandmorecolor .';}
             .today .daynum {background-color:'.$currentdaycolor.';}';

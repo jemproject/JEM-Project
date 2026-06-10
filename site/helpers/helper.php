@@ -1621,12 +1621,47 @@ class JemHelper
 
         if ($href) {
             $href = Route::_ ($href);
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
+            $time = preg_replace('/(<br\s*\/?>\s*)+$/i', '', (string) $time);
+            $eventText = ($time !== '' ? '<span class="jem-calendar-event-time">' . $time . '</span>' : '')
+                . '<span class="jem-calendar-event-title">' . $text . '</span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'"><a href="'.$href.'">'.$eventText.'</a></span>';
         } else {
             $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'">'.$text.'</span>';
         }
 
         return $tip;
+    }
+
+    /**
+     * Return a readable text color for a hexadecimal background color.
+     */
+    static public function getContrastTextColor($backgroundColor)
+    {
+        $color = trim((string) $backgroundColor);
+
+        if ($color === '') {
+            return '';
+        }
+
+        if ($color[0] === '#') {
+            $color = substr($color, 1);
+        }
+
+        if (strlen($color) === 3 && preg_match('/^[0-9a-f]{3}$/i', $color)) {
+            $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
+        }
+
+        if (!preg_match('/^[0-9a-f]{6}$/i', $color)) {
+            return '';
+        }
+
+        $red   = hexdec(substr($color, 0, 2));
+        $green = hexdec(substr($color, 2, 2));
+        $blue  = hexdec(substr($color, 4, 2));
+
+        $brightness = (($red * 299) + ($green * 587) + ($blue * 114)) / 1000;
+
+        return $brightness < 140 ? '#fff' : '#000';
     }
 
     /**

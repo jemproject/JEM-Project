@@ -245,10 +245,14 @@ class JemModelEvents extends ListModel
                             $query->where('co.name LIKE '.$search);
                             break;
                         case 7:
+                            /* search author */
+                            $query->where('u.name LIKE '.$search);
+                            break;
+                        case 8:
                             /* search all */
                             $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
                             $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-                            $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.')');
+                            $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.' OR u.name LIKE '.$search.')');
                             break;
                         default:
                             /* search event and location (city, state, country)*/

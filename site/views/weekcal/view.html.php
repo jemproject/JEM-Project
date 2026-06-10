@@ -57,7 +57,9 @@ class JemViewWeekcal extends JemView
         $eventandmorecolor = $params->get('eventandmorecolor');
 
         $style = '
-        div#jem .eventcontentinner a,
+        div#jem .eventcontentinner a {
+            color: inherit;
+        }
         div#jem .eventandmore a {
             color:' . $evlinkcolor . ';
         }

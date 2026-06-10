@@ -75,7 +75,8 @@ class JemViewEvents extends JemAdminView
         $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
         $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
         $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
-        $filters[] = HTMLHelper::_('select.option', '7', Text::_('JALL'));
+        $filters[] = HTMLHelper::_('select.option', '7', Text::_('COM_JEM_AUTHOR'));
+        $filters[] = HTMLHelper::_('select.option', '8', Text::_('JALL'));
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select m-0','onChange'=>"this.form.submit()"), 'value', 'text', $this->state->get('filter_type'));
         $lists['event_type_filter'] = HTMLHelper::_(
             'select.genericlist',
@@ -86,6 +87,16 @@ class JemViewEvents extends JemAdminView
             'text',
             (int) $this->state->get('filter_event_type_id'),
             'filter_event_type_id'
+        );
+        $lists['category_filter'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getCategoryFilterOptions(),
+            'filter_category_id',
+            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
+            'value',
+            'text',
+            (int) $this->state->get('filter_category_id'),
+            'filter_category_id'
         );
         $lists['batch_category'] = HTMLHelper::_(
             'select.genericlist',
@@ -150,6 +161,18 @@ class JemViewEvents extends JemAdminView
         foreach ($types as $type) {
             $options[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
         }
+
+        return $options;
+    }
+
+    /**
+     * Build category options for filtering the event list.
+     */
+    protected function getCategoryFilterOptions()
+    {
+        $options = $this->getCategoryMoveOptions();
+        $options[0]->value = '0';
+        $options[0]->text = Text::_('COM_JEM_SELECT_CATEGORY');
 
         return $options;
     }
