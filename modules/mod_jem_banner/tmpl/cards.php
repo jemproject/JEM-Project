@@ -157,23 +157,6 @@ $wa->addInlineStyle($css);
                             <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" style="text-decoration:none;color:inherit;">'.$item->title.'</a>' : $item->title; ?>
                         </h3>
 
-                        <?php if ((($params->get('showvenue', 1) == 1) && !empty($item->venue)) || (($params->get('showcategory', 1) == 1) && !empty($item->catname))) : ?>
-                            <div class="event-title-meta">
-                                <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) : ?>
-                                    <div class="event-venue">
-                                        <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                                        <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) : ?>
-                                    <div class="event-category-badge">
-                                        <span><?php echo $item->catname; ?></span>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-
                         <div class="event-date-container">
                             <div class="date-box" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;">
                                 <div class="date-day"><?php echo $item->startdate['day']; ?></div>
@@ -186,10 +169,17 @@ $wa->addInlineStyle($css);
                         </div>
 
                         <div class="event-meta">
-                            <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) : ?>
+                            <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) : ?>
                                 <div class="meta-item">
                                     <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-map-marker-alt"></i></div>
-                                    <div class="meta-text"><?php echo $item->venue; ?></div>
+                                    <div class="meta-text"><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></div>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (($params->get('showtype', 1) == 1) && !empty($item->typename)) : ?>
+                                <div class="meta-item">
+                                    <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-tag"></i></div>
+                                    <div class="meta-text"><?php echo $item->typelink ? '<a href="'.$item->typelink.'">'.$item->typename.'</a>' : $item->typename; ?></div>
                                 </div>
                             <?php endif; ?>
 

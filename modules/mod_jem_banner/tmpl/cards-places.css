@@ -17,12 +17,14 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1rem;
+    align-items: stretch;
 }
 
 #jemmodulebanner_cards_places .jem-banner-card-place {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    height: 100%;
     max-width: 420px;
 }
 
@@ -72,6 +74,8 @@
 }
 
 #jemmodulebanner_cards_places .jem-banner-card-panel {
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--jem-card-border);
     border-radius: 8px;
     background: #fff;
@@ -79,6 +83,7 @@
 }
 
 #jemmodulebanner_cards_places .jem-banner-card-main {
+    flex: 1 1 auto;
     padding: 1rem;
 }
 
