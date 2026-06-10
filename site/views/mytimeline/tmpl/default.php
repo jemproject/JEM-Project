@@ -195,9 +195,14 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
         <?php
         $uri = Uri::getInstance();
         $returnUrl = $uri->toString();
-        $urlLogin = 'index.php?option=com_users&view=login&return=' . base64_encode($returnUrl);
+        $urlLogin = Route::_('index.php?option=com_users&view=login&return=' . base64_encode($returnUrl), false);
         ?>
-        <button class="btn btn-warning" onclick="location.href='<?php echo $uri->root() . $urlLogin; ?>'" type="button"><?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?></button>
+        <div class="alert alert-warning">
+            <p><?php echo Text::_('COM_JEM_NEED_LOGGED_IN'); ?></p>
+            <a class="btn btn-warning" href="<?php echo $this->escape($urlLogin); ?>">
+                <?php echo Text::_('COM_JEM_LOGIN_TO_ACCESS'); ?>
+            </a>
+        </div>
     <?php else : ?>
         <div class="buttons">
             <?php
