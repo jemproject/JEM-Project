@@ -237,7 +237,9 @@ $showAxisDate = (int) $this->params->get('timeline_show_axis_date', 1);
                 $timeText = '';
 
                 if ($hasDate && $this->jemsettings->showtime && !empty($row->times)) {
-                    $timeText = HTMLHelper::_('date', $row->dates . ' ' . $row->times, Text::_('TIME_FORMAT_LC4'));
+                    $startTime = JemOutput::formattime($row->times);
+                    $endTime   = !empty($row->endtimes) ? JemOutput::formattime($row->endtimes) : '';
+                    $timeText  = $startTime . ($endTime !== '' ? ' - ' . $endTime : '');
                 }
 
                 $countryName = jem_myattendances_country_name($row->country ?? '');
