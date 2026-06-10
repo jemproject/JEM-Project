@@ -37,6 +37,7 @@
             <li><a href="#detailspage">Event Page</a></li>
             <li><a href="#layout">Layout</a></li>
             <li><a href="#params">Global Parameters</a></li>
+            <li><a href="#associatedarticles">Associated Articles</a></li>
             <li><a href="#access">User Control</a></li>
             <li><a href="#configinfo">Configinfo</a></li>
         </ul>
@@ -368,6 +369,68 @@
             You set the 'By the end of' date in the Repeating Events section of the Event edit screen,
             or when submitting an event from the Frontend.
         </p>
+        <h3>Associated Articles<a name="associatedarticles" id="associatedarticles"></a></h3>
+        <p><strong>Use Associated Articles:</strong><br>
+            Enable this option when JEM should create or link Joomla articles for events. Associated articles are useful when
+            an event needs a longer editorial page, Joomla content plugins, custom modules, or a stable article URL beside the
+            normal JEM event page.
+        </p>
+        <p><strong>Associated Article Title Format:</strong><br>
+            Defines the article title used for one-time events and for the parent event of a recurring series. You can combine
+            plain text with placeholders such as <code>{title}</code>, <code>{id}</code>, <code>{date}</code>, and <code>{time}</code>.
+        </p>
+        <p><strong>Show More Information / More Information Text:</strong><br>
+            Controls whether the event detail page displays a link or button to the associated article, and defines the text
+            used for that link.
+        </p>
+        <p><strong>Associated Article Date:</strong><br>
+            Controls whether the generated Joomla article keeps the current article date or uses the JEM event date.
+        </p>
+        <p><strong>Recurring Event Articles:</strong><br>
+            Choose how articles are handled for recurring events. You can create only the first article, share the first article
+            with the complete recurring series, or create one separate article for each generated occurrence.
+        </p>
+        <p><strong>Recurring Article Title Format:</strong><br>
+            This field is shown when recurring events create one article per occurrence. It supports the same placeholders as
+            the normal article title format and also supports counters. Use <code>{#}</code> for a plain counter,
+            <code>{##}</code> for a two-digit counter, or <code>{###}</code> for a three-digit counter.
+        </p>
+        <table class="help">
+            <tr>
+                <th>Format</th>
+                <th>Example result</th>
+                <th>Typical use</th>
+            </tr>
+            <tr>
+                <td><code>{date} - {title}</code></td>
+                <td>2026-06-20 - Concert in Madrid</td>
+                <td>One-time event articles ordered by date.</td>
+            </tr>
+            <tr>
+                <td><code>{title} ({date} {time})</code></td>
+                <td>Concert in Madrid (2026-06-20 19:30:00)</td>
+                <td>Events where the time must be visible in the article title.</td>
+            </tr>
+            <tr>
+                <td><code>{title} {##}</code></td>
+                <td>Workshop 01, Workshop 02, Workshop 03</td>
+                <td>Recurring events with one article per occurrence.</td>
+            </tr>
+            <tr>
+                <td><code>{###} - {title} - {date}</code></td>
+                <td>001 - Workshop - 2026-06-20</td>
+                <td>Long recurring series that need stable sortable titles.</td>
+            </tr>
+        </table>
+        <div class="box">
+            <p class="hintheader">Recommended setups</p>
+            <p class="hint">
+                Use one shared article when the recurring series has the same editorial content for every date. Use one article
+                per occurrence when each occurrence needs its own text, date-specific information, modules, comments, or SEO title.
+                Add <code>{##}</code> or <code>{###}</code> to the recurring title format when generated titles must stay unique
+                and easy to sort.
+            </p>
+        </div>
         <p><strong>Timezone Handling:</strong><br>
             You can select how the dates will be exported. If you chose 'float', when imported,
             all dates will appear as being in the same timezone as the user
