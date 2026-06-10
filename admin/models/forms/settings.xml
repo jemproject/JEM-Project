@@ -1133,6 +1133,13 @@
                 <option value="1">COM_JEM_ARTICLE_RECURRENCE_SHARE_SERIES</option>
                 <option value="2">COM_JEM_ARTICLE_RECURRENCE_EACH_OCCURRENCE</option>
             </field>
+            <field name="event_associated_article_recurrence_title_format" type="text"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_TITLE_FORMAT_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_TITLE_FORMAT_DESC"
+                class="inputbox form-control w-auto"
+                default="{title} {##}"
+                showon="event_use_associated_article:1[AND]event_associated_article_recurrence_mode:2"
+            />
         </fieldset>
 
         <fieldset name="globalparam"

@@ -844,6 +844,7 @@ class JemModelEvent extends JemModelAdmin
             return true;
         }
 
+        $eventData = $this->prepareAssociatedArticleEventData($eventData, $eventId);
         $articleId = $this->createAssociatedContentArticle($eventData, $articleCategoryId, $eventId);
 
         if (!$articleId) {
@@ -863,6 +864,48 @@ class JemModelEvent extends JemModelAdmin
         Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
 
         return true;
+    }
+
+    /**
+     * Complete article creation data with the event values saved in the database.
+     *
+     * @param   array    $eventData  Event form data.
+     * @param   integer  $eventId    Event id.
+     *
+     * @return  array
+     */
+    protected function prepareAssociatedArticleEventData(array $eventData, $eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return $eventData;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language')))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $eventId);
+
+        try {
+            $db->setQuery($query);
+            $savedEvent = (array) $db->loadAssoc();
+        } catch (Throwable $e) {
+            return $eventData;
+        }
+
+        if (empty($savedEvent)) {
+            return $eventData;
+        }
+
+        foreach ($savedEvent as $field => $value) {
+            if (!array_key_exists($field, $eventData) || $eventData[$field] === '' || $eventData[$field] === null) {
+                $eventData[$field] = $value;
+            }
+        }
+
+        return $eventData;
     }
 
     /**
@@ -1147,7 +1190,7 @@ class JemModelEvent extends JemModelAdmin
      *
      * @return  integer
      */
-    protected function createAssociatedContentArticle(array $eventData, $articleCategoryId, $eventId = 0)
+    protected function createAssociatedContentArticle(array $eventData, $articleCategoryId, $eventId = 0, $recurrenceCounter = null)
     {
         $app = Factory::getApplication();
 
@@ -1167,7 +1210,7 @@ class JemModelEvent extends JemModelAdmin
 
         $user           = $app->getIdentity();
         $eventTitle     = trim((string) ($eventData['title'] ?? ''));
-        $title          = $this->buildAssociatedArticleTitle($eventData, $eventId);
+        $title          = $this->buildAssociatedArticleTitle($eventData, $eventId, $recurrenceCounter);
         $categoryAccess = 1;
         $eventId = (int) $eventId;
 
@@ -1218,6 +1261,44 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return (int) $model->getState($model->getName() . '.id');
+    }
+
+    /**
+     * Build the visible title for an associated Joomla article.
+     *
+     * @param   array    $eventData  Event data.
+     * @param   integer  $eventId    Event id.
+     *
+     * @return  string
+     */
+    protected function buildAssociatedArticleTitle(array $eventData, $eventId, $recurrenceCounter = null)
+    {
+        $eventTitle = trim((string) ($eventData['title'] ?? ''));
+        $formatKey = $recurrenceCounter === null
+            ? 'event_associated_article_title_format'
+            : 'event_associated_article_recurrence_title_format';
+        $format = trim((string) JemHelper::globalattribs()->get($formatKey, '{title}'));
+
+        if ($format === '') {
+            $format = '{title}';
+        }
+
+        $date = trim((string) ($eventData['dates'] ?? ''));
+        $time = trim((string) ($eventData['times'] ?? ''));
+        $title = str_replace(
+            array('{title}', '{id}', '{date}', '{time}'),
+            array($eventTitle, (int) $eventId, $date, $time),
+            $format
+        );
+        if ($recurrenceCounter !== null) {
+            $title = preg_replace_callback('/\{(#+)\}/', static function ($matches) use ($recurrenceCounter) {
+                return str_pad((string) (int) $recurrenceCounter, strlen($matches[1]), '0', STR_PAD_LEFT);
+            }, $title);
+        }
+
+        $title = trim(preg_replace('/\s+/', ' ', $title));
+
+        return $title !== '' ? $title : $eventTitle;
     }
 
     /**
@@ -1319,13 +1400,17 @@ class JemModelEvent extends JemModelAdmin
             return;
         }
 
+        $recurrenceCounter = 1;
+
         foreach ($children as $child) {
             $childData = array_merge($eventData, (array) $child);
-            $childArticleId = $this->createAssociatedContentArticle($childData, $articleCategoryId, (int) $child->id);
+            $childArticleId = $this->createAssociatedContentArticle($childData, $articleCategoryId, (int) $child->id, $recurrenceCounter);
 
             if ($childArticleId) {
                 $this->setAssociatedArticleForEvents(array((int) $child->id), $childArticleId);
             }
+
+            $recurrenceCounter++;
         }
     }
 
