@@ -232,10 +232,11 @@ $showAxisDate = (int) $this->params->get('timeline_show_axis_date', 1);
         <div class="jem-myattendances-timeline-list jem-myattendances-timeline-<?php echo $this->escape($timelineSide); ?>">
             <?php foreach ($this->attending as $row) : ?>
                 <?php
-                $dateText = HTMLHelper::_('date', $row->dates, Text::_('DATE_FORMAT_LC3'));
+                $hasDate  = JemHelper::isValidDate($row->dates);
+                $dateText = $hasDate ? HTMLHelper::_('date', $row->dates, Text::_('DATE_FORMAT_LC3')) : Text::_('COM_JEM_OPEN_DATE');
                 $timeText = '';
 
-                if ($this->jemsettings->showtime && !empty($row->times)) {
+                if ($hasDate && $this->jemsettings->showtime && !empty($row->times)) {
                     $timeText = HTMLHelper::_('date', $row->dates . ' ' . $row->times, Text::_('TIME_FORMAT_LC4'));
                 }
 
