@@ -1651,7 +1651,7 @@ input#places::-webkit-inner-spin-button {
 }
 
 .jem-admin-filter-item {
-    flex: 0 1 auto;
+    flex: 1 1 12rem;
     max-width: 100%;
     min-width: 10rem;
 }
@@ -1680,6 +1680,11 @@ input#places::-webkit-inner-spin-button {
 .jem-admin-filter-limit {
     flex: 0 0 auto;
     margin-left: auto;
+}
+
+.jem-admin-filter-bar .wauto-minwmax {
+    min-width: 0;
+    width: 100%;
 }
 
 .jem-admin-filter-bar .form-select,
@@ -1716,6 +1721,13 @@ input#places::-webkit-inner-spin-button {
 @media (max-width: 900px) {
     .jem-admin-filter-limit {
         margin-left: 0;
+    }
+
+    .jem-admin-filter-item,
+    .jem-admin-filter-search,
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        max-width: 100%;
     }
 }
 

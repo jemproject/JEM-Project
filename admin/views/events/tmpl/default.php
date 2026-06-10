@@ -86,6 +86,9 @@ $ticketAvailabilityOptions = array(
                     <?php echo $this->lists['event_type_filter']; ?>
                 </div>
                 <div class="jem-admin-filter-item">
+                    <?php echo $this->lists['category_filter']; ?>
+                </div>
+                <div class="jem-admin-filter-item">
                     <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
                         <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
@@ -321,7 +324,6 @@ $ticketAvailabilityOptions = array(
         <input type="hidden" name="boxchecked" value="0" />
         <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-        <input type="hidden" name="filter_category_id" id="filter_category_id" value="<?php echo (int) $this->state->get('filter_category_id'); ?>" />
         <input type="hidden" name="filter_venue_id" id="filter_venue_id" value="<?php echo (int) $this->state->get('filter_venue_id'); ?>" />
 
         <?php echo HTMLHelper::_('form.token'); ?>

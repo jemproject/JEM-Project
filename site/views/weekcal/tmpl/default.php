@@ -366,8 +366,16 @@ use Joomla\CMS\Factory;
         // if we have exact one color from categories we can use this as background color of event
         $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 ps-0 pe-0 ' : '') . '" style="' . $featuredstyle;
         $style = '';
+        $eventBackgroundColor = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
-            $style = '; background-color:' . array_pop($catcolor);
+            $eventBackgroundColor = reset($catcolor);
+        }
+        if ($eventBackgroundColor) {
+            $style = '; background-color:' . $eventBackgroundColor;
+            $contrastColor = JemHelper::getContrastTextColor($eventBackgroundColor);
+            if ($contrastColor) {
+                $style .= '; color:' . $contrastColor;
+            }
         }
         $content .= $style . '" onclick="location.href=\'' . $detaillink . '\'">';
         $divClass = $categoryColorMarker ? 'eventcontenttextbar' : 'eventcontenttextblock';

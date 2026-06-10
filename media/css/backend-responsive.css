@@ -1461,3 +1461,104 @@ a.label:focus {
     min-width: max-content;
 }
 
+.jem-admin-filter-bar {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    max-width: 100%;
+}
+
+.jem-admin-filter-item {
+    flex: 1 1 12rem;
+    max-width: 100%;
+    min-width: 10rem;
+}
+
+.jem-admin-filter-search {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+    min-width: min(100%, 16rem);
+}
+
+.jem-admin-filter-date-range {
+    display: flex;
+    flex: 1 1 28rem;
+    flex-wrap: nowrap;
+    gap: .5rem;
+    max-width: 36rem;
+    min-width: min(100%, 28rem);
+}
+
+.jem-admin-filter-calendar {
+    flex: 1 1 0;
+    max-width: min(100%, 17rem);
+    min-width: 13rem;
+}
+
+.jem-admin-filter-limit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.jem-admin-filter-bar .wauto-minwmax {
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-admin-filter-bar .form-select,
+.jem-admin-filter-bar .form-control,
+.jem-admin-filter-bar .field-calendar,
+.jem-admin-filter-bar .input-group {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar {
+    align-items: stretch;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+}
+
+.jem-admin-filter-calendar .field-calendar .input-group {
+    flex-wrap: nowrap;
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar button {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+    .jem-admin-filter-limit {
+        margin-left: 0;
+    }
+
+    .jem-admin-filter-item,
+    .jem-admin-filter-search,
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .jem-admin-filter-calendar {
+        flex-basis: 100%;
+    }
+}
+
