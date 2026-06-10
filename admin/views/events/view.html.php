@@ -87,6 +87,36 @@ class JemViewEvents extends JemAdminView
             (int) $this->state->get('filter_event_type_id'),
             'filter_event_type_id'
         );
+        $lists['batch_category'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getCategoryMoveOptions(),
+            'batch[category_id]',
+            array('class'=>'inputbox form-select wauto-minwmax m-0'),
+            'value',
+            'text',
+            '',
+            'batch_category_id'
+        );
+        $lists['batch_venue'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getVenueMoveOptions(),
+            'batch[venue_id]',
+            array('class'=>'inputbox form-select wauto-minwmax m-0'),
+            'value',
+            'text',
+            '',
+            'batch_venue_id'
+        );
+        $lists['batch_type'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getTypeMoveOptions(),
+            'batch[type_id]',
+            array('class'=>'inputbox form-select wauto-minwmax m-0'),
+            'value',
+            'text',
+            '',
+            'batch_type_id'
+        );
 
         //assign data to template
         $this->lists        = $lists;
@@ -120,6 +150,65 @@ class JemViewEvents extends JemAdminView
         foreach ($types as $type) {
             $options[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
         }
+
+        return $options;
+    }
+
+    /**
+     * Build category options for bulk event moves.
+     */
+    protected function getCategoryMoveOptions()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'catname', 'level')))
+            ->from($db->quoteName('#__jem_categories'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('lft') . ' ASC');
+
+        $db->setQuery($query);
+        $categories = $db->loadObjectList() ?: array();
+        $options = array(HTMLHelper::_('select.option', '', Text::_('COM_JEM_EVENTS_MOVE_CATEGORY_SELECT')));
+
+        foreach ($categories as $category) {
+            $options[] = HTMLHelper::_('select.option', (int) $category->id, str_repeat('- ', max(0, (int) $category->level - 1)) . $category->catname);
+        }
+
+        return $options;
+    }
+
+    /**
+     * Build venue options for bulk event moves.
+     */
+    protected function getVenueMoveOptions()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'venue', 'city')))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('venue') . ' ASC');
+
+        $db->setQuery($query);
+        $venues = $db->loadObjectList() ?: array();
+        $options = array(HTMLHelper::_('select.option', '', Text::_('COM_JEM_EVENTS_MOVE_VENUE_SELECT')));
+
+        foreach ($venues as $venue) {
+            $label = $venue->venue . (!empty($venue->city) ? ' (' . $venue->city . ')' : '');
+            $options[] = HTMLHelper::_('select.option', (int) $venue->id, $label);
+        }
+
+        return $options;
+    }
+
+    /**
+     * Build type options for bulk event moves.
+     */
+    protected function getTypeMoveOptions()
+    {
+        $options = $this->getTypeFilterOptions(1, 'COM_JEM_EVENTS_MOVE_TYPE_SELECT');
+        $options[0]->value = '';
+        array_splice($options, 1, 0, array(HTMLHelper::_('select.option', '0', Text::_('COM_JEM_TYPE_SELECT_NONE'))));
 
         return $options;
     }
@@ -178,6 +267,16 @@ class JemViewEvents extends JemAdminView
 
             if ($canChangeState) {
                 $childBar->checkin('events.checkin')->listCheck(true);
+            }
+
+            if ($canDo->get('core.edit')) {
+                $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
+                    ->popupType('inline')
+                    ->textHeader(Text::_('COM_JEM_EVENTS_BATCH_OPTIONS'))
+                    ->url('#joomla-dialog-batch')
+                    ->modalWidth('800px')
+                    ->modalHeight('fit-content')
+                    ->listCheck(true);
             }
 
             if ($this->state->get('filter_state') != -2 && $canChangeState) {
