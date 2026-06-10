@@ -131,6 +131,10 @@ class JemViewWeekcal extends JemView
         $weekEnd = $weekStart->modify('+' . ($nrweeks - 1) . ' weeks');
         $previousWeek = $weekStart->modify('-' . $nrweeks . ' weeks');
         $nextWeek = $weekStart->modify('+' . $nrweeks . ' weeks');
+        $previousYear = (int) $weekStart->format('o') - 1;
+        $nextYear = (int) $weekStart->format('o') + 1;
+        $previousYearWeek = min((int) $weekStart->format('W'), ((new \DateTimeImmutable())->setISODate($previousYear, 53)->format('W') === '53') ? 53 : 52);
+        $nextYearWeek = min((int) $weekStart->format('W'), ((new \DateTimeImmutable())->setISODate($nextYear, 53)->format('W') === '53') ? 53 : 52);
         $weekTitle = Text::_('COM_JEM_WKCAL_WEEK') . ' ' . (int) $weekStart->format('W') . ', ' . $weekStart->format('o');
 
         if ($nrweeks > 1) {
@@ -153,7 +157,11 @@ class JemViewWeekcal extends JemView
             Route::_($url_base . '&yearID=' . $previousWeek->format('o') . '&weekID=' . (int) $previousWeek->format('W')),
             Route::_($url_base . '&yearID=' . $nextWeek->format('o') . '&weekID=' . (int) $nextWeek->format('W')),
             jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_PREVIOUS_WEEK'), array('class' => 'jem-calendar-nav-icon')),
-            jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon'))
+            jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_WKCAL_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon')),
+            $params->get('show_year_navigation', 0) ? Route::_($url_base . '&yearID=' . $previousYear . '&weekID=' . $previousYearWeek) : null,
+            $params->get('show_year_navigation', 0) ? Route::_($url_base . '&yearID=' . $nextYear . '&weekID=' . $nextYearWeek) : null,
+            jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angles-left jem-calendar-nav-icon', Text::_('JPREV'), array('class' => 'jem-calendar-nav-icon')),
+            jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angles-right jem-calendar-nav-icon', Text::_('JNEXT'), array('class' => 'jem-calendar-nav-icon'))
         );
 
         $this->rows          = $rows;

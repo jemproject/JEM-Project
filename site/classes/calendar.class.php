@@ -530,23 +530,39 @@ class JemCalendar
             $out.=$this->getMonthName().$this->monthYearDivider.$this->actyear;
             $out.="</td></tr>\n";
         } else {
-            $out = "<tr><td class=\"".$this->cssMonthNav."\" colspan=\"2\">";
+            $out = "<tr>";
+
+            if ($this->yearNav) {
+                $out .= "<td class=\"".$this->cssMonthNav."\">";
+                $out .= $this->mkUrl($this->actyear - 1, $this->actmonth);
+                $out .= $this->yearNavBack."</a></td>";
+            }
+
+            $out .= "<td class=\"".$this->cssMonthNav."\"".($this->yearNav ? '' : ' colspan="2"').">";
             if ($this->actmonth==1) { // january
                 $out.=$this->mkUrl($this->actyear-1,"12");
             } else {
                 $out.=$this->mkUrl($this->actyear,$this->actmonth-1);
             }
             $out .= $this->monthNavBack."</a></td>";
-            $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-4)."\">";
+            $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-($this->yearNav ? 4 : 4))."\">";
             $out .= $this->getMonthName().$this->monthYearDivider.$this->actyear."</td>";
-            $out .= "<td class=\"".$this->cssMonthNav."\" colspan=\"2\">";
+            $out .= "<td class=\"".$this->cssMonthNav."\"".($this->yearNav ? '' : ' colspan="2"').">";
             if ($this->actmonth==12) { //december
                 $out.=$this->mkUrl($this->actyear+1,"1");
             }
             else {
                 $out.=$this->mkUrl($this->actyear,$this->actmonth+1);
             }
-            $out.=$this->monthNavForw."</a></td></tr>\n";
+            $out.=$this->monthNavForw."</a></td>";
+
+            if ($this->yearNav) {
+                $out .= "<td class=\"".$this->cssMonthNav."\">";
+                $out .= $this->mkUrl($this->actyear + 1, $this->actmonth);
+                $out .= $this->yearNavForw."</a></td>";
+            }
+
+            $out .= "</tr>\n";
         }
         return $out;
     }

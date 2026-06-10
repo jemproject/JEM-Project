@@ -61,13 +61,17 @@ class ActiveCalendarWeek extends JEMCalendar {
         return $out;
     }
 
-    function setWeekNavigation($title, $previousLink, $nextLink, $previousIcon, $nextIcon) {
+    function setWeekNavigation($title, $previousLink, $nextLink, $previousIcon, $nextIcon, $previousYearLink = null, $nextYearLink = null, $previousYearIcon = null, $nextYearIcon = null) {
         $this->weekNavigation = array(
             'title' => $title,
             'previous' => $previousLink,
             'next' => $nextLink,
             'previousIcon' => $previousIcon,
             'nextIcon' => $nextIcon,
+            'previousYear' => $previousYearLink,
+            'nextYear' => $nextYearLink,
+            'previousYearIcon' => $previousYearIcon,
+            'nextYearIcon' => $nextYearIcon,
         );
     }
     /*
@@ -133,11 +137,23 @@ class ActiveCalendarWeek extends JEMCalendar {
             return '';
         }
 
+        $showYearNavigation = !empty($this->weekNavigation['previousYear']) && !empty($this->weekNavigation['nextYear']);
         $previousColspan = $this->weekNum ? 3 : 2;
         $nextColspan = 2;
         $titleColspan = 3;
 
+        if ($showYearNavigation) {
+            $previousColspan = $this->weekNum ? 2 : 1;
+            $nextColspan = $this->weekNum ? 2 : 1;
+            $titleColspan = $this->weekNum ? 2 : 3;
+        }
+
         $out = '<tr>';
+        if ($showYearNavigation) {
+            $out .= '<td class="monthnavigation">';
+            $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['previousYear'] . '" rel="prev">';
+            $out .= $this->weekNavigation['previousYearIcon'] . '</a></td>';
+        }
         $out .= '<td class="monthnavigation" colspan="' . $previousColspan . '">';
         $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['previous'] . '" rel="prev">';
         $out .= $this->weekNavigation['previousIcon'] . '</a></td>';
@@ -146,6 +162,11 @@ class ActiveCalendarWeek extends JEMCalendar {
         $out .= '<td class="monthnavigation" colspan="' . $nextColspan . '">';
         $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['next'] . '" rel="next">';
         $out .= $this->weekNavigation['nextIcon'] . '</a></td>';
+        if ($showYearNavigation) {
+            $out .= '<td class="monthnavigation">';
+            $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['nextYear'] . '" rel="next">';
+            $out .= $this->weekNavigation['nextYearIcon'] . '</a></td>';
+        }
         $out .= "</tr>\n";
 
         return $out;

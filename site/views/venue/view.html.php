@@ -152,6 +152,9 @@ class JemViewVenue extends JemView
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
+            if ($params->get('show_year_navigation', 0)) {
+                $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+            }
             $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
             $cal->setFirstWeekDay($params->get('firstweekday',1));
             $cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
