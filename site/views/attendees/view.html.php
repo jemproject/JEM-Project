@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 
@@ -26,7 +27,8 @@ class JemViewAttendees extends JemView
 
         //redirect if not logged in
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode(Uri::getInstance()->toString()), false));
             return false;
         }
 

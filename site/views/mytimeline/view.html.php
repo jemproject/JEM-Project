@@ -29,10 +29,24 @@ class JemViewMytimeline extends JemView
         $print = $app->input->getBool('print', false);
 
         $this->needLoginFirst = 0;
+        $this->action = $uri->toString();
+        $this->items = array();
+        $this->task = $task;
+        $this->print = $print;
+        $this->params = $params;
+        $this->jemsettings = $jemsettings;
+        $this->settings = $settings;
+        $this->permissions = new stdClass();
+        $this->pagetitle = Text::_('COM_JEM_MY_TIMELINE');
+        $this->print_link = '';
+        $this->archive_link = '';
+        $this->pageclass_sfx = '';
 
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
             $this->needLoginFirst = 1;
+            return;
         } else {
             JemHelper::loadCss('jem');
             JemHelper::loadCustomCss();
@@ -78,16 +92,7 @@ class JemViewMytimeline extends JemView
             $document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
 
-            $permissions = new stdClass();
-
-            $this->action = $uri->toString();
             $this->items = $this->get('Items');
-            $this->task = $task;
-            $this->print = $print;
-            $this->params = $params;
-            $this->jemsettings = $jemsettings;
-            $this->settings = $settings;
-            $this->permissions = $permissions;
             $this->pagetitle = $pagetitle;
             $this->print_link = $print_link;
             $this->archive_link = $archive_link;

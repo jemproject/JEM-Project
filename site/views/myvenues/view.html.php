@@ -24,10 +24,6 @@ class JemViewMyvenues extends JemView
      */
     public function display($tpl = null)
     {
-        // Get data from model
-        $venues       = $this->get('Venues');
-        $pagination   = $this->get('VenuesPagination');
-
         // initialize variables
         $app          = Factory::getApplication();
         $document     = $app->getDocument();
@@ -47,8 +43,10 @@ class JemViewMyvenues extends JemView
         // redirect if not logged in
         $this->needLoginFirst = 0;
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
-            $this->needLoginFirst=1;
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+            $this->needLoginFirst = 1;
+            return;
         }else {
             // Decide which parameters should take priority
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -63,6 +61,10 @@ class JemViewMyvenues extends JemView
                 JemHelper::loadCss('print');
                 $document->setMetaData('robots', 'noindex, nofollow');
             }
+
+            // Get data from model
+            $venues       = $this->get('Venues');
+            $pagination   = $this->get('VenuesPagination');
 
             // are no venues available?
             $novenues = (!$venues) ? 1 : 0;

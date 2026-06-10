@@ -41,8 +41,10 @@ class JemViewMyattendances extends JemView
         // redirect if not logged in
         $this->needLoginFirst = 0;
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
-            $this->needLoginFirst=1;
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+            $this->needLoginFirst = 1;
+            return;
         }else {
             // Decide which parameters should take priority
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
