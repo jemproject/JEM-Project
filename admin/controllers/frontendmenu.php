@@ -100,13 +100,25 @@ class JemControllerFrontendmenu extends BaseController
         }
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
-        $items[] = array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents&id=' . (int) ($eventType->id ?? 0), $groups['types']);
+        if ($eventType) {
+            $items[] = array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents&id=' . (int) $eventType->id, $groups['types']);
+        } else {
+            $this->unpublishGeneratedMenuItems($menutype, array('events-by-type'));
+        }
 
         $venueType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 3', array('id', 'alias'));
-        $items[] = array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) ($venueType->id ?? 0), $groups['types']);
+        if ($venueType) {
+            $items[] = array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) $venueType->id, $groups['types']);
+        } else {
+            $this->unpublishGeneratedMenuItems($menutype, array('venues-by-type'));
+        }
 
         $categoryType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 2', array('id', 'alias'));
-        $items[] = array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=' . (int) ($categoryType->id ?? 0), $groups['types']);
+        if ($categoryType) {
+            $items[] = array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=' . (int) $categoryType->id, $groups['types']);
+        } else {
+            $this->unpublishGeneratedMenuItems($menutype, array('categories-by-type'));
+        }
 
         foreach ($items as $item) {
             if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], 'component', $componentId)) {

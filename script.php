@@ -305,8 +305,14 @@ class com_jemInstallerScript
         // $type is the type of change (install, update or discover_install)
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
-        if (strtolower($type) == 'install') {
+        $type = strtolower($type);
+
+        if ($type == 'install') {
             $this->fixJemMenuItems();
+        }
+
+        if (in_array($type, array('install', 'update', 'discover_install'), true)) {
+            $this->repairGeneratedTypeMenuItems();
         }
     }
 
@@ -617,6 +623,72 @@ class com_jemInstallerScript
             $query->set('component_id = ' . (int)$newId);
             $query->where('client_id = 0')
                   ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Repair generated frontend type menu items whose stored type id became stale.
+     *
+     * @return void
+     */
+    private function repairGeneratedTypeMenuItems()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $items = array(
+            'events-by-type' => array(
+                'entity' => 1,
+                'link'   => 'index.php?option=com_jem&view=typeevents&id=%d',
+            ),
+            'venues-by-type' => array(
+                'entity' => 3,
+                'link'   => 'index.php?option=com_jem&view=typevenues&id=%d',
+            ),
+            'categories-by-type' => array(
+                'entity' => 2,
+                'link'   => 'index.php?option=com_jem&view=categories&id=1&typeid=%d',
+            ),
+        );
+
+        foreach ($items as $alias => $item) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_types'))
+                ->where($db->quoteName('published') . ' = 1')
+                ->where($db->quoteName('entity') . ' = ' . (int) $item['entity'])
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+            $db->setQuery($query, 0, 1);
+            $typeId = (int) $db->loadResult();
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__menu'))
+                ->where($db->quoteName('client_id') . ' = 0')
+                ->where($db->quoteName('menutype') . ' = ' . $db->quote('jem-frontend-menu'))
+                ->where($db->quoteName('alias') . ' = ' . $db->quote($alias));
+
+            if ($typeId) {
+                $query->set($db->quoteName('link') . ' = ' . $db->quote(sprintf($item['link'], $typeId)))
+                    ->set($db->quoteName('type') . ' = ' . $db->quote('component'))
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->set($db->quoteName('access') . ' = 1');
+
+                if ($componentId) {
+                    $query->set($db->quoteName('component_id') . ' = ' . $componentId);
+                }
+            } else {
+                $query->set($db->quoteName('published') . ' = 0');
+            }
+
             $db->setQuery($query);
             $db->execute();
         }
