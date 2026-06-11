@@ -256,7 +256,9 @@ class com_jemInstallerScript
         }
 
         // abort if the release being installed is not newer than the currently installed version
-        if (strtolower($type) == 'update') {
+        $type = strtolower($type);
+
+        if ($type == 'update') {
             // Installed component version
             $this->oldRelease = $this->getParam('version');
             // Installing component version as per Manifest file
@@ -301,14 +303,20 @@ class com_jemInstallerScript
         // $type is the type of change (install, update or discover_install)
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
-        if (strtolower($type) == 'update') {
+        $type = strtolower($type);
+
+        if ($type == 'update') {
             // Changes between 2.3.5 -> 4.0
             if (version_compare($this->oldRelease, '4.0', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
                 // change categoriesdetailed view name in menu items
                 $this->updateJem2315();
             }
-        } elseif (strtolower($type) == 'install') {
+        } elseif ($type == 'install') {
             $this->fixJemMenuItems();
+        }
+
+        if (in_array($type, array('install', 'update', 'discover_install'), true)) {
+            $this->repairGeneratedTypeMenuItems();
         }
     }
 
@@ -605,6 +613,72 @@ class com_jemInstallerScript
         }
     }
 
+
+    /**
+     * Repair generated frontend type menu items whose stored type id became stale.
+     *
+     * @return void
+     */
+    private function repairGeneratedTypeMenuItems()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $items = array(
+            'events-by-type' => array(
+                'entity' => 1,
+                'link'   => 'index.php?option=com_jem&view=typeevents&id=%d',
+            ),
+            'venues-by-type' => array(
+                'entity' => 3,
+                'link'   => 'index.php?option=com_jem&view=typevenues&id=%d',
+            ),
+            'categories-by-type' => array(
+                'entity' => 2,
+                'link'   => 'index.php?option=com_jem&view=categories&id=1&typeid=%d',
+            ),
+        );
+
+        foreach ($items as $alias => $item) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_types'))
+                ->where($db->quoteName('published') . ' = 1')
+                ->where($db->quoteName('entity') . ' = ' . (int) $item['entity'])
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+            $db->setQuery($query, 0, 1);
+            $typeId = (int) $db->loadResult();
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__menu'))
+                ->where($db->quoteName('client_id') . ' = 0')
+                ->where($db->quoteName('menutype') . ' = ' . $db->quote('jem-frontend-menu'))
+                ->where($db->quoteName('alias') . ' = ' . $db->quote($alias));
+
+            if ($typeId) {
+                $query->set($db->quoteName('link') . ' = ' . $db->quote(sprintf($item['link'], $typeId)))
+                    ->set($db->quoteName('type') . ' = ' . $db->quote('component'))
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->set($db->quoteName('access') . ' = 1');
+
+                if ($componentId) {
+                    $query->set($db->quoteName('component_id') . ' = ' . $componentId);
+                }
+            } else {
+                $query->set($db->quoteName('published') . ' = 0');
+            }
+
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
     /**
      * Remove all obsolete files and folders of previous versions.
      *
