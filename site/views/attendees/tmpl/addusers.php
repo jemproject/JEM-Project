@@ -69,6 +69,10 @@ if (empty($form)) {
         boxes = form.querySelectorAll('input[name="cid[]"]');
 
         for (i = 0; i < boxes.length; i++) {
+            if (boxes[i].disabled) {
+                continue;
+            }
+
             boxes[i].checked = source.checked;
 
             if (boxes[i].checked) {
@@ -80,7 +84,150 @@ if (empty($form)) {
             form.boxchecked.value = checked;
         }
     }
+
+    function checkPlaces(form)
+    {
+        var result = [],
+            boxes = form.querySelectorAll('input[name="cid[]"]'),
+            field,
+            i;
+
+        for (i = 0; i < boxes.length; i++) {
+            if (!boxes[i].checked || boxes[i].disabled) {
+                continue;
+            }
+
+            field = form.querySelector('[data-user-places="' + boxes[i].value + '"]');
+            result.push(boxes[i].value + ':' + (field ? field.value : 0));
+        }
+
+        return result.join(',');
+    }
 </script>
+
+<?php
+if (!function_exists('jem_addusers_account_status')) {
+    function jem_addusers_account_status($row)
+    {
+        if (!empty($row->block)) {
+            return '<span class="jem-user-account-state jem-user-account-blocked" title="' . Text::_('JDISABLED') . '"><i class="fa fa-ban" aria-hidden="true"></i><span class="visually-hidden">' . Text::_('JDISABLED') . '</span></span>';
+        }
+
+        if (!empty($row->activation)) {
+            return '<span class="jem-user-account-state jem-user-account-unpublished" title="' . Text::_('JUNPUBLISHED') . '"><i class="fa fa-eye-slash" aria-hidden="true"></i><span class="visually-hidden">' . Text::_('JUNPUBLISHED') . '</span></span>';
+        }
+
+        return '<span class="jem-user-account-state jem-user-account-active" title="' . Text::_('JENABLED') . '"><i class="fa fa-check" aria-hidden="true"></i><span class="visually-hidden">' . Text::_('JENABLED') . '</span></span>';
+    }
+}
+?>
+
+<style>
+    #jem.jem_select_users {
+        padding: 1rem;
+    }
+
+    #jem.jem_select_users #jem_filter {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .5rem;
+        margin: 0 0 1rem;
+        padding: .75rem;
+        border-radius: .25rem;
+    }
+
+    #jem.jem_select_users #jem_filter .jem_fleft,
+    #jem.jem_select_users #jem_filter .jem_fright {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .5rem;
+        float: none;
+    }
+
+    #jem.jem_select_users #jem_filter input,
+    #jem.jem_select_users #jem_filter select {
+        max-width: 18rem;
+    }
+
+    #jem.jem_select_users .jem-users-select,
+    #jem.jem_select_users .jem-users-number,
+    #jem.jem_select_users .jem-users-status {
+        width: 1%;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_users .jem-users-booked,
+    #jem.jem_select_users .jem-users-places {
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_users .jem-users-name {
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    #jem.jem_select_users .jem-addusers-options {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .75rem 1rem;
+        margin: 1rem 0;
+    }
+
+    #jem.jem_select_users .eventtable {
+        table-layout: auto;
+    }
+
+    #jem.jem_select_users .eventtable th,
+    #jem.jem_select_users .eventtable td {
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
+    #jem.jem_select_users .jem-users-status {
+        min-width: 5rem;
+    }
+
+    #jem.jem_select_users .jem-users-booked {
+        min-width: 8.5rem;
+    }
+
+    #jem.jem_select_users .jem-users-places {
+        min-width: 6.75rem;
+    }
+
+    #jem.jem_select_users .jem-user-account-state {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+    }
+
+    #jem.jem_select_users .jem-user-account-active {
+        color: #198754;
+    }
+
+    #jem.jem_select_users .jem-user-account-blocked {
+        color: #b02a37;
+    }
+
+    #jem.jem_select_users .jem-user-account-unpublished {
+        color: #6c757d;
+    }
+
+    #jem.jem_select_users .jem-user-places-input {
+        width: 4.5rem;
+        text-align: center;
+    }
+</style>
 
 <div id="jem" class="jem_select_users">
     <h1 class='componentheading'>
@@ -116,24 +263,31 @@ if (empty($form)) {
         <table class="eventtable table table-striped" style="width:100%" summary="jem">
             <thead>
                 <tr>
-                    <th style="width: 1%" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="jemCheckAllUsers(this)" /></th>
-                    <th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NAME'); ?></th>
-                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
-                    <th style="width: 10%" class="center"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
+                    <th style="width: 1%" class="jem-users-select"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="jemCheckAllUsers(this)" /></th>
+                    <th style="width: 1%" class="sectiontableheader jem-users-number"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+                    <th class="sectiontableheader jem-users-name"><?php echo Text::_('COM_JEM_NAME'); ?></th>
+                    <th style="width: 10%" class="jem-users-status"><?php echo Text::_('COM_JEM_STATUS'); ?></th>
+                    <th style="width: 10%" class="jem-users-booked"><?php echo Text::_('COM_JEM_BOOKED_PLACES'); ?></th>
+                    <th style="width: 10%" class="jem-users-places"><?php echo Text::_('COM_JEM_PLACES'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($this->rows)) : ?>
-                    <tr style="text-align: center;"><td colspan="0"><?php echo Text::_('COM_JEM_NOUSERS'); ?></td></tr>
+                    <tr style="text-align: center;"><td colspan="6"><?php echo Text::_('COM_JEM_NOUSERS'); ?></td></tr>
                 <?php else :?>
                     <?php foreach ($this->rows as $i => $row) : ?>
+                    <?php $canSelectUser = empty($row->block) && empty($row->activation) && ($row->places_max === '' || (int) $row->places_max > 0); ?>
                     <tr class="row<?php echo $i % 2; ?>">
-                        <td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-                        <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
-                        <td style="text-align: left;"><?php echo $this->escape($row->name); ?></td>
-                        <td class="center"><?php echo jemhtml::toggleAttendanceStatus(0, $row->status, false); ?></td>
-                        <td class="center"><?php echo $this->escape($row->places); ?></td>
+                        <td class="jem-users-select">
+                            <input type="checkbox" id="cb<?php echo $i; ?>" name="cid[]" value="<?php echo (int) $row->id; ?>" <?php echo $canSelectUser ? '' : 'disabled="disabled"'; ?> />
+                        </td>
+                        <td class="jem-users-number"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+                        <td class="jem-users-name"><?php echo $this->escape($row->name); ?></td>
+                        <td class="jem-users-status"><?php echo jem_addusers_account_status($row); ?></td>
+                        <td class="jem-users-booked"><?php echo (int) $row->booked_places; ?></td>
+                        <td class="jem-users-places">
+                            <input class="jem-user-places-input" type="number" data-user-places="<?php echo (int) $row->id; ?>" value="<?php echo (int) $row->places_default; ?>" min="<?php echo (int) $row->places_min; ?>" max="<?php echo $this->escape((string) $row->places_max); ?>" <?php echo $canSelectUser ? '' : 'disabled="disabled"'; ?> />
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -149,7 +303,7 @@ if (empty($form)) {
         }
         ?>
 
-        <div class="jem-row jem-justify-start valign-baseline">
+        <div class="jem-addusers-options">
             <div class="choose-status">
                 <?php echo Text::_('COM_JEM_SELECT');?> <?php echo $form->getLabel('status'); ?> <?php echo $form->getInput('status'); ?>
             </div>
@@ -178,7 +332,7 @@ if (empty($form)) {
         <input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
     </form>
     <div class="jem_fright">
-        <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, document.adminForm.places.value, <?php echo $this->event->id; ?>, document.adminForm.seriesbooking.value, '<?php echo Session::getFormToken(); ?>');">
+        <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, checkPlaces(document.adminForm), <?php echo $this->event->id; ?>, document.adminForm.seriesbooking.value, '<?php echo Session::getFormToken(); ?>');">
             <?php echo Text::_('COM_JEM_SAVE'); ?>
         </button>
     </div>

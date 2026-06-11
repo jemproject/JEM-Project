@@ -20,31 +20,65 @@ $selectedIds = $this->selection ? explode(',', $this->selection) : [];
 $selectedIds = array_map('trim', $selectedIds);
 ?>
 
+<style>
+    .jem-contactelement-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: 1rem;
+    }
+
+    .jem-contactelement-toolbar .form-select,
+    .jem-contactelement-toolbar .form-control {
+        width: auto;
+        min-width: 12rem;
+    }
+
+    .jem-contactelement-toolbar .jem-contactelement-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        margin-left: auto;
+    }
+
+    .jem-contactelement-table th,
+    .jem-contactelement-table td {
+        vertical-align: middle;
+    }
+
+    .jem-contactelement-table .center {
+        text-align: center;
+    }
+</style>
+
 <form action="index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
-    <table class="adminform">
-        <tr>
-            <td style="width: 100%;">
-                <?php echo Text::_('COM_JEM_SEARCH') . ' ' . $this->lists['filter']; ?>
-                <input type="text" name="filter_search" id="filter_search"
-                       value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>"
-                       class="text_area" onChange="document.adminForm.submit();"/>
-                <button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                <button class="buttonfilter" type="button"
-                        onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+    <div class="jem-contactelement-toolbar">
+        <label for="filter_search" class="visually-hidden"><?php echo Text::_('COM_JEM_SEARCH'); ?></label>
+        <?php echo $this->lists['filter']; ?>
+        <input type="text" name="filter_search" id="filter_search"
+               value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>"
+               class="form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" onChange="document.adminForm.submit();" />
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-search" aria-hidden="true"></i> <?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>
+        </button>
+        <button class="btn btn-secondary" type="button"
+                onclick="document.getElementById('filter_search').value='';this.form.submit();">
+            <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+        </button>
+        <div class="jem-contactelement-actions">
+            <button class="btn btn-success" type="button" onclick="jemGetSelectedContacts();">
+                <i class="icon-check" aria-hidden="true"></i> <?php echo Text::_('COM_JEM_SELECT_CHECKED'); ?>
+            </button>
+            <button class="btn btn-outline-secondary" type="button"
+                    onclick="if (window.parent) window.parent.<?php echo $this->escape($function); ?>('', '<?php echo Text::_('COM_JEM_SELECTCONTACT') ?>');">
+                <?php echo Text::_('COM_JEM_NOCONTACT') ?>
+            </button>
+        </div>
+    </div>
 
-                <button class="buttonfilter" type="button" onclick="jemGetSelectedContacts();"
-                        style="background-color: #28a745; color: white; font-weight: bold; margin-left: 10px;">
-                    <i class="icon-check"></i> <?php echo Text::_('COM_JEM_SELECT_CHECKED'); ?>
-                </button>
-
-                <button class="buttonfilter" type="button"
-                        onclick="if (window.parent) window.parent.<?php echo $this->escape($function); ?>('', '<?php echo Text::_('COM_JEM_SELECTCONTACT') ?>');"><?php echo Text::_('COM_JEM_NOCONTACT') ?></button>
-            </td>
-        </tr>
-    </table>
-
-    <table class="table table-striped" id="articleList">
+    <table class="table table-striped table-hover jem-contactelement-table" id="articleList">
         <thead>
         <tr>
             <th style="width: 20px" class="center">
@@ -62,7 +96,7 @@ $selectedIds = array_map('trim', $selectedIds);
 
         <tfoot>
         <tr>
-            <td colspan="5">
+            <td colspan="6">
                 <?php echo(method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
             </td>
         </tr>

@@ -25,7 +25,6 @@ class JFormFieldModal_Contact extends FormField
      */
     protected $type = 'Modal_Contact';
 
-
     /**
      * Check whether Contact has selectable published contacts.
      *
@@ -65,9 +64,9 @@ class JFormFieldModal_Contact extends FormField
         if (!$this->hasAvailableContacts()) {
             $emptyContactName = htmlspecialchars(Text::_('COM_JEM_SELECT_CONTACT'), ENT_QUOTES, 'UTF-8');
             $html = array();
-            $html[] = '<div class="input-group" style="width: auto; flex-grow: 1;">';
+            $html[] = '<div class="input-group jem-contact-modal-field" style="width: auto; flex-grow: 1;">';
             $html[] = '  <input type="text" id="' . $this->id . '_name" class="form-control readonly" disabled="disabled" value="' . $emptyContactName . '" readonly size="35" />';
-            $html[] = '  <button type="button" class="btn btn-success" disabled="disabled">';
+            $html[] = '  <button type="button" class="btn btn-primary" disabled="disabled">';
             $html[] = '    <i class="icon-user"></i> ' . Text::_('COM_JEM_SELECT');
             $html[] = '  </button>';
             $html[] = '</div>';
@@ -123,9 +122,9 @@ class JFormFieldModal_Contact extends FormField
 
         // The current contact input field
         $html = array();
-        $html[] = '<div class="input-group" style="width: auto; flex-grow: 1;">';
+        $html[] = '<div class="input-group jem-contact-modal-field" style="width: auto; flex-grow: 1;">';
         $html[] = '  <input type="text" id="' . $this->id . '_name" class="form-control readonly" disabled="disabled" value="' . $contactNames . '" readonly size="35" />';
-        $html[] = '  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
+        $html[] = '  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
         $html[] = '    <i class="icon-user"></i> ' . Text::_('COM_JEM_SELECT');
         $html[] = '  </button>';
         $html[] = '</div>';
@@ -134,7 +133,7 @@ class JFormFieldModal_Contact extends FormField
             $modalId,
             array(
                 'url' => $link . '&' . Session::getFormToken() . '=1',
-                'title' => Text::_('COM_JEM_SELECT'),
+                'title' => Text::_('COM_JEM_SELECT_CONTACT'),
                 'width' => '800px',
                 'height' => '450px',
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'

@@ -12,7 +12,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-
+use Joomla\String\StringHelper;
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component attendees Model
  *
@@ -86,7 +88,7 @@ class JemModelAttendees extends BaseDatabaseModel
 
         $this->_reguser = $settings->get('global_regname', '1');
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.attendees.limitstart', 0);
         }
@@ -251,7 +253,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
         $filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
         $search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-        $search         = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search         = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
         $where[] = 'r.event = '.$this->_db->Quote($this->_id);
@@ -326,7 +328,7 @@ class JemModelAttendees extends BaseDatabaseModel
     {
         if (is_array($cid) && count($cid))
         {
-            \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            ArrayHelper::toInteger($cid);
             $query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
 
             if ((int) $eventId > 0) {
@@ -359,11 +361,12 @@ class JemModelAttendees extends BaseDatabaseModel
         $pagination = $this->getUsersPagination();
         $rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
-        // Add registration status if available
+        // Add registration status and per-user place limits if available
+        $this->getEvent();
         $eventId    = $this->_id;
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $qry        = $db->getQuery(true);
-        // #__jem_register (id, event, uid, waiting, status, comment)
+        // #__jem_register (id, event, uid, waiting, status, places, comment)
         $qry->select(array('reg.uid, reg.status, reg.waiting, reg.places'));
         $qry->from('#__jem_register As reg');
         $qry->where('reg.event = ' . $eventId);
@@ -375,14 +378,23 @@ class JemModelAttendees extends BaseDatabaseModel
         foreach ($rows as &$row) {
             if (array_key_exists($row->id, $regs)) {
                 $row->status = $regs[$row->id]->status;
-                $row->places = $regs[$row->id]->places;
+                $row->booked_places = (int) $regs[$row->id]->places;
                 if ($row->status == 1 && $regs[$row->id]->waiting) {
                     ++$row->status;
                 }
             } else {
                 $row->status = -99;
-                $row->places = 0;
+                $row->booked_places = 0;
             }
+
+            $maxBookedUser = (int) ($this->_event->maxbookeduser ?? 0);
+            $minBookedUser = max(1, (int) ($this->_event->minbookeduser ?? 1));
+            $remainingUserPlaces = $maxBookedUser > 0 ? max(0, $maxBookedUser - $row->booked_places) : null;
+
+            $row->places = $row->booked_places;
+            $row->places_min = $remainingUserPlaces !== null ? ($remainingUserPlaces > 0 ? max(1, min($minBookedUser, $remainingUserPlaces)) : 0) : $minBookedUser;
+            $row->places_max = $remainingUserPlaces !== null ? $remainingUserPlaces : '';
+            $row->places_default = $remainingUserPlaces !== null ? ($remainingUserPlaces > 0 ? $row->places_min : 0) : $minBookedUser;
         }
 
         return $rows;
@@ -444,18 +456,16 @@ class JemModelAttendees extends BaseDatabaseModel
         $filter_order_Dir = '';
         $filter_type      = '1';
         $search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select(array('usr.id, usr.name'));
+        $query->select(array('usr.id, usr.name, usr.block, usr.activation'));
         $query->from('#__users As usr');
 
         // where
         $where = array();
-        $where[] = 'usr.block = 0';
-        $where[] = 'NOT usr.activation > 0';
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {
@@ -465,7 +475,9 @@ class JemModelAttendees extends BaseDatabaseModel
                     break;
             }
         }
-        $query->where($where);
+        if (!empty($where)) {
+            $query->where($where);
+        }
 
         // ordering
 

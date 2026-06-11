@@ -282,11 +282,85 @@
             If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in here "/media/my/css/mystyle.css".
         </p>
         <h3>Background Color</h3>
-        <p>Choose a custom Background Color for various parts of JEM.</p>
+        <p>Choose a custom Background Color for various parts of JEM. Empty colour fields use the value provided by the active JEM stylesheet and, where no JEM colour is defined, by the Joomla template.</p>
         <h3>Border Color</h3>
-        <p>Choose a custom Border Color for various parts of JEM.</p>
+        <p>Choose a custom Border Color for various parts of JEM. Empty colour fields use the value provided by the active JEM stylesheet and, where no JEM colour is defined, by the Joomla template.</p>
         <h3>Font Color</h3>
-        <p>Choose a custom Font Color for various parts of JEM.</p>
+        <p>Choose a custom Font Color for various parts of JEM. Empty colour fields use the value provided by the active JEM stylesheet and, where no JEM colour is defined, by the Joomla template.</p>
+        <h3>Default stylesheet colour reference</h3>
+        <p>The values below are the main defaults currently defined in the bundled JEM stylesheets. They are used when no custom colour override is saved in Settings.</p>
+        <table class="help">
+            <thead>
+                <tr>
+                    <th>Setting</th>
+                    <th>Legacy table layout</th>
+                    <th>Responsive layout</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Filter background</td>
+                    <td>#FFA500</td>
+                    <td>#ffa500</td>
+                    <td>Registered as the visible default in Settings.</td>
+                </tr>
+                <tr>
+                    <td>Filter border</td>
+                    <td>#808080</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Some views may add their own filter styling.</td>
+                </tr>
+                <tr>
+                    <td>Table header background</td>
+                    <td>#809EA8</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Responsive layouts use list headers instead of table headers.</td>
+                </tr>
+                <tr>
+                    <td>Table header font</td>
+                    <td>#fff</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Links inside legacy table headers also use #fff.</td>
+                </tr>
+                <tr>
+                    <td>Table header border</td>
+                    <td>#000</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Responsive layouts use list rows and separators.</td>
+                </tr>
+                <tr>
+                    <td>Table row background</td>
+                    <td>#EAEBE1</td>
+                    <td>#f9f9f9 for odd list rows</td>
+                    <td>Responsive layouts do not use table cells.</td>
+                </tr>
+                <tr>
+                    <td>Alternate row background</td>
+                    <td>#F0F0EE</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Only the legacy layout has a direct alternate table-row colour.</td>
+                </tr>
+                <tr>
+                    <td>Row hover background</td>
+                    <td>#BACFBA</td>
+                    <td>#e0e0e0</td>
+                    <td>Applied when the row supports hover styling.</td>
+                </tr>
+                <tr>
+                    <td>Featured row background</td>
+                    <td>#B6B6B4</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Featured styling can vary by view.</td>
+                </tr>
+                <tr>
+                    <td>Table cell border</td>
+                    <td>#000</td>
+                    <td>#ddd for list row separators</td>
+                    <td>Responsive layouts use list item borders.</td>
+                </tr>
+            </tbody>
+        </table>
         <h2>Global Parameters<a name="params" id="params"></a></h2>
         <h3>Global Parameters:</h3>
         <p>The Global Parameters are used to assign basic settings to the views.
