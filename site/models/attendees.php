@@ -361,11 +361,12 @@ class JemModelAttendees extends BaseDatabaseModel
         $pagination = $this->getUsersPagination();
         $rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
-        // Add registration status if available
+        // Add registration status and per-user place limits if available
+        $this->getEvent();
         $eventId    = $this->_id;
         $db         = Factory::getContainer()->get('DatabaseDriver');
         $qry        = $db->getQuery(true);
-        // #__jem_register (id, event, uid, waiting, status, comment)
+        // #__jem_register (id, event, uid, waiting, status, places, comment)
         $qry->select(array('reg.uid, reg.status, reg.waiting, reg.places'));
         $qry->from('#__jem_register As reg');
         $qry->where('reg.event = ' . $eventId);
@@ -377,14 +378,23 @@ class JemModelAttendees extends BaseDatabaseModel
         foreach ($rows as &$row) {
             if (array_key_exists($row->id, $regs)) {
                 $row->status = $regs[$row->id]->status;
-                $row->places = $regs[$row->id]->places;
+                $row->booked_places = (int) $regs[$row->id]->places;
                 if ($row->status == 1 && $regs[$row->id]->waiting) {
                     ++$row->status;
                 }
             } else {
                 $row->status = -99;
-                $row->places = 0;
+                $row->booked_places = 0;
             }
+
+            $maxBookedUser = (int) ($this->_event->maxbookeduser ?? 0);
+            $minBookedUser = max(1, (int) ($this->_event->minbookeduser ?? 1));
+            $remainingUserPlaces = $maxBookedUser > 0 ? max(0, $maxBookedUser - $row->booked_places) : null;
+
+            $row->places = $row->booked_places;
+            $row->places_min = $remainingUserPlaces !== null ? ($remainingUserPlaces > 0 ? max(1, min($minBookedUser, $remainingUserPlaces)) : 0) : $minBookedUser;
+            $row->places_max = $remainingUserPlaces !== null ? $remainingUserPlaces : '';
+            $row->places_default = $remainingUserPlaces !== null ? ($remainingUserPlaces > 0 ? $row->places_min : 0) : $minBookedUser;
         }
 
         return $rows;
@@ -451,13 +461,11 @@ class JemModelAttendees extends BaseDatabaseModel
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select(array('usr.id, usr.name'));
+        $query->select(array('usr.id, usr.name, usr.block, usr.activation'));
         $query->from('#__users As usr');
 
         // where
         $where = array();
-        $where[] = 'usr.block = 0';
-        $where[] = 'NOT usr.activation > 0';
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {
@@ -467,7 +475,9 @@ class JemModelAttendees extends BaseDatabaseModel
                     break;
             }
         }
-        $query->where($where);
+        if (!empty($where)) {
+            $query->where($where);
+        }
 
         // ordering
 

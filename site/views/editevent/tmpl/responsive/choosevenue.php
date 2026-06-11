@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -15,6 +17,27 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+
+if (!function_exists('jem_choosevenue_country')) {
+    function jem_choosevenue_country($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        $countryName = JemHelperCountries::getCountryName($country) ?: $country;
+        $flagSrc = JemHelperCountries::getIsoFlag($country);
+        $html = '';
+
+        if ($flagSrc) {
+            $html .= '<img src="' . htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') . '" title="' . htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') . '" class="venue_country_flag jem-choosevenue-country-flag" />';
+        }
+
+        return $html . '<span>' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '</span>';
+    }
+}
 ?>
 
 <script>
@@ -28,6 +51,114 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
     }
 </script>
 
+<style>
+    #jem.jem_select_venue {
+        padding: 1rem;
+    }
+
+    #jem.jem_select_venue #jem_filter {
+        display: grid !important;
+        grid-template-columns: auto minmax(14rem, 1fr) auto auto auto auto;
+        align-items: center;
+        gap: .5rem;
+        margin: 0;
+        padding: .75rem;
+        border: 1px solid var(--border-color, #dfe3e7);
+        border-radius: .25rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #jem.jem_select_venue #jem_filter > div {
+        display: flex !important;
+        flex-flow: row nowrap !important;
+        align-items: center;
+        gap: .5rem;
+        width: auto !important;
+        margin: 0 !important;
+        min-width: 0;
+    }
+
+    #jem.jem_select_venue #jem_filter .jem-row {
+        gap: .5rem;
+    }
+
+    #jem.jem_select_venue #filter_search {
+        width: 100%;
+        flex: 1 1 12rem;
+        min-width: 8rem;
+        max-width: none;
+    }
+
+    #jem.jem_select_venue #jem_filter select {
+        width: auto;
+        min-width: 5.5rem;
+    }
+
+    #jem.jem_select_venue #jem_filter .btn,
+    #jem.jem_select_venue #jem_filter button {
+        width: auto !important;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_venue .jem-choosevenue-search {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    #jem.jem_select_venue .jem-choosevenue-actions,
+    #jem.jem_select_venue .jem-choosevenue-limit {
+        flex: 0 0 auto;
+    }
+
+    @media (max-width: 520px) {
+        #jem.jem_select_venue #jem_filter {
+            grid-template-columns: 1fr;
+        }
+
+        #jem.jem_select_venue #jem_filter > div,
+        #jem.jem_select_venue .jem-choosevenue-search {
+            flex-wrap: wrap !important;
+        }
+
+        #jem.jem_select_venue .jem-choosevenue-search,
+        #jem.jem_select_venue .jem-choosevenue-actions,
+        #jem.jem_select_venue .jem-choosevenue-limit,
+        #jem.jem_select_venue #filter_search {
+            flex: 1 1 100%;
+        }
+    }
+
+    #jem.jem_select_venue .jem-small-list {
+        align-items: center;
+    }
+
+    #jem.jem_select_venue .jem-venue-number {
+        flex: 0 0 3rem;
+        max-width: 3rem;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_venue .jem-venue-country {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_venue .jem-choosevenue-country {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .35rem;
+    }
+
+    #jem.jem_select_venue .jem-choosevenue-country-flag {
+        width: 20px;
+        height: auto;
+        vertical-align: middle;
+    }
+</style>
+
 <div id="jem" class="jem_select_venue">
     <h1 class='componentheading'>
         <?php echo Text::_('COM_JEM_SELECT_VENUE'); ?>
@@ -38,27 +169,20 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div class="jem-row valign-baseline">
             <div id="jem_filter" class="jem-form jem-row jem-justify-start">
-                <div>
+                <div class="jem-choosevenue-label">
                     <?php
                     echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>';
                     ?>
                 </div>
-                <div class="jem-row jem-justify-start jem-nowrap">
+                <div class="jem-row jem-justify-start jem-nowrap jem-choosevenue-search">
                     <?php echo $this->searchfilter; ?>
                     <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->filter, ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 </div>
-                <div class="jem-row jem-justify-start jem-nowrap">
-                    <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                    <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                    <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_VENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
-                </div>
-            </div>
-            <div class="jem-row jem-justify-start jem-nowrap">
-                <div>
+                <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+                <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_VENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+                <div class="jem-row jem-justify-start jem-nowrap jem-choosevenue-limit">
                     <?php echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;'; ?>
-                </div>
-                <div>&nbsp;</div>
-                <div>
                     <?php echo $this->pagination->getLimitBox(); ?>
                 </div>
             </div>
@@ -101,7 +225,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
                         </div>
 
                         <div class="jem-event-info-small jem-venue-country">
-                            <?php echo !empty($row->country) ? $this->escape($row->country) : '-'; ?>
+                            <span class="jem-choosevenue-country"><?php echo !empty($row->country) ? jem_choosevenue_country($row->country) : '-'; ?></span>
                         </div>
                     </li>
                 <?php endforeach; ?>

@@ -23,6 +23,61 @@ $detaillink = Route::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this-
 $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
 ?>
+<style>
+    #jem.jem_attendees #jem_filter {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: .5rem;
+        clear: both;
+        grid-column: 1 / -1;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: .75rem;
+        box-sizing: border-box;
+    }
+
+    #jem.jem_attendees #jem_filter .jem_fleft,
+    #jem.jem_attendees #jem_filter .jem_fright {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: .5rem;
+        float: none;
+        margin: 0;
+        width: auto;
+    }
+
+    #jem.jem_attendees #jem_filter .jem-attendees-search {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    #jem.jem_attendees #jem_filter #filter_search {
+        flex: 1 1 14rem;
+        min-width: 8rem;
+    }
+
+    #jem.jem_attendees #jem_filter select {
+        width: auto;
+        min-width: 5.5rem;
+    }
+
+    @media (max-width: 768px) {
+        #jem.jem_attendees #jem_filter,
+        #jem.jem_attendees #jem_filter .jem_fleft,
+        #jem.jem_attendees #jem_filter .jem_fright {
+            flex-wrap: wrap;
+        }
+
+        #jem.jem_attendees #jem_filter .jem_fleft,
+        #jem.jem_attendees #jem_filter .jem_fright,
+        #jem.jem_attendees #jem_filter #filter_search {
+            flex: 1 1 100%;
+        }
+    }
+</style>
 <script>
     function tableOrdering(order, dir, view)
     {
@@ -35,7 +90,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 </script>
 <script>
     function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
-        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
+        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+encodeURIComponent(places)+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
         SqueezeBox.close();
     }
 </script>
@@ -89,15 +144,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         <?php else : /* empty($this->rows) */ ?>
 
         <div id="jem_filter" class="floattext">
-            <div class="jem_fleft">
+            <div class="jem_fleft jem-attendees-search">
                 <label for="filter"><?php echo Text::_('COM_JEM_SEARCH'); ?></label>
                 <?php echo $this->lists['filter'].'&nbsp;'; ?>
                 <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onChange="document.adminForm.submit();" />
                 <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                &nbsp;
             </div>
-            <br><br><br>
             <div class="jem_fleft" style="white-space:nowrap;">
                 <?php echo Text::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
             </div>

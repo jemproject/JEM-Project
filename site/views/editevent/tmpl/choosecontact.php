@@ -26,37 +26,39 @@ if (!empty($selectedParam)) {
 
 // Get the current search field to keep it selected in the dropdown
 $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
+Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 ?>
 
 <style>
     #jem_filter {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
         align-items: center;
-        gap: 4px;
-        background-color: #f0a800;
-        padding: 6px 10px;
-        margin-bottom: 20px;
+        gap: 6px;
+        padding: 8px 10px;
+        margin-bottom: 18px;
         width: 100%;
+        max-width: 100%;
         box-sizing: border-box;
     }
 
     .jem_fleft {
         display: flex;
         flex-wrap: nowrap;
-        align-items: stretch;
-        gap: 4px;
+        align-items: center;
+        gap: 6px;
         flex: 1 1 auto;
-        margin-right: 20px;
+        margin-right: 0;
+        min-width: 0;
     }
 
     .jem_fright {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         flex-shrink: 0;
+        margin-left: 0;
+        min-width: 0;
     }
 
     .jem_fleft select,
@@ -74,34 +76,83 @@ $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type'
         white-space: nowrap;
     }
 
+    .jem_fleft select {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 6.5rem;
+    }
+
     #filter_search {
-        flex: 0 1 120px;
-        min-width: 80px;
+        flex: 1 1 6rem;
+        min-width: 4.5rem;
+        max-width: 14rem;
     }
 
     .jem_fright select {
         width: auto !important;
-        min-width: 80px;
+        min-width: 72px;
         padding-right: 20px;
     }
 
     .jem_fright label {
         margin: 0;
         line-height: 34px;
-        font-weight: bold;
+        font-weight: 600;
     }
 
-    @media (max-width: 768px) {
-        #jem_filter { flex-wrap: wrap; }
-        .jem_fleft { flex-wrap: wrap; margin-right: 0; }
+    .btn-save-selection {
+        background: #397039;
+        color: #fff;
+        border: 1px solid #218838;
+        font-weight: 600;
+        margin-left: auto !important;
+    }
+
+    #jem_filter button,
+    #jem_filter .btn {
+        width: auto !important;
+        white-space: nowrap;
+    }
+
+    .jem-contact-footer {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .jem-contact-footer label {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .jem-contact-footer select {
+        width: auto !important;
+        min-width: 72px;
+    }
+
+    @media (max-width: 520px) {
+        #jem_filter {
+            grid-template-columns: 1fr;
+        }
+
+        .jem_fleft {
+            flex-wrap: wrap;
+        }
+
+        .jem_fleft,
+        .jem_fright,
+        #filter_search {
+            flex: 1 1 100%;
+        }
+
+        .jem_fright {
+            margin-left: 0;
+        }
     }
 </style>
 
 <div id="jem" class="jem_select_contact">
-    <h1 class='componentheading'>
-        <?php echo Text::_('COM_JEM_SELECT_CONTACT'); ?>
-    </h1>
-
     <div class="clr"></div>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
@@ -122,12 +173,10 @@ $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type'
                 <button type="button" class="btn-save-selection" onclick="jemGetSelectedContacts();">
                     <?php echo Text::_('COM_JEM_SELECT_CHECKED'); ?>
                 </button>
-                <button type="button" class="btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CONTACT') ?>');"><?php echo Text::_('COM_JEM_NOCONTACT')?></button>
-            </div>
-
-            <div class="jem_fright">
-                <label for="limit">Limit</label>
-                <?php echo $this->pagination->getLimitBox(); ?>
+                <span class="jem-contact-footer">
+                    <label for="limit">#</label>
+                    <?php echo $this->pagination->getLimitBox(); ?>
+                </span>
             </div>
         </div>
 
@@ -179,6 +228,13 @@ $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type'
 </div>
 
 <script>
+    if (window.parent && window.parent.document) {
+        var modalTitle = window.parent.document.querySelector('.modal.show .modal-title, .joomla-modal.show .modal-title');
+        if (modalTitle) {
+            modalTitle.textContent = "<?php echo $this->escape(Text::_('COM_JEM_SELECT_CONTACT')); ?>";
+        }
+    }
+
     function jemGetSelectedContacts() {
         var checkboxes = document.getElementsByName('cid[]');
         var ids = [], names = [];

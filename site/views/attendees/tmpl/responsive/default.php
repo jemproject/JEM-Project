@@ -24,6 +24,56 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
 
 ?>
+<style>
+    #jem.jem_attendees #jem_filter {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: .5rem;
+        clear: both;
+        grid-column: 1 / -1;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: .75rem;
+        box-sizing: border-box;
+    }
+
+    #jem.jem_attendees #jem_filter .jem-attendees-filter-group {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: .5rem;
+        width: auto;
+        min-width: 0;
+    }
+
+    #jem.jem_attendees #jem_filter .jem-attendees-search {
+        flex: 1 1 auto;
+    }
+
+    #jem.jem_attendees #jem_filter #filter_search {
+        flex: 1 1 14rem;
+        min-width: 8rem;
+    }
+
+    #jem.jem_attendees #jem_filter select {
+        width: auto;
+        min-width: 5.5rem;
+    }
+
+    @media (max-width: 768px) {
+        #jem.jem_attendees #jem_filter,
+        #jem.jem_attendees #jem_filter .jem-attendees-filter-group {
+            flex-wrap: wrap;
+        }
+
+        #jem.jem_attendees #jem_filter .jem-attendees-filter-group,
+        #jem.jem_attendees #jem_filter #filter_search {
+            flex: 1 1 100%;
+        }
+    }
+</style>
 <script>
     function tableOrdering(order, dir, view)
     {
@@ -36,7 +86,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 </script>
 <script>
     function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
-        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
+        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+encodeURIComponent(places)+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
         SqueezeBox.close();
     }
 </script>
@@ -77,43 +127,21 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             </dd>
         </dl>
         <div id="jem_filter" class="jem-dl">
-            <div class="row jem-row">
-                <div class="col-md-2">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="input-group">
-                                <?php echo '<label for="filter_search">'.Text::_('COM_JEM_SEARCH').'</label>'; ?>
-                                <?php echo $this->lists['filter']; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="row mb-12">
-                        <div class="col-md-8">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onChange="document.adminForm.submit();" />
-                                <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                                <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="input-group" style="margin-top:6px;">
-                                <?php echo '<label for="filter_status">'.Text::_('COM_JEM_STATUS').'</label>'; ?>
-                                <?php echo $this->lists['status']; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="row ">
-                        <div class="wauto-minwmax">
-                            <div class=" float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="jem-attendees-filter-group">
+                <?php echo '<label for="filter_search">'.Text::_('COM_JEM_SEARCH').'</label>'; ?>
+                <?php echo $this->lists['filter']; ?>
+            </div>
+            <div class="jem-attendees-filter-group jem-attendees-search">
+                <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onChange="document.adminForm.submit();" />
+                <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+                <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            </div>
+            <div class="jem-attendees-filter-group">
+                <?php echo '<label for="filter_status">'.Text::_('COM_JEM_STATUS').'</label>'; ?>
+                <?php echo $this->lists['status']; ?>
+            </div>
+            <div class="jem-attendees-filter-group">
+                <?php echo $this->pagination->getLimitBox(); ?>
             </div>
             <?php if (empty($this->rows)) : ?>
                 <div style="padding-bottom: 8px;">

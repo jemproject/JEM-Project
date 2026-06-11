@@ -328,6 +328,7 @@ class JemViewEditevent extends JemView
         $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));
         $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_STATE'));
+        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_COUNTRY'));
         $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
         $this->rows         = $rows;

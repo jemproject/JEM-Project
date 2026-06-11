@@ -332,6 +332,9 @@ class JemModelEditevent extends JemModelEvent
                     break;
                 case 3: // Search state
                     $where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+                    break;
+                case 4: // Search country
+                    $where[] = 'LOWER(l.country) LIKE "%' . $search . '%"';
             }
         }
 
