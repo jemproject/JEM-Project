@@ -31,6 +31,8 @@ if (!function_exists('jem_frontend_status_label')) {
     }
 }
 
+$showAttendeeColumn = ((int) $this->params->get('displayattendeecolumn', 0) === 1);
+
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
@@ -221,7 +223,7 @@ if (!function_exists('jem_frontend_status_label')) {
 
   .jem-sort #jem_atte,
   #jem .jem-event .jem-event-attendees {
-    <?php if (($this->jemsettings->showatte == 1) && (!empty($this->jemsettings->attewidth))) : ?>
+    <?php if ($showAttendeeColumn && !empty($this->jemsettings->attewidth)) : ?>
       flex: 1 <?php echo ($this->jemsettings->attewidth); ?>;
     <?php else : ?>
       flex: 1;
@@ -311,7 +313,7 @@ if (!function_exists('jem_frontend_status_label')) {
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader"><i class="jem-column-icon fa fa-tag" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
-      <?php if ($this->jemsettings->showatte == 1) : ?>
+      <?php if ($showAttendeeColumn) : ?>
                 <div id="jem_atte" class="sectiontableheader">&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
       <div class="jem-myevents-status" title="<?php echo Text::_('JSTATUS'); ?>" aria-label="<?php echo Text::_('JSTATUS'); ?>">
@@ -410,7 +412,7 @@ if (!function_exists('jem_frontend_status_label')) {
               </div>
             <?php endif; ?>
 
-                    <?php if ($this->jemsettings->showatte == 1) : ?>
+                    <?php if ($showAttendeeColumn) : ?>
                     <div class="jem-event-info-small jem-event-attendees" title="<?php echo Text::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
             <i class="fa fa-user" aria-hidden="true"></i>
                         <?php
