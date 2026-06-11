@@ -1,8 +1,11 @@
 <?php
 /**
  * @package    JEM
+ * @subpackage JEM Event Map View
  * @copyright  (C) 2013-2025 joomlaeventmanager.net
- * @copyright  (C) 2005-2009 Christoph Lukes
+ * @copyright https://leafletjs.com/
+ * @copyright https://github.com/brunob/leaflet.fullscreen
+ * @copyright https://github.com/Leaflet/Leaflet.heat
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
 
@@ -17,47 +20,56 @@ use Joomla\CMS\HTML\HTMLHelper;
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
+$wa->registerAndUseStyle('com_jem.eventsmap', 'media/com_jem/css/eventsmap.css');
 
-$wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
-$wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
-
-$wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
-$wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
-$wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
-
-JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
-$jemsettings = JemHelper::config();
-
-$map_id       = 'leafletmap-' . uniqid();
+$jemsettings  = JemHelper::config();
+$map_id        = 'leafletmap-' . uniqid();
 $showDateFilter = (int) $this->showDateFilter;
 $showCategoryFilter = (int) ($this->showCategoryFilter ?? 0);
 $showCountryFilter = (int) ($this->showCountryFilter ?? 0);
-$categories   = $this->categories ?? [];
-$countries    = $this->countries ?? [];
+$categories    = $this->categories ?? [];
+$countries     = $this->countries ?? [];
 $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
 $selectedCountry = (string) ($this->selectedCountry ?? '');
-$filterMode   = $this->filterMode;
-$filterDate   = $this->filterDate;
-$isDateMode   = $filterDate !== null;
-$currentDate  = $isDateMode ? $filterDate : '';
-$youAreHere  = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
-$height       = $this->height;
-$centerLat    = (float) $this->centerLat;
-$centerLng    = (float) $this->centerLng;
-$venueMarker  = $this->venueMarker;
-$mylocMarker  = $this->mylocMarker;
-$jemItemid    = (int) $this->jemItemid;
-$events       = $this->eventslist ?? [];
+$filterMode    = $this->filterMode;
+$filterDate    = $this->filterDate;
+$isDateMode    = $filterDate !== null;
+$currentDate   = $isDateMode ? $filterDate : '';
+$youAreHere    = Text::_('COM_JEM_EVENTS_MAP_YOU_ARE_HERE');
+$height        = $this->height;
+$centerLat     = (float) $this->centerLat;
+$centerLng     = (float) $this->centerLng;
+$venueMarker   = $this->venueMarker;
+$mylocMarker   = $this->mylocMarker;
+$jemItemid     = (int) $this->jemItemid;
+$events        = $this->eventslist ?? [];
 
-$startLat    = (float) $this->params->get('map_center_lat', '0');
-$startLng    = (float) $this->params->get('map_center_lng', '0');
-$startZoom   = (int)   $this->params->get('map_zoom', '10');
-$autoCenter  = (int)   $this->params->get('map_auto_center', '1');
-$heatMapLayer = (int)  $this->params->get('heat_layer', '1');
+$startLat      = (float) $this->params->get('map_center_lat', '54.526');
+$startLng      = (float) $this->params->get('map_center_lng', '15.255');
+$startZoom     = (int)   $this->params->get('map_zoom', '4');
+$mapProvider   = (string) $this->params->get('map_provider', 'osm');
+$mapProvider   = $mapProvider === 'google' ? 'google' : 'osm';
+$autoCenter    = (int)   $this->params->get('map_auto_center', '1');
+$heatMapLayer  = (int)  $this->params->get('heat_layer', '1');
 $fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
-$showControls = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');
-$mapType     = (string) $this->params->get('map_type', 'political');
-$tileLayers  = [
+$showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
+$showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
+$showControls  = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');
+$mapType       = (string) $this->params->get('map_type', 'political');
+$settings      = JemHelper::globalattribs();
+$googleApiKey  = trim((string) $settings->get('global_googleapi', ''));
+
+if ($mapProvider === 'google' && $googleApiKey !== '') {
+    $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
+} else {
+    $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
+    $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
+    $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
+    $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
+    $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
+}
+
+$tileLayers    = [
     'political' => [
         'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         'attribution' => '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -71,6 +83,45 @@ $tileLayers  = [
 ];
 $tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
 $eventMarkers = [];
+$mapLanguage = substr((string) Factory::getLanguage()->getTag(), 0, 2) ?: 'en';
+$buildDirectionsLink = static function ($lat, $lng) use ($mapProvider, $mapLanguage) {
+    $lat = (float) $lat;
+    $lng = (float) $lng;
+
+    if ($mapProvider === 'google') {
+        return 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($lat . ',' . $lng);
+    }
+
+    return 'https://routing.openstreetmap.de/?z=17&center=' . rawurlencode($lat . ',' . $lng)
+        . '&loc=' . rawurlencode($lat . ',' . $lng)
+        . '&hl=' . rawurlencode($mapLanguage)
+        . '&alt=0&srv=1';
+};
+$buildFullMapLink = static function ($lat, $lng) use ($mapProvider) {
+    $lat = (float) $lat;
+    $lng = (float) $lng;
+
+    if ($mapProvider === 'google') {
+        return 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($lat . ',' . $lng);
+    }
+
+    return 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat)
+        . '&mlon=' . rawurlencode((string) $lng)
+        . '&zoom=15#map=15/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lng);
+};
+$buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $showFullMapLink, $buildDirectionsLink, $buildFullMapLink) {
+    $links = [];
+
+    if ($showDirectionsLink) {
+        $links[] = '<a href="' . htmlspecialchars($buildDirectionsLink($lat, $lng), ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_EVENTS_MAP_NAVIGATE') . '</a>';
+    }
+
+    if ($showFullMapLink) {
+        $links[] = '<a href="' . htmlspecialchars($buildFullMapLink($lat, $lng), ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_FULL_MAP') . '</a>';
+    }
+
+    return $links ? implode(' | ', $links) : '';
+};
 
 foreach ((array) $events as $event) {
     $lat = (float) $event->latitude;
@@ -113,120 +164,154 @@ foreach ((array) $events as $event) {
 }
 ?>
 
-<?php if ($showControls): ?>
-    <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
-        <?php if (!empty($showCountryFilter)): ?>
-            <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
-                <?= Text::_('MOD_JEM_MAP_COUNTRY_FILTER') ?>
-            </label>
-            <select name="jem_map_filter_country"
-                    id="jem-map-filter-country-<?= $map_id ?>"
-                    class="form-select form-select-sm auto-submit"
-                    style="width: auto;">
-                <option value=""><?= Text::_('MOD_JEM_MAP_ALL_COUNTRIES') ?></option>
-                <?php foreach ($countries as $country): ?>
-                    <?php
-                    $countryCode = (string) $country->country;
-                    $countryName = !empty($country->country_name) ? (string) $country->country_name : $countryCode;
-                    ?>
-                    <option value="<?= htmlspecialchars($countryCode, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryCode === (string) $selectedCountry) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        <?php endif; ?>
 
-        <?php if (!empty($showDateFilter)): ?>
+<div id="jem" class="jem_eventsmap<?php echo $this->pageclass_sfx; ?>">
+    <div class="buttons">
         <?php
-        $options = [
-            'all'      => 'MOD_JEM_MAP_ALL',
-            'today'    => 'MOD_JEM_MAP_TODAY',
-            'tomorrow' => 'MOD_JEM_MAP_TOMORROW',
-            'week'     => 'MOD_JEM_MAP_WEEK',
-            'month'    => 'MOD_JEM_MAP_MONTH',
-            'year'     => 'MOD_JEM_MAP_YEAR',
-            'date'     => 'MOD_JEM_MAP_DATE'
-        ];
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        ?>
+    </div>
 
-        foreach ($options as $value => $label) {
-            $isActive = ($filterMode === 'date' ) ? $isDateMode : !$isDateMode;
-            $isDateField = $value === 'date';
-            ?>
-            <?php if ($isDateField) { ?>
-                <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
-                    <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
-                           id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                    <label class="btn btn-outline-primary btn-sm" style="padding-top: 6px;" for="filter-<?= $value ?>">
+    <?php
+    if ($this->params->get('show_page_heading', 1)) : ?>
+        <h1 class="componentheading">
+            <?php
+            echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
+    <?php
+    endif; ?>
+
+    <div class="clr"></div>
+
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
+
+    <?php if ($showControls): ?>
+        <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+            <?php if (!empty($showCountryFilter)): ?>
+                <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
+                    <?= Text::_('COM_JEM_EVENTS_MAP_COUNTRY_FILTER') ?>
+                </label>
+                <select name="jem_map_filter_country"
+                        id="jem-map-filter-country-<?= $map_id ?>"
+                        class="form-select form-select-sm auto-submit"
+                        style="width: auto;">
+                    <option value=""><?= Text::_('COM_JEM_EVENTS_MAP_ALL_COUNTRIES') ?></option>
+                    <?php foreach ($countries as $country): ?>
+                        <?php
+                        $countryCode = (string) $country->country;
+                        $countryName = !empty($country->country_name) ? (string) $country->country_name : $countryCode;
+                        ?>
+                        <option value="<?= htmlspecialchars($countryCode, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryCode === (string) $selectedCountry) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
+
+            <?php if (!empty($showDateFilter)): ?>
+            <?php
+            $options = [
+                'all'      => 'COM_JEM_EVENTS_MAP_ALL',
+                'today'    => 'COM_JEM_EVENTS_MAP_TODAY',
+                'tomorrow' => 'COM_JEM_EVENTS_MAP_TOMORROW',
+                'week'     => 'COM_JEM_EVENTS_MAP_WEEK',
+                'month'    => 'COM_JEM_EVENTS_MAP_MONTH',
+                'year'     => 'COM_JEM_EVENTS_MAP_YEAR',
+                'date'     => 'COM_JEM_EVENTS_MAP_DATE'
+            ];
+
+            foreach ($options as $value => $label) {
+                $isActive = $filterMode === $value;
+                $isDateField = $value === 'date';
+                ?>
+                <?php if ($isDateField) { ?>
+                    <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
+                        <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
+                               id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
+                        <label class="btn btn-outline-primary btn-sm" style="padding-top: 6px;" for="filter-<?= $value ?>">
+                            <?= Text::_($label) ?>
+                        </label>
+                        <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
+                               class="form-control form-control-sm" style="width: auto;">
+                    </div>
+                <?php } else { ?>
+                    <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
+                           id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
+                    <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
                         <?= Text::_($label) ?>
                     </label>
-                    <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
-                           class="form-control form-control-sm" style="width: auto;">
-                </div>
-            <?php } else { ?>
-                <input type="radio" class="btn-check auto-submit" name="jem_map_filter_mode" value="<?= $value ?>"
-                       id="filter-<?= $value ?>" <?= ($value == $filterMode) ? 'checked' : '' ?>>
-                <label class="btn btn-outline-primary btn-sm"  for="filter-<?= $value ?>">
-                    <?= Text::_($label) ?>
-                </label>
+                <?php } ?>
             <?php } ?>
-        <?php } ?>
 
-        <button type="submit" class="btn btn-primary btn-sm">
-            <?= Text::_('MOD_JEM_MAP_APPLY') ?>
-        </button>
-        <?php endif; ?>
-
-        <?php if (!empty($showCategoryFilter)): ?>
-            <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
-                <?= Text::_('MOD_JEM_MAP_CATEGORY_FILTER') ?>
-            </label>
-            <select name="jem_map_filter_catid"
-                    id="jem-map-filter-category-<?= $map_id ?>"
-                    class="form-select form-select-sm auto-submit"
-                    style="width: auto;">
-                <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
-                <?php foreach ($categories as $category): ?>
-                    <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        <?php endif; ?>
-
-        <?php if($this->params->get('show_my_location','0')) { ?>
-            <!-- Location button -->
-            <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
-                <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <?= Text::_('COM_JEM_EVENTS_MAP_APPLY') ?>
             </button>
+            <?php endif; ?>
+
+            <?php if (!empty($showCategoryFilter)): ?>
+                <label for="jem-map-filter-category-<?= $map_id ?>" class="visually-hidden">
+                    <?= Text::_('COM_JEM_EVENTS_MAP_CATEGORY_FILTER') ?>
+                </label>
+                <select name="jem_map_filter_catid"
+                        id="jem-map-filter-category-<?= $map_id ?>"
+                        class="form-select form-select-sm auto-submit"
+                        style="width: auto;">
+                    <option value="0"><?= Text::_('COM_JEM_EVENTS_MAP_ALL_CATEGORIES') ?></option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
+
+            <?php if($this->params->get('show_my_location','0')) { ?>
+                <!-- Location button -->
+                <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                    <i class="icon-location"></i> <?= Text::_('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>
+                </button>
+            <?php } ?>
+            <?php echo HTMLHelper::_('form.token'); ?>
+        </form>
+
+        <!-- Location help text -->
+        <?php if($this->params->get('show_my_location','0')) { ?>
+            <div class="alert alert-info small mt-2" id="location-help">
+                <i class="icon-info"></i>
+                <?= Text::_('COM_JEM_EVENTS_MAP_LOCATION_HELP') ?>
+            </div>
+
+            <!-- Permission instructions -->
+            <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
+                <i class="icon-warning"></i>
+                <?= Text::_('COM_JEM_EVENTS_MAP_PERMISSION_INSTRUCTIONS') ?>
+            </div>
         <?php } ?>
-    </form>
+    <?php endif; ?>
 
-    <!-- Location help text -->
-    <?php if($this->params->get('show_my_location','0')) { ?>
-        <div class="alert alert-info small mt-2" id="location-help">
-            <i class="icon-info"></i>
-            <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
+    <?php if ($mapProvider === 'google' && $googleApiKey === '') : ?>
+        <div class="alert alert-warning"><?php echo Text::_('COM_JEM_GOOGLE_NO_API_KEY'); ?></div>
+    <?php endif; ?>
+
+    <div id="<?= $map_id ?>" class="jem-eventsmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
+
+
+    <!--footer-->  
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
         </div>
-
-        <!-- Permission instructions -->
-        <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
-            <i class="icon-warning"></i>
-            <?= Text::_('MOD_JEM_MAP_PERMISSION_INSTRUCTIONS') ?>
-        </div>
-    <?php } ?>
-<?php endif; ?>
-
-<div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
-
-<?php if ($this->params->get('showfootertext')) : ?>
-    <div class="description no_space floattext">
-        <?php echo $this->params->get('footertext'); ?>
+    <?php endif; ?>
+    <div class="copyright">
+        <?php
+        echo JemOutput::footer(); ?>
     </div>
-<?php endif; ?>
-<!--footer-->
-<div class="copyright">
-    <?php echo JEMOutput::footer( ); ?>
-</div>
 </div>
 
 <script>
@@ -239,14 +324,13 @@ foreach ((array) $events as $event) {
             });
         });
     });
-
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         <?php if (!empty($showDateFilter)): ?>
-        (function(){
-            var form      = document.querySelector('.jem-date-filter');
+        (function () {
+            var form = document.querySelector('.jem-date-filter');
             if (!form) return;
-            var rAll      = form.querySelector('input[name="jem_map_filter_mode"][value="all"]');
-            var rDate     = form.querySelector('input[name="jem_map_filter_mode"][value="date"]');
+            var rAll = form.querySelector('input[name="jem_map_filter_mode"][value="all"]');
+            var rDate = form.querySelector('input[name="jem_map_filter_mode"][value="date"]');
             var dateInput = form.querySelector('input[name="jem_map_filter_date"]');
             function sync() {
                 var useDate = rDate && rDate.checked;
@@ -255,12 +339,238 @@ foreach ((array) $events as $event) {
                     dateInput.required = useDate;
                 }
             }
-            if (rAll)  rAll.addEventListener('change', sync);
-            if (rDate) rDate.addEventListener('change', sync);
+            if (rAll) {
+                rAll.addEventListener('change', sync);
+            }
+            if (rDate) {
+                rDate.addEventListener('change', sync);
+            }
             sync();
         })();
         <?php endif; ?>
 
+        var mapElement = document.getElementById('<?= $map_id ?>');
+        if (!mapElement) {
+            return;
+        }
+
+        <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
+        if (typeof google === 'undefined' || !google.maps) {
+            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('COM_JEM_GOOGLE_NO_API_KEY') ?></div>';
+            return;
+        }
+
+        var mapTypeId = <?= json_encode($mapType === 'physical' ? 'terrain' : 'roadmap') ?>;
+        var map = new google.maps.Map(mapElement, {
+            center: {lat: <?php echo (float) ($centerLat ? $centerLat : $startLat); ?>, lng: <?php echo (float) ($centerLng ? $centerLng : $startLng); ?>},
+            zoom: <?php echo (int) $startZoom; ?>,
+            mapTypeId: mapTypeId,
+            fullscreenControl: <?= $fullScreenMap ? 'true' : 'false' ?>
+        });
+        var infoWindow = new google.maps.InfoWindow();
+        var bounds = new google.maps.LatLngBounds();
+        var hasBounds = false;
+        var venueIcon = {
+            url: <?= json_encode($venueMarker) ?>,
+            scaledSize: new google.maps.Size(32, 32),
+            anchor: new google.maps.Point(16, 32)
+        };
+        var mylocIcon = {
+            url: <?= json_encode($mylocMarker) ?>,
+            scaledSize: new google.maps.Size(32, 32),
+            anchor: new google.maps.Point(16, 32)
+        };
+
+        var locationMarker = null;
+        var locationCircle = null;
+        var locationRequested = false;
+
+        function showError(message) {
+            alert(message);
+            var locateBtn = document.getElementById('locate-me-btn');
+            if (locateBtn) {
+                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.disabled = false;
+            }
+        }
+
+        function showPermissionInstructions() {
+            var instructions = document.getElementById('permission-instructions');
+            var help = document.getElementById('location-help');
+            if (instructions && help) {
+                help.style.display = 'none';
+                instructions.style.display = 'block';
+            }
+        }
+
+        function hidePermissionInstructions() {
+            var instructions = document.getElementById('permission-instructions');
+            var help = document.getElementById('location-help');
+            if (instructions && help) {
+                instructions.style.display = 'none';
+                help.style.display = 'block';
+            }
+        }
+
+        function locateUser() {
+            if (!navigator.geolocation) {
+                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                return;
+            }
+
+            var locateBtn = document.getElementById('locate-me-btn');
+            if (!locateBtn) {
+                return;
+            }
+            var originalText = locateBtn.innerHTML;
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
+            locateBtn.disabled = true;
+            locationRequested = true;
+            setTimeout(showPermissionInstructions, 1000);
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    hidePermissionInstructions();
+                    var latLng = {lat: position.coords.latitude, lng: position.coords.longitude};
+
+                    if (locationMarker) {
+                        locationMarker.setMap(null);
+                    }
+                    if (locationCircle) {
+                        locationCircle.setMap(null);
+                    }
+
+                    locationCircle = new google.maps.Circle({
+                        map: map,
+                        center: latLng,
+                        radius: position.coords.accuracy,
+                        strokeColor: 'red',
+                        fillColor: '#3399ff',
+                        fillOpacity: 0.2
+                    });
+
+                    locationMarker = new google.maps.Marker({
+                        position: latLng,
+                        map: map,
+                        icon: mylocIcon,
+                        title: <?= json_encode($youAreHere) ?>
+                    });
+                    infoWindow.setContent(<?= json_encode($youAreHere) ?>);
+                    infoWindow.open(map, locationMarker);
+                    map.setCenter(latLng);
+                    map.setZoom(Math.max(map.getZoom(), 15));
+
+                    locateBtn.innerHTML = originalText;
+                    locateBtn.disabled = false;
+                    locationRequested = false;
+                },
+                function(error) {
+                    hidePermissionInstructions();
+                    var errorMessage = '';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
+                            break;
+                        default:
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
+                    }
+                    showError(errorMessage);
+                    locationRequested = false;
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 20000,
+                    maximumAge: 300000
+                }
+            );
+        }
+
+        var locateBtn = document.getElementById('locate-me-btn');
+        if (locateBtn) {
+            locateBtn.addEventListener('click', function() {
+                if (!locationRequested) {
+                    locateUser();
+                }
+            });
+        }
+
+        <?php
+        $heatPoints = [];
+        $mapBounds = [];
+        foreach ($eventMarkers as $marker):
+        $visibleEvents = array_slice($marker['events'], 0, 5);
+        $hiddenEvents = max(0, count($marker['events']) - count($visibleEvents));
+        $popupEvents = [];
+
+        foreach ($visibleEvents as $event) {
+            $eventLine = '<li><a href="' . $event['link'] . '"><strong>' . $event['title'] . '</strong></a>';
+
+            if ($event['date'] !== '') {
+                $eventLine .= '<br><small>' . $event['date'] . '</small>';
+            }
+
+            $popupEvents[] = $eventLine . '</li>';
+        }
+
+        if ($hiddenEvents > 0) {
+            $popupEvents[] = '<li><em>' . Text::sprintf('COM_JEM_EVENTS_MAP_MORE_EVENTS', $hiddenEvents) . '</em></li>';
+        }
+
+        $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
+        $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
+            . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
+            . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
+            . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
+            . $mapActionsHtml;
+        ?>
+        (function() {
+            var position = {lat: <?= (float) $marker['lat'] ?>, lng: <?= (float) $marker['lng'] ?>};
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                icon: venueIcon
+            });
+            marker.addListener('click', function() {
+                infoWindow.setContent(<?= json_encode($popupHtml) ?>);
+                infoWindow.open(map, marker);
+            });
+            bounds.extend(position);
+            hasBounds = true;
+        })();
+        <?php $heatPoints[] = ['lat' => (float) $marker['lat'], 'lng' => (float) $marker['lng']]; ?>
+        <?php $mapBounds[] = [(float) $marker['lat'], (float) $marker['lng']]; ?>
+        <?php endforeach; ?>
+
+        <?php if ($heatMapLayer) : ?>
+        if (google.maps.visualization && hasBounds) {
+            var heatPoints = <?php echo json_encode($heatPoints); ?>.map(function(point) {
+                return new google.maps.LatLng(point.lat, point.lng);
+            });
+            new google.maps.visualization.HeatmapLayer({
+                data: heatPoints,
+                radius: 25,
+                map: map
+            });
+        }
+        <?php endif; ?>
+
+        <?php if ($autoCenter) : ?>
+        if (hasBounds) {
+            map.fitBounds(bounds);
+            if (<?= count($mapBounds) ?> === 1) {
+                google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+                    map.setZoom(Math.max(map.getZoom(), 10));
+                });
+            }
+        }
+        <?php endif; ?>
+        <?php else : ?>
         var map = L.map('<?= $map_id ?>').setView([<?php echo (float) ($centerLat? $centerLat : $startLat); ?>, <?php echo (float)($centerLng? $centerLng : $startLng); ?>], <?php echo (int) $startZoom; ?>);
         L.tileLayer(<?= json_encode($tileLayer['url']) ?>, {
             maxZoom: <?= (int) $tileLayer['maxZoom'] ?>,
@@ -271,8 +581,8 @@ foreach ((array) $events as $event) {
         L.control
             .fullscreen({
                 position: 'topleft', // change the position: topleft, topright, bottomright or bottomleft, default topleft
-                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
-                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                title: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_TITLE") ?>',
+                titleCancel: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_EXIT") ?>',
                 content: null,
                 forceSeparateButton: true
             })
@@ -287,7 +597,7 @@ foreach ((array) $events as $event) {
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
                 return false;
             }
             return true;
@@ -298,7 +608,7 @@ foreach ((array) $events as $event) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
                 locateBtn.disabled = false;
             }
         }
@@ -325,12 +635,17 @@ foreach ((array) $events as $event) {
 
         // Improved function to center on user location
         function locateUser() {
-            if (!checkGeolocationSupport()) return;
+                if (!checkGeolocationSupport()) {
+                    return;
+                }
 
             // Show loading state
             var locateBtn = document.getElementById('locate-me-btn');
+            if (!locateBtn) {
+                return;
+            }
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
             locateBtn.disabled = true;
             locationRequested = true;
 
@@ -367,7 +682,7 @@ foreach ((array) $events as $event) {
                             iconSize: [32, 32],
                             iconAnchor: [16, 32],
                             popupAnchor: [0, -32],
-                            shadowUrl: "media/com_jem/images/marker-shadow.webp",
+                                shadowUrl: 'media/com_jem/images/marker-shadow.webp',
                             shadowSize: [32, 32],
                             shadowAnchor: [16, 32]
                         })
@@ -388,16 +703,16 @@ foreach ((array) $events as $event) {
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
                             break;
                         default:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
                     }
 
                     showError(errorMessage);
@@ -443,12 +758,12 @@ foreach ((array) $events as $event) {
             $popupEvents[] = '<li><em>' . Text::sprintf('COM_JEM_EVENTS_MAP_MORE_EVENTS', $hiddenEvents) . '</em></li>';
         }
 
+        $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
         $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
             . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
             . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
             . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
-            . '<a href="https://maps.google.com/?daddr=' . (float) $marker['lat'] . ',' . (float) $marker['lng'] . '">'
-            . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
+            . $mapActionsHtml;
         ?>
         L.marker([<?= (float) $marker['lat'] ?>, <?= (float) $marker['lng'] ?>], {
             icon: L.icon({
@@ -457,8 +772,8 @@ foreach ((array) $events as $event) {
             })
         }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
 
-        <?php   $heatPoints[] = ["lat" => (float) $marker['lat'], "lng" => (float) $marker['lng']]; ?>
-        <?php   $mapBounds[] = [(float) $marker['lat'], (float) $marker['lng']]; ?>
+        <?php $heatPoints[] = ['lat' => (float) $marker['lat'], 'lng' => (float) $marker['lng']]; ?>
+        <?php $mapBounds[] = [(float) $marker['lat'], (float) $marker['lng']]; ?>
         <?php endforeach; ?>
 
         <?php if($heatMapLayer) { ?>
@@ -487,6 +802,6 @@ foreach ((array) $events as $event) {
             map.setView(eventBounds[0], Math.max(map.getZoom(), 10));
         }
         <?php endif; ?>
-
+        <?php endif; ?>
     });
 </script>

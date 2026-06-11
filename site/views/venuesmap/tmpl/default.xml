@@ -33,6 +33,14 @@
                    description="COM_JEM_VENUESMAP_ZOOM_DESC"
                    min="0"
                    max="19"/>
+            <field name="map_provider" type="list"
+                   default="osm"
+                   label="COM_JEM_MAP_PROVIDER"
+                   description="COM_JEM_MAP_PROVIDER_DESC"
+           >
+                <option value="osm">COM_JEM_MAP_PROVIDER_OSM</option>
+                <option value="google">COM_JEM_MAP_PROVIDER_GOOGLE</option>
+            </field>
             <field name="map_type" type="list"
                    default="political"
                    label="COM_JEM_VENUESMAP_TYPE_LABEL"
@@ -66,6 +74,24 @@
                    default="0"
                    label="COM_JEM_VENUESMAP_FULL_SCREEN_LABEL"
                    description="COM_JEM_VENUESMAP_FULL_SCREEN_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_directions_link" type="radio"
+                   default="1"
+                   label="COM_JEM_MAP_SHOW_DIRECTIONS_LINK"
+                   description="COM_JEM_MAP_SHOW_DIRECTIONS_LINK_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_full_map_link" type="radio"
+                   default="1"
+                   label="COM_JEM_MAP_SHOW_FULL_MAP_LINK"
+                   description="COM_JEM_MAP_SHOW_FULL_MAP_LINK_DESC"
                    class="inputbox btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>

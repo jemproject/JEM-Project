@@ -55,6 +55,15 @@
                        min="0"
                        max="19"
                        class="form-control w-auto"/>
+                <field name="map_provider" type="list"
+                       default="osm"
+                       label="MOD_JEM_MAP_PROVIDER"
+                       description="MOD_JEM_MAP_PROVIDER_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="osm">MOD_JEM_MAP_PROVIDER_OSM</option>
+                    <option value="google">MOD_JEM_MAP_PROVIDER_GOOGLE</option>
+                </field>
                 <field name="show_my_location" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
@@ -91,6 +100,24 @@
                        default="0"
                        label="MOD_JEM_MAP_FULL_SCREEN"
                        description="MOD_JEM_MAP_FULL_SCREEN_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_directions_link" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_DIRECTIONS_LINK"
+                       description="MOD_JEM_MAP_SHOW_DIRECTIONS_LINK_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_full_map_link" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_FULL_MAP_LINK"
+                       description="MOD_JEM_MAP_SHOW_FULL_MAP_LINK_DESC"
                        class="inputbox btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
