@@ -31,6 +31,8 @@ if (!function_exists('jem_frontend_status_label')) {
     }
 }
 
+$showAttendeeColumn = ((int) $this->params->get('displayattendeecolumn', 0) === 1);
+
 ?>
 
 <script>
@@ -150,8 +152,8 @@ if (!function_exists('jem_frontend_status_label')) {
                 <?php if ($this->jemsettings->showcat == 1) : ?>
                 <col style="width: <?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
                 <?php endif; ?>
-                <?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
-                <col style="width: "<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
+                <?php if ($showAttendeeColumn) : ?>
+                <col style="width: <?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
                 <?php endif; ?>
                 <col style="width: 1%" class="jem_col_status" />
             </colgroup>
@@ -179,7 +181,7 @@ if (!function_exists('jem_frontend_status_label')) {
                     <?php if ($this->jemsettings->showcat == 1) : ?>
                     <th id="jem_category" class="sectiontableheader" style="text-align: left;"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php endif; ?>
-                    <?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
+                    <?php if ($showAttendeeColumn) : ?>
                     <th id="jem_atte" class="sectiontableheader" style="text-align: center;"><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
                     <?php endif; ?>
                     <th id="jem_status" class="sectiontableheader center" nowrap="nowrap" title="<?php echo Text::_('JSTATUS'); ?>" aria-label="<?php echo Text::_('JSTATUS'); ?>">
@@ -259,7 +261,7 @@ if (!function_exists('jem_frontend_status_label')) {
                             </td>
                             <?php endif; ?>
 
-                            <?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
+                            <?php if ($showAttendeeColumn) : ?>
                             <td headers="jem_atte" style="text-align: center; vertical-align: top;">
                                 <?php
                                 if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {

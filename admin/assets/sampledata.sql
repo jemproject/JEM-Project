@@ -24,12 +24,18 @@ INSERT INTO `#__jem_types` (`name`, `alias`, `description`, `entity`, `icon`, `c
 ('Conciert', 'conciert', 'Concert-style events used to demonstrate custom event types.', 1, 'fa-solid fa-guitar', '#d35400', 1, 6, 1, '*', NOW(), 62),
 ('Dancing', 'dancing', 'Dance events, parties, and social dancing sessions.', 1, 'fa-solid fa-person-dress', '#c2185b', 1, 7, 1, '*', NOW(), 62),
 ('Guided Tour', 'guided-tour', 'Small-group tours with limited capacity, bookings, and waiting lists.', 1, 'fa-solid fa-person-walking', '#245c4a', 1, 8, 1, '*', NOW(), 62),
-('Music Category', 'music-category', 'Music-oriented categories used by the category type sample menu.', 2, 'fa-solid fa-tags', '#7b2cbf', 1, 1, 1, '*', NOW(), 62),
-('Museum Category', 'museum-category', 'Museum and cultural categories used by the category type sample menu.', 2, 'fa-solid fa-landmark', '#8a5a00', 1, 2, 1, '*', NOW(), 62),
+('Kids', 'kids', 'Categories suitable for children and family-friendly children programmes.', 2, 'fa-solid fa-child-reaching', '#2f80ed', 1, 1, 1, '*', NOW(), 62),
+('Teens', 'teens', 'Categories aimed at teenage audiences.', 2, 'fa-solid fa-user-graduate', '#9b51e0', 1, 2, 1, '*', NOW(), 62),
+('Young Adults', 'young-adults', 'Categories aimed at young adult audiences, students, and early-career visitors.', 2, 'fa-solid fa-users', '#7b2cbf', 1, 3, 1, '*', NOW(), 62),
+('Adults', 'adults', 'Categories aimed at general adult audiences.', 2, 'fa-solid fa-user', '#245c4a', 1, 4, 1, '*', NOW(), 62),
+('Seniors', 'seniors', 'Categories suitable for senior audiences.', 2, 'fa-solid fa-person-cane', '#8a5a00', 1, 5, 1, '*', NOW(), 62),
+('All Ages', 'all-ages', 'Categories suitable for mixed audiences and all-age events.', 2, 'fa-solid fa-people-group', '#d35400', 1, 6, 1, '*', NOW(), 62),
 ('Museum', 'museum', 'Museums, galleries, and science centres.', 3, 'fa-solid fa-landmark', '#245c4a', 1, 1, 1, '*', NOW(), 62);
 
-UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'music-category' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` IN (2, 3, 4);
-UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'museum-category' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 5;
+UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'young-adults' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 2;
+UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'adults' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 3;
+UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'teens' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 4;
+UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'all-ages' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 5;
 
 -- --------------------------------------------------------
 

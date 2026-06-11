@@ -100,28 +100,25 @@ class JemControllerFrontendmenu extends BaseController
         }
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
-        if ($eventType) {
-            $items[] = array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents&id=' . (int) $eventType->id, $groups['types']);
-        } else {
-            $this->unpublishGeneratedMenuItems($menutype, array('events-by-type'));
-        }
+        $items[] = $eventType
+            ? array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents&id=' . (int) $eventType->id, $groups['types'])
+            : array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents', $groups['types']);
 
         $venueType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 3', array('id', 'alias'));
-        if ($venueType) {
-            $items[] = array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) $venueType->id, $groups['types']);
-        } else {
-            $this->unpublishGeneratedMenuItems($menutype, array('venues-by-type'));
-        }
+        $items[] = $venueType
+            ? array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) $venueType->id, $groups['types'])
+            : array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues', $groups['types']);
 
         $categoryType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 2', array('id', 'alias'));
-        if ($categoryType) {
-            $items[] = array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=' . (int) $categoryType->id, $groups['types']);
-        } else {
-            $this->unpublishGeneratedMenuItems($menutype, array('categories-by-type'));
-        }
+        $items[] = $categoryType
+            ? array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=' . (int) $categoryType->id, $groups['types'])
+            : array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0', $groups['types']);
 
         foreach ($items as $item) {
-            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], 'component', $componentId)) {
+            $itemType        = $item[4] ?? 'component';
+            $itemComponentId = $item[5] ?? $componentId;
+
+            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId)) {
                 $created++;
             }
         }
@@ -327,21 +324,29 @@ class JemControllerFrontendmenu extends BaseController
 
     protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $table = Table::getInstance('Menu');
 
-        $query = $db->getQuery(true)
-            ->update($db->quoteName('#__menu'))
-            ->set($db->quoteName('title') . ' = ' . $db->quote($title))
-            ->set($db->quoteName('link') . ' = ' . $db->quote($link))
-            ->set($db->quoteName('type') . ' = ' . $db->quote($type))
-            ->set($db->quoteName('component_id') . ' = ' . (int) $componentId)
-            ->set($db->quoteName('published') . ' = 1')
-            ->set($db->quoteName('access') . ' = 1')
-            ->where($db->quoteName('id') . ' = ' . (int) $id)
-            ->where($db->quoteName('client_id') . ' = 0');
+        if (!$table->load((int) $id)) {
+            throw new \RuntimeException($table->getError());
+        }
 
-        $db->setQuery($query);
-        $db->execute();
+        if ($parentId !== null && (int) $table->parent_id !== (int) $parentId) {
+            $table->setLocation((int) $parentId, 'last-child');
+        }
+
+        $data = array(
+            'title'        => $title,
+            'link'         => $link,
+            'type'         => $type,
+            'component_id' => (int) $componentId,
+            'published'    => 1,
+            'access'       => 1,
+            'parent_id'    => $parentId !== null ? (int) $parentId : (int) $table->parent_id,
+        );
+
+        if (!$table->bind($data) || !$table->check() || !$table->store()) {
+            throw new \RuntimeException($table->getError());
+        }
     }
 
     protected function unpublishGeneratedMenuItems($menutype, array $aliases)

@@ -87,6 +87,20 @@ class JemModelCategories extends BaseDatabaseModel
     protected $_typeid = 0;
 
     /**
+     * Whether the category type filter was explicitly requested.
+     *
+     * @var bool
+     */
+    protected $_typeFilterRequested = false;
+
+    /**
+     * Category type data.
+     *
+     * @var object|null
+     */
+    protected $_type = null;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -104,7 +118,8 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $this->_id = $id;
-        $this->_typeid = $app->input->getInt('typeid', (int) $params->get('typeid', 0));
+        $this->_typeFilterRequested = $app->input->exists('typeid') || $params->get('typeid', null) !== null;
+        $this->_typeid = $this->_typeFilterRequested ? $app->input->getInt('typeid', (int) $params->get('typeid', 0)) : 0;
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
         $this->_showsubcats      = (bool)$params->get('usecat', 1);
@@ -181,6 +196,63 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         return $this->_categories;
+    }
+
+    public function getType()
+    {
+        if (!$this->_typeFilterRequested) {
+            return null;
+        }
+
+        if ($this->_type !== null) {
+            return $this->_type;
+        }
+
+        if ($this->_typeid <= 0) {
+            return null;
+        }
+
+        $app      = Factory::getApplication();
+        $user     = JemFactory::getUser();
+        $levels   = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
+        $language = $app->getLanguage()->getTag();
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $query    = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
+            ->select('CASE WHEN ' . $db->quoteName('access') . ' IN (' . $levelsList . ') THEN 1 ELSE 0 END AS ' . $db->quoteName('user_has_access_type'))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = 2')
+            ->where($db->quoteName('published') . ' = 1')
+            ->where('('
+                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')');
+
+        $query->where($db->quoteName('id') . ' = ' . (int) $this->_typeid);
+
+        $query->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+        $db->setQuery($query, 0, 1);
+        $this->_type = $db->loadObject();
+
+        if ($this->_type) {
+            $this->_typeid = (int) $this->_type->id;
+            require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+            JemOutput::translateType($this->_type);
+        }
+
+        return $this->_type;
+    }
+
+    public function getRequestedTypeId()
+    {
+        return (int) $this->_typeid;
+    }
+
+    public function isTypeFilterRequested()
+    {
+        return $this->_typeFilterRequested;
     }
 
     /**
@@ -433,6 +505,8 @@ class JemModelCategories extends BaseDatabaseModel
 
         if ($this->_typeid > 0) {
             $where_sub .= ' AND cc.type_id = ' . (int) $this->_typeid;
+        } elseif ($this->_typeFilterRequested) {
+            $where_sub .= ' AND 1 = 0';
         }
 
         // show/hide empty categories
@@ -472,7 +546,7 @@ class JemModelCategories extends BaseDatabaseModel
                . ' WHERE c.published = 1'
                . ' AND '.$parentCategoryQuery
                . $where_access
-               . ($this->_typeid > 0 ? ' AND c.type_id = ' . (int) $this->_typeid : '')
+               . ($this->_typeid > 0 ? ' AND c.type_id = ' . (int) $this->_typeid : ($this->_typeFilterRequested ? ' AND 1 = 0' : ''))
                . ' GROUP BY c.id '.$empty
                . ' ORDER BY '.$ordering
                ;
@@ -508,6 +582,8 @@ class JemModelCategories extends BaseDatabaseModel
 
         if ($this->_typeid > 0) {
             $query .= ' AND c.type_id = ' . (int) $this->_typeid;
+        } elseif ($this->_typeFilterRequested) {
+            $query .= ' AND 1 = 0';
         }
 
         if (!$this->_showemptycats) {

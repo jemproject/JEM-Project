@@ -45,7 +45,44 @@ class JemViewTypevenues extends JemView
         $typeObj = $this->get('Type');
 
         if (!$typeObj) {
-            throw new \Exception(Text::_('JERROR_PAGE_NOT_FOUND'), 404);
+            $requestedTypeId = $app->input->getInt('id', 0) ?: (int) $params->get('id', 0);
+            $pagetitle = Text::_('COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE');
+            $pathway->addItem($pagetitle);
+            $params->set('page_heading', $pagetitle);
+
+            if ($app->get('sitename_pagetitles', 0) == 1) {
+                $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
+            } elseif ($app->get('sitename_pagetitles', 0) == 2) {
+                $pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
+            }
+
+            $document->setTitle($pagetitle);
+            $document->setMetaData('title', $pagetitle);
+
+            $permissions = new stdClass();
+            $permissions->canAddVenue = $user->can('add', 'venue');
+            $permissions->canEditPublishVenue = $user->can(array('edit', 'publish'), 'venue');
+
+            $this->type          = null;
+            $this->missingTypeId = $requestedTypeId;
+            $this->rows          = array();
+            $this->novenues      = 1;
+            $this->pagination    = null;
+            $this->lists         = array('filter' => '', 'search' => '', 'order_Dir' => '', 'order' => 'a.city');
+            $this->params        = $params;
+            $this->action        = $uri->toString();
+            $this->jemsettings   = $jemsettings;
+            $this->settings      = $settings;
+            $this->permissions   = $permissions;
+            $this->pagetitle     = $pagetitle;
+            $this->pageclass_sfx = '';
+            $this->print         = $print;
+            $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+            $this->task          = '';
+            $this->show_status   = false;
+
+            parent::display($tpl);
+            return;
         }
 
         if (empty($typeObj->user_has_access_type)) {

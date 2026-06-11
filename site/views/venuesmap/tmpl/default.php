@@ -260,10 +260,6 @@ foreach (($this->venueslist ?? []) as $venue) {
 
 
 
-    <?php if ($mapProvider === 'google' && $googleApiKey === '') : ?>
-        <div class="alert alert-warning"><?php echo Text::_('COM_JEM_GOOGLE_NO_API_KEY'); ?></div>
-    <?php endif; ?>
-
     <div id="<?= $map_id ?>" class="jem-venuesmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>; min-height:300px;"></div>
 
     <?php if (empty($this->venueslist)) : ?>
@@ -364,7 +360,6 @@ foreach (($this->venueslist ?? []) as $venue) {
 
         <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
         if (typeof google === 'undefined' || !google.maps) {
-            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('COM_JEM_GOOGLE_NO_API_KEY') ?></div>';
             return;
         }
 

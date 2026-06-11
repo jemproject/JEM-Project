@@ -8,11 +8,16 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 ?>
 
 <div id="jem" class="jem_typeevents<?php echo $this->pageclass_sfx; ?>">
 
-    <?php if ($this->type) : ?>
+    <?php if (!$this->type) : ?>
+        <div class="alert alert-info">
+            <?php echo !empty($this->missingTypeId) ? Text::sprintf('COM_JEM_TYPEEVENTS_TYPE_NOT_FOUND', (int) $this->missingTypeId) : Text::_('COM_JEM_TYPEEVENTS_NO_TYPES'); ?>
+        </div>
+    <?php elseif ($this->type) : ?>
         <div class="jem-type-header mb-3">
             <h1 class="componentheading">
                 <?php if ($this->type->icon) : ?>
@@ -26,6 +31,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         </div>
     <?php endif; ?>
 
+    <?php if ($this->type) : ?>
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
         <?php echo $this->loadTemplate('events_table'); ?>
 
@@ -40,6 +46,7 @@ use Joomla\CMS\HTML\HTMLHelper;
     <div class="pagination">
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
+    <?php endif; ?>
 
         <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">

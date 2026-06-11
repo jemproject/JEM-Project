@@ -337,9 +337,12 @@
             This allows our developers to look a bit deeper into JEM.
         </p>
         <p><strong>Google API-Key:</strong><br>
-            When you want to display a Google Maps based on the Google API3 key, enter your API key here.
-            Please note that for just displaying an event map, an API key is not mandatory, but if you want to use the
-            geotagging function in the venue edit screen, a Google APUI key is required
+            Enter the Google Maps Platform API key used by JEM when a Google map is displayed with the Maps JavaScript API.
+            The key is required for Google based map views, Google map modules and venue geotagging.
+            Create the key in Google Cloud / Google Maps Platform, enable the Maps JavaScript API for the project, configure billing as required by Google, and restrict the key to your site domains.
+            See the official Google guide:
+            <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener">Set up the Maps JavaScript API</a>.
+            If you do not want to use Google Maps, leave this field empty and keep map provider options set to OpenStreetMap / Leaflet.
         </p>
         <p><strong>Google ClientID:</strong><br>
             If you have a Google Client ID you can fill it in here. (Optional, only for businesses)

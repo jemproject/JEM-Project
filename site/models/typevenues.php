@@ -28,7 +28,7 @@ class JemModelTypevenues extends JemModelVenueslist
     {
         $typeId = (int) $this->getState('filter.type_id');
 
-        if (!$typeId) {
+        if ($typeId <= 0) {
             return null;
         }
 
@@ -42,7 +42,6 @@ class JemModelTypevenues extends JemModelVenueslist
             ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
             ->select('CASE WHEN ' . $db->quoteName('access') . ' IN (' . $levelsList . ') THEN 1 ELSE 0 END AS ' . $db->quoteName('user_has_access_type'))
             ->from($db->quoteName('#__jem_types'))
-            ->where($db->quoteName('id') . ' = ' . $typeId)
             ->where($db->quoteName('entity') . ' = 3')
             ->where($db->quoteName('published') . ' = 1')
             ->where('('
@@ -51,10 +50,15 @@ class JemModelTypevenues extends JemModelVenueslist
                 . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
                 . ')');
 
+        $query->where($db->quoteName('id') . ' = ' . $typeId);
+
+        $query->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
         $db->setQuery($query);
         $type = $db->loadObject();
 
         if ($type) {
+            $this->setState('filter.type_id', (int) $type->id);
             require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
             JemOutput::translateType($type);
         }

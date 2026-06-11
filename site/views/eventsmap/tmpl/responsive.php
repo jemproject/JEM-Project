@@ -295,10 +295,6 @@ foreach ((array) $events as $event) {
         <?php } ?>
     <?php endif; ?>
 
-    <?php if ($mapProvider === 'google' && $googleApiKey === '') : ?>
-        <div class="alert alert-warning"><?php echo Text::_('COM_JEM_GOOGLE_NO_API_KEY'); ?></div>
-    <?php endif; ?>
-
     <div id="<?= $map_id ?>" class="jem-eventsmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
 
 
@@ -356,7 +352,6 @@ foreach ((array) $events as $event) {
 
         <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
         if (typeof google === 'undefined' || !google.maps) {
-            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('COM_JEM_GOOGLE_NO_API_KEY') ?></div>';
             return;
         }
 
