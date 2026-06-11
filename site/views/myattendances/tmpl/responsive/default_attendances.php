@@ -114,12 +114,12 @@ if (!function_exists('jem_myattendances_country_flag')) {
 
   .jem-sort #jem_country,
   #jem .jem-event .jem-event-country {
-    <?php if (($this->jemsettings->showstate == 1) && (!empty($this->jemsettings->statewidth))) : ?>
+    <?php if (($this->showcountry == 1) && (!empty($this->jemsettings->statewidth))) : ?>
       flex: 1 <?php echo ($this->jemsettings->statewidth); ?>;
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nocountry')) : ?>
+    <?php if (($this->showcountry != 1) || JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nocountry')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -228,6 +228,8 @@ if (!function_exists('jem_myattendances_country_flag')) {
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
         <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
+      <?php if ($this->showcountry == 1) : ?>
         <div id="jem_country" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcat == 1) : ?>
@@ -319,7 +321,9 @@ if (!function_exists('jem_myattendances_country_flag')) {
             <?php else : ?>
               <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
             <?php endif; ?>
+          <?php endif; ?>
 
+                    <?php if ($this->showcountry == 1) : ?>
             <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY') . ': ' . $this->escape(jem_myattendances_country_name($row->country ?? '')); ?>">
               <?php $countryName = jem_myattendances_country_name($row->country ?? ''); ?>
               <?php echo $countryName !== '' ? jem_myattendances_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '<i class="fa fa-globe" aria-hidden="true"></i> -'; ?>

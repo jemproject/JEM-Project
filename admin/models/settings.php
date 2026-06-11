@@ -15,6 +15,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Database\DatabaseDriver;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 /**
  * JEM Component Settings Model
  *
@@ -160,6 +162,9 @@ class JemModelSettings extends AdminModel
         $varmetakey = $jinput->get('meta_keywords','','');
         $data['meta_keywords'] = implode(', ', array_filter($varmetakey));
         $data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
+        if ($jinput->exists('jem_custom_fields')) {
+            $data['custom_fields_config'] = json_encode(JemCustomFields::normaliseConfig($jinput->get('jem_custom_fields', array(), 'array')));
+        }
 
         // sanitize
         if (empty($data['imagewidth'])) {

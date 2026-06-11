@@ -18,12 +18,24 @@ use Joomla\String\StringHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Editevent Model
  */
 class JemModelEditevent extends JemModelEvent
 {
+    public function getForm($data = array(), $loadData = true)
+    {
+        $form = parent::getForm($data, $loadData);
+
+        if ($form) {
+            JemCustomFields::applyFormLabels($form, 'event', 'frontend_edit');
+        }
+
+        return $form;
+    }
+
     /**
      * Method to auto-populate the model state.
      *

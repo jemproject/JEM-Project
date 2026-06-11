@@ -20,7 +20,8 @@ $visibleColumns += (int) ($this->showdate == 1);
 $visibleColumns += (int) ($this->jemsettings->showtitle == 1);
 $visibleColumns += (int) ($this->jemsettings->showlocate == 1);
 $visibleColumns += (int) ($this->jemsettings->showcity == 1);
-$visibleColumns += ($this->jemsettings->showstate == 1) ? 2 : 0;
+$visibleColumns += (int) ($this->jemsettings->showstate == 1);
+$visibleColumns += (int) ($this->showcountry == 1);
 $visibleColumns += (int) ($this->jemsettings->showcat == 1);
 $visibleColumns += (int) ($this->showplaces == 1);
 $visibleColumns += (int) ($this->showstatus == 1);
@@ -135,6 +136,8 @@ if (!function_exists('jem_myattendances_country_flag')) {
                 <?php endif; ?>
                 <?php if ($this->jemsettings->showstate == 1) : ?>
                 <col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
+                <?php endif; ?>
+                <?php if ($this->showcountry == 1) : ?>
                 <col style="width: <?php echo $this->jemsettings->statewidth; ?>" class="jem_col_country" />
                 <?php endif; ?>
                 <?php if ($this->jemsettings->showcat == 1) : ?>
@@ -167,6 +170,8 @@ if (!function_exists('jem_myattendances_country_flag')) {
                     <?php endif; ?>
                     <?php if ($this->jemsettings->showstate == 1) : ?>
                     <th id="jem_state" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                    <?php endif; ?>
+                    <?php if ($this->showcountry == 1) : ?>
                     <th id="jem_country" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                     <?php endif; ?>
                     <?php if ($this->jemsettings->showcat == 1) : ?>
@@ -245,6 +250,8 @@ if (!function_exists('jem_myattendances_country_flag')) {
                         <td headers="jem_state" style="text-align: left; vertical-align: top;">
                             <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
                         </td>
+                        <?php endif; ?>
+                        <?php if ($this->showcountry == 1) : ?>
                         <td headers="jem_country" style="text-align: left; vertical-align: top;">
                             <?php $countryName = jem_myattendances_country_name($row->country ?? ''); ?>
                             <?php echo $countryName !== '' ? jem_myattendances_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?>

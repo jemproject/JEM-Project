@@ -16,6 +16,7 @@ use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Model: Venue
@@ -187,6 +188,9 @@ class JemModelVenue extends JemModelAdmin
         if (empty($form)) {
             return false;
         }
+
+        $scope = Factory::getApplication()->isClient('administrator') ? 'backend' : 'frontend_edit';
+        JemCustomFields::applyFormLabels($form, 'venue', $scope);
 
         return $form;
     }

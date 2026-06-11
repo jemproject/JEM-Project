@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 ?>
 
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . (int) $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
@@ -194,13 +196,15 @@ use Joomla\CMS\Language\Text;
 
             <?php
             for ($cr = 1; $cr <= 10; $cr++) {
-                $currentRow = $this->venue->{'custom'.$cr};
+                $fieldName = 'custom' . $cr;
+                $currentRow = $this->venue->{$fieldName};
                 if (preg_match('%^http(s)?://%', $currentRow)) {
                     $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
                 }
-                if ($currentRow) {
+                if ($currentRow && JemCustomFields::isVisible('venue', $fieldName, 'detail')) {
+                    $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
                 ?>
-                <dt class="custom<?php echo $cr; ?>"><?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
+                <dt class="custom<?php echo $cr; ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
                 <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
                 <?php
                 }

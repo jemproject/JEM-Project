@@ -86,6 +86,7 @@ class JemViewMyattendances extends JemView
             $showplaces  = (int) $params->get('showplaces', 1);
             $showstatus  = (int) $params->get('showstatus', 1);
             $showcomment = (int) $params->get('showcomment', 1);
+            $showcountry = (int) $params->get('showcountry', 0);
 
             // get variables
             $filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -187,6 +188,7 @@ class JemViewMyattendances extends JemView
             $this->showplaces = $showplaces;
             $this->showstatus = $showstatus;
             $this->showcomment = $showcomment;
+            $this->showcountry = $showcountry;
             $this->lists = $lists;
             $this->noattending = $noattending;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

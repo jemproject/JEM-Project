@@ -15,6 +15,8 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Date\Date;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
@@ -240,13 +242,15 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         endif;
 
                         for ($cr = 1; $cr <= 10; $cr++) {
-                        $currentRow = $this->item->{'custom'.$cr};
+                        $fieldName = 'custom' . $cr;
+                        $currentRow = $this->item->{$fieldName};
                         if (preg_match('%^http(s)?://%', $currentRow)) {
                             $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
                         }
-                        if ($currentRow) {
+                        if ($currentRow && JemCustomFields::isVisible('event', $fieldName, 'detail')) {
+                            $fieldLabel = JemCustomFields::getLabel('event', $fieldName, Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr));
                         ?>
-                    <dt class="jem-custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr); ?>:</dt>
+                    <dt class="jem-custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo $this->escape($fieldLabel); ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
                     <dd class="jem-custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
                 <?php
                 }
@@ -841,13 +845,15 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
                                     <?php
                                     for ($cr = 1; $cr <= 10; $cr++) {
+                                        $fieldName = 'custom' . $cr;
                                         $currentRow = $this->item->{'venue'.$cr};
                                         if (preg_match('%^http(s)?://%', $currentRow)) {
                                             $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
                                         }
-                                        if ($currentRow) {
+                                        if ($currentRow && JemCustomFields::isVisible('venue', $fieldName, 'detail')) {
+                                            $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
                                             ?>
-                                            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>"><?php echo Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr); ?>:</dt>
+                                            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo $this->escape($fieldLabel); ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
                                             <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
                                             <?php
                                         }
