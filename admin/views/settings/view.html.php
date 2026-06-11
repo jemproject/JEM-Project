@@ -13,6 +13,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 /**
  * View class for the JEM Settings screen
  *
@@ -86,6 +88,8 @@ class JemViewSettings extends JemAdminView
         $this->config      = $config;
         $this->countryGroups = $countryGroups;
         $this->settings       = $settings;
+        $this->customFieldLanguages = JemCustomFields::getLanguageTags();
+        $this->customFieldsConfig   = JemCustomFields::getConfig();
 
         // add toolbar
         $this->addToolbar();

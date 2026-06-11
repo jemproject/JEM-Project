@@ -15,6 +15,7 @@ use Joomla\Utilities\ArrayHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Editvenue Model
@@ -27,6 +28,16 @@ class JemModelEditvenue extends JemModelVenue
      */
     public $typeAlias = 'com_jem.venue';
 
+    public function getForm($data = array(), $loadData = true)
+    {
+        $form = parent::getForm($data, $loadData);
+
+        if ($form) {
+            JemCustomFields::applyFormLabels($form, 'venue', 'frontend_edit');
+        }
+
+        return $form;
+    }
 
     /**
      * Method to auto-populate the model state.

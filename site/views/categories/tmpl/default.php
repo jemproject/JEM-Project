@@ -91,7 +91,9 @@ use Joomla\CMS\Router\Route;
                 </div>
             <?php } ?>
             <div class="description cat<?php echo $row->id; ?>">
-                <?php echo $row->description; ?>
+                <?php if (empty($this->isTypeCategoryView)) : ?>
+                    <?php echo $row->description; ?>
+                <?php endif; ?>
                 <p>
                     <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $row->linktext); ?>
                     (<?php echo $row->assignedevents ? $row->assignedevents : '0'; ?>)

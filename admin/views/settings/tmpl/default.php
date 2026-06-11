@@ -472,6 +472,14 @@ function registraoff()
                     <div class="clr"></div>
 
 
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'custom-fields', Text::_('COM_JEM_CUSTOM_FIELDS_SETTINGS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('customfields'); ?>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
                         <fieldset class="adminform">
                            <?php echo $this->loadTemplate('usercontrol'); ?>
