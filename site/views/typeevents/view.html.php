@@ -45,7 +45,40 @@ class JemViewTypeevents extends JemView
         $typeObj = $this->get('Type');
 
         if (!$typeObj) {
-            throw new \Exception(Text::_('JERROR_PAGE_NOT_FOUND'), 404);
+            $requestedTypeId = $app->input->getInt('id', 0) ?: (int) $params->get('id', 0);
+
+            $pagetitle = Text::_('COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE');
+            $pathway->addItem($pagetitle);
+
+            if ($app->get('sitename_pagetitles', 0) == 1) {
+                $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
+            } elseif ($app->get('sitename_pagetitles', 0) == 2) {
+                $pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
+            }
+
+            $document->setTitle($pagetitle);
+            $document->setMetaData('title', $pagetitle);
+
+            $this->type          = null;
+            $this->missingTypeId = $requestedTypeId;
+            $this->rows          = array();
+            $this->noevents      = 1;
+            $this->pagination    = null;
+            $this->lists         = array('order_Dir' => 'ASC', 'order' => 'a.dates', 'search' => '', 'filter' => '');
+            $this->params        = $params;
+            $this->action        = $uri->toString();
+            $this->jemsettings   = $jemsettings;
+            $this->settings      = $settings;
+            $this->permissions   = (object) array('canAddEvent' => $user->can('add', 'event'), 'canAddVenue' => $user->can('add', 'venue'));
+            $this->pagetitle     = $pagetitle;
+            $this->pageclass_sfx = '';
+            $this->print         = $print;
+            $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+            $this->archive_link  = $uri->toString();
+            $this->task          = '';
+
+            parent::display($tpl);
+            return;
         }
 
         if (empty($typeObj->user_has_access_type)) {

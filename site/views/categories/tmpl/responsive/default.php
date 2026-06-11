@@ -24,10 +24,34 @@ $buildCategoryEventsLink = static function ($category) {
         ?>
     </div>
 
-    <?php if ($this->params->get('show_page_heading', 1)) : ?>
+    <?php if ($this->params->get('show_page_heading', 1) && empty($this->isTypeCategoryView)) : ?>
         <h1 class="componentheading">
             <?php echo $this->escape($this->params->get('page_heading')); ?>
         </h1>
+    <?php endif; ?>
+
+    <?php if (!empty($this->categoryType)) : ?>
+        <div class="jem-type-header mb-3">
+            <h1 class="componentheading">
+                <?php if ($this->categoryType->icon) : ?>
+                    <span class="<?php echo htmlspecialchars($this->categoryType->icon, ENT_QUOTES, 'UTF-8'); ?>"></span>
+                <?php endif; ?>
+                <?php echo htmlspecialchars($this->categoryType->name, ENT_QUOTES, 'UTF-8'); ?>
+            </h1>
+            <?php if ($this->categoryType->description) : ?>
+                <div class="jem-type-description"><?php echo htmlspecialchars($this->categoryType->description, ENT_QUOTES, 'UTF-8'); ?></div>
+            <?php endif; ?>
+        </div>
+    <?php elseif (!empty($this->missingTypeId)) : ?>
+        <div class="alert alert-info">
+            <?php echo Text::sprintf('COM_JEM_TYPECATEGORIES_TYPE_NOT_FOUND', (int) $this->missingTypeId); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($this->isTypeCategoryView) && empty($this->rows) && empty($this->missingTypeId)) : ?>
+        <div class="alert alert-info">
+            <?php echo !empty($this->categoryType) ? Text::_('COM_JEM_TYPECATEGORIES_NO_CATEGORIES') : Text::_('COM_JEM_TYPECATEGORIES_NO_TYPES'); ?>
+        </div>
     <?php endif; ?>
 
     <?php foreach ($this->rows as $row) : ?>

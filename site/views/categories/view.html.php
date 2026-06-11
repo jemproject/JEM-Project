@@ -33,6 +33,9 @@ class JemViewCategories extends JemView
         $id          = $app->input->getInt('id', 1);
         $model       = $this->getModel();
         $uri         = Uri::getInstance();
+        $isTypeCategoryView = $model->isTypeFilterRequested();
+        $categoryType = $model->getType();
+        $missingTypeId = (!$categoryType && $model->getRequestedTypeId() > 0) ? $model->getRequestedTypeId() : 0;
         $rows        = $this->get('Data');
         $pagination  = $this->get('Pagination');
 
@@ -76,6 +79,13 @@ class JemViewCategories extends JemView
             $archive_link = $uri->toString();
         }
 
+        if ($isTypeCategoryView && $categoryType) {
+            $typeName    = htmlspecialchars($categoryType->name, ENT_QUOTES, 'UTF-8');
+            $pagetitle   = Text::sprintf('COM_JEM_TYPECATEGORIES_TITLE', $typeName);
+            $pageheading = $pagetitle;
+            $params->set('page_heading', $pageheading);
+        }
+
         // Add site name to title if param is set
         if ($app->get('sitename_pagetitles', 0) == 1) {
             $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
@@ -101,6 +111,9 @@ class JemViewCategories extends JemView
         }
 
         $this->rows          = $rows;
+        $this->isTypeCategoryView = $isTypeCategoryView;
+        $this->categoryType  = $categoryType;
+        $this->missingTypeId = $missingTypeId;
         $this->task          = $task;
         $this->params        = $params;
         $this->dellink       = $permissions->canAddEvent; // deprecated

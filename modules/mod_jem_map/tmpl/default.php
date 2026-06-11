@@ -197,10 +197,6 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
     <?php } ?>
 <?php endif; ?>
 
-<?php if ($mapProvider === 'google' && $googleApiKey === '') : ?>
-    <div class="alert alert-warning"><?php echo Text::_('MOD_JEM_MAP_GOOGLE_NO_API_KEY'); ?></div>
-<?php endif; ?>
-
 <div id="<?= $map_id ?>" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
 
 <script>
@@ -242,7 +238,6 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
         <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
         if (typeof google === 'undefined' || !google.maps) {
-            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('MOD_JEM_MAP_GOOGLE_NO_API_KEY') ?></div>';
             return;
         }
 

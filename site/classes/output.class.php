@@ -966,8 +966,7 @@ static public function lightbox() {
                 $clientid = $params->get('global_googleclientid');
                 $output = '';
 
-                if (empty($api) || empty($clientid)) {
-                    $output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
+                if (empty($api) && empty($clientid)) {
                     break;
                 } else {
                     $api = trim($api);

@@ -57,6 +57,31 @@ if (!function_exists('jem_myattendances_country_flag')) {
 }
 ?>
 
+<style>
+    #jem table.jem-myattendees {
+        min-width: 980px;
+        table-layout: auto;
+    }
+
+    #jem table.jem-myattendees th.sectiontableheader {
+        white-space: nowrap;
+        vertical-align: top;
+    }
+
+    #jem table.jem-myattendees th#jem_places,
+    #jem table.jem-myattendees th#jem_status,
+    #jem table.jem-myattendees td[headers="jem_places"],
+    #jem table.jem-myattendees td[headers="jem_status"] {
+        text-align: center !important;
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    #jem table.jem-myattendees th#jem_category {
+        min-width: 7rem;
+    }
+</style>
+
 <script>
     function tableOrdering(order, dir, view)
     {

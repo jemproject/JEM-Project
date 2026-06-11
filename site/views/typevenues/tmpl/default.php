@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 $layoutSuffix = JemHelper::getLayoutStyleSuffix();
 
@@ -20,7 +21,11 @@ $this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl')
 
 <div id="jem" class="jem_typevenues jem_venueslist<?php echo $this->pageclass_sfx; ?>">
 
-    <?php if ($this->type) : ?>
+    <?php if (!$this->type) : ?>
+        <div class="alert alert-info">
+            <?php echo !empty($this->missingTypeId) ? Text::sprintf('COM_JEM_TYPEVENUES_TYPE_NOT_FOUND', (int) $this->missingTypeId) : Text::_('COM_JEM_TYPEVENUES_NO_TYPES'); ?>
+        </div>
+    <?php elseif ($this->type) : ?>
         <div class="jem-type-header mb-3">
             <h1 class="componentheading">
                 <?php if ($this->type->icon) : ?>
@@ -34,7 +39,7 @@ $this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl')
         </div>
     <?php endif; ?>
 
-    <?php if ($layoutSuffix === 'responsive') : ?>
+    <?php if ($this->type && $layoutSuffix === 'responsive') : ?>
         <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
             <?php echo $this->loadTemplate('venues'); ?>
 
@@ -47,7 +52,7 @@ $this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl')
             <input type="hidden" name="id" value="<?php echo (int) $this->type->id; ?>" />
             <?php echo HTMLHelper::_('form.token'); ?>
         </form>
-    <?php else : ?>
+    <?php elseif ($this->type) : ?>
         <?php echo $this->loadTemplate('venues'); ?>
     <?php endif; ?>
 
