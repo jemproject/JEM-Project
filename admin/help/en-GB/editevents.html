@@ -137,20 +137,61 @@
             If you want to use the language string for both backend and frontend, then don't forget to click the 'for both locations' checkbox.
         </p>
         <h3>Registration</h3>
+        <div class="box">
+            <p class="hintheader">Terminology</p>
+            <p class="hint">
+                In JEM, registration means an event booking or attendance registration. It is not the same as Joomla user
+                registration, which creates a user account on the website.
+            </p>
+        </div>
+        <p>
+            The registration options define whether visitors can book places for this event, when bookings open or close,
+            whether users may cancel, how many places can be booked, and how waiting lists or invitations are handled.
+        </p>
         <p><strong>Registration:</strong>
-            Select if users should be able to register to this Event. The options are No, Yes or Invited Users Only.
+            Select if users should be able to register to this Event. The options are No, Yes or From date/time. Default: No.
+        </p>
+        <p><strong>Registration From:</strong>
+            When Registration is set to From date/time, registrations open at this date and time. Default: now.
+        </p>
+        <p><strong>Registration Until:</strong>
+            When Registration is set to From date/time, registrations close at this date and time.
+        </p>
+        <p><strong>Invited users only:</strong>
+            Restricts registration to the invited users selected for the event. Default: No.
         </p>
         <p><strong>Registration Annulation:</strong>
-            Select if users should be able to annulate their registration from this Event. The options are No, Yes or Limited .... datetime before the event starts.
+            Select if users should be able to annulate their registration from this Event. The options are No, Yes or Until date/time. Default: No.
+        </p>
+        <p><strong>Annulation Until:</strong>
+            When annulation is limited, users can unregister until this date and time.
         </p>
         <p><strong>Max Places:</strong>
             Enter the maximum capacity for the event. When there is no maximum, enter 0 for unlimited registrations.
+        </p>
+        <p><strong>Minimum / Maximum booked places per user:</strong>
+            Controls how many places one user must or may book. Both fields default to 1.
+        </p>
+        <p><strong>Reserved Places:</strong>
+            Places held back from normal booking. Default: 0.
+        </p>
+        <p><strong>Invited Users:</strong>
+            Select users that may register when invited-only registration is enabled.
         </p>
         <p><strong>Booked Places:</strong>
             Displays the currently booked (registered) number of visitors to the event.
         </p>
         <p><strong>Waiting List:</strong>
             Check this box to enable the waiting list.
+        </p>
+        <p><strong>Request answer:</strong>
+            Ask registered users to answer the attendance request. Default: No.
+        </p>
+        <p><strong>Series booking:</strong>
+            Applies booking behavior to events in a recurrence series where supported. Default: No.
+        </p>
+        <p><strong>Single event booking:</strong>
+            Applies booking behavior to this individual event where supported. Default: No.
         </p>
         <h3>Image</h3>
         <p><strong>Image:</strong>
