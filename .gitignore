@@ -174,3 +174,5 @@ pip-log.txt
 /build.number
 /*.code-workspace
 
+CODEX_PENDING_DIARY.md
+/docs
