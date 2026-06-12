@@ -101,6 +101,27 @@ class JemModelCategories extends BaseDatabaseModel
     protected $_type = null;
 
     /**
+     * Category type list filter.
+     *
+     * @var int
+     */
+    protected $_filterTypeid = 0;
+
+    /**
+     * Category type filter options.
+     *
+     * @var array|null
+     */
+    protected $_types = null;
+
+    /**
+     * Category search filter.
+     *
+     * @var string
+     */
+    protected $_search = '';
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -118,12 +139,15 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $this->_id = $id;
-        $this->_typeFilterRequested = $app->input->exists('typeid') || $params->get('typeid', null) !== null;
-        $this->_typeid = $this->_typeFilterRequested ? $app->input->getInt('typeid', (int) $params->get('typeid', 0)) : 0;
+        $requestedTypeId = $app->input->getInt('typeid', (int) $params->get('typeid', 0));
+        $this->_typeFilterRequested = $requestedTypeId > 0;
+        $this->_typeid = $this->_typeFilterRequested ? $requestedTypeId : 0;
+        $this->_filterTypeid = $this->_typeFilterRequested ? 0 : $app->input->getInt('filter_typeid', 0);
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
         $this->_showsubcats      = (bool)$params->get('usecat', 1);
         $this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
+        $this->_search           = trim($app->input->getString('filter_search', ''));
 
         //get the number of events from database
         $limit      = $app->input->getInt('limit', $params->get('cat_num'));
@@ -248,6 +272,71 @@ class JemModelCategories extends BaseDatabaseModel
     public function getRequestedTypeId()
     {
         return (int) $this->_typeid;
+    }
+
+    public function getFilterTypeId()
+    {
+        return (int) $this->_filterTypeid;
+    }
+
+    public function getTypes()
+    {
+        if ($this->_types !== null) {
+            return $this->_types;
+        }
+
+        $app      = Factory::getApplication();
+        $user     = JemFactory::getUser();
+        $levels   = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
+        $language = $app->getLanguage()->getTag();
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $query    = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = 2')
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
+            ->where('('
+                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        $db->setQuery($query);
+        $this->_types = $db->loadObjectList();
+
+        if ($this->_types) {
+            require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+            foreach ($this->_types as $type) {
+                JemOutput::translateType($type);
+            }
+        }
+
+        return $this->_types;
+    }
+
+    public function getTypeNames()
+    {
+        $typeNames = array();
+
+        foreach ($this->getTypes() as $type) {
+            $typeNames[(int) $type->id] = $type->name;
+        }
+
+        return $typeNames;
+    }
+
+    public function getTypeItems()
+    {
+        $typeItems = array();
+
+        foreach ($this->getTypes() as $type) {
+            $typeItems[(int) $type->id] = $type;
+        }
+
+        return $typeItems;
     }
 
     public function isTypeFilterRequested()
@@ -503,8 +592,9 @@ class JemModelCategories extends BaseDatabaseModel
         }
         $where_sub .= ' AND c.id = cc.id';
 
-        if ($this->_typeid > 0) {
-            $where_sub .= ' AND cc.type_id = ' . (int) $this->_typeid;
+        $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
+        if ($effectiveTypeId > 0) {
+            $where_sub .= ' AND cc.type_id = ' . (int) $effectiveTypeId;
         } elseif ($this->_typeFilterRequested) {
             $where_sub .= ' AND 1 = 0';
         }
@@ -531,6 +621,12 @@ class JemModelCategories extends BaseDatabaseModel
             $where_access = ' AND c.access IN ('.implode(',', $levels).')';
         }
 
+        $where_search = '';
+        if ($this->_search !== '') {
+            $search = $this->_db->quote('%' . $this->_db->escape($this->_search, true) . '%', false);
+            $where_search = ' AND c.catname LIKE ' . $search;
+        }
+
         $query = 'SELECT c.*,'
                . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
                . $case_when_a
@@ -546,7 +642,8 @@ class JemModelCategories extends BaseDatabaseModel
                . ' WHERE c.published = 1'
                . ' AND '.$parentCategoryQuery
                . $where_access
-               . ($this->_typeid > 0 ? ' AND c.type_id = ' . (int) $this->_typeid : ($this->_typeFilterRequested ? ' AND 1 = 0' : ''))
+               . $where_search
+               . ($effectiveTypeId > 0 ? ' AND c.type_id = ' . (int) $effectiveTypeId : ($this->_typeFilterRequested ? ' AND 1 = 0' : ''))
                . ' GROUP BY c.id '.$empty
                . ' ORDER BY '.$ordering
                ;
@@ -580,10 +677,16 @@ class JemModelCategories extends BaseDatabaseModel
                 . ' AND c.access IN (' . implode(',', $levels) . ')'
                 ;
 
-        if ($this->_typeid > 0) {
-            $query .= ' AND c.type_id = ' . (int) $this->_typeid;
+        $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
+        if ($effectiveTypeId > 0) {
+            $query .= ' AND c.type_id = ' . (int) $effectiveTypeId;
         } elseif ($this->_typeFilterRequested) {
             $query .= ' AND 1 = 0';
+        }
+
+        if ($this->_search !== '') {
+            $search = $this->_db->quote('%' . $this->_db->escape($this->_search, true) . '%', false);
+            $query .= ' AND c.catname LIKE ' . $search;
         }
 
         if (!$this->_showemptycats) {

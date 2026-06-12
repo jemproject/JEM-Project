@@ -31,6 +31,60 @@
 
     <fields name="params">
         <fieldset name="basic">
+            <field name="show_categories_filter" type="radio"
+                default="1"
+                label="COM_JEM_CATEGORIES_SHOW_FILTER"
+                description="COM_JEM_CATEGORIES_SHOW_FILTER_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_categories_type_filter" type="radio"
+                default="1"
+                label="COM_JEM_CATEGORIES_SHOW_TYPE_FILTER"
+                description="COM_JEM_CATEGORIES_SHOW_TYPE_FILTER_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_category_description" type="radio"
+                default="1"
+                label="COM_JEM_CATEGORIES_SHOW_DESCRIPTION"
+                description="COM_JEM_CATEGORIES_SHOW_DESCRIPTION_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_category_type" type="radio"
+                default="0"
+                label="COM_JEM_CATEGORIES_SHOW_TYPE"
+                description="COM_JEM_CATEGORIES_SHOW_TYPE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_category_image" type="radio"
+                default="1"
+                label="COM_JEM_CATEGORIES_SHOW_IMAGE"
+                description="COM_JEM_CATEGORIES_SHOW_IMAGE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_category_events" type="radio"
+                default="1"
+                label="COM_JEM_CATEGORIES_SHOW_EVENTS"
+                description="COM_JEM_CATEGORIES_SHOW_EVENTS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="showemptycats" type="radio"
                 default="1"
                 label="COM_JEM_SHOWEMPTYCATS"
