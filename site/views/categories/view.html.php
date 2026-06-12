@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
 /**
  * Categories-View
  */
@@ -37,6 +38,8 @@ class JemViewCategories extends JemView
         $missingTypeId = (!$categoryType && $model->getRequestedTypeId() > 0) ? $model->getRequestedTypeId() : 0;
         $rows        = $this->get('Data');
         $pagination  = $this->get('Pagination');
+        $filterSearch = $app->input->getString('filter_search', '');
+        $filterTypeId = $model->getFilterTypeId();
 
         // Load css
         JemHelper::loadCss('jem');
@@ -102,8 +105,29 @@ class JemViewCategories extends JemView
         $permissions->canAddEvent = $user->can('add', 'event');
         $permissions->canAddVenue = $user->can('add', 'venue');
 
+        $lists = array();
+        $lists['search'] = $filterSearch;
+        $typeOptions = array(HTMLHelper::_('select.option', 0, Text::_('JALL')));
+        foreach ($model->getTypes() as $type) {
+            $typeOptions[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
+        }
+        $lists['type'] = HTMLHelper::_(
+            'select.genericlist',
+            $typeOptions,
+            'filter_typeid',
+            array(
+                'size' => '1',
+                'class' => 'inputbox form-select',
+                'onchange' => 'this.form.submit();',
+                'title' => Text::_('COM_JEM_CATEGORIES_TYPE_FILTER_TOOLTIP'),
+            ),
+            'value',
+            'text',
+            $filterTypeId
+        );
+
         // Get events if requested
-        if (!empty($rows) && $params->get('detcat_nr', 0) > 0) {
+        if (!empty($rows) && $params->get('show_category_events', 1) && $params->get('detcat_nr', 0) > 0) {
             foreach($rows as $row) {
                 $row->events = $model->getEventdata($row->id);
             }
@@ -112,11 +136,14 @@ class JemViewCategories extends JemView
         $this->rows          = $rows;
         $this->isTypeCategoryView = $isTypeCategoryView;
         $this->categoryType  = $categoryType;
+        $this->typeNames     = $model->getTypeNames();
+        $this->typeItems     = $model->getTypeItems();
         $this->missingTypeId = $missingTypeId;
         $this->task          = $task;
         $this->params        = $params;
         $this->dellink       = $permissions->canAddEvent; // deprecated
         $this->pagination    = $pagination;
+        $this->lists         = $lists;
         $this->item          = $menuitem;
         $this->jemsettings   = $jemsettings;
         $this->pagetitle     = $pagetitle;
