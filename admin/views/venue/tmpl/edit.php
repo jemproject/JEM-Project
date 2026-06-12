@@ -1129,38 +1129,38 @@ Text::script('JCANCEL');
                                         <ul class="adminformlist label-button-line">
                                             <li><label><?php echo Text::_('COM_JEM_STREET'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_street" />
+                                                <input type="text" class="form-control valid" id="tmp_form_street" />
                                                 <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
                                                 <input type="hidden" class="readonly form-control valid" id="tmp_form_route" readonly="readonly" />
                                             </div>
                                                 </li>
                                             <li><label><?php echo Text::_('COM_JEM_ZIP'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_postalCode" /></div>
+                                                <input type="text" class="form-control valid" id="tmp_form_postalCode" /></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_city"/></div>
+                                                <input type="text" class="form-control valid" id="tmp_form_city"/></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_state" /></div>
+                                                <input type="text" class="form-control valid" id="tmp_form_state" /></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_VENUE'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_venue" /></div>
+                                                <input type="text" class="form-control valid" id="tmp_form_venue" /></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_country" /></div>
+                                                <input type="text" class="form-control valid" id="tmp_form_country" /></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_latitude" /></div>
+                                                <input type="text" class="form-control valid" id="tmp_form_latitude" /></div>
                                             </li>
                                             <li><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label>
                                             <div class="geodata-info">
-                                                <input type="text" disabled="disabled" class="readonly form-control valid" id="tmp_form_longitude" />
+                                                <input type="text" class="form-control valid" id="tmp_form_longitude" />
                                              </div>
                                             </li>
                                         </ul>
