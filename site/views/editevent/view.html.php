@@ -323,6 +323,7 @@ class JemViewEditevent extends JemView
 
         $document->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $filters = array();
         $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));

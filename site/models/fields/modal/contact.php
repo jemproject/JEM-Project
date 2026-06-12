@@ -124,7 +124,7 @@ class JFormFieldModal_Contact extends FormField
             $modalId,
             array(
                 'url'    => $link . '&' . Session::getFormToken() . '=1',
-                'title'  => Text::_('COM_JEM_SELECT'),
+                'title'  => Text::_('COM_JEM_SELECT_CONTACT'),
                 'width'  => '800px',
                 'height' => '450px',
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'

@@ -208,6 +208,7 @@ class JemViewAttendees extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_USERS_AND_STATUS'));
 

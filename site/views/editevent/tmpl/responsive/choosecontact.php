@@ -27,6 +27,18 @@ if (!empty($selectedParam)) {
 // Get the current search field to keep it selected in the dropdown
 $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
+$cssSettings = JemHelper::retrieveCss();
+$filterBackground = $cssSettings->get('css_color_bg_filter');
+$filterBorder = $cssSettings->get('css_color_border_filter');
+$filterStyle = array();
+
+if (!empty($filterBackground)) {
+    $filterStyle[] = 'background-color: ' . htmlspecialchars($filterBackground, ENT_QUOTES, 'UTF-8') . ' !important';
+}
+
+if (!empty($filterBorder)) {
+    $filterStyle[] = 'border-color: ' . htmlspecialchars($filterBorder, ENT_QUOTES, 'UTF-8') . ' !important';
+}
 ?>
 
 <style>
@@ -35,7 +47,6 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
         gap: 6px;
-        background: #f8f9fa;
         padding: 8px 10px;
         border: 1px solid #ddd;
         border-radius: 4px;
@@ -83,6 +94,10 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
     .jem-toolbar-group select {
         width: auto !important;
         min-width: 6.5rem;
+        max-width: 9rem;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
     }
 
     .btn-save-selection {
@@ -115,7 +130,11 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 
     .jem-contact-footer select {
         width: auto !important;
-        min-width: 72px !important;
+        min-width: 5rem !important;
+        max-width: 5.5rem;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
     }
 
     .jem-selected-row { background-color: #f0fff4 !important; border-left: 4px solid #28a745; }
@@ -141,7 +160,7 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
 
-        <div id="jem_filter" class="jem-toolbar floattext">
+        <div id="jem_filter" class="jem-toolbar floattext"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem-toolbar-group">
                 <select name="filter_type" id="filter_type" class="inputbox" onchange="this.form.submit()">
                     <option value="1" <?php echo ($filter_type == 'con.name' ? 'selected' : ''); ?>><?php echo Text::_('COM_JEM_NAME'); ?></option>

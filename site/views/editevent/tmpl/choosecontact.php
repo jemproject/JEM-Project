@@ -80,6 +80,10 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
         flex: 0 0 auto;
         width: auto;
         min-width: 6.5rem;
+        max-width: 9rem;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
     }
 
     #filter_search {
@@ -128,7 +132,11 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 
     .jem-contact-footer select {
         width: auto !important;
-        min-width: 72px;
+        min-width: 5rem !important;
+        max-width: 5.5rem;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
     }
 
     @media (max-width: 520px) {

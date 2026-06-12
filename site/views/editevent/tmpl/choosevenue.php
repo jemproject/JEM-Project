@@ -17,6 +17,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
 
 if (!function_exists('jem_choosevenue_country')) {
     function jem_choosevenue_country($country)
@@ -41,6 +42,13 @@ if (!function_exists('jem_choosevenue_country')) {
 ?>
 
 <script>
+    if (window.parent && window.parent.document) {
+        var modalTitle = window.parent.document.querySelector('.modal.show .modal-title, .joomla-modal.show .modal-title');
+        if (modalTitle) {
+            modalTitle.textContent = "<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>";
+        }
+    }
+
     function tableOrdering( order, dir, view )
     {
         var form = document.getElementById("adminForm");
@@ -57,8 +65,8 @@ if (!function_exists('jem_choosevenue_country')) {
     }
 
     #jem.jem_select_venue #jem_filter {
-        display: flex;
-        flex-wrap: nowrap;
+        display: grid;
+        grid-template-columns: auto auto minmax(7rem, 1fr) auto auto auto auto auto;
         align-items: center;
         gap: .5rem;
         margin: 0 0 1rem;
@@ -69,42 +77,49 @@ if (!function_exists('jem_choosevenue_country')) {
 
     #jem.jem_select_venue #jem_filter .jem_fleft,
     #jem.jem_select_venue #jem_filter .jem_fright {
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: .5rem;
+        display: contents;
         float: none;
     }
 
-    #jem.jem_select_venue #jem_filter .jem_fleft {
-        flex: 1 1 auto;
-        min-width: 0;
-    }
-
-    #jem.jem_select_venue #jem_filter .jem_fright {
-        margin-left: 0;
-        flex: 0 0 auto;
-    }
-
     #jem.jem_select_venue #filter_search {
-        flex: 1 1 12rem;
-        min-width: 8rem;
-        max-width: 20rem;
+        width: 100%;
+        min-width: 7rem;
     }
 
     #jem.jem_select_venue #jem_filter select {
         width: auto;
         min-width: 5.5rem;
+        max-width: 9rem;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
+    }
+
+    #jem.jem_select_venue #jem_filter select#limit {
+        min-width: 5rem;
+        max-width: 5.5rem;
+    }
+
+    #jem.jem_select_venue #jem_filter label {
+        margin: 0;
+        white-space: nowrap;
     }
 
     @media (max-width: 768px) {
-        #jem.jem_select_venue #jem_filter,
-        #jem.jem_select_venue #jem_filter .jem_fleft {
+        #jem.jem_select_venue #jem_filter {
+            display: flex;
             flex-wrap: wrap;
         }
 
         #jem.jem_select_venue #jem_filter .jem_fleft,
-        #jem.jem_select_venue #jem_filter .jem_fright,
+        #jem.jem_select_venue #jem_filter .jem_fright {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .5rem;
+            flex: 1 1 100%;
+        }
+
         #jem.jem_select_venue #filter_search {
             flex: 1 1 100%;
         }
@@ -138,18 +153,14 @@ if (!function_exists('jem_choosevenue_country')) {
 </style>
 
 <div id="jem" class="jem_select_venue">
-    <h1 class='componentheading'>
-        <?php echo Text::_('COM_JEM_SELECT_VENUE'); ?>
-    </h1>
-
     <div class="clr"></div>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter" class="floattext">
             <div class="jem_fleft">
                 <?php
-                echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>&nbsp;';
-                echo $this->searchfilter.'&nbsp;';
+                echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>';
+                echo $this->searchfilter;
                 ?>
                 <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->filter, ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -158,7 +169,7 @@ if (!function_exists('jem_choosevenue_country')) {
             </div>
             <div class="jem_fright">
                 <?php
-                echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+                echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>';
                 echo $this->pagination->getLimitBox();
                 ?>
             </div>

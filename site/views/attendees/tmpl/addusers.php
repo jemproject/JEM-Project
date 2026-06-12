@@ -151,6 +151,18 @@ if (!function_exists('jem_addusers_account_status')) {
         max-width: 18rem;
     }
 
+    #jem.jem_select_users #jem_filter select {
+        width: auto;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
+    }
+
+    #jem.jem_select_users #jem_filter select#limit {
+        min-width: 5rem;
+        max-width: 5.5rem;
+    }
+
     #jem.jem_select_users .jem-users-select,
     #jem.jem_select_users .jem-users-number,
     #jem.jem_select_users .jem-users-status {
