@@ -15,9 +15,29 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectArticle');
+Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_ARTICLE'));
+$cssSettings = JemHelper::retrieveCss();
+$filterBackground = $cssSettings->get('css_color_bg_filter');
+$filterBorder = $cssSettings->get('css_color_border_filter');
+$filterStyle = array();
+
+if (!empty($filterBackground)) {
+    $filterStyle[] = 'background-color: ' . htmlspecialchars($filterBackground, ENT_QUOTES, 'UTF-8') . ' !important';
+}
+
+if (!empty($filterBorder)) {
+    $filterStyle[] = 'border-color: ' . htmlspecialchars($filterBorder, ENT_QUOTES, 'UTF-8') . ' !important';
+}
 ?>
 
 <script>
+    if (window.parent && window.parent.document) {
+        var modalTitle = window.parent.document.querySelector('.modal.show .modal-title, .joomla-modal.show .modal-title');
+        if (modalTitle) {
+            modalTitle.textContent = "<?php echo $this->escape(Text::_('COM_JEM_SELECT_ARTICLE')); ?>";
+        }
+    }
+
     function tableOrdering(order, dir, view)
     {
         var form = document.getElementById("adminForm");
@@ -28,19 +48,97 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectArticle
     }
 </script>
 
-<div id="jem" class="jem_select_article">
-    <h1 class="componentheading">
-        <?php echo Text::_('COM_JEM_SELECT_ARTICLE'); ?>
-    </h1>
+<style>
+    #jem.jem_select_article {
+        padding: 1rem;
+    }
 
+    #jem.jem_select_article #jem_filter {
+        display: grid !important;
+        grid-template-columns: auto auto minmax(3rem, 1fr) auto auto auto auto auto;
+        align-items: center;
+        gap: .4rem;
+        margin: 0 0 1rem;
+        padding: .65rem;
+        border-radius: .25rem;
+        width: 100%;
+        box-sizing: border-box;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_article #jem_filter .jem_fleft,
+    #jem.jem_select_article #jem_filter .jem_fright {
+        display: contents !important;
+        float: none;
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    #jem.jem_select_article #filter_search {
+        width: 100%;
+        min-width: 3rem;
+        max-width: none;
+    }
+
+    #jem.jem_select_article #jem_filter select {
+        width: auto;
+        min-width: 4.75rem;
+        max-width: 7rem;
+        padding-left: .4rem;
+        padding-right: 1.75rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
+    }
+
+    #jem.jem_select_article #jem_filter select#limit {
+        min-width: 4.25rem;
+        max-width: 4.75rem;
+    }
+
+    #jem.jem_select_article #jem_filter .btn,
+    #jem.jem_select_article #jem_filter button {
+        padding-left: .55rem;
+        padding-right: .55rem;
+        white-space: nowrap;
+        width: auto !important;
+    }
+
+    #jem.jem_select_article #jem_filter label {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 560px) {
+        #jem.jem_select_article #jem_filter {
+            display: flex;
+            flex-wrap: wrap;
+            white-space: normal;
+        }
+
+        #jem.jem_select_article #jem_filter .jem_fleft,
+        #jem.jem_select_article #jem_filter .jem_fright {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .5rem;
+            flex: 1 1 100%;
+        }
+
+        #jem.jem_select_article #filter_search {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+
+<div id="jem" class="jem_select_article">
     <div class="clr"></div>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component&function=' . $this->escape($function) . '&' . Session::getFormToken() . '=1'); ?>" method="post" name="adminForm" id="adminForm">
-        <div id="jem_filter" class="floattext">
+        <div id="jem_filter" class="floattext"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem_fleft">
                 <?php
-                echo '<label for="filter_type">' . Text::_('COM_JEM_FILTER') . '</label>&nbsp;';
-                echo $this->searchfilter . '&nbsp;';
+                echo '<label for="filter_type">' . Text::_('COM_JEM_FILTER') . '</label>';
+                echo $this->searchfilter;
                 ?>
                 <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onchange="document.adminForm.submit();" />
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -49,7 +147,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectArticle
             </div>
             <div class="jem_fright">
                 <?php
-                echo '<label for="limit">' . Text::_('COM_JEM_DISPLAY_NUM') . '</label>&nbsp;';
+                echo '<label for="limit">' . Text::_('COM_JEM_DISPLAY_NUM') . '</label>';
                 echo $this->pagination->getLimitBox();
                 ?>
             </div>

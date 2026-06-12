@@ -2006,11 +2006,12 @@ class JemHelper
         $font_table_th        = $settings->get('css_color_font_table_th');
         $font_table_td        = $settings->get('css_color_font_table_td');
         $font_table_td_a      = $settings->get('css_color_font_table_td_a');
+        $filter_selector      = "#jem_filter, div#jem #jem_filter, #jem #jem_filter, #jem.jem_select_contact #jem_filter, #jem.jem_select_venue #jem_filter, #jem.jem_select_users #jem_filter, #jem.jem_select_article #jem_filter";
 
         switch ($layoutstyle) {
         case 1: // 'Default (Responsive Style)'
             if (!empty($bg_filter)) {
-                $style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
+                $style .= $filter_selector . " {background-color:" . $bg_filter . " !important;}";
             }
             if (!empty($bg_h2)) {
                 $style .= "div#jem h2 {background-color:".$bg_h2.";}";
@@ -2035,7 +2036,7 @@ class JemHelper
                 $style .= "div#jem .eventlist li:hover {background-color:" . $bg_table_tr_hover . ";}";
             }
             if (!empty($border_filter)) {
-                $style .= "div#jem #jem_filter {border: 1px solid " . $border_filter . ";}";
+                $style .= $filter_selector . " {border-color:" . $border_filter . " !important;}";
             }
             if (!empty($border_h2)) {
                 $style .= "div#jem h2 {border: 1px solid " . $border_h2 . ";}";
@@ -2061,7 +2062,7 @@ class JemHelper
             break;
         default: // 'Legacy (Table Style)'
             if (!empty($bg_filter)) {
-                $style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
+                $style .= $filter_selector . " {background-color:" . $bg_filter . " !important;}";
             }
             if (!empty($bg_h2)) {
                 $style .= "div#jem h2 {background-color:".$bg_h2.";}";
@@ -2086,7 +2087,7 @@ class JemHelper
                 $style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
             }
             if (!empty($border_filter)) {
-                $style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
+                $style .= $filter_selector . " {border-color:" . $border_filter . " !important;}";
             }
             if (!empty($border_h2)) {
                 $style .= "div#jem h2 {border-color:".$border_h2.";}";

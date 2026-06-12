@@ -17,6 +17,19 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
+$cssSettings = JemHelper::retrieveCss();
+$filterBackground = $cssSettings->get('css_color_bg_filter');
+$filterBorder = $cssSettings->get('css_color_border_filter');
+$filterStyle = array();
+
+if (!empty($filterBackground)) {
+    $filterStyle[] = 'background-color: ' . htmlspecialchars($filterBackground, ENT_QUOTES, 'UTF-8') . ' !important';
+}
+
+if (!empty($filterBorder)) {
+    $filterStyle[] = 'border-color: ' . htmlspecialchars($filterBorder, ENT_QUOTES, 'UTF-8') . ' !important';
+}
 
 if (!function_exists('jem_choosevenue_country')) {
     function jem_choosevenue_country($country)
@@ -41,6 +54,13 @@ if (!function_exists('jem_choosevenue_country')) {
 ?>
 
 <script>
+    if (window.parent && window.parent.document) {
+        var modalTitle = window.parent.document.querySelector('.modal.show .modal-title, .joomla-modal.show .modal-title');
+        if (modalTitle) {
+            modalTitle.textContent = "<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>";
+        }
+    }
+
     function tableOrdering( order, dir, view )
     {
         var form = document.getElementById("adminForm");
@@ -58,22 +78,21 @@ if (!function_exists('jem_choosevenue_country')) {
 
     #jem.jem_select_venue #jem_filter {
         display: grid !important;
-        grid-template-columns: auto minmax(14rem, 1fr) auto auto auto auto;
+        grid-template-columns: auto auto minmax(3rem, 1fr) auto auto auto auto auto;
         align-items: center;
-        gap: .5rem;
+        gap: .4rem;
         margin: 0;
-        padding: .75rem;
+        padding: .65rem;
         border: 1px solid var(--border-color, #dfe3e7);
         border-radius: .25rem;
         width: 100%;
         box-sizing: border-box;
+        white-space: nowrap;
     }
 
     #jem.jem_select_venue #jem_filter > div {
-        display: flex !important;
-        flex-flow: row nowrap !important;
+        display: contents !important;
         align-items: center;
-        gap: .5rem;
         width: auto !important;
         margin: 0 !important;
         min-width: 0;
@@ -85,45 +104,58 @@ if (!function_exists('jem_choosevenue_country')) {
 
     #jem.jem_select_venue #filter_search {
         width: 100%;
-        flex: 1 1 12rem;
-        min-width: 8rem;
+        min-width: 3rem;
         max-width: none;
     }
 
     #jem.jem_select_venue #jem_filter select {
         width: auto;
-        min-width: 5.5rem;
+        min-width: 4.75rem;
+        max-width: 7rem;
+        padding-left: .4rem;
+        padding-right: 1.75rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
+    }
+
+    #jem.jem_select_venue #jem_filter select#limit {
+        min-width: 4.25rem;
+        max-width: 4.75rem;
     }
 
     #jem.jem_select_venue #jem_filter .btn,
     #jem.jem_select_venue #jem_filter button {
         width: auto !important;
         white-space: nowrap;
+        padding-left: .55rem;
+        padding-right: .55rem;
     }
 
     #jem.jem_select_venue .jem-choosevenue-search {
-        flex: 1 1 auto;
-        min-width: 0;
+        display: contents !important;
     }
 
     #jem.jem_select_venue .jem-choosevenue-actions,
     #jem.jem_select_venue .jem-choosevenue-limit {
-        flex: 0 0 auto;
+        display: contents !important;
     }
 
-    @media (max-width: 520px) {
+    #jem.jem_select_venue .jem-choosevenue-limit label {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 560px) {
         #jem.jem_select_venue #jem_filter {
             grid-template-columns: 1fr;
+            white-space: normal;
         }
 
-        #jem.jem_select_venue #jem_filter > div,
-        #jem.jem_select_venue .jem-choosevenue-search {
+        #jem.jem_select_venue #jem_filter > div {
+            display: flex !important;
             flex-wrap: wrap !important;
         }
 
-        #jem.jem_select_venue .jem-choosevenue-search,
-        #jem.jem_select_venue .jem-choosevenue-actions,
-        #jem.jem_select_venue .jem-choosevenue-limit,
         #jem.jem_select_venue #filter_search {
             flex: 1 1 100%;
         }
@@ -160,15 +192,11 @@ if (!function_exists('jem_choosevenue_country')) {
 </style>
 
 <div id="jem" class="jem_select_venue">
-    <h1 class='componentheading'>
-        <?php echo Text::_('COM_JEM_SELECT_VENUE'); ?>
-    </h1>
-
     <div class="clr"></div>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div class="jem-row valign-baseline">
-            <div id="jem_filter" class="jem-form jem-row jem-justify-start">
+            <div id="jem_filter" class="jem-form jem-row jem-justify-start"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
                 <div class="jem-choosevenue-label">
                     <?php
                     echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>';
@@ -182,7 +210,7 @@ if (!function_exists('jem_choosevenue_country')) {
                 <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_VENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
                 <div class="jem-row jem-justify-start jem-nowrap jem-choosevenue-limit">
-                    <?php echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;'; ?>
+                    <?php echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>'; ?>
                     <?php echo $this->pagination->getLimitBox(); ?>
                 </div>
             </div>

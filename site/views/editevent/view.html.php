@@ -323,6 +323,7 @@ class JemViewEditevent extends JemView
 
         $document->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $filters = array();
         $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));
@@ -361,6 +362,7 @@ class JemViewEditevent extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 
@@ -413,6 +415,7 @@ class JemViewEditevent extends JemView
         $limit            = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
 
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_ARTICLE'));
 
@@ -460,6 +463,7 @@ class JemViewEditevent extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_USERS_TO_INVITE'));
 
