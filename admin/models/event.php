@@ -864,6 +864,19 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $eventData = $this->prepareAssociatedArticleEventData($eventData, $eventId);
+        $existingArticleId = $this->findAssociatedContentArticle($eventData, $articleCategoryId, $eventId);
+
+        if ($existingArticleId) {
+            $article = (object) array(
+                'id'         => $eventId,
+                'article_id' => $existingArticleId
+            );
+
+            Factory::getContainer()->get('DatabaseDriver')->updateObject('#__jem_events', $article, 'id');
+
+            return true;
+        }
+
         $articleId = $this->createAssociatedContentArticle($eventData, $articleCategoryId, $eventId);
 
         if (!$articleId) {
@@ -944,10 +957,6 @@ class JemModelEvent extends JemModelAdmin
         $associations = $this->getAssociatedArticleCategoryOptions($categories);
 
         if ($mode === 2) {
-            if (!$new) {
-                return 0;
-            }
-
             $autoConfigured = array_filter($associations, static function ($category) {
                 return (int) $category->article_create_mode === 1;
             });
@@ -1194,6 +1203,41 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return false;
+    }
+
+    /**
+     * Find an existing Joomla article that matches the deterministic JEM alias.
+     *
+     * @param   array    $eventData          Event data.
+     * @param   integer  $articleCategoryId  Joomla article category id.
+     * @param   integer  $eventId            Event id.
+     *
+     * @return  integer
+     */
+    protected function findAssociatedContentArticle(array $eventData, $articleCategoryId, $eventId)
+    {
+        $eventTitle = trim((string) ($eventData['title'] ?? ''));
+        $alias = $this->buildAssociatedArticleAlias($eventTitle, (int) $eventId);
+
+        if ($alias === '') {
+            return 0;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('catid') . ' = ' . (int) $articleCategoryId)
+            ->where($db->quoteName('alias') . ' = ' . $db->quote($alias))
+            ->where($db->quoteName('state') . ' != -2');
+
+        try {
+            $db->setQuery($query, 0, 1);
+
+            return (int) $db->loadResult();
+        } catch (Throwable $e) {
+            return 0;
+        }
     }
 
     /**
